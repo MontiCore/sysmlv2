@@ -1,0 +1,17 @@
+/target/
+target/
+target
+.project
+.settings
+.classpath
+out/
+
+# Ignore Macintosh Desktop Service Stores
+.DS_Store
+
+# Ignore Intellij files
+*.iml
+.idea
+
+# Ignore log file
+*.log
