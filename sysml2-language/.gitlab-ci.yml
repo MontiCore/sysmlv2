@@ -1,0 +1,70 @@
+stages:
+  - build
+  - test
+  - integration-test
+  - acceptance-test
+
+variables:
+  # This will supress any download for dependencies and plugins or upload messages which would clutter the console log.
+  # `showDateTime` will show the passed time in milliseconds. You need to specify `--batch-mode` to make this work.
+  MAVEN_OPTS: "-Xmx4096m -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  # `installAtEnd` and `deployAtEnd`are only effective with recent version of the corresponding plugins.
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true"
+# Cache downloaded dependencies and plugins between builds.
+# To keep cache across branches add 'key: "$CI_JOB_NAME"'
+cache:
+  paths:
+    - .m2/repository
+#  key: "$CI_COMMIT_SHA" # Cache across branch and stage
+
+
+
+# This will only validate and compile stuff and run e.g. maven-enforcer-plugin.
+# Because some enforcer rules might check dependency convergence and class duplications
+# we use `test-compile` here instead of `validate`, so the correct classpath is picked up.
+validate:
+  image: maven:3-jdk-11
+  stage: build
+  script:
+    - 'mvn clean test-compile'
+  artifacts:
+    reports:
+      junit:
+      - ./target/surefire-reports/TEST-*.xml
+
+# Run Unit Tests after build
+unit test:
+  image: maven:3-jdk-11
+  stage: test
+  script:
+    - mvn $MAVEN_CLI_OPTS test
+  except:
+    - master
+  artifacts:
+    reports:
+      junit:
+      - ./target/surefire-reports/TEST-*.xml
+
+# Run Integration Tests after build
+integration test:
+  image: maven:3-jdk-11
+  stage: integration-test
+  script:
+    - mvn $MAVEN_CLI_OPTS verify -Pintegration-test
+  except:
+    - master
+  artifacts:
+    reports:
+      junit:
+      - ./target/surefire-reports/TEST-*.xml
+
+# Run Acceptance Tests after build
+acceptance test:
+  image: maven:3-jdk-11
+  stage: acceptance-test
+  script:
+    - mvn $MAVEN_CLI_OPTS verify -Pacceptance-test
+  artifacts:
+    reports:
+      junit:
+      - ./target/surefire-reports/TEST-*.xml

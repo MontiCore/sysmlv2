@@ -1,0 +1,9 @@
+/*
+ * Copyright (c) RWTH Aachen. All rights reserved.
+ *
+ * http://www.se-rwth.de/
+ */
+
+grammar SysML2 extends de.monticore.literals.MCCommonLiterals {
+  
+}

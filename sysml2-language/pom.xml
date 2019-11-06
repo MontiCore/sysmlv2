@@ -1,0 +1,486 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- == PROJECT COORDINATES ============================================= -->
+
+  <groupId>de.monticore.lang</groupId>
+  <artifactId>sysml_2</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+
+  <properties>
+
+    <!-- .. Libraries ..................................................... -->
+
+    <monticore.version>5.4.0-SNAPSHOT</monticore.version>
+    
+    <guava.version>18.0</guava.version>
+    <jsr305.version>3.0.0</jsr305.version>
+    <junit.jupiter.version>5.0.3</junit.jupiter.version>
+    <junit.platform.version>1.0.3</junit.platform.version>
+    <antlr.version>4.7.1</antlr.version>
+    <logback.version>1.1.2</logback.version>
+    <emf.common.version>2.5.0</emf.common.version>
+    <emf.ecore.version>2.5.0</emf.ecore.version>
+    <emf.ecore.xmi.version>2.5.0</emf.ecore.xmi.version>
+    <assertj.version>3.7.0</assertj.version>
+
+
+    <!-- .. Plugins ....................................................... -->
+
+    <!-- <mc4.maven.version>${monticore.version}</mc4.maven.version> -->
+
+    <assembly.plugin>2.5.3</assembly.plugin>
+    <compiler.plugin>3.2</compiler.plugin>
+    <release.plugin>2.5.1</release.plugin>
+    <source.plugin>2.4</source.plugin>
+    <surefire.plugin>2.19.1</surefire.plugin>
+    <failsafe.version>2.19.1</failsafe.version>
+    <maven.build.helper.version>3.0.0</maven.build.helper.version>
+
+    <!-- Classifiers -->
+
+    <grammars.classifier>grammars</grammars.classifier>
+
+    <!-- .. Misc .......................................................... -->
+
+    <java.version>1.8</java.version>
+    <wagon.provider.version>2.6</wagon.provider.version>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
+  <!-- == PROJECT METAINFORMATION ========================================= -->
+
+  <name>SysML_2</name>
+  <url>http://nexus.se.rwth-aachen.de/service/local/repositories/se-sites/content/monticore/sysml2/${project.version}/</url>
+  <inceptionYear>2018</inceptionYear>
+
+  <organization>
+    <name>SE RWTH Aachen</name>
+    <url>http://www.se-rwth.de/</url>
+  </organization>
+
+  <mailingLists>
+    <mailingList>
+      <name>Developer</name>
+      <post>monticore-dev@se-rwth.de</post>
+    </mailingList>
+  </mailingLists>
+
+  <issueManagement>
+    <system>Trac</system>
+    <url>https://sselab.de/lab2/private/trac/MontiCore/</url>
+  </issueManagement>
+
+  <!-- == DEFAULT BUILD SETTINGS =========================================== -->
+
+  <build>
+
+    <plugins>
+      <!-- MontiCore Generation -->
+      <plugin>
+        <groupId>de.monticore.mojo</groupId>
+        <artifactId>monticore-maven-plugin</artifactId>
+        <version>${monticore.version}</version>
+        <executions>
+          <execution>
+            <configuration>
+              <script>de/monticore/monticore_noemf.groovy</script>
+            </configuration>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Other Configuration -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${compiler.plugin}</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
+      </plugin>
+
+      <!-- Unit Tests -->
+      <!-- default folder is src/test/java/ -->
+      <!-- default incl. are "**/Test*.java", "**/*Test.java", "**/*TestCase.java" -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${surefire.plugin}</version>
+        <configuration>
+          <classpathDependencyExcludes>
+            <classpathDependencyExclude>de.monticore:monticore-cli</classpathDependencyExclude>
+          </classpathDependencyExcludes>
+          <skipTests>${skip.unit.tests}</skipTests>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-surefire-provider</artifactId>
+            <version>${junit.platform.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
+      <!-- Integration / Acceptance Tests -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${failsafe.version}</version>
+        <configuration>
+          <classpathDependencyExcludes>
+            <classpathDependencyExclude>de.monticore:monticore-cli</classpathDependencyExclude>
+          </classpathDependencyExcludes>
+          <skipTests>${skip.integration.tests}</skipTests>
+          <includes>
+            <!-- Integration Tests -->
+            <!-- default folder is src/integration-test/java/ -->
+            <!-- default incl. are "**/IT*.java", "**/*IT.java", "**/*ITCase.java" -->
+            <include>**/IT*.java</include>
+            <include>**/*IT.java</include>
+            <include>**/*ITCase.java</include>
+            <!-- Acceptance Tests -->
+            <!-- default folder is src/acceptance-test/java/ -->
+            <!-- default incl. are "**/AT*.java", "**/*AT.java", "**/*ATCase.java" -->
+            <include>**/AT*.java</include>
+            <include>**/*AT.java</include>
+            <include>**/*ATCase.java</include>
+          </includes>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-surefire-provider</artifactId>
+            <version>${junit.platform.version}</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>${release.plugin}</version>
+        <configuration>
+          <tagNameFormat>sysml2-@{project.version}</tagNameFormat>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>${source.plugin}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>${assembly.plugin}</version>
+        <executions>
+          <execution>
+            <configuration>
+              <formats>
+                <format>jar</format>
+              </formats>
+              <descriptor>src/main/assemblies/example-assembly.xml</descriptor>
+            </configuration>
+            <id>sysml2-example-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+  </build>
+
+  <dependencies>
+   <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+      <version>${jsr305.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr4-runtime</artifactId>
+      <version>${antlr.version}</version>
+    </dependency>
+
+    <!-- MontiCore Dependencies -->
+    <dependency>
+      <groupId>de.monticore</groupId>
+      <artifactId>monticore-generator</artifactId>
+      <version>${monticore.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>de.monticore</groupId>
+      <artifactId>monticore-runtime</artifactId>
+      <version>${monticore.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>de.monticore</groupId>
+      <artifactId>monticore-grammar</artifactId>
+      <version>${monticore.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>de.monticore</groupId>
+      <artifactId>monticore-grammar</artifactId>
+      <version>${monticore.version}</version>
+      <classifier>${grammars.classifier}</classifier>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- .. Test Libraries ............................................... -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+      <!-- doc: http://junit.org/junit5/ -->
+    </dependency>
+
+    <dependency>
+      <groupId>de.monticore</groupId>
+      <artifactId>monticore-runtime</artifactId>
+      <version>${monticore.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj.version}</version>
+      <!-- doc: http://joel-costigliola.github.io/assertj/ -->
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+      <dependency>
+          <groupId>org.junit.jupiter</groupId>
+          <artifactId>junit-jupiter-api</artifactId>
+          <version>5.0.3</version>
+          <scope>compile</scope>
+      </dependency>
+  </dependencies>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>de.monticore.mojo</groupId>
+        <artifactId>monticore-maven-plugin</artifactId>
+        <version>${monticore.version}</version>
+        <inherited>false</inherited>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>reporting-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <!-- == DISTRIBUTION ==================================================== -->
+
+  <distributionManagement>
+    <repository>
+      <id>se-nexus</id>
+      <url>https://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>se-nexus</id>
+      <url>https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/</url>
+    </snapshotRepository>
+    <site>
+      <id>se-nexus</id>
+      <url>dav:https://nexus.se.rwth-aachen.de/content/sites/se-sites/monticore/sysml2/${project.version}/</url>
+    </site>
+  </distributionManagement>
+
+  <repositories>
+    <repository>
+      <id>se-nexus</id>
+      <url>https://nexus.se.rwth-aachen.de/content/groups/public/</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>se-nexus</id>
+      <url>https://nexus.se.rwth-aachen.de/content/groups/public/</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+
+  <!-- == PROFILES ================================================= -->
+
+  <profiles>
+    <profile>
+      <id>develop</id>
+
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <properties>
+        <build.profile.id>develop</build.profile.id>
+        <skip.unit.tests>false</skip.unit.tests>
+        <skip.integration.tests>true</skip.integration.tests>
+      </properties>
+    </profile>
+
+    <profile>
+      <!-- see https://www.petrikainulainen.net/programming/maven/integration-testing-with-maven/ -->
+      <id>integration-test</id>
+
+      <properties>
+        <build.profile.id>integration-tests</build.profile.id>
+        <skip.unit.tests>true</skip.unit.tests>
+        <skip.integration.tests>false</skip.integration.tests>
+      </properties>
+
+      <build>
+        <plugins>
+          <!-- Adding source and resource directories for integration tests -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>${maven.build.helper.version}</version>
+            <executions>
+              <execution>
+                <id>add-integration-test-sources</id>
+                <phase>generate-test-sources</phase>
+                <goals>
+                  <goal>add-test-source</goal>
+                </goals>
+                <configuration>
+                  <sources>
+                    <source>src/integration-test/java</source>
+                  </sources>
+                </configuration>
+              </execution>
+              <execution>
+                <id>add-integration-test-resources</id>
+                <phase>generate-test-resources</phase>
+                <goals>
+                  <goal>add-test-resource</goal>
+                </goals>
+                <configuration>
+                  <resources>
+                    <resource>
+                      <filtering>true</filtering>
+                      <directory>src/integration-test/resources</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>acceptance-test</id>
+
+      <properties>
+        <build.profile.id>acceptance-tests</build.profile.id>
+        <skip.unit.tests>true</skip.unit.tests>
+        <skip.integration.tests>false</skip.integration.tests>
+      </properties>
+
+      <build>
+        <plugins>
+          <!-- Adding source and resource directories for acceptance tests -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>${maven.build.helper.version}</version>
+            <executions>
+              <execution>
+                <id>add-acceptance-test-sources</id>
+                <phase>generate-test-sources</phase>
+                <goals>
+                  <goal>add-test-source</goal>
+                </goals>
+                <configuration>
+                  <sources>
+                    <source>src/acceptance-test/java</source>
+                  </sources>
+                </configuration>
+              </execution>
+              <execution>
+                <id>add-acceptance-test-resources</id>
+                <phase>generate-test-resources</phase>
+                <goals>
+                  <goal>add-test-resource</goal>
+                </goals>
+                <configuration>
+                  <resources>
+                    <resource>
+                      <filtering>true</filtering>
+                      <directory>src/acceptance-test/resources</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+
+</project>
