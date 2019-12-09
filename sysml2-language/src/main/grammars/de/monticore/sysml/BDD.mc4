@@ -1,0 +1,11 @@
+/*
+ * Copyright (c) RWTH Aachen. All rights reserved.
+ *
+ * http://www.se-rwth.de/
+ */
+package de.monticore.sysml;
+
+grammar BDD extends de.monticore.sysml.SysMLBasics {
+  
+  BDD = "bbd" Name;
+}

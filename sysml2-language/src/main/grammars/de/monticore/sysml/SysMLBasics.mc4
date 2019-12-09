@@ -1,0 +1,12 @@
+/*
+ * Copyright (c) RWTH Aachen. All rights reserved.
+ *
+ * http://www.se-rwth.de/
+ */
+package de.monticore.sysml;
+
+grammar SysMLBasics extends de.monticore.MCBasics {
+  
+  // TODO
+  SysMLElement;
+}

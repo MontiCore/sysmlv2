@@ -1,0 +1,11 @@
+/*
+ * Copyright (c) RWTH Aachen. All rights reserved.
+ *
+ * http://www.se-rwth.de/
+ */
+package de.monticore.sysml;
+
+grammar RequirementDiagram extends de.monticore.sysml.SysMLBasics {
+  
+  Requirement = "requirement" Name;
+}
