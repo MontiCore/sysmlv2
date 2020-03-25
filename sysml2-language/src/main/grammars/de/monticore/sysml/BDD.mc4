@@ -1,8 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-package de.monticore.sysml;
-
-
-grammar BDD extends de.monticore.sysml.SysMLBasics {
-  
-  BDD = "bbd" Name;
-}

@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml;
+
+
+grammar ParametricDiagram extends de.monticore.lang.sysml.SysMLBasics {
+  
+  Parametric = "param" Name;
+}

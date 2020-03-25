@@ -1,8 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-package de.monticore.sysml;
-
-
-grammar PackageDiagram extends de.monticore.sysml.SysMLBasics {
-  
-  SysMLPackage = "package" Name;
-}

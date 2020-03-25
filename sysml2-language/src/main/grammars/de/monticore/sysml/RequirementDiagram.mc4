@@ -1,8 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-package de.monticore.sysml;
-
-
-grammar RequirementDiagram extends de.monticore.sysml.SysMLBasics {
-  
-  Requirement = "requirement" Name;
-}

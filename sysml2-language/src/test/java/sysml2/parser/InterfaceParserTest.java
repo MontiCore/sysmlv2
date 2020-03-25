@@ -12,8 +12,8 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import sysml2._ast.ASTSysMLPackage;
-import sysml2._parser.SysML2Parser;
+import de.monticore.lang.sysml.legacy.sysml2._ast.ASTSysMLPackage;
+import de.monticore.lang.sysml.legacy.sysml2._parser.SysML2Parser;
 
 class InterfaceParserTest {
 
