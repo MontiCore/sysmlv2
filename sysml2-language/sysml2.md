@@ -17,7 +17,7 @@ The MontiCore language for the SysML 2 language familly contains the grammars:
 The main pupose of this language is modeling integrated SysML 2 models that 
 adhere to the textual version of the upcoming specification. 
 
-The grammar file are:  
+The grammar files are:  
  [`de.monticore.lang.sysml.AD.mc4`][ADGrammar].  
  [`de.monticore.lang.sysml.BDD.mc4`][BDDGrammar].  
  [`de.monticore.lang.sysml.IBD.mc4`][IBDGrammar].  
