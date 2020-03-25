@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2017, MontiCore. All rights reserved. http://www.se-rwth.de/
+ */
 package sysml2.parser;
 
 import static org.junit.jupiter.api.Assertions.*;
