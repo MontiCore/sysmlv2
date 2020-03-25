@@ -17,18 +17,18 @@ The MontiCore language for the SysML 2 language familly contains the grammars:
 The main pupose of this language is modeling integrated SysML 2 models that 
 adhere to the textual version of the upcoming specification. 
 
-The grammar file are:
- [`de.monticore.lang.sysml.AD.mc4`][ADGrammar].
- [`de.monticore.lang.sysml.BDD.mc4`][BDDGrammar].
- [`de.monticore.lang.sysml.IBD.mc4`][IBDGrammar].
- [`de.monticore.lang.sysml.PackageDiagram.mc4`][PackageDiagramGrammar].
- [`de.monticore.lang.sysml.ParametricDiagram.mc4`][ParametricDiagramGrammar].
- [`de.monticore.lang.sysml.RequirementDiagram.mc4`][RequirementDiagramGrammar].
- [`de.monticore.lang.sysml.SD.mc4`][SDGrammar].
- [`de.monticore.lang.sysml.SMD.mc4`][SMDGrammar].
- [`de.monticore.lang.sysml.SysMLBasics.mc4`][SysMLBasicsGrammar].
- [`de.monticore.lang.sysml.UseCaseDiagram.mc4`][UseCaseDiagramGrammar].
- [`de.monticore.lang.sysml.legacy.SysML2.mc4`][SysML2Grammar].
+The grammar file are:  
+ [`de.monticore.lang.sysml.AD.mc4`][ADGrammar].  
+ [`de.monticore.lang.sysml.BDD.mc4`][BDDGrammar].  
+ [`de.monticore.lang.sysml.IBD.mc4`][IBDGrammar].  
+ [`de.monticore.lang.sysml.PackageDiagram.mc4`][PackageDiagramGrammar].  
+ [`de.monticore.lang.sysml.ParametricDiagram.mc4`][ParametricDiagramGrammar].  
+ [`de.monticore.lang.sysml.RequirementDiagram.mc4`][RequirementDiagramGrammar].  
+ [`de.monticore.lang.sysml.SD.mc4`][SDGrammar].  
+ [`de.monticore.lang.sysml.SMD.mc4`][SMDGrammar].  
+ [`de.monticore.lang.sysml.SysMLBasics.mc4`][SysMLBasicsGrammar].  
+ [`de.monticore.lang.sysml.UseCaseDiagram.mc4`][UseCaseDiagramGrammar].  
+ [`de.monticore.lang.sysml.legacy.SysML2.mc4`][SysML2Grammar].  
 
 
 ## Handwritten Extensions
