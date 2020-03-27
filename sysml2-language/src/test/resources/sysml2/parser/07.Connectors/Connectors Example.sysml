@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package Connectors Example {
 	
 	block WheelHubAssembly;

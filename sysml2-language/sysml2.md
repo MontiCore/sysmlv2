@@ -1,3 +1,4 @@
+<!-- (c) https://github.com/MontiCore/monticore -->
 # SysML2
 The MontiCore language for the SysML 2 language familly contains the grammars:
 - **AD**: Language definition for SysML Activity Diagrams

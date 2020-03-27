@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package Generalization Example {
 
 	abstract block Vehicle;
