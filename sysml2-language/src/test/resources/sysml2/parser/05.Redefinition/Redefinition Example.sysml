@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package Redefinition Example {
+package 'Redefinition Example' {
 
 	block Vehicle {
 		part eng : Engine;

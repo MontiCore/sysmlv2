@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package Parts Example2 {
+package 'Parts Example-2' {
 	
 	// Definitions
 	

@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package Port Example {
+package 'Port Example' {
 	
 	value type Temp;
 	

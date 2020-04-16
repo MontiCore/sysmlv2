@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package Blocks Example {
+package 'Blocks Example' {
 	import ScalarValues::*;
 	
 	block Vehicle {

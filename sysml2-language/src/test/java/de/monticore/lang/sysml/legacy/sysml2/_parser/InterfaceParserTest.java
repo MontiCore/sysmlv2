@@ -13,12 +13,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import de.monticore.lang.sysml.legacy.sysml2._ast.ASTSysMLPackage;
-import de.monticore.lang.sysml.legacy.sysml2._parser.SysML2Parser;
 
 public class InterfaceParserTest {
   
-  @Test
   @Ignore
+  @Test
   public void testInterfaceDecomposition() {
     SysML2Parser parser = new SysML2Parser();
     Path model = Paths.get("src/test/resources/sysml2/parser/09.Interfaces/Interface Decomposition Example.sysml");
@@ -34,8 +33,8 @@ public class InterfaceParserTest {
     }
   }
   
-  @Test
   @Ignore
+  @Test
   public void testInterface() {
     SysML2Parser parser = new SysML2Parser();
     Path model = Paths.get("src/test/resources/sysml2/parser/09.Interfaces/Interface Example.sysml");

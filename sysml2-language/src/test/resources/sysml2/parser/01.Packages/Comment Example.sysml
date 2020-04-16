@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package Comment Example {
+package 'Comment Example' {
 	/* This is documentary comment, part of the model, 
 	 * annotating (by default) its owning package. */
 	

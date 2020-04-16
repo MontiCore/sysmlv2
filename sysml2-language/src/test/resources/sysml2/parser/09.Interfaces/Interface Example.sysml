@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package Interface Example {
+package 'Interface Example' {
 	import 'Port Example'::*;
 	
 	block Vehicle;

@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package Package Example {
+package 'Package Example' {
 	private import ScalarValues::*;
 	 
 	block Automobile;

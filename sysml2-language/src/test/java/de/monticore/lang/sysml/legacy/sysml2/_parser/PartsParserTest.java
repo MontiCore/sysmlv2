@@ -13,10 +13,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import de.monticore.lang.sysml.legacy.sysml2._ast.ASTSysMLPackage;
-import de.monticore.lang.sysml.legacy.sysml2._parser.SysML2Parser;
 
 public class PartsParserTest {
   
+  @Ignore
   @Test
   public void testParts1() {
     SysML2Parser parser = new SysML2Parser();
@@ -33,6 +33,7 @@ public class PartsParserTest {
     }
   }
   
+  @Ignore
   @Test
   public void testParts2() {
     SysML2Parser parser = new SysML2Parser();

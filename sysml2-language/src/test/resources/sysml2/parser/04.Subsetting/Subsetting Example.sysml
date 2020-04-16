@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package Subsetting Example {
+package 'Subsetting Example' {
 	
 	block Vehicle {
 		part parts : VehiclePart[*];

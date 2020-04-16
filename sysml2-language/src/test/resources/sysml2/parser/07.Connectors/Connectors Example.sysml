@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package Connectors Example {
+package 'Connectors Example' {
 	
 	block WheelHubAssembly;
 	block WheelAssembly;

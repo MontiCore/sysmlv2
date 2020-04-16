@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package Interface Decomposition Example {
+package 'Interface Decomposition Example' {
 	
 	port def SpigotBank;
 	port def Spigot;

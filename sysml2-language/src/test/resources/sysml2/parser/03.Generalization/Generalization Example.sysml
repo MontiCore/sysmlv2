@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package Generalization Example {
+package 'Generalization Example' {
 
 	abstract block Vehicle;
 	

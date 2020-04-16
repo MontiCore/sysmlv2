@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package Port Conjugation Example {
+package 'Port Conjugation Example' {
 	
 	value type Temp;
 	
