@@ -17,8 +17,7 @@
     
     <guava.version>18.0</guava.version>
     <jsr305.version>3.0.0</jsr305.version>
-    <junit.jupiter.version>5.0.3</junit.jupiter.version>
-    <junit.platform.version>1.0.3</junit.platform.version>
+    <junit.version>4.11</junit.version>
     <antlr.version>4.7.1</antlr.version>
     <logback.version>1.1.2</logback.version>
     <emf.common.version>2.5.0</emf.common.version>
@@ -118,57 +117,7 @@
           <classpathDependencyExcludes>
             <classpathDependencyExclude>de.monticore:monticore-cli</classpathDependencyExclude>
           </classpathDependencyExcludes>
-          <skipTests>${skip.unit.tests}</skipTests>
         </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-surefire-provider</artifactId>
-            <version>${junit.platform.version}</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-
-      <!-- Integration / Acceptance Tests -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>${failsafe.version}</version>
-        <configuration>
-          <classpathDependencyExcludes>
-            <classpathDependencyExclude>de.monticore:monticore-cli</classpathDependencyExclude>
-          </classpathDependencyExcludes>
-          <skipTests>${skip.integration.tests}</skipTests>
-          <includes>
-            <!-- Integration Tests -->
-            <!-- default folder is src/integration-test/java/ -->
-            <!-- default incl. are "**/IT*.java", "**/*IT.java", "**/*ITCase.java" -->
-            <include>**/IT*.java</include>
-            <include>**/*IT.java</include>
-            <include>**/*ITCase.java</include>
-            <!-- Acceptance Tests -->
-            <!-- default folder is src/acceptance-test/java/ -->
-            <!-- default incl. are "**/AT*.java", "**/*AT.java", "**/*ATCase.java" -->
-            <include>**/AT*.java</include>
-            <include>**/*AT.java</include>
-            <include>**/*ATCase.java</include>
-          </includes>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-surefire-provider</artifactId>
-            <version>${junit.platform.version}</version>
-          </dependency>
-        </dependencies>
-        <executions>
-          <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
 
       <plugin>
@@ -267,16 +216,8 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>${junit.jupiter.version}</version>
-      <scope>test</scope>
-      <!-- doc: http://junit.org/junit5/ -->
     </dependency>
 
     <dependency>
@@ -293,25 +234,6 @@
       <version>${logback.version}</version>
       <scope>test</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <version>${assertj.version}</version>
-      <!-- doc: http://joel-costigliola.github.io/assertj/ -->
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-params</artifactId>
-      <version>${junit.jupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
-      <dependency>
-          <groupId>org.junit.jupiter</groupId>
-          <artifactId>junit-jupiter-api</artifactId>
-          <version>5.0.3</version>
-          <scope>compile</scope>
-      </dependency>
   </dependencies>
 
   <reporting>
