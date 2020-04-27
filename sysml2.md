@@ -39,15 +39,15 @@ The grammar files are:
 (ToDo)
   
 
-[ADGrammar]: https://git.rwth-aachen.de/monticore/sysml/sysml_2/-/blob/master/sysml2-language/src/main/grammars/de/monticore/lang/sysml/AD.mc4
-[BDDGrammar]: https://git.rwth-aachen.de/monticore/sysml/sysml_2/-/blob/master/sysml2-language/src/main/grammars/de/monticore/lang/sysml/BDD.mc4
-[IBDGrammar]: https://git.rwth-aachen.de/monticore/sysml/sysml_2/-/blob/master/sysml2-language/src/main/grammars/de/monticore/lang/sysml/IBD.mc4
-[PackageDiagramGrammar]: https://git.rwth-aachen.de/monticore/sysml/sysml_2/-/blob/master/sysml2-language/src/main/grammars/de/monticore/lang/sysml/PackageDiagram.mc4
-[ParametricDiagramGrammar]: https://git.rwth-aachen.de/monticore/sysml/sysml_2/-/blob/master/sysml2-language/src/main/grammars/de/monticore/lang/sysml/ParametricDiagram.mc4
-[RequirementDiagramGrammar]: https://git.rwth-aachen.de/monticore/sysml/sysml_2/-/blob/master/sysml2-language/src/main/grammars/de/monticore/lang/sysml/RequirementDiagram.mc4
-[SDGrammar]: https://git.rwth-aachen.de/monticore/sysml/sysml_2/-/blob/master/sysml2-language/src/main/grammars/de/monticore/lang/sysml/SD.mc4
-[SMDGrammar]: https://git.rwth-aachen.de/monticore/sysml/sysml_2/-/blob/master/sysml2-language/src/main/grammars/de/monticore/lang/sysml/SMD.mc4
-[SysMLBasicsGrammar]: https://git.rwth-aachen.de/monticore/sysml/sysml_2/-/blob/master/sysml2-language/src/main/grammars/de/monticore/lang/sysml/SysMLBasics.mc4
-[UseCaseDiagramGrammar]: https://git.rwth-aachen.de/monticore/sysml/sysml_2/-/blob/master/sysml2-language/src/main/grammars/de/monticore/lang/sysml/UseCaseDiagram.mc4
-[SysML2Grammar]: https://git.rwth-aachen.de/monticore/sysml/sysml_2/-/blob/master/sysml2-language/src/main/grammars/de/monticore/lang/sysml/legacy/SysML2.mc4
+[ADGrammar]: https://git.rwth-aachen.de/monticore/languages/sysml2/sysml2official/-/blob/master/src/main/grammars/de/monticore/lang/sysml/AD.mc4
+[BDDGrammar]: https://git.rwth-aachen.de/monticore/languages/sysml2/sysml2official/-/blob/master/src/main/grammars/de/monticore/lang/sysml/BDD.mc4
+[IBDGrammar]: https://git.rwth-aachen.de/monticore/languages/sysml2/sysml2official/-/blob/master/src/main/grammars/de/monticore/lang/sysml/IBD.mc4
+[PackageDiagramGrammar]: https://git.rwth-aachen.de/monticore/languages/sysml2/sysml2official/-/blob/master/src/main/grammars/de/monticore/lang/sysml/PackageDiagram.mc4
+[ParametricDiagramGrammar]: https://git.rwth-aachen.de/monticore/languages/sysml2/sysml2official/-/blob/master/src/main/grammars/de/monticore/lang/sysml/ParametricDiagram.mc4
+[RequirementDiagramGrammar]: https://git.rwth-aachen.de/monticore/languages/sysml2/sysml2official/-/blob/master/src/main/grammars/de/monticore/lang/sysml/RequirementDiagram.mc4
+[SDGrammar]: https://git.rwth-aachen.de/monticore/languages/sysml2/sysml2official/-/blob/master/src/main/grammars/de/monticore/lang/sysml/SD.mc4
+[SMDGrammar]: https://git.rwth-aachen.de/monticore/languages/sysml2/sysml2official/-/blob/master/src/main/grammars/de/monticore/lang/sysml/SMD.mc4
+[SysMLBasicsGrammar]: https://git.rwth-aachen.de/monticore/languages/sysml2/sysml2official/-/blob/master/src/main/grammars/de/monticore/lang/sysml/SysMLBasics.mc4
+[UseCaseDiagramGrammar]: https://git.rwth-aachen.de/monticore/languages/sysml2/sysml2official/-/blob/master/src/main/grammars/de/monticore/lang/sysml/UseCaseDiagram.mc4
+[SysML2Grammar]: https://git.rwth-aachen.de/monticore/languages/sysml2/sysml2official/-/tree/master/src/main/grammars/de/monticore/lang/sysml/legacy
 
