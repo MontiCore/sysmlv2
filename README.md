@@ -2,3 +2,11 @@
 # SysML 2 Official
 
 Project for the SysML 2 language familly in MontiCore. It is compatible with the general standard.
+The language should a strict compatible superset of the SysML 2 Syntax. It can also parse
+models which are not valid, because of the additional CoCos this prohect has.
+
+This project is based on the 2020-03 pilot implementation of SysML 2.
+
+It reuses MontiCore language.
+
+Also a Pretty Printer should be written. 

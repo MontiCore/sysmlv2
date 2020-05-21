@@ -62,5 +62,5 @@ grammar SysML2 extends de.monticore.literals.MCCommonLiterals {
   
   enum Visibility = "public" | "private" | "protected" ;
   
-  enum SysMLExtensionKind = "is" | ":>" | ":>>" | "subsets" | "redefines" | "specializes";
+  enum SysMLExtensionKind = "is" | ":>" | ":>>" | "subsets" | "redefines" | "specializes"; //TODO should be with interface
 }
