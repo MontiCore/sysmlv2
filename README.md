@@ -10,3 +10,8 @@ This project is based on the 2020-03 pilot implementation of SysML 2.
 It reuses MontiCore language.
 
 Also a Pretty Printer should be written. 
+
+#Useful commands
+
+mvn clean install (to build everything)
+mvn clean install -DskipTests
