@@ -1,6 +1,6 @@
 
 
-package de.monticore.lang.sysml.parser.officialImpl.sysml.src.training;
+package de.monticore.lang.sysml.parser.officialImpl.sysml.src.training.p01package;
 
 /**
  * @author Robin Muenstermann

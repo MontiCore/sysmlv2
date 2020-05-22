@@ -3,7 +3,16 @@ package de.monticore.lang.sysml;
 
 
 grammar SysMLBasics extends de.monticore.MCBasics {
-  
+
+  // TODO
+  start UnitPrefix;
+  UnitPrefix = PrefixAnnotation;
+
+  PrefixAnnotation = Documentation;
+  Documentation = "comment" Name;
+
   // TODO
   SysMLElement;
+
+
 }
