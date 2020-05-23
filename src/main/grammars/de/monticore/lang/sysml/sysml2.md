@@ -1,42 +1,30 @@
 <!-- (c) https://github.com/MontiCore/monticore -->
 # SysML2
-The MontiCore language for the SysML 2 language familly contains the grammars:
-- **AD**: Language definition for SysML Activity Diagrams
-- **BDD**: Language definition for SysML Block Definition Diagrams
-- **IBD**: Language definition for SysML Internal Block Diagrams
-- **PackageDiagram**: Language definition for SysML Package Diagrams
-- **ParametricDiagram**: Language definition for SysML Parametric Diagrams
-- **RequirementDiagram**: Language definition for SysML Requirement Diagrams
-- **SD**: Language definition for SysML Sequence Diagrams
-- **SMD**: Language definition for SysML State Machine Diagrams
-- **SysMLBasics**: Language definition for a common basis of all SysML diagrams
-- **SysML2**: Reference implementation based on SysML 2 examples
-- **UseCaseDiagram**: Language definition for SysML Use Case Diagrams
+* The MontiCore language family for the SysML 2  contains the grammars 
+  and symbol management infrastructure for parsing and processing SysML models
+  An example:
+
+```
+package 'Vehicles' { 
+  private import ScalarValues::*; 
+  block Vehicle; 
+  block Truck is Vehicle; 
+  value type Torque is ISQ::TorqueValue; 
+}
+```
+* The language family comprises the following grammars:
+- [`AD`][ADGrammar]: Language definition for SysML Activity Diagrams
+- [`BDD`][BDDGrammar]: Language definition for SysML Block Definition Diagrams
+- [`IBD`][IBDGrammar]: Language definition for SysML Internal Block Diagrams
+- [`PackageDiagram`][PackageDiagramGrammar]: Language definition for SysML Package Diagrams
+- [`ParametricDiagram`][ParametricDiagramGrammar]: Language definition for SysML Parametric Diagrams
+- [`RequirementDiagram`][RequirementDiagramGrammar]: Language definition for SysML Requirement Diagrams
+- [`SD`][SDGrammar]: Language definition for SysML Sequence Diagrams
+- [`SMD`][SMDGrammar]: Language definition for SysML State Machine Diagrams
+- [`SysMLBasics`][SysMLBasicsGrammar]: Language definition for a common basis of all SysML diagrams
+- [`UseCaseDiagram`][UseCaseDiagramGrammar]: Language definition for SysML Use Case Diagrams
 
 
-
-The main pupose of this language is modeling integrated SysML 2 models that 
-adhere to the textual version of the upcoming specification. 
-
-The grammar files are:  
- [`de.monticore.lang.sysml.AD.mc4`][ADGrammar].  
- [`de.monticore.lang.sysml.BDD.mc4`][BDDGrammar].  
- [`de.monticore.lang.sysml.IBD.mc4`][IBDGrammar].  
- [`de.monticore.lang.sysml.PackageDiagram.mc4`][PackageDiagramGrammar].  
- [`de.monticore.lang.sysml.ParametricDiagram.mc4`][ParametricDiagramGrammar].  
- [`de.monticore.lang.sysml.RequirementDiagram.mc4`][RequirementDiagramGrammar].  
- [`de.monticore.lang.sysml.SD.mc4`][SDGrammar].  
- [`de.monticore.lang.sysml.SMD.mc4`][SMDGrammar].  
- [`de.monticore.lang.sysml.SysMLBasics.mc4`][SysMLBasicsGrammar].  
- [`de.monticore.lang.sysml.UseCaseDiagram.mc4`][UseCaseDiagramGrammar].  
- [`de.monticore.lang.sysml.legacy.SysML2.mc4`][SysML2Grammar].  
-
-
-## Handwritten Extensions
-(ToDo)
-
-## Functionality
-(ToDo)
   
 
 [ADGrammar]: https://git.rwth-aachen.de/monticore/languages/sysml2/sysml2official/-/blob/master/src/main/grammars/de/monticore/lang/sysml/AD.mc4
