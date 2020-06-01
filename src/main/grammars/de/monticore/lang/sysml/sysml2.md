@@ -2,7 +2,7 @@
 # SysML2
 * The MontiCore language family for the SysML 2  contains the grammars 
   and symbol management infrastructure for parsing and processing SysML models
-  An example:
+  Examples:
 
 ```
 package 'Vehicles' { 
@@ -12,6 +12,19 @@ package 'Vehicles' {
   value type Torque is ISQ::TorqueValue; 
 }
 ```
+```
+package 'Coffee' {
+  activity BrewCoffee (in beans : CoffeeBeans, in, water : Water, out coffee : Coffee) { 
+    bind grind::beans = beans;
+    action grind : Dring (in beans, out powder);
+    flow grind::powder to brew::powder;
+    bind brew::water = water;
+    action brew : Brew (in powder, in water, out coffee); 
+    bind brew::coffee = coffee;
+  }
+}
+```
+
 * The language family comprises the following grammars:
 - [`AD`][ADGrammar]: Language definition for SysML Activity Diagrams
 - [`BDD`][BDDGrammar]: Language definition for SysML Block Definition Diagrams
