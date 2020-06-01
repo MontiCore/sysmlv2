@@ -16,7 +16,7 @@ package 'Vehicles' {
 package 'Coffee' {
   activity BrewCoffee (in beans : CoffeeBeans, in, water : Water, out coffee : Coffee) { 
     bind grind::beans = beans;
-    action grind : Dring (in beans, out powder);
+    action grind : Grind (in beans, out powder);
     flow grind::powder to brew::powder;
     bind brew::water = water;
     action brew : Brew (in powder, in water, out coffee); 
