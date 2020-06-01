@@ -3,5 +3,8 @@ package de.monticore.lang.sysml.basics;
 
 
 grammar Names extends de.monticore.MCBasics {
-  Element = "TODO";
+  interface QualifiedName;
+  SimpleName implements QualifiedName = Name;
+  ColonQualifiedName implements QualifiedName = (Name || "::")+;
+  DotQualifiedName implements QualifiedName = (Name || ".")+;
 }
