@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.basics;
+
+
+grammar Names extends de.monticore.MCBasics {
+  Element = "TODO";
+}
