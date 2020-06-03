@@ -1,8 +1,8 @@
 <!-- (c) https://github.com/MontiCore/monticore -->
 # SysML2
 * The MontiCore language family for the SysML 2  contains the grammars 
-  and symbol management infrastructure for parsing and processing SysML models
-  Examples:
+  and symbol management infrastructure for parsing and processing SysML models.
+  Examples for two of the languages:
 
 ```
 package 'Vehicles' {                        // a SysML block diagram
@@ -39,30 +39,33 @@ package 'Coffee' {                         // a SysML activity diagram
 
 * The main purpose of this language is parsing general artifacts in SysML 2 
   format that adhere to the upcoming standard.
+  Caution: As long as the upcoming standard changes, we will adapt the 
+  textual language definitions accordingly (until there will be a finalization).
 * The SysML 2 grammars enables parsing arbitrary SysML 2 artifacts for further 
-  processing.
-* Actually these grammars represents a slight superset to the official SysML 2 
-  standard. It is intended for parsing SysML 2-compliant models. Further 
+  processing. 
+  Actually these grammars represents a slight superset to the official SysML 2 
+  standard. It is intended for parsing SysML 2-compliant models. Therefore, 
   well-formedness checks are are kept to a minimum, because we assume to parse 
   correctly produced SysML 2 models only. 
 
 ## Symboltable
-* The SysML 2  artifacts provide symbols of different, yet to be explored kinds. 
+* The SysML 2  artifacts provide symbols of different, yet to be 
+  precisely kinds. 
 * Symbol management:
   * SysML 2 artifacts provide a hierarchy of scopes along the objects they 
     define.
-  * Symbols are by definition *externally visible* and *exported*. 
-    All of them, even deeply nested ones!
+  * Symbols are often *externally visible* and *exported*. 
+  * Details to be defined.
 
 ### Symbol kinds used by SysML 2 (importable):
-* Currently none. However this may change when applying future use cases.
+* TBD: Currently none. However this may change when applying future use cases.
 
 ### Symbol kinds defined by SysML 2:
-* Symbol kinds are currently explored.
+* TBD: Symbol kinds are currently explored.
 
 ### Symbols exported by SysML 2:
-* Symbols defined by SysML 2 are by definition *externally visible* and 
-  *exported*. All of them, are exported.
+* TBD: Symbols defined by SysML2 models are often *externally visible* and 
+  *exported*. Details will follow.
 
 ## Functionality: CoCos
 * currently none; it is assumed that the SysML 2 models were produced correctly.
