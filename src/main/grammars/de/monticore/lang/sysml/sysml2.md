@@ -45,7 +45,7 @@ package 'Coffee' {                         // a SysML activity diagram
   processing. 
   Actually these grammars represents a slight superset to the official SysML 2 
   standard. It is intended for parsing SysML 2-compliant models. Therefore, 
-  well-formedness checks are are kept to a minimum, because we assume to parse 
+  well-formedness checks are kept to a minimum, because we assume to parse 
   correctly produced SysML 2 models only. 
 
 ## Symboltable
