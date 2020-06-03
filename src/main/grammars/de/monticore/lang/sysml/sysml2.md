@@ -5,7 +5,7 @@
   Examples:
 
 ```
-package 'Vehicles' { 
+package 'Vehicles' {                        // a SysML block diagram
   private import ScalarValues::*; 
   block Vehicle; 
   block Truck is Vehicle; 
@@ -13,7 +13,7 @@ package 'Vehicles' {
 }
 ```
 ```
-package 'Coffee' {
+package 'Coffee' {                         // a SysML activity diagram
   activity BrewCoffee (in beans : CoffeeBeans, in, water : Water, out coffee : Coffee) { 
     bind grind::beans = beans;
     action grind : Grind (in beans, out powder);
