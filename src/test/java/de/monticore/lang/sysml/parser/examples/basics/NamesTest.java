@@ -1,8 +1,8 @@
 package de.monticore.lang.sysml.parser.examples.basics;
 
-import de.monticore.lang.sysml.basics.names._ast.ASTNamesNode;
-import de.monticore.lang.sysml.basics.names._ast.ASTQualifiedName;
-import de.monticore.lang.sysml.basics.names._parser.NamesParser;
+import de.monticore.lang.sysml.basics.sysmldefault.names._ast.ASTNamesNode;
+import de.monticore.lang.sysml.basics.sysmldefault.names._ast.ASTQualifiedName;
+import de.monticore.lang.sysml.basics.sysmldefault.names._parser.NamesParser;
 import de.monticore.lang.sysml.block._parser.BlockParser;
 import org.junit.Test;
 

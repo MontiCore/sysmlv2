@@ -1,9 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.lang.sysml.basics;
+package de.monticore.lang.sysml.basics.sysmldefault;
 
 //TODO not finished
 //TODO no tests yet
-grammar Comments extends de.monticore.lang.sysml.basics.Names{
+grammar Comments extends de.monticore.lang.sysml.basics.sysmldefault.Names {
   Comment = "comment" Name? (Annotation+ | EmptyAnnotation);
 
   EmptyAnnotation = "emptyTODO";
