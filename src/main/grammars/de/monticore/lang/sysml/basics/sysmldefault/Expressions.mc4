@@ -2,6 +2,11 @@
 package de.monticore.lang.sysml.basics.sysmldefault;
 
 
-grammar Expressions {
+grammar Expressions extends de.monticore.expressions.JavaClassExpressions,
+  de.monticore.lang.sysml.basics.sysmldefault.LiteralsSysML{
   Element = "TODO";
+
+  //TODO LiteralsSysML should overwrite or extend Commonliterals, also for JavaClassExpressions
+  //TODO the implicitely imported CommonExpressions
 }
+
