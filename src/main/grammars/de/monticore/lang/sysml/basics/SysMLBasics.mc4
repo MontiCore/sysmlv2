@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics;
 
-
-grammar SysMLBasics {
+//TODO make more modular
+grammar SysMLBasics extends de.monticore.lang.sysml.basics.sysmldefault.Comments {
   Element = "TODO";
 }

@@ -2,6 +2,8 @@
 package de.monticore.lang.sysml.basics;
 
 
-grammar SysMLCommon {
+grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers,
+  de.monticore.lang.sysml.basics.SysMLBasics,
+  de.monticore.lang.sysml.basics.SysMLCommonInterfaces{
   Element = "TODO";
 }

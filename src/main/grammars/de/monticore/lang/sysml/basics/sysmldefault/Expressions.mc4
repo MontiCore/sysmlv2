@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml.basics.sysmldefault;
 
 
-grammar Expressions extends de.monticore.expressions.JavaClassExpressions,
+component grammar Expressions extends de.monticore.expressions.JavaClassExpressions,
   de.monticore.lang.sysml.basics.sysmldefault.LiteralsSysML{
   Element = "TODO";
 
