@@ -1,10 +1,6 @@
 
 
 package de.monticore.lang.sysml.utils;
-
-import de.monticore.lang.sysml.legacy.sysml2._ast.ASTSysMLPackage;
-import de.monticore.lang.sysml.legacy.sysml2._parser.SysML2Parser;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,7 +21,7 @@ public class Parser {
     this.pathToFile = pathToFile;
   }
 
-  void parse(){
+  /*void parse(){
     SysML2Parser parser = new SysML2Parser();// TODO
     Path model = Paths.get(this.pathToFile);
 
@@ -38,5 +34,5 @@ public class Parser {
       e.printStackTrace();
       fail("There was an exception when parsing the model " + model + ": " + e.getMessage());
     }
-  }
+  }*/
 }
