@@ -8,6 +8,7 @@ grammar Comments extends de.monticore.lang.sysml.basics.sysmldefault.Names {
 
   EmptyAnnotation = "emptyTODO";
   Annotation = "TO DO" "about" QualifiedName;
+  UnitPrefix = "TODO";
 
   PrefixAnnotation = Documentation+;
 
