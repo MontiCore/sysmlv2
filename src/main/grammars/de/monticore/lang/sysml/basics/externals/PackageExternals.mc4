@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.basics.externals;
+
+component grammar PackageExternals {
+
+  //TODO see line 189 in Xtext
+  //TODO namespace to std from standard?
+  /*external AnonymousPackage; //TODO
+  external PackageUnit; //TODO
+  external PackageBody;
+  external ImportUnit; //Remark: Just Import in Xtext
+  external PackageDeclaration;*/
+}
