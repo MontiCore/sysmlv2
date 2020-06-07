@@ -4,7 +4,7 @@ package de.monticore.lang.sysml;
 
 grammar BDD extends de.monticore.lang.sysml.basics.SysMLCommon {
   
-  BlockUnit = UnitPrefix Block; //Remark: in Xtext BlockDeclaration DefintionBody
+  BlockUnit = UnitPrefix Block; //Remark: in Xtext BlockDeclaration DefinitionBody
 
   Block = BlockDeclaration DefinitionBody;
 

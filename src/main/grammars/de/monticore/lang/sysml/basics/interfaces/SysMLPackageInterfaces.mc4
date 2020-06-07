@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.basics.interfaces;
+
+component grammar SysMLPackageInterfaces {
+  interface PackagedDefinitionMember; //Can be everything what is an element of a package
+
+}

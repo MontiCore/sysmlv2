@@ -4,16 +4,19 @@ package de.monticore.lang.sysml.basics.sysmldefault;
 
 grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.sysmldefault.Comments,
         de.monticore.lang.sysml.basics.SysMLCommonInterfaces,
-         de.monticore.lang.sysml.basics.sysmldefault.Visibility {
+         de.monticore.lang.sysml.basics.sysmldefault.Visibility,
+          de.monticore.lang.sysml.basics.interfaces.SysMLPackageInterfaces {
 
-  interface PackagedDefinitionMember; //Can be everything what is an element of a package
-  interface PackageUsageMember;
-  //TODO see line 189 in Xtext
+
 
 
   PackageUsageMemberStd implements PackageUsageMember = "TODO" "removeMe";
   PackagedDefinitionMemberStd implements PackagedDefinitionMember= "TODO" "removeMe"; //TODO
 
+
+
+  interface PackageUsageMember;
+  //TODO see line 189 in Xtext
   //TODO namespace to std from standard?
   interface AnonymousPackage; //TODO
   interface PackageUnit; //TODO
@@ -39,7 +42,7 @@ grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.sysmldefault.C
   ImportUnitStd implements ImportUnit = PrefixAnnotation* (visibility:PackageElementVisibilityIndicator)?
     "import" QualifiedName ("."|"::") "*";
     //TODO test if there are no whitespaces
-    //TODO do not force the star (*), see Xtext 151
+    //TODO force the star (*) ? , see Xtext 151
 
 
 

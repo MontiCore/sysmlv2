@@ -4,8 +4,12 @@ package de.monticore.lang.sysml.basics;
 
 grammar SysMLCommonInterfaces {
   interface DefinitionBody;
+  interface PackagedDefinitionMember; //Remark: Xtext 189
+  interface PackagedUsageMember; //Remark: Xtext 206
 
   //TODO make component
   SomeToken = "TODO";
   DefinitionBodyStd implements DefinitionBody = "TODO";
+  PackagedDefinitionMemberStd implements PackagedDefinitionMember = "TODO";
+  PackagedUsageMemberStd implements PackagedUsageMember = "TODO";
 }
