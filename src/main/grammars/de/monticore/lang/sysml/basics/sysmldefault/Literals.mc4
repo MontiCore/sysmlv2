@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml.basics.sysmldefault;
 
 
-grammar LiteralsSysML extends de.monticore.literals.MCCommonLiterals {
+grammar Literals extends de.monticore.literals.MCCommonLiterals {
   Element = "TODO";
   //TODO add exponent
 }

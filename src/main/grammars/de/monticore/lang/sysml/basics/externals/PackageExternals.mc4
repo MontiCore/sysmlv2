@@ -4,8 +4,10 @@ package de.monticore.lang.sysml.basics.externals;
 component grammar PackageExternals {
 
   //TODO see line 189 in Xtext
+  //TODO make them abstract??? but then AST is maybe not perfect?
+  //TODO why would you need an abstract if there is just one implementation per language configuration
   //TODO namespace to std from standard?
-  AnonymousPackage; //TODO
+  AnonymousPackage; //TODO if I delete this, I get compile errors "cannot find Symbols" and "name clash"
   external PackageUnit; //TODO
   external PackageBody;
   external ImportUnit; //Remark: Just Import in Xtext
