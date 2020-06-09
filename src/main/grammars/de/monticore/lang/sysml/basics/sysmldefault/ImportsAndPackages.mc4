@@ -22,7 +22,11 @@ grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.sysmldefault.C
 
 
   PackageUnit = UnitPrefix PackageDeclaration DefinitionBody;
-  PackageDeclaration = "package" Name;
+  fragment token QUOTEMARK=  '\'';
+  QuotationMark = QUOTEMARK;
+  PackageDeclaration = "package" QuotationMark Name+ QuotationMark; //TODO add quatiationMarks
+
+  //PackageDeclaration = "package" Name; //TODO add quatiationMarks or remove
 
   //TODO can this be improved? -> also naming is different
   PackageBody = "{" (PackageMember+ | ImportUnit+)* "}";

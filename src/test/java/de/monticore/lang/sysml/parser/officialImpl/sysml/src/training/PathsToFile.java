@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO implement me
- *
  * @author Robin Muenstermann
  * @version 1.0
  */
 public class PathsToFile {
-  private final String pathToTraining = "src/test/resources/testing/resources/examples" +
+
+  private final String pathToTraining = "src/test/resources/examples" +
           "/officialPilotImplementation/2020/03/sysml/src/training/";
+
   private final String [] trainingSubPaths = {
     "01. Packages/Comment Example.sysml",
     "01. Packages/Package Example.sysml",

@@ -4,7 +4,8 @@ package de.monticore.lang.sysml.basics.sysmldefault;
 //TODO not finished
 //TODO no tests yet
 grammar Comments extends de.monticore.lang.sysml.basics.sysmldefault.Names {
-  Comment = "comment" Name? (Annotation+ | EmptyAnnotation);
+  //Comment = "comment" (QuotationMark (Name)+ QuotationMark)?  (Annotation+ | EmptyAnnotation); TODO
+  Comment = "comment" Name (Annotation+ | EmptyAnnotation);
 
   EmptyAnnotation = "emptyTODO";
   Annotation = "TO DO" "about" QualifiedName;
@@ -15,6 +16,4 @@ grammar Comments extends de.monticore.lang.sysml.basics.sysmldefault.Names {
   Documentation = ("comment" Name?)? DocumentationComment;
 
   DocumentationComment = "TODO";
-
-
 }

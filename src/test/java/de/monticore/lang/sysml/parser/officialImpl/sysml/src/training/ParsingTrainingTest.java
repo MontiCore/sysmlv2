@@ -2,6 +2,7 @@ package de.monticore.lang.sysml.parser.officialImpl.sysml.src.training;
 
 import de.monticore.lang.sysml.sysmlbasics._ast.ASTUnitPrefix;
 import de.monticore.lang.sysml.sysmlbasics._parser.SysMLBasicsParser;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -13,14 +14,13 @@ import java.util.Optional;
 import static org.junit.Assert.*;
 
 /**
- * TODO implement me
- *
  * @author Robin Muenstermann
  * @version 1.0
  */
 public class ParsingTrainingTest {
 
-  /*@Test
+  @Ignore
+  @Test
   public void parseAllSpecifiedTrainingFilesTest(){
     PathsToFile pathsToFile = new PathsToFile();
     List<String> fullRelPaths = pathsToFile.getFullRelativePathToTrainingFiles();
@@ -37,5 +37,5 @@ public class ParsingTrainingTest {
       }
     }
 
-  }*/
+  }
 }
