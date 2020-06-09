@@ -4,7 +4,7 @@ package de.monticore.lang.sysml.basics.sysmldefault;
 //TODO should we use JavaClassExpressions?
 grammar Expressions extends de.monticore.expressions.CommonExpressions,
   de.monticore.lang.sysml.basics.sysmldefault.Literals{
-  Element = "TODO";
+  QueryPathExpression = "TODO"; //Remark: /* QUERY PATH EXPRESSIONS */ from l. 1801
 
   //TODO LiteralsSysML should overwrite or extend Commonliterals, also for JavaClassExpressions
   //TODO the implicitely imported CommonExpressions

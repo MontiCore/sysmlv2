@@ -3,6 +3,11 @@ package de.monticore.lang.sysml.basics.sysmldefault;
 
 
 grammar Literals extends de.monticore.literals.MCCommonLiterals {
-  Element = "TODO";
-  //TODO add exponent
+  /*Remark: See "// Literal Expressions" in Xtext line 1739
+  * Literals are implemented very differently here */
+  RealLiteralWithExponent implements Literal =
+    (Digits {noSpace()}? "." {noSpace()}?)? ExpValue;
+
+  ExpValue = Digits ("e" | "E") ("+" | negativeExponent:["-"])? Digits;
+  //TODO test
 }

@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml.basics;
 
 
-grammar SysMLCommonInterfaces {
+component grammar SysMLCommonInterfaces {
   interface DefinitionBody;
   interface PackagedDefinitionMember; //Remark: Xtext 189
   interface PackagedUsageMember; //Remark: Xtext 206
