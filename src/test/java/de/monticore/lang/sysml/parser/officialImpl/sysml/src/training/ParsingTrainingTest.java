@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
  */
 public class ParsingTrainingTest {
 
-  @Test
+  /*@Test
   public void parseAllSpecifiedTrainingFilesTest(){
     PathsToFile pathsToFile = new PathsToFile();
     List<String> fullRelPaths = pathsToFile.getFullRelativePathToTrainingFiles();
@@ -37,5 +37,5 @@ public class ParsingTrainingTest {
       }
     }
 
-  }
+  }*/
 }
