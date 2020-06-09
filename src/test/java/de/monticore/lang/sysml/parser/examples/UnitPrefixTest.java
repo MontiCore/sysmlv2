@@ -4,6 +4,7 @@ import de.monticore.lang.sysml.block._ast.ASTBlockUnit;
 import de.monticore.lang.sysml.block._parser.BlockParser;
 import de.monticore.lang.sysml.sysmlbasics._ast.ASTUnitPrefix;
 import de.monticore.lang.sysml.sysmlbasics._parser.SysMLBasicsParser;
+import de.monticore.lang.sysml.utils.GenericParser;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ import static org.junit.Assert.*;
 public class UnitPrefixTest {
 
   @Test
-  public void UnitPrefixtest(){
+  public void unitPrefixTest(){
     SysMLBasicsParser parser = new SysMLBasicsParser();
     Path model = Paths.get("src/test/resources/testing/UnitPrefix.sysml");
     try {
@@ -34,5 +35,14 @@ public class UnitPrefixTest {
       fail("There was an exception when parsing the model " + model + ": " + e.getMessage());
     }
   }
+
+  /*@Test TODO First fix the GenericParser
+  public void UnitPrefixGenericTest(){
+    SysMLBasicsParser parser = new SysMLBasicsParser();
+    Path model = Paths.get("src/test/resources/testing/UnitPrefix.sysml");
+    GenericParser<SysMLBasicsParser, ASTUnitPrefix> genericParser =
+            new GenericParser<>(model, parser);
+    genericParser.parse();
+  }*/
 
 }
