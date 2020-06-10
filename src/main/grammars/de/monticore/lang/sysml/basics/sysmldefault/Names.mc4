@@ -6,9 +6,15 @@ grammar Names extends de.monticore.MCBasics {
 
   //TODO in Xtext: Name = ID (fine more or less same as in MCBasics) or
   //TODO UnrestrictedName. (But do we want to have an UnrestrictedName everywhere e.g. for package?
+
   interface QualifiedName;
 
   SimpleName implements QualifiedName = Name;
   ColonQualifiedName implements QualifiedName = (Name || "::")+;
   DotQualifiedName implements QualifiedName = (Name || ".")+;
+
+  fragment token SingleCharacter = ~ ('\''); //TODO do not define twice
+  token UNRESTRICTED_NAME = '\'' SingleCharacter* '\'';
+
+  SysMLName = Name | UNRESTRICTED_NAME;
 }

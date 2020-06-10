@@ -21,10 +21,9 @@ grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.sysmldefault.C
 
 
 
-  PackageUnit = UnitPrefix PackageDeclaration DefinitionBody;
-  fragment token QUOTEMARK=  '\'';
-  QuotationMark = QUOTEMARK;
-  PackageDeclaration = "package" QuotationMark Name+ QuotationMark; //TODO add quatiationMarks
+  PackageUnit implements Unit = UnitPrefix PackageDeclaration PackageBody;
+
+  PackageDeclaration = "package" SysMLName; //TODO add quatiationMarks
 
   //PackageDeclaration = "package" Name; //TODO add quatiationMarks or remove
 

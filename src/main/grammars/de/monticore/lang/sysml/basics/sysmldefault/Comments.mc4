@@ -3,17 +3,17 @@ package de.monticore.lang.sysml.basics.sysmldefault;
 
 //TODO not finished
 //TODO no tests yet
-grammar Comments extends de.monticore.lang.sysml.basics.sysmldefault.Names {
-  //Comment = "comment" (QuotationMark (Name)+ QuotationMark)?  (Annotation+ | EmptyAnnotation); TODO
-  Comment = "comment" Name (Annotation+ | EmptyAnnotation);
+grammar Comments extends de.monticore.lang.sysml.basics.sysmldefault.Names,
+  de.monticore.lang.sysml.basics.SysMLCommonInterfaces{
+  Comment implements PackagedDefinitionMember= "comment" SysMLName (Annotation+ | EmptyAnnotation);
 
-  EmptyAnnotation = "emptyTODO";
-  Annotation = "TO DO" "about" QualifiedName;
-  UnitPrefix = "TODO";
+  EmptyAnnotation = "TODO"; //TODO see line 137-139
+  Annotation = "about" QualifiedName; //TODO {SysML::Annotation}
+  UnitPrefix = ("TODO")*;
 
   PrefixAnnotation = Documentation+;
 
   Documentation = ("comment" Name?)? DocumentationComment;
 
-  DocumentationComment = "TODO";
+  DocumentationComment = "TODO";//TODO should be '/**' -> '*/' => first enable this in the Parser.
 }

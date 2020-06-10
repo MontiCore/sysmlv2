@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml;
 
 
-grammar SysML{
-  //TODO
-  SysML = "TODO";
+grammar SysML extends de.monticore.lang.sysml.BDD{
+  //TODO extend more
+  SysMLRoot= Unit;
 }
