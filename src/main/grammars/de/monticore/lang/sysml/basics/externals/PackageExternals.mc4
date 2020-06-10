@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics.externals;
 
-component grammar PackageExternals {
+component grammar PackageExternals { //TODO !!! Make Interfaces ! (best in PackageInterfaces)
 
   //TODO see line 189 in Xtext
   //TODO make them abstract??? but then AST is maybe not perfect?

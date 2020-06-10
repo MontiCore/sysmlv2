@@ -8,9 +8,9 @@ component grammar SysMLCommonInterfaces { //TODO split into Basic Interfaces and
   interface PackagedDefinitionMember; //Remark: Xtext 189
   interface PackagedUsageMember; //Remark: Xtext 206
 
-  //TODO make component
+  //TODO where to put this:
+  EmptyDefinitionBody implements DefinitionBody = ";";
+
   SomeToken = "TODO";
-  DefinitionBodyStd implements DefinitionBody = "TODO";
-  PackagedDefinitionMemberStd implements PackagedDefinitionMember = "TODO";
   PackagedUsageMemberStd implements PackagedUsageMember = "TODO";
 }

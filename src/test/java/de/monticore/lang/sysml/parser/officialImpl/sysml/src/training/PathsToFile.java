@@ -13,7 +13,7 @@ public class PathsToFile {
           "/officialPilotImplementation/2020/03/sysml/src/training/";
 
   private final String [] trainingSubPaths = {
-    "01. Packages/Comment Example.sysml",
+    //"01. Packages/Comment Example.sysml",
     "01. Packages/Package Example.sysml",
   };
 

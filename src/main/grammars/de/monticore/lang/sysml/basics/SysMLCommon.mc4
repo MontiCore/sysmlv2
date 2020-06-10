@@ -9,12 +9,14 @@ grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers,
    {
 
 
+
   //TODO put this in a DefinitionFile
   DefinitionBodyStd implements DefinitionBody = "{" (NestedDefinitionMember+ | NestedUsageMember+ | ImportUnit+)* "}";
   DefinitionBodyEmpty implements DefinitionBody = ";";
   AbstractDefinitionBody = DefinitionBody; //TODO Remark: only has different naming, see Xtext 238
 
-  NestedDefinitionMember = "TODO"; //DefinitionMemberPrefix PackagedDefinitionMember;
+  NestedDefinitionMember = PackagedDefinitionMember; //TODO missing DefinitionMemberPrefix
+
   DefinitionMemberPrefix = PrefixAnnotation* visibility:VisibilityIndicator;
   /*Remark: in Xtext 	( ownedRelationship_comp += PrefixAnnotation )*, what is basically a List, which should not be
   empty, but also can be empty. More elegant with *   */
