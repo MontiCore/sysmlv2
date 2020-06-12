@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml;
 
 
-grammar RequirementDiagram extends de.monticore.lang.sysml.SysMLBasics {
+grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysMLCommon {
   
   Requirement = "requirement" Name;
 }

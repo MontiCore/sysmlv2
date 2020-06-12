@@ -1,10 +1,9 @@
 package de.monticore.lang.sysml.parser.examples;
 
-import de.monticore.lang.sysml.block._ast.ASTBlockUnit;
-import de.monticore.lang.sysml.block._parser.BlockParser;
 import de.monticore.lang.sysml.sysmlbasics._ast.ASTUnitPrefix;
 import de.monticore.lang.sysml.sysmlbasics._parser.SysMLBasicsParser;
 import de.monticore.lang.sysml.utils.GenericParser;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
