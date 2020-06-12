@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
  */
 public class ParsingTrainingTest {
 
-  @Ignore
   @Test
   public void parseAllSpecifiedTrainingFilesTest(){
     PathsToFile pathsToFile = new PathsToFile();
