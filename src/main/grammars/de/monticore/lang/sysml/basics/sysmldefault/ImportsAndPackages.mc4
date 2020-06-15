@@ -24,9 +24,7 @@ grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.sysmldefault.C
 
   PackageUnit implements Unit = UnitPrefix PackageDeclaration PackageBody;
 
-  PackageDeclaration = "package" SysMLName; //TODO add quatiationMarks
-
-  //PackageDeclaration = "package" Name; //TODO add quatiationMarks or remove
+  PackageDeclaration = "package" SysMLName;
 
   //TODO can this be improved? -> also naming is different
   PackageBody = "{" (PackageMember | ImportUnit)* "}";
@@ -44,15 +42,9 @@ grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.sysmldefault.C
     //TODO first Name should be QualifiedName, second Name or SysMLName
     //16:48:25.793 [main] ERROR ROOT - Package Example.sysml:<6,7>: mismatched input 'Automobile' expecting Name
 
+  AliasPackagedDefinitionMember implements PackagedDefinitionMember =
+      ("import" | "alias") QualifiedName ("as" SysMLName) ";";
 
-  //AliasPackagedDefinitionMember2 implements PackagedDefinitionMember =
-  //  "alias" QualifiedName "as" "Car" ";"	;
-
-  //AliasPackagedDefinitionMember2 implements PackagedDefinitionMember =
-  //   "alias" QualifiedName "as" "Car" ";"	;     //TODO remove why does this not work, but below does work?
-
-  AliasPackagedDefinitionMember3 implements PackagedDefinitionMember =
-     "alias" "Automobile" "as" "Car" ";"	;     //TODO remove
 
 
 

@@ -3,7 +3,7 @@ package de.monticore.lang.sysml.basics;
 
 
 grammar Classifiers extends de.monticore.lang.sysml.basics.sysmldefault.Names{
-  ClassifierDeclarationCompletion = Name SuperclassingList?;
+  ClassifierDeclarationCompletion = SysMLName SuperclassingList?;
 
   SuperclassingList = SpecializesKeyword (Superclassing || ",")+;
   SpecializesKeyword = ":>" | "specializes";
