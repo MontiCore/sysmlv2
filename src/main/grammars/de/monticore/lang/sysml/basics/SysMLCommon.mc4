@@ -4,8 +4,7 @@ package de.monticore.lang.sysml.basics;
 
 component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers,
   de.monticore.lang.sysml.basics.sysmldefault.SysMLBasics,
-  de.monticore.lang.sysml.basics.SysMLCommonInterfaces,
-   de.monticore.lang.sysml.basics.sysmldefault.ImportsAndPackages
+  de.monticore.lang.sysml.basics.SysMLCommonInterfaces
    {
 
 

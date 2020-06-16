@@ -2,9 +2,9 @@
 package de.monticore.lang.sysml.basics.sysmldefault;
 
 //TODO not tested yet
-grammar Visibility{
- PackageElementVisibilityIndicator = vis:VISIBILITYSHORT;
- VisibilityIndicator = vis:VISIBILITYLONG;
+grammar Visibility extends de.monticore.lang.sysml.basics.interfaces.VisibilityInterfaces{
+ PackageElementVisibilityIndicatorStd implements PackageElementVisibilityIndicator = vis:VISIBILITYSHORT;
+ VisibilityIndicatorStd implements VisibilityIndicator = vis:VISIBILITYLONG;
 
  enum VISIBILITYSHORT = "public" | "private";
  enum VISIBILITYLONG = "public" | "private" | "protected" | "package";

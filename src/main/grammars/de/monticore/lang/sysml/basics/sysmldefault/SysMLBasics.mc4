@@ -2,6 +2,8 @@
 package de.monticore.lang.sysml.basics.sysmldefault;
 
 //TODO make more modular
-grammar SysMLBasics extends de.monticore.lang.sysml.basics.sysmldefault.Comments {
+grammar SysMLBasics extends de.monticore.lang.sysml.basics.sysmldefault.Comments,
+ de.monticore.lang.sysml.basics.sysmldefault.ImportsAndPackages,
+ de.monticore.lang.sysml.basics.sysmldefault.Expressions{
   Element = "TODO";
 }
