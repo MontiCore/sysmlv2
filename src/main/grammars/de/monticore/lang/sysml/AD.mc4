@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml;
 
 
-grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
+component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   
   AD = "ad" Name;
 }

@@ -2,15 +2,16 @@
 package de.monticore.lang.sysml.basics.sysmldefault;
 
 
-grammar Names extends de.monticore.MCBasics {
+grammar Names extends de.monticore.MCBasics,
+ de.monticore.lang.sysml.basics.interfaces.NamesInterfaces{
 
-  interface QualifiedName;
+  //interface QualifiedName;
 
   SimpleName implements QualifiedName = Name;
   ColonQualifiedName implements QualifiedName = (Name || "::")+;
   DotQualifiedName implements QualifiedName = (Name || ".")+;
 
-  interface SysMLName;
+  //interface SysMLName;
   fragment token SingleCharacterNotQuote = ~ ('\'');
   token UNRESTRICTED_NAME = '\'' SingleCharacterNotQuote* '\'';
 

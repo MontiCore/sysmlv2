@@ -1,7 +1,6 @@
 package de.monticore.lang.sysml.parser.examples.basics;
 
-import de.monticore.lang.sysml.basics.sysmldefault.names._ast.ASTQualifiedName;
-import de.monticore.lang.sysml.basics.sysmldefault.names._parser.NamesParser;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -19,7 +18,7 @@ import static org.junit.Assert.*;
  */
 public class NamesTest {
 
-
+  /*@Ignore //TODO this test is outdated, there is no interface anymore.
   private void checkParser(Path model){
     try {
       NamesParser parser = new NamesParser();
@@ -46,5 +45,5 @@ public class NamesTest {
   public void simpleNameTest(){
     Path model = Paths.get("src/test/resources/testing/basics/names/simpleName.sysml");
     checkParser(model);
-  }
+  }*/
 }
