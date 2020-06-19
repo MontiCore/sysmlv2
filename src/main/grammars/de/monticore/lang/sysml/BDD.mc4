@@ -2,8 +2,7 @@
 package de.monticore.lang.sysml;
 
 
-component grammar BDD extends de.monticore.lang.sysml.basics.SysMLCommon,
-  de.monticore.lang.sysml.basics.sysmldefault.Names{
+component grammar BDD extends de.monticore.lang.sysml.basics.SysMLCommon{
   
   BlockUnit = UnitPrefix Block; //Remark: in Xtext BlockDeclaration DefinitionBody
 
@@ -11,5 +10,5 @@ component grammar BDD extends de.monticore.lang.sysml.basics.SysMLCommon,
 
   BlockDeclaration= ["abstract"]? "block" ClassifierDeclarationCompletion;
   //BlockDeclarationTestingRemoveLater implements PackagedDefinitionMember = "block" "Automobile" ";"; //TODO remove
-  //BlockDeclarationTestingRemoveLater2 implements PackagedDefinitionMember = "block" Name ";"; //TODO remove
+  //BlockDeclarationTestingRemoveLater2 implements PackagedDefinitionMember = "block" SysMLName ";"; //TODO remove
 }

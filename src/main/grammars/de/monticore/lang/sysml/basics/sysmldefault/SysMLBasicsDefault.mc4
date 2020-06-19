@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics.sysmldefault;
 
-component grammar SysMLBasics extends de.monticore.lang.sysml.basics.sysmldefault.Comments,
+component grammar SysMLBasicsDefault extends de.monticore.lang.sysml.basics.sysmldefault.Comments,
  de.monticore.lang.sysml.basics.sysmldefault.Expressions,
  de.monticore.lang.sysml.basics.sysmldefault.ImportsAndPackages,
  de.monticore.lang.sysml.basics.sysmldefault.Literals,
