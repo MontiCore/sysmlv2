@@ -3,5 +3,5 @@ package de.monticore.lang.sysml.basics.interfaces;
 
 component grammar PackageInterfaces { //TODO not used right now -> use this in SysMLCommonInterfaces
   interface PackagedDefinitionMember; //Can be everything what is an element of a package
-  interface PackageUsageMember;
+  interface PackagedUsageMember;
 }

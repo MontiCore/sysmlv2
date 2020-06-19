@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml;
 
 
-grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon {
+component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon {
   
   IBD = "ibd" Name;
 }

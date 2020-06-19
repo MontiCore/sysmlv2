@@ -2,15 +2,21 @@
 package de.monticore.lang.sysml.basics;
 
 
-component grammar SysMLCommonInterfaces { //TODO split into Basic Interfaces and CommonInterfaces
+component grammar SysMLCommonInterfaces extends de.monticore.lang.sysml.basics.interfaces.CommentsInterfaces,
+ de.monticore.lang.sysml.basics.interfaces.LiteralsInterfaces,
+ de.monticore.lang.sysml.basics.interfaces.NamesInterfaces,
+ de.monticore.lang.sysml.basics.interfaces.PackageInterfaces,
+ de.monticore.lang.sysml.basics.interfaces.ImportInterfaces,
+ de.monticore.lang.sysml.basics.interfaces.VisibilityInterfaces{
+
+//TODO split into Basic Interfaces and CommonInterfaces
   interface Unit;
   interface DefinitionBody;
-  interface PackagedDefinitionMember; //Remark: Xtext 189
-  interface PackagedUsageMember; //Remark: Xtext 206
+  //interface PackagedDefinitionMember; //Remark: Xtext 189
+  //interface PackagedUsageMember; //Remark: Xtext 206
 
   //TODO where to put this:
   EmptyDefinitionBody implements DefinitionBody = ";";
 
   SomeToken = "TODO";
-  PackagedUsageMemberStd implements PackagedUsageMember = "TODO";
 }

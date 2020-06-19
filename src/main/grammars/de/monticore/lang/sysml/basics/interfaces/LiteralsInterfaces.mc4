@@ -1,6 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics.interfaces;
 
-component grammar LiteralsInterfaces extends de.monticore.literals.MCLiteralsBasics {
-
+component grammar LiteralsInterfaces extends de.monticore.literals.MCCommonLiterals {
 }

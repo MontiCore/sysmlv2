@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics.interfaces;
 
-component grammar CommentsInterfaces{
-  interface PrefixAnnotation;
-  interface UnitPrefix;
+component grammar ImportInterfaces {
+  interface ImportUnit;
 }

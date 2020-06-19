@@ -9,9 +9,10 @@ grammar Comments extends de.monticore.lang.sysml.basics.sysmldefault.Names,
 
   EmptyAnnotation = "TODO"; //TODO see line 137-139
   Annotation = "about" QualifiedName; //TODO {SysML::Annotation}
-  UnitPrefix = ("TODO")*;
+  UnitPrefixStd implements UnitPrefix = ("TODO")*;
 
-  PrefixAnnotation = Documentation+;
+
+  PrefixAnnotationStd implements PrefixAnnotation = Documentation+;
 
   Documentation = ("comment" Name?)? DocumentationComment;
 

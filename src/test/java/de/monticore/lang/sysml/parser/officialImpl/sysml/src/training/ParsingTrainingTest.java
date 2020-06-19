@@ -2,8 +2,6 @@ package de.monticore.lang.sysml.parser.officialImpl.sysml.src.training;
 
 import de.monticore.lang.sysml.sysml._ast.ASTSysMLRoot;
 import de.monticore.lang.sysml.sysml._parser.SysMLParser;
-import de.monticore.lang.sysml.sysmlbasics._ast.ASTUnitPrefix;
-import de.monticore.lang.sysml.sysmlbasics._parser.SysMLBasicsParser;
 import org.junit.Ignore;
 import org.junit.Test;
 
