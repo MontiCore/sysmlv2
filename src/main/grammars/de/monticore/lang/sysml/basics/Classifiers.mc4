@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml.basics;
 
 
-component grammar Classifiers extends de.monticore.lang.sysml.basics.interfaces.NamesInterfaces{ //TODO create another layer for this
+component grammar Classifiers extends de.monticore.lang.sysml.basics.SysMLCommonInterfaces{ //TODO create another layer for this
   ClassifierDeclarationCompletion = SysMLName SuperclassingList?;
 
   SuperclassingList = SpecializesKeyword (Superclassing || ",")+;
