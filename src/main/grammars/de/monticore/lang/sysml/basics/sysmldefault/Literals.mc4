@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml.basics.sysmldefault;
 
 
-grammar Literals extends de.monticore.literals.MCCommonLiterals {
+component grammar Literals extends de.monticore.literals.MCCommonLiterals {
   /*Remark: See "// Literal Expressions" in Xtext line 1739
   * Literals are implemented very differently here */
   RealLiteralWithExponent implements Literal =

@@ -4,5 +4,5 @@ package de.monticore.lang.sysml;
 
 component grammar SMD extends de.monticore.lang.sysml.basics.SysMLCommon {
   
-  SMD = "state" "machine" Name;
+  SMD = "state" "machine" SysMLName;
 }

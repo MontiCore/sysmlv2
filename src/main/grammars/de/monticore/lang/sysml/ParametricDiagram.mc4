@@ -4,5 +4,5 @@ package de.monticore.lang.sysml;
 
 component grammar ParametricDiagram extends de.monticore.lang.sysml.basics.SysMLCommon {
   
-  Parametric = "param" Name;
+  Parametric = "param" SysMLName;
 }

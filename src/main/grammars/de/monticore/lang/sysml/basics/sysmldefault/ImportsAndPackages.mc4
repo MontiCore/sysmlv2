@@ -2,12 +2,7 @@
 package de.monticore.lang.sysml.basics.sysmldefault;
 
 
-grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.sysmldefault.Comments,
-        de.monticore.lang.sysml.basics.SysMLCommonInterfaces,
-         de.monticore.lang.sysml.basics.sysmldefault.Visibility,
-          de.monticore.lang.sysml.basics.interfaces.PackageInterfaces,
-          de.monticore.lang.sysml.basics.interfaces.ImportInterfaces,
-           de.monticore.lang.sysml.basics.sysmldefault.Names
+component grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.SysMLCommonInterfaces
            {
            //TODO de.monticore.lang.sysml.basics.externals.PackageExternals
            //TODO remove imports here -> later binding
@@ -37,12 +32,6 @@ grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.sysmldefault.C
 
   AnonymousPackage = "TODO";
 
-  //TODO alias same as import?
-  //AliasPackagedDefinitionMember implements PackagedDefinitionMember =
-  //  ("import" | "alias") SimpleName ("as" SimpleName) ";";
-    //TODO first Name should be QualifiedName, second Name or SysMLName
-    //16:48:25.793 [main] ERROR ROOT - Package Example.sysml:<6,7>: mismatched input 'Automobile' expecting Name
-
   AliasPackagedDefinitionMember implements PackagedDefinitionMember =
       ("import" | "alias") QualifiedName ("as" SysMLName) ";";
 
@@ -52,7 +41,7 @@ grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.sysmldefault.C
 
   //TODO how to do something like this in MC: importedPackage = [SysML::Package|Name]
   ImportUnitStd implements ImportUnit = PrefixAnnotation* (visibility:PackageElementVisibilityIndicator)?
-    "import" QualifiedName star:["::*"]? ("as" SimpleName)? ";"; //TODO do not allow spaces and allow explicit import
+    "import" QualifiedName star:["::*"]? ("as" SysMLName)? ";"; //TODO do not allow spaces and allow explicit import
     //TODO actually not in the pilot implementation
     //TODO test if there are no whitespaces
     //TODO force the star (*) ? , see Xtext 151

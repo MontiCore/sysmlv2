@@ -3,8 +3,7 @@ package de.monticore.lang.sysml.basics.sysmldefault;
 
 //TODO not finished
 //TODO no tests yet
-grammar Comments extends de.monticore.lang.sysml.basics.sysmldefault.Names,
-  de.monticore.lang.sysml.basics.SysMLCommonInterfaces{
+component grammar Comments extends de.monticore.lang.sysml.basics.SysMLCommonInterfaces{
   Comment implements PackagedDefinitionMember= "comment" SysMLName (Annotation+ | EmptyAnnotation);
 
   EmptyAnnotation = "TODO"; //TODO see line 137-139
@@ -14,7 +13,7 @@ grammar Comments extends de.monticore.lang.sysml.basics.sysmldefault.Names,
 
   PrefixAnnotationStd implements PrefixAnnotation = Documentation+;
 
-  Documentation = ("comment" Name?)? DocumentationComment;
+  Documentation = ("comment" SysMLName?)? DocumentationComment;
 
   DocumentationComment = "TODO";//TODO should be '/**' -> '*/' => first enable this in the Parser.
 }

@@ -1,9 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics.sysmldefault;
 
-//TODO make more modular
-grammar SysMLBasics extends de.monticore.lang.sysml.basics.sysmldefault.Comments,
+component grammar SysMLBasics extends de.monticore.lang.sysml.basics.sysmldefault.Comments,
+ de.monticore.lang.sysml.basics.sysmldefault.Expressions,
  de.monticore.lang.sysml.basics.sysmldefault.ImportsAndPackages,
- de.monticore.lang.sysml.basics.sysmldefault.Expressions{
-  Element = "TODO";
+ de.monticore.lang.sysml.basics.sysmldefault.Literals,
+ de.monticore.lang.sysml.basics.sysmldefault.Names,
+ de.monticore.lang.sysml.basics.sysmldefault.Visibility{
 }

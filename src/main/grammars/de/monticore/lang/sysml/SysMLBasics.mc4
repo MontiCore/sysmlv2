@@ -7,12 +7,6 @@ component grammar SysMLBasics extends de.monticore.MCBasics {
   // TODO deleting this files leads to an internal error in MC
   start UnitPrefix;
   UnitPrefix = PrefixAnnotation;
-
-  PrefixAnnotation = Documentation;
-  Documentation = "comment" Name;
-
-  // TODO
-  SysMLElement;
-
+  PrefixAnnotation = "DeleteME";
 
 }

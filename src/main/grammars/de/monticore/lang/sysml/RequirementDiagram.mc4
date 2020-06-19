@@ -4,5 +4,5 @@ package de.monticore.lang.sysml;
 
 component grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysMLCommon {
   
-  Requirement = "requirement" Name;
+  Requirement = "requirement" SysMLName;
 }

@@ -4,5 +4,5 @@ package de.monticore.lang.sysml;
 
 component grammar SD extends de.monticore.lang.sysml.basics.SysMLCommon {
   
-  SD = "sd" Name;
+  SD = "sd" SysMLName;
 }

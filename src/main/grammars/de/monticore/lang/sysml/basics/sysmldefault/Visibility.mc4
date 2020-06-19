@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml.basics.sysmldefault;
 
 //TODO not tested yet
-grammar Visibility extends de.monticore.lang.sysml.basics.interfaces.VisibilityInterfaces{
+component grammar Visibility extends de.monticore.lang.sysml.basics.interfaces.VisibilityInterfaces{
  PackageElementVisibilityIndicatorStd implements PackageElementVisibilityIndicator = vis:VISIBILITYSHORT;
  VisibilityIndicatorStd implements VisibilityIndicator = vis:VISIBILITYLONG;
 

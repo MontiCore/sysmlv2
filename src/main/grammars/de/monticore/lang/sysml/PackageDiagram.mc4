@@ -4,5 +4,5 @@ package de.monticore.lang.sysml;
 
 component grammar PackageDiagram extends de.monticore.lang.sysml.basics.SysMLCommon {
   
-  SysMLPackage = "package" Name;
+  SysMLPackage = "package" SysMLName;
 }
