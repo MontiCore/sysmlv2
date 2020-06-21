@@ -9,6 +9,4 @@ component grammar BDD extends de.monticore.lang.sysml.basics.SysMLCommon{
   Block implements PackagedDefinitionMember = BlockDeclaration DefinitionBody;
 
   BlockDeclaration= ["abstract"]? "block" ClassifierDeclarationCompletion;
-  //BlockDeclarationTestingRemoveLater implements PackagedDefinitionMember = "block" "Automobile" ";"; //TODO remove
-  //BlockDeclarationTestingRemoveLater2 implements PackagedDefinitionMember = "block" SysMLName ";"; //TODO remove
 }

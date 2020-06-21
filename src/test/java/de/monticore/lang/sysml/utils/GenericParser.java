@@ -2,8 +2,6 @@
 
 package de.monticore.lang.sysml.utils;
 import de.monticore.antlr4.MCConcreteParser;
-import de.monticore.ast.ASTNode;
-import de.monticore.lang.sysml.sysmlbasics._ast.ASTUnitPrefix;
 
 import java.io.IOException;
 import java.nio.file.Path;

@@ -1,6 +1,5 @@
 package de.monticore.lang.sysml.parser.examples;
 
-import de.monticore.lang.sysml.sysmlbasics._ast.ASTUnitPrefix;
 import de.monticore.lang.sysml.utils.GenericParser;
 import org.junit.Ignore;
 import org.junit.Test;
