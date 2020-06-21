@@ -2,24 +2,9 @@
 package de.monticore.lang.sysml.basics.sysmldefault;
 
 
-component grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.SysMLCommonInterfaces
-           {
-           //TODO de.monticore.lang.sysml.basics.externals.PackageExternals
-           //TODO remove imports here -> later binding
-
-
-
-
-
-  PackagedUsageMemberStd implements PackagedUsageMember = "TODO" "removeMe";
-  PackagedDefinitionMemberStd implements PackagedDefinitionMember= "TODO" "removeMe"; //TODO
-
-
-
-
+component grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.SysMLCommonInterfaces{
 
   PackageUnit implements Unit = UnitPrefix PackageDeclaration PackageBody;
-
   PackageDeclaration = "package" SysMLName;
 
   //TODO can this be improved? -> also naming is different

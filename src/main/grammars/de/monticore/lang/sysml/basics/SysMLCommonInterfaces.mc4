@@ -9,14 +9,7 @@ component grammar SysMLCommonInterfaces extends de.monticore.lang.sysml.basics.i
  de.monticore.lang.sysml.basics.interfaces.ImportInterfaces,
  de.monticore.lang.sysml.basics.interfaces.VisibilityInterfaces{
 
-//TODO split into Basic Interfaces and CommonInterfaces
+//TODO split into Basic Interfaces and CommonInterfaces ?
   interface Unit;
   interface DefinitionBody;
-  //interface PackagedDefinitionMember; //Remark: Xtext 189
-  //interface PackagedUsageMember; //Remark: Xtext 206
-
-  //TODO where to put this:
-  EmptyDefinitionBody implements DefinitionBody = ";";
-
-  SomeToken = "TODO";
 }

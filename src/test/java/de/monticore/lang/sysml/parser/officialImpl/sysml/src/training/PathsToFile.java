@@ -11,10 +11,15 @@ public class PathsToFile {
 
   private final String pathToTraining = "src/test/resources/examples" +
           "/officialPilotImplementation/2020/03/sysml/src/training/";
-
   private final String [] trainingSubPaths = {
     //"01. Packages/Comment Example.sysml",
     "01. Packages/Package Example.sysml",
+    //"02. Blocks/Blocks Example.sysml",
+    //"03. Generalization/Generalization Example.sysml",
+    //"04. Subsetting/Subsetting Example.sysml" ,
+    //"05. Redefinition/Redefinition Example.sysml",
+    //"06. Parts/Parts Example-1.sysml",
+    //"06. Parts/Parts Example-2.sysml",
   };
 
   public List<String> getFullRelativePathToTrainingFiles() {
