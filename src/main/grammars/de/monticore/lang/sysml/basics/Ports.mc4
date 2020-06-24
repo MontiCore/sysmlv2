@@ -1,0 +1,16 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.basics;
+
+component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonInterfaces{
+  //Remark see ll.393-417 in Xtext
+  PortDefinitionStd implements PortDefinition = PortDeclaration DefinitionBody;
+  PortDeclaration = ["abstract"]? "port" "def" ClassifierDeclarationCompletion ConjugatedPortDefinitionMember;
+  ConjugatedPortDefinition = PortConjugation;
+
+  PortConjugation = "TODO"; //TODO PortConjugation returns SysML::PortConjugation :
+                                   //	{SysML::PortConjugation}
+                                   //;
+
+  ConjugatedPortDefinitionMember = ConjugatedPortDefinition;
+}
+

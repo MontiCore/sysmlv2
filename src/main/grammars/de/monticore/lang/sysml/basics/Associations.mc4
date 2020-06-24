@@ -1,0 +1,47 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.basics;
+
+component grammar Associations extends de.monticore.lang.sysml.basics.SysMLCommonInterfaces{
+
+  AssociationBlockStd implements AssociationBlock = AssociationBlockDeclaration AssociationBlockBody;
+  AssociationBlockDeclaration = ["abstract"]? "assoc" "block" ClassifierDeclarationCompletion;
+  AssociationBlockBody = (";") | ("{"
+    (
+        NestedDefinitionMember
+        | AssociationUsageMember
+        | ImportUnit
+    )"}"
+  );
+  AbstractAssociationBlockBody = AssociationBlockBody;
+
+  /**
+    Memberships
+  */
+  //NestedUsageMember is implemented in SysMLCommon
+
+  //TODO do we need something like this:  ownedMemberFeature_comp = AbstractActionUsage
+  AssociationEndMember implements AssociationUsageMember= DefinitionMemberPrefix
+    (
+      "end" (isComposite:"part")? PartProperty
+      | "abstract" "end"  (isComposite:"part")? AbstractPartProperty //This abstract and then having exactly the same, just abstract, is notperfect //TODO
+      | "end" ["ref"]? ReferenceProperty
+      | "abstract" "end" ["ref"]? AbstractReferenceProperty
+      | "end" ("ref" "action" | (isComposite:"action")? ) ActionUsage // TODO define ActionUsage
+      | "abstract" "end" ("ref" "action" | (isComposite:"action")? ) AbstractActionUsage
+    )
+  ;
+
+  EndPortMember = DefinitionMemberPrefix
+    (
+      "end" ["port"]? PortUsage
+      | "abstract" "end" "port" AbstractPortUsage
+    )
+  ;
+
+  ConjugatedEndPortMember = DefinitionMemberPrefix
+    (
+      "end" ["port"]? ConjugatedPortUsage
+      | "abstract" "end" "port" AbstractConjugatedPortUsage
+    )
+  ;
+}
