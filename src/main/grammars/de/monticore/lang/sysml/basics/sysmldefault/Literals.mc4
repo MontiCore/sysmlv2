@@ -5,9 +5,13 @@ package de.monticore.lang.sysml.basics.sysmldefault;
 component grammar Literals extends de.monticore.literals.MCCommonLiterals {
   /*Remark: See "// Literal Expressions" in Xtext line 1739
   * Literals are implemented very differently here */
-  RealLiteralWithExponent implements Literal =
-    (Digits {noSpace()}? "." {noSpace()}?)? ExpValue;
 
-  ExpValue = Digits ("e" | "E") ("+" | negativeExponent:["-"])? Digits;
+  token DecimalDoublePointLiteral = Digits '.' (Digits)? (ExponentPart)? |
+                                      Digits ExponentPart;
+  token ExponentPart = Digits ('e' | 'E') ('+' | '-')? Digits;
+
+  RealLiteralWithExponent implements Literal = DecimalDoublePointLiteral;
+
+  //ExpValue = Digits ("e" | "E") ("+" | negativeExponent:["-"])? Digits;//TODO
   //TODO test
 }
