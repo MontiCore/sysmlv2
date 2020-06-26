@@ -15,9 +15,9 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
 
   AbstractDefinitionBody = DefinitionBody; //TODO Remark: only has different naming, see Xtext 238
 
-  NestedDefinitionMemberStd implements NestedDefinitionMember = PackagedDefinitionMember; //TODO missing DefinitionMemberPrefix
+  NestedDefinitionMemberStd implements NestedDefinitionMember = DefinitionMemberPrefix PackagedDefinitionMember;
 
-  DefinitionMemberPrefixStd implements DefinitionMemberPrefix= PrefixAnnotation* visibility:VisibilityIndicator;
+  DefinitionMemberPrefixStd implements DefinitionMemberPrefix = PrefixAnnotation* visibility:VisibilityIndicator?;
   /*Remark: in Xtext 	( ownedRelationship_comp += PrefixAnnotation )*, what is basically a List, which should not be
   empty, but also can be empty. More elegant with *   */
 
