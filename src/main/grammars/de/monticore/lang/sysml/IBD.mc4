@@ -6,11 +6,13 @@ component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon {
   
   IBD = "ibd" SysMLName;
 
-  Part = ["abstract"]? "part" PartProperty; //Remark: combining abstract and non-abstract element of line 264-265
-  PartProperty = Usage;
+  //Part = ["abstract"]? "part" PartProperty; //Remark: combining abstract and non-abstract element of line 264-265
+  //PartProperty = Usage;
 
   //Should be done in a Usages file in Common TODO
-  Usage = UsageDeclaration UsageCompletion;
-  UsageDeclaration = "TODO";
-  UsageCompletion = ValuePart? DefinitionBody;
+  //Usage = "TODO";
+  //Usage = UsageDeclaration UsageCompletion;
+  //UsageDeclaration = "TODO";
+  //ValuePart = "TODO"; //TODO define somewhere
+  //UsageCompletion = ValuePart? DefinitionBody;
 }
