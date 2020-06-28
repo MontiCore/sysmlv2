@@ -5,6 +5,7 @@ target
 .settings
 .classpath
 out/
+bin/
 
 # Ignore Macintosh Desktop Service Stores
 .DS_Store
@@ -15,3 +16,4 @@ out/
 
 # Ignore log file
 *.log
+/.gradle/
