@@ -3,7 +3,7 @@ package de.monticore.lang.sysml.basics.sysmldefault;
 
 //TODO not finished
 //TODO no tests yet
-component grammar Comments extends de.monticore.lang.sysml.basics.SysMLCommonInterfaces{
+component grammar Comments extends de.monticore.lang.sysml.basics.SysMLCommonBasis{
   Comment implements PackagedDefinitionMember= "comment" SysMLName (Annotation+ | EmptyAnnotation);
 
   EmptyAnnotation = "TODO"; //TODO see line 137-139

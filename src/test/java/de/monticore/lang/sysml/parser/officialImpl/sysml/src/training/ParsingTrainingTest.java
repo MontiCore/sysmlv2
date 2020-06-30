@@ -2,6 +2,7 @@ package de.monticore.lang.sysml.parser.officialImpl.sysml.src.training;
 
 import de.monticore.lang.sysml.sysml._ast.ASTSysMLRoot;
 import de.monticore.lang.sysml.sysml._parser.SysMLParser;
+import de.se_rwth.commons.logging.Log;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -27,6 +28,7 @@ public class ParsingTrainingTest {
       SysMLParser parser = new SysMLParser();
       Path model = Paths.get(path);
       try {
+        Log.enableFailQuick(false);
         Optional<ASTSysMLRoot> sysmlPackage = parser.parse(model.toString());
         assertFalse(parser.hasErrors());
         assertTrue(sysmlPackage.isPresent());

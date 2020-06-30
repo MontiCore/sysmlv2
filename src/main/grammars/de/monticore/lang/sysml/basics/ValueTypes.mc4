@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml.basics;
 
 
-component grammar ValueTypes extends de.monticore.lang.sysml.basics.SysMLCommonInterfaces{
+component grammar ValueTypes extends de.monticore.lang.sysml.basics.SysMLCommonBasis{
 
   ValueTypeStd implements ValueType= ValueTypeDeclaration DefinitionBody; //TODO make Cocos to restrict defBody???
   ValueTypeDeclaration = ["abstract"]? "value" "type" ClassifierDeclarationCompletion;

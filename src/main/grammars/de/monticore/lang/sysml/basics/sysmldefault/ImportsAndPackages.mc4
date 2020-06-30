@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml.basics.sysmldefault;
 
 
-component grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.SysMLCommonInterfaces{
+component grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.SysMLCommonBasis{
 
   PackageUnit implements Unit = UnitPrefix PackageDeclaration PackageBody;
   PackageDeclaration = "package" SysMLName;

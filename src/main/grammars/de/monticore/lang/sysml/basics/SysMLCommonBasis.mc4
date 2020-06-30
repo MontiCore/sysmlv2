@@ -2,12 +2,12 @@
 package de.monticore.lang.sysml.basics;
 
 
-component grammar SysMLCommonInterfaces extends de.monticore.lang.sysml.basics.interfaces.CommentsInterfaces,
- de.monticore.lang.sysml.basics.interfaces.LiteralsInterfaces,
- de.monticore.lang.sysml.basics.interfaces.NamesInterfaces,
- de.monticore.lang.sysml.basics.interfaces.PackageInterfaces,
- de.monticore.lang.sysml.basics.interfaces.ImportInterfaces,
- de.monticore.lang.sysml.basics.interfaces.VisibilityInterfaces{
+component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.interfaces.CommentsBasis,
+ de.monticore.lang.sysml.basics.interfaces.LiteralsBasis,
+ de.monticore.lang.sysml.basics.interfaces.NamesBasis,
+ de.monticore.lang.sysml.basics.interfaces.PackageBasis,
+ de.monticore.lang.sysml.basics.interfaces.ImportBasis,
+ de.monticore.lang.sysml.basics.interfaces.VisibilityBasis{
 
 //TODO split into Basic Interfaces and CommonInterfaces ?
   interface Unit;
