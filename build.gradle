@@ -25,7 +25,7 @@ sourceCompatibility = '1.8'
 /* ========================= Versions ========================= */
 /* ============================================================ */
 
-def monticore_version = "6.1.0"
+def monticore_version = "6.1.0" //changed from 6.1.0 TODO
 def junit_version = "4.12"
 def grammar_classifier = "grammars"
 def grammarDir = "src/main/grammars"
@@ -36,7 +36,7 @@ def grammarDir = "src/main/grammars"
 
 // configure non-standard source sets
 sourceSets {
-    main.java.srcDirs += [ "$projectDir/target/generated-sources/monticore/sourcecode"]
+    main.java.srcDirs += ["$projectDir/target/generated-sources/monticore/sourcecode"]
 
     test {
         java.srcDir "$projectDir/src/test/java"
@@ -45,7 +45,7 @@ sourceSets {
 }
 buildDir = file("$projectDir/target")
 
-configurations {grammar}
+configurations { grammar }
 
 test {
     useJUnit()
@@ -82,37 +82,77 @@ dependencies {
 /* ========================== Tasks =========================== */
 /* ============================================================ */
 
-fileTree(grammarDir).matching { include '**/*.mc4'}.each {
-  def g = it
-  task  "generate${it.getName().substring(0,it.getName().lastIndexOf('.'))}" (type: MCTask) {
-    grammar = file g
-    outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
-    def grammarIncludingPackage = file(grammarDir).toURI().relativize(g.toURI()).toString()
-    def uptoDate = incCheck(grammarIncludingPackage)
-    outputs.upToDateWhen { uptoDate }
-  }
+fileTree(grammarDir).matching { include '**/*.mc4' }.each {
+    def g = it
+    task "generate${it.getName().substring(0, it.getName().lastIndexOf('.'))}"(type: MCTask) {
+        grammar = file g
+        outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
+        def grammarIncludingPackage = file(grammarDir).toURI().relativize(g.toURI()).toString()
+        def uptoDate = incCheck(grammarIncludingPackage)
+        outputs.upToDateWhen { uptoDate }
+    }
 }
 
-generateAD.dependsOn generateSysMLBasics
-generateBDD.dependsOn generateSysMLBasics
-generateIBD.dependsOn generateSysMLBasics
-generatePackageDiagram.dependsOn generateSysMLBasics
-generateParametricDiagram.dependsOn generateSysMLBasics
-generateRequirementDiagram.dependsOn generateSysMLBasics
-generateSD.dependsOn generateSysMLBasics
-generateSMD.dependsOn generateSysMLBasics
-generateUseCaseDiagram.dependsOn generateSysMLBasics
-
+generateAssociations
+generateClassifiers
+generateCommentsBasis
+generateImportBasis
+generateLiteralsBasis
+generateNamesBasis
+generatePackageBasis
+generateVisibilityBasis
+generatePorts
+generateSysMLCommonBasis
+generateComments
+generateExpressions
+generateImportsAndPackages
+generateLiterals
+generateNames
+generateSysMLBasicsDefault
+generateVisibility
+generateValueTypes
+generateSysMLCommon
+generateAD.dependsOn generateSysMLCommon
+generateBDD.dependsOn generateSysMLCommon
+generateIBD.dependsOn generateSysMLCommon
+generatePackageDiagram.dependsOn generateSysMLCommon
+generateParametricDiagram.dependsOn generateSysMLCommon
+generateRequirementDiagram.dependsOn generateSysMLCommon
+generateSD.dependsOn generateSysMLCommon
+generateSMD.dependsOn generateSysMLCommon
+generateUseCaseDiagram.dependsOn generateSysMLCommon
 compileJava.dependsOn(
-  generateAD,
-  generateBDD,
-  generateIBD,
-  generatePackageDiagram,
-  generateParametricDiagram,
-  generateRequirementDiagram,
-  generateSD,generateSMD,
-  generateUseCaseDiagram,
-  generateSysML2)
+        generateAD,
+        generateAssociations,
+        generateClassifiers,
+        generateCommentsBasis,
+        generateImportBasis,
+        generateLiteralsBasis,
+        generateNamesBasis,
+        generatePackageBasis,
+        generateVisibilityBasis,
+        generatePorts,
+        generateSysMLCommon,
+        generateSysMLCommonBasis,
+        generateComments,
+        generateExpressions,
+        generateImportsAndPackages,
+        generateLiterals,
+        generateNames,
+        generateSysMLBasicsDefault,
+        generateVisibility,
+        generateValueTypes,
+        generateBDD,
+        generateIBD,
+        generatePackageDiagram,
+        generateParametricDiagram,
+        generateRequirementDiagram,
+        generateSD,
+        generateSMD,
+        generateSysML,
+        generateUseCaseDiagram,
+)
+
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"

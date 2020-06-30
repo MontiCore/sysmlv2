@@ -13,7 +13,7 @@
 
     <!-- .. Libraries ..................................................... -->
 
-    <monticore.version>6.0.0</monticore.version>
+    <monticore.version>6.1.0</monticore.version>
     
     <guava.version>18.0</guava.version>
     <jsr305.version>3.0.0</jsr305.version>

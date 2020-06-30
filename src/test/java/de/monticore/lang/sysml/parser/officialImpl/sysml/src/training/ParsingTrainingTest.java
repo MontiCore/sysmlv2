@@ -32,6 +32,7 @@ public class ParsingTrainingTest {
         Optional<ASTSysMLRoot> sysmlPackage = parser.parse(model.toString());
         assertFalse(parser.hasErrors());
         assertTrue(sysmlPackage.isPresent());
+        Log.enableFailQuick(true);
       }catch( IOException e){
         e.printStackTrace();
         fail("There was an exception when parsing the model " + model + ": " + e.getMessage());
