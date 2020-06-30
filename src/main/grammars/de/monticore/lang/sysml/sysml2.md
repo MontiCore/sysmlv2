@@ -1,43 +1,78 @@
 <!-- (c) https://github.com/MontiCore/monticore -->
 # SysML2
-The MontiCore language for the SysML 2 language familly contains the grammars:
-- **AD**: Language definition for SysML Activity Diagrams
-- **BDD**: Language definition for SysML Block Definition Diagrams
-- **IBD**: Language definition for SysML Internal Block Diagrams
-- **PackageDiagram**: Language definition for SysML Package Diagrams
-- **ParametricDiagram**: Language definition for SysML Parametric Diagrams
-- **RequirementDiagram**: Language definition for SysML Requirement Diagrams
-- **SD**: Language definition for SysML Sequence Diagrams
-- **SMD**: Language definition for SysML State Machine Diagrams
-- **SysMLBasics**: Language definition for a common basis of all SysML diagrams
-- **SysML2**: Reference implementation based on SysML 2 examples
-- **UseCaseDiagram**: Language definition for SysML Use Case Diagrams
+* The MontiCore language family for the SysML 2  contains the grammars 
+  and symbol management infrastructure for parsing and processing SysML models.
+  Examples for two of the languages:
 
+```
+package 'Vehicles' {                        // a SysML block diagram
+  private import ScalarValues::*; 
+  block Vehicle; 
+  block Truck is Vehicle; 
+  value type Torque is ISQ::TorqueValue; 
+}
+```
+```
+package 'Coffee' {                         // a SysML activity diagram
+  activity BrewCoffee (in beans : CoffeeBeans, in, water : Water, out coffee : Coffee) { 
+    bind grind::beans = beans;
+    action grind : Grind (in beans, out powder);
+    flow grind::powder to brew::powder;
+    bind brew::water = water;
+    action brew : Brew (in powder, in water, out coffee); 
+    bind brew::coffee = coffee;
+  }
+}
+```
 
+* The language family comprises the following grammars:
+- [`AD`][ADGrammar]: Language definition for SysML Activity Diagrams
+- [`BDD`][BDDGrammar]: Language definition for SysML Block Definition Diagrams
+- [`IBD`][IBDGrammar]: Language definition for SysML Internal Block Diagrams
+- [`PackageDiagram`][PackageDiagramGrammar]: Language definition for SysML Package Diagrams
+- [`ParametricDiagram`][ParametricDiagramGrammar]: Language definition for SysML Parametric Diagrams
+- [`RequirementDiagram`][RequirementDiagramGrammar]: Language definition for SysML Requirement Diagrams
+- [`SD`][SDGrammar]: Language definition for SysML Sequence Diagrams
+- [`SMD`][SMDGrammar]: Language definition for SysML State Machine Diagrams
+- [`SysMLBasics`][SysMLBasicsGrammar]: Language definition for a common basis of all SysML diagrams
+- [`UseCaseDiagram`][UseCaseDiagramGrammar]: Language definition for SysML Use Case Diagrams
 
-The main pupose of this language is modeling integrated SysML 2 models that 
-adhere to the textual version of the upcoming specification. 
+* The main purpose of this language is parsing general artifacts in SysML 2 
+  format that adhere to the upcoming standard.
+  Caution: As long as the upcoming standard changes, we will adapt the 
+  textual language definitions accordingly (until there will be a finalization).
+* The SysML 2 grammars enables parsing arbitrary SysML 2 artifacts for further 
+  processing. 
+  Actually these grammars represents a slight superset to the official SysML 2 
+  standard. It is intended for parsing SysML 2-compliant models. Therefore, 
+  well-formedness checks are kept to a minimum, because we assume to parse 
+  correctly produced SysML 2 models only. 
 
-The grammar files are:  
- [`de.monticore.lang.sysml.AD.mc4`][ADGrammar].  
- [`de.monticore.lang.sysml.BDD.mc4`][BDDGrammar].  
- [`de.monticore.lang.sysml.IBD.mc4`][IBDGrammar].  
- [`de.monticore.lang.sysml.PackageDiagram.mc4`][PackageDiagramGrammar].  
- [`de.monticore.lang.sysml.ParametricDiagram.mc4`][ParametricDiagramGrammar].  
- [`de.monticore.lang.sysml.RequirementDiagram.mc4`][RequirementDiagramGrammar].  
- [`de.monticore.lang.sysml.SD.mc4`][SDGrammar].  
- [`de.monticore.lang.sysml.SMD.mc4`][SMDGrammar].  
- [`de.monticore.lang.sysml.SysMLBasics.mc4`][SysMLBasicsGrammar].  
- [`de.monticore.lang.sysml.UseCaseDiagram.mc4`][UseCaseDiagramGrammar].  
- [`de.monticore.lang.sysml.legacy.SysML2.mc4`][SysML2Grammar].  
+## Symboltable
+* The SysML 2  artifacts provide symbols of different, yet to be 
+  precisely kinds. 
+* Symbol management:
+  * SysML 2 artifacts provide a hierarchy of scopes along the objects they 
+    define.
+  * Symbols are often *externally visible* and *exported*. 
+  * Details to be defined.
 
+### Symbol kinds used by SysML 2 (importable):
+* TBD: Currently none. However this may change when applying future use cases.
 
-## Handwritten Extensions
-(ToDo)
+### Symbol kinds defined by SysML 2:
+* TBD: Symbol kinds are currently explored.
 
-## Functionality
-(ToDo)
-  
+### Symbols exported by SysML 2:
+* TBD: Symbols defined by SysML2 models are often *externally visible* and 
+  *exported*. Details will follow.
+
+## Functionality: CoCos
+* currently none; it is assumed that the SysML 2 models were produced correctly.
+
+## Further Information
+* [MontiCore documentation](http://www.monticore.de/)
+
 
 [ADGrammar]: https://git.rwth-aachen.de/monticore/languages/sysml2/sysml2official/-/blob/master/src/main/grammars/de/monticore/lang/sysml/AD.mc4
 [BDDGrammar]: https://git.rwth-aachen.de/monticore/languages/sysml2/sysml2official/-/blob/master/src/main/grammars/de/monticore/lang/sysml/BDD.mc4
