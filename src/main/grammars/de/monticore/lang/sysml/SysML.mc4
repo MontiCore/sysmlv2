@@ -3,6 +3,7 @@ package de.monticore.lang.sysml;
 
 
 grammar SysML extends de.monticore.lang.sysml.BDD,
+de.monticore.lang.sysml.IBD,
 de.monticore.lang.sysml.AD,
  de.monticore.lang.sysml.basics.sysmldefault.SysMLBasicsDefault
 {
