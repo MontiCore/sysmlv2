@@ -18,7 +18,7 @@ component grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.SysM
   AnonymousPackage = "TODO";
 
   AliasPackagedDefinitionMember implements PackagedDefinitionMember =
-      ("import" | "alias") QualifiedName ("as" SysMLName) ";";
+      ("import" | "alias") QualifiedName ("as" SysMLName)? ";";
 
 
 
