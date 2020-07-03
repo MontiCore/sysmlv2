@@ -23,6 +23,6 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
 
 
   //Definition Memberships
-  NestedUsageMember = "TODO";
-
+  NestedUsageMember = StructureUsageMember | BehaviorUsageMember;
+  StructureUsageMember = NonPortStructureUsageMember | PortMember | ConjugatedPortMember;
 }

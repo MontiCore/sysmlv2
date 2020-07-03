@@ -17,7 +17,10 @@ component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.interf
   interface PortDefinition;
   interface AssociationBlock;
   interface AssociationUsageMember;
-  interface NestedDefinitionMember;
+
+  interface NestedDefinitionMember;  //Referenced by DefinitionBody:
+
+
   interface DefinitionMemberPrefix;
 
   //Not implemented interfaces yet
@@ -32,6 +35,11 @@ component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.interf
   interface ConjugatedPortUsage;
   interface AbstractConjugatedPortUsage;
 
+  interface BehaviorUsageMember;
+  interface NonPortStructureUsageMember;
+  interface PortMember;
+  interface ConjugatedPortMember;
+
 
 
   //Fake implementation TODO
@@ -45,4 +53,10 @@ component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.interf
   AbstractPortUsageStd implements AbstractPortUsage = "TODO";
   ConjugatedPortUsageStd implements ConjugatedPortUsage = "TODO";
   AbstractConjugatedPortUsageStd implements AbstractConjugatedPortUsage = "TODO";
+
+  BehaviorUsageMemberStd implements BehaviorUsageMember = "TODO";
+  NonPortStructureUsageMemberStd implements NonPortStructureUsageMember = "TODO";
+  PortMemberStd implements PortMember = "TODO";
+  ConjugatedPortMemberStd implements ConjugatedPortMember = "TODO";
+
 }

@@ -93,7 +93,110 @@ fileTree(grammarDir).matching { include '**/*.mc4' }.each {
     }
 }
 
-generateAssociations
+/*This is generated*/
+generateAD.dependsOn generateSysMLCommon
+
+generateAssociations.dependsOn generateSysMLCommonBasis
+
+generateClassifiers.dependsOn generateSysMLCommonBasis
+
+generateCommentsBasis
+generateImportBasis
+
+generateNamesBasis
+generatePackageBasis
+generateVisibilityBasis
+generatePorts.dependsOn generateSysMLCommonBasis
+
+generateSysMLCommon.dependsOn generateClassifiers
+generateSysMLCommon.dependsOn generateValueTypes
+generateSysMLCommon.dependsOn generateSysMLCommonBasis
+
+generateSysMLCommonBasis.dependsOn generateCommentsBasis
+generateSysMLCommonBasis.dependsOn generateLiteralsBasis
+generateSysMLCommonBasis.dependsOn generateNamesBasis
+generateSysMLCommonBasis.dependsOn generatePackageBasis
+generateSysMLCommonBasis.dependsOn generateImportBasis
+generateSysMLCommonBasis.dependsOn generateVisibilityBasis
+
+generateComments.dependsOn generateSysMLCommonBasis
+
+generateExpressions.dependsOn generateSysMLCommonBasis
+
+generateImportsAndPackages.dependsOn generateSysMLCommonBasis
+
+
+generateNames.dependsOn generateSysMLCommonBasis
+
+generateSysMLBasicsDefault.dependsOn generateComments
+generateSysMLBasicsDefault.dependsOn generateExpressions
+generateSysMLBasicsDefault.dependsOn generateImportsAndPackages
+generateSysMLBasicsDefault.dependsOn generateLiterals
+generateSysMLBasicsDefault.dependsOn generateNames
+generateSysMLBasicsDefault.dependsOn generateVisibility
+
+generateVisibility.dependsOn generateSysMLCommonBasis
+
+generateValueTypes.dependsOn generateSysMLCommonBasis
+
+generateBDD.dependsOn generateSysMLCommon
+
+generateIBD.dependsOn generateSysMLCommon
+
+generatePackageDiagram.dependsOn generateSysMLCommon
+
+generateParametricDiagram.dependsOn generateSysMLCommon
+
+generateRequirementDiagram.dependsOn generateSysMLCommon
+
+generateSD.dependsOn generateSysMLCommon
+
+generateSMD.dependsOn generateSysMLCommon
+
+generateSysML.dependsOn generateBDD
+generateSysML.dependsOn generateAD
+generateSysML.dependsOn generateSysMLBasicsDefault
+
+generateUseCaseDiagram.dependsOn generateSysMLCommon
+
+
+compileJava.dependsOn(
+        generateAD,
+        generateAssociations,
+        generateClassifiers,
+        generateCommentsBasis,
+        generateImportBasis,
+        generateLiteralsBasis,
+        generateNamesBasis,
+        generatePackageBasis,
+        generateVisibilityBasis,
+        generatePorts,
+        generateSysMLCommon,
+        generateSysMLCommonBasis,
+        generateComments,
+        generateExpressions,
+        generateImportsAndPackages,
+        generateLiterals,
+        generateNames,
+        generateSysMLBasicsDefault,
+        generateVisibility,
+        generateValueTypes,
+        generateBDD,
+        generateIBD,
+        generatePackageDiagram,
+        generateParametricDiagram,
+        generateRequirementDiagram,
+        generateSD,
+        generateSMD,
+        generateSysML,
+        generateUseCaseDiagram,
+)
+/*This was generated*/
+
+
+
+
+/*generateAssociations
 generateClassifiers
 generateCommentsBasis
 generateImportBasis
@@ -151,7 +254,7 @@ compileJava.dependsOn(
         generateSMD,
         generateSysML,
         generateUseCaseDiagram,
-)
+)*/
 
 
 tasks.withType(JavaCompile) {
