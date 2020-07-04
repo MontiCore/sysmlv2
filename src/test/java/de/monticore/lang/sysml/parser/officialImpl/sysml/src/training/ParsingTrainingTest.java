@@ -38,6 +38,6 @@ public class ParsingTrainingTest {
         fail("There was an exception when parsing the model " + model + ": " + e.getMessage());
       }
     }
-
   }
+
 }

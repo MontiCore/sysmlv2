@@ -11,7 +11,16 @@ It reuses MontiCore language.
 
 Also a Pretty Printer should be written. 
 
-#Useful commands
+#Useful commands Maven build
 
 mvn clean install (to build everything)
 mvn clean install -DskipTests
+
+#Useful commands Gradle build
+
+``
+gradle build
+``
+``
+gradle test -i --fail-fast
+`` (Enables Info logging and fast fail)
