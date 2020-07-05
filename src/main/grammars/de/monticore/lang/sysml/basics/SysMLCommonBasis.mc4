@@ -1,9 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.lang.sysml.basics;
+ package de.monticore.lang.sysml.basics;
 
 
-component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.interfaces.CommentsBasis,
- de.monticore.lang.sysml.basics.interfaces.LiteralsBasis,
+ component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.interfaces.CommentsBasis,
+  de.monticore.lang.sysml.basics.interfaces.LiteralsBasis,
  de.monticore.lang.sysml.basics.interfaces.NamesBasis,
  de.monticore.lang.sysml.basics.interfaces.PackageBasis,
  de.monticore.lang.sysml.basics.interfaces.ImportBasis,
@@ -22,6 +22,8 @@ component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.interf
 
 
   interface DefinitionMemberPrefix;
+  interface AbstractUsage;
+
 
   //Not implemented interfaces yet
   interface ActionUsage;

@@ -35,7 +35,7 @@ public class ParseAllTest {
     Log.enableFailQuick(true);
   }
 
-  private final String pathToDir= "C:\\Users\\robin\\Documents\\AAAAMasterarbeit\\Gits\\sysml2official\\src\\test\\resources\\examples\\officialPilotImplementation\\2020\\03\\sysml\\src\\training\\" ;
+  private final String pathToDir= "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src/training/";
 
   @Ignore
   @Test

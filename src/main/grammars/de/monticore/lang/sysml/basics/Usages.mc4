@@ -1,0 +1,47 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.basics;
+
+
+component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis{
+   SiMAbstractUsageStd implements AbstractUsage =
+     SiMUsageDeclaration UsageCompletion; //TODO make UsageCompletion abstract?
+
+   SiMUsageDeclaration = (SysMLName TypePart? SubsettingPart)
+    | (TypePart  SubsettingPart)
+    | (RedefinesKeyword Redefinition TypePart? SubsettingPart);
+    UsageCompletion = ValuePart? DefinitionBody;
+
+    ValuePart = FeatureValue+;
+    FeatureValue = Expression;
+    TypePart = (TypedByKeyword ((FeatureTyping || ",")+ | "any") MultiplicityPart? )
+      | MultiplicityPart;
+    TypedByKeyword = ":" | "typed" "by";
+    /*FeatureTyping returns SysML::FeatureTyping :
+      	type = [SysML::Type | QualifiedName]
+      ; TODO reference in MontiCore with @ and test this.*/
+    FeatureTyping = QualifiedName;
+
+    //TODO enable any order ( isOrdered ?= 'ordered'? & isNonunique ?= 'nonunique'? )
+    MultiplicityPart = MultiplicityMember ["ordered"]? ["nonunique"]?;
+
+
+    Multiplicity = "[" ((".." NaturalLiteralMember)? | UnlimitedNaturalLiteralMember) "]";
+
+    SubsettingPart = (Subsets ||",")+ | (Redefines || ",")+;
+
+    Subsets = SubsetsKeyword Subset+;
+    SubsetsKeyword = ":>" | "subsets";
+    Subset = QualifiedName; //TODO @SysML::Feature
+
+    Redefines = RedefinesKeyword Redefinition+;
+    RedefinesKeyword = ":>>" | "redefines";
+    Redefinition = QualifiedName; //TODO @SysML::Feature
+
+    //Usage Memberships
+    MultiplicityMember = Multiplicity;
+
+    //Remark: literal type is enforced by CoCo TODO write CoCo
+    //TODO unlimitedNat -> map this how?
+    NaturalLiteralMember = naturalLiteralExpression:Literal;
+    UnlimitedNaturalLiteralMember = unlimitedNaturalLiteralExpression:Literal;
+}
