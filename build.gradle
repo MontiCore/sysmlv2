@@ -1,4 +1,4 @@
- // (c) https://github.com/MontiCore/monticore
+// (c) https://github.com/MontiCore/monticore
 
 /* ============================================================ */
 /* ========================= Plugins ========================== */
@@ -48,6 +48,11 @@ buildDir = file("$projectDir/target")
 configurations { grammar }
 
 test {
+    /*maxHeapSize = '1G'
+    testLogging {
+        events "failed"
+        exceptionFormat "full"
+    }*/
     useJUnit()
 }
 
@@ -93,7 +98,7 @@ fileTree(grammarDir).matching { include '**/*.mc4' }.each {
     }
 }
 
- /*This is generated*/
+/*This is generated*/
 generateAD.dependsOn generateSysMLCommon
 
 generateAssociations.dependsOn generateSysMLCommonBasis
@@ -163,36 +168,36 @@ generateUseCaseDiagram.dependsOn generateSysMLCommon
 
 
 compileJava.dependsOn(
-generateAD,
-generateAssociations,
-generateClassifiers,
-generateCommentsBasis,
-generateImportBasis,
-generateLiteralsBasis,
-generateNamesBasis,
-generatePackageBasis,
-generateVisibilityBasis,
-generatePorts,
-generateSysMLCommon,
-generateSysMLCommonBasis,
-generateComments,
-generateExpressions,
-generateImportsAndPackages,
-generateLiterals,
-generateNames,
-generateSysMLBasicsDefault,
-generateVisibility,
-generateValueTypes,
-generateBDD,
-generateIBD,
-generateNotDistributed,
-generatePackageDiagram,
-generateParametricDiagram,
-generateRequirementDiagram,
-generateSD,
-generateSMD,
-generateSysML,
-generateUseCaseDiagram,
+        generateAD,
+        generateAssociations,
+        generateClassifiers,
+        generateCommentsBasis,
+        generateImportBasis,
+        generateLiteralsBasis,
+        generateNamesBasis,
+        generatePackageBasis,
+        generateVisibilityBasis,
+        generatePorts,
+        generateSysMLCommon,
+        generateSysMLCommonBasis,
+        generateComments,
+        generateExpressions,
+        generateImportsAndPackages,
+        generateLiterals,
+        generateNames,
+        generateSysMLBasicsDefault,
+        generateVisibility,
+        generateValueTypes,
+        generateBDD,
+        generateIBD,
+        generateNotDistributed,
+        generatePackageDiagram,
+        generateParametricDiagram,
+        generateRequirementDiagram,
+        generateSD,
+        generateSMD,
+        generateSysML,
+        generateUseCaseDiagram,
 )
 /*This was generated*/
 

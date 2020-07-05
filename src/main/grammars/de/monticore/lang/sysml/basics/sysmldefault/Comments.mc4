@@ -10,10 +10,11 @@ component grammar Comments extends de.monticore.lang.sysml.basics.SysMLCommonBas
   Annotation = "about" QualifiedName; //TODO {SysML::Annotation}
   UnitPrefixStd implements UnitPrefix = ("TODO")*;
 
-
   PrefixAnnotationStd implements PrefixAnnotation = Documentation+;
 
-  Documentation = ("comment" SysMLName?)? DocumentationComment;
+  //token namedComment = "comment" SysMLName : -> skip {storeComment();};
 
-  DocumentationComment = "TODO";//TODO should be '/**' -> '*/' => first enable this in the Parser.
+  Documentation = "comment" SysMLName? PackagedDefinitionMember; //TODO this a bad ast
+  //Documentation = ("comment" SysMLName?)? DocumentationComment;
+  //DocumentationComment = "TODO";//TODO should be '/**' -> '*/' => first enable this in the Parser.
 }

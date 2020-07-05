@@ -8,7 +8,7 @@ de.monticore.lang.sysml.AD,
  de.monticore.lang.sysml.basics.sysmldefault.SysMLBasicsDefault
 {
   //TODO extend more
-  SysMLRoot= Unit;
+  start Unit;
   Test = "test";
 
   PackagedUsageMemberTest implements PackagedUsageMember = "RemoveMe";//TODO

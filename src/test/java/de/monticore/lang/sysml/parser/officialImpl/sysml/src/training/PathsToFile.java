@@ -8,7 +8,7 @@ import java.util.List;
  * @version 1.0
  */
 public class PathsToFile {
-
+  //TODO can be remove
   private final String pathToTraining = "src/test/resources/examples" +
           "/officialPilotImplementation/2020/03/sysml/src/training/";
   private final String [] trainingSubPaths = {

@@ -19,8 +19,9 @@ mvn clean install -DskipTests
 #Useful commands Gradle build
 
 ``
-gradle build
-``
+gradle build -i 
+`` (Often shows the reason, any tests failed.)
+
 ``
 gradle test -i --fail-fast
 `` (Enables Info logging and fast fail)
