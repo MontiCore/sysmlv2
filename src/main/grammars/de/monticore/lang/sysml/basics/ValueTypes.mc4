@@ -9,10 +9,14 @@ component grammar ValueTypes extends de.monticore.lang.sysml.basics.SysMLCommonB
 
   ValueTypeDeclaration = ["abstract"]? "value" "type" ClassifierDeclarationCompletion;
 
+  //TODO ( direction = FeatureDirection )? for NonPortStructureUsageMember missing.
+  SiMValueProperty implements PackagedUsageMember, NonPortStructureUsageMember =
+    ["abstract"]? "value"? Usage;
 
-  SiMValueProperty implements PackagedUsageMember =
-    ["abstract"]? "value"? AbstractUsage;
-  SiMAbstractValueProperty = AbstractUsage;
+
+  SiMAbstractValueProperty = Usage;
+
+
 
 
 }

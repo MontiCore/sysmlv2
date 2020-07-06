@@ -17,12 +17,10 @@ component grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.SysM
 
   AnonymousPackage = "TODO";
 
+  //------------Imports--------------
+
   AliasPackagedDefinitionMember implements PackagedDefinitionMember =
       ("import" | "alias") QualifiedName ("as" SysMLName)? ";";
-
-
-
-
 
   //TODO how to do something like this in MC: importedPackage = [SysML::Package|Name]
   ImportUnitStd implements ImportUnit = PrefixAnnotation* (visibility:PackageElementVisibilityIndicator)?

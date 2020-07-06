@@ -3,12 +3,13 @@ package de.monticore.lang.sysml.basics;
 
 
 component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis{
-   SiMAbstractUsageStd implements AbstractUsage =
+   UsageStd implements Usage =
      SiMUsageDeclaration UsageCompletion; //TODO make UsageCompletion abstract?
 
    SiMUsageDeclaration = (SysMLName TypePart? SubsettingPart)
     | (TypePart  SubsettingPart)
     | (RedefinesKeyword Redefinition TypePart? SubsettingPart);
+
     UsageCompletion = ValuePart? DefinitionBody;
 
     ValuePart = FeatureValue+;
@@ -27,7 +28,7 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
 
     Multiplicity = "[" ((".." NaturalLiteralMember)? | UnlimitedNaturalLiteralMember) "]";
 
-    SubsettingPart = (Subsets ||",")+ | (Redefines || ",")+;
+    SubsettingPart = ((Subsets ||",")+ | (Redefines || ",")+)*;
 
     Subsets = SubsetsKeyword Subset+;
     SubsetsKeyword = ":>" | "subsets";

@@ -22,7 +22,7 @@
 
 
   interface DefinitionMemberPrefix;
-  interface AbstractUsage;
+  interface Usage;
 
 
   //Not implemented interfaces yet
