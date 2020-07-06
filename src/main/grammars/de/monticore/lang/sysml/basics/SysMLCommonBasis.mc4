@@ -7,7 +7,9 @@
  de.monticore.lang.sysml.basics.interfaces.NamesBasis,
  de.monticore.lang.sysml.basics.interfaces.PackageBasis,
  de.monticore.lang.sysml.basics.interfaces.ImportBasis,
- de.monticore.lang.sysml.basics.interfaces.VisibilityBasis{
+ de.monticore.lang.sysml.basics.interfaces.VisibilityBasis,
+ de.monticore.expressions.ExpressionsBasis //TODO put this into a another grammar like literals?
+ {
 
 //TODO split into Basic Interfaces and CommonInterfaces ?
   interface Unit;
@@ -28,10 +30,6 @@
   //Not implemented interfaces yet
   interface ActionUsage;
    interface AbstractActionUsage;
-  interface PartProperty;
-  interface AbstractPartProperty;
-  interface ReferenceProperty;
-  interface AbstractReferenceProperty;
   interface PortUsage;
   interface AbstractPortUsage;
   interface ConjugatedPortUsage;
@@ -47,10 +45,6 @@
   //Fake implementation TODO
   ActionUsageStd implements ActionUsage = "TODO";
   AbstractActionUsageStd implements AbstractActionUsage = "TODO";
-  PartPropertyStd implements PartProperty = "TODO";
-  AbstractPartPropertyStd implements AbstractPartProperty = "TODO";
-  ReferencePropertyStd implements ReferenceProperty = "TODO";
-  AbstractReferencePropertyStd implements AbstractReferenceProperty = "TODO";
   PortUsageStd implements PortUsage = "TODO";
   AbstractPortUsageStd implements AbstractPortUsage = "TODO";
   ConjugatedPortUsageStd implements ConjugatedPortUsage = "TODO";
@@ -60,5 +54,7 @@
   NonPortStructureUsageMemberStd implements NonPortStructureUsageMember = "TODO";
   PortMemberStd implements PortMember = "TODO";
   ConjugatedPortMemberStd implements ConjugatedPortMember = "TODO";
+
+  AssociationUsageMemberStd implements AssociationUsageMember = "TODO";
 
 }

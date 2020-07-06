@@ -20,7 +20,8 @@ component grammar Associations extends de.monticore.lang.sysml.basics.SysMLCommo
   //NestedUsageMember is implemented in SysMLCommon
 
   //TODO do we need something like this:  ownedMemberFeature_comp = AbstractActionUsage
-  AssociationEndMember implements AssociationUsageMember= DefinitionMemberPrefix
+  //TODO put this as an interface
+  /*AssociationEndMember implements AssociationUsageMember= DefinitionMemberPrefix
     (
       "end" (isComposite:"part")? PartProperty
       | "abstract" "end"  (isComposite:"part")? AbstractPartProperty //This abstract and then having exactly the same, just abstract, is notperfect //TODO
@@ -29,7 +30,7 @@ component grammar Associations extends de.monticore.lang.sysml.basics.SysMLCommo
       | "end" ("ref" "action" | (isComposite:"action")? ) ActionUsage // TODO define ActionUsage
       | "abstract" "end" ("ref" "action" | (isComposite:"action")? ) AbstractActionUsage
     )
-  ;
+  ;*/
 
   EndPortMember = DefinitionMemberPrefix
     (

@@ -4,7 +4,30 @@ package de.monticore.lang.sysml;
 
 component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon {
   
-  IBD = "ibd" SysMLName;
+  //IBD = "ibd" SysMLName;
+
+
+  PartUnit implements Unit = UnitPrefix PartDeclaration UsageCompletion;
+  PartDeclaration = ["abstract"]? "part" SysMLName TypePart SubsettingPart;
+
+
+ //TODO isComposite ?=  for NonPortStructureUsageMember
+  PartNonPortStructureUsageMember implements NonPortStructureUsageMember =
+    "part" PartProperty;
+  PartPackagedUsageMember implements PackagedUsageMember =
+    "part" PartProperty;
+
+
+  PartProperty = Usage;
+
+  //TODO is this BDD?
+
+  //TOdO FeatureDirection
+  ReferencePropertyNonPortStructureUsageMember implements NonPortStructureUsageMember =
+    "ref" ReferenceProperty;
+
+  ReferenceProperty = Usage;
+
 
   //Part = ["abstract"]? "part" PartProperty; //Remark: combining abstract and non-abstract element of line 264-265
   //PartProperty = Usage;
