@@ -23,7 +23,6 @@ public class ParseAllTest {
     SysMLParser parser = new SysMLParser();
     Path model = Paths.get(path);
     try {
-      //TODO does not work with gradle..........................................
       Optional<ASTUnit> sysmlPackage = parser.parse(model.toString());
       //assertFalse(parser.hasErrors());
       //assertTrue(sysmlPackage.isPresent());
@@ -32,7 +31,6 @@ public class ParseAllTest {
       //e.printStackTrace();
       //fail("There was an exception when parsing the model " + model + ": " + e.getMessage());
     }
-    Log.enableFailQuick(true);
   }
 
   private final String pathToDir= "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src/training/";

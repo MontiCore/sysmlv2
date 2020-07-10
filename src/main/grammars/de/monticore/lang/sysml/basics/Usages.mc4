@@ -4,7 +4,7 @@ package de.monticore.lang.sysml.basics;
 
 component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis{
    UsageStd implements Usage =
-     SiMUsageDeclaration UsageCompletion; //TODO make UsageCompletion abstract?
+     SiMUsageDeclaration UsageCompletion;
 
    SiMUsageDeclaration = (SysMLName TypePart? SubsettingPart)
     | (TypePart  SubsettingPart)
@@ -26,7 +26,7 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
     MultiplicityPart = MultiplicityMember ["ordered"]? ["nonunique"]?;
 
 
-    Multiplicity = "[" ((".." NaturalLiteralMember)? | UnlimitedNaturalLiteralMember) "]";
+    Multiplicity = "[" (( NaturalLiteralMember "..")? UnlimitedNaturalLiteralMember) "]";
 
     SubsettingPart = ((Subsets ||",")+ | (Redefines || ",")+)*;
 
@@ -44,5 +44,5 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
     //Remark: literal type is enforced by CoCo TODO write CoCo
     //TODO unlimitedNat -> map this how?
     NaturalLiteralMember = naturalLiteralExpression:Literal;
-    UnlimitedNaturalLiteralMember = unlimitedNaturalLiteralExpression:Literal;
+    UnlimitedNaturalLiteralMember = unlimitedNaturalLiteralExpression:Literal | isUnlimited:["*"];
 }
