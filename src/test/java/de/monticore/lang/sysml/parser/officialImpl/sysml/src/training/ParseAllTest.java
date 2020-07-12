@@ -52,13 +52,13 @@ public class ParseAllTest {
     this.parseSysML( pathToDir +  "02. Blocks\\Blocks Example.sysml");
   }
 
-  @Ignore
+
   @Test
   public void parse03_Generalization_Generalization_ExampleTest(){
     this.parseSysML( pathToDir +  "03. Generalization\\Generalization Example.sysml");
   }
 
-  @Ignore
+
   @Test
   public void parse04_Subsetting_Subsetting_ExampleTest(){
     this.parseSysML( pathToDir +  "04. Subsetting\\Subsetting Example.sysml");

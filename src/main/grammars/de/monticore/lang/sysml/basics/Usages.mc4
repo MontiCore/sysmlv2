@@ -26,7 +26,12 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
     MultiplicityPart = MultiplicityMember ["ordered"]? ["nonunique"]?;
 
 
-    Multiplicity = "[" (( NaturalLiteralMember "..")? UnlimitedNaturalLiteralMember) "]";
+    //Multiplicity = "[" ( NaturalLiteralMember "..")? UnlimitedNaturalLiteralMember "]";
+    //Multiplicity = "[" ( NaturalLiteralMember "..")? (SysMLNatNumber "..")? UnlimitedNaturalLiteralMember "]";
+    //Multiplicity = "[" ((NaturalLiteralMember "..")? UnlimitedNaturalLiteralMember) "]";
+    Multiplicity = "[" ((FromToDigitsDotDot)? UnlimitedNaturalLiteralMember) "]";
+    //token SysMLNatNumber = Digits;
+    token FromToDigitsDotDot = Digits ".."; //TODO is this clean?
 
     SubsettingPart = ((Subsets ||",")+ | (Redefines || ",")+)*;
 
