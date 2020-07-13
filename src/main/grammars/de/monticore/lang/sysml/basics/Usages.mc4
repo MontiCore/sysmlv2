@@ -31,7 +31,7 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
     //Multiplicity = "[" ((NaturalLiteralMember "..")? UnlimitedNaturalLiteralMember) "]";
     Multiplicity = "[" ((FromToDigitsDotDot)? UnlimitedNaturalLiteralMember) "]";
     //token SysMLNatNumber = Digits;
-    token FromToDigitsDotDot = Digits ".."; //TODO is this clean?
+    token FromToDigitsDotDot = ('0'..'9')+ ".."; //TODO is this clean?
 
     SubsettingPart = ((Subsets ||",")+ | (Redefines || ",")+)*;
 
