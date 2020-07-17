@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics.sysmldefault;
 
-//TODO not finished
-//TODO no tests yet
 component grammar Comments extends de.monticore.lang.sysml.basics.SysMLCommonBasis{
 
   /*Remark actually "comment" SysMLName? (Annotation+ | EmptyAnnotation) ML_Comment
