@@ -23,7 +23,7 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
     FeatureTyping = QualifiedName;
 
     //TODO enable any order ( isOrdered ?= 'ordered'? & isNonunique ?= 'nonunique'? )
-    MultiplicityPart = MultiplicityMember ["ordered"]? ["nonunique"]?;
+    MultiplicityPart = MultiplicityMember (["ordered"] | ["nonunique"])*; //Ast RUles TODO only once
 
 
     //Multiplicity = "[" ( NaturalLiteralMember "..")? UnlimitedNaturalLiteralMember "]";
@@ -31,7 +31,7 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
     //Multiplicity = "[" ((NaturalLiteralMember "..")? UnlimitedNaturalLiteralMember) "]";
     Multiplicity = "[" ((FromToDigitsDotDot)? UnlimitedNaturalLiteralMember) "]";
     //token SysMLNatNumber = Digits;
-    token FromToDigitsDotDot = ('0'..'9')+ ".."; //TODO is this clean?
+    token FromToDigitsDotDot = ('0'..'9')+ ".."; //TODO is this clean? //TODO noSpace(2) "." "." command
 
     SubsettingPart = ((Subsets ||",")+ | (Redefines || ",")+)*;
 
