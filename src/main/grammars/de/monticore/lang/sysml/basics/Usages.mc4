@@ -3,53 +3,65 @@ package de.monticore.lang.sysml.basics;
 
 
 component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis{
-   UsageStd implements Usage =
-     SiMUsageDeclaration UsageCompletion;
+  UsageStd implements Usage =
+     UsageDeclaration UsageCompletion;
 
-   SiMUsageDeclaration = (SysMLName TypePart? SubsettingPart)
+  UsageDeclaration = (SysMLName TypePart? SubsettingPart)
     | (TypePart  SubsettingPart)
     | (RedefinesKeyword Redefinition TypePart? SubsettingPart);
 
-    UsageCompletion = DefinitionBody;
+  UsageCompletion = DefinitionBody;
     //UsageCompletion = ValuePart? DefinitionBody; TODO add ValuePart, if FeatureValue is fixed.
 
-    ValuePart = FeatureValue+;
-    FeatureValue = Expression; //TODO expressions cannot be used like this, because else something like
-    //TODO value mass : Real asd; (<--asd is problematic) is possible.
-    TypePart = (TypedByKeyword ((FeatureTyping || ",")+ | "any") MultiplicityPart? )
-      | MultiplicityPart;
-    TypedByKeyword = ":" | "typed" "by";
-    /*FeatureTyping returns SysML::FeatureTyping :
-      	type = [SysML::Type | QualifiedName]
-      ; TODO reference in MontiCore with @ and test this.*/
-    FeatureTyping = QualifiedName;
+  ValuePart = FeatureValue+;
+  FeatureValue = Expression; //TODO expressions cannot be used like this, because else something like
+  //TODO value mass : Real asd; (<--asd is problematic) is possible.
+  TypePart = (TypedByKeyword ((FeatureTyping || ",")+ | "any") MultiplicityPart? )
+    | MultiplicityPart;
+  TypedByKeyword = ":" | "typed" "by";
+  /*FeatureTyping returns SysML::FeatureTyping :
+    	type = [SysML::Type | QualifiedName]
+    ; TODO reference in MontiCore with @ and test this.*/
+  FeatureTyping = QualifiedName;
+   //TODO enable any order ( isOrdered ?= 'ordered'? & isNonunique ?= 'nonunique'? )
+  MultiplicityPart = MultiplicityMember (["ordered"] | ["nonunique"])*; //Ast RUles TODO only once
 
-    //TODO enable any order ( isOrdered ?= 'ordered'? & isNonunique ?= 'nonunique'? )
-    MultiplicityPart = MultiplicityMember (["ordered"] | ["nonunique"])*; //Ast RUles TODO only once
+  Multiplicity = "[" ((FromToDigitsDotDot)? UnlimitedNaturalLiteralMember) "]";
+
+  token FromToDigitsDotDot = ('0'..'9')+ ".."; //TODO noSpace(2) "." "." command
+
+  SubsettingPart = ((Subsets ||",")+ | (Redefines || ",")+)*;
+
+  Subsets = SubsetsKeyword Subset+;
+  SubsetsKeyword = ":>" | "subsets";
+  Subset = QualifiedName; //TODO @SysML::Feature
+
+  Redefines = RedefinesKeyword Redefinition+;
+  RedefinesKeyword = ":>>" | "redefines";
+  Redefinition = QualifiedName; //TODO @SysML::Feature
+
+  //Usage Memberships
+  MultiplicityMember = Multiplicity;
+
+  //Remark: literal type is enforced by CoCo TODO write CoCo
+  //TODO unlimitedNat -> map this how?
+  NaturalLiteralMember = naturalLiteralExpression:Literal;
+  UnlimitedNaturalLiteralMember = unlimitedNaturalLiteralExpression:Literal | isUnlimited:["*"];
 
 
-    //Multiplicity = "[" ( NaturalLiteralMember "..")? UnlimitedNaturalLiteralMember "]";
-    //Multiplicity = "[" ( NaturalLiteralMember "..")? (SysMLNatNumber "..")? UnlimitedNaturalLiteralMember "]";
-    //Multiplicity = "[" ((NaturalLiteralMember "..")? UnlimitedNaturalLiteralMember) "]";
-    Multiplicity = "[" ((FromToDigitsDotDot)? UnlimitedNaturalLiteralMember) "]";
-    //token SysMLNatNumber = Digits;
-    token FromToDigitsDotDot = ('0'..'9')+ ".."; //TODO is this clean? //TODO noSpace(2) "." "." command
 
-    SubsettingPart = ((Subsets ||",")+ | (Redefines || ",")+)*;
+  //TODO later decide to put Individuals in own FILE
+  //------------------------------------------------------------
+  //-----------------------Individuals--------------------------
+  //------------------------------------------------------------
+  IndividualUsage = Usage;
+  TimeSliceUsage = UsageDeclaration UsageCompletion; //Remark: Can be abstract.
+  //TimeSliceUsage = UsageDeclaration TimeSliceFeatureMember+ UsageCompletion; //Remark: Can be abstract.
+  //TimeSliceFeature = {SysML::TimeSliceFeature} TODO and enable
+  SnapshotUsage = UsageDeclaration UsageCompletion; //Remark: Can be abstract.
+  //SnapshotUsage = UsageDeclaration SnapshotFeatureMember* UsageCompletion; //Remark: Can be abstract.
+  //{SysML::SnapshotFeature} TODO and enable
 
-    Subsets = SubsetsKeyword Subset+;
-    SubsetsKeyword = ":>" | "subsets";
-    Subset = QualifiedName; //TODO @SysML::Feature
-
-    Redefines = RedefinesKeyword Redefinition+;
-    RedefinesKeyword = ":>>" | "redefines";
-    Redefinition = QualifiedName; //TODO @SysML::Feature
-
-    //Usage Memberships
-    MultiplicityMember = Multiplicity;
-
-    //Remark: literal type is enforced by CoCo TODO write CoCo
-    //TODO unlimitedNat -> map this how?
-    NaturalLiteralMember = naturalLiteralExpression:Literal;
-    UnlimitedNaturalLiteralMember = unlimitedNaturalLiteralExpression:Literal | isUnlimited:["*"];
+  //TimeSliceFeatureMember = TimeSliceFeature; TODO
+  //SnapshotFeatureMember = SnapshotFeature;
 }

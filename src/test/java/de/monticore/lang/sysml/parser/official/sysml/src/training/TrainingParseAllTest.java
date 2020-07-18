@@ -1,7 +1,8 @@
-package de.monticore.lang.sysml.parser.officialImpl.sysml.src.training;
+package de.monticore.lang.sysml.parser.official.sysml.src.training;
 
 import de.monticore.lang.sysml.basics.sysmlcommonbasis._ast.ASTUnit;
 import de.monticore.lang.sysml.sysml._parser.SysMLParser;
+import de.monticore.lang.sysml.utils.SysMLParserForTesting;
 import de.se_rwth.commons.logging.Log;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -17,25 +18,30 @@ import static org.junit.Assert.*;
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class ParseAllTest {
-  public void parseSysML(String path){
+public class TrainingParseAllTest {
+  /* TODO delete public void parseSysML(String path){
     Log.enableFailQuick(false);
     SysMLParser parser = new SysMLParser();
     Path model = Paths.get(path);
     try {
       Optional<ASTUnit> sysmlPackage = parser.parse(model.toString());
-      //assertFalse(parser.hasErrors());
-      //assertTrue(sysmlPackage.isPresent());
+      assertFalse(parser.hasErrors());
+      assertTrue(sysmlPackage.isPresent());
 
     }catch( IOException e){
-      //e.printStackTrace();
-      //fail("There was an exception when parsing the model " + model + ": " + e.getMessage());
+      e.printStackTrace();
+      fail("There was an exception when parsing the model " + model + ": " + e.getMessage());
     }
+  }*/
+
+  public void parseSysML(String path){
+    SysMLParserForTesting parser = new SysMLParserForTesting();
+    parser.parseSysML(path);
   }
 
   private final String pathToDir= "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src/training/";
 
-  @Ignore
+
   @Test
   public void parse01_Packages_Comment_ExampleTest(){
     this.parseSysML( pathToDir +  "01. Packages\\Comment Example.sysml");
@@ -64,19 +70,19 @@ public class ParseAllTest {
     this.parseSysML( pathToDir +  "04. Subsetting\\Subsetting Example.sysml");
   }
 
-  @Ignore
+
   @Test
   public void parse05_Redefinition_Redefinition_ExampleTest(){
     this.parseSysML( pathToDir +  "05. Redefinition\\Redefinition Example.sysml");
   }
 
-  @Ignore
+
   @Test
   public void parse06_Parts_Parts_Example_1Test(){
     this.parseSysML( pathToDir +  "06. Parts\\Parts Example-1.sysml");
   }
 
-  @Ignore
+
   @Test
   public void parse06_Parts_Parts_Example_2Test(){
     this.parseSysML( pathToDir +  "06. Parts\\Parts Example-2.sysml");
