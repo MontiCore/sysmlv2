@@ -27,13 +27,11 @@
   interface Usage;
 
 
-  //Not implemented interfaces yet
   interface ActionUsage;
-   interface AbstractActionUsage;
+  interface AbstractActionUsage;
   interface PortUsage;
   interface AbstractPortUsage;
   interface ConjugatedPortUsage;
-  interface AbstractConjugatedPortUsage;
 
   interface BehaviorUsageMember;
   interface NonPortStructureUsageMember;
@@ -45,10 +43,7 @@
   //Fake implementation TODO
   ActionUsageStd implements ActionUsage = "TODO";
   AbstractActionUsageStd implements AbstractActionUsage = "TODO";
-  PortUsageStd implements PortUsage = "TODO";
   AbstractPortUsageStd implements AbstractPortUsage = "TODO";
-  ConjugatedPortUsageStd implements ConjugatedPortUsage = "TODO";
-  AbstractConjugatedPortUsageStd implements AbstractConjugatedPortUsage = "TODO";
 
   BehaviorUsageMemberStd implements BehaviorUsageMember = "TODO";
   NonPortStructureUsageMemberStd implements NonPortStructureUsageMember = "TODO";

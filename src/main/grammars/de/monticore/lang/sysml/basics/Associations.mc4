@@ -42,7 +42,7 @@ component grammar Associations extends de.monticore.lang.sysml.basics.SysMLCommo
   ConjugatedEndPortMember = DefinitionMemberPrefix
     (
       "end" ["port"]? ConjugatedPortUsage
-      | "abstract" "end" "port" AbstractConjugatedPortUsage
+      | "abstract" "end" "port" ConjugatedPortUsage
     )
   ;
 }

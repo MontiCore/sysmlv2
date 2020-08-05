@@ -55,13 +55,13 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
   //-----------------------Individuals--------------------------
   //------------------------------------------------------------
   IndividualUsage = Usage;
-  TimeSliceUsage = UsageDeclaration UsageCompletion; //Remark: Can be abstract.
-  //TimeSliceUsage = UsageDeclaration TimeSliceFeatureMember+ UsageCompletion; //Remark: Can be abstract.
-  //TimeSliceFeature = {SysML::TimeSliceFeature} TODO and enable
-  SnapshotUsage = UsageDeclaration UsageCompletion; //Remark: Can be abstract.
-  //SnapshotUsage = UsageDeclaration SnapshotFeatureMember* UsageCompletion; //Remark: Can be abstract.
-  //{SysML::SnapshotFeature} TODO and enable
+  TimeSliceUsage = UsageDeclaration TimeSliceFeatureMember+ UsageCompletion; //Remark: Can be abstract.
+  TimeSliceFeature = SysMLName; //{SysML::TimeSliceFeature} TODO and enable
+  SnapshotUsage = UsageDeclaration SnapshotFeatureMember+ UsageCompletion; //Remark: Can be abstract.
+  SnapshotFeature = SysMLName; //{SysML::SnapshotFeature} TODO and enable
 
-  //TimeSliceFeatureMember = TimeSliceFeature; TODO
-  //SnapshotFeatureMember = SnapshotFeature;
+  /* INDIVIDUAL MEMBERSHIPS */
+
+  TimeSliceFeatureMember = TimeSliceFeature;
+  SnapshotFeatureMember = SnapshotFeature;
 }

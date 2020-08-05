@@ -1,16 +1,81 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics;
 
-component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis{
+component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
+  de.monticore.lang.sysml.basics.Usages {
   //Remark see ll.393-417 in Xtext
   PortDefinitionStd implements PortDefinition = PortDeclaration DefinitionBody;
   PortDeclaration = ["abstract"]? "port" "def" ClassifierDeclarationCompletion ConjugatedPortDefinitionMember;
   ConjugatedPortDefinition = PortConjugation;
+
 
   PortConjugation = "TODO"; //TODO PortConjugation returns SysML::PortConjugation :
                                    //	{SysML::PortConjugation}
                                    //;
 
   ConjugatedPortDefinitionMember = ConjugatedPortDefinition;
+
+  /* PORT USAGE */
+
+  PortUsageStd implements PortUsage = Usage;
+  ConjugatedPortUsageStd implements ConjugatedPortUsage= ConjugatePortUsageDeclaration UsageCompletion;
+  ConjugatePortUsageDeclaration =
+    ( name:SysMLName? ConjugatePortTypePart MultiplicityPart? SubsettingPart)
+    | (RedefinesKeyword ownedRelationship_comp:Redefinition ConjugatePortTypePart
+    MultiplicityPart SubsettingPart);
+  ConjugatePortTypePart = TypedByKeyword "~" ConjugatedPortTyping; //TypedByKeyword is defined in Usages
+  ConjugatedPortTyping = SysMLName; // Remark: [SysML::PortDefinition | QualifiedName]
+
+  /* Connectors */
+  Connector = ConnectionPart AssociationBlockBody;
+  ConnectionUsage = UsageDeclaration "connect" ConnectionPart AssociationBlockBody;
+  ConnectionPart =  ownedFeatureMembership_compFrom:ConnectorEndMember 'to'
+      ownedFeatureMembership_compTo:ConnectorEndMember
+      | ("(" ownedFeatureMembership_comp:ConnectorEndMember || ",")+ //TODO coco should be >2
+       ")");
+  ConnectorEnd = Subset+ MultiplicityMember?;
+
+  MultiplicitySourceEnd = SysMLName MultiplicityMember;
+  EmptySourceEnd = SysMLName;
+  EmptyTargetEnd = SysMLName;
+
+  /*MultiplicitySourceEnd returns SysML::Feature :
+  	{SysML::SourceEnd} (  ownedFeatureMembership_comp += MultiplicityMember )?
+  ;
+
+  EmptySourceEnd returns SysML::Feature :
+  	{SysML::SourceEnd}
+  ;
+
+  EmptyTargetEnd returns SysML::Feature :
+  	{SysML::TargetEnd}
+  ;*/ //TODO
+  /* CONNECTOR MEMBERSHIPS */
+  ConnectorEndMember = (memberName:SysMLName "=>" )? ConnectorEnd;
+  MultiplicitySourceEndMember = MultiplicitySourceEnd;
+  EmptySourceEndMember = EmptySourceEnd;
+  EmptyTargetEndMember = EmptyTargetEnd;
+
+  /* INTERFACE CONNECTORS */
+  InterfaceUsage = UsageDeclaration "connect" ConnectionPart InterfaceBody;
+
+  /* INTERFACE DEFINITIONS */
+  InterfaceDefinition = InterfaceDeclaration InterfaceBody;
+  InterfaceDeclaration = ["abstract"]? "interface" "def" ClassifierDeclarationCompletion;
+  InterfaceBody = ";" |
+    "{"
+     (NestedDefinitionMember+ | InterfaceUsageMember+ | Import)*
+    "}";
+
+  /* INTERFACE DEFINITION MEMBERSHIPS */
+
+  InterfaceUsageMember = NestedUsageMember | InterfaceEndMember | ConjugatedInterfaceEndMember ;
+  InterfaceEndMember = DefinitionMemberPrefix
+    ( [abstract]? isPort:["end"]? "port"? PortUsage);
+
+  ConjugatedInterfaceEndMember = DefinitionMemberPrefix
+    ([abstract]? isPort:["end"]? "port"? ConjugatedPortUsage);
+
+
 }
 
