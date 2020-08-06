@@ -51,9 +51,24 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
 
 
   //TODO later decide to put Individuals in own FILE
+
+
+
   //------------------------------------------------------------
   //-----------------------Individuals--------------------------
   //------------------------------------------------------------
+  IndividualDefinitionUnit = UnitPrefix IndividualDefinition;
+
+  /* Individual Definitions */
+
+  IndividualDefinition = IndividualDefDeclaration DefinitionBody;
+  IndividualDefDeclaration = ["abstract"]? "individual" "def" ClassifierDeclarationCompletion
+    LifeClassMembership+;
+  LifeClass = SysMLName; //TODO {SysML::LifeClass}
+  /* INDIVIDUAL DEFINITION MEMBERSHIPS */
+  LifeClassMembership = LifeClass;
+
+  /*Individuals*/
   IndividualUsage = Usage;
   TimeSliceUsage = UsageDeclaration TimeSliceFeatureMember+ UsageCompletion; //Remark: Can be abstract.
   TimeSliceFeature = SysMLName; //{SysML::TimeSliceFeature} TODO and enable

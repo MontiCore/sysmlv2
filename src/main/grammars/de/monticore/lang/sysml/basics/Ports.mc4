@@ -57,8 +57,13 @@ component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
   EmptySourceEndMember = EmptySourceEnd;
   EmptyTargetEndMember = EmptyTargetEnd;
 
+
+
   /* INTERFACE CONNECTORS */
   InterfaceUsage = UsageDeclaration "connect" ConnectionPart InterfaceBody;
+
+  //TODO Own File for Interfaces
+  InterfaceDefinitionUnit = UnitPrefix InterfaceDefinition;
 
   /* INTERFACE DEFINITIONS */
   InterfaceDefinition = InterfaceDeclaration InterfaceBody;

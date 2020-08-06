@@ -4,5 +4,22 @@ package de.monticore.lang.sysml;
 
 component grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysMLCommon {
   
-  Requirement = "requirement" SysMLName;
+  RequirementDefinition = RequirementDefDeclaration RequirementBody;
+  RequirementDefDeclaration = ["abstract"]? "requirement" "def" ("id" reqId:SysMLName)? name:SysMLName
+    RequirementDefParameterList EmptyReturnParameterPart SuperClassingList?;
+  RequirementDefParameterList = EmptyParameterMember
+    | ( "(" EmptyParameterMember+ ")")
+    | ( "(" (ParameterMember || ",")+ ")";
+  RequirementBody = ";" | ( "{" RequirementMembers "}" );
+  RequirementMembers =
+    (NestedDefinitionMember+ | NestedUsageMember+ | ImportUnit+ | RequirementConstraintMember+);
+
+  RequirementConstraintMember = ((( name:SysMLName)? TypePart? "as")? Subset | "constraint" (name:SysMLName)? TypePart?)
+     ConstraintParameterPart ConstraintBody;
+
+  /* REQUIREMENT DEFINITION MEMBERSHIPS */
+
+  RequirementConstraintMember = RequirementConstraintKind;
+  RequirementConstraintKind = assumption:["assume"] | requirement:["require"];
+
 }

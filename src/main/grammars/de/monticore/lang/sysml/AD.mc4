@@ -4,5 +4,183 @@ package de.monticore.lang.sysml;
 
 component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   
-  AD = "ad" SysMLName;
+  ActivityUnit implements Unit = UnitPrefix Activity;
+
+  /*Activities*/
+  Activity = ActivityDeclaration ActivityBody;
+
+  ActivityDeclaration = ["abstract"]? "activity" name:SysMLName ParameterList? SuperclassingList?;
+  ParameterList = "(" (ParameterMember || "," )+ ")";
+
+  ActivityBody = ";" | ("{" ActivityBodyItem* "}"); /*
+  // Note: Using a syntactic predicate here seems to avoid a possible infinite loop
+  		// while incrementally parsing.
+  	  | '{' => ActivityBodyItem* '}'
+  	  TODO check if this  "=>" is also necessary here. */
+
+  // interface ActivityBodyItem; TODO make item interface
+  ActivityBodyItem =
+    NestedDefinitionMember
+    | StructureUsageMember
+    | InitialNodeMember+ (TargetSuccessionMember )*
+    | (EmptySuccessionMember+ )? ActivityNodeMember+ ( TargetSuccessionMember+ )*
+    | GuardedSuccessionMember+
+    | ImportUnit;
+  /* ACTIVITIY MEMBERSHIPS */
+  ParameterMember = direction:FeatureDirection? memberName:SysMLName Parameter;
+  InitialNodeMember = DefinitionMemberPrefix "first" memberFeature:QualifiedName ";";
+  ActivityNodeMember = DefinitionMemberPrefix ActivityNode;
+  TargetSuccessionMember = DefinitionMemberPrefix ActivityNode;
+  GuardedSuccessionMember = GuardedSuccession;
+
+  /* STATE DEFINITIONS */
+  StateDefinitionUnit implements Unit = UnitPrefix StateDefinition;
+  StateDefinition = StateDefDeclaration StateBody;
+  StateDefDeclaration = ["abstract"]? "state" "def" name:SysMLName ParameterList? SuperclassingList?;
+  StateBody = ";" | "{" StateBodyPart "}";
+  StateBodyPart = (EntryActionMember (EntryTransitionMember)*)? DoActionMember? ExitActionMember? StateBodyItem*;
+  // Note: Using a syntactic predicate here seems to avoid a possible infinite loop
+  // while incrementally parsing. TODO check necessary => StateBodyItem*
+  StateBodyItem = NestedDefinitionMember
+    | StructureUsageMember
+    | StateMember+ (TargetTransitionSuccessionMember )*
+    | TransitionStepMember
+    | ImportUnit;
+  StateActionUsage = (EmptyActionUsage ";") | PerformedActionUsage ActivityBody;
+  PerformedActionUsage = PerformActionUsageDeclaration | AcceptActionNodeDeclaration | SendActionNodeDeclaration;
+  EmptyActionUsage = SysMLName; //TODO 	{SysML::ActionUsage}
+
+  /* STATE MEMBERSHIPS */
+
+  EntryActionMember = DefinitionMemberPrefix kind:EntryActionKind StateActionUsage;
+  EntryActionKind = "entry";
+  DoActionMember = DefinitionMemberPrefix kind:DoActionKind StateActionUsage;
+  DoActionKind = "do";
+  ExitActionMember = DefinitionMemberPrefix kind:ExitActionKind StateActionUsage;
+  ExitActionKind = "exit";
+
+  StateMember = DefinitionMemberPrefix ["abstract"]? ("ref" "state" | isComposite:["state"]) StateUsage;
+  EntryTransitionMember = DefinitionMemberPrefix (GuardedTargetSuccession | "then" TransitionSuccession ) ";";
+
+  TargetTransitionSuccessionMember =  DefinitionMemberPrefix TargetTransitionStep ";";
+  TransitionStepMember = DefinitionMemberPrefix TransitionStep ";";
+
+
+  //TODO where does Action belong????
+  /* ACTIONS */
+  ActionUnit implements Unit = UnitPrefix ActionDeclaration ActivityBody;
+  ActionDeclaration = ["abstract"]? "action" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
+  ActionUsage =  SysMLName ActionUsageDeclaration ActivityBody;
+  //TODO
+  /*ActionUsage returns SysML::ActionUsage :
+           	{SysML::ActionUsage} ActionUsageDeclaration ActivityBody
+           ;*/
+           /* TODO do we need to differentiate to AbstractActionUsage returns SysML::ActionUsage :
+                                                  	ActionUsageDeclaration AbstractActivityBody
+                                                  ;*/
+  ActionUsageDeclaration = (name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?)
+    | (TypePart? ActionParameterList? ValuePart?)
+    | (RedefinesKeyword Redefinition+ TypePart ActionParameterList? ValuePart?;
+
+  ActionParameterList = "(" ( ActionParameterMember+ ActionParameterFlowMember? || ",")* ")";
+  //TODO
+    /*  ActionParameter returns SysML::Parameter :
+       	{SysML::Parameter} ParameterTypePart? ValuePart?
+         ;
+
+         ActionParameterFlow returns SysML::ItemFlow :
+         	( 'stream' | {SysML::SuccessionItemFlow} 'flow' ) ownedFeatureMembership_comp += EmptyItemFeatureMember
+         	'from' ownedFeatureMembership_comp += ItemFlowEndMember
+         ;*/
+  ActionParameter = SysMLName ParameterTypePart? ValuePart?;
+  ActionParameterFlow = ("stream" | SysMLName "flow") EmptyItemFeatureMember+ "from" ItemFlowEndMember+;
+  PerformActionUsage = PerformActionUsageDeclaration ActivityBody;
+  PerformActionUsageDeclaration = (( name:SysMLName TypePart? "as" )? Subset+
+    | "action" (name:SysMLName)? TypePart?)) ActionParameterList? SubsettingPart ValuePart?;
+
+  /* ACTIVITY NODES */
+  ActivityNode = ActionNode | ControlNode;
+  ActionNode = ActionNodeDeclaration ActivityBody;
+  ActionNodeDeclaration =   ActionUsageNodeDeclaration
+  	| PerformActionNodeDeclaration
+  	| AcceptActionNodeDeclaration
+  	| SendActionNodeDeclaration;
+  ActionUsageNodeDeclaration = ["abstract"]? (("ref" "action") | isComposite:["action"]) ActionUsageDeclaration;
+  PerformActionNodeDeclaration = isComposite:"perform" (name:SysMLName TypePart? "as")? Subset+  ActionParameterList?
+    SubsettingPart ValuePart?;
+  AcceptActionNodeDeclaration = EmptyParameterMember "accept" (name:SysMLName TypePart?)? "(" ItemFeatureMember+ ")";
+  SendActionNodeDeclaration = EmptyParameterMember+ EmptyItemFeatureMember+
+    "send" ( ( name = SysMLName TypePart? )? "of")? ExpressionMember+ "to" ExpressionMember+;
+  ControlNode = MergeNode	| DecisionNode | JoinNode | ForkNode;
+
+  //TODO
+  /*MergeNode returns SysML::MergeNode :
+    	{SysML::MergeNode} isComposite ?= 'merge' ( name = Name TypePart? )? ';'
+    ;
+
+    DecisionNode returns SysML::DecisionNode :
+    	{SysML::DecisionNode} isComposite ?= 'decide' ( name = Name TypePart? )? ';'
+    ;
+
+    JoinNode returns SysML::JoinNode :
+    	{SysML::JoinNode} isComposite ?= 'join' ( name = Name TypePart? )? ';'
+    ;
+
+    ForkNode returns SysML::ForkNode :
+    	{SysML::ForkNode} isComposite ?= 'fork' ( name = Name TypePart? )? ';'
+    ;
+
+    EmptyParameter returns SysML::Parameter :
+    	{SysML::Parameter}
+    ;*/
+  MergeNode = isComposite:["merge"]? SysMLNameAndTypePartOptional ";";
+  DecisionNode = isComposite:["decide"]? SysMLNameAndTypePartOptional ";";
+  JoinNode = isComposite:["join"]? SysMLNameAndTypePartOptional ";";
+  ForkNode = isComposite:["fork"]? SysMLNameAndTypePartOptional ";";
+  EmptyParameter = SysMLName?;
+  SysMLNameAndTypePartOptional = (name:SysMLName TypePart?)?;
+
+  StateUnit implements Unit = UnitPrefix StateDeclaration StateBody;
+  StateDefDeclaration = ["abstract"]? "state" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
+  //TODO
+        /*
+          StateUsage returns SysML::StateUsage :
+            {SysML::StateUsage} ActionUsageDeclaration StateBody
+          ;
+
+          AbstractStateUsage returns SysML::StateUsage :
+            {SysML::StateUsage} ActionUsageDeclaration AbstractStateBody
+          ;*/
+  StateUsage = ActionUsageDeclaration StateBody;
+  ExhibitStateUsage =
+      ( ( name:SysMLName TypePart? 'as' )? Subset+
+    | "state" ( name:SysMLName )? TypePart?
+    )
+    ActionParameterList? SubsettingPart ValuePart? StateBody;
+
+  /* TRANSITIONS */
+  TransitionStep = "transition" (SysMLNameAndTypePartOptional "first")? TransitionSourceMember+
+    TriggerStepMember* GuardExpressionMember* EffectBehaviourMember* "then" TransitionSuccessionMember;
+  TargetTransitionStep = TriggerStepMember* GuardExpressionMember* EffectBehaviourMember* "then"
+    TransitionSuccessionMember; //TODO make common NT later and write in improvement list
+  TriggerStep = EmptyParameterMember+ ItemFeatureMember+;
+  EffectBehaviourUsage = EmptyActionUsage | PerformedActionUsage ( "{" ActivityBodyItem* "}" )?;
+  TransitionSuccession = EmptySourceEndMember+ ConnectorEndMember+;
+
+  /* TRANSITION MEMBERSHIPS */
+  TransitionSourceMember = memberFeature:QualifiedName;
+  TransitionSuccessionMember = TransitionSuccession;
+  TriggerStepMember = kind:TriggerFeatureKind TriggerStep;
+  TriggerFeatureKind = kind:"accept"; //Remark: this is an enum in xtext
+  GuardExpressionMember = kind:GuardFeatureKind Expression;
+  GuardFeatureKind = guard:"if"; //Remark: this is an enum in xtext
+  EffectBehaviorMember = kind: EffectFeatureKind EffectBehaviorUsage;
+  EffectFeatureKind = effect:"do"; //Remark: this is an enum in xtext
+
+
+
+
+
+
+
 }

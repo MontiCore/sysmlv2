@@ -24,4 +24,20 @@ component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon {
     "ref" ReferenceProperty;
 
   ReferenceProperty = Usage;
+
+
+  /* CONSTRAINT DEFINITIONS */
+  ConstraintDefinitionUnit implements Unit = UnitPrefix ConstraintDefinition;
+  ConstraintDefinition = ConstraintDefDeclaration ConstraintBody;
+  ConstraintDefDeclaration = ["abstract"]? "constraint" "def" name:SysMLName ParameterList? EmptyReturnParameterPart
+    SuperClassingList?;
+  ConstraintBody = ";" | "{" ContraintMembers "}";
+  ConstrainMembers = (NestedDefinitionMember | NestedUsageMemeber | ImportUnit)* ConstraintExpressionMember?;
+  EmptyReturnParameterPart = EmptyReturnParameterMember;
+
+  /* CONSTRAINT DEFINITION MEMBERSHIPS */
+  EmptyReturnParameterMember = EmptyParameter;
+  ConstraintExpressionMember = DefinitionMemberPrefix Expression;
+
+
 }

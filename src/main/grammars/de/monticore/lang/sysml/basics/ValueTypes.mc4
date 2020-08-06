@@ -4,6 +4,7 @@ package de.monticore.lang.sysml.basics;
 
 component grammar ValueTypes extends de.monticore.lang.sysml.basics.SysMLCommonBasis{
 
+  ValueTypeUnit = UnitPrefix ValueType;
   ValueTypeStd implements ValueType, PackagedDefinitionMember= ValueTypeDeclaration DefinitionBody; //TODO make Cocos to restrict defBody???
       //TODO actually ValueType should implement PackagedDefinitionMember
 
@@ -20,6 +21,8 @@ component grammar ValueTypes extends de.monticore.lang.sysml.basics.SysMLCommonB
   SiMAbstractValueProperty = Usage;
 
 
-
-
+  //TODO differences ValueType And Value
+  ValueUnit implements Unit = UnitPrefix ValueDeclaration UsageCompletion;
+  ValueProperty = Usage; //TODO merge with ValueProperty on Top
+  //TODO implement me
 }

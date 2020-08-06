@@ -7,7 +7,7 @@ component grammar Names extends de.monticore.MCBasics,
 
   SimpleName implements QualifiedName = Name;
   ColonQualifiedName implements QualifiedName = (Name || "::")+;
-  DotQualifiedName implements QualifiedName = (Name || ".")+;
+  DotQualifiedName implements QualifiedName = (Name || ".")+; //TODO change to SysMLName;
 
   fragment token AnyText = ~ ('\'');
   token UNRESTRICTED_NAME = '\'' AnyText* '\'';

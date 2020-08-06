@@ -3,6 +3,8 @@ package de.monticore.lang.sysml.basics;
 
 component grammar Associations extends de.monticore.lang.sysml.basics.SysMLCommonBasis{
 
+
+  AssociationBlockUnit = UnitPrefix AssociationBlock;
   AssociationBlockStd implements AssociationBlock = AssociationBlockDeclaration AssociationBlockBody;
   AssociationBlockDeclaration = ["abstract"]? "assoc" "block" ClassifierDeclarationCompletion;
   AssociationBlockBody = (";") | ("{"
