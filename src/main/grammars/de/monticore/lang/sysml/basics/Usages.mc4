@@ -50,8 +50,15 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
 
 
 
-  //TODO later decide to put Individuals in own FILE
 
+  /* PARAMETERS */ //TODO decide Parameters FILE
+
+  Parameter = SysMLName? ParameterTypePart?; //TODO {SysML:Parameter}
+  ParameterTypePart = (TypedByKeyword (FeatureTyping | "any" ) MultiplicityPart? )
+    | (MultiplicityPart) ;
+
+
+  //TODO later decide to put Individuals in own FILE
 
 
   //------------------------------------------------------------

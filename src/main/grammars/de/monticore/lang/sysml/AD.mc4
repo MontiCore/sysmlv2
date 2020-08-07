@@ -80,9 +80,10 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
                                                   ;*/
   ActionUsageDeclaration = (name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?)
     | (TypePart? ActionParameterList? ValuePart?)
-    | (RedefinesKeyword Redefinition+ TypePart ActionParameterList? ValuePart?;
+    | (RedefinesKeyword Redefinition+ TypePart ActionParameterList? ValuePart?);
 
-  ActionParameterList = "(" ( ActionParameterMember+ ActionParameterFlowMember? || ",")* ")";
+  ActionParameterList = "(" ( ActionParameterMemberAndFlowMember || ",")* ")";
+  ActionParameterMemberAndFlowMember = ActionParameterMember ActionParameterFlowMember?;
   //TODO
     /*  ActionParameter returns SysML::Parameter :
        	{SysML::Parameter} ParameterTypePart? ValuePart?
@@ -95,8 +96,8 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   ActionParameter = SysMLName ParameterTypePart? ValuePart?;
   ActionParameterFlow = ("stream" | SysMLName "flow") EmptyItemFeatureMember+ "from" ItemFlowEndMember+;
   PerformActionUsage = PerformActionUsageDeclaration ActivityBody;
-  PerformActionUsageDeclaration = (( name:SysMLName TypePart? "as" )? Subset+
-    | "action" (name:SysMLName)? TypePart?)) ActionParameterList? SubsettingPart ValuePart?;
+  PerformActionUsageDeclaration = ((( name:SysMLName TypePart? "as" )? Subset+)
+    |( "action" (name:SysMLName)? TypePart?)) ActionParameterList? SubsettingPart ValuePart?;
 
   /* ACTIVITY NODES */
   ActivityNode = ActionNode | ControlNode;
@@ -110,7 +111,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
     SubsettingPart ValuePart?;
   AcceptActionNodeDeclaration = EmptyParameterMember "accept" (name:SysMLName TypePart?)? "(" ItemFeatureMember+ ")";
   SendActionNodeDeclaration = EmptyParameterMember+ EmptyItemFeatureMember+
-    "send" ( ( name = SysMLName TypePart? )? "of")? ExpressionMember+ "to" ExpressionMember+;
+    "send" ( ( name:SysMLName TypePart? )? "of")? ExpressionMember+ "to" ExpressionMember+;
   ControlNode = MergeNode	| DecisionNode | JoinNode | ForkNode;
 
   //TODO
@@ -141,7 +142,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   SysMLNameAndTypePartOptional = (name:SysMLName TypePart?)?;
 
   StateUnit implements Unit = UnitPrefix StateDeclaration StateBody;
-  StateDefDeclaration = ["abstract"]? "state" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
+  // TODO can be deleted: StateDefDeclaration = ["abstract"]? "state" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
   //TODO
         /*
           StateUsage returns SysML::StateUsage :
@@ -153,10 +154,16 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
           ;*/
   StateUsage = ActionUsageDeclaration StateBody;
   ExhibitStateUsage =
-      ( ( name:SysMLName TypePart? 'as' )? Subset+
+      ( ( name:SysMLName TypePart? "as" )? Subset+
     | "state" ( name:SysMLName )? TypePart?
     )
     ActionParameterList? SubsettingPart ValuePart? StateBody;
+  /* ACTION MEMBERSHIPS */
+  ActionParameterMember = (direction:FeatureDirection )| (direction:FeatureDirection? memberName:SysMLName)
+    ActionParameter;
+  ActionParameterFlowMember = ActionParameterFlow;
+  EmptySuccessionMember = EmptySuccession;
+  EmptyParameterMember = EmptyParameter;
 
   /* TRANSITIONS */
   TransitionStep = "transition" (SysMLNameAndTypePartOptional "first")? TransitionSourceMember+
@@ -177,10 +184,33 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   EffectBehaviorMember = kind: EffectFeatureKind EffectBehaviorUsage;
   EffectFeatureKind = effect:"do"; //Remark: this is an enum in xtext
 
+  /* SUCCESSIONS */
+  Succession = SuccessionDeclaration ";";
+  SuccessionDeclaration = ( ( name:SysMLName)? TypePart? "first" )?
+    ConnectionEndMember+ "then" ConnectorEndMember+;
+  TargetSuccession = "then" MultiplicitySourceEndMember+ ConnectorEndMember+;
+  EmptySuccession = MultiplicitySourceEndMember+ EmtpyTargetEndMember+;
+  GuardedSuccession = "succession" (( name:SysMLName)? TypePart? "first")?
+    TransitionSourceMember+ GuardExpressionMember+ "then" TransitionSuccessionMember+;
+  GuardedTargetSuccession = GuardExpressionMember+  "then" TransitionSuccessionMember+;
+  DefaultTargetSuccession = "else" TransitionSuccessionMember+;
 
 
+  /* ITEM FLOWS */ //Is this AD and IBD?
+  ItemFlow = ItemFlowDeclaration DefinitionBody;
+  SuccessionItem = ItemFlowDeclaration DefinitionBody;
+  ItemFlowDeclaration = ( (name:SysMLName)? TypePart? //TODO I am not sure if "from" or the whole is meant with or
+    (( "of" ItemFeatureMember+) | (EmptyItemFeatureMember+))
+    "from" | EmptyItemFeatureMember+ )
+    ItemFlowEndMember+ "to" ItemFlowEndMember+;
+  ItemFeatureTyping = FeatureTyping+ MultplicityMember*;
+  EmptyItemFeature = SysMLName?; //TODO {SysML::ItemFeature}
+  ItemFlowEnd = ItemFlowFeatureMember+;
+  ItemFlowFeature = Redefinition+;
 
-
-
-
+  /* ITEM FLOW MEMBERSHIPS */
+  ItemFeatureMember = (memberName:SysMLName TypedByKeyword)? ItemFeatureTyping;
+  ItemFlowEndMember = ItemFlowEnd;
+  ItemFlowFeatureMember = ItemFlowFeature;
+  EmptyItemFeatureMember = EmptyItemFeature;
 }

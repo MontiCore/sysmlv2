@@ -2,8 +2,14 @@
 - Check Expressions and Literals Compatibility.
 - Check implementation of Expressions
 - Implement 
-    - Interface Connection 
-    - Binding Connectors
-    - Successions
-    - Item Flows
-    - ITEM FLOW MEMBERSHIPS
+    - Interface CONNECTORS (Implemented in Ports) 
+    - Binding Connectors (Implemented in Ports) 
+    - Successions (Implemented)
+    - Item Flows  (Implemented)
+    - ITEM FLOW MEMBERSHIPS  (Implemented)
+    
+- Structure all Files.
+
+
+
+ - Debug

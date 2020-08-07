@@ -6,6 +6,7 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
   de.monticore.lang.sysml.basics.ValueTypes,
   de.monticore.lang.sysml.basics.Usages,
   de.monticore.lang.sysml.basics.Ports,
+  de.monticore.lang.sysml.basics.Associations,
   de.monticore.lang.sysml.basics.SysMLCommonBasis
    {
 
@@ -24,7 +25,27 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
   empty, but also can be empty. More elegant with *   */
 
 
-  //Definition Memberships
+ /* DEFINITION MEMBERSHIPS */
+  NestedDefinitionMember = DefinitionMemberPrefix PackagedDefinitionMember;
   NestedUsageMember = StructureUsageMember | BehaviorUsageMember;
   StructureUsageMember = NonPortStructureUsageMember | PortMember | ConjugatedPortMember;
+  /*
+   * NonPortStructureUsageMember, BehaviorUsageMember are interfaces
+   */
+  PortMember = DefinitionMemberPrefix (["abstract"] ["port"]? PortUsage); //Remark we do not use abstract Port Usage
+  ConjugatedPortMember = DefinitionMemberPrefix (["abstract"] ["port"]? ConjugatedPortMember);
+
+  FeatureDirection =  ["in"] | ["out"] | ["inout"];
+
+  DefinitionMemberPrefix = PrefixAnnotation* visibility:VisibilityIndicator?;
+
+
+   /* EXPRESSION MEMBERSHIPS */ //TODO maybe interfaces
+      ExpressionMember = Expression;
+      FeatureReferece = QualifiedName; //TODO see xtext
+      TypeReferenceMember = TypeReference;
+      NamedExpressionMember = memberName:SysMLName "=>" Expression;
+      BodyMember = BodyExpression;
+      BodyParameterMember = memberName:SysMLName Parameter;
+      //TODO more...
 }
