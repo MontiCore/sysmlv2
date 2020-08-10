@@ -22,7 +22,7 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
   /*FeatureTyping returns SysML::FeatureTyping :
     	type = [SysML::Type | QualifiedName]
     ; TODO reference in MontiCore with @ and test this.*/
-  FeatureTyping = QualifiedName;
+  FeatureTypingStd implements FeatureTyping = QualifiedName;
    //TODO enable any order ( isOrdered ?= 'ordered'? & isNonunique ?= 'nonunique'? )
   MultiplicityPart = MultiplicityMember (["ordered"] | ["nonunique"])*; //Ast RUles TODO only once
 
@@ -53,7 +53,7 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
 
   /* PARAMETERS */ //TODO decide Parameters FILE
 
-  Parameter = SysMLName? ParameterTypePart?; //TODO {SysML:Parameter}
+  ParameterStd implements Parameter = SysMLName? ParameterTypePart?; //TODO {SysML:Parameter}
   ParameterTypePart = (TypedByKeyword (FeatureTyping | "any" ) MultiplicityPart? )
     | (MultiplicityPart) ;
 

@@ -70,7 +70,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   /* ACTIONS */
   ActionUnit implements Unit = UnitPrefix ActionDeclaration ActivityBody;
   ActionDeclaration = ["abstract"]? "action" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
-  ActionUsage =  SysMLName ActionUsageDeclaration ActivityBody;
+  ActionUsageStd implements ActionUsage =  SysMLName ActionUsageDeclaration ActivityBody;
   //TODO
   /*ActionUsage returns SysML::ActionUsage :
            	{SysML::ActionUsage} ActionUsageDeclaration ActivityBody
@@ -94,7 +94,9 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
          	'from' ownedFeatureMembership_comp += ItemFlowEndMember
          ;*/
   ActionParameter = SysMLName ParameterTypePart? ValuePart?;
-  ActionParameterFlow = ("stream" | SysMLName "flow") EmptyItemFeatureMember+ "from" ItemFlowEndMember+;
+  ActionParameterFlow = //("stream" | SysMLName "flow") EmptyItemFeatureMember+ "from" ItemFlowEndMember+
+    "TODO"; //TODO  0xA0129 rule actionParameterFlow contains a closure with at least one alternative that can match an empty string
+
   PerformActionUsage = PerformActionUsageDeclaration ActivityBody;
   PerformActionUsageDeclaration = ((( name:SysMLName TypePart? "as" )? Subset+)
     |( "action" (name:SysMLName)? TypePart?)) ActionParameterList? SubsettingPart ValuePart?;
@@ -138,37 +140,30 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   DecisionNode = isComposite:["decide"]? SysMLNameAndTypePartOptional ";";
   JoinNode = isComposite:["join"]? SysMLNameAndTypePartOptional ";";
   ForkNode = isComposite:["fork"]? SysMLNameAndTypePartOptional ";";
-  EmptyParameter = SysMLName?;
+  EmptyParameter = SysMLName; //TODO
   SysMLNameAndTypePartOptional = (name:SysMLName TypePart?)?;
 
-  StateUnit implements Unit = UnitPrefix StateDeclaration StateBody;
-  // TODO can be deleted: StateDefDeclaration = ["abstract"]? "state" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
-  //TODO
-        /*
-          StateUsage returns SysML::StateUsage :
-            {SysML::StateUsage} ActionUsageDeclaration StateBody
-          ;
 
-          AbstractStateUsage returns SysML::StateUsage :
-            {SysML::StateUsage} ActionUsageDeclaration AbstractStateBody
-          ;*/
-  StateUsage = ActionUsageDeclaration StateBody;
-  ExhibitStateUsage =
-      ( ( name:SysMLName TypePart? "as" )? Subset+
-    | "state" ( name:SysMLName )? TypePart?
-    )
-    ActionParameterList? SubsettingPart ValuePart? StateBody;
   /* ACTION MEMBERSHIPS */
   ActionParameterMember = (direction:FeatureDirection )| (direction:FeatureDirection? memberName:SysMLName)
     ActionParameter;
   ActionParameterFlowMember = ActionParameterFlow;
   EmptySuccessionMember = EmptySuccession;
   EmptyParameterMember = EmptyParameter;
+  /* STATES */
+  StateUnit implements Unit = UnitPrefix StateDeclaration StateBody;
+  StateDeclaration = ["abstract"]? "state" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
+  StateUsage = SysMLName? ActionUsageDeclaration StateBody; //TODO {SysML:StateUsage}
+  ExhibitStateUsage = ((((name:SysMLName) TypePart? "as")? Subset+)
+    | ( "state" name:SysMLName? TypePart? ))
+    ActionParameterList? SubsettingPart ValuePart? StateBody;
+
+
 
   /* TRANSITIONS */
   TransitionStep = "transition" (SysMLNameAndTypePartOptional "first")? TransitionSourceMember+
-    TriggerStepMember* GuardExpressionMember* EffectBehaviourMember* "then" TransitionSuccessionMember;
-  TargetTransitionStep = TriggerStepMember* GuardExpressionMember* EffectBehaviourMember* "then"
+    TriggerStepMember* GuardExpressionMember* EffectBehaviorMember* "then" TransitionSuccessionMember;
+  TargetTransitionStep = TriggerStepMember* GuardExpressionMember* EffectBehaviorMember* "then"
     TransitionSuccessionMember; //TODO make common NT later and write in improvement list
   TriggerStep = EmptyParameterMember+ ItemFeatureMember+;
   EffectBehaviourUsage = EmptyActionUsage | PerformedActionUsage ( "{" ActivityBodyItem* "}" )?;
@@ -181,15 +176,15 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   TriggerFeatureKind = kind:"accept"; //Remark: this is an enum in xtext
   GuardExpressionMember = kind:GuardFeatureKind Expression;
   GuardFeatureKind = guard:"if"; //Remark: this is an enum in xtext
-  EffectBehaviorMember = kind: EffectFeatureKind EffectBehaviorUsage;
+  EffectBehaviorMember = kind: EffectFeatureKind EffectBehaviourUsage;
   EffectFeatureKind = effect:"do"; //Remark: this is an enum in xtext
 
   /* SUCCESSIONS */
   Succession = SuccessionDeclaration ";";
   SuccessionDeclaration = ( ( name:SysMLName)? TypePart? "first" )?
-    ConnectionEndMember+ "then" ConnectorEndMember+;
+    ConnectorEndMember+ "then" ConnectorEndMember+;
   TargetSuccession = "then" MultiplicitySourceEndMember+ ConnectorEndMember+;
-  EmptySuccession = MultiplicitySourceEndMember+ EmtpyTargetEndMember+;
+  EmptySuccession = MultiplicitySourceEndMember+ EmptyTargetEndMember+;
   GuardedSuccession = "succession" (( name:SysMLName)? TypePart? "first")?
     TransitionSourceMember+ GuardExpressionMember+ "then" TransitionSuccessionMember+;
   GuardedTargetSuccession = GuardExpressionMember+  "then" TransitionSuccessionMember+;
@@ -203,8 +198,8 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
     (( "of" ItemFeatureMember+) | (EmptyItemFeatureMember+))
     "from" | EmptyItemFeatureMember+ )
     ItemFlowEndMember+ "to" ItemFlowEndMember+;
-  ItemFeatureTyping = FeatureTyping+ MultplicityMember*;
-  EmptyItemFeature = SysMLName?; //TODO {SysML::ItemFeature}
+  ItemFeatureTyping = FeatureTyping+ MultiplicityMember*;
+  EmptyItemFeature = SysMLName; //TODO {SysML::ItemFeature}
   ItemFlowEnd = ItemFlowFeatureMember+;
   ItemFlowFeature = Redefinition+;
 

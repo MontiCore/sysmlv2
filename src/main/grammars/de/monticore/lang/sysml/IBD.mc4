@@ -2,7 +2,9 @@
 package de.monticore.lang.sysml;
 
 
-component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon {
+component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon,
+ de.monticore.lang.sysml.AD //TODO refactor, needs at least ParameterList
+  {
 
   PartUnit implements Unit = UnitPrefix PartDeclaration UsageCompletion;
   PartDeclaration = ["abstract"]? "part" SysMLName TypePart SubsettingPart;
@@ -26,13 +28,14 @@ component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon {
   ReferenceProperty = Usage;
 
 
+
   /* CONSTRAINT DEFINITIONS */
   ConstraintDefinitionUnit implements Unit = UnitPrefix ConstraintDefinition;
   ConstraintDefinition = ConstraintDefDeclaration ConstraintBody;
   ConstraintDefDeclaration = ["abstract"]? "constraint" "def" name:SysMLName ParameterList? EmptyReturnParameterPart
-    SuperClassingList?;
-  ConstraintBody = ";" | "{" ContraintMembers "}";
-  ConstrainMembers = (NestedDefinitionMember | NestedUsageMemeber | ImportUnit)* ConstraintExpressionMember?;
+    SuperclassingList?;
+  ConstraintBody = ";" | "{" ConstraintMembers "}";
+  ConstraintMembers = (NestedDefinitionMember | NestedUsageMember | ImportUnit)* ConstraintExpressionMember?;
   EmptyReturnParameterPart = EmptyReturnParameterMember;
 
   /* CONSTRAINT DEFINITION MEMBERSHIPS */
@@ -40,4 +43,20 @@ component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon {
   ConstraintExpressionMember = DefinitionMemberPrefix Expression;
 
 
+  //---------------------------------
+  /* CONSTRAINTS */
+  ConstraintUsage = ConstraintDeclaration ConstraintBody;
+  ConstraintDeclaration =
+    (name:SysMLName TypePart? ConstraintParameterPart)
+    | (TypePart? (ActionParameterList EmptyReturnParameterPart)? ValuePart?)
+    | (RedefinesKeyword Redefinition+ TypePart? ActionParameterList? EmptyReturnParameterPart ValuePart?);
+  ConstraintParameterPart = ActionParameterList? EmptyReturnParameterPart SubsettingPart ValuePart?;
+  AssertConstraintUsage =
+    (((( name:SysMLName)? TypePart? "as" )? Subset+ ) | ("constraint" (name:SysMLName)? TypePart?) )
+    ConstraintParameterPart InvariantPart ConstraintBody;
+  InvariantPart = TrueLiteralMember;
+  TrueLiteralExpression = SysMLName; //{SysML::LiteralBoolean}
+
+  /* CONSTRAINT MEMBERSHIPS */
+  TrueLiteralMember = TrueLiteralExpression;
 }

@@ -2,24 +2,25 @@
 package de.monticore.lang.sysml;
 
 
-component grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysMLCommon {
+component grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysMLCommon,
+  de.monticore.lang.sysml.IBD // TODO refactor, necessary for (at least) EmptyReturnParameterPart
+  {
   
   RequirementDefinition = RequirementDefDeclaration RequirementBody;
   RequirementDefDeclaration = ["abstract"]? "requirement" "def" ("id" reqId:SysMLName)? name:SysMLName
-    RequirementDefParameterList EmptyReturnParameterPart SuperClassingList?;
+    RequirementDefParameterList EmptyReturnParameterPart SuperclassingList?;
   RequirementDefParameterList = EmptyParameterMember
     | ( "(" EmptyParameterMember+ ")")
-    | ( "(" (ParameterMember || ",")+ ")";
+    | ( "(" (ParameterMember || ",")+ ")" ) ;
   RequirementBody = ";" | ( "{" RequirementMembers "}" );
   RequirementMembers =
     (NestedDefinitionMember+ | NestedUsageMember+ | ImportUnit+ | RequirementConstraintMember+);
-
-  RequirementConstraintMember = ((( name:SysMLName)? TypePart? "as")? Subset | "constraint" (name:SysMLName)? TypePart?)
+  RequirementConstraintUsage = ((( name:SysMLName)? TypePart? "as")? Subset | "constraint" (name:SysMLName)? TypePart?)
      ConstraintParameterPart ConstraintBody;
 
   /* REQUIREMENT DEFINITION MEMBERSHIPS */
 
-  RequirementConstraintMember = RequirementConstraintKind;
+  RequirementConstraintMember = DefinitionMemberPrefix RequirementConstraintKind RequirementConstraintUsage;
   RequirementConstraintKind = assumption:["assume"] | requirement:["require"];
 
 }

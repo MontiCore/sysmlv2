@@ -11,6 +11,18 @@
  de.monticore.expressions.ExpressionsBasis //TODO put this into a another grammar like literals?
  {
 
+
+interface Parameter;
+// TODO Expressions ------------------------------------------------------------------------->
+// Body Expressions
+BodyExpression = "TODO";
+// Base Expressions
+interface FeatureTyping;
+TypeReference = FeatureTyping;
+
+
+// TODO Expressions <-------------------------------------------------------------------------
+
 //TODO split into Basic Interfaces and CommonInterfaces ?
   interface Unit;
   interface DefinitionBody;
@@ -23,7 +35,7 @@
   interface NestedDefinitionMember;  //Referenced by DefinitionBody:
 
 
-  interface DefinitionMemberPrefix;
+  // interface DefinitionMemberPrefix;
   interface Usage;
 
 
@@ -37,21 +49,38 @@
   interface NonPortStructureUsageMember;
   interface BehaviorUsageMember;
 
-  interface PortMember;
-  interface ConjugatedPortMember;
+
+
+  //interface PortMember;
+  //interface ConjugatedPortMember;
+
+  //TODO move to some file--------------------------------------------------------------------------
+  /* DEFINITION MEMBERSHIPS */
+    //NestedDefinitionMember = DefinitionMemberPrefix PackagedDefinitionMember; //is Interface
+    NestedUsageMember = StructureUsageMember | BehaviorUsageMember;
+    StructureUsageMember = NonPortStructureUsageMember | PortMember | ConjugatedPortMember;
+    /*
+     * NonPortStructureUsageMember, BehaviorUsageMember are interfaces
+     */
+    PortMember = DefinitionMemberPrefix (["abstract"] ["port"]? PortUsage); //Remark we do not use abstract Port Usage
+    ConjugatedPortMember = DefinitionMemberPrefix (["abstract"] ["port"]? ConjugatedPortMember);
+
+    FeatureDirection =  ["in"] | ["out"] | ["inout"];
+
+    DefinitionMemberPrefix = PrefixAnnotation* visibility:VisibilityIndicator?;
+
+
+     /* EXPRESSION MEMBERSHIPS */ //TODO maybe interfaces
+        ExpressionMember = Expression;
+        FeatureReferece = QualifiedName; //TODO see xtext
+        TypeReferenceMember = TypeReference;
+        NamedExpressionMember = memberName:SysMLName "=>" Expression;
+        BodyMember = BodyExpression;
+        BodyParameterMember = memberName:SysMLName Parameter;
+        //TODO more...
+  //----------------------------------------------------------------------------------------------------------------
 
 
 
-  //Fake implementation TODO
-  ActionUsageStd implements ActionUsage = "TODO";
-  AbstractActionUsageStd implements AbstractActionUsage = "TODO";
-  AbstractPortUsageStd implements AbstractPortUsage = "TODO";
-
-  BehaviorUsageMemberStd implements BehaviorUsageMember = "TODO";
-  NonPortStructureUsageMemberStd implements NonPortStructureUsageMember = "TODO";
-  PortMemberStd implements PortMember = "TODO";
-  ConjugatedPortMemberStd implements ConjugatedPortMember = "TODO";
-
-  AssociationUsageMemberStd implements AssociationUsageMember = "TODO";
 
 }

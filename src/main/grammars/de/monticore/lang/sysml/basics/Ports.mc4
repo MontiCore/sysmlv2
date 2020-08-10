@@ -2,7 +2,9 @@
 package de.monticore.lang.sysml.basics;
 
 component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
-  de.monticore.lang.sysml.basics.Usages {
+  de.monticore.lang.sysml.basics.Usages,
+  de.monticore.lang.sysml.basics.Associations //TODO try to avoid circular dependencies
+  {
   //Remark see ll.393-417 in Xtext
   PortDefinitionStd implements PortDefinition = PortDeclaration DefinitionBody;
   PortDeclaration = ["abstract"]? "port" "def" ClassifierDeclarationCompletion ConjugatedPortDefinitionMember;

@@ -2,7 +2,8 @@
 package de.monticore.lang.sysml.basics;
 
 
-component grammar Classifiers extends de.monticore.lang.sysml.basics.SysMLCommonBasis{ //TODO create another layer for this
+component grammar Classifiers extends de.monticore.lang.sysml.basics.SysMLCommonBasis
+{ //TODO create another layer for this
   ClassifierDeclarationCompletionStd implements ClassifierDeclarationCompletion = SysMLName SuperclassingList?;
 
   SuperclassingList = SpecializesKeyword (Superclassing || ",")+;

@@ -3,7 +3,7 @@ package de.monticore.lang.sysml.basics;
 
 
 component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers,
-  de.monticore.lang.sysml.basics.ValueTypes,
+  //de.monticore.lang.sysml.basics.ValueTypes, Transitively through Usages
   de.monticore.lang.sysml.basics.Usages,
   de.monticore.lang.sysml.basics.Ports,
   de.monticore.lang.sysml.basics.Associations,
@@ -18,34 +18,12 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
 
   AbstractDefinitionBody = DefinitionBody; //TODO Remark: only has different naming, see Xtext 238
 
-  NestedDefinitionMemberStd implements NestedDefinitionMember = DefinitionMemberPrefix PackagedDefinitionMember;
+  //NestedDefinitionMemberStd implements NestedDefinitionMember = DefinitionMemberPrefix PackagedDefinitionMember;
 
-  DefinitionMemberPrefixStd implements DefinitionMemberPrefix = PrefixAnnotation* visibility:VisibilityIndicator?;
+  //DefinitionMemberPrefixStd implements DefinitionMemberPrefix = PrefixAnnotation* visibility:VisibilityIndicator?;
   /*Remark: in Xtext 	( ownedRelationship_comp += PrefixAnnotation )*, what is basically a List, which should not be
   empty, but also can be empty. More elegant with *   */
 
 
- /* DEFINITION MEMBERSHIPS */
-  NestedDefinitionMember = DefinitionMemberPrefix PackagedDefinitionMember;
-  NestedUsageMember = StructureUsageMember | BehaviorUsageMember;
-  StructureUsageMember = NonPortStructureUsageMember | PortMember | ConjugatedPortMember;
-  /*
-   * NonPortStructureUsageMember, BehaviorUsageMember are interfaces
-   */
-  PortMember = DefinitionMemberPrefix (["abstract"] ["port"]? PortUsage); //Remark we do not use abstract Port Usage
-  ConjugatedPortMember = DefinitionMemberPrefix (["abstract"] ["port"]? ConjugatedPortMember);
 
-  FeatureDirection =  ["in"] | ["out"] | ["inout"];
-
-  DefinitionMemberPrefix = PrefixAnnotation* visibility:VisibilityIndicator?;
-
-
-   /* EXPRESSION MEMBERSHIPS */ //TODO maybe interfaces
-      ExpressionMember = Expression;
-      FeatureReferece = QualifiedName; //TODO see xtext
-      TypeReferenceMember = TypeReference;
-      NamedExpressionMember = memberName:SysMLName "=>" Expression;
-      BodyMember = BodyExpression;
-      BodyParameterMember = memberName:SysMLName Parameter;
-      //TODO more...
 }
