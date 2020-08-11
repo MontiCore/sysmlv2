@@ -52,7 +52,7 @@ public class TrainingParseAllTest {
     this.parseSysML( pathToDir +  "01. Packages\\Package Example.sysml");
   }
 
-
+  @Ignore //TODO
   @Test
   public void parse02_Blocks_Blocks_ExampleTest(){
     this.parseSysML( pathToDir +  "02. Blocks\\Blocks Example.sysml");

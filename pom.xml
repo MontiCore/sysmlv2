@@ -31,12 +31,14 @@
     <!-- <mc4.maven.version>${monticore.version}</mc4.maven.version> -->
 
     <assembly.plugin>2.5.3</assembly.plugin>
-    <compiler.plugin>3.2</compiler.plugin>
+    <!-- old <compiler.plugin>3.2</compiler.plugin>-->
+    <compiler.plugin>3.8.1</compiler.plugin>
     <release.plugin>2.5.1</release.plugin>
     <source.plugin>2.4</source.plugin>
     <surefire.plugin>2.19.1</surefire.plugin>
     <failsafe.version>2.19.1</failsafe.version>
     <maven.build.helper.version>3.0.0</maven.build.helper.version>
+    <eclipse.compiler>2.8.4</eclipse.compiler>
 
     <!-- Classifiers -->
 
@@ -161,6 +163,25 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <version>${compiler.plugin}</version>
+      <configuration>
+        <compilerId>eclipse</compilerId>
+        <source>${java.version}</source>
+        <target>${java.version}</target>
+        <useIncrementalCompilation>true</useIncrementalCompilation>
+      </configuration>
+      <dependencies>
+        <dependency>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-compiler-eclipse</artifactId>
+          <version>${eclipse.compiler}</version>
+        </dependency>
+      </dependencies>
       </plugin>
     </plugins>
 
