@@ -99,7 +99,8 @@
       </plugin>
 
       <!-- Other Configuration -->
-      <plugin>
+     <!-- Taking eclipse plugin
+     <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${compiler.plugin}</version>
@@ -107,7 +108,7 @@
           <source>${java.version}</source>
           <target>${java.version}</target>
         </configuration>
-      </plugin>
+      </plugin>-->
 
       <!-- Unit Tests -->
       <!-- default folder is src/test/java/ -->
