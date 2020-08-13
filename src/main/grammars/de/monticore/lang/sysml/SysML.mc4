@@ -10,9 +10,6 @@ de.monticore.lang.sysml.RequirementDiagram,
 {
   //TODO extend more
   start Unit;
-  Test = "test";
-
-  PackagedUsageMemberTest implements PackagedUsageMember = "RemoveMe";//TODO
 
 
   // TODO implement Me ------------------------------------------------------------------------->
@@ -66,5 +63,14 @@ de.monticore.lang.sysml.RequirementDiagram,
     | ( ["abstract"]? "stream" ItemFlow )
     | ( ["abstract"]? "flow" SuccessionItemFlow )
   ;
+  //Some of the following PackagedUsageMember Implementations are already in its files.
+  IndividualUsagePackagedUsageMember implements PackagedUsageMember =  ["abstract"]? "individual" IndividualUsage;
+  TimeSliceUsagePackagedUsageMember implements PackagedUsageMember =   ["abstract"]? "timeslice" TimeSliceUsage;
+  SnapshotUsagePackagedUsageMember implements PackagedUsageMember =    ["abstract"]? "snapshot" SnapshotUsage;
+  ActionUsagePackagedUsageMember implements PackagedUsageMember =      ["abstract"]? "action" ActionUsage;
+  StateUsagePackagedUsageMember implements PackagedUsageMember =       ["abstract"]? "state" StateUsage;
+  ConstraintUsagePackagedUsageMember implements PackagedUsageMember =  ["abstract"]? "constraint" ConstraintUsage;
+  RequirementUsagePackagedUsageMember implements PackagedUsageMember = ["abstract"]? "requirement" RequirementUsage;
+
   //TODO structure in files later <--------------------------------------------------------------
 }

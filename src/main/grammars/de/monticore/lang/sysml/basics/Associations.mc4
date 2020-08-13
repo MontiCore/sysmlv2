@@ -6,7 +6,8 @@ component grammar Associations extends de.monticore.lang.sysml.basics.SysMLCommo
   /* ASSOCIATION BLOCKS */
 
   AssociationBlockUnit implements Unit = UnitPrefix AssociationBlock;
-  AssociationBlockStd implements AssociationBlock = AssociationBlockDeclaration AssociationBlockBody;
+  //TODO AssociationBlock only used once in xtext, here twice (see above) => AssociationBlock does not have to be an interface
+  AssociationBlockStd implements AssociationBlock, PackagedDefinitionMember  = AssociationBlockDeclaration AssociationBlockBody;
   AssociationBlockDeclaration = ["abstract"]? "assoc" "block" ClassifierDeclarationCompletion;
   AssociationBlockBody = (";") | ("{"
     (

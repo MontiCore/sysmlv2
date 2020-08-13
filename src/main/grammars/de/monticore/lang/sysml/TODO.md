@@ -27,11 +27,34 @@
 - Import -> ImportUnit
 - All NTs which are now interface in MC must be implemented. For the standard implementation these NTs
   get suffix "std".
-- 
+-  ValueProperty -> ValueProperty + 'abstract' 'value'? (because just used as interface)
 
 
 # Maybe misstakes in Xtext
 
 -> isPort ?= 'end' 'port'? <-  at InterfaceEndMember and
 ConjugatedInterfaceEndMember
+ 
+ ----
+ Check if the NTs need to be abstracted to an interface
+ 
+ fragment PackagedDefinitionMember returns SysML::Membership :
+ 	( ownedMemberElement_comp = Package
+ 	| ownedMemberElement_comp = Block
+ 	| ownedMemberElement_comp = ValueType
+ 	| ownedMemberElement_comp = IndividualDefinition
+ 	| ownedMemberElement_comp = AssociationBlock
+ 	| ownedMemberElement_comp = InterfaceDefinition
+ 	| ownedMemberElement_comp = PortDefinition
+ 	| ownedMemberElement_comp = Activity
+     | ownedMemberElement_comp = StateDefinition
+     | ownedMemberElement_comp = ConstraintDefinition
+     | ownedMemberElement_comp = RequirementDefinition
+ 	| ownedMemberElement_comp = Comment
+ 	| ( 'import' | 'alias' ) memberElement = [SysML::Element|QualifiedName] ( 'as' memberName = Name )? ';'
+ 	)
+ ;
+ 
+ Some are just used once in xtext. (Click Xtext find References)
+ And because we merge them often with unit (to avoid duplicated code), we use them twice.
  

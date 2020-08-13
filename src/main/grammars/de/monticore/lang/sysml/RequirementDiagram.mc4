@@ -8,7 +8,7 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysM
 
   /* REQUIREMENT DEFINITIONS */
 
-  RequirementDefinition = RequirementDefDeclaration RequirementBody;
+  RequirementDefinition implements PackagedDefinitionMember = RequirementDefDeclaration RequirementBody;
   RequirementDefDeclaration = ["abstract"]? "requirement" "def" ("id" reqId:SysMLName)? name:SysMLName
     RequirementDefParameterList EmptyReturnParameterPart SuperclassingList?;
   RequirementDefParameterList = EmptyParameterMember

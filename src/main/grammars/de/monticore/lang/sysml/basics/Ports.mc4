@@ -7,7 +7,8 @@ component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
   {
 
   /* PORT DEFINITIONS */
-  PortDefinitionStd implements PortDefinition = PortDeclaration DefinitionBody;
+
+  PortDefinitionStd implements PortDefinition, PackagedDefinitionMember  = PortDeclaration DefinitionBody;
   PortDeclaration = ["abstract"]? "port" "def" ClassifierDeclarationCompletion ConjugatedPortDefinitionMember+;
   ConjugatedPortDefinition = PortConjugation+;
   PortConjugation = SysMLName; //TODO {SysML::PortConjugation}
@@ -69,7 +70,7 @@ component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
 
   /* INTERFACE DEFINITIONS */
   InterfaceDefinitionUnit implements Unit = UnitPrefix InterfaceDefinition;
-  InterfaceDefinition = InterfaceDeclaration InterfaceBody;
+  InterfaceDefinition implements PackagedDefinitionMember = InterfaceDeclaration InterfaceBody;
   InterfaceDeclaration = ["abstract"]? "interface" "def" ClassifierDeclarationCompletion;
   InterfaceBody = ";" | (
      "{"

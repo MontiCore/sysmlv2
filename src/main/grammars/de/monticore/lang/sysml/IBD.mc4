@@ -13,8 +13,8 @@ component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon,
  //TODO isComposite ?=  for NonPortStructureUsageMember
   PartNonPortStructureUsageMember implements NonPortStructureUsageMember =
     ["abstract"]? "part" PartProperty;
-  PartPackagedUsageMember implements PackagedUsageMember =
-    "part" PartProperty;
+  PartPropertyPackagedUsageMember implements PackagedUsageMember =
+     ["abstract"]? "part" PartProperty; //TODO check if merge with above
 
 
   PartProperty = Usage;
@@ -28,7 +28,7 @@ component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon,
 
   /* CONSTRAINT DEFINITIONS */
   ConstraintDefinitionUnit implements Unit = UnitPrefix ConstraintDefinition;
-  ConstraintDefinition = ConstraintDefDeclaration ConstraintBody;
+  ConstraintDefinition implements PackagedDefinitionMember = ConstraintDefDeclaration ConstraintBody;
   ConstraintDefDeclaration = ["abstract"]? "constraint" "def" name:SysMLName ParameterList? EmptyReturnParameterPart
     SuperclassingList?;
   ConstraintBody = ";" | "{" ConstraintMembers "}";

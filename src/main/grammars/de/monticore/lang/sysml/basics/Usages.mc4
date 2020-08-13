@@ -69,7 +69,7 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
 
   /* INDIVIDUAL DEFINITIONS */
 
-  IndividualDefinition = IndividualDefDeclaration DefinitionBody;
+  IndividualDefinition implements PackagedDefinitionMember = IndividualDefDeclaration DefinitionBody;
   IndividualDefDeclaration = ["abstract"]? "individual" "def" ClassifierDeclarationCompletion
     LifeClassMembership+;
   LifeClass = SysMLName; //TODO {SysML::LifeClass}

@@ -7,7 +7,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   /* ACTIVITIES */
 
   ActivityUnit implements Unit = UnitPrefix Activity;
-  Activity = ActivityDeclaration ActivityBody;
+  Activity implements PackagedDefinitionMember = ActivityDeclaration ActivityBody;
   ActivityDeclaration = ["abstract"]? "activity" name:SysMLName ParameterList? SuperclassingList?;
   ParameterList = "(" (ParameterMember || "," )+ ")";
   ActivityBody = ";" | ("{" ActivityBodyItem* "}"); /*
@@ -38,7 +38,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   /* STATE DEFINITIONS */
 
   StateDefinitionUnit implements Unit = UnitPrefix StateDefinition;
-  StateDefinition = StateDefDeclaration StateBody;
+  StateDefinition implements PackagedDefinitionMember = StateDefDeclaration StateBody;
   StateDefDeclaration = ["abstract"]? "state" "def" name:SysMLName ParameterList? SuperclassingList?;
   StateBody = ";" | "{" StateBodyPart "}";
   StateBodyPart = (EntryActionMember (EntryTransitionMember)*)? DoActionMember? ExitActionMember? StateBodyItem*;
