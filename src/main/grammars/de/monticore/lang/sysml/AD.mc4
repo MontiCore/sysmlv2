@@ -3,37 +3,40 @@ package de.monticore.lang.sysml;
 
 
 component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
-  
+
+  /* ACTIVITIES */
+
   ActivityUnit implements Unit = UnitPrefix Activity;
-
-  /*Activities*/
   Activity = ActivityDeclaration ActivityBody;
-
   ActivityDeclaration = ["abstract"]? "activity" name:SysMLName ParameterList? SuperclassingList?;
   ParameterList = "(" (ParameterMember || "," )+ ")";
-
   ActivityBody = ";" | ("{" ActivityBodyItem* "}"); /*
   // Note: Using a syntactic predicate here seems to avoid a possible infinite loop
   		// while incrementally parsing.
   	  | '{' => ActivityBodyItem* '}'
   	  TODO check if this  "=>" is also necessary here. */
 
-  // interface ActivityBodyItem; TODO make item interface
+  // interface ActivityBodyItem; TODO make item interface ? does not need to necessarily
   ActivityBodyItem =
-    NestedDefinitionMember
-    | StructureUsageMember
+    NestedDefinitionMember+
+    | StructureUsageMember+
     | InitialNodeMember+ (TargetSuccessionMember )*
     | (EmptySuccessionMember+ )? ActivityNodeMember+ ( TargetSuccessionMember+ )*
     | GuardedSuccessionMember+
     | ImportUnit;
+
+
   /* ACTIVITIY MEMBERSHIPS */
+
   ParameterMember = direction:FeatureDirection? memberName:SysMLName Parameter;
   InitialNodeMember = DefinitionMemberPrefix "first" memberFeature:QualifiedName ";";
   ActivityNodeMember = DefinitionMemberPrefix ActivityNode;
   TargetSuccessionMember = DefinitionMemberPrefix ActivityNode;
   GuardedSuccessionMember = GuardedSuccession;
 
+
   /* STATE DEFINITIONS */
+
   StateDefinitionUnit implements Unit = UnitPrefix StateDefinition;
   StateDefinition = StateDefDeclaration StateBody;
   StateDefDeclaration = ["abstract"]? "state" "def" name:SysMLName ParameterList? SuperclassingList?;
@@ -193,7 +196,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
 
   /* ITEM FLOWS */ //Is this AD and IBD?
   ItemFlow = ItemFlowDeclaration DefinitionBody;
-  SuccessionItem = ItemFlowDeclaration DefinitionBody;
+  SuccessionItemFlow = ItemFlowDeclaration DefinitionBody;
   ItemFlowDeclaration = ( (name:SysMLName)? TypePart? //TODO I am not sure if "from" or the whole is meant with or
     (( "of" ItemFeatureMember+) | (EmptyItemFeatureMember+))
     "from" | EmptyItemFeatureMember+ )

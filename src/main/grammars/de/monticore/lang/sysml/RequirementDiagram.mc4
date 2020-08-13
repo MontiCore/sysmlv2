@@ -17,7 +17,7 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysM
   RequirementBody = ";" | ( "{" RequirementMembers "}" );
   RequirementMembers =
     (NestedDefinitionMember+ | NestedUsageMember+ | ImportUnit+ | RequirementConstraintMember+);
-  RequirementConstraintUsage = ((( name:SysMLName)? TypePart? "as")? Subset | "constraint" (name:SysMLName)? TypePart?)
+  RequirementConstraintUsage = ((( name:SysMLName)? TypePart? "as")? Subset+ | "constraint" (name:SysMLName)? TypePart?)
      ConstraintParameterPart ConstraintBody;
 
   /* REQUIREMENT DEFINITION MEMBERSHIPS */
@@ -25,4 +25,25 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysM
   RequirementConstraintMember = DefinitionMemberPrefix RequirementConstraintKind RequirementConstraintUsage;
   RequirementConstraintKind = assumption:["assume"] | requirement:["require"];
 
+  /* REQUIREMENTS */
+
+  RequirementUsage = RequirementDeclaration RequirementBody;
+  RequirementDeclaration  = ( "id" reqId:SysMLName)?
+    (name:SysMLName TypePart? ConstraintParameterPart
+    | TypePart? ( ActionParameterList EmptyReturnParameterPart )? ValuePart?
+  	| RedefinesKeyword Redefinition+
+  	TypePart? ActionParameterList? EmptyReturnParameterPart ValuePart?
+  	);
+
+  //TODO make ((( name:SysMLName)? TypePart? "as")? NT? and write in List of Improvements.
+  SatisfyRequirementUsage =
+    ((( name:SysMLName)? TypePart? "as")? Subset+
+    | "requirement" (name:SysMLName)? TypePart?)
+    ( "by" SatisfactionConnectorMember)?
+    ConstraintParameterPart InvariantPart RequirementBody;
+
+  SatisfactionConnector = EmptySourceEndMember+ ConnectorEndMember+;
+
+  /* REQUIREMENT MEMBERSHIPS */
+  SatisfactionConnectorMember = SatisfactionConnector;
 }

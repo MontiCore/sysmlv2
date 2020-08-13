@@ -15,10 +15,13 @@ component grammar Associations extends de.monticore.lang.sysml.basics.SysMLCommo
         | ImportUnit+
     )"}"
   );
-  // AbstractAssociationBlockBody = AssociationBlockBody; //TODO remove me, we do not use Abstract anymore
 
   /* ASSOCIATION BLOCK MEMBERSHIPS */
-  AssociationUsageMemberStd implements AssociationUsageMember = "RemoveMe";
+
+  AssociationUsageMemberStd implements AssociationUsageMember =
+    NestedUsageMember | AssociationEndMember | EndPortMember | ConjugatedEndPortMember;
+  //AssociationEndMember is an interface
+
   /**
     Memberships
   */
@@ -37,17 +40,6 @@ component grammar Associations extends de.monticore.lang.sysml.basics.SysMLCommo
     )
   ;*/
 
-  EndPortMember = DefinitionMemberPrefix
-    (
-      "end" ["port"]? PortUsage
-      | "abstract" "end" "port" AbstractPortUsage
-    )
-  ;
-
-  ConjugatedEndPortMember = DefinitionMemberPrefix
-    (
-      "end" ["port"]? ConjugatedPortUsage
-      | "abstract" "end" "port" ConjugatedPortUsage
-    )
-  ;
+  EndPortMember = DefinitionMemberPrefix ["abstract"]? "end" ["port"]? PortUsage;
+  ConjugatedEndPortMember = DefinitionMemberPrefix ["abstract"]? "end" ["port"]? ConjugatedPortUsage;
 }

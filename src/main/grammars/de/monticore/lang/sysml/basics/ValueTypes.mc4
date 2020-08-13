@@ -17,16 +17,13 @@ component grammar ValueTypes extends de.monticore.lang.sysml.basics.SysMLCommonB
 
 
   //TODO ( direction = FeatureDirection )? for NonPortStructureUsageMember missing.
-  SiMValueProperty implements PackagedUsageMember, NonPortStructureUsageMember =
+  ValueProperty implements PackagedUsageMember, NonPortStructureUsageMember =
     ["abstract"]? "value"? Usage;
 
-
-  SiMAbstractValueProperty = Usage;
 
 
   //TODO differences ValueType And Value
   ValueUnit implements Unit = UnitPrefix ValueDeclaration UsageCompletion;
-  ValueProperty = Usage; //TODO merge with ValueProperty on Top
 
   /* VALUE PROPERTIES */
   ValueDeclaration = ["abstract"]? ["value"]? name:SysMLName TypePart? SubsettingPart;

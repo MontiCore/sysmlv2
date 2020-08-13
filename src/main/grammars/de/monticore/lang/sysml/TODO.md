@@ -18,7 +18,7 @@
 
  - Debug
  
- 
+ - Maybe change isComposite:"action" to  isComposite:["action"]
  
  -------- 
  # Some renamed NTs
@@ -29,4 +29,9 @@
   get suffix "std".
 - 
 
+
+# Maybe misstakes in Xtext
+
+-> isPort ?= 'end' 'port'? <-  at InterfaceEndMember and
+ConjugatedInterfaceEndMember
  

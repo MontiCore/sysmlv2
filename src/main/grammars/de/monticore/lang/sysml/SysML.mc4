@@ -5,6 +5,7 @@ package de.monticore.lang.sysml;
 grammar SysML extends de.monticore.lang.sysml.BDD,
 de.monticore.lang.sysml.IBD,
 de.monticore.lang.sysml.AD,
+de.monticore.lang.sysml.RequirementDiagram,
  de.monticore.lang.sysml.basics.sysmldefault.SysMLBasicsDefault
 {
   //TODO extend more
@@ -17,13 +18,53 @@ de.monticore.lang.sysml.AD,
   // TODO implement Me ------------------------------------------------------------------------->
 
 
-  AbstractPortUsageStd implements AbstractPortUsage = "RemoveMe";
-  BehaviorUsageMemberStd implements BehaviorUsageMember = "RemoveMe";
   // TODO implement Me <-------------------------------------------------------------------------
 
 
   //TODO structure in files later -------------------------------------------------------------->
+  AssociationEndMemberStd implements AssociationEndMember= DefinitionMemberPrefix
+      (
+        ["abstract"]? "end" (isComposite:"part")? PartProperty
+        | ["abstract"]? "end" ["ref"]? ReferenceProperty
+        | ["abstract"]?"end" ("ref" "action" | (isComposite:"action")? ) ActionUsage
+      )
+    ;
+  BehaviorUsageMemberStd implements BehaviorUsageMember =
+    DefinitionMemberPrefix
+    (
+      ( ["abstract"]?  ("ref" "action" | isComposite:"action") ActionUsage)
+      | ( ["abstract"]?  ("ref" "state" | isComposite:"state") StateUsage)
+      | ( ["abstract"]?  ("ref" "constraint" | isComposite:"constraint") ConstraintUsage)
+      | ( ["abstract"]?  ("ref" "requirement" | isComposite:"requirement") RequirementUsage)
+      | ( "perform" PerformActionUsage)
+      | ( "exhibit" ExhibitStateUsage)
+      | ( "assert" AssertConstraintUsage)
+      | ( "satisfy" SatisfyRequirementUsage)
+    )
+  ;
 
+   //TOdO FeatureDirection
+  ReferencePropertyNonPortStructureUsageMember implements NonPortStructureUsageMember =
+    ["abstract"]? "ref" direction:FeatureDirection? ReferenceProperty;
 
+  NonPortStructureUsageMemberStd implements NonPortStructureUsageMember =
+    //PartNonPortStructureUsageMember in IBD
+    // ReferencePropertyNonPortStructureUsageMember on Top
+    ( ["abstract"]? ["value"]? direction:FeatureDirection? ValueProperty )
+    | ( ["abstract"]? ( "ref" "individual" | isComposite:"individual")
+     ( direction:FeatureDirection )? IndividualUsage )
+    | ( ["abstract"]? ( "ref" "timeslice" | isComposite:"timeslice")
+          ( direction:FeatureDirection )? TimeSliceUsage )
+    | ( ["abstract"]? ( "ref" "snapshot" | isComposite:"snapshot")
+          ( direction:FeatureDirection )? SnapshotUsage )
+    | ( ["abstract"]? "link" ConnectionUsage )
+    | ( ["abstract"]? "connect" Connector )
+    | ( ["abstract"]? "interface" InterfaceUsage )
+    | ( ["abstract"]? "interface" InterfaceUsage )
+    | ( "bind" BindingConnector )
+    | ( ["abstract"]? "succession" Succession )
+    | ( ["abstract"]? "stream" ItemFlow )
+    | ( ["abstract"]? "flow" SuccessionItemFlow )
+  ;
   //TODO structure in files later <--------------------------------------------------------------
 }

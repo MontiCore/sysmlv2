@@ -12,18 +12,15 @@ component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon,
 
  //TODO isComposite ?=  for NonPortStructureUsageMember
   PartNonPortStructureUsageMember implements NonPortStructureUsageMember =
-    "part" PartProperty;
+    ["abstract"]? "part" PartProperty;
   PartPackagedUsageMember implements PackagedUsageMember =
     "part" PartProperty;
 
 
   PartProperty = Usage;
 
-  //TODO is this BDD?
 
-  //TOdO FeatureDirection
-  ReferencePropertyNonPortStructureUsageMember implements NonPortStructureUsageMember =
-    "ref" ReferenceProperty;
+
 
   ReferenceProperty = Usage;
 

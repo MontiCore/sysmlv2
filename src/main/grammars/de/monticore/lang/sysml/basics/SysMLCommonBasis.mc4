@@ -29,8 +29,10 @@ TypeReference = FeatureTyping;
   interface ValueType;
   interface ClassifierDeclarationCompletion;
   interface PortDefinition;
+  /* Associations */
   interface AssociationBlock;
   interface AssociationUsageMember;
+  interface AssociationEndMember;
 
   /* Interfaces for Definitions*/
   interface NestedDefinitionMember;
@@ -44,7 +46,6 @@ TypeReference = FeatureTyping;
   interface ActionUsage;
   interface AbstractActionUsage;
   interface PortUsage;
-  interface AbstractPortUsage;
   interface ConjugatedPortUsage;
 
   /* DEFINITION MEMBERSHIPS */
