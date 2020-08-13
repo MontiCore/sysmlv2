@@ -4,30 +4,34 @@ package de.monticore.lang.sysml.basics.sysmldefault;
 
 component grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.SysMLCommonBasis{
 
-  PackageUnit implements Unit = UnitPrefix PackageDeclaration PackageBody;
-  PackageDeclaration = "package" SysMLName;
-
-  //TODO can this be improved? -> also naming is different
-  PackageBody = "{" (PackageMember | ImportUnit)* "}";
-  //TODO ImportUnit+ -> ImportUnits ? with ImportUnits = ImportUnit+
-
-  PackageMember = PackageMemberPrefix ( PackagedDefinitionMember | PackagedUsageMember);
-
-  PackageMemberPrefix = PrefixAnnotation* PackageElementVisibilityIndicator?;
-
-  AnonymousPackage = "TODO";
-
-  //------------Imports--------------
+  /* IMPORTS */
 
   AliasPackagedDefinitionMember implements PackagedDefinitionMember =
       ("import" | "alias") QualifiedName ("as" SysMLName)? ";";
-
   //TODO how to do something like this in MC: importedPackage = [SysML::Package|Name]
   ImportUnitStd implements ImportUnit = PrefixAnnotation* (visibility:PackageElementVisibilityIndicator)?
     "import" QualifiedName star:["::*"]? star:["."]? ("as" SysMLName)? ";"; //TODO do not allow spaces and allow explicit import
     //TODO actually not in the pilot implementation
     //TODO test if there are no whitespaces, write Cocos for star or StarDot
     //TODO force the star (*) ? , see Xtext 151
+
+
+  /* PACKAGES */
+  PackageUnit implements Unit = UnitPrefix Package;
+  AnonymousPackage implements Unit = PackageBody;
+  Package implements PackagedDefinitionMember =  PackageDeclaration PackageBody;
+  PackageDeclaration = "package" name:SysMLName;
+  PackageBody = "{" (PackageMember | ImportUnit)* "}";
+
+  /* PACKAGE MEMBERSHIPS */
+  PackageMember = PackageMemberPrefix ( PackagedDefinitionMember | PackagedUsageMember);
+  PackageMemberPrefix = PrefixAnnotation* visibility:PackageElementVisibilityIndicator?;
+  // Remark: PackagedDefinitionMember is an interface
+  // Remark: PackagedUsageMemberis an interface
+
+
+
+
 
 
 

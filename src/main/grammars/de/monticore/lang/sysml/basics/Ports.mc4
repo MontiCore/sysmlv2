@@ -5,16 +5,14 @@ component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
   de.monticore.lang.sysml.basics.Usages,
   de.monticore.lang.sysml.basics.Associations //TODO try to avoid circular dependencies
   {
-  //Remark see ll.393-417 in Xtext
+
+  /* PORT DEFINITIONS */
   PortDefinitionStd implements PortDefinition = PortDeclaration DefinitionBody;
-  PortDeclaration = ["abstract"]? "port" "def" ClassifierDeclarationCompletion ConjugatedPortDefinitionMember;
-  ConjugatedPortDefinition = PortConjugation;
+  PortDeclaration = ["abstract"]? "port" "def" ClassifierDeclarationCompletion ConjugatedPortDefinitionMember+;
+  ConjugatedPortDefinition = PortConjugation+;
+  PortConjugation = SysMLName; //TODO {SysML::PortConjugation}
 
-
-  PortConjugation = "TODO"; //TODO PortConjugation returns SysML::PortConjugation :
-                                   //	{SysML::PortConjugation}
-                                   //;
-
+  /* PORT DEFINITION MEMBERSHIPS */
   ConjugatedPortDefinitionMember = ConjugatedPortDefinition;
 
   /* PORT USAGE */

@@ -5,7 +5,9 @@ package de.monticore.lang.sysml;
 component grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysMLCommon,
   de.monticore.lang.sysml.IBD // TODO refactor, necessary for (at least) EmptyReturnParameterPart
   {
-  
+
+  /* REQUIREMENT DEFINITIONS */
+
   RequirementDefinition = RequirementDefDeclaration RequirementBody;
   RequirementDefDeclaration = ["abstract"]? "requirement" "def" ("id" reqId:SysMLName)? name:SysMLName
     RequirementDefParameterList EmptyReturnParameterPart SuperclassingList?;

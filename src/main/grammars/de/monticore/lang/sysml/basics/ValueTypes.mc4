@@ -7,13 +7,13 @@ component grammar ValueTypes extends de.monticore.lang.sysml.basics.SysMLCommonB
 
   {
 
+  /* VALUE TYPES */
   ValueTypeUnit = UnitPrefix ValueType;
-  ValueTypeStd implements ValueType, PackagedDefinitionMember= ValueTypeDeclaration DefinitionBody; //TODO make Cocos to restrict defBody???
-      //TODO actually ValueType should implement PackagedDefinitionMember
-
+  ValueTypeStd implements ValueType, PackagedDefinitionMember =
+    ValueTypeDeclaration DefinitionBody;
   ValueTypeDeclaration = ["abstract"]? "value" "type" ClassifierDeclarationCompletion;
 
-  //TODO there is also another ValueDeclaration implement me
+
 
 
   //TODO ( direction = FeatureDirection )? for NonPortStructureUsageMember missing.

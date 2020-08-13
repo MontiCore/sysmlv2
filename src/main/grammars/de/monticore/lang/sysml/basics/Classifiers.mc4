@@ -4,11 +4,12 @@ package de.monticore.lang.sysml.basics;
 
 component grammar Classifiers extends de.monticore.lang.sysml.basics.SysMLCommonBasis
 { //TODO create another layer for this
+
+  /* CLASSIFIERS */
   ClassifierDeclarationCompletionStd implements ClassifierDeclarationCompletion = SysMLName SuperclassingList?;
 
   SuperclassingList = SpecializesKeyword (Superclassing || ",")+;
   SpecializesKeyword = ":>" | "specializes";
 
-  //TODO see line 348
-  Superclassing = QualifiedName;
+  Superclassing = QualifiedName; //TODO see line 348
 }

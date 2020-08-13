@@ -32,10 +32,12 @@ TypeReference = FeatureTyping;
   interface AssociationBlock;
   interface AssociationUsageMember;
 
-  interface NestedDefinitionMember;  //Referenced by DefinitionBody:
+  /* Interfaces for Definitions*/
+  interface NestedDefinitionMember;
+  interface NestedUsageMember;
 
 
-  // interface DefinitionMemberPrefix;
+  interface DefinitionMemberPrefix;
   interface Usage;
 
 
@@ -55,19 +57,14 @@ TypeReference = FeatureTyping;
   //interface ConjugatedPortMember;
 
   //TODO move to some file--------------------------------------------------------------------------
-  /* DEFINITION MEMBERSHIPS */
-    //NestedDefinitionMember = DefinitionMemberPrefix PackagedDefinitionMember; //is Interface
-    NestedUsageMember = StructureUsageMember | BehaviorUsageMember;
-    StructureUsageMember = NonPortStructureUsageMember | PortMember | ConjugatedPortMember;
-    /*
-     * NonPortStructureUsageMember, BehaviorUsageMember are interfaces
-     */
-    PortMember = DefinitionMemberPrefix (["abstract"] ["port"]? PortUsage); //Remark we do not use abstract Port Usage
-    ConjugatedPortMember = DefinitionMemberPrefix (["abstract"] ["port"]? ConjugatedPortMember);
 
-    FeatureDirection =  ["in"] | ["out"] | ["inout"];
 
-    DefinitionMemberPrefix = PrefixAnnotation* visibility:VisibilityIndicator?;
+
+
+
+
+
+
 
 
      /* EXPRESSION MEMBERSHIPS */ //TODO maybe interfaces

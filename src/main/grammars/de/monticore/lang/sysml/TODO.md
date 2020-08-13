@@ -13,7 +13,20 @@
 - Fix java.lang.ClassCastException: de.monticore.cd.cd4analysis._ast.ASTCDInterface cannot be cast to 
     de.monticore.cd.cd4analysis._ast.ASTCDClass
 - Implement overall connecting NTs (check all interface, if they are properly implemented.).
-
+   - Check if Cocos are necessary for some Connecting NTs
 
 
  - Debug
+ 
+ 
+ 
+ -------- 
+ # Some renamed NTs
+ 
+ (xtext->MC)
+- Import -> ImportUnit
+- All NTs which are now interface in MC must be implemented. For the standard implementation these NTs
+  get suffix "std".
+- 
+
+ 

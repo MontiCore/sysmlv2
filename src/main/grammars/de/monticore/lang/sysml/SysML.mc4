@@ -15,9 +15,15 @@ de.monticore.lang.sysml.AD,
 
 
   // TODO implement Me ------------------------------------------------------------------------->
-  AssociationUsageMemberStd implements AssociationUsageMember = "RemoveMe";
-  NestedDefinitionMemberStd implements NestedDefinitionMember = "RemoveMe";
+
+
   AbstractPortUsageStd implements AbstractPortUsage = "RemoveMe";
   BehaviorUsageMemberStd implements BehaviorUsageMember = "RemoveMe";
   // TODO implement Me <-------------------------------------------------------------------------
+
+
+  //TODO structure in files later -------------------------------------------------------------->
+
+
+  //TODO structure in files later <--------------------------------------------------------------
 }

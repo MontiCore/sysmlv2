@@ -3,19 +3,22 @@ package de.monticore.lang.sysml.basics;
 
 component grammar Associations extends de.monticore.lang.sysml.basics.SysMLCommonBasis{
 
+  /* ASSOCIATION BLOCKS */
 
-  AssociationBlockUnit = UnitPrefix AssociationBlock;
+  AssociationBlockUnit implements Unit = UnitPrefix AssociationBlock;
   AssociationBlockStd implements AssociationBlock = AssociationBlockDeclaration AssociationBlockBody;
   AssociationBlockDeclaration = ["abstract"]? "assoc" "block" ClassifierDeclarationCompletion;
   AssociationBlockBody = (";") | ("{"
     (
-        NestedDefinitionMember
-        | AssociationUsageMember
-        | ImportUnit
+        NestedDefinitionMember+
+        | AssociationUsageMember+
+        | ImportUnit+
     )"}"
   );
-  AbstractAssociationBlockBody = AssociationBlockBody;
+  // AbstractAssociationBlockBody = AssociationBlockBody; //TODO remove me, we do not use Abstract anymore
 
+  /* ASSOCIATION BLOCK MEMBERSHIPS */
+  AssociationUsageMemberStd implements AssociationUsageMember = "RemoveMe";
   /**
     Memberships
   */
