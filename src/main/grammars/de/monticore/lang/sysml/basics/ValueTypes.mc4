@@ -17,9 +17,9 @@ component grammar ValueTypes extends de.monticore.lang.sysml.basics.SysMLCommonB
 
 
   //TODO ( direction = FeatureDirection )? for NonPortStructureUsageMember missing.
-  ValueProperty implements PackagedUsageMember, NonPortStructureUsageMember =
+  ValuePropertyStd implements PackagedUsageMember =
     ["abstract"]? "value"? Usage;
-
+  ValueProperty = Usage; //TODO remove above ValuePropertyStd
 
 
   //TODO differences ValueType And Value

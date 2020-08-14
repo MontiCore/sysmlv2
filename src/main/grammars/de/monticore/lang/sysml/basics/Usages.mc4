@@ -8,7 +8,7 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
 
   UsageDeclaration = (SysMLName TypePart? SubsettingPart)
     | (TypePart  SubsettingPart)
-    | (RedefinesKeyword Redefinition TypePart? SubsettingPart);
+    | (RedefinesKeyword Redefinition TypePart? SubsettingPart); //SubsettingPart itself is optional
 
   UsageCompletion = DefinitionBody;
     //UsageCompletion = ValuePart? DefinitionBody; TODO add ValuePart, if FeatureValue is fixed.

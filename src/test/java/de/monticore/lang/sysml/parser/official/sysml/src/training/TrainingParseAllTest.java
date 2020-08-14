@@ -42,6 +42,7 @@ public class TrainingParseAllTest {
     this.parseSysML( pathToDir +  "/02. Blocks/Blocks Example.sysml");
   }
 
+
   @Test
   public void parse_03_Generalization_Generalization_ExampleTest(){
     this.parseSysML( pathToDir +  "/03. Generalization/Generalization Example.sysml");
@@ -71,13 +72,11 @@ public class TrainingParseAllTest {
   public void parse_07_Individuals_Individuals_and_Roles_1Test(){
     this.parseSysML( pathToDir +  "/07. Individuals/Individuals and Roles-1.sysml");
   }
-
   @Ignore
   @Test
   public void parse_07_Individuals_Individuals_and_Snapshots_ExampleTest(){
     this.parseSysML( pathToDir +  "/07. Individuals/Individuals and Snapshots Example.sysml");
   }
-
   @Ignore
   @Test
   public void parse_07_Individuals_Individuals_and_Time_SlicesTest(){
