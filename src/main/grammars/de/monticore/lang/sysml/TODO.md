@@ -58,3 +58,12 @@ ConjugatedInterfaceEndMember
  Some are just used once in xtext. (Click Xtext find References)
  And because we merge them often with unit (to avoid duplicated code), we use them twice.
  
+ ------
+# Empty NTs
+
+Some NTs are have no CS in Xtext.
+We create an optional NT EmptyNT.
+Whenever a tree leads to this NT we make the tree optional (? or *) and denote this with 
+x0opt
+. Whenever EmptyNT is used we write 
+x0mty

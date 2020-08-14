@@ -37,7 +37,6 @@ public class TrainingParseAllTest {
     this.parseSysML( pathToDir +  "/01. Packages/Package Example.sysml");
   }
 
-  @Ignore //TODO fix me
   @Test
   public void parse_02_Blocks_Blocks_ExampleTest(){
     this.parseSysML( pathToDir +  "/02. Blocks/Blocks Example.sysml");
@@ -68,7 +67,6 @@ public class TrainingParseAllTest {
     this.parseSysML( pathToDir +  "/06. Parts/Parts Example-2.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_07_Individuals_Individuals_and_Roles_1Test(){
     this.parseSysML( pathToDir +  "/07. Individuals/Individuals and Roles-1.sysml");

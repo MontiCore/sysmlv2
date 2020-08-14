@@ -5,9 +5,9 @@ package de.monticore.lang.sysml.basics.sysmldefault;
 component grammar Names extends de.monticore.MCBasics,
  de.monticore.lang.sysml.basics.SysMLCommonBasis{
 
-  SimpleName implements QualifiedName = Name;
-  ColonQualifiedName implements QualifiedName = (Name || "::")+;
-  DotQualifiedName implements QualifiedName = (Name || ".")+; //TODO change to SysMLName;
+  SimpleName implements QualifiedName = SysMLName;
+  ColonQualifiedName implements QualifiedName = (SysMLName || "::")+;
+  DotQualifiedName implements QualifiedName = (SysMLName || ".")+;
 
   fragment token AnyText = ~ ('\'');
   token UNRESTRICTED_NAME = '\'' AnyText* '\'';

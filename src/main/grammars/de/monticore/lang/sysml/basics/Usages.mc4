@@ -71,8 +71,12 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
 
   IndividualDefinition implements PackagedDefinitionMember = IndividualDefDeclaration DefinitionBody;
   IndividualDefDeclaration = ["abstract"]? "individual" "def" ClassifierDeclarationCompletion
-    LifeClassMembership+;
-  LifeClass = SysMLName; //TODO {SysML::LifeClass}
+    LifeClassMembership*; //TODO x0opt
+  LifeClass = EmptyNT; //TODO {SysML::LifeClass} // TODO x0mty
+
+  //if optional   ->
+  // TODO individualDefDeclaration contains a closure with at least one alternative that can match an empty string
+
   /* INDIVIDUAL DEFINITION MEMBERSHIPS */
   LifeClassMembership = LifeClass;
 
@@ -80,10 +84,14 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
   /* INDIVIDUALS */
 
   IndividualUsage = Usage;
-  TimeSliceUsage = UsageDeclaration TimeSliceFeatureMember+ UsageCompletion; //Remark: Can be abstract.
-  TimeSliceFeature = SysMLName; //{SysML::TimeSliceFeature} TODO and enable
-  SnapshotUsage = UsageDeclaration SnapshotFeatureMember+ UsageCompletion; //Remark: Can be abstract.
-  SnapshotFeature = SysMLName; //{SysML::SnapshotFeature} TODO and enable
+  TimeSliceUsage = UsageDeclaration TimeSliceFeatureMember* UsageCompletion;
+  //TODO x0opt TimeSliceFeatureMember
+  //Remark: Can be abstract.
+  TimeSliceFeature = EmptyNT; //{SysML::TimeSliceFeature} TODO and enable //TODO x0mty
+  SnapshotUsage = UsageDeclaration SnapshotFeatureMember* UsageCompletion;
+  //TODO x0opt SnapshotFeatureMember
+  //Remark: Can be abstract.
+  SnapshotFeature = EmptyNT; //{SysML::SnapshotFeature} TODO and enable //TODO x0mty
 
   /* INDIVIDUAL MEMBERSHIPS */
 

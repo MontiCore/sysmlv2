@@ -23,6 +23,9 @@ TypeReference = FeatureTyping;
 
 // TODO Expressions <-------------------------------------------------------------------------
 
+//TODO Empty
+EmptyNT = "ThisIsEmpty12325513rt35141rfv";
+
 //TODO split into Basic Interfaces and CommonInterfaces ?
   interface Unit;
   interface DefinitionBody;
