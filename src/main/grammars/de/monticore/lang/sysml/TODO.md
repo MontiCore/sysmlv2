@@ -7,12 +7,12 @@
     - Successions (Implemented) &check;
     - Item Flows  (Implemented) &check;
     - ITEM FLOW MEMBERSHIPS  (Implemented) &check;
-    - Expressions
-    - Literals
+    - Expressions TODO 
+    - Literals TODO
 - Structure all Files.
 - Fix java.lang.ClassCastException: de.monticore.cd.cd4analysis._ast.ASTCDInterface cannot be cast to 
-    de.monticore.cd.cd4analysis._ast.ASTCDClass
-- Implement overall connecting NTs (check all interface, if they are properly implemented.).
+    de.monticore.cd.cd4analysis._ast.ASTCDClass &check;
+- Implement overall connecting NTs (check all interface, if they are properly implemented.). &check;
    - Check if Cocos are necessary for some Connecting NTs
 
 

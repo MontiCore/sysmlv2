@@ -10,12 +10,11 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
     | (TypePart  SubsettingPart)
     | (RedefinesKeyword Redefinition TypePart? SubsettingPart); //SubsettingPart itself is optional
 
-  UsageCompletion = DefinitionBody;
-    //UsageCompletion = ValuePart? DefinitionBody; TODO add ValuePart, if FeatureValue is fixed.
+  UsageCompletion = ValuePart? DefinitionBody;
 
-  ValuePart = FeatureValue+;
+  ValuePart = "=" FeatureValue+;
   FeatureValue = Expression; //TODO expressions cannot be used like this, because else something like
-  //TODO value mass : Real asd; (<--asd is problematic) is possible.
+  //TODO value mass : Real asd; (<--asd is problematic) is possible. => Restrict Expressions
   TypePart = (TypedByKeyword ((FeatureTyping || ",")+ | "any") MultiplicityPart? )
     | MultiplicityPart;
   TypedByKeyword = ":" | "typed" "by";

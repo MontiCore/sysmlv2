@@ -9,6 +9,30 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
   //TODO LiteralsSysML should overwrite or extend Commonliterals, also for JavaClassExpressions
   //TODO the implicitely imported CommonExpressions
 
+  /* EXPRESSIONS */
+
+// TODO Expressions ------------------------------------------------------------------------->
+// Body Expressions
+BodyExpression = "TODO";
+// Base Expressions
+
+TypeReference = FeatureTyping;
+
+
+// TODO Expressions <-------------------------------------------------------------------------
+
+
+
+     /* EXPRESSION MEMBERSHIPS */ //TODO maybe interfaces
+        ExpressionMemberStd implements ExpressionMember = Expression;
+        FeatureReferece = QualifiedName; //TODO see xtext
+        TypeReferenceMember = TypeReference;
+        NamedExpressionMember = memberName:SysMLName "=>" Expression;
+        BodyMember = BodyExpression;
+        BodyParameterMember = memberName:SysMLName Parameter;
+        //TODO more...
+  //----------------------------------------------------------------------------------------------------------------
+
 
 }
 

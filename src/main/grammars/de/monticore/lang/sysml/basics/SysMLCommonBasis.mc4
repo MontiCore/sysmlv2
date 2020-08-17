@@ -8,20 +8,13 @@
  de.monticore.lang.sysml.basics.interfaces.PackageBasis,
  de.monticore.lang.sysml.basics.interfaces.ImportBasis,
  de.monticore.lang.sysml.basics.interfaces.VisibilityBasis,
- de.monticore.expressions.ExpressionsBasis //TODO put this into a another grammar like literals?
+ de.monticore.lang.sysml.basics.interfaces.SysMLExpressionsBasis
  {
 
 
 interface Parameter;
-// TODO Expressions ------------------------------------------------------------------------->
-// Body Expressions
-BodyExpression = "TODO";
-// Base Expressions
+
 interface FeatureTyping;
-TypeReference = FeatureTyping;
-
-
-// TODO Expressions <-------------------------------------------------------------------------
 
 //TODO Empty
 EmptyNT = "ThisIsEmpty12325513rt35141rfv";
@@ -65,21 +58,6 @@ EmptyNT = "ThisIsEmpty12325513rt35141rfv";
 
 
 
-
-
-
-
-
-
-     /* EXPRESSION MEMBERSHIPS */ //TODO maybe interfaces
-        ExpressionMember = Expression;
-        FeatureReferece = QualifiedName; //TODO see xtext
-        TypeReferenceMember = TypeReference;
-        NamedExpressionMember = memberName:SysMLName "=>" Expression;
-        BodyMember = BodyExpression;
-        BodyParameterMember = memberName:SysMLName Parameter;
-        //TODO more...
-  //----------------------------------------------------------------------------------------------------------------
 
 
 

@@ -72,7 +72,7 @@ public class TrainingParseAllTest {
   public void parse_07_Individuals_Individuals_and_Roles_1Test(){
     this.parseSysML( pathToDir +  "/07. Individuals/Individuals and Roles-1.sysml");
   }
-  @Ignore
+  //@Ignore
   @Test
   public void parse_07_Individuals_Individuals_and_Snapshots_ExampleTest(){
     this.parseSysML( pathToDir +  "/07. Individuals/Individuals and Snapshots Example.sysml");
