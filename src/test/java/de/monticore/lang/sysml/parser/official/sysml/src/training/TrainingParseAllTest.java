@@ -77,13 +77,13 @@ public class TrainingParseAllTest {
   public void parse_07_Individuals_Individuals_and_Snapshots_ExampleTest(){
     this.parseSysML( pathToDir +  "/07. Individuals/Individuals and Snapshots Example.sysml");
   }
-  @Ignore
+  //@Ignore
   @Test
   public void parse_07_Individuals_Individuals_and_Time_SlicesTest(){
     this.parseSysML( pathToDir +  "/07. Individuals/Individuals and Time Slices.sysml");
   }
 
-  @Ignore
+  //@Ignore
   @Test
   public void parse_08_Connectors_Connectors_ExampleTest(){
     this.parseSysML( pathToDir +  "/08. Connectors/Connectors Example.sysml");

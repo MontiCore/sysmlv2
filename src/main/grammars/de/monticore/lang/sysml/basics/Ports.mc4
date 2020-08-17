@@ -9,9 +9,9 @@ component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
   /* PORT DEFINITIONS */
 
   PortDefinitionStd implements PortDefinition, PackagedDefinitionMember  = PortDeclaration DefinitionBody;
-  PortDeclaration = ["abstract"]? "port" "def" ClassifierDeclarationCompletion ConjugatedPortDefinitionMember+;
+  PortDeclaration = ["abstract"]? "port" "def" ClassifierDeclarationCompletion ConjugatedPortDefinitionMember*;
   ConjugatedPortDefinition = PortConjugation+;
-  PortConjugation = SysMLName; //TODO {SysML::PortConjugation}
+  PortConjugation = EmptyNT; //TODO {SysML::PortConjugation}
 
   /* PORT DEFINITION MEMBERSHIPS */
   ConjugatedPortDefinitionMember = ConjugatedPortDefinition;
@@ -64,7 +64,7 @@ component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
   InterfaceUsage = UsageDeclaration "connect" ConnectionPart InterfaceBody;
 
 
-  /* BINDING CONNECTORS */  //TODO Own File
+  /* BINDING CONNECTORS */
   BindingConnector = ((name:SysMLName)? TypePart? "as")? //Make own NT
     ConnectorEndMember+ "=" ConnectorEndMember+ DefinitionBody;
 
