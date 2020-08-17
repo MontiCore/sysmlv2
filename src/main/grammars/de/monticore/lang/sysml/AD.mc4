@@ -87,18 +87,10 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
 
   ActionParameterList = "(" ( ActionParameterMemberAndFlowMember || ",")* ")";
   ActionParameterMemberAndFlowMember = ActionParameterMember ActionParameterFlowMember?;
-  //TODO
-    /*  ActionParameter returns SysML::Parameter :
-       	{SysML::Parameter} ParameterTypePart? ValuePart?
-         ;
-
-         ActionParameterFlow returns SysML::ItemFlow :
-         	( 'stream' | {SysML::SuccessionItemFlow} 'flow' ) ownedFeatureMembership_comp += EmptyItemFeatureMember
-         	'from' ownedFeatureMembership_comp += ItemFlowEndMember
-         ;*/
-  ActionParameter = SysMLName ParameterTypePart? ValuePart?;
-  ActionParameterFlow = //("stream" | SysMLName "flow") EmptyItemFeatureMember+ "from" ItemFlowEndMember+
-    "TODO"; //TODO  0xA0129 rule actionParameterFlow contains a closure with at least one alternative that can match an empty string
+  ActionParameter = ParameterTypePart? ValuePart?;
+  ActionParameterFlow =
+    ("stream" | "flow") EmptyItemFeatureMember* "from" ItemFlowEndMember+; //TODO on "flow" {SysML::SuccessionItemFlow}
+    //"TODO"; //TODO  0xA0129 rule actionParameterFlow contains a closure with at least one alternative that can match an empty string
 
   PerformActionUsage = PerformActionUsageDeclaration ActivityBody;
   PerformActionUsageDeclaration = ((( name:SysMLName TypePart? "as" )? Subset+)
@@ -115,7 +107,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   PerformActionNodeDeclaration = isComposite:"perform" (name:SysMLName TypePart? "as")? Subset+  ActionParameterList?
     SubsettingPart ValuePart?;
   AcceptActionNodeDeclaration = EmptyParameterMember "accept" (name:SysMLName TypePart?)? "(" ItemFeatureMember+ ")";
-  SendActionNodeDeclaration = EmptyParameterMember+ EmptyItemFeatureMember+
+  SendActionNodeDeclaration = EmptyParameterMember+ EmptyItemFeatureMember*
     "send" ( ( name:SysMLName TypePart? )? "of")? ExpressionMember+ "to" ExpressionMember+;
   ControlNode = MergeNode	| DecisionNode | JoinNode | ForkNode;
 

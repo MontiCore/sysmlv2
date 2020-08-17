@@ -129,7 +129,6 @@ public class TrainingParseAllTest {
     this.parseSysML( pathToDir +  "/12. Item Flows/Streaming Interface Example.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_13_Activities_Activity_Example_1Test(){
     this.parseSysML( pathToDir +  "/13. Activities/Activity Example-1.sysml");
