@@ -134,13 +134,11 @@ public class TrainingParseAllTest {
     this.parseSysML( pathToDir +  "/13. Activities/Activity Example-1.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_13_Activities_Activity_Example_2Test(){
     this.parseSysML( pathToDir +  "/13. Activities/Activity Example-2.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_14_Actions_Action_DecompositionTest(){
     this.parseSysML( pathToDir +  "/14. Actions/Action Decomposition.sysml");
