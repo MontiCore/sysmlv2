@@ -37,7 +37,7 @@ ConjugatedInterfaceEndMember
  
  ----
  Check if the NTs need to be abstracted to an interface
- 
+ ```
  fragment PackagedDefinitionMember returns SysML::Membership :
  	( ownedMemberElement_comp = Package
  	| ownedMemberElement_comp = Block
@@ -54,6 +54,7 @@ ConjugatedInterfaceEndMember
  	| ( 'import' | 'alias' ) memberElement = [SysML::Element|QualifiedName] ( 'as' memberName = Name )? ';'
  	)
  ;
+```
  
  Some are just used once in xtext. (Click Xtext find References)
  And because we merge them often with unit (to avoid duplicated code), we use them twice.

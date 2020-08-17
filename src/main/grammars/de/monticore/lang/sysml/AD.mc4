@@ -198,11 +198,11 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   ItemFlow = ItemFlowDeclaration DefinitionBody;
   SuccessionItemFlow = ItemFlowDeclaration DefinitionBody;
   ItemFlowDeclaration = ( (name:SysMLName)? TypePart? //TODO I am not sure if "from" or the whole is meant with or
-    (( "of" ItemFeatureMember+) | (EmptyItemFeatureMember+))
-    "from" | EmptyItemFeatureMember+ )
+    (( "of" ItemFeatureMember+) | (EmptyItemFeatureMember*)) //TODO x0opt EmptyItemFeatureMember
+    "from" | EmptyItemFeatureMember* )
     ItemFlowEndMember+ "to" ItemFlowEndMember+;
   ItemFeatureTyping = FeatureTyping+ MultiplicityMember*;
-  EmptyItemFeature = SysMLName; //TODO {SysML::ItemFeature}
+  EmptyItemFeature = EmptyNT; //TODO {SysML::ItemFeature} x0mty
   ItemFlowEnd = ItemFlowFeatureMember+;
   ItemFlowFeature = Redefinition+;
 

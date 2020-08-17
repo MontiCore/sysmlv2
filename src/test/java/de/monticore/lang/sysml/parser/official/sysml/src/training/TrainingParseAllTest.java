@@ -114,19 +114,16 @@ public class TrainingParseAllTest {
     this.parseSysML( pathToDir +  "/11. Binding Connectors/Binding Connectors Example-1.sysml");
   }
 
-
   @Test
   public void parse_11_Binding_Connectors_Binding_Connectors_Example_2Test(){
     this.parseSysML( pathToDir +  "/11. Binding Connectors/Binding Connectors Example-2.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_12_Item_Flows_Streaming_ExampleTest(){
     this.parseSysML( pathToDir +  "/12. Item Flows/Streaming Example.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_12_Item_Flows_Streaming_Interface_ExampleTest(){
     this.parseSysML( pathToDir +  "/12. Item Flows/Streaming Interface Example.sysml");
