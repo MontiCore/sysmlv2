@@ -37,9 +37,9 @@ component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
 
   ConnectorEnd = Subset+ MultiplicityMember?;
 
-  MultiplicitySourceEnd = SysMLName MultiplicityMember;
-  EmptySourceEnd = SysMLName;
-  EmptyTargetEnd = SysMLName;
+  MultiplicitySourceEnd = EmptyNT MultiplicityMember?;
+  EmptySourceEnd = EmptyNT;
+  EmptyTargetEnd = EmptyNT;
 
   /*MultiplicitySourceEnd returns SysML::Feature :
   	{SysML::SourceEnd} (  ownedFeatureMembership_comp += MultiplicityMember )?

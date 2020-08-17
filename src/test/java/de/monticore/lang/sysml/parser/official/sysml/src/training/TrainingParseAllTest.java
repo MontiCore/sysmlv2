@@ -144,19 +144,16 @@ public class TrainingParseAllTest {
     this.parseSysML( pathToDir +  "/14. Actions/Action Decomposition.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_15_Succession_Conditional_Succession_ExampleTest(){
     this.parseSysML( pathToDir +  "/15. Succession/Conditional Succession Example.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_15_Succession_Succession_Example_1Test(){
     this.parseSysML( pathToDir +  "/15. Succession/Succession Example-1.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_15_Succession_Succession_Example_2Test(){
     this.parseSysML( pathToDir +  "/15. Succession/Succession Example-2.sysml");

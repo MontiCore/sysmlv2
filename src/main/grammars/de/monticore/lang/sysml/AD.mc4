@@ -21,9 +21,9 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
     NestedDefinitionMember+
     | StructureUsageMember+
     | InitialNodeMember+ (TargetSuccessionMember )*
-    | (EmptySuccessionMember+ )? ActivityNodeMember+ ( TargetSuccessionMember+ )*
+    | EmptySuccessionMember* ActivityNodeMember+ TargetSuccessionMember*
     | GuardedSuccessionMember+
-    | ImportUnit;
+    | ImportUnit+;
 
 
   /* ACTIVITIY MEMBERSHIPS */
@@ -31,8 +31,9 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   ParameterMember = direction:FeatureDirection? memberName:SysMLName Parameter;
   InitialNodeMember = DefinitionMemberPrefix "first" memberFeature:QualifiedName ";";
   ActivityNodeMember = DefinitionMemberPrefix ActivityNode;
-  TargetSuccessionMember = DefinitionMemberPrefix ActivityNode;
-  GuardedSuccessionMember = GuardedSuccession;
+  TargetSuccessionMember = DefinitionMemberPrefix
+    ( TargetSuccession | GuardedTargetSuccession | DefaultTargetSuccession);
+  GuardedSuccessionMember = GuardedSuccession ";";
 
 
   /* STATE DEFINITIONS */
@@ -49,9 +50,9 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
     | StateMember+ (TargetTransitionSuccessionMember )*
     | TransitionStepMember
     | ImportUnit;
-  StateActionUsage = (EmptyActionUsage ";") | PerformedActionUsage ActivityBody;
+  StateActionUsage = (EmptyActionUsage? ";") | PerformedActionUsage ActivityBody;
   PerformedActionUsage = PerformActionUsageDeclaration | AcceptActionNodeDeclaration | SendActionNodeDeclaration;
-  EmptyActionUsage = SysMLName; //TODO 	{SysML::ActionUsage}
+  EmptyActionUsage = EmptyNT; //TODO 	{SysML::ActionUsage}
 
   /* STATE MEMBERSHIPS */
 
@@ -74,13 +75,6 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   ActionUnit implements Unit = UnitPrefix ActionDeclaration ActivityBody;
   ActionDeclaration = ["abstract"]? "action" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
   ActionUsageStd implements ActionUsage =  SysMLName ActionUsageDeclaration ActivityBody;
-  //TODO
-  /*ActionUsage returns SysML::ActionUsage :
-           	{SysML::ActionUsage} ActionUsageDeclaration ActivityBody
-           ;*/
-           /* TODO do we need to differentiate to AbstractActionUsage returns SysML::ActionUsage :
-                                                  	ActionUsageDeclaration AbstractActivityBody
-                                                  ;*/
   ActionUsageDeclaration = (name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?)
     | (TypePart? ActionParameterList? ValuePart?)
     | (RedefinesKeyword Redefinition+ TypePart ActionParameterList? ValuePart?);
@@ -106,8 +100,8 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   ActionUsageNodeDeclaration = ["abstract"]? (("ref" "action") | isComposite:["action"]) ActionUsageDeclaration;
   PerformActionNodeDeclaration = isComposite:"perform" (name:SysMLName TypePart? "as")? Subset+  ActionParameterList?
     SubsettingPart ValuePart?;
-  AcceptActionNodeDeclaration = EmptyParameterMember "accept" (name:SysMLName TypePart?)? "(" ItemFeatureMember+ ")";
-  SendActionNodeDeclaration = EmptyParameterMember+ EmptyItemFeatureMember*
+  AcceptActionNodeDeclaration = EmptyParameterMember? "accept" (name:SysMLName TypePart?)? "(" ItemFeatureMember+ ")";
+  SendActionNodeDeclaration = EmptyParameterMember* EmptyItemFeatureMember*
     "send" ( ( name:SysMLName TypePart? )? "of")? ExpressionMember+ "to" ExpressionMember+;
   ControlNode = MergeNode	| DecisionNode | JoinNode | ForkNode;
 
@@ -135,7 +129,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   DecisionNode = isComposite:["decide"]? SysMLNameAndTypePartOptional ";";
   JoinNode = isComposite:["join"]? SysMLNameAndTypePartOptional ";";
   ForkNode = isComposite:["fork"]? SysMLNameAndTypePartOptional ";";
-  EmptyParameter = SysMLName; //TODO
+  EmptyParameter = EmptyNT; //TODO
   SysMLNameAndTypePartOptional = (name:SysMLName TypePart?)?;
 
 
@@ -160,9 +154,9 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
     TriggerStepMember* GuardExpressionMember* EffectBehaviorMember* "then" TransitionSuccessionMember;
   TargetTransitionStep = TriggerStepMember* GuardExpressionMember* EffectBehaviorMember* "then"
     TransitionSuccessionMember; //TODO make common NT later and write in improvement list
-  TriggerStep = EmptyParameterMember+ ItemFeatureMember+;
+  TriggerStep = EmptyParameterMember* ItemFeatureMember+;
   EffectBehaviourUsage = EmptyActionUsage | PerformedActionUsage ( "{" ActivityBodyItem* "}" )?;
-  TransitionSuccession = EmptySourceEndMember+ ConnectorEndMember+;
+  TransitionSuccession = EmptySourceEndMember* ConnectorEndMember+;
 
   /* TRANSITION MEMBERSHIPS */
   TransitionSourceMember = memberFeature:QualifiedName;
@@ -178,8 +172,8 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   Succession = SuccessionDeclaration ";";
   SuccessionDeclaration = ( ( name:SysMLName)? TypePart? "first" )?
     ConnectorEndMember+ "then" ConnectorEndMember+;
-  TargetSuccession = "then" MultiplicitySourceEndMember+ ConnectorEndMember+;
-  EmptySuccession = MultiplicitySourceEndMember+ EmptyTargetEndMember+;
+  TargetSuccession = "then" MultiplicitySourceEndMember* ConnectorEndMember+; //TODO MultiplicitySourceEndMember
+  EmptySuccession =  "then" MultiplicitySourceEndMember* EmptyTargetEndMember*; //TODO MultiplicitySourceEndMember
   GuardedSuccession = "succession" (( name:SysMLName)? TypePart? "first")?
     TransitionSourceMember+ GuardExpressionMember+ "then" TransitionSuccessionMember+;
   GuardedTargetSuccession = GuardExpressionMember+  "then" TransitionSuccessionMember+;
