@@ -11,15 +11,33 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
 
   /* EXPRESSIONS */
 
-// TODO Expressions ------------------------------------------------------------------------->
-// Body Expressions
-BodyExpression = "TODO";
-// Base Expressions
+  // These Expressions are needed addtionally-------->
 
-TypeReference = FeatureTyping;
+  // Base Expressions
+  BaseExpression implements Expression = //TODO there are some more BaseExpressions, merge them with MC Expressions
+    FeatureReferenceExpression;
+
+  FeatureReferenceExpression = FeatureReference+;
 
 
-// TODO Expressions <-------------------------------------------------------------------------
+  /* EXPRESSION MEMBERSHIPS */
+  FeatureReference = memberFeature:QualifiedName;
+
+
+  // These Expressions are needed addtionally<-------
+
+
+
+  // TODO Expressions ------------------------------------------------------------------------->
+  // Body Expressions
+  BodyExpression = "TODO";
+  // Base Expressions
+
+  TypeReference = FeatureTyping;
+
+
+
+  // TODO Expressions <-------------------------------------------------------------------------
 
 
 

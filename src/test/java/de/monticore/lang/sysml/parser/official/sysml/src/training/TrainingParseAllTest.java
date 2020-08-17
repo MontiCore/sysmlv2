@@ -88,37 +88,33 @@ public class TrainingParseAllTest {
     this.parseSysML( pathToDir +  "/08. Connectors/Connectors Example.sysml");
   }
 
-
   @Test
   public void parse_09_Ports_Port_Conjugation_ExampleTest(){
     this.parseSysML( pathToDir +  "/09. Ports/Port Conjugation Example.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_09_Ports_Port_ExampleTest(){
     this.parseSysML( pathToDir +  "/09. Ports/Port Example.sysml");
   }
 
-  @Ignore
+
   @Test
   public void parse_10_Interfaces_Interface_Decomposition_ExampleTest(){
     this.parseSysML( pathToDir +  "/10. Interfaces/Interface Decomposition Example.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_10_Interfaces_Interface_ExampleTest(){
     this.parseSysML( pathToDir +  "/10. Interfaces/Interface Example.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_11_Binding_Connectors_Binding_Connectors_Example_1Test(){
     this.parseSysML( pathToDir +  "/11. Binding Connectors/Binding Connectors Example-1.sysml");
   }
 
-  @Ignore
+
   @Test
   public void parse_11_Binding_Connectors_Binding_Connectors_Example_2Test(){
     this.parseSysML( pathToDir +  "/11. Binding Connectors/Binding Connectors Example-2.sysml");
