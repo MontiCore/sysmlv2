@@ -159,67 +159,56 @@ public class TrainingParseAllTest {
     this.parseSysML( pathToDir +  "/15. Succession/Succession Example-2.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_16_Signaling_Signaling_ExampleTest(){
     this.parseSysML( pathToDir +  "/16. Signaling/Signaling Example.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_17_Control_CameraTest(){
     this.parseSysML( pathToDir +  "/17. Control/Camera.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_17_Control_Decision_ExampleTest(){
     this.parseSysML( pathToDir +  "/17. Control/Decision Example.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_17_Control_Fork_Join_ExampleTest(){
     this.parseSysML( pathToDir +  "/17. Control/Fork Join Example.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_17_Control_Merge_ExampleTest(){
     this.parseSysML( pathToDir +  "/17. Control/Merge Example.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_18_Action_Allocation_Action_Allocation_ExampleTest(){
     this.parseSysML( pathToDir +  "/18. Action Allocation/Action Allocation Example.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_19_State_Definitions_State_Definition_Example_1Test(){
     this.parseSysML( pathToDir +  "/19. State Definitions/State Definition Example-1.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_19_State_Definitions_State_Definition_Example_2Test(){
     this.parseSysML( pathToDir +  "/19. State Definitions/State Definition Example-2.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_20_States_State_ActionsTest(){
     this.parseSysML( pathToDir +  "/20. States/State Actions.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_20_States_State_Decomposition_1Test(){
     this.parseSysML( pathToDir +  "/20. States/State Decomposition-1.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_20_States_State_Decomposition_2Test(){
     this.parseSysML( pathToDir +  "/20. States/State Decomposition-2.sysml");
@@ -231,13 +220,11 @@ public class TrainingParseAllTest {
     this.parseSysML( pathToDir +  "/21. State Allocation/State Allocation Example.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_21_Transitions_Transition_ActionsTest(){
     this.parseSysML( pathToDir +  "/21. Transitions/Transition Actions.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_23_Expressions_MassRollupTest(){
     this.parseSysML( pathToDir +  "/23. Expressions/MassRollup.sysml");

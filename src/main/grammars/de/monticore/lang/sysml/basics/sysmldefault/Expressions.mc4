@@ -11,26 +11,64 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
 
   /* EXPRESSIONS */
 
-  // These Expressions are needed addtionally-------->
+  // These Expressions are needed addtionally TODO check if some could be merged with MC Expressions-------->
+  SysMLConditionalExpression implements Expression =
+      NullCoalescingExpression ( // TODO {SysML::OperatorExpression.operand_comp += current}
+    		"?" Expression+ ":" SysMLConditionalExpression+
+    	)?;
+  //TODO which are necessary, why this weird circle?
+  NullCoalescingExpression = ConditionalOrExpression  ( "??" ConditionalOrExpression)*;
+  ConditionalOrExpression = ConditionalAndExpression  ( "||" ConditionalAndExpression)*;
+  ConditionalAndExpression = OrExpression             ( "&&" OrExpression+ )*;
+  OrExpression = XorExpression                        ( "|" XorExpression)*;
+  XorExpression = AndExpression                       ( "^" AndExpression)*;
+  AndExpression = EqualityExpression                  ( "&" EqualityExpression)*;
+  EqualityExpression = ClassificationExpression ((equal:["=="] | notEqual:["!="]) ClassificationExpression)*;
+  ClassificationExpression = RelationalExpression (("instanceof"| "hastype") RelationalExpression)*;
+  RelationalExpression = AdditiveExpression           (RelationalOperator AdditiveExpression)*;
+  RelationalOperator = "<" | ">" | "<=" | ">=";
+  AdditiveExpression =  MultiplicativeExpression      ((plus:["+"]|minus:["-"]) MultiplicativeExpression)*;
+  MultiplicativeExpression =  UnitsExpression      ((times:["*"]|divide:["/"]|exp:["**"]) UnitsExpression)*;
+  UnitsExpression =  UnaryExpression      ("@"  "[" UnaryExpression "]")?;
+  UnaryExpression =  SequenceAccessExpression | ("+"|"-"| "!" | "~") SequenceAccessExpression;
+  SequenceAccessExpression = PrimaryExpression ("[" Expression+ "]")?;
+  PrimaryExpression = BaseExpression ( "->" SysMLName BodyMember)+;
+  BodyExpression = //TODO operator for high priority: =>
+    ( BodyParameterMember+ ( BodyParameterMember )* "(" ExpressionMember* ")" ) | ExpressionTyping+;
+  ExpressionTyping = type:QualifiedName; //TODO [ SysML::Function | QualifiedName ]
+
+
 
   // Base Expressions
-  BaseExpression implements Expression = //TODO there are some more BaseExpressions, merge them with MC Expressions
+  BaseExpression implements Expression =
     FeatureReferenceExpression;
+  // TODO need to implement this? BaseExpressionLiteralExpression implements Expression =
 
   FeatureReferenceExpression = FeatureReference+;
 
 
   /* EXPRESSION MEMBERSHIPS */
+
+  ExpressionMemberStd implements ExpressionMember = Expression;
   FeatureReference = memberFeature:QualifiedName;
+  TypeReferenceMember = TypeReference;
+  NamedExpressionMember = memberName:SysMLName "=>" Expression;
+  BodyMember = BodyExpression;
+  BodyParameterMember = memberName:SysMLName Parameter;
+
+  /* QUERY PATH EXPRESSIONS */
+  SysMLQueryPathExpression implements Expression =
+    	QueryHeadExpression
+    	( "[" BodyMember+ "]" )?
+    	( "/"  QueryNameExpression+	( "[" BodyMember+ "]" )?)*;
+  QueryNameExpression = FeatureReference+;
+  QueryHeadExpression = "./" FeatureReference+;
 
 
   // These Expressions are needed addtionally<-------
 
 
 
-  // TODO Expressions ------------------------------------------------------------------------->
-  // Body Expressions
-  BodyExpression = "TODO";
   // Base Expressions
 
   TypeReference = FeatureTyping;
@@ -38,19 +76,6 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
 
 
   // TODO Expressions <-------------------------------------------------------------------------
-
-
-
-     /* EXPRESSION MEMBERSHIPS */ //TODO maybe interfaces
-        ExpressionMemberStd implements ExpressionMember = Expression;
-        FeatureReferece = QualifiedName; //TODO see xtext
-        TypeReferenceMember = TypeReference;
-        NamedExpressionMember = memberName:SysMLName "=>" Expression;
-        BodyMember = BodyExpression;
-        BodyParameterMember = memberName:SysMLName Parameter;
-        //TODO more...
-  //----------------------------------------------------------------------------------------------------------------
-
 
 }
 
