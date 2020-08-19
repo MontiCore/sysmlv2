@@ -13,6 +13,7 @@ public class TrainingParseAllTest {
   public void parseSysML(String path){
     SysMLParserForTesting parser = new SysMLParserForTesting();
     parser.parseSysML(path);
+    //TODO add additional asserts and tests
   }
 
   private final String pathToDir= "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src/training/";

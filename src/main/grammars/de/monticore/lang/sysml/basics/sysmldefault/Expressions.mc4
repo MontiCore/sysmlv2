@@ -57,14 +57,19 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
   ExpressionTyping = type:QualifiedName; //TODO [ SysML::Function | QualifiedName ]
 
 
-  // Base Expressions
+  // Base Expressions TODO check if all are implemented
   BaseExpression implements Expression =
-    FeatureReferenceExpression;
+    NullExpression| FeatureReferenceExpression | SequenceConstructionExpression;
+
   // TODO need to implement this? BaseExpressionLiteralExpression implements Expression =
 
   FeatureReferenceExpression = FeatureReference+;
+  // TODO ... some are missing
 
-
+  SequenceConstructionExpression = "{" "}" |
+    ( "{" Expression ("," SequenceElementList | ".." Expression)? "}" );
+  SequenceElementList = Expression ("," SequenceElementList)?;
+  NullExpression = "null";
   /* EXPRESSION MEMBERSHIPS */
 
   ExpressionMemberStd implements ExpressionMember = Expression;
