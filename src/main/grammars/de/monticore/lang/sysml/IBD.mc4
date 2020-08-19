@@ -25,7 +25,7 @@ component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon,
   ReferenceProperty = Usage;
 
 
-
+  //TODO which file?
   /* CONSTRAINT DEFINITIONS */
   ConstraintDefinitionUnit implements Unit = UnitPrefix ConstraintDefinition;
   ConstraintDefinition implements PackagedDefinitionMember = ConstraintDefDeclaration ConstraintBody;
@@ -50,9 +50,9 @@ component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon,
   ConstraintParameterPart = ActionParameterList? EmptyReturnParameterPart? SubsettingPart ValuePart?;
   AssertConstraintUsage =
     (((( name:SysMLName)? TypePart? "as" )? Subset+ ) | ("constraint" (name:SysMLName)? TypePart?) )
-    ConstraintParameterPart InvariantPart ConstraintBody;
-  InvariantPart = TrueLiteralMember;
-  TrueLiteralExpression = SysMLName; //{SysML::LiteralBoolean}
+    ConstraintParameterPart InvariantPart? ConstraintBody; //TODO actually InvariantPart is necessary
+  InvariantPart = TrueLiteralMember; //TODO
+  TrueLiteralExpression = EmptyNT; //{SysML::LiteralBoolean} TODO
 
   /* CONSTRAINT MEMBERSHIPS */
   TrueLiteralMember = TrueLiteralExpression;
