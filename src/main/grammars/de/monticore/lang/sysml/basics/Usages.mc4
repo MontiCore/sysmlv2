@@ -8,7 +8,7 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
 
   UsageDeclaration = (SysMLName TypePart? SubsettingPart)
     | (TypePart  SubsettingPart)
-    | (RedefinesKeyword Redefinition TypePart? SubsettingPart); //SubsettingPart itself is optional
+    | (RedefinesKeyword Redefinition+ TypePart? SubsettingPart); //SubsettingPart itself is optional
 
   UsageCompletion = ValuePart? DefinitionBody;
 
@@ -29,9 +29,9 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
 
   token FromToDigitsDotDot = ('0'..'9')+ ".."; //TODO noSpace(2) "." "." command
 
-  SubsettingPart = ((Subsets ||",")+ | (Redefines || ",")+)*;
+  SubsettingPart = (Subsets ("," Subset)* | Redefines  ("," Redefinition)*)*;
 
-  Subsets = SubsetsKeyword Subset+;
+  Subsets = SubsetsKeyword Subset+; //TODO check Cardinalities here, is it really "+" ?
   SubsetsKeyword = ":>" | "subsets";
   Subset = QualifiedName; //TODO @SysML::Feature
 

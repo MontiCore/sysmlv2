@@ -1,18 +1,8 @@
 package de.monticore.lang.sysml.parser.official.sysml.src.training;
 
-import de.monticore.lang.sysml.basics.sysmlcommonbasis._ast.ASTUnit;
-import de.monticore.lang.sysml.sysml._parser.SysMLParser;
 import de.monticore.lang.sysml.utils.SysMLParserForTesting;
-import de.se_rwth.commons.logging.Log;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Optional;
-
-import static org.junit.Assert.*;
 
 /**
  * @author Robin Muenstermann
@@ -214,7 +204,6 @@ public class TrainingParseAllTest {
     this.parseSysML( pathToDir +  "/20. States/State Decomposition-2.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_21_State_Allocation_State_Allocation_ExampleTest(){
     this.parseSysML( pathToDir +  "/21. State Allocation/State Allocation Example.sysml");
@@ -230,7 +219,6 @@ public class TrainingParseAllTest {
     this.parseSysML( pathToDir +  "/23. Expressions/MassRollup.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_23_Expressions_VehicleMassesTest(){
     this.parseSysML( pathToDir +  "/23. Expressions/VehicleMasses.sysml");
