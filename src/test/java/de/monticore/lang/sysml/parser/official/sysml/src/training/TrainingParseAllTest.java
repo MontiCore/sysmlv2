@@ -224,19 +224,17 @@ public class TrainingParseAllTest {
     this.parseSysML( pathToDir +  "/23. Expressions/VehicleMasses.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_24_Constraints_Constraint_Assertions_1Test(){
     this.parseSysML( pathToDir +  "/24. Constraints/Constraint Assertions-1.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_24_Constraints_Constraint_Assertions_2Test(){
     this.parseSysML( pathToDir +  "/24. Constraints/Constraint Assertions-2.sysml");
   }
 
-  @Ignore
+
   @Test
   public void parse_24_Constraints_Constraints_Example_1Test(){
     this.parseSysML( pathToDir +  "/24. Constraints/Constraints Example-1.sysml");
