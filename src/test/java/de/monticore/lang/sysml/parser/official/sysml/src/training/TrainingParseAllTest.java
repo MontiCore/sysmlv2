@@ -251,25 +251,21 @@ public class TrainingParseAllTest {
     this.parseSysML( pathToDir +  "/24. Constraints/Derivation Constraints.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_25_Requirements_Requirement_DefinitionsTest(){
     this.parseSysML( pathToDir +  "/25. Requirements/Requirement Definitions.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_25_Requirements_Requirement_GroupsTest(){
     this.parseSysML( pathToDir +  "/25. Requirements/Requirement Groups.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_25_Requirements_Requirement_SatisfactionTest(){
     this.parseSysML( pathToDir +  "/25. Requirements/Requirement Satisfaction.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_25_Requirements_Requirement_UsagesTest(){
     this.parseSysML( pathToDir +  "/25. Requirements/Requirement Usages.sysml");

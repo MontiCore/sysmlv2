@@ -5,18 +5,19 @@ package de.monticore.lang.sysml;
 component grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysMLCommon,
   de.monticore.lang.sysml.IBD // TODO refactor, necessary for (at least) EmptyReturnParameterPart
   {
-
+  //TODO EmptyReturnParameterPart is necessary everywhere in xtext
+  //TODO EmptyParameterMember is necessary in Xtext
   /* REQUIREMENT DEFINITIONS */
 
   RequirementDefinition implements PackagedDefinitionMember = RequirementDefDeclaration RequirementBody;
   RequirementDefDeclaration = ["abstract"]? "requirement" "def" ("id" reqId:SysMLName)? name:SysMLName
-    RequirementDefParameterList EmptyReturnParameterPart SuperclassingList?;
-  RequirementDefParameterList = EmptyParameterMember
-    | ( "(" EmptyParameterMember+ ")")
+    RequirementDefParameterList EmptyReturnParameterPart? SuperclassingList?;
+  RequirementDefParameterList = EmptyParameterMember?
+    | ( "(" EmptyParameterMember* ")")
     | ( "(" (ParameterMember || ",")+ ")" ) ;
   RequirementBody = ";" | ( "{" RequirementMembers "}" );
   RequirementMembers =
-    (NestedDefinitionMember+ | NestedUsageMember+ | ImportUnit+ | RequirementConstraintMember+);
+    (NestedDefinitionMember+ | NestedUsageMember+ |  RequirementConstraintMember+ | ImportUnit+ )*;
   RequirementConstraintUsage = ((( name:SysMLName)? TypePart? "as")? Subset+ | "constraint" (name:SysMLName)? TypePart?)
      ConstraintParameterPart ConstraintBody;
 
@@ -30,9 +31,9 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysM
   RequirementUsage = RequirementDeclaration RequirementBody;
   RequirementDeclaration  = ( "id" reqId:SysMLName)?
     (name:SysMLName TypePart? ConstraintParameterPart
-    | TypePart? ( ActionParameterList EmptyReturnParameterPart )? ValuePart?
+    | TypePart? ( ActionParameterList EmptyReturnParameterPart? )? ValuePart?
   	| RedefinesKeyword Redefinition+
-  	TypePart? ActionParameterList? EmptyReturnParameterPart ValuePart?
+  	TypePart? ActionParameterList? EmptyReturnParameterPart? ValuePart?
   	);
 
   //TODO make ((( name:SysMLName)? TypePart? "as")? NT? and write in List of Improvements.
@@ -40,9 +41,9 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysM
     ((( name:SysMLName)? TypePart? "as")? Subset+
     | "requirement" (name:SysMLName)? TypePart?)
     ( "by" SatisfactionConnectorMember)?
-    ConstraintParameterPart InvariantPart RequirementBody;
+    ConstraintParameterPart InvariantPart? RequirementBody;
 
-  SatisfactionConnector = EmptySourceEndMember+ ConnectorEndMember+;
+  SatisfactionConnector = EmptySourceEndMember* ConnectorEndMember+;
 
   /* REQUIREMENT MEMBERSHIPS */
   SatisfactionConnectorMember = SatisfactionConnector;
