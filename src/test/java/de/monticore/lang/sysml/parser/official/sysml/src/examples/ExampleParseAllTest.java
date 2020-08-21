@@ -17,19 +17,16 @@ public class ExampleParseAllTest {
     parser.parseSysML(path);
   }
 
-  @Ignore
   @Test
   public void parse_Action_Sequencing_Example_ActionInterfaceProtocolTest(){
     this.parseSysML( pathToDir +  "/Action Sequencing Example/ActionInterfaceProtocol.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Action_Sequencing_Example_ActionSequencingTest(){
     this.parseSysML( pathToDir +  "/Action Sequencing Example/ActionSequencing.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Arrowhead_Framework_Example_AHFCoreLibTest(){
     this.parseSysML( pathToDir +  "/Arrowhead Framework Example/AHFCoreLib.sysml");

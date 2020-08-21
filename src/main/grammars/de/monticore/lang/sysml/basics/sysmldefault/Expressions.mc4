@@ -15,7 +15,7 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
       Expression ( // TODO first Expression  could be NullCoalescingExpression  TODO {SysML::OperatorExpression.operand_comp += current}
     		"?" Expression+ ":" Expression+ //TODO second Expression could be  be SysMLConditionalExpression
     	);
-  //TODO which are necessary, why this weird circle?
+  // Following is the Xtext implementation with cycling in the definition
   /* NullCoalescingExpression = ConditionalOrExpression  ( "??" ConditionalOrExpression)*;
   ConditionalOrExpression = ConditionalAndExpression  ( "||" ConditionalAndExpression)*;
   ConditionalAndExpression = OrExpression             ( "&&" OrExpression+ )*;
@@ -31,10 +31,10 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
   UnitsExpression =  UnaryExpression      ("@"  "[" UnaryExpression "]")?;
   UnaryExpression =  SequenceAccessExpression | ("+"|"-"| "!" | "~") SequenceAccessExpression;
   SequenceAccessExpression = PrimaryExpression ("[" Expression+ "]")?;
-  PrimaryExpression = BaseExpression? ( "->" SysMLName BodyMember)+; //TODO  BaseExpression? is actually necessary
-  BodyExpression = //TODO operator for high priority: =>
+  PrimaryExpression = BaseExpression? ( "->" SysMLName BodyMember)+;
+  BodyExpression =
     ( BodyParameterMember+ ( BodyParameterMember )* "(" ExpressionMember* ")" ) | ExpressionTyping+;
-  ExpressionTyping = type:QualifiedName; //TODO [ SysML::Function | QualifiedName ]*/
+  ExpressionTyping = type:QualifiedName;*/
 
   NullCoalescingExpression implements Expression = Expression  ( "??" Expression);
   ConditionalOrExpression implements Expression = Expression  ( "||" Expression);
@@ -57,19 +57,33 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
   ExpressionTyping = type:QualifiedName; //TODO [ SysML::Function | QualifiedName ]
 
 
-  // Base Expressions TODO check if all are implemented
+  // Base Expressions
   BaseExpression implements Expression =
-    NullExpression| FeatureReferenceExpression | SequenceConstructionExpression;
-
-  // TODO need to implement this? BaseExpressionLiteralExpression implements Expression =
+     NullExpression
+    	| LiteralExpression
+    	| FeatureReferenceExpression
+    	| InvocationExpression
+    	| ClassExtentExpression
+    	| SequenceConstructionExpression
+    	| "(" Expression ")"
+    ;
 
   FeatureReferenceExpression = FeatureReference+;
-  // TODO ... some are missing
-
+  InvocationExpression = FeatureTyping "(" Tuple ")"; // TODO tupels seem not to be included in MCLiterals
+  Tuple = PositionalTuple | NamedTuple;
+  PositionalTuple = ( ExpressionMember || ",")+;
+  NamedTuple = ( NamedExpressionMember || ",")+;
+  ClassExtentExpression = TypeReferenceMember+ "." "allInstances" "(" ")";
+  TypeReference = FeatureTyping;
   SequenceConstructionExpression = "{" "}" |
     ( "{" Expression ("," SequenceElementList | ".." Expression)? "}" );
   SequenceElementList = Expression ("," SequenceElementList)?;
   NullExpression = "null";
+
+  // Literal Expressions
+
+  // => Implemented in Literals
+
   /* EXPRESSION MEMBERSHIPS */
 
   ExpressionMemberStd implements ExpressionMember = Expression;
@@ -86,19 +100,6 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
     	( "/"  QueryNameExpression+	( "[" BodyMember+ "]" )?)*;
   QueryNameExpression = FeatureReference+;
   QueryHeadExpression = "./" FeatureReference+;
-
-
-  // These Expressions are needed addtionally<-------
-
-
-
-  // Base Expressions
-
-  TypeReference = FeatureTyping;
-
-
-
-  // TODO Expressions <-------------------------------------------------------------------------
 
 }
 
