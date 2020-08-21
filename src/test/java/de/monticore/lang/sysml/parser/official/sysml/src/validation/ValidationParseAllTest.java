@@ -106,34 +106,28 @@ public class ValidationParseAllTest {
     this.parseSysML( pathToDir +  "/15-Properties-Values-Expressions/15_08-Range Restriction.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_15_Properties_Values_Expressions_15_10_Primitive_Data_TypesTest(){
     this.parseSysML( pathToDir +  "/15-Properties-Values-Expressions/15_10-Primitive Data Types.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_15_Properties_Values_Expressions_15_11_Variable_Length_Collection_TypesTest(){
     this.parseSysML( pathToDir +  "/15-Properties-Values-Expressions/15_11-Variable Length Collection Types.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_15_Properties_Values_Expressions_15_12_Compound_Value_TypeTest(){
     this.parseSysML( pathToDir +  "/15-Properties-Values-Expressions/15_12-Compound Value Type.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_15_Properties_Values_Expressions_15_13_Discretely_Sampled_Function_ValueTest(){
     this.parseSysML( pathToDir +  "/15-Properties-Values-Expressions/15_13-Discretely Sampled Function Value.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_15_Properties_Values_Expressions_15_19_Materials_with_PropertiesTest(){
     this.parseSysML( pathToDir +  "/15-Properties-Values-Expressions/15_19-Materials with Properties.sysml");
   }
-
 }
