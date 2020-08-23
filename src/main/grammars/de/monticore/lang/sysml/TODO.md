@@ -68,3 +68,8 @@ Whenever a tree leads to this NT we make the tree optional (? or *) and denote t
 x0opt
 . Whenever EmptyNT is used we write 
 x0mty
+
+# Helpful methods
+If searching for the implementation of an interface __x__ often it is helpful to search
+for "__x =__" in the grammar directory. If an NT does only implement one interface it will always have
+the form "MyNT implements __x =__".

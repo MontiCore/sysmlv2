@@ -39,31 +39,26 @@ public class ExampleParseAllTest {
     this.parseSysML( pathToDir +  "/Arrowhead Framework Example/AHFNorwayAppSystem.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Arrowhead_Framework_Example_AHFProfileLibTest(){
     this.parseSysML( pathToDir +  "/Arrowhead Framework Example/AHFProfileLib.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Camera_Example_CameraTest(){
     this.parseSysML( pathToDir +  "/Camera Example/Camera.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Camera_Example_CameraWithOperationsTest(){
     this.parseSysML( pathToDir +  "/Camera Example/CameraWithOperations.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Camera_Example_PictureTakingTest(){
     this.parseSysML( pathToDir +  "/Camera Example/PictureTaking.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Comment_Examples_CommentsTest(){
     this.parseSysML( pathToDir +  "/Comment Examples/Comments.sysml");

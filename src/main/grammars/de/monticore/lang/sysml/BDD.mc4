@@ -6,7 +6,7 @@ component grammar BDD extends de.monticore.lang.sysml.basics.SysMLCommon{
 
   /* BLOCKS */
 
-  BlockUnit = UnitPrefix Block; //Remark: in Xtext BlockDeclaration DefinitionBody
+  BlockUnit implements Unit = UnitPrefix Block; //Remark: in Xtext BlockDeclaration DefinitionBody
 
   Block implements PackagedDefinitionMember = BlockDeclaration DefinitionBody;
 
