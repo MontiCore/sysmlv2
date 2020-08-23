@@ -129,73 +129,62 @@ public class ExampleParseAllTest {
     this.parseSysML( pathToDir +  "/Simple Tests/BlockTest.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Simple_Tests_ConjugationTestTest(){
     this.parseSysML( pathToDir +  "/Simple Tests/ConjugationTest.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Simple_Tests_ConstraintTestTest(){
     this.parseSysML( pathToDir +  "/Simple Tests/ConstraintTest.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Simple_Tests_ControlNodeTestTest(){
     this.parseSysML( pathToDir +  "/Simple Tests/ControlNodeTest.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Simple_Tests_DecisionTestTest(){
     this.parseSysML( pathToDir +  "/Simple Tests/DecisionTest.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Simple_Tests_SmallTestTest(){
     this.parseSysML( pathToDir +  "/Simple Tests/SmallTest.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Simple_Tests_StateTestTest(){
     this.parseSysML( pathToDir +  "/Simple Tests/StateTest.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_v1_Spec_Examples_841_Wheel_Hub_Assembly_Wheel_Package___UpdatedTest(){
     this.parseSysML( pathToDir +  "/v1 Spec Examples/8.4.1 Wheel Hub Assembly/Wheel Package - Updated.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_v1_Spec_Examples_841_Wheel_Hub_Assembly_Wheel_PackageTest(){
     this.parseSysML( pathToDir +  "/v1 Spec Examples/8.4.1 Wheel Hub Assembly/Wheel Package.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_v1_Spec_Examples_845_Constraining_Decomposition_Vehicle_Decomposition___UpdatedTest(){
     this.parseSysML( pathToDir +  "/v1 Spec Examples/8.4.5 Constraining Decomposition/Vehicle Decomposition - Updated.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_v1_Spec_Examples_845_Constraining_Decomposition_Vehicle_DecompositionTest(){
     this.parseSysML( pathToDir +  "/v1 Spec Examples/8.4.5 Constraining Decomposition/Vehicle Decomposition.sysml");
   }
 
-  @Ignore
+  @Ignore //TODO
   @Test
   public void parse_v1_Spec_Examples_D478_Dynamics_HSUVDynamicsTest(){
     this.parseSysML( pathToDir +  "/v1 Spec Examples/D.4.7.8 Dynamics/HSUVDynamics.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Vehicle_Example_INCOSE_IW_2020_DemoTest(){
     this.parseSysML( pathToDir +  "/Vehicle Example/INCOSE IW 2020 Demo.sysml");
@@ -207,29 +196,23 @@ public class ExampleParseAllTest {
     this.parseSysML( pathToDir +  "/Vehicle Example/sfriedenthal_VehicleModel_1.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Vehicle_Example_VehicleDefinitionsTest(){
     this.parseSysML( pathToDir +  "/Vehicle Example/VehicleDefinitions.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Vehicle_Example_VehicleIndividualsTest(){
     this.parseSysML( pathToDir +  "/Vehicle Example/VehicleIndividuals.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Vehicle_Example_VehicleModel_evs_updateTest(){
     this.parseSysML( pathToDir +  "/Vehicle Example/VehicleModel_evs_update.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Vehicle_Example_VehicleUsagesTest(){
     this.parseSysML( pathToDir +  "/Vehicle Example/VehicleUsages.sysml");
   }
-
-
 }
