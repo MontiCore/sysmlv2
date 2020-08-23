@@ -31,8 +31,9 @@ public class ExampleParseAllTest {
   public void parse_Arrowhead_Framework_Example_AHFCoreLibTest(){
     this.parseSysML( pathToDir +  "/Arrowhead Framework Example/AHFCoreLib.sysml");
   }
-
-  @Ignore
+  //TODO (name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?) not running into this
+  //     "restGetAllItems:RESTGetAllItems"->SysMLName  "()"->ActionParameterList "subsets ServiceMethod" -> SubsettingPart
+  //     ";" -> ActivityBody
   @Test
   public void parse_Arrowhead_Framework_Example_AHFNorwayAppSystemTest(){
     this.parseSysML( pathToDir +  "/Arrowhead Framework Example/AHFNorwayAppSystem.sysml");

@@ -74,7 +74,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   /* ACTIONS */
   ActionUnit implements Unit = UnitPrefix ActionDeclaration ActivityBody;
   ActionDeclaration = ["abstract"]? "action" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
-  ActionUsageStd implements ActionUsage =  SysMLName ActionUsageDeclaration ActivityBody;
+  ActionUsageStd implements ActionUsage = ActionUsageDeclaration ActivityBody;
   ActionUsageDeclaration = (name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?)
     | (TypePart? ActionParameterList? ValuePart?)
     | (RedefinesKeyword Redefinition+ TypePart ActionParameterList? ValuePart?);
