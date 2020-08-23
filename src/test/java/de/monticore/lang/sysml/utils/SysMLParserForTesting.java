@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
  * @version 1.0
  */
 public class SysMLParserForTesting {
-  public Optional<ASTUnit> parseSysML(String path){
+  public Optional<ASTUnit> parseSysML(String path) {
     Log.enableFailQuick(false);
     SysMLParser parser = new SysMLParser();
     Path model = Paths.get(path);
@@ -25,7 +25,8 @@ public class SysMLParserForTesting {
       assertFalse(parser.hasErrors());
       assertTrue(sysmlPackage.isPresent());
       return sysmlPackage;
-    }catch( IOException e){
+    }
+    catch (IOException e) {
       e.printStackTrace();
       fail("There was an exception when parsing the model " + model + ": " + e.getMessage());
       return Optional.empty();
