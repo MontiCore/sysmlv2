@@ -7,14 +7,14 @@ component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon,
   {
 
   PartUnit implements Unit = UnitPrefix PartDeclaration UsageCompletion;
-  PartDeclaration = ["abstract"]? "part" SysMLName TypePart SubsettingPart;
+  PartDeclaration = ["abstract"]? "part" SysMLName TypePart? SubsettingPart;
 
 
  //TODO isComposite ?=  for NonPortStructureUsageMember
   PartNonPortStructureUsageMember implements NonPortStructureUsageMember =
     ["abstract"]? "part" PartProperty;
   PartPropertyPackagedUsageMember implements PackagedUsageMember =
-     ["abstract"]? "part" PartProperty; //TODO check if merge with above
+    ["abstract"]? "part" PartProperty; //TODO check if merge with above
 
 
   PartProperty = Usage;

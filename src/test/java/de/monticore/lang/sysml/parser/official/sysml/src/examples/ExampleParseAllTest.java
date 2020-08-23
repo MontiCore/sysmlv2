@@ -64,79 +64,66 @@ public class ExampleParseAllTest {
     this.parseSysML( pathToDir +  "/Comment Examples/Comments.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Flashlight_Example_Flashlight_ExampleTest(){
     this.parseSysML( pathToDir +  "/Flashlight Example/Flashlight Example.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Mass_Roll_up_Example_MassConstraintExampleTest(){
     this.parseSysML( pathToDir +  "/Mass Roll-up Example/MassConstraintExample.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Mass_Roll_up_Example_MassRollupTest(){
     this.parseSysML( pathToDir +  "/Mass Roll-up Example/MassRollup.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Mass_Roll_up_Example_SimpleVehicleMassTest(){
     this.parseSysML( pathToDir +  "/Mass Roll-up Example/SimpleVehicleMass.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Mass_Roll_up_Example_VehiclesTest(){
     this.parseSysML( pathToDir +  "/Mass Roll-up Example/Vehicles.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Packet_Example_PacketsTest(){
     this.parseSysML( pathToDir +  "/Packet Example/Packets.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Packet_Example_PacketUsageTest(){
     this.parseSysML( pathToDir +  "/Packet Example/PacketUsage.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Requirements_Examples_HSUVRequirementsTest(){
     this.parseSysML( pathToDir +  "/Requirements Examples/HSUVRequirements.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Requirements_Examples_MIDRequirementsTest(){
     this.parseSysML( pathToDir +  "/Requirements Examples/MIDRequirements.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Room_Model_RoomModelTest(){
     this.parseSysML( pathToDir +  "/Room Model/RoomModel.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Simple_Tests_ActionTestTest(){
     this.parseSysML( pathToDir +  "/Simple Tests/ActionTest.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Simple_Tests_AnalysisExampleTest(){
     this.parseSysML( pathToDir +  "/Simple Tests/AnalysisExample.sysml");
   }
 
-  @Ignore
   @Test
   public void parse_Simple_Tests_BlockTestTest(){
     this.parseSysML( pathToDir +  "/Simple Tests/BlockTest.sysml");

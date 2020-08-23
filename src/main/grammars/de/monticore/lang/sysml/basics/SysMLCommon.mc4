@@ -17,7 +17,7 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
   //TODO put this in a DefinitionFile
   /* DEFINITIONS */
 
-  DefinitionBodyStd implements DefinitionBody = "{" (NestedDefinitionMember+ | NestedUsageMember+ | ImportUnit+)* "}";
+  DefinitionBodyStd implements DefinitionBody = "{" (NestedDefinitionMember | NestedUsageMember | ImportUnit)* "}";
   DefinitionBodyEmpty implements DefinitionBody = ";";
 
   AbstractDefinitionBody = DefinitionBody; //TODO Remark: only has different naming, see Xtext 238
@@ -26,7 +26,8 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
 
   NestedDefinitionMemberStd implements NestedDefinitionMember = DefinitionMemberPrefix PackagedDefinitionMember;
   NestedUsageMemberStd implements NestedUsageMember = StructureUsageMember | BehaviorUsageMember;
-  StructureUsageMember = NonPortStructureUsageMember | PortMember | ConjugatedPortMember;
+  StructureUsageMember = (DefinitionMemberPrefix NonPortStructureUsageMember) | PortMember | ConjugatedPortMember;
+  // Remark: in Xtext DefinitionMemberPrefix is a part of NonPortStructureUsageMember
   // Remark: NonPortStructureUsageMember is an interface
   // Remark: BehaviorUsageMember is an interface
   PortMember = DefinitionMemberPrefix (["abstract"]? ["port"]? PortUsage); //Remark we do not use abstract Port Usage
