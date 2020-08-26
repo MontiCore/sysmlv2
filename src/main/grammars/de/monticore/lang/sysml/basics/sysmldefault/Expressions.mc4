@@ -3,7 +3,8 @@ package de.monticore.lang.sysml.basics.sysmldefault;
 
 //TODO should we use JavaClassExpressions?
 component grammar Expressions extends de.monticore.expressions.CommonExpressions,
-  de.monticore.lang.sysml.basics.SysMLCommonBasis{
+  de.monticore.lang.sysml.basics.SysMLCommonBasis,
+  de.monticore.lang.sysml.basics.sysmldefault.Literals{
 
   //TODO LiteralsSysML should overwrite or extend Commonliterals, also for JavaClassExpressions
   //TODO the implicitely imported CommonExpressions
@@ -51,7 +52,7 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
   UnitsExpression implements Expression =  Expression      ("@"  "[" Expression "]");
   UnaryExpression implements Expression =  ("+"|"-"| "!" | "~") Expression;
   SequenceAccessExpression implements Expression = Expression  ("[" Expression+ "]");
-  PrimaryExpression implements Expression = Expression ( "->" SysMLName BodyMember)+; //TODO  BaseExpression? is actually necessary
+  PrimaryExpression implements Expression <300> = Expression ( "->" SysMLName BodyMember)+;
   BodyExpression = //TODO operator for high priority: =>
     ( BodyParameterMember+ ( BodyParameterMember )* "(" ExpressionMember* ")" ) | ExpressionTyping+;
   ExpressionTyping = type:QualifiedName; //TODO [ SysML::Function | QualifiedName ]
@@ -77,6 +78,16 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
   TypeReference = FeatureTyping;
   SequenceConstructionExpression = "{" "}" |
     ( "{" Expression ("," SequenceElementList | ".." Expression)? "}" );
+  //TODO remove following
+  //SequenceConstructionExpression = "{" "}" |
+   // ( "{" Expression ("," SequenceElementList | ".." Expression)? "}" )
+  //  | ( "{" DigitsDotDot Expression "}") ;
+  //fragment token DigitsDotDot = ('0'..'9')+ "..";
+  //Size implements Expression = "size" "(x)" "-" Digits;
+  // SomeExpression implements Expression ="->forAll n (x[n + 1] == x[n] + v[n] * (5280/3600) * dt)";
+  //TODO remove
+
+
   SequenceElementList = Expression ("," SequenceElementList)?;
   NullExpression = "null";
 
