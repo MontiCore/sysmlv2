@@ -83,8 +83,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   ActionParameterMemberAndFlowMember = ActionParameterMember ActionParameterFlowMember?;
   ActionParameter = ParameterTypePart? ValuePart?;
   ActionParameterFlow =
-    ("stream" | "flow") EmptyItemFeatureMember* "from" ItemFlowEndMember+; //TODO on "flow" {SysML::SuccessionItemFlow}
-    //"TODO"; //TODO  0xA0129 rule actionParameterFlow contains a closure with at least one alternative that can match an empty string
+    ("stream" | "flow") EmptyItemFeatureMember "from" ItemFlowEndMember; //TODO  0xA0129 rule actionParameterFlow contains a closure with at least one alternative that can match an empty string
 
   PerformActionUsage = PerformActionUsageDeclaration ActivityBody;
   PerformActionUsageDeclaration = ((( name:SysMLName TypePart? "as" )? Subset+)
@@ -101,7 +100,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   PerformActionNodeDeclaration = isComposite:"perform" (name:SysMLName TypePart? "as")? Subset+  ActionParameterList?
     SubsettingPart ValuePart?;
   AcceptActionNodeDeclaration = EmptyParameterMember? "accept" (name:SysMLName TypePart?)? "(" ItemFeatureMember+ ")";
-  SendActionNodeDeclaration = EmptyParameterMember* EmptyItemFeatureMember*
+  SendActionNodeDeclaration = EmptyParameterMember* EmptyItemFeatureMember
     "send" ( ( name:SysMLName TypePart? )? "of")? ExpressionMember+ "to" ExpressionMember+;
   ControlNode = MergeNode	| DecisionNode | JoinNode | ForkNode;
 
@@ -134,7 +133,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
 
 
   /* ACTION MEMBERSHIPS */
-  ActionParameterMember = (direction:FeatureDirection )| (direction:FeatureDirection? memberName:SysMLName)
+  ActionParameterMember = (direction:FeatureDirection | direction:FeatureDirection? memberName:SysMLName)
     ActionParameter;
   ActionParameterFlowMember = ActionParameterFlow;
   EmptySuccessionMember = EmptySuccession;
@@ -184,11 +183,11 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   ItemFlow = ItemFlowDeclaration DefinitionBody;
   SuccessionItemFlow = ItemFlowDeclaration DefinitionBody;
   ItemFlowDeclaration = ( (name:SysMLName)? TypePart? //TODO I am not sure if "from" or the whole is meant with or
-    (( "of" ItemFeatureMember+) | (EmptyItemFeatureMember*)) //TODO x0opt EmptyItemFeatureMember
-    "from" | EmptyItemFeatureMember* )
+    (( "of" ItemFeatureMember+) | (EmptyItemFeatureMember)) //TODO x0opt EmptyItemFeatureMember
+    "from" | EmptyItemFeatureMember )
     ItemFlowEndMember+ "to" ItemFlowEndMember+;
   ItemFeatureTyping = FeatureTyping+ MultiplicityMember*;
-  EmptyItemFeature = EmptyNT; //TODO {SysML::ItemFeature} x0mty
+  EmptyItemFeature; //TODO {SysML::ItemFeature} x0mty EmptyNT
   ItemFlowEnd = ItemFlowFeatureMember+;
   ItemFlowFeature = Redefinition+;
 

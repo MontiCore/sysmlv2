@@ -188,7 +188,6 @@ public class ExampleParseAllTest {
     this.parseSysML(pathToDir + "/Vehicle Example/INCOSE IW 2020 Demo.sysml");
   }
 
-  @Ignore ///TODO ActionParameterList Error.
   @Test
   public void parse_Vehicle_Example_sfriedenthal_VehicleModel_1Test() {
     this.parseSysML(pathToDir + "/Vehicle Example/sfriedenthal_VehicleModel_1.sysml");
