@@ -9,9 +9,9 @@ component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
   /* PORT DEFINITIONS */
 
   PortDefinitionStd implements PortDefinition, PackagedDefinitionMember  = PortDeclaration DefinitionBody;
-  PortDeclaration = ["abstract"]? "port" "def" ClassifierDeclarationCompletion ConjugatedPortDefinitionMember*;
-  ConjugatedPortDefinition = PortConjugation+; // TODO PortConjugation x0opt
-  PortConjugation = EmptyNT; //TODO {SysML::PortConjugation}
+  PortDeclaration = ["abstract"]? "port" "def" ClassifierDeclarationCompletion ConjugatedPortDefinitionMember;
+  ConjugatedPortDefinition = PortConjugation; // TODO PortConjugation x0opt
+  PortConjugation; //TODO {SysML::PortConjugation}
 
   /* PORT DEFINITION MEMBERSHIPS */
   ConjugatedPortDefinitionMember = ConjugatedPortDefinition;
@@ -21,9 +21,8 @@ component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
   PortUsageStd implements PortUsage = Usage;
   ConjugatedPortUsageStd implements ConjugatedPortUsage= ConjugatePortUsageDeclaration UsageCompletion;
   ConjugatePortUsageDeclaration =
-    ( name:SysMLName? ConjugatePortTypePart MultiplicityPart? SubsettingPart)
-    | (RedefinesKeyword ownedRelationship_comp:Redefinition ConjugatePortTypePart
-    MultiplicityPart SubsettingPart);
+    name:SysMLName? ConjugatePortTypePart MultiplicityPart? SubsettingPart
+    | RedefinesKeyword Redefinition ConjugatePortTypePart MultiplicityPart SubsettingPart;
   ConjugatePortTypePart = TypedByKeyword "~" ConjugatedPortTyping; //TypedByKeyword is defined in Usages
   ConjugatedPortTyping = SysMLName; // Remark: [SysML::PortDefinition | QualifiedName]
 
@@ -32,8 +31,8 @@ component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
   ConnectionUsage = UsageDeclaration "connect" ConnectionPart AssociationBlockBody;
   ConnectionPart =  ownedFeatureMembership_compFrom:ConnectorEndMember "to"
       ownedFeatureMembership_compTo:ConnectorEndMember
-      | ( "(" ( ConnectorEndMember || ",")+ ")");
-      //TODO coco should be >2 TODO ownedFeatureMembership_comp:ConnectorEndMember
+      | ( "(" ( ConnectorEndMember | ",") ( ConnectorEndMember | ",")+ ")");
+      //TODO coco should be >2 TODO ownedFeatureMembership_comp:ConnectorEndMember => should be done with definition above
 
   ConnectorEnd = Subset+ MultiplicityMember?;
 
