@@ -28,12 +28,4 @@ component grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.SysM
   PackageMemberPrefix = PrefixAnnotation* visibility:PackageElementVisibilityIndicator?;
   // Remark: PackagedDefinitionMember is an interface
   // Remark: PackagedUsageMemberis an interface
-
-
-
-
-
-
-
-
 }

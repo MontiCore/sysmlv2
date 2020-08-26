@@ -4,10 +4,10 @@ package de.monticore.lang.sysml.basics.sysmldefault;
 component grammar Comments extends de.monticore.lang.sysml.basics.SysMLCommonBasis{
 
   /*Remark actually "comment" SysMLName? (Annotation+ | EmptyAnnotation) ML_Comment
-  * but we do not have ML_Comment (Because of MCBasics saving these some where else in the AST) and we
+  * but we do not have ML_Comment (Because MCBasics saves these in the AST) and we
   * do not need an Empty Annotation
   */
-  Comment implements PackagedDefinitionMember= "comment" SysMLName? Annotation*;
+  Comment implements PackagedDefinitionMember= "comment" SysMLName? Annotation?;
   Annotation = "about" QualifiedName;
 
   UnitPrefixStd implements UnitPrefix = PrefixAnnotation*;
