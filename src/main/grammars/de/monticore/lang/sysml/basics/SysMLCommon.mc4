@@ -10,11 +10,7 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
   de.monticore.lang.sysml.basics.ValueTypes,
   de.monticore.lang.sysml.basics.SysMLCommonBasis
    {
-
-
-
-
-  //TODO put this in a DefinitionFile
+  //TODO put this in a DefinitionFile?
   /* DEFINITIONS */
 
   DefinitionBodyStd implements DefinitionBody = "{" (NestedDefinitionMember | NestedUsageMember | ImportUnit)* "}";
@@ -30,19 +26,9 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
   // Remark: in Xtext DefinitionMemberPrefix is a part of NonPortStructureUsageMember
   // Remark: NonPortStructureUsageMember is an interface
   // Remark: BehaviorUsageMember is an interface
-  PortMember = DefinitionMemberPrefix (["abstract"]? ["port"]? PortUsage); //Remark we do not use abstract Port Usage
+  PortMember = DefinitionMemberPrefix (["abstract"]? "port" PortUsage); //Remark we do not use abstract Port Usage
   //TODO look into port is optional
-  ConjugatedPortMember = DefinitionMemberPrefix (["abstract"]? ["port"]? ConjugatedPortUsage);
+  ConjugatedPortMember = DefinitionMemberPrefix (["abstract"]? "port" ConjugatedPortUsage);
   FeatureDirection =  ["in"] | ["out"] | ["inout"];
   DefinitionMemberPrefixStd implements DefinitionMemberPrefix = PrefixAnnotation* visibility:VisibilityIndicator?;
-
-
-  //NestedDefinitionMemberStd implements NestedDefinitionMember = DefinitionMemberPrefix PackagedDefinitionMember;
-
-  //DefinitionMemberPrefixStd implements DefinitionMemberPrefix = PrefixAnnotation* visibility:VisibilityIndicator?;
-  /*Remark: in Xtext 	( ownedRelationship_comp += PrefixAnnotation )*, what is basically a List, which should not be
-  empty, but also can be empty. More elegant with *   */
-
-
-
 }

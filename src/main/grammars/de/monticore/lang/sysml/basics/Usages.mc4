@@ -27,11 +27,16 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
 
   //TODO
   Multiplicity = "[" ((FromToDigitsDotDot)? UnlimitedNaturalLiteralMember) "]";
+  token FromToDigitsDotDot = ('0'..'9')+ ".."; //TODO noSpace(2) "." "." command
+  //Multiplicity = "[" ( {noSpace(2,3,4)}? (MultiplicityDigits  "." "." )? UnlimitedNaturalLiteralMember) "]";
+  //token MultiplicityDigits = ('0'..'9')+;
+  //Multiplicity = "[" ( (MultiplicityDigits  "." {noSpace()}? "." {noSpace()}?)? UnlimitedNaturalLiteralMember {noSpace()}? ) "]";
+  //token MultiplicityDigits = ('0'..'9')+;
   ///Multiplicity = "[" ( (MultiplicityDigits  "." "." {noSpace()}?)? UnlimitedNaturalLiteralMember) "]";
   //Multiplicity = "[" ( (MultiplicityDigits  {noSpace(2)}? "." "." )? UnlimitedNaturalLiteralMember) "]";
 
   //token MultiplicityDigits = ('0'..'9')+;
-  token FromToDigitsDotDot = ('0'..'9')+ ".."; //TODO noSpace(2) "." "." command
+
 
   SubsettingPart = (Subsets ("," Subset)* | Redefines  ("," Redefinition)*)*;
 

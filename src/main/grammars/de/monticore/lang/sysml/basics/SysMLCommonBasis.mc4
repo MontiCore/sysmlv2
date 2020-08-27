@@ -3,63 +3,42 @@
 
 
  component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.interfaces.CommentsBasis,
-  de.monticore.lang.sysml.basics.interfaces.LiteralsBasis,
- de.monticore.lang.sysml.basics.interfaces.NamesBasis,
- de.monticore.lang.sysml.basics.interfaces.PackageBasis,
- de.monticore.lang.sysml.basics.interfaces.ImportBasis,
- de.monticore.lang.sysml.basics.interfaces.VisibilityBasis,
- de.monticore.lang.sysml.basics.interfaces.SysMLExpressionsBasis
- {
+   de.monticore.lang.sysml.basics.interfaces.LiteralsBasis,
+   de.monticore.lang.sysml.basics.interfaces.NamesBasis,
+   de.monticore.lang.sysml.basics.interfaces.PackageBasis,
+   de.monticore.lang.sysml.basics.interfaces.ImportBasis,
+   de.monticore.lang.sysml.basics.interfaces.VisibilityBasis,
+   de.monticore.lang.sysml.basics.interfaces.SysMLExpressionsBasis{
 
+ interface Parameter;
+ interface FeatureTyping;
 
-interface Parameter;
+ //TODO Empty
+ EmptyNT = "ThisIsEmpty12325513rt35141rfv";
 
-interface FeatureTyping;
+ //TODO split into Basic Interfaces and CommonInterfaces ?
+ interface Unit;
+ interface DefinitionBody;
+ interface ValueType;
+ interface ClassifierDeclarationCompletion;
+ interface PortDefinition;
+ /* Associations */
+ interface AssociationBlock;
+ interface AssociationUsageMember;
+ interface AssociationEndMember;
 
-//TODO Empty
-EmptyNT = "ThisIsEmpty12325513rt35141rfv";
+ /* Interfaces for Definitions*/
+ interface NestedDefinitionMember;
+ interface NestedUsageMember;
 
-//TODO split into Basic Interfaces and CommonInterfaces ?
-  interface Unit;
-  interface DefinitionBody;
-  interface ValueType;
-  interface ClassifierDeclarationCompletion;
-  interface PortDefinition;
-  /* Associations */
-  interface AssociationBlock;
-  interface AssociationUsageMember;
-  interface AssociationEndMember;
+ interface DefinitionMemberPrefix;
+ interface Usage;
 
-  /* Interfaces for Definitions*/
-  interface NestedDefinitionMember;
-  interface NestedUsageMember;
-
-
-  interface DefinitionMemberPrefix;
-  interface Usage;
-
-
-  interface ActionUsage;
-  interface AbstractActionUsage;
-  interface PortUsage;
-  interface ConjugatedPortUsage;
-
-  /* DEFINITION MEMBERSHIPS */
-  interface NonPortStructureUsageMember;
-  interface BehaviorUsageMember;
-
-
-
-  //interface PortMember;
-  //interface ConjugatedPortMember;
-
-  //TODO move to some file--------------------------------------------------------------------------
-
-
-
-
-
-
-
-
+ interface ActionUsage;
+ interface AbstractActionUsage;
+ interface PortUsage;
+ interface ConjugatedPortUsage;
+ /* DEFINITION MEMBERSHIPS */
+ interface NonPortStructureUsageMember;
+ interface BehaviorUsageMember;
 }
