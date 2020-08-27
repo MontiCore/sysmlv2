@@ -3,32 +3,30 @@ package de.monticore.lang.sysml.basics;
 
 
 component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis{
+
+  /* USAGES */
   UsageStd implements Usage =
      UsageDeclaration UsageCompletion;
 
   UsageDeclaration = (SysMLName TypePart? SubsettingPart)
     | (TypePart  SubsettingPart)
-    | (RedefinesKeyword Redefinition+ TypePart? SubsettingPart); //SubsettingPart itself is optional
+    | (RedefinesKeyword Redefinition TypePart? SubsettingPart); //SubsettingPart itself is optional
 
   UsageCompletion = ValuePart? DefinitionBody;
 
-  ValuePart = "=" FeatureValue+;
-  FeatureValue = Expression; //TODO expressions cannot be used like this, because else something like
-  //TODO value mass : Real asd; (<--asd is problematic) is possible. => Restrict Expressions
+  ValuePart = "=" FeatureValue;
+  FeatureValue = Expression;
+  //TODO value mass : Real asd; (<--asd is problematic) is possible. => Restrict Expressions => Restricted FeatureValue [from + to unique], maybe it is fine now?
   TypePart = (TypedByKeyword ((FeatureTyping || ",")+ | "any") MultiplicityPart? )
     | MultiplicityPart;
   TypedByKeyword = ":" | "typed" "by";
-  /*FeatureTyping returns SysML::FeatureTyping :
-    	type = [SysML::Type | QualifiedName]
-    ; TODO reference in MontiCore with @ and test this.*/
-  FeatureTypingStd implements FeatureTyping = QualifiedName;
-   //TODO enable any order ( isOrdered ?= 'ordered'? & isNonunique ?= 'nonunique'? )
-  MultiplicityPart = MultiplicityMember (["ordered"] | ["nonunique"])*; //Ast RUles TODO only once
+  FeatureTypingStd implements FeatureTyping = QualifiedName; //@SysML::Type TODO
+  MultiplicityPart = MultiplicityMember (["ordered"] | ["nonunique"])*; //Ast RUles TODO only once, not allowed: "ordered ordered"
 
   //TODO
   Multiplicity = "[" ((FromToDigitsDotDot)? UnlimitedNaturalLiteralMember) "]";
   token FromToDigitsDotDot = ('0'..'9')+ ".."; //TODO noSpace(2) "." "." command
-  //Multiplicity = "[" ( {noSpace(2,3,4)}? (MultiplicityDigits  "." "." )? UnlimitedNaturalLiteralMember) "]";
+  //Multiplicity = "[" ( (MultiplicityDigits  "." "." )? UnlimitedNaturalLiteralMember) "]";
   //token MultiplicityDigits = ('0'..'9')+;
   //Multiplicity = "[" ( (MultiplicityDigits  "." {noSpace()}? "." {noSpace()}?)? UnlimitedNaturalLiteralMember {noSpace()}? ) "]";
   //token MultiplicityDigits = ('0'..'9')+;
@@ -40,7 +38,7 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
 
   SubsettingPart = (Subsets ("," Subset)* | Redefines  ("," Redefinition)*)*;
 
-  Subsets = SubsetsKeyword Subset+; //TODO check Cardinalities here, is it really "+" ?
+  Subsets = SubsetsKeyword Subset;
   SubsetsKeyword = ":>" | "subsets";
   Subset = QualifiedName; //TODO @SysML::Feature
 
@@ -51,7 +49,7 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
   //Usage Memberships
   MultiplicityMember = Multiplicity;
 
-  //Remark: literal type is enforced by CoCo TODO write CoCo
+  //Remark: literal type is enforced by CoCo (write CoCo) or by Exact Literal TODO
   //TODO unlimitedNat -> map this how?
   NaturalLiteralMember = naturalLiteralExpression:Literal;
   UnlimitedNaturalLiteralMember = unlimitedNaturalLiteralExpression:Literal | isUnlimited:["*"];
@@ -59,31 +57,20 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
 
 
 
-  /* PARAMETERS */ //TODO decide Parameters FILE
+  /* PARAMETERS */ //TODO decide FILE
 
-  ParameterStd implements Parameter = SysMLName? ParameterTypePart?; //TODO {SysML:Parameter}
+  ParameterStd implements Parameter = ParameterTypePart?;
   ParameterTypePart = (TypedByKeyword (FeatureTyping | "any" ) MultiplicityPart? )
     | (MultiplicityPart) ;
 
 
   //TODO later decide to put Individuals in own FILE
-
-
-  //------------------------------------------------------------
-  //-----------------------Individuals--------------------------
-  //------------------------------------------------------------
-  IndividualDefinitionUnit implements Unit = UnitPrefix IndividualDefinition;
-
-
   /* INDIVIDUAL DEFINITIONS */
-
+  IndividualDefinitionUnit implements Unit = UnitPrefix IndividualDefinition;
   IndividualDefinition implements PackagedDefinitionMember = IndividualDefDeclaration DefinitionBody;
   IndividualDefDeclaration = ["abstract"]? "individual" "def" ClassifierDeclarationCompletion
-    LifeClassMembership*; //TODO x0opt
-  LifeClass = EmptyNT; //TODO {SysML::LifeClass} // TODO x0mty
-
-  //if optional   ->
-  // TODO individualDefDeclaration contains a closure with at least one alternative that can match an empty string
+    LifeClassMembership;
+  LifeClass;
 
   /* INDIVIDUAL DEFINITION MEMBERSHIPS */
   LifeClassMembership = LifeClass;
@@ -92,14 +79,10 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
   /* INDIVIDUALS */
 
   IndividualUsage = Usage;
-  TimeSliceUsage = UsageDeclaration TimeSliceFeatureMember* UsageCompletion;
-  //TODO x0opt TimeSliceFeatureMember
-  //Remark: Can be abstract.
-  TimeSliceFeature = EmptyNT; //{SysML::TimeSliceFeature} TODO and enable //TODO x0mty
-  SnapshotUsage = UsageDeclaration SnapshotFeatureMember* UsageCompletion;
-  //TODO x0opt SnapshotFeatureMember
-  //Remark: Can be abstract.
-  SnapshotFeature = EmptyNT; //{SysML::SnapshotFeature} TODO and enable //TODO x0mty
+  TimeSliceUsage = UsageDeclaration TimeSliceFeatureMember UsageCompletion;
+  TimeSliceFeature;
+  SnapshotUsage = UsageDeclaration SnapshotFeatureMember UsageCompletion;
+  SnapshotFeature;
 
   /* INDIVIDUAL MEMBERSHIPS */
 

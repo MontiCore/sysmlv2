@@ -13,18 +13,11 @@ component grammar ValueTypes extends de.monticore.lang.sysml.basics.SysMLCommonB
     ValueTypeDeclaration DefinitionBody;
   ValueTypeDeclaration = ["abstract"]? "value" "type" ClassifierDeclarationCompletion;
 
-
-
-
-  //TODO ( direction = FeatureDirection )? for NonPortStructureUsageMember missing.
   ValuePropertyStd implements PackagedUsageMember =
-    ["abstract"]? "value"? Usage;
-  ValueProperty = Usage; //TODO remove above ValuePropertyStd
-
-
-  //TODO differences ValueType And Value
-  ValueUnit implements Unit = UnitPrefix ValueDeclaration UsageCompletion;
+    ["abstract"]? "value"? ValueProperty;
+  ValueProperty = Usage;
 
   /* VALUE PROPERTIES */
+  ValueUnit implements Unit = UnitPrefix ValueDeclaration UsageCompletion;
   ValueDeclaration = ["abstract"]? ["value"]? name:SysMLName TypePart? SubsettingPart;
 }
