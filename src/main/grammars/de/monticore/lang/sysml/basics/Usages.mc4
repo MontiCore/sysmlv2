@@ -25,8 +25,12 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
    //TODO enable any order ( isOrdered ?= 'ordered'? & isNonunique ?= 'nonunique'? )
   MultiplicityPart = MultiplicityMember (["ordered"] | ["nonunique"])*; //Ast RUles TODO only once
 
+  //TODO
   Multiplicity = "[" ((FromToDigitsDotDot)? UnlimitedNaturalLiteralMember) "]";
+  ///Multiplicity = "[" ( (MultiplicityDigits  "." "." {noSpace()}?)? UnlimitedNaturalLiteralMember) "]";
+  //Multiplicity = "[" ( (MultiplicityDigits  {noSpace(2)}? "." "." )? UnlimitedNaturalLiteralMember) "]";
 
+  //token MultiplicityDigits = ('0'..'9')+;
   token FromToDigitsDotDot = ('0'..'9')+ ".."; //TODO noSpace(2) "." "." command
 
   SubsettingPart = (Subsets ("," Subset)* | Redefines  ("," Redefinition)*)*;

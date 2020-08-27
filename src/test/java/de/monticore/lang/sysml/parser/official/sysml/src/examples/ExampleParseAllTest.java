@@ -177,7 +177,7 @@ public class ExampleParseAllTest {
     this.parseSysML(pathToDir + "/v1 Spec Examples/8.4.5 Constraining Decomposition/Vehicle Decomposition.sysml");
   }
 
-  @Ignore //TODO there is some error with sequence expression or ".." or with the priorities of multiple Expressions.
+  @Ignore//TODO there is some error with sequence expression or ".." or with the priorities of multiple Expressions.
   @Test
   public void parse_v1_Spec_Examples_D478_Dynamics_HSUVDynamicsTest() {
     this.parseSysML(pathToDir + "/v1 Spec Examples/D.4.7.8 Dynamics/HSUVDynamics.sysml");
