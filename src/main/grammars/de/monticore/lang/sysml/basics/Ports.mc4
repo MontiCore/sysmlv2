@@ -34,23 +34,12 @@ component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
       | ( "(" ( ConnectorEndMember | ",") ( ConnectorEndMember | ",")+ ")");
       //TODO coco should be >2 TODO ownedFeatureMembership_comp:ConnectorEndMember => should be done with definition above
 
-  ConnectorEnd = Subset+ MultiplicityMember?;
+  ConnectorEnd = Subset MultiplicityMember?;
 
-  MultiplicitySourceEnd = EmptyNT MultiplicityMember?;
-  EmptySourceEnd = EmptyNT;
-  EmptyTargetEnd = EmptyNT;
+  MultiplicitySourceEnd = MultiplicityMember?;
+  EmptySourceEnd;
+  EmptyTargetEnd;
 
-  /*MultiplicitySourceEnd returns SysML::Feature :
-  	{SysML::SourceEnd} (  ownedFeatureMembership_comp += MultiplicityMember )?
-  ;
-
-  EmptySourceEnd returns SysML::Feature :
-  	{SysML::SourceEnd}
-  ;
-
-  EmptyTargetEnd returns SysML::Feature :
-  	{SysML::TargetEnd}
-  ;*/ //TODO
   /* CONNECTOR MEMBERSHIPS */
   ConnectorEndMember = (memberName:SysMLName "=>" )? ConnectorEnd;
   MultiplicitySourceEndMember = MultiplicitySourceEnd;

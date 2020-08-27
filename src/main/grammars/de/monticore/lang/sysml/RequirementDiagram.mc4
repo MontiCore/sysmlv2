@@ -43,7 +43,7 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysM
     ( "by" SatisfactionConnectorMember)?
     ConstraintParameterPart InvariantPart? RequirementBody;
 
-  SatisfactionConnector = EmptySourceEndMember* ConnectorEndMember+;
+  SatisfactionConnector = EmptySourceEndMember ConnectorEndMember;
 
   /* REQUIREMENT MEMBERSHIPS */
   SatisfactionConnectorMember = SatisfactionConnector;

@@ -155,7 +155,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
     TransitionSuccessionMember; //TODO make common NT later and write in improvement list
   TriggerStep = EmptyParameterMember* ItemFeatureMember+;
   EffectBehaviourUsage = EmptyActionUsage | PerformedActionUsage ( "{" ActivityBodyItem* "}" )?;
-  TransitionSuccession = EmptySourceEndMember* ConnectorEndMember+;
+  TransitionSuccession = EmptySourceEndMember ConnectorEndMember;
 
   /* TRANSITION MEMBERSHIPS */
   TransitionSourceMember = memberFeature:QualifiedName;
@@ -171,8 +171,8 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   Succession = SuccessionDeclaration ";";
   SuccessionDeclaration = ( ( name:SysMLName)? TypePart? "first" )?
     ConnectorEndMember+ "then" ConnectorEndMember+;
-  TargetSuccession = "then" MultiplicitySourceEndMember* ConnectorEndMember+; //TODO MultiplicitySourceEndMember
-  EmptySuccession =  "then" MultiplicitySourceEndMember* EmptyTargetEndMember*; //TODO MultiplicitySourceEndMember
+  TargetSuccession = "then" MultiplicitySourceEndMember ConnectorEndMember+; //TODO MultiplicitySourceEndMember
+  EmptySuccession =  "then" MultiplicitySourceEndMember EmptyTargetEndMember; //TODO MultiplicitySourceEndMember
   GuardedSuccession = "succession" (( name:SysMLName)? TypePart? "first")?
     TransitionSourceMember+ GuardExpressionMember+ "then" TransitionSuccessionMember+;
   GuardedTargetSuccession = GuardExpressionMember+  "then" TransitionSuccessionMember+;
