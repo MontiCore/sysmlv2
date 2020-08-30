@@ -8,7 +8,7 @@
     - Item Flows  (Implemented) &check;
     - ITEM FLOW MEMBERSHIPS  (Implemented) &check;
     - Expressions TODO 
-    - Literals TODO
+    - Literals &check;
 - Structure all Files.
 - Fix java.lang.ClassCastException: de.monticore.cd.cd4analysis._ast.ASTCDInterface cannot be cast to 
     de.monticore.cd.cd4analysis._ast.ASTCDClass &check;
@@ -16,9 +16,9 @@
    - Check if Cocos are necessary for some Connecting NTs
 
 
- - Debug
+ - Debug &check;
  
- - Maybe change isComposite:"action" to  isComposite:["action"]
+ - Maybe change isComposite:"action" to  isComposite:["action"] &check;
  
  -------- 
  # Some renamed NTs
@@ -60,14 +60,6 @@ ConjugatedInterfaceEndMember
  And because we merge them often with unit (to avoid duplicated code), we use them twice.
  
  ------
-# Empty NTs
-
-Some NTs are have no CS in Xtext.
-We create an optional NT EmptyNT.
-Whenever a tree leads to this NT we make the tree optional (? or *) and denote this with 
-x0opt
-. Whenever EmptyNT is used we write 
-x0mty
 
 # Helpful methods
 If searching for the implementation of an interface __x__ often it is helpful to search
