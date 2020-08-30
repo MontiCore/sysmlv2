@@ -4,26 +4,21 @@ package de.monticore.lang.sysml;
 
 component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
 
+
   /* ACTIVITIES */
 
   ActivityUnit implements Unit = UnitPrefix Activity;
   Activity implements PackagedDefinitionMember = ActivityDeclaration ActivityBody;
   ActivityDeclaration = ["abstract"]? "activity" name:SysMLName ParameterList? SuperclassingList?;
-  ParameterList = "(" (ParameterMember || "," )+ ")";
-  ActivityBody = ";" | ("{" ActivityBodyItem* "}"); /*
-  // Note: Using a syntactic predicate here seems to avoid a possible infinite loop
-  		// while incrementally parsing.
-  	  | '{' => ActivityBodyItem* '}'
-  	  TODO check if this  "=>" is also necessary here. */
-
-  // interface ActivityBodyItem; TODO make item interface ? does not need to necessarily
+  ParameterList = "(" (ParameterMember || "," )* ")";
+  ActivityBody = ";" | ("{" ActivityBodyItem* "}");
   ActivityBodyItem =
-    NestedDefinitionMember+
-    | StructureUsageMember+
-    | InitialNodeMember+ (TargetSuccessionMember )*
-    | EmptySuccessionMember* ActivityNodeMember+ TargetSuccessionMember*
-    | GuardedSuccessionMember+
-    | ImportUnit+;
+    NestedDefinitionMember
+    | StructureUsageMember
+    | InitialNodeMember TargetSuccessionMember*
+    | EmptySuccessionMember? ActivityNodeMember TargetSuccessionMember*
+    | GuardedSuccessionMember
+    | ImportUnit;
 
 
   /* ACTIVITIY MEMBERSHIPS */
@@ -32,7 +27,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   InitialNodeMember = DefinitionMemberPrefix "first" memberFeature:QualifiedName ";";
   ActivityNodeMember = DefinitionMemberPrefix ActivityNode;
   TargetSuccessionMember = DefinitionMemberPrefix
-    ( TargetSuccession | GuardedTargetSuccession | DefaultTargetSuccession);
+    (DefaultTargetSuccession | TargetSuccession | GuardedTargetSuccession);
   GuardedSuccessionMember = GuardedSuccession ";";
 
 
@@ -68,24 +63,24 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
     TransitionStepMember = DefinitionMemberPrefix TransitionStep ";";
 
 
-  //TODO where does Action belong????
-  /* ACTIONS */
-  ActionUnit implements Unit = UnitPrefix ActionDeclaration ActivityBody;
-  ActionDeclaration = ["abstract"]? "action" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
-  ActionUsageStd implements ActionUsage = ActionUsageDeclaration ActivityBody;
-  ActionUsageDeclaration = (name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?)
-    | (TypePart? ActionParameterList? ValuePart?)
-    | (RedefinesKeyword Redefinition+ TypePart ActionParameterList? ValuePart?);
+  //TODO where does Action belong to?
+   /* ACTIONS */
+   ActionUnit implements Unit = UnitPrefix ActionDeclaration ActivityBody;
+   ActionDeclaration = ["abstract"]? "action" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
+   ActionUsageStd implements ActionUsage = ActionUsageDeclaration ActivityBody;
+   ActionUsageDeclaration = (name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?)
+     | (TypePart? ActionParameterList? ValuePart?)
+     | (RedefinesKeyword Redefinition+ TypePart ActionParameterList? ValuePart?);
 
-  ActionParameterList = "(" ( ActionParameterMemberAndFlowMember || ",")* ")";
-  ActionParameterMemberAndFlowMember = ActionParameterMember ActionParameterFlowMember?;
-  ActionParameter = ParameterTypePart? ValuePart?;
-  ActionParameterFlow =
-    ("stream" | "flow") EmptyItemFeatureMember "from" ItemFlowEndMember; //TODO  0xA0129 rule actionParameterFlow contains a closure with at least one alternative that can match an empty string
+   ActionParameterList = "(" ( ActionParameterMemberAndFlowMember || ",")* ")";
+   ActionParameterMemberAndFlowMember = ActionParameterMember ActionParameterFlowMember?;
+   ActionParameter = ParameterTypePart? ValuePart?;
+   ActionParameterFlow =
+     ("stream" | "flow") EmptyItemFeatureMember "from" ItemFlowEndMember; //TODO  0xA0129 rule actionParameterFlow contains a closure with at least one alternative that can match an empty string
 
-  PerformActionUsage = PerformActionUsageDeclaration ActivityBody;
-  PerformActionUsageDeclaration = ((( name:SysMLName TypePart? "as" )? Subset+)
-    |( "action" (name:SysMLName)? TypePart?)) ActionParameterList? SubsettingPart ValuePart?;
+   PerformActionUsage = PerformActionUsageDeclaration ActivityBody;
+   PerformActionUsageDeclaration = ((( name:SysMLName TypePart? "as" )? Subset+)
+     |( "action" (name:SysMLName)? TypePart?)) ActionParameterList? SubsettingPart ValuePart?;
 
   /* ACTIVITY NODES */
   ActivityNode = ActionNode | ControlNode;
