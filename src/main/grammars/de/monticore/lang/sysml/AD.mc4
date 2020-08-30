@@ -27,7 +27,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   InitialNodeMember = DefinitionMemberPrefix "first" memberFeature:QualifiedName ";";
   ActivityNodeMember = DefinitionMemberPrefix ActivityNode;
   TargetSuccessionMember = DefinitionMemberPrefix
-    (DefaultTargetSuccession | TargetSuccession | GuardedTargetSuccession);
+    (DefaultTargetSuccession | TargetSuccession | GuardedTargetSuccession) ";";
   GuardedSuccessionMember = GuardedSuccession ";";
 
 
@@ -85,43 +85,24 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   /* ACTIVITY NODES */
   ActivityNode = ActionNode | ControlNode;
   ActionNode = ActionNodeDeclaration ActivityBody;
-  ActionNodeDeclaration =   ActionUsageNodeDeclaration
-  	| PerformActionNodeDeclaration
-  	| AcceptActionNodeDeclaration
-  	| SendActionNodeDeclaration;
+  ActionNodeDeclaration = ActionUsageNodeDeclaration | PerformActionNodeDeclaration | AcceptActionNodeDeclaration | SendActionNodeDeclaration;
   ActionUsageNodeDeclaration = ["abstract"]? (("ref" "action") | isComposite:["action"]) ActionUsageDeclaration;
-  PerformActionNodeDeclaration = isComposite:"perform" (name:SysMLName TypePart? "as")? Subset+  ActionParameterList?
+  PerformActionNodeDeclaration = isComposite:["perform"] (name:SysMLName TypePart? "as")? Subset ActionParameterList?
     SubsettingPart ValuePart?;
-  AcceptActionNodeDeclaration = EmptyParameterMember? "accept" (name:SysMLName TypePart?)? "(" ItemFeatureMember+ ")";
+  AcceptActionNodeDeclaration = EmptyParameterMember "accept" (name:SysMLName TypePart?)? "(" ItemFeatureMember ")";
   SendActionNodeDeclaration = EmptyParameterMember EmptyItemFeatureMember
-    "send" ( ( name:SysMLName TypePart? )? "of")? ExpressionMember+ "to" ExpressionMember+;
+    "send" ( ( name:SysMLName TypePart? )? "of")? ExpressionMember "to" ExpressionMember;
   ControlNode = MergeNode	| DecisionNode | JoinNode | ForkNode;
 
-  //TODO
-  /*MergeNode returns SysML::MergeNode :
-    	{SysML::MergeNode} isComposite ?= 'merge' ( name = Name TypePart? )? ';'
-    ;
-
-    DecisionNode returns SysML::DecisionNode :
-    	{SysML::DecisionNode} isComposite ?= 'decide' ( name = Name TypePart? )? ';'
-    ;
-
-    JoinNode returns SysML::JoinNode :
-    	{SysML::JoinNode} isComposite ?= 'join' ( name = Name TypePart? )? ';'
-    ;
-
-    ForkNode returns SysML::ForkNode :
-    	{SysML::ForkNode} isComposite ?= 'fork' ( name = Name TypePart? )? ';'
-    ;
-
-    EmptyParameter returns SysML::Parameter :
-    	{SysML::Parameter}
-    ;*/
-  MergeNode = isComposite:["merge"]? SysMLNameAndTypePartOptional ";";
+  MergeNode = "merge" SysMLNameAndTypePartOptional ";";
+  DecisionNode = "decide" SysMLNameAndTypePartOptional ";";
+  JoinNode = "join" SysMLNameAndTypePartOptional ";";
+  ForkNode = "fork" SysMLNameAndTypePartOptional ";";
+  /*MergeNode = isComposite:["merge"]? SysMLNameAndTypePartOptional ";";
   DecisionNode = isComposite:["decide"]? SysMLNameAndTypePartOptional ";";
   JoinNode = isComposite:["join"]? SysMLNameAndTypePartOptional ";";
-  ForkNode = isComposite:["fork"]? SysMLNameAndTypePartOptional ";";
-  EmptyParameter; //TODO
+  ForkNode = isComposite:["fork"]? SysMLNameAndTypePartOptional ";";*/
+  EmptyParameter;
   SysMLNameAndTypePartOptional = (name:SysMLName TypePart?)?;
 
 

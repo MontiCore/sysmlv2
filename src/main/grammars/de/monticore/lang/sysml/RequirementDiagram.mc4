@@ -40,7 +40,7 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysM
     ((( name:SysMLName)? TypePart? "as")? Subset
     | "requirement" (name:SysMLName)? TypePart?)
     ( "by" SatisfactionConnectorMember)?
-    ConstraintParameterPart InvariantPart? RequirementBody;
+    ConstraintParameterPart InvariantPart RequirementBody;
 
   SatisfactionConnector = EmptySourceEndMember ConnectorEndMember;
 
