@@ -36,38 +36,36 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   GuardedSuccessionMember = GuardedSuccession ";";
 
 
-  /* STATE DEFINITIONS */
+    /* STATE DEFINITIONS */
 
-  StateDefinitionUnit implements Unit = UnitPrefix StateDefinition;
-  StateDefinition implements PackagedDefinitionMember = StateDefDeclaration StateBody;
-  StateDefDeclaration = ["abstract"]? "state" "def" name:SysMLName ParameterList? SuperclassingList?;
-  StateBody = ";" | "{" StateBodyPart "}";
-  StateBodyPart = (EntryActionMember (EntryTransitionMember)*)? DoActionMember? ExitActionMember? StateBodyItem*;
-  // Note: Using a syntactic predicate here seems to avoid a possible infinite loop
-  // while incrementally parsing. TODO check necessary => StateBodyItem*
-  StateBodyItem = NestedDefinitionMember
-    | StructureUsageMember
-    | StateMember+ (TargetTransitionSuccessionMember )*
-    | TransitionStepMember
-    | ImportUnit;
-  StateActionUsage = (EmptyActionUsage? ";") | PerformedActionUsage ActivityBody;
-  PerformedActionUsage = PerformActionUsageDeclaration | AcceptActionNodeDeclaration | SendActionNodeDeclaration;
-  EmptyActionUsage = EmptyNT; //TODO 	{SysML::ActionUsage}
+    StateDefinitionUnit implements Unit = UnitPrefix StateDefinition;
+    StateDefinition implements PackagedDefinitionMember = StateDefDeclaration StateBody;
+    StateDefDeclaration = ["abstract"]? "state" "def" name:SysMLName ParameterList? SuperclassingList?;
+    StateBody = ";" | "{" StateBodyPart "}";
+    StateBodyPart = (EntryActionMember EntryTransitionMember*)? DoActionMember? ExitActionMember? StateBodyItem*;
+    StateBodyItem = NestedDefinitionMember
+      | StructureUsageMember
+      | StateMember TargetTransitionSuccessionMember*
+      | TransitionStepMember
+      | ImportUnit;
+    StateActionUsage = EmptyActionUsage ";" | PerformedActionUsage ActivityBody;
+    PerformedActionUsage = PerformActionUsageDeclaration | AcceptActionNodeDeclaration | SendActionNodeDeclaration;
+    EmptyActionUsage;
 
-  /* STATE MEMBERSHIPS */
+    /* STATE MEMBERSHIPS */
 
-  EntryActionMember = DefinitionMemberPrefix kind:EntryActionKind StateActionUsage;
-  EntryActionKind = "entry";
-  DoActionMember = DefinitionMemberPrefix kind:DoActionKind StateActionUsage;
-  DoActionKind = "do";
-  ExitActionMember = DefinitionMemberPrefix kind:ExitActionKind StateActionUsage;
-  ExitActionKind = "exit";
+    EntryActionMember = DefinitionMemberPrefix kind:EntryActionKind StateActionUsage;
+    EntryActionKind = "entry";
+    DoActionMember = DefinitionMemberPrefix kind:DoActionKind StateActionUsage;
+    DoActionKind = "do";
+    ExitActionMember = DefinitionMemberPrefix kind:ExitActionKind StateActionUsage;
+    ExitActionKind = "exit";
 
-  StateMember = DefinitionMemberPrefix ["abstract"]? ("ref" "state" | isComposite:["state"]) StateUsage;
-  EntryTransitionMember = DefinitionMemberPrefix (GuardedTargetSuccession | "then" TransitionSuccession ) ";";
+    StateMember = DefinitionMemberPrefix ["abstract"]? ("ref" "state" | isComposite:["state"]) StateUsage;
+    EntryTransitionMember = DefinitionMemberPrefix (GuardedTargetSuccession | "then" TransitionSuccession ) ";";
 
-  TargetTransitionSuccessionMember =  DefinitionMemberPrefix TargetTransitionStep ";";
-  TransitionStepMember = DefinitionMemberPrefix TransitionStep ";";
+    TargetTransitionSuccessionMember =  DefinitionMemberPrefix TargetTransitionStep ";";
+    TransitionStepMember = DefinitionMemberPrefix TransitionStep ";";
 
 
   //TODO where does Action belong????
@@ -132,68 +130,70 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   SysMLNameAndTypePartOptional = (name:SysMLName TypePart?)?;
 
 
-  /* ACTION MEMBERSHIPS */
-  ActionParameterMember = (direction:FeatureDirection | direction:FeatureDirection? memberName:SysMLName)
-    ActionParameter;
-  ActionParameterFlowMember = ActionParameterFlow;
-  EmptySuccessionMember = EmptySuccession;
-  EmptyParameterMember = EmptyParameter;
-  /* STATES */
-  StateUnit implements Unit = UnitPrefix StateDeclaration StateBody;
-  StateDeclaration = ["abstract"]? "state" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
-  StateUsage = SysMLName? ActionUsageDeclaration StateBody; //TODO {SysML:StateUsage}
-  ExhibitStateUsage = ((((name:SysMLName) TypePart? "as")? Subset+)
-    | ( "state" name:SysMLName? TypePart? ))
-    ActionParameterList? SubsettingPart ValuePart? StateBody;
+    /* ACTION MEMBERSHIPS */
+    ActionParameterMember = (direction:FeatureDirection | direction:FeatureDirection? memberName:SysMLName)
+      ActionParameter;
+    ActionParameterFlowMember = ActionParameterFlow;
+    EmptySuccessionMember = EmptySuccession;
+    EmptyParameterMember = EmptyParameter;
+
+    /* STATES */
+    StateUnit implements Unit = UnitPrefix StateDeclaration StateBody;
+    StateDeclaration = ["abstract"]? "state" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
+    StateUsage = ActionUsageDeclaration StateBody;
+    ExhibitStateUsage = ((((name:SysMLName) TypePart? "as")? Subset)
+      | ( "state" name:SysMLName? TypePart? ))
+      ActionParameterList? SubsettingPart ValuePart? StateBody;
 
 
 
-  /* TRANSITIONS */
-  TransitionStep = "transition" (SysMLNameAndTypePartOptional "first")? TransitionSourceMember+
-    TriggerStepMember* GuardExpressionMember* EffectBehaviorMember* "then" TransitionSuccessionMember;
-  TargetTransitionStep = TriggerStepMember* GuardExpressionMember* EffectBehaviorMember* "then"
-    TransitionSuccessionMember; //TODO make common NT later and write in improvement list
-  TriggerStep = EmptyParameterMember ItemFeatureMember;
-  EffectBehaviourUsage = EmptyActionUsage | PerformedActionUsage ( "{" ActivityBodyItem* "}" )?;
-  TransitionSuccession = EmptySourceEndMember ConnectorEndMember;
+   /* TRANSITIONS */
+   TransitionStep = "transition" (SysMLNameAndTypePartOptional "first")? TransitionSourceMember
+     TriggerStepMember? GuardExpressionMember? EffectBehaviorMember? "then" TransitionSuccessionMember;
+   TargetTransitionStep = TriggerStepMember? GuardExpressionMember? EffectBehaviorMember? "then"
+     TransitionSuccessionMember; //TODO make common NT later and write in improvement list
+   TriggerStep = EmptyParameterMember ItemFeatureMember;
+   EffectBehaviourUsage = EmptyActionUsage | PerformedActionUsage ( "{" ActivityBodyItem* "}" )?;
+   TransitionSuccession = EmptySourceEndMember ConnectorEndMember;
 
-  /* TRANSITION MEMBERSHIPS */
-  TransitionSourceMember = memberFeature:QualifiedName;
-  TransitionSuccessionMember = TransitionSuccession;
-  TriggerStepMember = kind:TriggerFeatureKind TriggerStep;
-  TriggerFeatureKind = kind:"accept"; //Remark: this is an enum in xtext
-  GuardExpressionMember = kind:GuardFeatureKind Expression;
-  GuardFeatureKind = guard:"if"; //Remark: this is an enum in xtext
-  EffectBehaviorMember = kind: EffectFeatureKind EffectBehaviourUsage;
-  EffectFeatureKind = effect:"do"; //Remark: this is an enum in xtext
+   /* TRANSITION MEMBERSHIPS */
+   TransitionSourceMember = memberFeature:QualifiedName;
+   TransitionSuccessionMember = TransitionSuccession;
+   //TODO add abstraction layer?
+   TriggerStepMember = kind:TriggerFeatureKind TriggerStep;
+   TriggerFeatureKind = kind:"accept"; //Remark: this is an enum in xtext
+   GuardExpressionMember = kind:GuardFeatureKind Expression;
+   GuardFeatureKind = guard:"if"; //Remark: this is an enum in xtext
+   EffectBehaviorMember = kind: EffectFeatureKind EffectBehaviourUsage;
+   EffectFeatureKind = effect:"do"; //Remark: this is an enum in xtext
 
-  /* SUCCESSIONS */
-  Succession = SuccessionDeclaration ";";
-  SuccessionDeclaration = ( ( name:SysMLName)? TypePart? "first" )?
-    ConnectorEndMember+ "then" ConnectorEndMember+;
-  TargetSuccession = "then" MultiplicitySourceEndMember ConnectorEndMember+; //TODO MultiplicitySourceEndMember
-  EmptySuccession =  "then" MultiplicitySourceEndMember EmptyTargetEndMember; //TODO MultiplicitySourceEndMember
-  GuardedSuccession = "succession" (( name:SysMLName)? TypePart? "first")?
-    TransitionSourceMember+ GuardExpressionMember+ "then" TransitionSuccessionMember+;
-  GuardedTargetSuccession = GuardExpressionMember+  "then" TransitionSuccessionMember+;
-  DefaultTargetSuccession = "else" TransitionSuccessionMember+;
+   /* SUCCESSIONS */
+   Succession = SuccessionDeclaration ";";
+   SuccessionDeclaration = ( ( name:SysMLName)? TypePart? "first" )?
+     ConnectorEndMember "then" ConnectorEndMember;
+   TargetSuccession = "then" MultiplicitySourceEndMember ConnectorEndMember; //TODO MultiplicitySourceEndMember
+   EmptySuccession =  "then" MultiplicitySourceEndMember EmptyTargetEndMember; //TODO MultiplicitySourceEndMember
+   GuardedSuccession = "succession" (( name:SysMLName)? TypePart? "first")?
+     TransitionSourceMember GuardExpressionMember "then" TransitionSuccessionMember;
+   GuardedTargetSuccession = GuardExpressionMember  "then" TransitionSuccessionMember;
+   DefaultTargetSuccession = "else" TransitionSuccessionMember;
 
 
-  /* ITEM FLOWS */ //Is this AD and IBD?
-  ItemFlow = ItemFlowDeclaration DefinitionBody;
-  SuccessionItemFlow = ItemFlowDeclaration DefinitionBody;
-  ItemFlowDeclaration = ( (name:SysMLName)? TypePart? //TODO I am not sure if "from" or the whole is meant with or
-    (( "of" ItemFeatureMember+) | (EmptyItemFeatureMember)) //TODO x0opt EmptyItemFeatureMember
-    "from" | EmptyItemFeatureMember )
-    ItemFlowEndMember+ "to" ItemFlowEndMember+;
-  ItemFeatureTyping = FeatureTyping+ MultiplicityMember*;
-  EmptyItemFeature; //TODO {SysML::ItemFeature} x0mty EmptyNT
-  ItemFlowEnd = ItemFlowFeatureMember+;
-  ItemFlowFeature = Redefinition+;
+   /* ITEM FLOWS */ //Is this AD and IBD?
+   ItemFlow = ItemFlowDeclaration DefinitionBody;
+   SuccessionItemFlow = ItemFlowDeclaration DefinitionBody;
+   ItemFlowDeclaration = ( (name:SysMLName)? TypePart?
+     (( "of" ItemFeatureMember) | (EmptyItemFeatureMember))
+     "from" | EmptyItemFeatureMember )
+     ItemFlowEndMember "to" ItemFlowEndMember;
+   ItemFeatureTyping = FeatureTyping MultiplicityMember?;
+   EmptyItemFeature;
+   ItemFlowEnd = ItemFlowFeatureMember;
+   ItemFlowFeature = Redefinition;
 
-  /* ITEM FLOW MEMBERSHIPS */
-  ItemFeatureMember = (memberName:SysMLName TypedByKeyword)? ItemFeatureTyping;
-  ItemFlowEndMember = ItemFlowEnd;
-  ItemFlowFeatureMember = ItemFlowFeature;
-  EmptyItemFeatureMember = EmptyItemFeature;
+   /* ITEM FLOW MEMBERSHIPS */
+   ItemFeatureMember = (memberName:SysMLName TypedByKeyword)? ItemFeatureTyping;
+   ItemFlowEndMember = ItemFlowEnd;
+   ItemFlowFeatureMember = ItemFlowFeature;
+   EmptyItemFeatureMember = EmptyItemFeature;
 }
