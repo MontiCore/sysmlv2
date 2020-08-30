@@ -9,8 +9,6 @@ component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon,
   PartUnit implements Unit = UnitPrefix PartDeclaration UsageCompletion;
   PartDeclaration = ["abstract"]? "part" SysMLName TypePart? SubsettingPart;
 
-
- //TODO isComposite ?=  for NonPortStructureUsageMember
   PartNonPortStructureUsageMember implements NonPortStructureUsageMember =
     ["abstract"]? "part" PartProperty;
   PartPropertyPackagedUsageMember implements PackagedUsageMember =
@@ -29,7 +27,7 @@ component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon,
   /* CONSTRAINT DEFINITIONS */
   ConstraintDefinitionUnit implements Unit = UnitPrefix ConstraintDefinition;
   ConstraintDefinition implements PackagedDefinitionMember = ConstraintDefDeclaration ConstraintBody;
-  ConstraintDefDeclaration = ["abstract"]? "constraint" "def" name:SysMLName ParameterList? EmptyReturnParameterPart?
+  ConstraintDefDeclaration = ["abstract"]? "constraint" "def" name:SysMLName ParameterList? EmptyReturnParameterPart
     SuperclassingList?;
   ConstraintBody = ";" | "{" ConstraintMembers "}";
   ConstraintMembers = (NestedDefinitionMember | NestedUsageMember | ImportUnit)* ConstraintExpressionMember?;
@@ -45,14 +43,14 @@ component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon,
   ConstraintUsage = ConstraintDeclaration ConstraintBody;
   ConstraintDeclaration =
     (name:SysMLName TypePart? ConstraintParameterPart)
-    | (TypePart? (ActionParameterList EmptyReturnParameterPart?)? ValuePart?)
-    | (RedefinesKeyword Redefinition+ TypePart? ActionParameterList? EmptyReturnParameterPart? ValuePart?);
-  ConstraintParameterPart = ActionParameterList? EmptyReturnParameterPart? SubsettingPart ValuePart?;
+    | (TypePart? (ActionParameterList EmptyReturnParameterPart)? ValuePart?)
+    | (RedefinesKeyword Redefinition TypePart? ActionParameterList? EmptyReturnParameterPart ValuePart?);
+  ConstraintParameterPart = ActionParameterList? EmptyReturnParameterPart SubsettingPart ValuePart?;
   AssertConstraintUsage =
     (((( name:SysMLName)? TypePart? "as" )? Subset+ ) | ("constraint" (name:SysMLName)? TypePart?) )
-    ConstraintParameterPart InvariantPart? ConstraintBody; //TODO actually InvariantPart is necessary
-  InvariantPart = TrueLiteralMember; //TODO
-  TrueLiteralExpression = EmptyNT; //{SysML::LiteralBoolean} TODO
+    ConstraintParameterPart InvariantPart ConstraintBody;
+  InvariantPart = TrueLiteralMember;
+  TrueLiteralExpression; //{SysML::LiteralBoolean} TODO
 
   /* CONSTRAINT MEMBERSHIPS */
   TrueLiteralMember = TrueLiteralExpression;

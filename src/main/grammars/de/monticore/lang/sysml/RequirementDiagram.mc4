@@ -11,14 +11,13 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysM
 
   RequirementDefinition implements PackagedDefinitionMember = RequirementDefDeclaration RequirementBody;
   RequirementDefDeclaration = ["abstract"]? "requirement" "def" ("id" reqId:SysMLName)? name:SysMLName
-    RequirementDefParameterList EmptyReturnParameterPart? SuperclassingList?;
-  RequirementDefParameterList = EmptyParameterMember?
-    | ( "(" EmptyParameterMember* ")")
+    RequirementDefParameterList EmptyReturnParameterPart SuperclassingList?;
+  RequirementDefParameterList = EmptyParameterMember
+    | ( "(" EmptyParameterMember ")")
     | ( "(" (ParameterMember || ",")+ ")" ) ;
   RequirementBody = ";" | ( "{" RequirementMembers "}" );
-  RequirementMembers =
-    (NestedDefinitionMember+ | NestedUsageMember+ |  RequirementConstraintMember+ | ImportUnit+ )*;
-  RequirementConstraintUsage = ((( name:SysMLName)? TypePart? "as")? Subset+ | "constraint" (name:SysMLName)? TypePart?)
+  RequirementMembers = (NestedDefinitionMember | NestedUsageMember |  RequirementConstraintMember | ImportUnit )*;
+  RequirementConstraintUsage = ((( name:SysMLName)? TypePart? "as")? Subset | "constraint" (name:SysMLName)? TypePart?)
      ConstraintParameterPart ConstraintBody;
 
   /* REQUIREMENT DEFINITION MEMBERSHIPS */
@@ -31,14 +30,14 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysM
   RequirementUsage = RequirementDeclaration RequirementBody;
   RequirementDeclaration  = ( "id" reqId:SysMLName)?
     (name:SysMLName TypePart? ConstraintParameterPart
-    | TypePart? ( ActionParameterList EmptyReturnParameterPart? )? ValuePart?
-  	| RedefinesKeyword Redefinition+
-  	TypePart? ActionParameterList? EmptyReturnParameterPart? ValuePart?
+    | TypePart? ( ActionParameterList EmptyReturnParameterPart )? ValuePart?
+  	| RedefinesKeyword Redefinition
+  	TypePart? ActionParameterList? EmptyReturnParameterPart ValuePart?
   	);
 
   //TODO make ((( name:SysMLName)? TypePart? "as")? NT? and write in List of Improvements.
   SatisfyRequirementUsage =
-    ((( name:SysMLName)? TypePart? "as")? Subset+
+    ((( name:SysMLName)? TypePart? "as")? Subset
     | "requirement" (name:SysMLName)? TypePart?)
     ( "by" SatisfactionConnectorMember)?
     ConstraintParameterPart InvariantPart? RequirementBody;

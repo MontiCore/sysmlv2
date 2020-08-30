@@ -100,7 +100,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   PerformActionNodeDeclaration = isComposite:"perform" (name:SysMLName TypePart? "as")? Subset+  ActionParameterList?
     SubsettingPart ValuePart?;
   AcceptActionNodeDeclaration = EmptyParameterMember? "accept" (name:SysMLName TypePart?)? "(" ItemFeatureMember+ ")";
-  SendActionNodeDeclaration = EmptyParameterMember* EmptyItemFeatureMember
+  SendActionNodeDeclaration = EmptyParameterMember EmptyItemFeatureMember
     "send" ( ( name:SysMLName TypePart? )? "of")? ExpressionMember+ "to" ExpressionMember+;
   ControlNode = MergeNode	| DecisionNode | JoinNode | ForkNode;
 
@@ -128,7 +128,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   DecisionNode = isComposite:["decide"]? SysMLNameAndTypePartOptional ";";
   JoinNode = isComposite:["join"]? SysMLNameAndTypePartOptional ";";
   ForkNode = isComposite:["fork"]? SysMLNameAndTypePartOptional ";";
-  EmptyParameter = EmptyNT; //TODO
+  EmptyParameter; //TODO
   SysMLNameAndTypePartOptional = (name:SysMLName TypePart?)?;
 
 
@@ -153,7 +153,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
     TriggerStepMember* GuardExpressionMember* EffectBehaviorMember* "then" TransitionSuccessionMember;
   TargetTransitionStep = TriggerStepMember* GuardExpressionMember* EffectBehaviorMember* "then"
     TransitionSuccessionMember; //TODO make common NT later and write in improvement list
-  TriggerStep = EmptyParameterMember* ItemFeatureMember+;
+  TriggerStep = EmptyParameterMember ItemFeatureMember;
   EffectBehaviourUsage = EmptyActionUsage | PerformedActionUsage ( "{" ActivityBodyItem* "}" )?;
   TransitionSuccession = EmptySourceEndMember ConnectorEndMember;
 
