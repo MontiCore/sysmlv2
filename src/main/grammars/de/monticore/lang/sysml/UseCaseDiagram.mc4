@@ -1,8 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-package de.monticore.lang.sysml;
-
-
-component grammar UseCaseDiagram extends de.monticore.lang.sysml.basics.SysMLCommon {
-  
-  UseCase = "use" "case" SysMLName;
-}

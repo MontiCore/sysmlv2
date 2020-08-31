@@ -2,7 +2,46 @@
 package de.monticore.lang.sysml;
 
 
-component grammar SMD extends de.monticore.lang.sysml.basics.SysMLCommon {
-  
-  SMD = "state" "machine" SysMLName;
+component grammar SMD extends de.monticore.lang.sysml.basics.SysMLCommon,
+    de.monticore.lang.sysml.AD{ //TODO do not extend AD
+
+ /* STATE DEFINITIONS */
+
+  StateDefinitionUnit implements Unit = UnitPrefix StateDefinition;
+  StateDefinition implements PackagedDefinitionMember = StateDefDeclaration StateBody;
+  StateDefDeclaration = ["abstract"]? "state" "def" name:SysMLName ParameterList? SuperclassingList?;
+  StateBody = ";" | "{" StateBodyPart "}";
+  StateBodyPart = (EntryActionMember EntryTransitionMember*)? DoActionMember? ExitActionMember? StateBodyItem*;
+  StateBodyItem = NestedDefinitionMember
+    | StructureUsageMember
+    | StateMember TargetTransitionSuccessionMember*
+    | TransitionStepMember
+    | ImportUnit;
+  StateActionUsage = EmptyActionUsage ";" | PerformedActionUsage ActivityBody;
+  PerformedActionUsageStd implements PerformedActionUsage = PerformActionUsageDeclaration | AcceptActionNodeDeclaration | SendActionNodeDeclaration;
+
+
+  /* STATE MEMBERSHIPS */
+
+  EntryActionMember = DefinitionMemberPrefix kind:EntryActionKind StateActionUsage;
+  EntryActionKind = "entry";
+  DoActionMember = DefinitionMemberPrefix kind:DoActionKind StateActionUsage;
+  DoActionKind = "do";
+  ExitActionMember = DefinitionMemberPrefix kind:ExitActionKind StateActionUsage;
+  ExitActionKind = "exit";
+
+  StateMember = DefinitionMemberPrefix ["abstract"]? ("ref" "state" | isComposite:["state"]) StateUsage;
+  EntryTransitionMember = DefinitionMemberPrefix (GuardedTargetSuccession | "then" TransitionSuccession ) ";";
+
+  TargetTransitionSuccessionMember =  DefinitionMemberPrefix TargetTransitionStep ";";
+  TransitionStepMember = DefinitionMemberPrefix TransitionStep ";";
+
+ /* STATES */
+  StateUnit implements Unit = UnitPrefix StateDeclaration StateBody;
+  StateDeclaration = ["abstract"]? "state" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
+  StateUsage = ActionUsageDeclaration StateBody;
+  ExhibitStateUsage = ((((name:SysMLName) TypePart? "as")? Subset)
+    | ( "state" name:SysMLName? TypePart? )) ActionParameterList? SubsettingPart ValuePart? StateBody;
+
+
 }

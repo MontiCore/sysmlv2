@@ -31,4 +31,17 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
   ConjugatedPortMember = DefinitionMemberPrefix (["abstract"]? "port" ConjugatedPortUsage);
   FeatureDirection =  ["in"] | ["out"] | ["inout"];
   DefinitionMemberPrefixStd implements DefinitionMemberPrefix = PrefixAnnotation* visibility:VisibilityIndicator?;
+
+
+
+  /* The following are some definitions, which are used by more than one diagram.
+   * In Xtext they are actually defined somewhere under the following headlines.
+   */
+   /* STATE DEFINITIONS */
+   EmptyActionUsage;
+   interface PerformedActionUsage;
+
+   /* ACTIVITIES */
+   interface ParameterList;
+   interface ActivityBody;
 }
