@@ -37,11 +37,72 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
   /* The following are some definitions, which are used by more than one diagram.
    * In Xtext they are actually defined somewhere under the following headlines.
    */
-   /* STATE DEFINITIONS */
-   EmptyActionUsage;
-   interface PerformedActionUsage;
+  /* STATE DEFINITIONS */
+  EmptyActionUsage;
+  interface PerformedActionUsage;
 
-   /* ACTIVITIES */
-   interface ParameterList;
-   interface ActivityBody;
+  /* ACTIVITIES */
+  interface ParameterList;
+  interface ActivityBody;
+
+  SysMLNameAndTypePartOptional = (name:SysMLName TypePart?)?;
+
+  interface ActivityBodyItem;
+  interface ActionParameterList;
+  ActionUsageDeclaration = (name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?) //TODO rename? used by states and Actions
+      | (TypePart? ActionParameterList? ValuePart?)
+      | (RedefinesKeyword Redefinition TypePart ActionParameterList? ValuePart?);
+
+ /* ITEM FLOWS */ //Is this AD and IBD?
+  ItemFlow = ItemFlowDeclaration DefinitionBody;
+  SuccessionItemFlow = ItemFlowDeclaration DefinitionBody;
+  ItemFlowDeclaration = ( (name:SysMLName)? TypePart?
+    (( "of" ItemFeatureMember) | (EmptyItemFeatureMember))
+    "from" | EmptyItemFeatureMember )
+    ItemFlowEndMember "to" ItemFlowEndMember;
+  ItemFeatureTyping = FeatureTyping MultiplicityMember?;
+  EmptyItemFeature;
+  ItemFlowEnd = ItemFlowFeatureMember;
+  ItemFlowFeature = Redefinition;
+
+  /* ITEM FLOW MEMBERSHIPS */
+  ItemFeatureMember = (memberName:SysMLName TypedByKeyword)? ItemFeatureTyping;
+  ItemFlowEndMember = ItemFlowEnd;
+  ItemFlowFeatureMember = ItemFlowFeature;
+  EmptyItemFeatureMember = EmptyItemFeature;
+
+
+  /* SUCCESSIONS */
+  Succession = SuccessionDeclaration ";";
+  SuccessionDeclaration = ( ( name:SysMLName)? TypePart? "first" )? ConnectorEndMember "then" ConnectorEndMember;
+  TargetSuccession = "then" MultiplicitySourceEndMember ConnectorEndMember;
+  EmptySuccession =  "then" MultiplicitySourceEndMember EmptyTargetEndMember;
+  GuardedSuccession = "succession" (( name:SysMLName)? TypePart? "first")?
+  TransitionSourceMember GuardExpressionMember "then" TransitionSuccessionMember;
+  GuardedTargetSuccession = GuardExpressionMember  "then" TransitionSuccessionMember;
+  DefaultTargetSuccession = "else" TransitionSuccessionMember;
+
+ /* TRANSITIONS */
+  TransitionStep = "transition" (SysMLNameAndTypePartOptional "first")? TransitionSourceMember
+    TriggerStepMember? GuardExpressionMember? EffectBehaviorMember? "then" TransitionSuccessionMember;
+  TargetTransitionStep = TriggerStepMember? GuardExpressionMember? EffectBehaviorMember? "then"
+  TransitionSuccessionMember;
+  TriggerStep = EmptyParameterMember ItemFeatureMember;
+  EffectBehaviourUsage = EmptyActionUsage | PerformedActionUsage ( "{" ActivityBodyItem* "}" )?;
+  TransitionSuccession = EmptySourceEndMember ConnectorEndMember;
+
+  /* TRANSITION MEMBERSHIPS */
+  TransitionSourceMember = memberFeature:QualifiedName;
+  TransitionSuccessionMember = TransitionSuccession;
+  //TODO add abstraction layer?
+  TriggerStepMember = kind:TriggerFeatureKind TriggerStep;
+  TriggerFeatureKind = kind:"accept"; //Remark: this is an enum in xtext
+  GuardExpressionMember = kind:GuardFeatureKind Expression;
+  GuardFeatureKind = guard:"if"; //Remark: this is an enum in xtext
+  EffectBehaviorMember = kind: EffectFeatureKind EffectBehaviourUsage;
+  EffectFeatureKind = effect:"do"; //Remark: this is an enum in xtext
+
+
+  EmptyParameter;
+  EmptyParameterMember = EmptyParameter;
 }

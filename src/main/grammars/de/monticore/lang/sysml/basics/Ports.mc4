@@ -10,8 +10,8 @@ component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
 
   PortDefinitionStd implements PortDefinition, PackagedDefinitionMember  = PortDeclaration DefinitionBody;
   PortDeclaration = ["abstract"]? "port" "def" ClassifierDeclarationCompletion ConjugatedPortDefinitionMember;
-  ConjugatedPortDefinition = PortConjugation; // TODO PortConjugation x0opt
-  PortConjugation; //TODO {SysML::PortConjugation}
+  ConjugatedPortDefinition = PortConjugation;
+  PortConjugation;
 
   /* PORT DEFINITION MEMBERSHIPS */
   ConjugatedPortDefinitionMember = ConjugatedPortDefinition;

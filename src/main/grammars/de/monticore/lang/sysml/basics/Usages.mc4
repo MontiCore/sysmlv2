@@ -2,7 +2,8 @@
 package de.monticore.lang.sysml.basics;
 
 
-component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis{
+component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
+   { //TODO make interface for NatLiteral
 
   /* USAGES */
   UsageStd implements Usage =
@@ -31,7 +32,7 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
   //Multiplicity = "[" ( (MultiplicityDigits  "." {noSpace()}? "." {noSpace()}?)? UnlimitedNaturalLiteralMember {noSpace()}? ) "]";
   //token MultiplicityDigits = ('0'..'9')+;
   ///Multiplicity = "[" ( (MultiplicityDigits  "." "." {noSpace()}?)? UnlimitedNaturalLiteralMember) "]";
-  //Multiplicity = "[" ( (MultiplicityDigits  {noSpace(2)}? "." "." )? UnlimitedNaturalLiteralMember) "]";
+  //Multiplicity = "[" ( (NaturalLiteralMember  "." "." {noSpace()}? )? UnlimitedNaturalLiteralMember) "]";
 
   //token MultiplicityDigits = ('0'..'9')+;
 
@@ -51,7 +52,7 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
 
   //Remark: literal type is enforced by CoCo (write CoCo) or by Exact Literal TODO
   //TODO unlimitedNat -> map this how?
-  NaturalLiteralMember = naturalLiteralExpression:Literal;
+  //NaturalLiteralMember = naturalLiteralExpression:NatLiteral ;
   UnlimitedNaturalLiteralMember = unlimitedNaturalLiteralExpression:Literal | isUnlimited:["*"];
 
 
