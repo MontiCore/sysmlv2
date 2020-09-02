@@ -10,7 +10,8 @@ import org.junit.Test;
  */
 public class ExampleParseAllTest {
 
-  private final String pathToDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src/examples/";
+  private final String pathToDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src"
+      + "/examples/";
 
   public void parseSysML(String path) {
     SysMLParserForTesting parser = new SysMLParserForTesting();
@@ -169,7 +170,8 @@ public class ExampleParseAllTest {
 
   @Test
   public void parse_v1_Spec_Examples_845_Constraining_Decomposition_Vehicle_Decomposition___UpdatedTest() {
-    this.parseSysML(pathToDir + "/v1 Spec Examples/8.4.5 Constraining Decomposition/Vehicle Decomposition - Updated.sysml");
+    this.parseSysML(pathToDir + "/v1 Spec Examples/8.4.5 Constraining Decomposition/Vehicle Decomposition - Updated"
+        + ".sysml");
   }
 
   @Test
@@ -177,7 +179,6 @@ public class ExampleParseAllTest {
     this.parseSysML(pathToDir + "/v1 Spec Examples/8.4.5 Constraining Decomposition/Vehicle Decomposition.sysml");
   }
 
-  @Ignore//TODO there is some error with sequence expression or ".." or with the priorities of multiple Expressions.
   @Test
   public void parse_v1_Spec_Examples_D478_Dynamics_HSUVDynamicsTest() {
     this.parseSysML(pathToDir + "/v1 Spec Examples/D.4.7.8 Dynamics/HSUVDynamics.sysml");

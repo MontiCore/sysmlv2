@@ -3,9 +3,8 @@ package de.monticore.lang.sysml;
 
 
 component grammar SMD extends de.monticore.lang.sysml.basics.SysMLCommon
-    //de.monticore.lang.sysml.AD{ //TODO do not extend AD
     {
- /* STATE DEFINITIONS */
+  /* STATE DEFINITIONS */
 
   StateDefinitionUnit implements Unit = UnitPrefix StateDefinition;
   StateDefinition implements PackagedDefinitionMember = StateDefDeclaration StateBody;

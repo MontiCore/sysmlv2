@@ -13,8 +13,7 @@
  interface Parameter;
  interface FeatureTyping;
 
- //TODO Empty
- EmptyNT = "ThisIsEmpty12325513rt35141rfv";
+ token FromToDigitsDotDot = ('0'..'9')+ "..";
 
  //TODO split into Basic Interfaces and CommonInterfaces ?
  interface Unit;

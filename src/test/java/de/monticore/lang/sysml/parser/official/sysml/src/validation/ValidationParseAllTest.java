@@ -8,7 +8,8 @@ import org.junit.Test;
  * @version 1.0
  */
 public class ValidationParseAllTest {
-  private final String pathToDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src/validation/";
+  private final String pathToDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src"
+      + "/validation/";
 
   public void parseSysML(String path) {
     SysMLParserForTesting parser = new SysMLParserForTesting();
@@ -97,7 +98,8 @@ public class ValidationParseAllTest {
 
   @Test
   public void parse_15_Properties_Values_Expressions_15_05_Unification_of_Expression_and_Constraint_DefinitionTest() {
-    this.parseSysML(pathToDir + "/15-Properties-Values-Expressions/15_05-Unification of Expression and Constraint Definition.sysml");
+    this.parseSysML(pathToDir + "/15-Properties-Values-Expressions/15_05-Unification of Expression and Constraint "
+        + "Definition.sysml");
   }
 
   @Test

@@ -16,7 +16,8 @@ public class TrainingParseAllTest {
     //TODO add additional asserts and tests
   }
 
-  private final String pathToDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src/training/";
+  private final String pathToDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src"
+      + "/training/";
 
   @Test
   public void parse_01_Packages_Comment_ExampleTest() {

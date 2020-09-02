@@ -78,8 +78,12 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
   TypeReference = FeatureTyping;
   //SequenceConstructionExpression = "{" "}" |
   //  ( "{" Expression ("," SequenceElementList | ".." Expression)? "}" );
+  //SequenceConstructionExpression = "{" "}" |
+  //  ( "{" Expression ("," SequenceElementList |  "." "." {noSpace()}? Expression)? "}" );
   SequenceConstructionExpression = "{" "}" |
-    ( "{" Expression ("," SequenceElementList |  "." "." {noSpace()}? Expression)? "}" );
+    "{" FromToDigitsDotDot Expression "}" |
+    //"{" Expression DotDot Expression "}" |
+    "{" Expression ("," SequenceElementList |  "." "." {noSpace()}? Expression)? "}";
   //TODO remove following
   //SequenceConstructionExpression = "{" "}" |
    // ( "{" Expression ("," SequenceElementList | ".." Expression)? "}" )

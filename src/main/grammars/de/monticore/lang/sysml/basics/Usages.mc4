@@ -25,13 +25,17 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
   MultiplicityPart = MultiplicityMember (["ordered"] | ["nonunique"])*; //Ast RUles TODO only once, not allowed: "ordered ordered"
 
   //TODO
+
   Multiplicity = "[" ((FromToDigitsDotDot)? UnlimitedNaturalLiteralMember) "]";
-  token FromToDigitsDotDot = ('0'..'9')+ ".."; //TODO noSpace(2) "." "." command
-  //Multiplicity = "[" ( (MultiplicityDigits  "." "." )? UnlimitedNaturalLiteralMember) "]";
+  //token FromToDigitsDotDot = ('0'..'9')+ ".."; //TODO noSpace(2) "." "." command This is in CommonBasis now.
+  //Multiplicity = "[" ((UnlimitedNaturalLiteralMember DotDot)? UnlimitedNaturalLiteralMember) "]";
+  //token DotDot = "..";
+  //Multiplicity = "[" ( (UnlimitedNaturalLiteralMember DotDot)? UnlimitedNaturalLiteralMember) "]";
+  //TODO token DotDot = '.' '.';
   //token MultiplicityDigits = ('0'..'9')+;
   //Multiplicity = "[" ( (MultiplicityDigits  "." {noSpace()}? "." {noSpace()}?)? UnlimitedNaturalLiteralMember {noSpace()}? ) "]";
   //token MultiplicityDigits = ('0'..'9')+;
-  ///Multiplicity = "[" ( (MultiplicityDigits  "." "." {noSpace()}?)? UnlimitedNaturalLiteralMember) "]";
+  //Multiplicity = "[" ( (MultiplicityDigits  "." "." {noSpace()}?)? UnlimitedNaturalLiteralMember) "]";
   //Multiplicity = "[" ( (NaturalLiteralMember  "." "." {noSpace()}? )? UnlimitedNaturalLiteralMember) "]";
 
   //token MultiplicityDigits = ('0'..'9')+;
