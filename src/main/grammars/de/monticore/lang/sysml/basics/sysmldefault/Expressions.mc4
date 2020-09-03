@@ -83,7 +83,7 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
   SequenceConstructionExpression = "{" "}" |
     "{" FromToDigitsDotDot Expression "}" |
     //"{" Expression DotDot Expression "}" |
-    "{" Expression ("," SequenceElementList |  "." "." {noSpace()}? Expression)? "}";
+    "{" Expression ("," SequenceElementList)? "}";
   //TODO remove following
   //SequenceConstructionExpression = "{" "}" |
    // ( "{" Expression ("," SequenceElementList | ".." Expression)? "}" )

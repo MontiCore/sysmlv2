@@ -139,15 +139,14 @@ public class PrintAstOfTrainingExamplesTest {
     return true;
   }
 
-  @Test
+  @Test //TODO delete if not used.
   public void parse_01_Packages_Comment_ExampleTest() {
     Optional<ASTUnit> ast = this.parseSysML(pathToDir + "/01. Packages/Comment Example.sysml");
     if(!ast.isPresent()){
       System.out.println("AST is not present!!");
       return;
     }
-    String printedAST = printAST(ast.get(), 0);
-    //String printedAST = ast.toString();
+     /*String printedAST = printAST(ast.get(), 0);
     System.out.println("----------------------------------------------------------------------");
     System.out.println("----------------------------------------------------------------------");
     System.out.println("----------------------------------------------------------------------");
@@ -158,7 +157,7 @@ public class PrintAstOfTrainingExamplesTest {
         + "ignored exceptions ) and the"
         + "order of the AST-children is sometimes backwards. But it gives an Impression of the AST."
         + "\n If you see somthing in the output it is included in the AST \n"
-        + printedAST);
+        + printedAST);*/
   }
 
   private static final Set<Class<?>> WRAPPER_TYPES = getWrapperTypes();
