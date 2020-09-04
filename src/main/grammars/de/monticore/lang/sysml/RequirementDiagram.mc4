@@ -27,6 +27,8 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysM
 
   /* REQUIREMENTS */
 
+  RequirementUsagePackagedUsageMember implements PackagedUsageMember = ["abstract"]? "requirement" RequirementUsage;
+
   RequirementUsage = RequirementDeclaration RequirementBody;
   RequirementDeclaration  = ( "id" reqId:SysMLName)?
     (name:SysMLName TypePart? ConstraintParameterPart
@@ -35,7 +37,6 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysM
   	TypePart? ActionParameterList? EmptyReturnParameterPart ValuePart?
   	);
 
-  //TODO make ((( name:SysMLName)? TypePart? "as")? NT? and write in List of Improvements.
   SatisfyRequirementUsage =
     ((( name:SysMLName)? TypePart? "as")? Subset
     | "requirement" (name:SysMLName)? TypePart?)

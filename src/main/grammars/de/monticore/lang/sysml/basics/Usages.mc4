@@ -89,6 +89,10 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
   SnapshotUsage = UsageDeclaration SnapshotFeatureMember UsageCompletion;
   SnapshotFeature;
 
+  IndividualUsagePackagedUsageMember implements PackagedUsageMember =  ["abstract"]? "individual" IndividualUsage;
+  TimeSliceUsagePackagedUsageMember implements PackagedUsageMember =   ["abstract"]? "timeslice" TimeSliceUsage;
+  SnapshotUsagePackagedUsageMember implements PackagedUsageMember =    ["abstract"]? "snapshot" SnapshotUsage;
+
   /* INDIVIDUAL MEMBERSHIPS */
 
   TimeSliceFeatureMember = TimeSliceFeature;

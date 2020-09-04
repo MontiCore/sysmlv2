@@ -31,13 +31,15 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   GuardedSuccessionMember = GuardedSuccession ";";
 
 
+ AssociationEndMemberActionUsage implements AssociationEndMember =
+    ["abstract"]?"end" ("ref" "action" | isComposite:"action" ) ActionUsage;
 
   //TODO where does Action belong to?
   /* ACTIONS */
   ActionUnit implements Unit = UnitPrefix ActionDeclaration ActivityBody;
   ActionDeclaration = ["abstract"]? "action" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
   ActionUsageStd implements ActionUsage = ActionUsageDeclaration ActivityBody;
-
+  ActionUsagePackagedUsageMember implements PackagedUsageMember =      ["abstract"]? "action" ActionUsage;
 
   ActionParameterListStd implements ActionParameterList = "(" ( ActionParameterMemberAndFlowMember || ",")* ")";
   ActionParameterMemberAndFlowMember = ActionParameterMember ActionParameterFlowMember?;

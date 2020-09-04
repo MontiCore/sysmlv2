@@ -42,5 +42,7 @@ component grammar SMD extends de.monticore.lang.sysml.basics.SysMLCommon
   ExhibitStateUsage = ((((name:SysMLName) TypePart? "as")? Subset)
     | ( "state" name:SysMLName? TypePart? )) ActionParameterList? SubsettingPart ValuePart? StateBody;
 
+  StateUsagePackagedUsageMember implements PackagedUsageMember =       ["abstract"]? "state" StateUsage;
+
 
 }
