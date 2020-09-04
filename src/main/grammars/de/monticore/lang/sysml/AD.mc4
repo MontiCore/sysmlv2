@@ -4,7 +4,6 @@ package de.monticore.lang.sysml;
 
 component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
 
-
   /* ACTIVITIES */
 
   ActivityUnit implements Unit = UnitPrefix Activity;
@@ -12,7 +11,7 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   ActivityDeclaration = ["abstract"]? "activity" name:SysMLName ParameterList? SuperclassingList?;
   ParameterListStd implements ParameterList = "(" (ParameterMember || "," )* ")";
   ActivityBodyStd implements ActivityBody = ";" | ("{" ActivityBodyItem* "}");
-  ActivityBodyItemStd implements ActivityBodyItem = //TODO
+  ActivityBodyItemStd implements ActivityBodyItem =
     NestedDefinitionMember
     | StructureUsageMember
     | InitialNodeMember TargetSuccessionMember*
@@ -73,24 +72,11 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
   JoinNode = "join" SysMLNameAndTypePartOptional ";";
   ForkNode = "fork" SysMLNameAndTypePartOptional ";";
 
-
-
-
-
-
-
-
-
-
-
   /* ACTION MEMBERSHIPS */
   ActionParameterMember = (direction:FeatureDirection | direction:FeatureDirection? memberName:SysMLName)
     ActionParameter;
   ActionParameterFlowMember = ActionParameterFlow;
   EmptySuccessionMember = EmptySuccession;
-
-
-
 
   PerformedActionUsageStd implements PerformedActionUsage = PerformActionUsageDeclaration | AcceptActionNodeDeclaration | SendActionNodeDeclaration;
 }

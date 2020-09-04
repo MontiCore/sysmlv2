@@ -8,12 +8,13 @@
    de.monticore.lang.sysml.basics.interfaces.PackageBasis,
    de.monticore.lang.sysml.basics.interfaces.ImportBasis,
    de.monticore.lang.sysml.basics.interfaces.VisibilityBasis,
-   de.monticore.lang.sysml.basics.interfaces.SysMLExpressionsBasis{
+   de.monticore.lang.sysml.basics.interfaces.SysMLExpressionsBasis {
 
  interface Parameter;
  interface FeatureTyping;
 
  token FromToDigitsDotDot = ('0'..'9')+ "..";
+ FeatureDirection =  ["in"] | ["out"] | ["inout"];
 
  //TODO split into Basic Interfaces and CommonInterfaces ?
  interface Unit;
@@ -22,7 +23,6 @@
  interface ClassifierDeclarationCompletion;
  interface PortDefinition;
  /* Associations */
- interface AssociationBlock;
  interface AssociationUsageMember;
  interface AssociationEndMember;
 

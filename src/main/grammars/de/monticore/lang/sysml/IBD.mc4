@@ -15,6 +15,9 @@ component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon,
     DefinitionMemberPrefix ["abstract"]? isComposite:"end" PartProperty;
   AssociationEndMemberReferenceProperty implements AssociationEndMember =
     DefinitionMemberPrefix ["abstract"]? "end" ["ref"]? ReferenceProperty;
+  ReferencePropertyNonPortStructureUsageMember implements NonPortStructureUsageMember =
+      ["abstract"]? "ref" direction:FeatureDirection? ReferenceProperty;
+
 
   PartProperty = "part" Usage;
   ReferenceProperty = Usage;

@@ -8,8 +8,7 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
   de.monticore.lang.sysml.basics.Ports,
   de.monticore.lang.sysml.basics.Associations,
   de.monticore.lang.sysml.basics.ValueTypes,
-  de.monticore.lang.sysml.basics.SysMLCommonBasis
-   {
+  de.monticore.lang.sysml.basics.SysMLCommonBasis {
   //TODO put this in a DefinitionFile?
   /* DEFINITIONS */
 
@@ -29,7 +28,7 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
   PortMember = DefinitionMemberPrefix (["abstract"]? "port" PortUsage); //Remark we do not use abstract Port Usage
   //TODO look into port is optional
   ConjugatedPortMember = DefinitionMemberPrefix (["abstract"]? "port" ConjugatedPortUsage);
-  FeatureDirection =  ["in"] | ["out"] | ["inout"];
+
   DefinitionMemberPrefixStd implements DefinitionMemberPrefix = PrefixAnnotation* visibility:VisibilityIndicator?;
 
 
@@ -53,7 +52,12 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
       | (TypePart? ActionParameterList? ValuePart?)
       | (RedefinesKeyword Redefinition TypePart ActionParameterList? ValuePart?);
 
- /* ITEM FLOWS */ //Is this AD and IBD?
+  /* ITEM FLOWS */ //Is this AD and IBD?
+  NonPortStructureUsageMemberItemFlow implements NonPortStructureUsageMember =
+    ["abstract"]? "stream" ItemFlow;
+  NonPortStructureUsageMemberSuccessionItemFlow implements NonPortStructureUsageMember =
+    ["abstract"]? "flow" SuccessionItemFlow;
+
   ItemFlow = ItemFlowDeclaration DefinitionBody;
   SuccessionItemFlow = ItemFlowDeclaration DefinitionBody;
   ItemFlowDeclaration = ( (name:SysMLName)? TypePart?
@@ -73,6 +77,9 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
 
 
   /* SUCCESSIONS */
+  NonPortStructureUsageMemberSuccession implements NonPortStructureUsageMember =
+    ["abstract"]? "succession" Succession;
+
   Succession = SuccessionDeclaration ";";
   SuccessionDeclaration = ( ( name:SysMLName)? TypePart? "first" )? ConnectorEndMember "then" ConnectorEndMember;
   TargetSuccession = "then" MultiplicitySourceEndMember ConnectorEndMember;

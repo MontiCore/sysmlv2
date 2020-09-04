@@ -8,42 +8,7 @@ grammar SysML extends de.monticore.lang.sysml.AD,
   de.monticore.lang.sysml.ParametricDiagram,
   de.monticore.lang.sysml.RequirementDiagram,
   de.monticore.lang.sysml.SMD,
-  de.monticore.lang.sysml.basics.sysmldefault.SysMLBasicsDefault
-{
+  de.monticore.lang.sysml.basics.sysmldefault.SysMLBasicsDefault {
   start Unit;
 
-
-
-
-
-
-
-
-
-
-
-  ReferencePropertyNonPortStructureUsageMember implements NonPortStructureUsageMember =
-    ["abstract"]? "ref" direction:FeatureDirection? ReferenceProperty;
-  NonPortStructureUsageMemberValueProperty implements NonPortStructureUsageMember =
-    ["abstract"]? ["value"]? direction:FeatureDirection? ValueProperty;
-  NonPortStructureUsageMemberIndividualUsage implements NonPortStructureUsageMember =
-    ["abstract"]? ( "ref" "individual" | isComposite:"individual") direction:FeatureDirection? IndividualUsage;
-  NonPortStructureUsageMemberTimeSliceUsage implements NonPortStructureUsageMember =
-    ["abstract"]? ( "ref" "timeslice" | isComposite:"timeslice") direction:FeatureDirection? TimeSliceUsage;
-  NonPortStructureUsageMemberSnapshotUsage implements NonPortStructureUsageMember =
-    ["abstract"]? ( "ref" "snapshot" | isComposite:"snapshot") direction:FeatureDirection? SnapshotUsage;
-  NonPortStructureUsageMemberConnectionUsage implements NonPortStructureUsageMember =
-    ["abstract"]? "link" ConnectionUsage;
-  NonPortStructureUsageMemberConnector implements NonPortStructureUsageMember =
-    ["abstract"]? "connect" Connector;
-  NonPortStructureUsageMemberInterfaceUsage implements NonPortStructureUsageMember =
-    ["abstract"]? "interface" InterfaceUsage;
-  NonPortStructureUsageMemberBindingConnector implements NonPortStructureUsageMember =
-    "bind" BindingConnector;
-  NonPortStructureUsageMemberSuccession implements NonPortStructureUsageMember =
-    ["abstract"]? "succession" Succession;
-  NonPortStructureUsageMemberItemFlow implements NonPortStructureUsageMember =
-    ["abstract"]? "stream" ItemFlow;
-  NonPortStructureUsageMemberSuccessionItemFlow implements NonPortStructureUsageMember =
-    ["abstract"]? "flow" SuccessionItemFlow;
 }

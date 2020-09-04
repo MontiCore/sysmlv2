@@ -3,14 +3,15 @@ package de.monticore.lang.sysml.basics;
 
 
 component grammar ValueTypes extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
-  de.monticore.lang.sysml.basics.Usages
-
-  {
+  de.monticore.lang.sysml.basics.Usages{
 
   /* VALUE TYPES */
   ValueTypeUnit = UnitPrefix ValueType;
   ValueTypeStd implements ValueType, PackagedDefinitionMember =
     ValueTypeDeclaration DefinitionBody;
+  NonPortStructureUsageMemberValueProperty implements NonPortStructureUsageMember =
+      ["abstract"]? ["value"]? direction:FeatureDirection? ValueProperty;
+
   ValueTypeDeclaration = ["abstract"]? "value" "type" ClassifierDeclarationCompletion;
 
   ValuePropertyStd implements PackagedUsageMember =

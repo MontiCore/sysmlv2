@@ -2,8 +2,8 @@
 package de.monticore.lang.sysml;
 
 
-component grammar SMD extends de.monticore.lang.sysml.basics.SysMLCommon
-    {
+component grammar SMD extends de.monticore.lang.sysml.basics.SysMLCommon{
+
   /* STATE DEFINITIONS */
 
   StateDefinitionUnit implements Unit = UnitPrefix StateDefinition;
@@ -47,6 +47,4 @@ component grammar SMD extends de.monticore.lang.sysml.basics.SysMLCommon
     DefinitionMemberPrefix ["abstract"]?  ("ref" "state" | isComposite:"state") StateUsage;
   BehaviorUsageMemberExhibitStateUsage implements BehaviorUsageMember =
     DefinitionMemberPrefix  "exhibit" ExhibitStateUsage;
-
-
 }

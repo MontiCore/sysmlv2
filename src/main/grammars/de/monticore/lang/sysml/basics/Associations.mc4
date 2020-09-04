@@ -1,13 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics;
 
-component grammar Associations extends de.monticore.lang.sysml.basics.SysMLCommonBasis{
+component grammar Associations extends de.monticore.lang.sysml.basics.SysMLCommonBasis {
 
   /* ASSOCIATION BLOCKS */
 
   AssociationBlockUnit implements Unit = UnitPrefix AssociationBlock;
-  //TODO AssociationBlock only used once in xtext, here twice (see above) => AssociationBlock does not have to be an interface
-  AssociationBlockStd implements AssociationBlock, PackagedDefinitionMember  = AssociationBlockDeclaration AssociationBlockBody;
+  AssociationBlock implements PackagedDefinitionMember  = AssociationBlockDeclaration AssociationBlockBody;
   AssociationBlockDeclaration = ["abstract"]? "assoc" "block" ClassifierDeclarationCompletion;
   AssociationBlockBody = (";") | ("{"
     (

@@ -3,7 +3,8 @@ package de.monticore.lang.sysml.basics;
 
 component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
   de.monticore.lang.sysml.basics.Usages,
-  de.monticore.lang.sysml.basics.Associations //TODO try to avoid circular dependencies
+  de.monticore.lang.sysml.basics.Associations //TODO try to avoid this dependencies (Because SysMLCommonBasis imports
+  // TODO these,too)
   {
 
   /* PORT DEFINITIONS */
@@ -27,6 +28,11 @@ component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
   ConjugatedPortTyping = SysMLName; // Remark: [SysML::PortDefinition | QualifiedName]
 
   /* Connectors */
+  NonPortStructureUsageMemberConnectionUsage implements NonPortStructureUsageMember =
+    ["abstract"]? "link" ConnectionUsage;
+  NonPortStructureUsageMemberConnector implements NonPortStructureUsageMember =
+    ["abstract"]? "connect" Connector;
+
   Connector = ConnectionPart AssociationBlockBody;
   ConnectionUsage = UsageDeclaration "connect" ConnectionPart AssociationBlockBody;
   ConnectionPart =  ownedFeatureMembership_compFrom:ConnectorEndMember "to"
@@ -51,8 +57,13 @@ component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
   /* INTERFACE CONNECTORS */
   InterfaceUsage = UsageDeclaration "connect" ConnectionPart InterfaceBody;
 
+  NonPortStructureUsageMemberInterfaceUsage implements NonPortStructureUsageMember =
+    ["abstract"]? "interface" InterfaceUsage;
 
   /* BINDING CONNECTORS */
+  NonPortStructureUsageMemberBindingConnector implements NonPortStructureUsageMember =
+    "bind" BindingConnector;
+
   BindingConnector = ((name:SysMLName)? TypePart? "as")? //TODO Make own NT
     ConnectorEndMember "=" ConnectorEndMember DefinitionBody;
 
@@ -71,7 +82,7 @@ component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
   InterfaceUsageMember = NestedUsageMember | InterfaceEndMember | ConjugatedInterfaceEndMember ;
   InterfaceEndMember = DefinitionMemberPrefix
     ( ["abstract"]? "end" ["port"]? PortUsage);
-    //isPort ?= 'end' is in Xtext, which is most likely an error and should be isPort ?= 'port'. This is defined here.
+    //isPort ?= 'end' is in Xtext, which is most likely an error and should be isPort ?= 'port'. This is defined here   TODO
   ConjugatedInterfaceEndMember = DefinitionMemberPrefix
     (["abstract"]? "end" ["port"]? ConjugatedPortUsage);
     //isPort ?= 'end' is in Xtext, which is most likely an error and should be isPort ?= 'port'. This is defined here.
