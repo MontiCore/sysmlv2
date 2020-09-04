@@ -1,4 +1,4 @@
-package de.monticore.lang.sysml.printast;
+package de.monticore.lang.sysml.print;
 
 import de.monticore.lang.sysml.basics.sysmlcommonbasis._ast.ASTUnit;
 import de.monticore.lang.sysml.utils.SysMLParserForTesting;

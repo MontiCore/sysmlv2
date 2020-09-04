@@ -12,5 +12,5 @@ component grammar Names extends de.monticore.MCBasics,
   fragment token AnyText = ~ ('\'');
   token UNRESTRICTED_NAME = '\'' AnyText* '\'';
 
-  SysMLNameDefault implements SysMLName = (Name | UNRESTRICTED_NAME); //Remark in Xtext this is Name
+  SysMLNameDefault implements SysMLName = (name:Name | name:UNRESTRICTED_NAME); //Remark in Xtext this is Name
 }

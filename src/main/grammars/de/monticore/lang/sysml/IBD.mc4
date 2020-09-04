@@ -9,17 +9,14 @@ component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon,
   PartUnit implements Unit = UnitPrefix PartDeclaration UsageCompletion;
   PartDeclaration = ["abstract"]? "part" SysMLName TypePart? SubsettingPart;
 
-  PartNonPortStructureUsageMember implements NonPortStructureUsageMember =
-    ["abstract"]? "part" PartProperty;
-  PartPropertyPackagedUsageMember implements PackagedUsageMember =
-    ["abstract"]? "part" PartProperty; //TODO check if merge with above
+  PartPropertyUsageMember implements PackagedUsageMember, NonPortStructureUsageMember =
+    ["abstract"]? PartProperty;
+  AssociationEndMemberPartProperty implements AssociationEndMember =
+    DefinitionMemberPrefix ["abstract"]? isComposite:"end" PartProperty;
+  AssociationEndMemberReferenceProperty implements AssociationEndMember =
+    DefinitionMemberPrefix ["abstract"]? "end" ["ref"]? ReferenceProperty;
 
-
-  PartProperty = Usage;
-
-
-
-
+  PartProperty = "part" Usage;
   ReferenceProperty = Usage;
 
 
@@ -37,8 +34,6 @@ component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon,
   EmptyReturnParameterMember = EmptyParameter;
   ConstraintExpressionMember = DefinitionMemberPrefix Expression;
 
-
-  //---------------------------------
   /* CONSTRAINTS */
   ConstraintUsage = ConstraintDeclaration ConstraintBody;
   ConstraintDeclaration =
@@ -50,7 +45,7 @@ component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon,
     (((( name:SysMLName)? TypePart? "as" )? Subset+ ) | ("constraint" (name:SysMLName)? TypePart?) )
     ConstraintParameterPart InvariantPart ConstraintBody;
   InvariantPart = TrueLiteralMember;
-  TrueLiteralExpression; //{SysML::LiteralBoolean} TODO
+  TrueLiteralExpression;
 
   /* CONSTRAINT MEMBERSHIPS */
   TrueLiteralMember = TrueLiteralExpression;

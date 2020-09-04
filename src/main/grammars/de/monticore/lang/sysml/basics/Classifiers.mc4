@@ -6,7 +6,8 @@ component grammar Classifiers extends de.monticore.lang.sysml.basics.SysMLCommon
 { //TODO create another layer for this
 
   /* CLASSIFIERS */
-  ClassifierDeclarationCompletionStd implements ClassifierDeclarationCompletion = SysMLName SuperclassingList?;
+  ClassifierDeclarationCompletionStd implements ClassifierDeclarationCompletion =
+    name:SysMLName SuperclassingList?;
 
   SuperclassingList = SpecializesKeyword (Superclassing || ",")+;
   SpecializesKeyword = ":>" | "specializes";

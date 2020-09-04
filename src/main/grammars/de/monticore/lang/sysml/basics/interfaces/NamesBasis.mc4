@@ -4,4 +4,12 @@ package de.monticore.lang.sysml.basics.interfaces;
 component grammar NamesBasis {
   interface QualifiedName;
   interface SysMLName; //Default Name for SysML
+
+  /*ast SysMLName =
+    method public void setName(String name){
+
+    };
+    method public String getName(){
+
+    };*/
 }
