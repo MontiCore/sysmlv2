@@ -36,6 +36,10 @@ component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon,
 
   /* CONSTRAINTS */
   ConstraintUsagePackagedUsageMember implements PackagedUsageMember =  ["abstract"]? "constraint" ConstraintUsage;
+  BehaviorUsageMemberConstraintUsage implements BehaviorUsageMember =
+    DefinitionMemberPrefix ["abstract"]?  ("ref" "constraint" | isComposite:"constraint") ConstraintUsage;
+  BehaviorUsageMemberAssertConstraintUsage implements BehaviorUsageMember =
+      DefinitionMemberPrefix "assert" AssertConstraintUsage;
 
   ConstraintUsage = ConstraintDeclaration ConstraintBody;
   ConstraintDeclaration =

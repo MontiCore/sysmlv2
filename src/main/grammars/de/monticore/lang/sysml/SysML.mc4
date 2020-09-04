@@ -12,22 +12,14 @@ grammar SysML extends de.monticore.lang.sysml.AD,
 {
   start Unit;
 
-  BehaviorUsageMemberActionUsage implements BehaviorUsageMember =
-    DefinitionMemberPrefix ["abstract"]?  ("ref" "action" | isComposite:"action") ActionUsage;
-  BehaviorUsageMemberStateUsage implements BehaviorUsageMember =
-    DefinitionMemberPrefix ["abstract"]?  ("ref" "state" | isComposite:"state") StateUsage;
-  BehaviorUsageMemberConstraintUsage implements BehaviorUsageMember =
-    DefinitionMemberPrefix ["abstract"]?  ("ref" "constraint" | isComposite:"constraint") ConstraintUsage;
-  BehaviorUsageMemberRequirementUsage implements BehaviorUsageMember =
-    DefinitionMemberPrefix ["abstract"]?  ("ref" "requirement" | isComposite:"requirement") RequirementUsage;
-  BehaviorUsageMemberPerformActionUsage implements BehaviorUsageMember =
-    DefinitionMemberPrefix "perform" PerformActionUsage;
-  BehaviorUsageMemberExhibitStateUsage implements BehaviorUsageMember =
-    DefinitionMemberPrefix  "exhibit" ExhibitStateUsage;
-  BehaviorUsageMemberAssertConstraintUsage implements BehaviorUsageMember =
-    DefinitionMemberPrefix "assert" AssertConstraintUsage;
-  BehaviorUsageMemberSatisfyRequirementUsage implements BehaviorUsageMember =
-    DefinitionMemberPrefix  "satisfy" SatisfyRequirementUsage;
+
+
+
+
+
+
+
+
 
 
   ReferencePropertyNonPortStructureUsageMember implements NonPortStructureUsageMember =

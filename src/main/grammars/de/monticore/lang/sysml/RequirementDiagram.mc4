@@ -28,6 +28,10 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.basics.SysM
   /* REQUIREMENTS */
 
   RequirementUsagePackagedUsageMember implements PackagedUsageMember = ["abstract"]? "requirement" RequirementUsage;
+  BehaviorUsageMemberRequirementUsage implements BehaviorUsageMember =
+    DefinitionMemberPrefix ["abstract"]?  ("ref" "requirement" | isComposite:"requirement") RequirementUsage;
+  BehaviorUsageMemberSatisfyRequirementUsage implements BehaviorUsageMember =
+    DefinitionMemberPrefix  "satisfy" SatisfyRequirementUsage;
 
   RequirementUsage = RequirementDeclaration RequirementBody;
   RequirementDeclaration  = ( "id" reqId:SysMLName)?

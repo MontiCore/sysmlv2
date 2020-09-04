@@ -34,12 +34,17 @@ component grammar AD extends de.monticore.lang.sysml.basics.SysMLCommon {
  AssociationEndMemberActionUsage implements AssociationEndMember =
     ["abstract"]?"end" ("ref" "action" | isComposite:"action" ) ActionUsage;
 
-  //TODO where does Action belong to?
-  /* ACTIONS */
-  ActionUnit implements Unit = UnitPrefix ActionDeclaration ActivityBody;
-  ActionDeclaration = ["abstract"]? "action" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
-  ActionUsageStd implements ActionUsage = ActionUsageDeclaration ActivityBody;
-  ActionUsagePackagedUsageMember implements PackagedUsageMember =      ["abstract"]? "action" ActionUsage;
+ //TODO where does Action belong to?
+ /* ACTIONS */
+ ActionUnit implements Unit = UnitPrefix ActionDeclaration ActivityBody;
+ ActionDeclaration = ["abstract"]? "action" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
+ ActionUsageStd implements ActionUsage = ActionUsageDeclaration ActivityBody;
+
+ ActionUsagePackagedUsageMember implements PackagedUsageMember =      ["abstract"]? "action" ActionUsage;
+ BehaviorUsageMemberActionUsage implements BehaviorUsageMember =
+   DefinitionMemberPrefix ["abstract"]?  ("ref" "action" | isComposite:"action") ActionUsage;
+ BehaviorUsageMemberPerformActionUsage implements BehaviorUsageMember =
+   DefinitionMemberPrefix "perform" PerformActionUsage;
 
   ActionParameterListStd implements ActionParameterList = "(" ( ActionParameterMemberAndFlowMember || ",")* ")";
   ActionParameterMemberAndFlowMember = ActionParameterMember ActionParameterFlowMember?;
