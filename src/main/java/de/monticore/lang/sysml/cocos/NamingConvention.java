@@ -18,21 +18,23 @@ public class NamingConvention implements ClassifiersASTClassifierDeclarationComp
 
   @Override
   public void check(ASTClassifierDeclarationCompletionStd node) {
-    ASTSysMLName astSysMLName =  node.getName();
+    /* ASTSysMLName astSysMLName =  node.getName(); //TODO old remove
     if(astSysMLName instanceof ASTSysMLNameDefault){
       ASTSysMLNameDefault nameDefault = (ASTSysMLNameDefault) astSysMLName;
       String name = nameDefault.getName();
       boolean startsWithUpperCase = Character.isUpperCase(name.charAt(0));
       if(!startsWithUpperCase){
-       // Log.warn(String.format("'%e' Name '%n' should start with a capital letter.",
-         // TODO   SysMLCoCos.getErrorCode(SysMLCoCoName.NamingConvention), name), astSysMLName.get_SourcePositionStart
-        // ());
-       /* Log.warn( SysMLCoCos.getErrorCode(SysMLCoCoName.NamingConvention)+ " Name "+name+" should start with a "
-            + "capital "
-            + "letter.", astSysMLName.get_SourcePositionStart()); */
+        //TODO use String format?
         Log.warn(SysMLCoCos.getErrorCode(SysMLCoCoName.NamingConvention)+ " Name "+name+
                 " should start with a capital letter.",astSysMLName.get_SourcePositionStart());
       }
+    }*/
+    String name =  node.getName();
+    boolean startsWithUpperCase = Character.isUpperCase(name.charAt(0));
+    if(!startsWithUpperCase){
+      //TODO use String format?
+      Log.warn(SysMLCoCos.getErrorCode(SysMLCoCoName.NamingConvention)+ " Name "+name+
+          " should start with a capital letter.", node.get_SourcePositionStart());
     }
   }
 }
