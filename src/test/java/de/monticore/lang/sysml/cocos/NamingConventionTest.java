@@ -19,13 +19,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class NamingConventionTest {
+public class NamingConventionTest extends AbstractCoCoTest {
 
   @BeforeClass
   public static void init() {
@@ -36,41 +37,45 @@ public class NamingConventionTest {
   public void setUp() throws RecognitionException, IOException {
     LogStub.init();
     Log.getFindings().clear();
+    //Log.warn();
   }
 
   @Test
   public void testValid() {
-    SysMLParserForTesting sysMLParserForTesting = new SysMLParserForTesting();
-    Optional<ASTUnit> astUnit = sysMLParserForTesting.parseSysML("src/test/resources/examples"
-        + "/officialPilotImplementation/2020/03/sysml/src/training/02. Blocks/Blocks Example.sysml");
+    ASTUnit astUnit =
+        this.parseSysMLSingleModel(this.pathToOfficialSysMLExamples + "/02. Blocks/Blocks Example.sysml");
 
     NamingConvention coco = new NamingConvention();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
     coCoChecker.addCoCo(coco);
-    coCoChecker.checkAll(astUnit.get()); //TODO write abstract parser
+    coCoChecker.checkAll(astUnit);
     assertTrue(Log.getFindings().isEmpty());
   }
-  @Ignore//TODO
+
+  @Ignore
   @Test
-  public void testInvalidDoesNotStartWithCaptialLetter() {
-    SysMLParserForTesting sysMLParserForTesting = new SysMLParserForTesting();
-    Optional<ASTUnit> astUnit = sysMLParserForTesting.parseSysML("src/test/resources/cocos/invalid"
+  public void testInvalidDoesNotStartWithCapitalLetter() {
+    ASTUnit astUnit = this.parseSysMLSingleModel(this.pathToInvalidModels
         + "/NamingConvention/Blocks Example.sysml");
 
     NamingConvention coco = new NamingConvention();
+    coco.testWarning();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
     coCoChecker.addCoCo(coco);
-    coCoChecker.checkAll(astUnit.get()); //TODO write parser
+    coCoChecker.checkAll(astUnit);
 
-    Collection<Finding> expectedWarnings = Arrays.asList(
-        //Finding.warning("0xSysML04 Name vehicle should start with a capital letter.Blocks Example.sysml:<4,7>")//TODO
-        Finding.warning("0xSysML04 Name vehicle should start with a capital letter.",
-            new SourcePosition(4, 7, "Blocks Example.sysml"))//TODO
+    //TODO assertTrue(this.checkIfFindingsContainWarning("0xSysML04 Name vehicle should start with a capital letter."));
+    //assertEquals(1,Log.getFindings().size());
+    //assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
+    /*Collection<Finding> expectedWarnings = Arrays.asList(
+        Finding.warning("[WARN] 0xSysML04 Name vehicle should start with a capital letter.")
+        //Finding.warning("0xSysML04 Name vehicle should start with a capital letter.",
+          //  new SourcePosition(4, 7, "Blocks Example.sysml"))//TODO
         //  Finding.warning("'%e' Name '%n' should start with a capital letter.Blocks Example.sysml",
         //  new SourcePosition(4, 7))//TODO
         //Finding.warning("'%e' Name '%n' should start with a capital letter.Blocks Example.sysml:<4,7>")//TODO
     );
 
-    Assert.assertErrors(expectedWarnings, Log.getFindings());
+    Assert.assertErrors(expectedWarnings, Log.getFindings());TODO remove, only errors can be tested like this.*/
   }
 }

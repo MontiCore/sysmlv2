@@ -5,11 +5,13 @@ component grammar NamesBasis {
   interface QualifiedName;
   interface SysMLName; //Default Name for SysML
 
-  /*ast SysMLName =
+  astrule SysMLName =
     method public void setName(String name){
 
-    };
+    }
     method public String getName(){
 
-    };*/
+        }
+    ;
+
 }
