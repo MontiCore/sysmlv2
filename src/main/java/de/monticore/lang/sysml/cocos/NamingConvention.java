@@ -30,19 +30,9 @@ public class NamingConvention implements ClassifiersASTClassifierDeclarationComp
        /* Log.warn( SysMLCoCos.getErrorCode(SysMLCoCoName.NamingConvention)+ " Name "+name+" should start with a "
             + "capital "
             + "letter.", astSysMLName.get_SourcePositionStart()); */
-        /*Log.warn(  astSysMLName.get_SourcePositionStart(),
-            ": " + SysMLCoCos.getErrorCode(SysMLCoCoName.NamingConvention)+ " Name "+name+" should start with a "
-            + "capital "
-            + "letter.");*/
-
-        Log.warn(   "0xSysML04 Name vehicle should start with a capital letter.");
-        System.out.println("Got here!!!!"); //TODO remove me
+        Log.warn(SysMLCoCos.getErrorCode(SysMLCoCoName.NamingConvention)+ " Name "+name+
+                " should start with a capital letter.",astSysMLName.get_SourcePositionStart());
       }
     }
-  }
-
-
-  public void testWarning(){//TODO remove
-    Log.warn(   "0xSysML04 Name vehicle should start with a capital letter.");
   }
 }

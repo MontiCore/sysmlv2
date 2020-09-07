@@ -38,7 +38,6 @@ public class NamingConventionTest extends AbstractCoCoTest {
   public void setUp() throws RecognitionException, IOException {
     LogStub.init();
     Log.getFindings().clear();
-    //Log.warn();
   }
 
   @Test
@@ -59,21 +58,15 @@ public class NamingConventionTest extends AbstractCoCoTest {
         + "/NamingConvention/Blocks Example.sysml");
 
     NamingConvention coco = new NamingConvention();
-    coco.testWarning();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
     coCoChecker.addCoCo(coco);
     coCoChecker.checkAll(astUnit);
 
-    assertTrue(this.checkIfFindingsContainWarning("0xSysML04 Name vehicle should start with a capital letter."));
-    //assertEquals(1,Log.getFindings().size());
-    //assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
+    assertEquals(1,Log.getFindings().size());
+    assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
     Collection<Finding> expectedWarnings = Arrays.asList(
-        Finding.warning("0xSysML04 Name vehicle should start with a capital letter.")
-        //Finding.warning("0xSysML04 Name vehicle should start with a capital letter.",
-          //  new SourcePosition(4, 7, "Blocks Example.sysml"))//TODO
-        //  Finding.warning("'%e' Name '%n' should start with a capital letter.Blocks Example.sysml",
-        //  new SourcePosition(4, 7))//TODO
-        //Finding.warning("'%e' Name '%n' should start with a capital letter.Blocks Example.sysml:<4,7>")//TODO
+        Finding.warning("0xSysML04 Name vehicle should start with a capital letter.",
+            new SourcePosition(4, 7, "Blocks Example.sysml"))
     );
 
     Assert.assertErrors(expectedWarnings, Log.getFindings());
