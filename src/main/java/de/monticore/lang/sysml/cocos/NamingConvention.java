@@ -8,7 +8,7 @@ import de.monticore.lang.sysml.basics.sysmlcommonbasis._cocos.SysMLCommonBasisAS
 import de.monticore.lang.sysml.basics.sysmldefault.names._ast.ASTSysMLNameDefault;
 import de.monticore.lang.sysml.sysml._ast.ASTSysMLNode;
 import de.monticore.lang.sysml.sysml._cocos.SysMLASTSysMLNodeCoCo;
-import jline.internal.Log;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * @author Robin Muenstermann

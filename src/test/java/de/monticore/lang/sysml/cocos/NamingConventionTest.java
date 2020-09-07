@@ -1,5 +1,6 @@
 package de.monticore.lang.sysml.cocos;
 
+import com.sun.xml.internal.bind.v2.TODO;
 import de.monticore.cocos.helper.Assert;
 import de.monticore.lang.sysml.basics.sysmlcommonbasis._ast.ASTUnit;
 import de.monticore.lang.sysml.sysml._cocos.SysMLCoCoChecker;
@@ -52,7 +53,6 @@ public class NamingConventionTest extends AbstractCoCoTest {
     assertTrue(Log.getFindings().isEmpty());
   }
 
-  @Ignore
   @Test
   public void testInvalidDoesNotStartWithCapitalLetter() {
     ASTUnit astUnit = this.parseSysMLSingleModel(this.pathToInvalidModels
@@ -64,11 +64,11 @@ public class NamingConventionTest extends AbstractCoCoTest {
     coCoChecker.addCoCo(coco);
     coCoChecker.checkAll(astUnit);
 
-    //TODO assertTrue(this.checkIfFindingsContainWarning("0xSysML04 Name vehicle should start with a capital letter."));
+    assertTrue(this.checkIfFindingsContainWarning("0xSysML04 Name vehicle should start with a capital letter."));
     //assertEquals(1,Log.getFindings().size());
     //assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
-    /*Collection<Finding> expectedWarnings = Arrays.asList(
-        Finding.warning("[WARN] 0xSysML04 Name vehicle should start with a capital letter.")
+    Collection<Finding> expectedWarnings = Arrays.asList(
+        Finding.warning("0xSysML04 Name vehicle should start with a capital letter.")
         //Finding.warning("0xSysML04 Name vehicle should start with a capital letter.",
           //  new SourcePosition(4, 7, "Blocks Example.sysml"))//TODO
         //  Finding.warning("'%e' Name '%n' should start with a capital letter.Blocks Example.sysml",
@@ -76,6 +76,6 @@ public class NamingConventionTest extends AbstractCoCoTest {
         //Finding.warning("'%e' Name '%n' should start with a capital letter.Blocks Example.sysml:<4,7>")//TODO
     );
 
-    Assert.assertErrors(expectedWarnings, Log.getFindings());TODO remove, only errors can be tested like this.*/
+    Assert.assertErrors(expectedWarnings, Log.getFindings());
   }
 }
