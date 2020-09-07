@@ -13,10 +13,15 @@ Also a Pretty Printer should be written.
 
 #Useful commands Maven build
 
-mvn clean install (to build everything)
-mvn clean install -DskipTests
+``mvn clean install `` (to build everything)
 
-#Useful commands Gradle build
+``mvn install -DskipTests``
+
+``mvn install -Pdev-skip-slow-tests``  (Activates profile which skips slow tests)
+
+
+
+#Useful commands Gradle build (Gradle dependencies may not be up to date)
 
 ``
 gradle build -i 

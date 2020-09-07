@@ -22,7 +22,7 @@
       3. Port definitions should begin with a capital letter
       4. A port usage should begin with a lowercase letter
     
--  Direction of Port
+- PortDirection
     - Error    
     - An "in" port should connect to an "out" port.
 - Redefinition and Subsetting
