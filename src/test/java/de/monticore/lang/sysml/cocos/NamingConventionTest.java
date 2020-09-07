@@ -1,10 +1,8 @@
 package de.monticore.lang.sysml.cocos;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import de.monticore.cocos.helper.Assert;
 import de.monticore.lang.sysml.basics.sysmlcommonbasis._ast.ASTUnit;
 import de.monticore.lang.sysml.sysml._cocos.SysMLCoCoChecker;
-import de.monticore.lang.sysml.utils.SysMLParserForTesting;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
