@@ -1,0 +1,40 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.basics;
+
+component grammar Individuals extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
+ de.monticore.lang.sysml.basics.Usages{
+
+  /* INDIVIDUAL DEFINITIONS */
+  IndividualDefinitionUnit implements Unit = UnitPrefix IndividualDefinition;
+  IndividualDefinition implements PackagedDefinitionMember = IndividualDefDeclaration DefinitionBody;
+  IndividualDefDeclaration = ["abstract"]? "individual" "def" ClassifierDeclarationCompletion
+    LifeClassMembership;
+  LifeClass;
+
+  /* INDIVIDUAL DEFINITION MEMBERSHIPS */
+  LifeClassMembership = LifeClass;
+
+
+  /* INDIVIDUALS */
+
+  IndividualUsage = Usage;
+  TimeSliceUsage = UsageDeclaration TimeSliceFeatureMember UsageCompletion;
+  TimeSliceFeature;
+  SnapshotUsage = UsageDeclaration SnapshotFeatureMember UsageCompletion;
+  SnapshotFeature;
+
+  IndividualUsagePackagedUsageMember implements PackagedUsageMember =  ["abstract"]? "individual" IndividualUsage;
+  TimeSliceUsagePackagedUsageMember implements PackagedUsageMember =   ["abstract"]? "timeslice" TimeSliceUsage;
+  SnapshotUsagePackagedUsageMember implements PackagedUsageMember =    ["abstract"]? "snapshot" SnapshotUsage;
+  NonPortStructureUsageMemberIndividualUsage implements NonPortStructureUsageMember =
+    ["abstract"]? ( "ref" "individual" | isComposite:"individual") direction:FeatureDirection? IndividualUsage;
+  NonPortStructureUsageMemberTimeSliceUsage implements NonPortStructureUsageMember =
+    ["abstract"]? ( "ref" "timeslice" | isComposite:"timeslice") direction:FeatureDirection? TimeSliceUsage;
+  NonPortStructureUsageMemberSnapshotUsage implements NonPortStructureUsageMember =
+    ["abstract"]? ( "ref" "snapshot" | isComposite:"snapshot") direction:FeatureDirection? SnapshotUsage;
+
+  /* INDIVIDUAL MEMBERSHIPS */
+
+  TimeSliceFeatureMember = TimeSliceFeature;
+  SnapshotFeatureMember = SnapshotFeature;
+}

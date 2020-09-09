@@ -3,12 +3,13 @@ package de.monticore.lang.sysml.basics;
 
 
 component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers,
-  //de.monticore.lang.sysml.basics.ValueTypes, Transitively through Usages
-  de.monticore.lang.sysml.basics.Usages,
+  // de.monticore.lang.sysml.basics.Usages, <- transitively imported through ValueTypes and Individuals
   de.monticore.lang.sysml.basics.Ports,
   de.monticore.lang.sysml.basics.Associations,
   de.monticore.lang.sysml.basics.ValueTypes,
-  de.monticore.lang.sysml.basics.SysMLCommonBasis {
+  de.monticore.lang.sysml.basics.Individuals
+  //de.monticore.lang.sysml.basics.SysMLCommonBasis  <- transitively through other imports
+  {
   //TODO put this in a DefinitionFile?
   /* DEFINITIONS */
 
@@ -26,7 +27,6 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
   // Remark: NonPortStructureUsageMember is an interface
   // Remark: BehaviorUsageMember is an interface
   PortMember = DefinitionMemberPrefix (["abstract"]? "port" PortUsage); //Remark we do not use abstract Port Usage
-  //TODO look into port is optional
   ConjugatedPortMember = DefinitionMemberPrefix (["abstract"]? "port" ConjugatedPortUsage);
 
   DefinitionMemberPrefixStd implements DefinitionMemberPrefix = PrefixAnnotation* visibility:VisibilityIndicator?;
@@ -101,14 +101,9 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
   /* TRANSITION MEMBERSHIPS */
   TransitionSourceMember = memberFeature:QualifiedName;
   TransitionSuccessionMember = TransitionSuccession;
-  //TODO add abstraction layer?
-  TriggerStepMember = kind:TriggerFeatureKind TriggerStep;
-  TriggerFeatureKind = kind:"accept"; //Remark: this is an enum in xtext
-  GuardExpressionMember = kind:GuardFeatureKind Expression;
-  GuardFeatureKind = guard:"if"; //Remark: this is an enum in xtext
-  EffectBehaviorMember = kind: EffectFeatureKind EffectBehaviourUsage;
-  EffectFeatureKind = effect:"do"; //Remark: this is an enum in xtext
-
+  TriggerStepMember = "accept" TriggerStep;
+  GuardExpressionMember = "if" Expression;
+  EffectBehaviorMember = "do" EffectBehaviourUsage;
 
   EmptyParameter;
   EmptyParameterMember = EmptyParameter;

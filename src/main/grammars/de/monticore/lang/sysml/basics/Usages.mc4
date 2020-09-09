@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml.basics;
 
 
-component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis { //TODO make interface for NatLiteral
+component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis {
 
   /* USAGES */
   UsageStd implements Usage =
@@ -23,14 +23,14 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
   FeatureTypingStd implements FeatureTyping = QualifiedName; //@SysML::Type TODO
   MultiplicityPart = MultiplicityMember (["ordered"] | ["nonunique"])*; //Ast RUles TODO only once, not allowed: "ordered ordered"
 
-  //TODO
+
 
   Multiplicity = "[" ((FromToDigitsDotDot)? UnlimitedNaturalLiteralMember) "]";
-  //token FromToDigitsDotDot = ('0'..'9')+ ".."; //TODO noSpace(2) "." "." command This is in CommonBasis now.
+  //TODO delete if solution is accepted
   //Multiplicity = "[" ((UnlimitedNaturalLiteralMember DotDot)? UnlimitedNaturalLiteralMember) "]";
   //token DotDot = "..";
   //Multiplicity = "[" ( (UnlimitedNaturalLiteralMember DotDot)? UnlimitedNaturalLiteralMember) "]";
-  //TODO token DotDot = '.' '.';
+  //token DotDot = '.' '.';
   //token MultiplicityDigits = ('0'..'9')+;
   //Multiplicity = "[" ( (MultiplicityDigits  "." {noSpace()}? "." {noSpace()}?)? UnlimitedNaturalLiteralMember {noSpace()}? ) "]";
   //token MultiplicityDigits = ('0'..'9')+;
@@ -44,18 +44,16 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
 
   Subsets = SubsetsKeyword Subset;
   SubsetsKeyword = ":>" | "subsets";
-  Subset = QualifiedName; //TODO @SysML::Feature
+  Subset = QualifiedName;
 
   Redefines = RedefinesKeyword Redefinition+;
   RedefinesKeyword = ":>>" | "redefines";
-  Redefinition = QualifiedName; //TODO @SysML::Feature
+  Redefinition = QualifiedName;
 
   //Usage Memberships
   MultiplicityMember = Multiplicity;
 
   //Remark: literal type is enforced by CoCo (write CoCo) or by Exact Literal TODO
-  //TODO unlimitedNat -> map this how?
-  //NaturalLiteralMember = naturalLiteralExpression:NatLiteral ;
   UnlimitedNaturalLiteralMember = unlimitedNaturalLiteralExpression:Literal | isUnlimited:["*"];
 
 
@@ -67,39 +65,4 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
   ParameterTypePart = (TypedByKeyword (FeatureTyping | "any" ) MultiplicityPart? )
     | (MultiplicityPart) ;
 
-
-  //TODO later decide to put Individuals in own FILE
-  /* INDIVIDUAL DEFINITIONS */
-  IndividualDefinitionUnit implements Unit = UnitPrefix IndividualDefinition;
-  IndividualDefinition implements PackagedDefinitionMember = IndividualDefDeclaration DefinitionBody;
-  IndividualDefDeclaration = ["abstract"]? "individual" "def" ClassifierDeclarationCompletion
-    LifeClassMembership;
-  LifeClass;
-
-  /* INDIVIDUAL DEFINITION MEMBERSHIPS */
-  LifeClassMembership = LifeClass;
-
-
-  /* INDIVIDUALS */
-
-  IndividualUsage = Usage;
-  TimeSliceUsage = UsageDeclaration TimeSliceFeatureMember UsageCompletion;
-  TimeSliceFeature;
-  SnapshotUsage = UsageDeclaration SnapshotFeatureMember UsageCompletion;
-  SnapshotFeature;
-
-  IndividualUsagePackagedUsageMember implements PackagedUsageMember =  ["abstract"]? "individual" IndividualUsage;
-  TimeSliceUsagePackagedUsageMember implements PackagedUsageMember =   ["abstract"]? "timeslice" TimeSliceUsage;
-  SnapshotUsagePackagedUsageMember implements PackagedUsageMember =    ["abstract"]? "snapshot" SnapshotUsage;
-  NonPortStructureUsageMemberIndividualUsage implements NonPortStructureUsageMember =
-    ["abstract"]? ( "ref" "individual" | isComposite:"individual") direction:FeatureDirection? IndividualUsage;
-  NonPortStructureUsageMemberTimeSliceUsage implements NonPortStructureUsageMember =
-    ["abstract"]? ( "ref" "timeslice" | isComposite:"timeslice") direction:FeatureDirection? TimeSliceUsage;
-  NonPortStructureUsageMemberSnapshotUsage implements NonPortStructureUsageMember =
-    ["abstract"]? ( "ref" "snapshot" | isComposite:"snapshot") direction:FeatureDirection? SnapshotUsage;
-
-  /* INDIVIDUAL MEMBERSHIPS */
-
-  TimeSliceFeatureMember = TimeSliceFeature;
-  SnapshotFeatureMember = SnapshotFeature;
 }
