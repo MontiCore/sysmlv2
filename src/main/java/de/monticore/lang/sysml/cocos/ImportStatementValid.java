@@ -5,4 +5,5 @@ package de.monticore.lang.sysml.cocos;
  * @version 1.0
  */
 public class ImportStatementValid {
+  //TODO implement me
 }

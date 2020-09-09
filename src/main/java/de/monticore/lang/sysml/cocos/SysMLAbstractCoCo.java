@@ -4,5 +4,5 @@ package de.monticore.lang.sysml.cocos;
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class SysMLAbstractCoCo {
+public class SysMLAbstractCoCo { //TODO check
 }

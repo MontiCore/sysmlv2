@@ -1,52 +1,35 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics.sysmldefault;
 
-//TODO should we use JavaClassExpressions?
 component grammar Expressions extends de.monticore.expressions.CommonExpressions,
   de.monticore.lang.sysml.basics.SysMLCommonBasis,
   de.monticore.lang.sysml.basics.sysmldefault.Literals{
 
-  //TODO LiteralsSysML should overwrite or extend Commonliterals, also for JavaClassExpressions
-  //TODO the implicitely imported CommonExpressions
-
   /* EXPRESSIONS */
-  //TODO not necessary the AST, but the Grammar can be improved (in Xtext)
-  // These Expressions are needed addtionally TODO check if some could be merged with MC Expressions-------->
+  /*
+   * We import CommonExpressions, but we also wanted to make clear how the Expressions of SysML map to the Expressions
+   * of CommonExpressions. That is why we comment out the Expressions of SysML and provide the name of the
+   * corresponding Expression in CommonExpressions.
+   */
+  // TODO check if some could be merged with MC Expressions-------->
   SysMLConditionalExpression implements Expression =
-      Expression ( // TODO first Expression  could be NullCoalescingExpression  TODO {SysML::OperatorExpression.operand_comp += current}
-    		"?" Expression+ ":" Expression+ //TODO second Expression could be  be SysMLConditionalExpression
+      condition:Expression (
+    		"?" doOnTrue:Expression+ ":" doOnFalse:Expression+
     	);
-  // Following is the Xtext implementation with cycling in the definition
-  /* NullCoalescingExpression = ConditionalOrExpression  ( "??" ConditionalOrExpression)*;
-  ConditionalOrExpression = ConditionalAndExpression  ( "||" ConditionalAndExpression)*;
-  ConditionalAndExpression = OrExpression             ( "&&" OrExpression+ )*;
-  OrExpression = XorExpression                        ( "|" XorExpression)*;
-  XorExpression = AndExpression                       ( "^" AndExpression)*;
-  AndExpression = EqualityExpression                  ( "&" EqualityExpression)*;
-  EqualityExpression = ClassificationExpression ((equal:["=="] | notEqual:["!="]) ClassificationExpression)*;
-  ClassificationExpression = RelationalExpression (("instanceof"| "hastype") RelationalExpression)*;
-  RelationalExpression = AdditiveExpression           (RelationalOperator AdditiveExpression)*;
-  RelationalOperator = "<" | ">" | "<=" | ">=";
-  AdditiveExpression =  MultiplicativeExpression      ((plus:["+"]|minus:["-"]) MultiplicativeExpression)*;
-  MultiplicativeExpression =  UnitsExpression      ((times:["*"]|divide:["/"]|exp:["**"]) UnitsExpression)*;
-  UnitsExpression =  UnaryExpression      ("@"  "[" UnaryExpression "]")?;
-  UnaryExpression =  SequenceAccessExpression | ("+"|"-"| "!" | "~") SequenceAccessExpression;
-  SequenceAccessExpression = PrimaryExpression ("[" Expression+ "]")?;
-  PrimaryExpression = BaseExpression? ( "->" SysMLName BodyMember)+;
-  BodyExpression =
-    ( BodyParameterMember+ ( BodyParameterMember )* "(" ExpressionMember* ")" ) | ExpressionTyping+;
-  ExpressionTyping = type:QualifiedName;*/
 
-  NullCoalescingExpression implements Expression = Expression  ( "??" Expression);
-  ConditionalOrExpression implements Expression = Expression  ( "||" Expression);
-  ConditionalAndExpression implements Expression = Expression             ( "&&" Expression );
-  OrExpression implements Expression = Expression                        ( "|" Expression);
-  XorExpression implements Expression = Expression                       ( "^" Expression);
-  AndExpression implements Expression = Expression                  ( "&" Expression);
-  EqualityExpression implements Expression = Expression ((equal:["=="] | notEqual:["!="]) Expression);
-  ClassificationExpression  implements Expression= Expression (("instanceof"| "hastype") Expression);
-  RelationalExpression implements Expression = Expression           (RelationalOperator Expression);
-  RelationalOperator = "<" | ">" | "<=" | ">=";
+  NullCoalescingExpression implements Expression = left:Expression "??" right:Expression;
+  // ConditionalOrExpression implements Expression = Expression  ( "||" Expression);
+    // covered in CommonExpressions ->  BooleanOrOpExpression
+  ConditionalAndExpression implements Expression = left:Expression "&&" right:Expression;
+  OrExpression implements Expression = left:Expression "|" right:Expression;
+  XorExpression implements Expression = left:Expression "^" right:Expression;
+  AndExpression implements Expression = left:Expression "&" right:Expression;
+  //EqualityExpression implements Expression = Expression ((equal:["=="] | notEqual:["!="]) Expression);
+    // covered in CommonExpressions ->  EqualsExpression, NotEqualsExpression
+  ClassificationExpression  implements Expression= Expression ("instanceof"| "hastype") Expression;
+  //RelationalExpression implements Expression = Expression           (RelationalOperator Expression);
+  //RelationalOperator = "<" | ">" | "<=" | ">=";
+    // covered in CommonExpressions -> LessEqualExpression, GreaterEqualExpression, LessThanExpression, GreaterThanExpression
   AdditiveExpression implements Expression =  Expression      ((plus:["+"]|minus:["-"]) Expression);
   MultiplicativeExpression implements Expression =  Expression      ((times:["*"]|divide:["/"]|exp:["**"]) Expression);
   UnitsExpression implements Expression =  Expression      ("@"  "[" Expression "]");

@@ -3,6 +3,7 @@ package de.monticore.lang.sysml.cocos;
 import de.monticore.cocos.helper.Assert;
 import de.monticore.lang.sysml.basics.sysmlcommonbasis._ast.ASTUnit;
 import de.monticore.lang.sysml.sysml._cocos.SysMLCoCoChecker;
+import de.monticore.lang.sysml.utils.AbstractSysMLTest;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
@@ -10,13 +11,11 @@ import de.se_rwth.commons.logging.LogStub;
 import org.antlr.v4.runtime.RecognitionException;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -25,7 +24,7 @@ import static org.junit.Assert.assertTrue;
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class NamingConventionTest extends AbstractCoCoTest {
+public class NamingConventionTest extends AbstractSysMLTest {
 
   @BeforeClass
   public static void init() {
@@ -33,9 +32,8 @@ public class NamingConventionTest extends AbstractCoCoTest {
   }
 
   @Before
-  public void setUp() throws RecognitionException, IOException {
-    LogStub.init();
-    Log.getFindings().clear();
+  public void setUp() throws RecognitionException {
+    this.setUpLog();
   }
 
   @Test
