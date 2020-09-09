@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 public class SysMLParserMultipleFiles {
 
   public List<ASTUnit> parseAllFilesInDirectory(String path) throws IOException {
-    List<ASTUnit> parsedFiles = new ArrayList<>();
+    List<ASTUnit> parsedArtifacts = new ArrayList<>();
     try (Stream<Path> walk = Files.walk(Paths.get(path))) {
 
       List<String> result = walk.filter(Files::isRegularFile).map(x -> x.toString()).collect(Collectors.toList());
@@ -35,9 +35,9 @@ public class SysMLParserMultipleFiles {
       }
       Log.info("Found " + onlySysMLFiles.size() + " \".sysml\" Files.", SysMLParserMultipleFiles.class.getName());
       for (String pathToSysMLFile : onlySysMLFiles) {
-        parsedFiles.add(parseSingleFile(pathToSysMLFile));
+        parsedArtifacts.add(parseSingleFile(pathToSysMLFile));
       }
-      return parsedFiles;
+      return parsedArtifacts;
     }catch (IOException e){
       Log.error("Error: The provided path lead to an IOException in " + SysMLParserMultipleFiles.class.getName());
       e.printStackTrace();

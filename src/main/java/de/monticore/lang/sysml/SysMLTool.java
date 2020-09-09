@@ -2,6 +2,7 @@ package de.monticore.lang.sysml;
 
 import de.monticore.lang.sysml._symboltable.SysMLLanguage;
 import de.monticore.lang.sysml.basics.sysmlcommonbasis._ast.ASTUnit;
+import de.monticore.lang.sysml.cocos.PackageNameEqualsFileName;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.monticore.lang.sysml.parser.SysMLParserMultipleFiles;
 import de.se_rwth.commons.logging.Log;
@@ -45,9 +46,11 @@ public class SysMLTool {
 
 
     Log.info("Checking Context Conditions.", SysMLTool.class.getName());
-    for (ASTUnit unit : models) {
-      runDefaultCocos(unit);
+    for (ASTUnit astUnit : models) {
+      runDefaultCocos(astUnit);
     }
+
+
 
     Log.info("Parsed and checked all models successfully.", SysMLTool.class.getName());
 
