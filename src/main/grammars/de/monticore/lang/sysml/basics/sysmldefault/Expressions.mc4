@@ -3,7 +3,7 @@ package de.monticore.lang.sysml.basics.sysmldefault;
 
 component grammar Expressions extends de.monticore.expressions.CommonExpressions,
   de.monticore.lang.sysml.basics.SysMLCommonBasis,
-  de.monticore.lang.sysml.basics.sysmldefault.Literals{
+  de.monticore.lang.sysml.basics.sysmldefault.Literals {
 
   /* EXPRESSIONS */
   /*
@@ -11,34 +11,36 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
    * of CommonExpressions. That is why we comment out the Expressions of SysML and provide the name of the
    * corresponding Expression in CommonExpressions.
    */
-  // TODO check if some could be merged with MC Expressions-------->
   SysMLConditionalExpression implements Expression =
       condition:Expression (
     		"?" doOnTrue:Expression+ ":" doOnFalse:Expression+
     	);
-
+  //TODO priorities?
   NullCoalescingExpression implements Expression = left:Expression "??" right:Expression;
   // ConditionalOrExpression implements Expression = Expression  ( "||" Expression);
     // covered in CommonExpressions ->  BooleanOrOpExpression
-  ConditionalAndExpression implements Expression = left:Expression "&&" right:Expression;
+  // ConditionalAndExpression implements Expression = left:Expression "&&" right:Expression;
+    // covered in CommonExpressions -> BooleanOrOpExpression
   OrExpression implements Expression = left:Expression "|" right:Expression;
   XorExpression implements Expression = left:Expression "^" right:Expression;
   AndExpression implements Expression = left:Expression "&" right:Expression;
   //EqualityExpression implements Expression = Expression ((equal:["=="] | notEqual:["!="]) Expression);
     // covered in CommonExpressions ->  EqualsExpression, NotEqualsExpression
   ClassificationExpression  implements Expression= Expression ("instanceof"| "hastype") Expression;
-  //RelationalExpression implements Expression = Expression           (RelationalOperator Expression);
+  //RelationalExpression implements Expression = Expression RelationalOperator Expression;
   //RelationalOperator = "<" | ">" | "<=" | ">=";
     // covered in CommonExpressions -> LessEqualExpression, GreaterEqualExpression, LessThanExpression, GreaterThanExpression
-  AdditiveExpression implements Expression =  Expression      ((plus:["+"]|minus:["-"]) Expression);
-  MultiplicativeExpression implements Expression =  Expression      ((times:["*"]|divide:["/"]|exp:["**"]) Expression);
-  UnitsExpression implements Expression =  Expression      ("@"  "[" Expression "]");
-  UnaryExpression implements Expression =  ("+"|"-"| "!" | "~") Expression;
-  SequenceAccessExpression implements Expression = Expression  ("[" Expression+ "]");
-  PrimaryExpression implements Expression <300> = Expression ( "->" SysMLName BodyMember)+;
-  BodyExpression = //TODO operator for high priority: =>
+  //AdditiveExpression implements Expression =  Expression (plus:["+"]|minus:["-"]) Expression;
+    // covered in CommonExpressions -> PlusExpression, MinusExpression
+  MultiplicativeExpression implements Expression =
+    left:Expression (times:["*"]|divide:["/"]|exp:["**"]) right:Expression;
+  UnitsExpression implements Expression =  Expression "@"  "[" Expression "]";
+  UnaryExpression implements Expression =  (plus:"+"|minus:"-"| not:"!" | tilde:"~") Expression;
+  SequenceAccessExpression implements Expression = Expression "[" Expression+ "]";
+  PrimaryExpression implements Expression <300> = Expression ("->" SysMLName BodyMember+)+;
+  BodyExpression =
     ( BodyParameterMember+ ( BodyParameterMember )* "(" ExpressionMember* ")" ) | ExpressionTyping+;
-  ExpressionTyping = type:QualifiedName; //TODO [ SysML::Function | QualifiedName ]
+  ExpressionTyping = type:QualifiedName;
 
 
   // Base Expressions
@@ -53,36 +55,24 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
     ;
 
   FeatureReferenceExpression = FeatureReference+;
-  InvocationExpression = FeatureTyping "(" Tuple ")"; // TODO tupels seem not to be included in MCLiterals
+  InvocationExpression = FeatureTyping "(" Tuple ")";
   Tuple = PositionalTuple | NamedTuple;
   PositionalTuple = ( ExpressionMember || ",")+;
   NamedTuple = ( NamedExpressionMember || ",")+;
   ClassExtentExpression = TypeReferenceMember+ "." "allInstances" "(" ")";
   TypeReference = FeatureTyping;
+  //TODO delete if FromToDigitsDotDot is cleared (this is only here because of legacy reasons
   //SequenceConstructionExpression = "{" "}" |
   //  ( "{" Expression ("," SequenceElementList | ".." Expression)? "}" );
   //SequenceConstructionExpression = "{" "}" |
   //  ( "{" Expression ("," SequenceElementList |  "." "." {noSpace()}? Expression)? "}" );
   SequenceConstructionExpression = "{" "}" |
     "{" FromToDigitsDotDot Expression "}" |
-    //"{" Expression DotDot Expression "}" |
     "{" Expression ("," SequenceElementList)? "}";
-  //TODO remove following
-  //SequenceConstructionExpression = "{" "}" |
-   // ( "{" Expression ("," SequenceElementList | ".." Expression)? "}" )
-  //  | ( "{" DigitsDotDot Expression "}") ;
-  //fragment token DigitsDotDot = ('0'..'9')+ "..";
-  //Size implements Expression = "size" "(x)" "-" Digits;
-  // SomeExpression implements Expression ="->forAll n (x[n + 1] == x[n] + v[n] * (5280/3600) * dt)";
-  //TODO remove
-
 
   SequenceElementList = Expression ("," SequenceElementList)?;
   NullExpression = "null";
 
-  // Literal Expressions
-
-  // => Implemented in Literals
 
   /* EXPRESSION MEMBERSHIPS */
 
@@ -102,4 +92,3 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
   QueryHeadExpression = "./" FeatureReference+;
 
 }
-
