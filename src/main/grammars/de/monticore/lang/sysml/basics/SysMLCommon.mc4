@@ -10,27 +10,6 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
   de.monticore.lang.sysml.basics.Individuals
   //de.monticore.lang.sysml.basics.SysMLCommonBasis  <- transitively through other imports
   {
-  //TODO put this in a DefinitionFile?
-  /* DEFINITIONS */
-
-  DefinitionBodyStd implements DefinitionBody = "{" (NestedDefinitionMember | NestedUsageMember | ImportUnit)* "}";
-  DefinitionBodyEmpty implements DefinitionBody = ";";
-
-  AbstractDefinitionBody = DefinitionBody; //TODO Remark: only has different naming, see Xtext 238
-
-  /* DEFINITION MEMBERSHIPS */
-
-  NestedDefinitionMemberStd implements NestedDefinitionMember = DefinitionMemberPrefix PackagedDefinitionMember;
-  NestedUsageMemberStd implements NestedUsageMember = StructureUsageMember | BehaviorUsageMember;
-  StructureUsageMember = (DefinitionMemberPrefix NonPortStructureUsageMember) | PortMember | ConjugatedPortMember;
-  // Remark: in Xtext DefinitionMemberPrefix is a part of NonPortStructureUsageMember
-  // Remark: NonPortStructureUsageMember is an interface
-  // Remark: BehaviorUsageMember is an interface
-  PortMember = DefinitionMemberPrefix (["abstract"]? "port" PortUsage); //Remark we do not use abstract Port Usage
-  ConjugatedPortMember = DefinitionMemberPrefix (["abstract"]? "port" ConjugatedPortUsage);
-
-  DefinitionMemberPrefixStd implements DefinitionMemberPrefix = PrefixAnnotation* visibility:VisibilityIndicator?;
-
 
 
   /* The following are some definitions, which are used by more than one diagram.
@@ -50,60 +29,7 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
   interface ActionParameterList;
   ActionUsageDeclaration = (name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?) //TODO rename? used by states and Actions
       | (TypePart? ActionParameterList? ValuePart?)
-      | (RedefinesKeyword Redefinition TypePart ActionParameterList? ValuePart?);
-
-  /* ITEM FLOWS */ //Is this AD and IBD?
-  NonPortStructureUsageMemberItemFlow implements NonPortStructureUsageMember =
-    ["abstract"]? "stream" ItemFlow;
-  NonPortStructureUsageMemberSuccessionItemFlow implements NonPortStructureUsageMember =
-    ["abstract"]? "flow" SuccessionItemFlow;
-
-  ItemFlow = ItemFlowDeclaration DefinitionBody;
-  SuccessionItemFlow = ItemFlowDeclaration DefinitionBody;
-  ItemFlowDeclaration = ( (name:SysMLName)? TypePart?
-    (( "of" ItemFeatureMember) | (EmptyItemFeatureMember))
-    "from" | EmptyItemFeatureMember )
-    ItemFlowEndMember "to" ItemFlowEndMember;
-  ItemFeatureTyping = FeatureTyping MultiplicityMember?;
-  EmptyItemFeature;
-  ItemFlowEnd = ItemFlowFeatureMember;
-  ItemFlowFeature = Redefinition;
-
-  /* ITEM FLOW MEMBERSHIPS */
-  ItemFeatureMember = (memberName:SysMLName TypedByKeyword)? ItemFeatureTyping;
-  ItemFlowEndMember = ItemFlowEnd;
-  ItemFlowFeatureMember = ItemFlowFeature;
-  EmptyItemFeatureMember = EmptyItemFeature;
-
-
-  /* SUCCESSIONS */
-  NonPortStructureUsageMemberSuccession implements NonPortStructureUsageMember =
-    ["abstract"]? "succession" Succession;
-
-  Succession = SuccessionDeclaration ";";
-  SuccessionDeclaration = ( ( name:SysMLName)? TypePart? "first" )? ConnectorEndMember "then" ConnectorEndMember;
-  TargetSuccession = "then" MultiplicitySourceEndMember ConnectorEndMember;
-  EmptySuccession =  "then" MultiplicitySourceEndMember EmptyTargetEndMember;
-  GuardedSuccession = "succession" (( name:SysMLName)? TypePart? "first")?
-  TransitionSourceMember GuardExpressionMember "then" TransitionSuccessionMember;
-  GuardedTargetSuccession = GuardExpressionMember  "then" TransitionSuccessionMember;
-  DefaultTargetSuccession = "else" TransitionSuccessionMember;
-
- /* TRANSITIONS */
-  TransitionStep = "transition" (SysMLNameAndTypePartOptional "first")? TransitionSourceMember
-    TriggerStepMember? GuardExpressionMember? EffectBehaviorMember? "then" TransitionSuccessionMember;
-  TargetTransitionStep = TriggerStepMember? GuardExpressionMember? EffectBehaviorMember? "then"
-  TransitionSuccessionMember;
-  TriggerStep = EmptyParameterMember ItemFeatureMember;
-  EffectBehaviourUsage = EmptyActionUsage | PerformedActionUsage ( "{" ActivityBodyItem* "}" )?;
-  TransitionSuccession = EmptySourceEndMember ConnectorEndMember;
-
-  /* TRANSITION MEMBERSHIPS */
-  TransitionSourceMember = memberFeature:QualifiedName;
-  TransitionSuccessionMember = TransitionSuccession;
-  TriggerStepMember = "accept" TriggerStep;
-  GuardExpressionMember = "if" Expression;
-  EffectBehaviorMember = "do" EffectBehaviourUsage;
+      | (RedefinesKeyword Redefinition TypePart ActionParameterList? ValuePart?); //TODO make an Interface => put to Actions
 
   EmptyParameter;
   EmptyParameterMember = EmptyParameter;

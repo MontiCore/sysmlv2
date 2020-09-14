@@ -4,7 +4,7 @@ package de.monticore.lang.sysml.basics.sysmldefault;
 
 component grammar Literals extends de.monticore.literals.MCCommonLiterals {
   /*Remark: See "// Literal Expressions" in Xtext line 1739
-  * Literals are implemented very differently here, because we use MCCommonLiterals */
+  * Literals are implemented very differently here, because we reuse MCCommonLiterals */
 
 
 

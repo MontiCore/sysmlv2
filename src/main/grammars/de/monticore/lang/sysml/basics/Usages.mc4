@@ -59,7 +59,7 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
 
 
 
-  /* PARAMETERS */ //TODO decide FILE
+  /* PARAMETERS */
 
   ParameterStd implements Parameter = ParameterTypePart?;
   ParameterTypePart = (TypedByKeyword (FeatureTyping | "any" ) MultiplicityPart? )

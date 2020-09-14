@@ -17,8 +17,6 @@ component grammar Classifiers extends de.monticore.lang.sysml.basics.SysMLCommon
        }
        ;
 
-  SuperclassingList = SpecializesKeyword (Superclassing || ",")+;
+  SuperclassingList = SpecializesKeyword (QualifiedName || ",")+;
   SpecializesKeyword = ":>" | "specializes";
-
-  Superclassing = QualifiedName; //TODO see line 348
 }

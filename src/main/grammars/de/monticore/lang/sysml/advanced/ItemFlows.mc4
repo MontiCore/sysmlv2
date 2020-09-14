@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.advanced;
+
+
+component grammar ItemFlows extends de.monticore.lang.sysml.basics.SysMLCommon {
+
+}

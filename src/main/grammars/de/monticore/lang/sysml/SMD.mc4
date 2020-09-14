@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml;
 
 
-component grammar SMD extends de.monticore.lang.sysml.basics.SysMLCommon{
+component grammar SMD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
 
   /* STATE DEFINITIONS */
 
