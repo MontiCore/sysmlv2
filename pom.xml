@@ -345,6 +345,8 @@
 
               <excludes>
                 <exclude>**/SysMLToolTest*.java</exclude>
+                <exclude>**/NamingConventionTest.java</exclude>
+                <exclude>**/PackageNameEqualsFileNameTest.java</exclude>
               </excludes>
             </configuration>
           </plugin>

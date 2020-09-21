@@ -16,11 +16,10 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
 
   ValuePart = "=" FeatureValue;
   FeatureValue = Expression;
-  //TODO value mass : Real asd; (<--asd is problematic) is possible. => Restrict Expressions => Restricted FeatureValue [from + to unique], maybe it is fine now?
   TypePart = (TypedByKeyword ((FeatureTyping || ",")+ | "any") MultiplicityPart? )
     | MultiplicityPart;
   TypedByKeyword = ":" | "typed" "by";
-  FeatureTypingStd implements FeatureTyping = QualifiedName; //@SysML::Type TODO
+  FeatureTypingStd implements FeatureTyping = QualifiedName;
   MultiplicityPart = MultiplicityMember (["ordered"] | ["nonunique"])*; //Ast RUles TODO only once, not allowed: "ordered ordered"
 
 

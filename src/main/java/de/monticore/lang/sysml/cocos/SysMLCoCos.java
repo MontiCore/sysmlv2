@@ -20,7 +20,7 @@ public class SysMLCoCos {
 
   public static String getErrorCode(SysMLCoCoName name) {
     StringBuilder res = new StringBuilder();
-    res.append("0xSysML");
+    res.append("0xSysML"); //Hexadezmal TODO
     switch (name) {
       case CommonFileExtension:
         return res.append("01").toString();

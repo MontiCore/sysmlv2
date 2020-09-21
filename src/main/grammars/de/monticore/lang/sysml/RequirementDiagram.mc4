@@ -2,11 +2,9 @@
 package de.monticore.lang.sysml;
 
 
-component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.SysMLAdvanced,
-  de.monticore.lang.sysml.IBD // TODO refactor, necessary for (at least) EmptyReturnParameterPart
+component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.SysMLAdvanced
   {
-  //TODO EmptyReturnParameterPart is necessary everywhere in xtext
-  //TODO EmptyParameterMember is necessary in Xtext
+
   /* REQUIREMENT DEFINITIONS */
 
   RequirementDefinition implements PackagedDefinitionMember = RequirementDefDeclaration RequirementBody;

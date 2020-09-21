@@ -22,7 +22,7 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
 
   /* ACTIVITIY MEMBERSHIPS */
 
-  ParameterMember = direction:FeatureDirection? memberName:SysMLName Parameter;
+  ParameterMemberStd implements ParameterMember = direction:FeatureDirection? memberName:SysMLName Parameter;
   InitialNodeMember = DefinitionMemberPrefix "first" memberFeature:QualifiedName ";";
   ActivityNodeMember = DefinitionMemberPrefix ActivityNode;
   TargetSuccessionMember = DefinitionMemberPrefix
@@ -33,7 +33,6 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
  AssociationEndMemberActionUsage implements AssociationEndMember =
     ["abstract"]?"end" ("ref" "action" | isComposite:"action" ) ActionUsage;
 
- //TODO where does Action belong to?
  /* ACTIONS */
  ActionUnit implements Unit = UnitPrefix ActionDeclaration ActivityBody;
  ActionDeclaration = ["abstract"]? "action" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;

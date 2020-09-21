@@ -2,8 +2,7 @@
 package de.monticore.lang.sysml;
 
 
-component grammar IBD extends de.monticore.lang.sysml.advanced.SysMLAdvanced,
- de.monticore.lang.sysml.AD //TODO refactor, needs at least ParameterList
+component grammar IBD extends de.monticore.lang.sysml.advanced.SysMLAdvanced
   {
 
   PartUnit implements Unit = UnitPrefix PartDeclaration UsageCompletion;
@@ -21,41 +20,4 @@ component grammar IBD extends de.monticore.lang.sysml.advanced.SysMLAdvanced,
 
   PartProperty = "part" Usage;
   ReferenceProperty = Usage;
-
-
-  //TODO which file?
-  /* CONSTRAINT DEFINITIONS */
-  ConstraintDefinitionUnit implements Unit = UnitPrefix ConstraintDefinition;
-  ConstraintDefinition implements PackagedDefinitionMember = ConstraintDefDeclaration ConstraintBody;
-  ConstraintDefDeclaration = ["abstract"]? "constraint" "def" name:SysMLName ParameterList? EmptyReturnParameterPart
-    SuperclassingList?;
-  ConstraintBody = ";" | "{" ConstraintMembers "}";
-  ConstraintMembers = (NestedDefinitionMember | NestedUsageMember | ImportUnit)* ConstraintExpressionMember?;
-  EmptyReturnParameterPart = EmptyReturnParameterMember;
-
-  /* CONSTRAINT DEFINITION MEMBERSHIPS */
-  EmptyReturnParameterMember = EmptyParameter;
-  ConstraintExpressionMember = DefinitionMemberPrefix Expression;
-
-  /* CONSTRAINTS */
-  ConstraintUsagePackagedUsageMember implements PackagedUsageMember =  ["abstract"]? "constraint" ConstraintUsage;
-  BehaviorUsageMemberConstraintUsage implements BehaviorUsageMember =
-    DefinitionMemberPrefix ["abstract"]?  ("ref" "constraint" | isComposite:"constraint") ConstraintUsage;
-  BehaviorUsageMemberAssertConstraintUsage implements BehaviorUsageMember =
-      DefinitionMemberPrefix "assert" AssertConstraintUsage;
-
-  ConstraintUsage = ConstraintDeclaration ConstraintBody;
-  ConstraintDeclaration =
-    (name:SysMLName TypePart? ConstraintParameterPart)
-    | (TypePart? (ActionParameterList EmptyReturnParameterPart)? ValuePart?)
-    | (RedefinesKeyword Redefinition TypePart? ActionParameterList? EmptyReturnParameterPart ValuePart?);
-  ConstraintParameterPart = ActionParameterList? EmptyReturnParameterPart SubsettingPart ValuePart?;
-  AssertConstraintUsage =
-    (((( name:SysMLName)? TypePart? "as" )? Subset+ ) | ("constraint" (name:SysMLName)? TypePart?) )
-    ConstraintParameterPart InvariantPart ConstraintBody;
-  InvariantPart = TrueLiteralMember;
-  TrueLiteralExpression;
-
-  /* CONSTRAINT MEMBERSHIPS */
-  TrueLiteralMember = TrueLiteralExpression;
 }

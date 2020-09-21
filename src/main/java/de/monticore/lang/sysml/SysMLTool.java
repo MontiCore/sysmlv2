@@ -1,8 +1,6 @@
 package de.monticore.lang.sysml;
 
-import de.monticore.lang.sysml._symboltable.SysMLLanguage;
 import de.monticore.lang.sysml.basics.sysmlcommonbasis._ast.ASTUnit;
-import de.monticore.lang.sysml.cocos.PackageNameEqualsFileName;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.monticore.lang.sysml.parser.SysMLParserMultipleFiles;
 import de.se_rwth.commons.logging.Log;
@@ -42,7 +40,7 @@ public class SysMLTool {
 
     Log.info("Creating Symbol Table.", SysMLTool.class.getName());
     //Setup Symboltable TODO
-    SysMLLanguage language = new SysMLLanguage();
+    //SysMLLanguage language = new SysMLLanguage();
 
 
     Log.info("Checking Context Conditions.", SysMLTool.class.getName());

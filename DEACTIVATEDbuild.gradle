@@ -25,7 +25,7 @@ sourceCompatibility = '1.8'
 /* ========================= Versions ========================= */
 /* ============================================================ */
 
-def monticore_version = "6.1.0" //changed from 6.1.0 TODO
+def monticore_version = "6.1.0"
 def junit_version = "4.12"
 def grammar_classifier = "grammars"
 def grammarDir = "src/main/grammars"
