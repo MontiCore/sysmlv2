@@ -20,25 +20,10 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
     | MultiplicityPart;
   TypedByKeyword = ":" | "typed" "by";
   FeatureTypingStd implements FeatureTyping = QualifiedName;
-  MultiplicityPart = MultiplicityMember (["ordered"] | ["nonunique"])*; //Ast RUles TODO only once, not allowed: "ordered ordered"
-
-
+  MultiplicityPart = MultiplicityMember (["ordered"]? ["nonunique"]? | ["nonunique"]? ["ordered"]?);
+    //Sequence of keywords does not matter here.
 
   Multiplicity = "[" ((FromToDigitsDotDot)? UnlimitedNaturalLiteralMember) "]";
-  //TODO delete if solution is accepted
-  //Multiplicity = "[" ((UnlimitedNaturalLiteralMember DotDot)? UnlimitedNaturalLiteralMember) "]";
-  //token DotDot = "..";
-  //Multiplicity = "[" ( (UnlimitedNaturalLiteralMember DotDot)? UnlimitedNaturalLiteralMember) "]";
-  //token DotDot = '.' '.';
-  //token MultiplicityDigits = ('0'..'9')+;
-  //Multiplicity = "[" ( (MultiplicityDigits  "." {noSpace()}? "." {noSpace()}?)? UnlimitedNaturalLiteralMember {noSpace()}? ) "]";
-  //token MultiplicityDigits = ('0'..'9')+;
-  //Multiplicity = "[" ( (MultiplicityDigits  "." "." {noSpace()}?)? UnlimitedNaturalLiteralMember) "]";
-  //Multiplicity = "[" ( (NaturalLiteralMember  "." "." {noSpace()}? )? UnlimitedNaturalLiteralMember) "]";
-
-  //token MultiplicityDigits = ('0'..'9')+;
-
-
   SubsettingPart = (Subsets ("," Subset)* | Redefines  ("," Redefinition)*)*;
 
   Subsets = SubsetsKeyword Subset;
@@ -53,10 +38,7 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
   MultiplicityMember = Multiplicity;
 
   //Remark: literal type is enforced by CoCo (write CoCo) or by Exact Literal TODO
-  UnlimitedNaturalLiteralMember = unlimitedNaturalLiteralExpression:Literal | isUnlimited:["*"];
-
-
-
+  UnlimitedNaturalLiteralMember = limitedLiteral:Literal | isUnlimited:["*"];
 
   /* PARAMETERS */
 

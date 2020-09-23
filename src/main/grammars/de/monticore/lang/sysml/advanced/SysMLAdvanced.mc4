@@ -7,4 +7,10 @@ component grammar SysMLAdvanced extends de.monticore.lang.sysml.advanced.Definit
  de.monticore.lang.sysml.advanced.Successions,
  de.monticore.lang.sysml.advanced.Constraints {
 
+
+ /* ACTIVITIES */
+
+  ActionOrStateUsageDeclaration = (name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?)
+       | (TypePart? ActionParameterList? ValuePart?)
+       | (RedefinesKeyword Redefinition TypePart ActionParameterList? ValuePart?); //TODO make an Interface => put to Actions
 }

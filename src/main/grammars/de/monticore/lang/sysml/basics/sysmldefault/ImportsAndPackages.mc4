@@ -8,13 +8,9 @@ component grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.SysM
 
   AliasPackagedDefinitionMember implements PackagedDefinitionMember =
       ("import" | "alias") QualifiedName ("as" SysMLName)? ";";
-  //TODO how to do something like this in MC: importedPackage = [SysML::Package|Name]
+  //Following has the name "Import" in Xtext
   ImportUnitStd implements ImportUnit = PrefixAnnotation* (visibility:PackageElementVisibilityIndicator)?
-    "import" QualifiedName star:["::*"]? star:["."]? ("as" SysMLName)? ";"; //TODO do not allow spaces and allow explicit import
-    //TODO actually not in the pilot implementation
-    //TODO test if there are no whitespaces, write Cocos for star or StarDot
-    //TODO force the star (*) ? , see Xtext 151
-
+    "import" QualifiedName (star:["::*"]? | star:[".*"]?) {noSpace()}? ("as" SysMLName)? ";";
 
   /* PACKAGES */
   PackageUnit implements Unit = UnitPrefix Package;
@@ -27,5 +23,5 @@ component grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.SysM
   PackageMember = PackageMemberPrefix ( PackagedDefinitionMember | PackagedUsageMember);
   PackageMemberPrefix = PrefixAnnotation* visibility:PackageElementVisibilityIndicator?;
   // Remark: PackagedDefinitionMember is an interface
-  // Remark: PackagedUsageMemberis an interface
+  // Remark: PackagedUsageMember is an interface
 }

@@ -15,7 +15,6 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
       condition:Expression (
     		"?" doOnTrue:Expression+ ":" doOnFalse:Expression+
     	);
-  //TODO priorities?
   NullCoalescingExpression implements Expression = left:Expression "??" right:Expression;
   // ConditionalOrExpression implements Expression = Expression  ( "||" Expression);
     // covered in CommonExpressions ->  BooleanOrOpExpression
@@ -61,11 +60,6 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
   NamedTuple = ( NamedExpressionMember || ",")+;
   ClassExtentExpression = TypeReferenceMember+ "." "allInstances" "(" ")";
   TypeReference = FeatureTyping;
-  //TODO delete if FromToDigitsDotDot is cleared (this is only here because of legacy reasons
-  //SequenceConstructionExpression = "{" "}" |
-  //  ( "{" Expression ("," SequenceElementList | ".." Expression)? "}" );
-  //SequenceConstructionExpression = "{" "}" |
-  //  ( "{" Expression ("," SequenceElementList |  "." "." {noSpace()}? Expression)? "}" );
   SequenceConstructionExpression = "{" "}" |
     "{" FromToDigitsDotDot Expression "}" |
     "{" Expression ("," SequenceElementList)? "}";

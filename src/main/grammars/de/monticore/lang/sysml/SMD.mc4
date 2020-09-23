@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml;
 
-
 component grammar SMD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
 
   /* STATE DEFINITIONS */
@@ -17,8 +16,6 @@ component grammar SMD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
     | TransitionStepMember
     | ImportUnit;
   StateActionUsage = EmptyActionUsage ";" | PerformedActionUsage ActivityBody;
-
-
 
   /* STATE MEMBERSHIPS */
 

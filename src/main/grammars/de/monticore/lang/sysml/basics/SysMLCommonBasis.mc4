@@ -42,9 +42,15 @@
  interface BehaviorUsageMember;
 
 
- interface ParameterMember; //Implemented in AD
+ interface ParameterMember;
  interface ParameterList;
  interface ActivityBody;
  interface ActivityBodyItem;
  interface ActionParameterList;
+
+ EmptyActionUsage;
+ interface PerformedActionUsage;
+
+ EmptyParameter;
+ EmptyParameterMember = EmptyParameter;
 }

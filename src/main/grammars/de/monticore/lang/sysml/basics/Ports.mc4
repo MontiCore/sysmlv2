@@ -3,8 +3,7 @@ package de.monticore.lang.sysml.basics;
 
 component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
   de.monticore.lang.sysml.basics.Usages,
-  de.monticore.lang.sysml.basics.Associations
-  {
+  de.monticore.lang.sysml.basics.Associations{
 
   /* PORT DEFINITIONS */
 
@@ -52,8 +51,6 @@ component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
   EmptySourceEndMember = EmptySourceEnd;
   EmptyTargetEndMember = EmptyTargetEnd;
 
-
-
   /* INTERFACE CONNECTORS */
   InterfaceUsage = UsageDeclaration "connect" ConnectionPart InterfaceBody;
   NonPortStructureUsageMemberInterfaceUsage implements NonPortStructureUsageMember =
@@ -86,6 +83,4 @@ component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
     (["abstract"]? "end" ["port"]? ConjugatedPortUsage);
     //isPort ?= 'end' is in Xtext, which is most likely an error and should be isPort ?= 'port'. This is defined here.
 
-
 }
-

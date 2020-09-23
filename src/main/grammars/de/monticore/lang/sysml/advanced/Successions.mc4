@@ -3,7 +3,8 @@ package de.monticore.lang.sysml.advanced;
 
 
 component grammar Successions extends de.monticore.lang.sysml.basics.SysMLCommon {
-/* SUCCESSIONS */
+
+  /* SUCCESSIONS */
   NonPortStructureUsageMemberSuccession implements NonPortStructureUsageMember =
     ["abstract"]? "succession" Succession;
 
