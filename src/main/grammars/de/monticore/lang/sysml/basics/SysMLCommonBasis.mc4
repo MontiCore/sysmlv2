@@ -43,4 +43,8 @@
 
 
  interface ParameterMember; //Implemented in AD
+ interface ParameterList;
+ interface ActivityBody;
+ interface ActivityBodyItem;
+ interface ActionParameterList;
 }

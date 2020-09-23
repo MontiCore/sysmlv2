@@ -38,7 +38,7 @@ component grammar SMD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
  /* STATES */
   StateUnit implements Unit = UnitPrefix StateDeclaration StateBody;
   StateDeclaration = ["abstract"]? "state" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
-  StateUsage = ActionUsageDeclaration StateBody;
+  StateUsage = ActionOrStateUsageDeclaration StateBody;
   ExhibitStateUsage = ((((name:SysMLName) TypePart? "as")? Subset)
     | ( "state" name:SysMLName? TypePart? )) ActionParameterList? SubsettingPart ValuePart? StateBody;
 

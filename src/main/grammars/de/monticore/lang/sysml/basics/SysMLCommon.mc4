@@ -5,9 +5,8 @@ package de.monticore.lang.sysml.basics;
 component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers,
   // de.monticore.lang.sysml.basics.Usages, <- transitively imported through ValueTypes and Individuals
   de.monticore.lang.sysml.basics.Ports,
-  de.monticore.lang.sysml.basics.Associations,
-  de.monticore.lang.sysml.basics.ValueTypes,
-  de.monticore.lang.sysml.basics.Individuals
+  // de.monticore.lang.sysml.basics.Associations, <- transitively through other imports
+  de.monticore.lang.sysml.basics.ValueTypes
   //de.monticore.lang.sysml.basics.SysMLCommonBasis  <- transitively through other imports
   {
 
@@ -20,16 +19,10 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
   interface PerformedActionUsage;
 
   /* ACTIVITIES */
-  interface ParameterList;
-  interface ActivityBody;
-
   SysMLNameAndTypePartOptional = (name:SysMLName TypePart?)?;
-
-  interface ActivityBodyItem;
-  interface ActionParameterList;
-  ActionUsageDeclaration = (name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?) //TODO rename? used by states and Actions
-      | (TypePart? ActionParameterList? ValuePart?)
-      | (RedefinesKeyword Redefinition TypePart ActionParameterList? ValuePart?); //TODO make an Interface => put to Actions
+  ActionOrStateUsageDeclaration = (name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?)
+       | (TypePart? ActionParameterList? ValuePart?)
+       | (RedefinesKeyword Redefinition TypePart ActionParameterList? ValuePart?); //TODO make an Interface => put to Actions
 
   EmptyParameter;
   EmptyParameterMember = EmptyParameter;

@@ -30,19 +30,19 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
   GuardedSuccessionMember = GuardedSuccession ";";
 
 
- AssociationEndMemberActionUsage implements AssociationEndMember =
-    ["abstract"]?"end" ("ref" "action" | isComposite:"action" ) ActionUsage;
+  AssociationEndMemberActionUsage implements AssociationEndMember =
+     ["abstract"]?"end" ("ref" "action" | isComposite:"action" ) ActionUsage;
 
- /* ACTIONS */
- ActionUnit implements Unit = UnitPrefix ActionDeclaration ActivityBody;
- ActionDeclaration = ["abstract"]? "action" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
- ActionUsageStd implements ActionUsage = ActionUsageDeclaration ActivityBody;
+  /* ACTIONS */
+  ActionUnit implements Unit = UnitPrefix ActionDeclaration ActivityBody;
+  ActionDeclaration = ["abstract"]? "action" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
+  ActionUsageStd implements ActionUsage = ActionOrStateUsageDeclaration ActivityBody;
 
- ActionUsagePackagedUsageMember implements PackagedUsageMember =      ["abstract"]? "action" ActionUsage;
- BehaviorUsageMemberActionUsage implements BehaviorUsageMember =
-   DefinitionMemberPrefix ["abstract"]?  ("ref" "action" | isComposite:"action") ActionUsage;
- BehaviorUsageMemberPerformActionUsage implements BehaviorUsageMember =
-   DefinitionMemberPrefix "perform" PerformActionUsage;
+  ActionUsagePackagedUsageMember implements PackagedUsageMember =      ["abstract"]? "action" ActionUsage;
+  BehaviorUsageMemberActionUsage implements BehaviorUsageMember =
+    DefinitionMemberPrefix ["abstract"]?  ("ref" "action" | isComposite:"action") ActionUsage;
+  BehaviorUsageMemberPerformActionUsage implements BehaviorUsageMember =
+    DefinitionMemberPrefix "perform" PerformActionUsage;
 
   ActionParameterListStd implements ActionParameterList = "(" ( ActionParameterMemberAndFlowMember || ",")* ")";
   ActionParameterMemberAndFlowMember = ActionParameterMember ActionParameterFlowMember?;
@@ -57,8 +57,9 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
   /* ACTIVITY NODES */
   ActivityNode = ActionNode | ControlNode;
   ActionNode = ActionNodeDeclaration ActivityBody;
-  ActionNodeDeclaration = ActionUsageNodeDeclaration | PerformActionNodeDeclaration | AcceptActionNodeDeclaration | SendActionNodeDeclaration;
-  ActionUsageNodeDeclaration = ["abstract"]? (("ref" "action") | isComposite:["action"]) ActionUsageDeclaration;
+  ActionNodeDeclaration = ActionUsageNodeDeclaration | PerformActionNodeDeclaration | AcceptActionNodeDeclaration |
+  SendActionNodeDeclaration;
+  ActionUsageNodeDeclaration = ["abstract"]? (("ref" "action") | isComposite:["action"]) ActionOrStateUsageDeclaration;
   PerformActionNodeDeclaration = isComposite:["perform"] (name:SysMLName TypePart? "as")? Subset ActionParameterList?
     SubsettingPart ValuePart?;
   AcceptActionNodeDeclaration = EmptyParameterMember "accept" (name:SysMLName TypePart?)? "(" ItemFeatureMember ")";
