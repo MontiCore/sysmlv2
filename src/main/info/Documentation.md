@@ -1,4 +1,20 @@
-# Interfaces
+# Important Interfaces
+- Unit: Interface which defines the first production of the grammar.
+- PackagedDefinitionMember: Definitions in a package
+- PackagedUsageMember: Usages of definitions in a package
+
+- Defining a DefinitionBody
+    - NestedDefinitionMember
+    - NestedUsageMember
+-  Defining Definition Memberships
+    - NonPortStructureUsageMember
+    - BehaviorUsageMember
+
+- Definining Association Usages
+    - AssociationEndMember
+    - EndPortMember
+    - ConjugatedEndPortMember
+# Examples
 In the following you can see the implementation of some overall connecting interfaces:
 
 ```
