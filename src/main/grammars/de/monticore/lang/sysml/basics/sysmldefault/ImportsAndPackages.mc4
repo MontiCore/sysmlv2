@@ -2,7 +2,12 @@
 package de.monticore.lang.sysml.basics.sysmldefault;
 
 
-component grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.SysMLCommonBasis{
+component grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.interfaces.CommentsBasis,
+  de.monticore.lang.sysml.basics.interfaces.ImportBasis,
+  de.monticore.lang.sysml.basics.interfaces.NamesBasis,
+  de.monticore.lang.sysml.basics.interfaces.PackageBasis,
+  de.monticore.lang.sysml.basics.interfaces.VisibilityBasis,
+  de.monticore.lang.sysml.basics.interfaces.SharedBasis {
 
   /* IMPORTS */
 

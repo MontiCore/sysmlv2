@@ -1,6 +1,6 @@
 package de.monticore.lang.sysml.cocos;
 
-import de.monticore.lang.sysml.basics.sysmlcommonbasis._ast.ASTUnit;
+
 import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._ast.ASTPackageUnit;
 import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._cocos.ImportsAndPackagesASTPackageUnitCoCo;
 import de.se_rwth.commons.logging.Log;

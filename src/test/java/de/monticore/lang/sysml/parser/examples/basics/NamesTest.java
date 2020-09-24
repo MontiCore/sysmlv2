@@ -1,15 +1,5 @@
 package de.monticore.lang.sysml.parser.examples.basics;
 
-import org.junit.Ignore;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Optional;
-
-import static org.junit.Assert.*;
-
 /**
  * TODO implement me
  *

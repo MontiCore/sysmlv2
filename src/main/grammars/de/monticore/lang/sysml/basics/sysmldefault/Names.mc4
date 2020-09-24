@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml.basics.sysmldefault;
 
 component grammar Names extends de.monticore.MCBasics,
- de.monticore.lang.sysml.basics.SysMLCommonBasis{
+ de.monticore.lang.sysml.basics.interfaces.NamesBasis{
 
   SimpleName implements QualifiedName = SysMLName;
   ColonQualifiedName implements QualifiedName = (SysMLName || "::")+;

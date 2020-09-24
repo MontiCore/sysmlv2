@@ -1,10 +1,8 @@
 package de.monticore.lang.sysml;
 
 import de.monticore.cocos.helper.Assert;
-import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
-import de.se_rwth.commons.logging.LogStub;
 import org.antlr.v4.runtime.RecognitionException;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +18,7 @@ import static org.junit.Assert.assertTrue;
  * @version 1.0
  */
 public class SysMLToolTest {
-  private final String pathToDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src";
+
 
   @Before
   public void setUp() throws RecognitionException, IOException {
@@ -49,6 +47,7 @@ public class SysMLToolTest {
 
   @Test
   public void toolParseAndCheckAllTrainingExamples(){
+    final String pathToDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src";
     SysMLTool.main(new String[]{pathToDir + "/training/"});
     assertTrue(Log.getFindings().isEmpty());
   }

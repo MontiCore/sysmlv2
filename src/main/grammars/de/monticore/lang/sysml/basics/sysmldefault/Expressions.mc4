@@ -2,8 +2,9 @@
 package de.monticore.lang.sysml.basics.sysmldefault;
 
 component grammar Expressions extends de.monticore.expressions.CommonExpressions,
-  de.monticore.lang.sysml.basics.SysMLCommonBasis,
-  de.monticore.lang.sysml.basics.sysmldefault.Literals {
+  de.monticore.lang.sysml.basics.interfaces.SharedBasis,
+  de.monticore.lang.sysml.basics.interfaces.NamesBasis,
+  de.monticore.lang.sysml.basics.interfaces.SysMLExpressionsBasis {
 
   /* EXPRESSIONS */
   /*

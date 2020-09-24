@@ -1,15 +1,10 @@
 package de.monticore.lang.sysml.utils;
 
-import de.monticore.lang.sysml.basics.sysmlcommonbasis._ast.ASTUnit;
-import de.monticore.lang.sysml.utils.SysMLParserForTesting;
+import de.monticore.lang.sysml.basics.interfaces.sharedbasis._ast.ASTUnit;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import org.antlr.v4.runtime.RecognitionException;
-import org.junit.Before;
-import org.junit.BeforeClass;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 

@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.basics.interfaces;
+
+component grammar SharedBasis {
+  interface Unit;
+
+  interface FeatureTyping;
+
+  interface Parameter;
+  token FromToDigitsDotDot = ('0'..'9')+ "..";
+}

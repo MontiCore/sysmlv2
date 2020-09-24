@@ -1,7 +1,7 @@
 package de.monticore.lang.sysml.cocos;
 
 import de.monticore.cocos.helper.Assert;
-import de.monticore.lang.sysml.basics.sysmlcommonbasis._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.interfaces.sharedbasis._ast.ASTUnit;
 import de.monticore.lang.sysml.sysml._cocos.SysMLCoCoChecker;
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;
 import de.se_rwth.commons.SourcePosition;
@@ -10,7 +10,6 @@ import de.se_rwth.commons.logging.Log;
 import org.antlr.v4.runtime.RecognitionException;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;

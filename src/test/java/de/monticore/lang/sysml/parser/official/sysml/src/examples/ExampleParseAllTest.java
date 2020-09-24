@@ -1,7 +1,6 @@
 package de.monticore.lang.sysml.parser.official.sysml.src.examples;
 
 import de.monticore.lang.sysml.utils.SysMLParserForTesting;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**

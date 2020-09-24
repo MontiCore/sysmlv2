@@ -1,6 +1,6 @@
 package de.monticore.lang.sysml;
 
-import de.monticore.lang.sysml.basics.sysmlcommonbasis._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.interfaces.sharedbasis._ast.ASTUnit;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.monticore.lang.sysml.parser.SysMLParserMultipleFiles;
 import de.se_rwth.commons.logging.Log;
