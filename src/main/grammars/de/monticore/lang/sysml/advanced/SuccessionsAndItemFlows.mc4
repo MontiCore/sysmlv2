@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml.advanced;
 
 
-component grammar Successions extends de.monticore.lang.sysml.basics.SysMLCommon {
+component grammar SuccessionsAndItemFlows extends de.monticore.lang.sysml.basics.SysMLCommon {
 
   /* SUCCESSIONS */
   NonPortStructureUsageMemberSuccession implements NonPortStructureUsageMember =
@@ -33,8 +33,7 @@ component grammar Successions extends de.monticore.lang.sysml.basics.SysMLCommon
   GuardExpressionMember = "if" Expression;
   EffectBehaviorMember = "do" EffectBehaviourUsage;
 
-  //TODO put in Itemflows
-  /* ITEM FLOWS */
+ /* ITEM FLOWS */
   NonPortStructureUsageMemberItemFlow implements NonPortStructureUsageMember =
     ["abstract"]? "stream" ItemFlow;
   NonPortStructureUsageMemberSuccessionItemFlow implements NonPortStructureUsageMember =
