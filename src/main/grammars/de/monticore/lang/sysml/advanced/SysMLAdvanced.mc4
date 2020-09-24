@@ -10,7 +10,15 @@ component grammar SysMLAdvanced extends de.monticore.lang.sysml.advanced.Definit
 
  /* ACTIVITIES */
 
-  ActionOrStateUsageDeclaration = (name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?)
+  ActionOrStateUsageDeclaration = (SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?)
        | (TypePart? ActionParameterList? ValuePart?)
-       | (RedefinesKeyword Redefinition TypePart ActionParameterList? ValuePart?); //TODO make an Interface => put to Actions
+       | (RedefinesKeyword Redefinition TypePart ActionParameterList? ValuePart?);
+  /*astrule ActionOrStateUsageDeclaration =  TODO how to handle this and how to handle optional names?
+       method public void setName(String name){
+         if(this.getSysMLName
+         this.getSysMLName().setName(name);
+       }
+       method public String getName(){
+         return this.getSysMLName().getName();
+       };*/
 }

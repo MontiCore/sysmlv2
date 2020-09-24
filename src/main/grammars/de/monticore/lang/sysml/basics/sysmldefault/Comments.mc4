@@ -9,7 +9,7 @@ component grammar Comments extends de.monticore.lang.sysml.basics.interfaces.Com
   * but we do not have ML_Comment (Because MCBasics saves these in the AST) and we
   * do not need an Empty Annotation
   */
-  Comment implements PackagedDefinitionMember= "comment" SysMLName? SysMLAnnotation?;
+  Comment implements PackagedDefinitionMember= "comment" name:SysMLName? SysMLAnnotation?;
   SysMLAnnotation = "about" QualifiedName;
 
   UnitPrefixStd implements UnitPrefix = PrefixAnnotation*;

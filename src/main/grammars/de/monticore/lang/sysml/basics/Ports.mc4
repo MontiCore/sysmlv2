@@ -1,8 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics;
 
-component grammar Ports extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
-  de.monticore.lang.sysml.basics.Usages,
+component grammar Ports extends de.monticore.lang.sysml.basics.Usages,
   de.monticore.lang.sysml.basics.Associations{
 
   /* PORT DEFINITIONS */

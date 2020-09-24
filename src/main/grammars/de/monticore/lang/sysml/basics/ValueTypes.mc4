@@ -2,8 +2,7 @@
 package de.monticore.lang.sysml.basics;
 
 
-component grammar ValueTypes extends de.monticore.lang.sysml.basics.SysMLCommonBasis,
-  de.monticore.lang.sysml.basics.Usages{
+component grammar ValueTypes extends de.monticore.lang.sysml.basics.Usages{
 
   /* VALUE TYPES */
   ValueTypeUnit = UnitPrefix ValueType;
