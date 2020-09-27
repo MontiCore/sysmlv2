@@ -8,11 +8,8 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
   ActivityUnit implements Unit = UnitPrefix Activity;
   Activity implements PackagedDefinitionMember = ActivityDeclaration ActivityBody;
   symbol ActivityDeclaration = ["abstract"]? "activity" SysMLName ParameterList? SuperclassingList?;
-  // TODO this clashess with a visitor if ActivityDeclaration is a symbol
   astrule ActivityDeclaration =
-     method public void setName(String name){
-       this.getSysMLName().setName(name);
-     }
+
      method public String getName(){
        return this.getSysMLName().getName();
      };

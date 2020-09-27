@@ -2,7 +2,17 @@
 package de.monticore.lang.sysml.basics.interfaces;
 
 component grammar SharedBasis {
-  interface Unit;
+  interface Unit; //A Unit is a starting production
+
+  interface NestedDefinitionMember;
+  interface NestedUsageMember;
+
+  /* DEFINITION MEMBERSHIPS */
+  interface NonPortStructureUsageMember; //Referencing other elements in a production
+  interface BehaviorUsageMember; //Referencing other elements in a production
+
+  /* ASSOCIATION BLOCK MEMBERSHIPS */
+  interface AssociationUsageMember;
 
   interface FeatureTyping;
 

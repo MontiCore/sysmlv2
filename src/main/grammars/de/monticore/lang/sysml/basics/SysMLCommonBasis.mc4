@@ -17,19 +17,15 @@
 
  FeatureDirection =  ["in"] | ["out"] | ["inout"];
 
- //TODO split into Basic Interfaces and CommonInterfaces ?
-
  interface DefinitionBody;
  interface ValueType;
  interface ClassifierDeclarationCompletion;
  interface PortDefinition;
- /* Associations */
- interface AssociationUsageMember;
+
+ /* ASSOCIATION BLOCK MEMBERSHIPS */
  interface AssociationEndMember;
 
- /* Interfaces for Definitions*/
- interface NestedDefinitionMember;
- interface NestedUsageMember;
+
 
  interface DefinitionMemberPrefix;
  interface Usage;
@@ -38,9 +34,7 @@
  interface AbstractActionUsage;
  interface PortUsage;
  interface ConjugatedPortUsage;
- /* DEFINITION MEMBERSHIPS */
- interface NonPortStructureUsageMember;
- interface BehaviorUsageMember;
+
 
 
  interface ParameterMember;
