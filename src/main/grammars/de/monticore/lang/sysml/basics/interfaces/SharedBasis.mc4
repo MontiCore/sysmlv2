@@ -22,5 +22,10 @@ component grammar SharedBasis extends de.monticore.lang.sysml.basics.interfaces.
   /*Remark: The following does not exist in Xtext, but since many NTs use the following structure we introduced this NT.
   */
   interface TypePart;
-  SysMLNameAndTypePart = SysMLName TypePart?;
+  symbol SysMLNameAndTypePart = SysMLName TypePart?;
+  astrule SysMLNameAndTypePart =
+    method public String getName(){
+      return this.getSysMLName().getName();
+    }
+  ;
 }

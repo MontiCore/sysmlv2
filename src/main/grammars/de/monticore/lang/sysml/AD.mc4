@@ -27,7 +27,12 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
 
   /* ACTIVITIY MEMBERSHIPS */
 
-  ParameterMemberStd implements ParameterMember = direction:FeatureDirection? memberName:SysMLName Parameter;
+  symbol ParameterMemberStd implements ParameterMember = direction:FeatureDirection? memberName:SysMLName Parameter;
+  astrule ParameterMemberStd =
+      method public String getName(){
+        return this.getMemberName().getName();
+      }
+    ;
   InitialNodeMember = DefinitionMemberPrefix "first" memberFeature:QualifiedName ";";
   ActivityNodeMember = DefinitionMemberPrefix ActivityNode;
   TargetSuccessionMember = DefinitionMemberPrefix

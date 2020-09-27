@@ -14,8 +14,36 @@
     - AssociationEndMember
     - EndPortMember
     - ConjugatedEndPortMember
-# Examples
+    
+# Symbols
+In general there SysML uses the name __SysMLName__, which may be a MCName or a name including a whitespace in single
+ qoutation marks. 
+
+If an element __references__ another element it does this with a __QualifiedName__ (Which also uses SysMLName).
+Usually if an element uses the name __SysMLName__, it __defines__ a new name and is a 
+symbol.
+
+SysMLName is sometimes used directly in a NT. But often the often NTs are used for definition:
+- ```ClassifierDeclarationCompletion ```(Currently implemented by 
+```ClassifierDeclarationCompletionStd```)
+- ```SysMLNameAndTypePart```
+
+SysMLName is not a ```String``` and MontiCore expects the following:
+- An symbol has the method ```getName()```
+- ```getName()``` always returns a ```String```
+
+This is why we use ```astrule``` to fulfill these requirements:
+``` 
+astrule <MyNTNameHere> =
+    method public String getName(){
+      return this.getSysMLName().getName();
+    }
+  ;
+```
+
+# Interface Implementations
 In the following you can see the implementation of some overall connecting interfaces:
+The definitions are bundled here, but they are bundled and rewritten in the corresponding grammar.
 
 ```
  AssociationEndMemberStd implements AssociationEndMember= DefinitionMemberPrefix

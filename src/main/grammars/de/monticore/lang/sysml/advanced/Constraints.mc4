@@ -7,8 +7,13 @@ component grammar Constraints extends de.monticore.lang.sysml.basics.SysMLCommon
 
   ConstraintDefinitionUnit implements Unit = UnitPrefix ConstraintDefinition;
   ConstraintDefinition implements PackagedDefinitionMember = ConstraintDefDeclaration ConstraintBody;
-  ConstraintDefDeclaration = ["abstract"]? "constraint" "def" name:SysMLName ParameterList? EmptyReturnParameterPart
-    SuperclassingList?;
+  symbol ConstraintDefDeclaration = ["abstract"]? "constraint" "def" SysMLName ParameterList?
+    EmptyReturnParameterPart SuperclassingList?;
+  astrule ConstraintDefDeclaration =
+    method public String getName(){
+      return this.getSysMLName().getName();
+    }
+  ;
   ConstraintBody = ";" | "{" ConstraintMembers "}";
   ConstraintMembers = (NestedDefinitionMember | NestedUsageMember | ImportUnit)* ConstraintExpressionMember?;
   EmptyReturnParameterPart = EmptyReturnParameterMember;

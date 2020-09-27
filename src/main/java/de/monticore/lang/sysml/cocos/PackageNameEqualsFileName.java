@@ -18,7 +18,7 @@ public class PackageNameEqualsFileName implements ImportsAndPackagesASTPackageUn
 
   @Override
   public void check(ASTPackageUnit node) {
-    String name = node.getPackage().getPackageDeclaration().getName().getName();
+    String name = node.getPackage().getPackageDeclaration().getSysMLName().getName();
     if(node.get_SourcePositionStart().getFileName().isPresent()){
       String relPath = node.get_SourcePositionStart().getFileName().get();
       Path path = Paths.get(relPath);

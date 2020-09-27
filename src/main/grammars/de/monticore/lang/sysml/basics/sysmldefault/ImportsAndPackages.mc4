@@ -11,18 +11,41 @@ component grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.inte
 
   /* IMPORTS */
 
-  AliasPackagedDefinitionMember implements PackagedDefinitionMember =
+  symbol AliasPackagedDefinitionMember implements PackagedDefinitionMember =
       ("import" | "alias") QualifiedName ("as" SysMLName)? ";";
+  astrule AliasPackagedDefinitionMember =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43";
+    }
+  ;
+
   //Following has the name "Import" in Xtext
-  ImportUnitStd implements ImportUnit = PrefixAnnotation* (visibility:PackageElementVisibilityIndicator)?
+  symbol ImportUnitStd implements ImportUnit = PrefixAnnotation* (visibility:PackageElementVisibilityIndicator)?
     "import" QualifiedName (star:["::*"]? | star:[".*"]?) {noSpace()}? ("as" SysMLName)? ";";
+  astrule ImportUnitStd =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43";
+    }
+  ;
 
   /* PACKAGES */
   PackageUnit implements Unit = UnitPrefix Package;
   AnonymousPackage implements Unit = PackageBody;
-  Package implements PackagedDefinitionMember =  PackageDeclaration PackageBody;
-  PackageDeclaration = "package" name:SysMLName;
+  symbol scope Package implements PackagedDefinitionMember =  PackageDeclaration PackageBody;
+  astrule Package =
+      method public String getName(){
+         return this.getPackageDeclaration().getSysMLName().getName();
+      }
+    ;
+  PackageDeclaration = "package" SysMLName;
   PackageBody = "{" (PackageMember | ImportUnit)* "}";
+
 
   /* PACKAGE MEMBERSHIPS */
   PackageMember = PackageMemberPrefix ( PackagedDefinitionMember | PackagedUsageMember);

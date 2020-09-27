@@ -19,9 +19,17 @@ component grammar Ports extends de.monticore.lang.sysml.basics.Usages,
 
   PortUsageStd implements PortUsage = Usage;
   ConjugatedPortUsageStd implements ConjugatedPortUsage= ConjugatePortUsageDeclaration UsageCompletion;
-  ConjugatePortUsageDeclaration =
-    name:SysMLName? ConjugatePortTypePart MultiplicityPart? SubsettingPart
+  symbol ConjugatePortUsageDeclaration =
+    SysMLName? ConjugatePortTypePart MultiplicityPart? SubsettingPart
     | RedefinesKeyword Redefinition ConjugatePortTypePart MultiplicityPart SubsettingPart;
+  astrule ConjugatePortUsageDeclaration =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43";
+    }
+  ;
   ConjugatePortTypePart = TypedByKeyword "~" ConjugatedPortTyping; //TypedByKeyword is defined in Usages
   ConjugatedPortTyping = SysMLName; // Remark: [SysML::PortDefinition | QualifiedName]
 
@@ -45,7 +53,11 @@ component grammar Ports extends de.monticore.lang.sysml.basics.Usages,
   EmptyTargetEnd;
 
   /* CONNECTOR MEMBERSHIPS */
+  /*
+   * memberName may only referece property of an interface.
+   */
   ConnectorEndMember = (memberName:SysMLName "=>" )? ConnectorEnd;
+
   MultiplicitySourceEndMember = MultiplicitySourceEnd;
   EmptySourceEndMember = EmptySourceEnd;
   EmptyTargetEndMember = EmptyTargetEnd;
