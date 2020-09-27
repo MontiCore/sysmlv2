@@ -19,5 +19,5 @@ component grammar ValueTypes extends de.monticore.lang.sysml.basics.Usages{
 
   /* VALUE PROPERTIES */
   ValueUnit implements Unit = UnitPrefix ValueDeclaration UsageCompletion;
-  ValueDeclaration = ["abstract"]? ["value"]? name:SysMLName TypePart? SubsettingPart;
+  ValueDeclaration = ["abstract"]? ["value"]? SysMLNameAndTypePart SubsettingPart;
 }

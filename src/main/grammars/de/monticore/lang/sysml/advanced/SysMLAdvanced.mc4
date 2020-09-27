@@ -9,7 +9,7 @@ component grammar SysMLAdvanced extends de.monticore.lang.sysml.advanced.Definit
 
  /* ACTIVITIES */
 
-  ActionOrStateUsageDeclaration = (SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?)
+  ActionOrStateUsageDeclaration = (SysMLNameAndTypePart ActionParameterList? SubsettingPart ValuePart?)
        | (TypePart? ActionParameterList? ValuePart?)
        | (RedefinesKeyword Redefinition TypePart ActionParameterList? ValuePart?);
   /*astrule ActionOrStateUsageDeclaration =  TODO how to handle this and how to handle optional names?

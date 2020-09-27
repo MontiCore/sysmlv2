@@ -8,7 +8,7 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
   UsageStd implements Usage =
      UsageDeclaration UsageCompletion;
 
-  UsageDeclaration = (SysMLName TypePart? SubsettingPart)
+  UsageDeclaration = (SysMLNameAndTypePart SubsettingPart)
     | (TypePart  SubsettingPart)
     | (RedefinesKeyword Redefinition TypePart? SubsettingPart); //SubsettingPart itself is optional
 
@@ -16,7 +16,7 @@ component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis
 
   ValuePart = "=" FeatureValue;
   FeatureValue = Expression;
-  TypePart = (TypedByKeyword ((FeatureTyping || ",")+ | "any") MultiplicityPart? )
+  TypePartStd implements TypePart = (TypedByKeyword ((FeatureTyping || ",")+ | "any") MultiplicityPart? )
     | MultiplicityPart;
   TypedByKeyword = ":" | "typed" "by";
   FeatureTypingStd implements FeatureTyping = QualifiedName;

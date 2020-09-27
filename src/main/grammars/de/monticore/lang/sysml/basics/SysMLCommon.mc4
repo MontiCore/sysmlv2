@@ -10,6 +10,4 @@ component grammar SysMLCommon extends de.monticore.lang.sysml.basics.Classifiers
   //de.monticore.lang.sysml.basics.SysMLCommonBasis  <- imported transitively
   {
 
-  SysMLNameAndTypePartOptional = (name:SysMLName TypePart?)?;
-
 }

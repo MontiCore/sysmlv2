@@ -40,7 +40,7 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
 
   /* ACTIONS */
   ActionUnit implements Unit = UnitPrefix ActionDeclaration ActivityBody;
-  ActionDeclaration = ["abstract"]? "action" name:SysMLName TypePart? ActionParameterList? SubsettingPart ValuePart?;
+  ActionDeclaration = ["abstract"]? "action" SysMLNameAndTypePart ActionParameterList? SubsettingPart ValuePart?;
   ActionUsageStd implements ActionUsage = ActionOrStateUsageDeclaration ActivityBody;
 
   ActionUsagePackagedUsageMember implements PackagedUsageMember =      ["abstract"]? "action" ActionUsage;
@@ -56,7 +56,7 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
     ("stream" | "flow") EmptyItemFeatureMember "from" ItemFlowEndMember;
 
   PerformActionUsage = PerformActionUsageDeclaration ActivityBody;
-  PerformActionUsageDeclaration = ((( name:SysMLName TypePart? "as" )? Subset+)
+  PerformActionUsageDeclaration = ((( SysMLNameAndTypePart "as" )? Subset+)
     |( "action" (name:SysMLName)? TypePart?)) ActionParameterList? SubsettingPart ValuePart?;
 
   /* ACTIVITY NODES */
@@ -65,17 +65,18 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
   ActionNodeDeclaration = ActionUsageNodeDeclaration | PerformActionNodeDeclaration | AcceptActionNodeDeclaration |
   SendActionNodeDeclaration;
   ActionUsageNodeDeclaration = ["abstract"]? (("ref" "action") | isComposite:["action"]) ActionOrStateUsageDeclaration;
-  PerformActionNodeDeclaration = isComposite:["perform"] (name:SysMLName TypePart? "as")? Subset ActionParameterList?
+  PerformActionNodeDeclaration = isComposite:["perform"] (SysMLNameAndTypePart "as")? Subset ActionParameterList?
     SubsettingPart ValuePart?;
-  AcceptActionNodeDeclaration = EmptyParameterMember "accept" (name:SysMLName TypePart?)? "(" ItemFeatureMember ")";
+  AcceptActionNodeDeclaration = EmptyParameterMember "accept" SysMLNameAndTypePart? "(" ItemFeatureMember ")";
   SendActionNodeDeclaration = EmptyParameterMember EmptyItemFeatureMember
-    "send" ( ( name:SysMLName TypePart? )? "of")? ExpressionMember "to" ExpressionMember;
+    "send" ( SysMLNameAndTypePart? "of")? ExpressionMember "to" ExpressionMember;
   ControlNode = MergeNode	| DecisionNode | JoinNode | ForkNode;
 
-  MergeNode = "merge" SysMLNameAndTypePartOptional ";";
-  DecisionNode = "decide" SysMLNameAndTypePartOptional ";";
-  JoinNode = "join" SysMLNameAndTypePartOptional ";";
-  ForkNode = "fork" SysMLNameAndTypePartOptional ";";
+  MergeNode = "merge" SysMLNameAndTypePart? ";";
+  DecisionNode = "decide" SysMLNameAndTypePart? ";";
+  JoinNode = "join" SysMLNameAndTypePart? ";";
+  ForkNode = "fork" SysMLNameAndTypePart? ";";
+  //TODO improve to? => ControlNode = (["merge"] | ["decide"] | ["join"] | ["fork"]) SysMLNameAndTypePart? ";";
 
   /* ACTION MEMBERSHIPS */
   ActionParameterMember = (direction:FeatureDirection | direction:FeatureDirection? memberName:SysMLName)

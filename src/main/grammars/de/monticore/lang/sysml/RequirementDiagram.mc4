@@ -32,7 +32,7 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.Sy
 
   RequirementUsage = RequirementDeclaration RequirementBody;
   RequirementDeclaration  = ( "id" reqId:SysMLName)?
-    (name:SysMLName TypePart? ConstraintParameterPart
+    (SysMLNameAndTypePart ConstraintParameterPart
     | TypePart? ( ActionParameterList EmptyReturnParameterPart )? ValuePart?
   	| RedefinesKeyword Redefinition
   	TypePart? ActionParameterList? EmptyReturnParameterPart ValuePart?

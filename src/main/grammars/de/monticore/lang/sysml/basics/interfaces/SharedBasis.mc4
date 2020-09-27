@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics.interfaces;
 
-component grammar SharedBasis {
+component grammar SharedBasis extends de.monticore.lang.sysml.basics.interfaces.NamesBasis{
   interface Unit; //A Unit is a starting production
 
   interface NestedDefinitionMember;
@@ -17,5 +17,10 @@ component grammar SharedBasis {
   interface FeatureTyping;
 
   interface Parameter;
+
   token FromToDigitsDotDot = ('0'..'9')+ "..";
+  /*Remark: The following does not exist in Xtext, but since many NTs use the following structure we introduced this NT.
+  */
+  interface TypePart;
+  SysMLNameAndTypePart = SysMLName TypePart?;
 }

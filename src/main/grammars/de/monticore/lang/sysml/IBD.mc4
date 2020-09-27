@@ -5,7 +5,7 @@ component grammar IBD extends de.monticore.lang.sysml.advanced.SysMLAdvanced
   {
 
   PartUnit implements Unit = UnitPrefix PartDeclaration UsageCompletion;
-  PartDeclaration = ["abstract"]? "part" SysMLName TypePart? SubsettingPart;
+  PartDeclaration = ["abstract"]? "part" SysMLNameAndTypePart SubsettingPart;
 
   PartPropertyUsageMember implements PackagedUsageMember, NonPortStructureUsageMember =
     ["abstract"]? PartProperty;

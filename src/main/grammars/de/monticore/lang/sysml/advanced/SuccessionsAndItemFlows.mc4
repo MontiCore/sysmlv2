@@ -17,8 +17,8 @@ component grammar SuccessionsAndItemFlows extends de.monticore.lang.sysml.basics
   GuardedTargetSuccession = GuardExpressionMember  "then" TransitionSuccessionMember;
   DefaultTargetSuccession = "else" TransitionSuccessionMember;
 
- /* TRANSITIONS */
-  TransitionStep = "transition" (SysMLNameAndTypePartOptional "first")? TransitionSourceMember
+  /* TRANSITIONS */
+  TransitionStep = "transition" (SysMLNameAndTypePart? "first")? TransitionSourceMember
     TriggerStepMember? GuardExpressionMember? EffectBehaviorMember? "then" TransitionSuccessionMember;
   TargetTransitionStep = TriggerStepMember? GuardExpressionMember? EffectBehaviorMember? "then"
   TransitionSuccessionMember;
