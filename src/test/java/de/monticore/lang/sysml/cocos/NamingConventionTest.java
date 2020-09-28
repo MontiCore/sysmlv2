@@ -31,31 +31,31 @@ public class NamingConventionTest extends AbstractSysMLTest {
 
   @Before
   public void setUp() throws RecognitionException {
-    System.out.println("Setting up log");
+    //System.out.println("Setting up log");
     this.setUpLog();
-    System.out.println("Finished setting up log");
+    //System.out.println("Finished setting up log");
   }
   @Test
   public void testValid() {
-    System.out.println("Testing valid " + this.getClass().getName());
+    //System.out.println("Testing valid " + this.getClass().getName());
     ASTUnit astUnit =
         this.parseSysMLSingleModel(this.pathToOfficialSysMLExamples + "/02. Blocks/Blocks Example.sysml");
-    System.out.println("Parsed Model.");
+    //System.out.println("Parsed Model.");
     NamingConvention coco = new NamingConvention();
-    System.out.println("New SysMLCoCoChecker.");
+    //System.out.println("New SysMLCoCoChecker.");
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
-    System.out.println("coCoChecker.addCoCo(coco);");
+    //System.out.println("coCoChecker.addCoCo(coco);");
     coCoChecker.addCoCo(coco);
-    System.out.println("coCoChecker.checkAll(astUnit);");
+    //System.out.println("coCoChecker.checkAll(astUnit);");
     coCoChecker.checkAll(astUnit);
-    System.out.println("Checked all CoCos.");
+    // System.out.println("Checked all CoCos.");
     assertTrue(Log.getFindings().isEmpty());
-    System.out.println("Finished testing valid " + this.getClass().getName());
+    //System.out.println("Finished testing valid " + this.getClass().getName());
   }
 
   @Test
   public void testInvalidDoesNotStartWithCapitalLetter() {
-    System.out.println("Testing invalid " + this.getClass().getName());
+    //System.out.println("Testing invalid " + this.getClass().getName());
     ASTUnit astUnit = this.parseSysMLSingleModel(this.pathToInvalidModels
         + "/NamingConvention/Blocks Example.sysml");
 

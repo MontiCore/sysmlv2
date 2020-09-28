@@ -64,7 +64,12 @@ public class SysMLTool {
 
     //Setup Symboltable TODO
     //SysMLLanguage language = new SysMLLanguage();
-
+    HelperSysMLSymbolTableCreator symbolTableHelper = new HelperSysMLSymbolTableCreator();
+    SysMLLanguage sysMLLanguage = new SysMLLanguageSub("SysML", ".sysml");
+    for (ASTUnit astUnit : models) {
+      SysMLArtifactScope scope = new SysMLArtifactScope("", new ArrayList<>());
+      SysMLArtifactScope extendedScope = symbolTableHelper.buildSymbolTable(astUnit, scope);
+    }
 
     Log.info("Checking Context Conditions.", SysMLTool.class.getName());
     for (ASTUnit astUnit : models) {
