@@ -10,4 +10,10 @@ component grammar BDD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
   scope Block implements PackagedDefinitionMember = BlockDeclaration DefinitionBody;
 
   BlockDeclaration= ["abstract"]? "block" ClassifierDeclarationCompletion;
+
+  AssociationEndMemberReferenceProperty implements AssociationEndMember =
+     DefinitionMemberPrefix ["abstract"]? "end" ["ref"]? ReferenceProperty;
+  ReferencePropertyNonPortStructureUsageMember implements NonPortStructureUsageMember =
+     ["abstract"]? "ref" direction:FeatureDirection? ReferenceProperty;
+  ReferenceProperty = Usage;
 }
