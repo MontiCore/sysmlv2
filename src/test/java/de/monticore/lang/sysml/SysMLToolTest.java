@@ -1,6 +1,7 @@
 package de.monticore.lang.sysml;
 
 import de.monticore.cocos.helper.Assert;
+import de.monticore.lang.sysml.utils.AbstractSysMLTest;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import org.antlr.v4.runtime.RecognitionException;
@@ -23,6 +24,7 @@ public class SysMLToolTest {
   @Before
   public void setUp() throws RecognitionException, IOException {
     Log.getFindings().clear();
+    Log.enableFailQuick(false);
   }
 
   @Test
@@ -49,6 +51,8 @@ public class SysMLToolTest {
   public void toolParseAndCheckAllTrainingExamples(){
     final String pathToDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src";
     SysMLTool.main(new String[]{pathToDir + "/training/"});
+    AbstractSysMLTest.printAllFindings();
     assertTrue(Log.getFindings().isEmpty());
+
   }
 }

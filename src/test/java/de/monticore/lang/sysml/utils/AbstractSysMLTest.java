@@ -30,12 +30,11 @@ public class AbstractSysMLTest {
     return astUnit.get();
   }
 
-  public boolean printAllFindings() {
+  public static void printAllFindings() {
     List<Finding> findingsList = Log.getFindings();
     System.out.println("I found " + findingsList.size() + " findings:");
     for (Finding f : findingsList) {
       System.out.println("    -> Finding: " + f.toString());
     }
-    return false;
   }
 }

@@ -50,9 +50,9 @@ public class SysMLParserMultipleFiles {
     Path model = Paths.get(path);
     Optional<ASTUnit> astUnitOpt =  parser.parse(model.toString());
     if(!astUnitOpt.isPresent()){
-      Log.error("Error: The model path "+ path + " had an empty model inside in " +
+      Log.error("Error: The model path "+ path + " had an empty model in " +
           SysMLParserMultipleFiles.class.getName());
-      throw new IOException("Error: The model path "+ path + " had an empty model inside in " +
+      throw new IOException("Error: The model path "+ path + " had an empty model in " +
           SysMLParserMultipleFiles.class.getName());
     }
     return astUnitOpt.get();
