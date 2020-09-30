@@ -12,6 +12,9 @@ component grammar NamesBasis {
     method public String getName(){
 
         }
+     method public String getNameForPrettyPrinting(){
+
+     }
     ;
 
 }

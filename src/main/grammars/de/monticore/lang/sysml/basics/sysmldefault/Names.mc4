@@ -28,8 +28,19 @@ component grammar Names extends de.monticore.MCBasics,
         if( this.isPresentMcBasicsName()){
           this.setMcBasicsName(name);
         }else{
+          //if the name is not surrounded by quotes add them
+          if(!name.substring(0,1).equals("'") && !name.substring(name.length() - 1,name.length()).equals("'")){
+            name = "'" + name + "'";
+          }
           this.setUnrestrictedName(name);
         }
+    }
+    method public String getNameForPrettyPrinting(){
+      String name = this.getName();
+      if(this.isPresentUnrestrictedName()){
+         name = "'" + name + "'";
+      }
+      return name;
     }
   ;
 }
