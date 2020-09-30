@@ -66,7 +66,7 @@ public class SysMLTool {
     // Symboltable
     Log.info("Creating Symbol Table.", SysMLTool.class.getName());
     HelperSysMLSymbolTableCreator helperSysMLSymbolTableCreator = new HelperSysMLSymbolTableCreator();
-    SysMLGlobalScope sysMLGlobalScope = helperSysMLSymbolTableCreator.createSymboltable(mp);
+    SysMLGlobalScope sysMLGlobalScope = helperSysMLSymbolTableCreator.createSymboltableMultipleASTUnit(models,mp);
 
     // Context Conditions
     Log.info("Checking Context Conditions.", SysMLTool.class.getName());

@@ -2,10 +2,9 @@ package de.monticore.lang.sysml._symboltable;
 
 import de.monticore.io.paths.ModelPath;
 import de.monticore.lang.sysml.basics.interfaces.sharedbasis._ast.ASTUnit;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLArtifactScope;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLLanguage;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLSymbolTableCreator;
+import de.monticore.lang.sysml.sysml._symboltable.*;
+
+import java.util.List;
 
 /**
  * @author Robin Muenstermann
@@ -25,9 +24,31 @@ public class HelperSysMLSymbolTableCreator {
     return newScope;
   }*/
 
-  public SysMLGlobalScope createSymboltable(ModelPath mp) {
+  public SysMLLanguageSub initSysMLLang() {
     SysMLLanguageSub sysMLLanguage = new SysMLLanguageSub("SysML", ".sysml");
+    return sysMLLanguage;
+  }
+
+  public SysMLGlobalScope initGlobalScope(ModelPath mp, SysMLLanguageSub sysMLLanguage) {
     SysMLGlobalScope sysMLGlobalScope = new SysMLGlobalScope(mp, sysMLLanguage);
     return sysMLGlobalScope;
+  }
+
+  public SysMLArtifactScope createSymboltable(ASTUnit ast,SysMLLanguageSub sysMLLanguage, SysMLGlobalScope globalScope) {
+
+    SysMLSymbolTableCreatorDelegator symbolTableDelegator = sysMLLanguage.getSymbolTableCreator(globalScope);
+    return symbolTableDelegator.createFromAST(ast);
+  }
+
+  public SysMLArtifactScope createSymboltableSingleASTUnit(ASTUnit astUnit, ModelPath mp){
+    return createSymboltable(astUnit, initSysMLLang(), initGlobalScope(mp, initSysMLLang()));
+  }
+  public SysMLGlobalScope createSymboltableMultipleASTUnit(List<ASTUnit> astUnits, ModelPath mp){ //TODO test
+    SysMLLanguageSub lang = initSysMLLang();
+    SysMLGlobalScope globalScope = initGlobalScope(mp, lang);
+    for (ASTUnit astUnit : astUnits) {
+      createSymboltable(astUnit, lang,globalScope );
+    }
+    return globalScope;
   }
 }
