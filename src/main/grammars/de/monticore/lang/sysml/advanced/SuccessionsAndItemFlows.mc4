@@ -41,10 +41,19 @@ component grammar SuccessionsAndItemFlows extends de.monticore.lang.sysml.basics
 
   ItemFlow = ItemFlowDeclaration DefinitionBody;
   SuccessionItemFlow = ItemFlowDeclaration DefinitionBody;
-  ItemFlowDeclaration = ( (name:SysMLName)? TypePart?
+  symbol ItemFlowDeclaration = ( (SysMLName)? TypePart?
     (( "of" ItemFeatureMember) | (EmptyItemFeatureMember))
     "from" | EmptyItemFeatureMember )
     ItemFlowEndMember "to" ItemFlowEndMember;
+  astrule ItemFlowDeclaration =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43";
+    }
+  ;
+
   ItemFeatureTyping = FeatureTyping MultiplicityMember?;
   EmptyItemFeature;
   ItemFlowEnd = ItemFlowFeatureMember;

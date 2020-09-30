@@ -7,9 +7,18 @@ component grammar BDD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
 
   BlockUnit implements Unit = UnitPrefix Block; //Remark: in Xtext BlockDeclaration DefinitionBody
 
-  scope Block implements PackagedDefinitionMember = BlockDeclaration DefinitionBody;
-
-  BlockDeclaration= ["abstract"]? "block" ClassifierDeclarationCompletion;
+  symbol scope Block implements PackagedDefinitionMember = BlockDeclaration DefinitionBody;
+  astrule Block =
+    method public String getName(){
+      return this.getBlockDeclaration().getName();
+    }
+  ;
+  BlockDeclaration = ["abstract"]? "block" ClassifierDeclarationCompletion;
+  astrule BlockDeclaration =
+    method public String getName(){
+      return this.getClassifierDeclarationCompletion().getName();
+    }
+  ;
 
   AssociationEndMemberReferenceProperty implements AssociationEndMember =
      DefinitionMemberPrefix ["abstract"]? "end" ["ref"]? ReferenceProperty;

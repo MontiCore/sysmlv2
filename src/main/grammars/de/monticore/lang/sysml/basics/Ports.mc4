@@ -6,8 +6,18 @@ component grammar Ports extends de.monticore.lang.sysml.basics.Usages,
 
   /* PORT DEFINITIONS */
 
-  PortDefinitionStd implements PortDefinition, PackagedDefinitionMember  = PortDeclaration DefinitionBody;
+  symbol scope PortDefinitionStd implements PortDefinition, PackagedDefinitionMember  = PortDeclaration DefinitionBody;
+  astrule PortDefinitionStd =
+    method public String getName(){
+      return this.getPortDeclaration().getName();
+    }
+  ;
   PortDeclaration = ["abstract"]? "port" "def" ClassifierDeclarationCompletion ConjugatedPortDefinitionMember;
+  astrule PortDeclaration =
+    method public String getName(){
+      return this.getClassifierDeclarationCompletion().getName();
+    }
+  ;
   ConjugatedPortDefinition = PortConjugation;
   PortConjugation;
 

@@ -20,6 +20,11 @@
  interface DefinitionBody;
  interface ValueType;
  interface ClassifierDeclarationCompletion;
+ astrule ClassifierDeclarationCompletion =
+    method public String getName(){
+      return "NotImplemented12324182481524";
+    }
+  ;
  interface PortDefinition;
 
  /* ASSOCIATION BLOCK MEMBERSHIPS */

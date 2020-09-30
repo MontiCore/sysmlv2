@@ -6,13 +6,24 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.Sy
 
   /* REQUIREMENT DEFINITIONS */
 
-  RequirementDefinition implements PackagedDefinitionMember = RequirementDefDeclaration RequirementBody;
-  RequirementDefDeclaration = ["abstract"]? "requirement" "def" ("id" reqId:SysMLName)? name:SysMLName
+  symbol RequirementDefinition implements PackagedDefinitionMember = RequirementDefDeclaration RequirementBody;
+  astrule RequirementDefinition =
+    method public String getName(){
+      return this.getRequirementDefDeclaration().getName();
+    }
+  ;
+  RequirementDefDeclaration = ["abstract"]? "requirement" "def" ("id" reqId:SysMLName)? SysMLName
     RequirementDefParameterList EmptyReturnParameterPart SuperclassingList?;
+  astrule RequirementDefDeclaration =
+    method public String getName(){
+      return this.getSysMLName().getName();
+    }
+  ;
+
   RequirementDefParameterList = EmptyParameterMember
     | ( "(" EmptyParameterMember ")")
     | ( "(" (ParameterMember || ",")+ ")" ) ;
-  RequirementBody = ";" | ( "{" RequirementMembers "}" );
+  scope RequirementBody = ";" | ( "{" RequirementMembers "}" );
   RequirementMembers = (NestedDefinitionMember | NestedUsageMember |  RequirementConstraintMember | ImportUnit )*;
   RequirementConstraintUsage = ((( name:SysMLName)? TypePart? "as")? Subset | "constraint" (name:SysMLName)? TypePart?)
      ConstraintParameterPart ConstraintBody;
@@ -30,7 +41,7 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.Sy
   BehaviorUsageMemberSatisfyRequirementUsage implements BehaviorUsageMember =
     DefinitionMemberPrefix  "satisfy" SatisfyRequirementUsage;
 
-  RequirementUsage = RequirementDeclaration RequirementBody;
+  scope RequirementUsage = RequirementDeclaration RequirementBody;
   RequirementDeclaration  = ( "id" reqId:SysMLName)?
     (SysMLNameAndTypePart ConstraintParameterPart
     | TypePart? ( ActionParameterList EmptyReturnParameterPart )? ValuePart?
@@ -38,12 +49,19 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.Sy
   	TypePart? ActionParameterList? EmptyReturnParameterPart ValuePart?
   	);
 
-  SatisfyRequirementUsage =
-    ((( name:SysMLName)? TypePart? "as")? Subset
-    | "requirement" (name:SysMLName)? TypePart?)
+  symbol scope SatisfyRequirementUsage =
+    ((( SysMLName)? TypePart? "as")? Subset
+    | "requirement" (SysMLName)? TypePart?)
     ( "by" SatisfactionConnectorMember)?
     ConstraintParameterPart InvariantPart RequirementBody;
-
+  astrule SatisfyRequirementUsage =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+    }
+  ;
   SatisfactionConnector = EmptySourceEndMember ConnectorEndMember;
 
   /* REQUIREMENT MEMBERSHIPS */

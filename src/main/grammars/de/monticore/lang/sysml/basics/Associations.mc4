@@ -6,8 +6,18 @@ component grammar Associations extends de.monticore.lang.sysml.basics.SysMLCommo
   /* ASSOCIATION BLOCKS */
 
   AssociationBlockUnit implements Unit = UnitPrefix AssociationBlock;
-  AssociationBlock implements PackagedDefinitionMember  = AssociationBlockDeclaration AssociationBlockBody;
+  symbol scope AssociationBlock implements PackagedDefinitionMember = AssociationBlockDeclaration AssociationBlockBody;
+  astrule AssociationBlock =
+    method public String getName(){
+      return this.getAssociationBlockDeclaration().getName();
+    }
+  ;
   AssociationBlockDeclaration = ["abstract"]? "assoc" "block" ClassifierDeclarationCompletion;
+  astrule AssociationBlockDeclaration =
+    method public String getName(){
+      return this.getClassifierDeclarationCompletion().getName();
+    }
+  ;
   AssociationBlockBody = (";") | ("{"
     (
         NestedDefinitionMember

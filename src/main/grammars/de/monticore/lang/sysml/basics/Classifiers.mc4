@@ -5,7 +5,7 @@ package de.monticore.lang.sysml.basics;
 component grammar Classifiers extends de.monticore.lang.sysml.basics.SysMLCommonBasis {
 
   /* CLASSIFIERS */
-  symbol ClassifierDeclarationCompletionStd implements ClassifierDeclarationCompletion =
+  ClassifierDeclarationCompletionStd implements ClassifierDeclarationCompletion =
     SysMLName SuperclassingList?;
 
   astrule ClassifierDeclarationCompletionStd =
@@ -15,7 +15,7 @@ component grammar Classifiers extends de.monticore.lang.sysml.basics.SysMLCommon
     method public String getName(){
       return this.getSysMLName().getName();
     }
-    ;
+  ;
 
   SuperclassingList = SpecializesKeyword (QualifiedName || ",")+;
   SpecializesKeyword = ":>" | "specializes";

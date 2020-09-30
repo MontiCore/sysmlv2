@@ -5,12 +5,26 @@ package de.monticore.lang.sysml.basics;
 component grammar Usages extends de.monticore.lang.sysml.basics.SysMLCommonBasis {
 
   /* USAGES */
-  UsageStd implements Usage =
+  scope UsageStd implements Usage =
      UsageDeclaration UsageCompletion;
+  astrule UsageStd =
+    method public String getName(){
+      return this.getUsageDeclaration().getName();
+    }
+  ;
 
   UsageDeclaration = (SysMLNameAndTypePart SubsettingPart)
     | (TypePart  SubsettingPart)
     | (RedefinesKeyword Redefinition TypePart? SubsettingPart); //SubsettingPart itself is optional
+  astrule UsageDeclaration =
+    method public String getName(){
+      if( this.isPresentSysMLNameAndTypePart()){
+        return this.getSysMLNameAndTypePart().getName();
+      }
+      return "NotNamed1232454123534j4jn43";
+    }
+  ;
+
 
   UsageCompletion = ValuePart? DefinitionBody;
 

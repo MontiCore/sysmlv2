@@ -5,9 +5,20 @@ component grammar ParametricDiagram extends de.monticore.lang.sysml.advanced.Sys
   
   /* INDIVIDUAL DEFINITIONS */
   IndividualDefinitionUnit implements Unit = UnitPrefix IndividualDefinition;
-  IndividualDefinition implements PackagedDefinitionMember = IndividualDefDeclaration DefinitionBody;
+  symbol scope IndividualDefinition implements PackagedDefinitionMember = IndividualDefDeclaration DefinitionBody;
+  astrule IndividualDefinition =
+    method public String getName(){
+      return this.getIndividualDefDeclaration().getName();
+    }
+  ;
   IndividualDefDeclaration = ["abstract"]? "individual" "def" ClassifierDeclarationCompletion
     LifeClassMembership;
+  astrule IndividualDefDeclaration =
+    method public String getName(){
+      return this.getClassifierDeclarationCompletion().getName();
+    }
+  ;
+
   LifeClass;
 
   /* INDIVIDUAL DEFINITION MEMBERSHIPS */
