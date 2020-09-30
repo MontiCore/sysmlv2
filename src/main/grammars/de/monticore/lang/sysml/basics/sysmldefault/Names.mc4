@@ -11,5 +11,25 @@ component grammar Names extends de.monticore.MCBasics,
   fragment token AnyText = ~ ('\'');
   token UNRESTRICTED_NAME = '\'' AnyText* '\'';
 
-  SysMLNameDefault implements SysMLName = (name:Name | name:UNRESTRICTED_NAME); //Remark in Xtext this is Name
+  SysMLNameDefault implements SysMLName = (mcBasicsName:Name | unrestrictedName:UNRESTRICTED_NAME); //Remark in Xtext this is Name
+  astrule SysMLNameDefault =
+    method public String getName(){
+      if( this.isPresentMcBasicsName()){
+        return this.getMcBasicsName();
+      }else{
+        String name = this.getUnrestrictedName();
+        //Remove prefix ' and suffix '
+        name = name.substring(1);
+        name = name.substring(0, name.length() - 1);
+        return name;
+      }
+    }
+    method public void setName(String name){
+        if( this.isPresentMcBasicsName()){
+          this.setMcBasicsName(name);
+        }else{
+          this.setUnrestrictedName(name);
+        }
+    }
+  ;
 }

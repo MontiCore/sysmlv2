@@ -48,12 +48,7 @@ public class SysMLTool {
     // Gathering all models in given directory "dir".
     List<ASTUnit> models = new ArrayList<>();
     List<String> filePaths = getSysMLFilePathsInDirectory(dir);
-    Set<Path> p = Sets.newHashSet();
-    for (String mP : filePaths) {
-      File f = new File(mP);
-      p.add(Paths.get(f.getAbsolutePath()));
-    }
-    final ModelPath mp = new ModelPath(p);
+    final ModelPath mp = createModelpath(filePaths);
 
     // Parsing
 
@@ -70,9 +65,8 @@ public class SysMLTool {
 
     // Symboltable
     Log.info("Creating Symbol Table.", SysMLTool.class.getName());
-
-    SysMLLanguageSub sysMLLanguage = new SysMLLanguageSub("SysML", ".sysml");
-    SysMLGlobalScope montiArcGlobalScope = new SysMLGlobalScope(mp, sysMLLanguage);
+    HelperSysMLSymbolTableCreator helperSysMLSymbolTableCreator = new HelperSysMLSymbolTableCreator();
+    SysMLGlobalScope sysMLGlobalScope = helperSysMLSymbolTableCreator.createSymboltable(mp);
 
     // Context Conditions
     Log.info("Checking Context Conditions.", SysMLTool.class.getName());
@@ -108,5 +102,19 @@ public class SysMLTool {
   public static void runDefaultCocos(ASTUnit unit) {
     SysMLCoCos cocos = new SysMLCoCos();
     cocos.getCheckerForAllCoCos().checkAll(unit);
+  }
+  public static ModelPath createModelpath(List<String> filePaths){
+    Set<Path> p = Sets.newHashSet();
+    for (String mP : filePaths) {
+      File f = new File(mP);
+      p.add(Paths.get(f.getAbsolutePath()));
+    }
+    final ModelPath mp = new ModelPath(p);
+    return mp;
+  }
+  public static ModelPath createModelpath(String filePath){
+    List<String> filePathAsList = new ArrayList<>();
+    filePathAsList.add(filePath);
+    return createModelpath(filePathAsList);
   }
 }

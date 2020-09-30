@@ -36,7 +36,7 @@ public class PackageNameEqualsFileNameTest extends AbstractSysMLTest {
   @Test
   public void testValid() {
     ASTUnit astUnit =
-        this.parseSysMLSingleModel(this.pathToOfficialSysMLExamples + "/02. Blocks/Blocks Example.sysml");
+        this.parseSysMLSingleModel(this.pathToOfficialSysMLTrainingExamples + "/02. Blocks/Blocks Example.sysml");
 
     PackageNameEqualsFileName coco = new PackageNameEqualsFileName();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
@@ -59,7 +59,7 @@ public class PackageNameEqualsFileNameTest extends AbstractSysMLTest {
     assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
     //this.printAllFindings();
     Collection<Finding> expectedWarnings = Arrays.asList(
-        Finding.warning("0xSysML03 package 'WrongName' should be equal to the Filename.",
+        Finding.warning("0xSysML03 package WrongName should be equal to the Filename.",
             new SourcePosition(1, 0, "Blocks Example.sysml"))
     );
 

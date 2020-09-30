@@ -39,7 +39,7 @@ public class NamingConventionTest extends AbstractSysMLTest {
   public void testValid() {
     //System.out.println("Testing valid " + this.getClass().getName());
     ASTUnit astUnit =
-        this.parseSysMLSingleModel(this.pathToOfficialSysMLExamples + "/02. Blocks/Blocks Example.sysml");
+        this.parseSysMLSingleModel(this.pathToOfficialSysMLTrainingExamples + "/02. Blocks/Blocks Example.sysml");
     //System.out.println("Parsed Model.");
     NamingConvention coco = new NamingConvention();
     //System.out.println("New SysMLCoCoChecker.");

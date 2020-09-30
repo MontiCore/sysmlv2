@@ -1,5 +1,6 @@
 package de.monticore.lang.sysml._symboltable;
 
+import de.monticore.io.paths.ModelPath;
 import de.monticore.lang.sysml.basics.interfaces.sharedbasis._ast.ASTUnit;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLArtifactScope;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
@@ -11,7 +12,7 @@ import de.monticore.lang.sysml.sysml._symboltable.SysMLSymbolTableCreator;
  * @version 1.0
  */
 public class HelperSysMLSymbolTableCreator {
-  public SysMLArtifactScope buildSymbolTable(ASTUnit astUnit, SysMLArtifactScope scope){
+ /* TODO delete public SysMLArtifactScope buildSymbolTable(ASTUnit astUnit, SysMLArtifactScope scope){
     SysMLSymbolTableCreator symbolTableCreator = new SysMLSymbolTableCreator(scope);
     SysMLArtifactScope newScope = symbolTableCreator.createFromAST(astUnit);
     return newScope;
@@ -22,5 +23,11 @@ public class HelperSysMLSymbolTableCreator {
     SysMLSymbolTableCreator symbolTableCreator = new SysMLSymbolTableCreator(globalScope);
     SysMLArtifactScope newScope = symbolTableCreator.createFromAST(astUnit);
     return newScope;
+  }*/
+
+  public SysMLGlobalScope createSymboltable(ModelPath mp) {
+    SysMLLanguageSub sysMLLanguage = new SysMLLanguageSub("SysML", ".sysml");
+    SysMLGlobalScope sysMLGlobalScope = new SysMLGlobalScope(mp, sysMLLanguage);
+    return sysMLGlobalScope;
   }
 }

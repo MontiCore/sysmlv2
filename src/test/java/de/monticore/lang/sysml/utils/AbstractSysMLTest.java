@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class AbstractSysMLTest {
   public final String pathToInvalidModels = "src/test/resources/cocos/invalid";
-  public final String pathToOfficialSysMLExamples = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src/training";
+  public final String pathToOfficialSysMLTrainingExamples = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src/training";
 
   public void setUpLog(){
     LogStub.init();
