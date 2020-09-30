@@ -14,7 +14,7 @@ component grammar Constraints extends de.monticore.lang.sysml.basics.SysMLCommon
       return this.getSysMLName().getName();
     }
   ;
-  ConstraintBody = ";" | "{" ConstraintMembers "}";
+  scope ConstraintBody = ";" | "{" ConstraintMembers "}";
   ConstraintMembers = (NestedDefinitionMember | NestedUsageMember | ImportUnit)* ConstraintExpressionMember?;
   EmptyReturnParameterPart = EmptyReturnParameterMember;
 
@@ -35,9 +35,17 @@ component grammar Constraints extends de.monticore.lang.sysml.basics.SysMLCommon
     | (TypePart? (ActionParameterList EmptyReturnParameterPart)? ValuePart?)
     | (RedefinesKeyword Redefinition TypePart? ActionParameterList? EmptyReturnParameterPart ValuePart?);
   ConstraintParameterPart = ActionParameterList? EmptyReturnParameterPart SubsettingPart ValuePart?;
-  AssertConstraintUsage =
-    (((( name:SysMLName)? TypePart? "as" )? Subset+ ) | ("constraint" (name:SysMLName)? TypePart?) )
+  symbol AssertConstraintUsage =
+    (((SysMLName? TypePart? "as" )? Subset+ ) | ("constraint" SysMLName? TypePart?) )
     ConstraintParameterPart InvariantPart ConstraintBody;
+  astrule AssertConstraintUsage =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+    }
+  ;
   InvariantPart = TrueLiteralMember;
   TrueLiteralExpression;
 

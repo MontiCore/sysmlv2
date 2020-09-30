@@ -81,8 +81,16 @@ component grammar Ports extends de.monticore.lang.sysml.basics.Usages,
   NonPortStructureUsageMemberBindingConnector implements NonPortStructureUsageMember =
     "bind" BindingConnector;
 
-  BindingConnector = ((name:SysMLName)? TypePart? "as")?
+  symbol BindingConnector = (SysMLName? TypePart? "as")?
     ConnectorEndMember "=" ConnectorEndMember DefinitionBody;
+  astrule BindingConnector =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+    }
+  ;
 
   /* INTERFACE DEFINITIONS */
   InterfaceDefinitionUnit implements Unit = UnitPrefix InterfaceDefinition;

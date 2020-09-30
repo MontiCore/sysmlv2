@@ -9,11 +9,28 @@ component grammar SuccessionsAndItemFlows extends de.monticore.lang.sysml.basics
     ["abstract"]? "succession" Succession;
 
   Succession = SuccessionDeclaration ";";
-  SuccessionDeclaration = ( name:SysMLName? TypePart? "first" )? ConnectorEndMember "then" ConnectorEndMember;
+  symbol SuccessionDeclaration = ( SysMLName? TypePart? "first" )? ConnectorEndMember "then" ConnectorEndMember;
+  astrule SuccessionDeclaration =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+    }
+  ;
   TargetSuccession = "then" MultiplicitySourceEndMember ConnectorEndMember;
   EmptySuccession =  "then" MultiplicitySourceEndMember EmptyTargetEndMember;
-  GuardedSuccession = "succession" (name:SysMLName? TypePart? "first")?
-  TransitionSourceMember GuardExpressionMember "then" TransitionSuccessionMember;
+  symbol GuardedSuccession = "succession" (SysMLName? TypePart? "first")?
+    TransitionSourceMember GuardExpressionMember "then" TransitionSuccessionMember;
+  astrule GuardedSuccession =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+    }
+  ;
+
   GuardedTargetSuccession = GuardExpressionMember  "then" TransitionSuccessionMember;
   DefaultTargetSuccession = "else" TransitionSuccessionMember;
 

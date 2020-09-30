@@ -61,8 +61,16 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
     ("stream" | "flow") EmptyItemFeatureMember "from" ItemFlowEndMember;
 
   PerformActionUsage = PerformActionUsageDeclaration ActivityBody;
-  PerformActionUsageDeclaration = ((( SysMLNameAndTypePart "as" )? Subset+)
-    |( "action" (name:SysMLName)? TypePart?)) ActionParameterList? SubsettingPart ValuePart?;
+  symbol PerformActionUsageDeclaration = ((( SysMLName TypePart? "as" )? Subset+)
+    |( "action" (SysMLName)? TypePart?)) ActionParameterList? SubsettingPart ValuePart?;
+  astrule PerformActionUsageDeclaration =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+    }
+  ;
 
   /* ACTIVITY NODES */
   ActivityNode = ActionNode | ControlNode;
