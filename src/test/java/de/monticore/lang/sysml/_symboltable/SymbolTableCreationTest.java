@@ -3,7 +3,10 @@ package de.monticore.lang.sysml._symboltable;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.lang.sysml.SysMLTool;
 import de.monticore.lang.sysml.basics.interfaces.sharedbasis._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.interfaces.sharedbasis._symboltable.ISharedBasisScope;
 import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._ast.ASTPackageUnit;
+import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._symboltable.IImportsAndPackagesScope;
+import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._symboltable.ImportsAndPackagesScope;
 import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._symboltable.PackageSymbol;
 import de.monticore.lang.sysml.basics.valuetypes._ast.ASTValueTypeStd;
 import de.monticore.lang.sysml.basics.valuetypes._symboltable.ValueTypeStdSymbol;
@@ -54,8 +57,8 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
       System.out.println("Resolving Package was not successful.");
     }
 
-    /* TODO
-    Optional<BlockSymbol> blockSymbol = topScope.resolveBlockDown("Vehicle");
+
+    Optional<BlockSymbol> blockSymbol = topScope.getSubScopes().get(0).resolveBlockDown("Vehicle");
     if (blockSymbol.isPresent()) {
       System.out.println("Resolved blockSymbol \"Vehicle\"; ResolvedName = " + packageSymbol.get().getName());
       Log.info("Resolved block symbol \"Vehicle\"; ResolvedName = " + packageSymbol.get().getName(),
@@ -65,23 +68,35 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
     }
 
 
-    Optional<ValueTypeStdSymbol> valueTypeSymbol = topScope.resolveValueTypeStdDown("VehicleStatus");
+    Optional<ValueTypeStdSymbol> valueTypeSymbol = topScope.getSubScopes().get(0).resolveValueTypeStdDown(
+        "VehicleStatus");
     if (valueTypeSymbol.isPresent()) {
       System.out.println("Resolved valueTypeSymbol \"VehicleStatus\"; ResolvedName = " + packageSymbol.get().getName());
       Log.info("Resolved valueTypeSymbol \"VehicleStatus\"; ResolvedName = " + packageSymbol.get().getName(),
           SymbolTableCreationTest.class.getName());
     }else {
       System.out.println("Resolving VehicleStatus was not successful.");
-    }*/
+    }
 
     Optional<PackageSymbol> notExistingSymbol = topScope.resolvePackage("WrongName Example");
 
     assertTrue(packageSymbol.isPresent());
-    // TODO assertTrue(blockSymbol.isPresent());
-    // TODO assertTrue(valueTypeSymbol.isPresent());
+    assertTrue(blockSymbol.isPresent());
+    assertTrue(valueTypeSymbol.isPresent());
     assertFalse(notExistingSymbol.isPresent());
 
-    // SysMLCommonSymbolTableCreator symbolTableCreator = new SysMLCommonSymbolTableCreator();
-    //SysMLSymbolTableCreator symbolTableCreator = new SysMLSymbolTableCreator(astUnit);
+
+    SysMLArtifactScope scope = (SysMLArtifactScope) astUnit.getEnclosingScope();
+    //Testing resolving with astUnit
+    Optional<PackageSymbol> packageSymbolEnclosingScope = scope.resolvePackage("Blocks Example");
+    Optional<BlockSymbol> blockSymbolEnclosingScope = scope.getSubScopes().get(0).resolveBlockDown("Vehicle");
+    Optional<ValueTypeStdSymbol> valueTypeSymbolEnclosingScope = scope.getSubScopes().get(0).resolveValueTypeStdDown(
+        "VehicleStatus");
+    Optional<PackageSymbol> notExistingSymbolEnclosingScope = scope.resolvePackage("WrongName Example");
+
+    assertTrue(packageSymbolEnclosingScope.isPresent());
+    assertTrue(blockSymbolEnclosingScope.isPresent());
+    assertTrue(valueTypeSymbolEnclosingScope.isPresent());
+    assertFalse(notExistingSymbolEnclosingScope.isPresent());
   }
 }

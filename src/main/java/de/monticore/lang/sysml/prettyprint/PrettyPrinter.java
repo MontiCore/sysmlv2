@@ -1,6 +1,7 @@
 package de.monticore.lang.sysml.prettyprint;
 
 import de.monticore.lang.sysml.basics.interfaces.sharedbasis._ast.ASTUnit;
+import de.monticore.lang.sysml.bdd._ast.ASTBlock;
 import de.monticore.lang.sysml.sysml._visitor.SysMLVisitor;
 
 /**
@@ -65,5 +66,10 @@ public class PrettyPrinter implements SysMLVisitor {
   private void unindent() {
     indention--;
     calcIndention();
+  }
+
+  @Override
+  public void visit(ASTBlock node) {
+
   }
 }
