@@ -20,6 +20,7 @@ import de.se_rwth.commons.logging.Log;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -30,7 +31,7 @@ import static org.junit.Assert.*;
  */
 public class SymbolTableCreationTest extends AbstractSysMLTest {
   @Test
-  public void testSuccessfulCreationInOneFile() { //TODO
+  public void testSuccessfulCreationInOneFile() {
     String currentPath = this.pathToOfficialSysMLTrainingExamples + "/02. Blocks/Blocks Example.sysml";
 
     //Ensure successful parsing
@@ -49,40 +50,17 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
 
     //Testing Symboltable
     Optional<PackageSymbol> packageSymbol = topScope.resolvePackage("Blocks Example");
-    if (packageSymbol.isPresent()) {
-      System.out.println("Resolved package symbol \"Blocks Example\"; ResolvedName = " + packageSymbol.get().getName());
-      Log.info("Resolved package symbol \"Blocks Example\"; ResolvedName = " + packageSymbol.get().getName(),
-          SymbolTableCreationTest.class.getName());
-    }else {
-      System.out.println("Resolving Package was not successful.");
-    }
-
-
     Optional<BlockSymbol> blockSymbol = topScope.getSubScopes().get(0).resolveBlockDown("Vehicle");
-    if (blockSymbol.isPresent()) {
-      System.out.println("Resolved blockSymbol \"Vehicle\"; ResolvedName = " + packageSymbol.get().getName());
-      Log.info("Resolved block symbol \"Vehicle\"; ResolvedName = " + packageSymbol.get().getName(),
-          SymbolTableCreationTest.class.getName());
-    }else {
-      System.out.println("Resolving Block was not successful.");
-    }
-
-
     Optional<ValueTypeStdSymbol> valueTypeSymbol = topScope.getSubScopes().get(0).resolveValueTypeStdDown(
         "VehicleStatus");
-    if (valueTypeSymbol.isPresent()) {
-      System.out.println("Resolved valueTypeSymbol \"VehicleStatus\"; ResolvedName = " + packageSymbol.get().getName());
-      Log.info("Resolved valueTypeSymbol \"VehicleStatus\"; ResolvedName = " + packageSymbol.get().getName(),
-          SymbolTableCreationTest.class.getName());
-    }else {
-      System.out.println("Resolving VehicleStatus was not successful.");
-    }
-
     Optional<PackageSymbol> notExistingSymbol = topScope.resolvePackage("WrongName Example");
 
     assertTrue(packageSymbol.isPresent());
+    assertEquals("Blocks Example", packageSymbol.get().getName());
     assertTrue(blockSymbol.isPresent());
+    assertEquals("Vehicle", blockSymbol.get().getName());
     assertTrue(valueTypeSymbol.isPresent());
+    assertEquals("VehicleStatus", valueTypeSymbol.get().getName());
     assertFalse(notExistingSymbol.isPresent());
 
 
@@ -98,5 +76,25 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
     assertTrue(blockSymbolEnclosingScope.isPresent());
     assertTrue(valueTypeSymbolEnclosingScope.isPresent());
     assertFalse(notExistingSymbolEnclosingScope.isPresent());
+  }
+
+
+  @Test
+  public void testSuccessfulCreationInMultipleFiles() {
+    String currentPath = this.pathToOfficialSysMLTrainingExamples;
+    List<ASTUnit> models = SysMLTool.parseDirectory(currentPath);
+    SysMLGlobalScope topScope = SysMLTool.buildSymbolTable(currentPath, models);
+
+    //Testing Symboltable
+    Optional<PackageSymbol> packageSymbolBlocksExample = topScope.resolvePackage("Blocks Example");
+    assertTrue(packageSymbolBlocksExample.isPresent());
+    Optional<PackageSymbol> packageSymbolCommentExample = topScope.resolvePackage("Comment Example");
+    assertTrue(packageSymbolCommentExample.isPresent());
+    Optional<PackageSymbol> packageSymbolPackageExample = topScope.resolvePackage("Package Example");
+    assertTrue(packageSymbolPackageExample.isPresent());
+
+    Optional<PackageSymbol> notExistingPackageSymbol = topScope.resolvePackage("WrongName...!");
+    assertFalse(notExistingPackageSymbol.isPresent());
+
   }
 }

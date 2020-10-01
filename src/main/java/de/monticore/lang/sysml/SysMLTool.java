@@ -37,36 +37,16 @@ public class SysMLTool {
       return;
     }
     String dir = args[0];
-    SysMLParserMultipleFiles sysMLParserMultipleFiles = new SysMLParserMultipleFiles();
-    File checkingIfDirOrFileExists = new File(dir);
-    if (!checkingIfDirOrFileExists.exists()) {
-      Log.error("The provided input path " + dir + " does not exists. Exiting.");
-      return;
-    }
 
-    Log.info("Parsing models in directory or file " + dir, SysMLTool.class.getName());
-    // Gathering all models in given directory "dir".
-    List<ASTUnit> models = new ArrayList<>();
-    List<String> filePaths = getSysMLFilePathsInDirectory(dir);
-    final ModelPath mp = createModelpath(filePaths);
+
 
     // Parsing
+    List<ASTUnit> models = parseDirectory(dir);
 
-    try {
-      for (String path : filePaths) {
-        models.add(sysMLParserMultipleFiles.parseSingleFile(path));
-      }
-    }
-    catch (IOException e) {
-      //e.printStackTrace();
-      Log.error("Could not parse all provided models.");
-      return;
-    }
 
     // Symboltable
-    Log.info("Creating Symbol Table.", SysMLTool.class.getName());
-    HelperSysMLSymbolTableCreator helperSysMLSymbolTableCreator = new HelperSysMLSymbolTableCreator();
-    SysMLGlobalScope sysMLGlobalScope = helperSysMLSymbolTableCreator.createSymboltableMultipleASTUnit(models,mp);
+    SysMLGlobalScope sysMLGlobalScope = buildSymbolTable(dir, models);
+
 
     // Context Conditions
     Log.info("Checking Context Conditions.", SysMLTool.class.getName());
@@ -76,6 +56,40 @@ public class SysMLTool {
 
     Log.info("Parsed and checked all models successfully.", SysMLTool.class.getName());
 
+  }
+
+  public static SysMLGlobalScope buildSymbolTable(String dir, List<ASTUnit> models){
+    Log.info("Creating Symbol Table.", SysMLTool.class.getName());
+    final ModelPath mp = createModelpath(getSysMLFilePathsInDirectory(dir));
+    HelperSysMLSymbolTableCreator helperSysMLSymbolTableCreator = new HelperSysMLSymbolTableCreator();
+    SysMLGlobalScope sysMLGlobalScope = helperSysMLSymbolTableCreator.createSymboltableMultipleASTUnit(models,mp);
+    return sysMLGlobalScope;
+  }
+
+  public static List<ASTUnit> parseDirectory(String dir){
+    SysMLParserMultipleFiles sysMLParserMultipleFiles = new SysMLParserMultipleFiles();
+    File checkingIfDirOrFileExists = new File(dir);
+    if (!checkingIfDirOrFileExists.exists()) {
+      Log.error("The provided input path " + dir + " does not exists. Exiting.");
+      return new ArrayList<>();
+    }
+
+    Log.info("Parsing models in directory or file " + dir, SysMLTool.class.getName());
+    // Gathering all models in given directory "dir".
+    List<String> filePaths = getSysMLFilePathsInDirectory(dir);
+
+    List<ASTUnit> models = new ArrayList<>();
+    try {
+      for (String path : filePaths) {
+        models.add(sysMLParserMultipleFiles.parseSingleFile(path));
+      }
+    }
+    catch (IOException e) {
+      //e.printStackTrace();
+      Log.error("Could not parse all provided models.");
+      return new ArrayList<>();
+    }
+    return models;
   }
 
   public static List<String> getSysMLFilePathsInDirectory(String dir) {
@@ -112,9 +126,8 @@ public class SysMLTool {
     final ModelPath mp = new ModelPath(p);
     return mp;
   }
-  public static ModelPath createModelpath(String filePath){
-    List<String> filePathAsList = new ArrayList<>();
-    filePathAsList.add(filePath);
+  public static ModelPath createModelpath(String dirOrFile){
+    List<String> filePathAsList = getSysMLFilePathsInDirectory(dirOrFile);
     return createModelpath(filePathAsList);
   }
 }
