@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.lang.sysml._symboltable.HelperSysMLSymbolTableCreator;
 import de.monticore.lang.sysml._symboltable.SysMLLanguageSub;
-import de.monticore.lang.sysml.basics.interfaces.sharedbasis._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.monticore.lang.sysml.parser.SysMLParserMultipleFiles;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLArtifactScope;

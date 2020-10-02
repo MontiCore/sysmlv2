@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics.interfaces;
 
-component grammar SharedBasis extends de.monticore.lang.sysml.basics.interfaces.NamesBasis{
+component grammar SysMLShared extends de.monticore.lang.sysml.basics.interfaces.SysMLNamesBasis{
   interface Unit; //A Unit is a starting production
 
   interface NestedDefinitionMember;

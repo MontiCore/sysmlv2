@@ -1,9 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics.sysmldefault;
 
-component grammar Expressions extends de.monticore.expressions.CommonExpressions,
-  de.monticore.lang.sysml.basics.interfaces.SharedBasis,
-  de.monticore.lang.sysml.basics.interfaces.NamesBasis,
+component grammar SysMLExpressions extends de.monticore.expressions.CommonExpressions,
+  de.monticore.lang.sysml.basics.interfaces.SysMLShared,
+  de.monticore.lang.sysml.basics.interfaces.SysMLNamesBasis,
   de.monticore.lang.sysml.basics.interfaces.SysMLExpressionsBasis {
 
   /* EXPRESSIONS */

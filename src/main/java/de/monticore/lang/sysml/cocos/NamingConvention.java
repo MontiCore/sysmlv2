@@ -1,14 +1,14 @@
 package de.monticore.lang.sysml.cocos;
 
-import de.monticore.lang.sysml.basics.classifiers._ast.ASTClassifierDeclarationCompletionStd;
-import de.monticore.lang.sysml.basics.classifiers._cocos.ClassifiersASTClassifierDeclarationCompletionStdCoCo;
+import de.monticore.lang.sysml.basics.sysmlclassifiers._ast.ASTClassifierDeclarationCompletionStd;
+import de.monticore.lang.sysml.basics.sysmlclassifiers._cocos.SysMLClassifiersASTClassifierDeclarationCompletionStdCoCo;
 import de.se_rwth.commons.logging.Log;
 
 /**
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class NamingConvention implements ClassifiersASTClassifierDeclarationCompletionStdCoCo {
+public class NamingConvention implements SysMLClassifiersASTClassifierDeclarationCompletionStdCoCo {
 
   @Override
   public void check(ASTClassifierDeclarationCompletionStd node) {

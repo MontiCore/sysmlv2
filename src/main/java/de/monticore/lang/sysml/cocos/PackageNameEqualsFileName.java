@@ -1,8 +1,7 @@
 package de.monticore.lang.sysml.cocos;
 
-
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._ast.ASTPackageUnit;
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._cocos.ImportsAndPackagesASTPackageUnitCoCo;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageUnit;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTPackageUnitCoCo;
 import de.se_rwth.commons.logging.Log;
 
 import java.nio.file.Path;
@@ -14,7 +13,7 @@ import java.nio.file.Paths;
  * This CoCos is a bit different than the normal MontiCore CoCos, because it compares the filename and the if the
  * hierarchical highest unit is a package unit with the same name as the filename.
  */
-public class PackageNameEqualsFileName implements ImportsAndPackagesASTPackageUnitCoCo {
+public class PackageNameEqualsFileName implements SysMLImportsAndPackagesASTPackageUnitCoCo {
 
   @Override
   public void check(ASTPackageUnit node) {

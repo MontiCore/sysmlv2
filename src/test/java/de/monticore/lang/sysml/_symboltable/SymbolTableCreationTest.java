@@ -2,14 +2,10 @@ package de.monticore.lang.sysml._symboltable;
 
 import de.monticore.io.paths.ModelPath;
 import de.monticore.lang.sysml.SysMLTool;
-import de.monticore.lang.sysml.basics.interfaces.sharedbasis._ast.ASTUnit;
-import de.monticore.lang.sysml.basics.interfaces.sharedbasis._symboltable.ISharedBasisScope;
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._ast.ASTPackageUnit;
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._symboltable.IImportsAndPackagesScope;
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._symboltable.ImportsAndPackagesScope;
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._symboltable.PackageSymbol;
-import de.monticore.lang.sysml.basics.valuetypes._ast.ASTValueTypeStd;
-import de.monticore.lang.sysml.basics.valuetypes._symboltable.ValueTypeStdSymbol;
+import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageUnit;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._symboltable.PackageSymbol;
+import de.monticore.lang.sysml.basics.sysmlvaluetypes._symboltable.ValueTypeStdSymbol;
 import de.monticore.lang.sysml.bdd._ast.ASTBlock;
 import de.monticore.lang.sysml.bdd._symboltable.BlockSymbol;
 import de.monticore.lang.sysml.sysml._symboltable.ISysMLScope;
@@ -49,6 +45,7 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
     SysMLArtifactScope topScope = helperSysMLSymbolTableCreator.createSymboltableSingleASTUnit(astUnit, mp);
 
     //Testing Symboltable
+    // Optional<PackageSymbol> packageSymbol = topScope.resolvePackage("Blocks Example");
     Optional<PackageSymbol> packageSymbol = topScope.resolvePackage("Blocks Example");
     Optional<BlockSymbol> blockSymbol = topScope.getSubScopes().get(0).resolveBlockDown("Vehicle");
     Optional<ValueTypeStdSymbol> valueTypeSymbol = topScope.getSubScopes().get(0).resolveValueTypeStdDown(

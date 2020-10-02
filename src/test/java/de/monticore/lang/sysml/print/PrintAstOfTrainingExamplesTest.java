@@ -1,6 +1,6 @@
 package de.monticore.lang.sysml.print;
 
-import de.monticore.lang.sysml.basics.interfaces.sharedbasis._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.utils.SysMLParserForTesting;
 import org.junit.Test;
 import org.reflections.ReflectionUtils;

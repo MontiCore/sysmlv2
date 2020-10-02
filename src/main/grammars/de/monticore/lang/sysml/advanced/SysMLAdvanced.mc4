@@ -2,9 +2,9 @@
 package de.monticore.lang.sysml.advanced;
 
 
-component grammar SysMLAdvanced extends de.monticore.lang.sysml.advanced.Definitions,
- de.monticore.lang.sysml.advanced.SuccessionsAndItemFlows,
- de.monticore.lang.sysml.advanced.Constraints {
+component grammar SysMLAdvanced extends de.monticore.lang.sysml.advanced.SysMLDefinitions,
+ de.monticore.lang.sysml.advanced.SysMLSuccessionsAndItemFlows,
+ de.monticore.lang.sysml.advanced.SysMLConstraints {
 
 
  /* ACTIVITIES */

@@ -1,8 +1,10 @@
 package de.monticore.lang.sysml._symboltable;
 
 import de.monticore.io.paths.ModelPath;
-import de.monticore.lang.sysml.basics.interfaces.sharedbasis._ast.ASTUnit;
-import de.monticore.lang.sysml.sysml._symboltable.*;
+import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.sysml._symboltable.SysMLArtifactScope;
+import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
+import de.monticore.lang.sysml.sysml._symboltable.SysMLSymbolTableCreatorDelegator;
 
 import java.util.List;
 

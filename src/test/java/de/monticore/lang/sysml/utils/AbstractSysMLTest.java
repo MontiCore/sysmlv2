@@ -1,6 +1,6 @@
 package de.monticore.lang.sysml.utils;
 
-import de.monticore.lang.sysml.basics.interfaces.sharedbasis._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;

@@ -8,7 +8,7 @@ grammar SysML extends de.monticore.lang.sysml.AD,
   de.monticore.lang.sysml.ParametricDiagram,
   de.monticore.lang.sysml.RequirementDiagram,
   de.monticore.lang.sysml.SMD,
-  de.monticore.lang.sysml.basics.sysmldefault.SysMLBasicsDefault {
+  de.monticore.lang.sysml.basics.sysmldefault.SysMLBasics {
 
   start Unit;
 }

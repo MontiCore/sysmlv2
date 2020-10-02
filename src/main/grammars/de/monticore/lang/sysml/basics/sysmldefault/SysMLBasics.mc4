@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.basics.sysmldefault;
+
+component grammar SysMLBasics extends de.monticore.lang.sysml.basics.sysmldefault.SysMLComments,
+ de.monticore.lang.sysml.basics.sysmldefault.SysMLExpressions,
+ de.monticore.lang.sysml.basics.sysmldefault.SysMLImportsAndPackages,
+ de.monticore.lang.sysml.basics.sysmldefault.SysMLLiterals,
+ de.monticore.lang.sysml.basics.sysmldefault.SysMLNames,
+ de.monticore.lang.sysml.basics.sysmldefault.SysMLVisibility{
+}

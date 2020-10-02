@@ -1,9 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics.sysmldefault;
 
-component grammar Comments extends de.monticore.lang.sysml.basics.interfaces.CommentsBasis,
-  de.monticore.lang.sysml.basics.interfaces.PackageBasis,
-  de.monticore.lang.sysml.basics.interfaces.NamesBasis {
+component grammar SysMLComments extends de.monticore.lang.sysml.basics.interfaces.SysMLCommentsBasis,
+  de.monticore.lang.sysml.basics.interfaces.SysMLPackageBasis,
+  de.monticore.lang.sysml.basics.interfaces.SysMLNamesBasis {
 
   /*Remark: Xtext suggests "comment" SysMLName? (Annotation | EmptyAnnotation) ML_Comment
   * but we do not have ML_Comment (Because MCBasics saves these in the AST) and we

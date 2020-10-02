@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.advanced;
 
-component grammar Definitions extends de.monticore.lang.sysml.basics.SysMLCommon {
+component grammar SysMLDefinitions extends de.monticore.lang.sysml.basics.SysMLCommon {
 
   /* DEFINITIONS */
 

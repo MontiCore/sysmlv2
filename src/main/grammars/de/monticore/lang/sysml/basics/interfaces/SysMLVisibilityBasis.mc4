@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics.interfaces;
 
-component grammar VisibilityBasis{
+component grammar SysMLVisibilityBasis{
   interface PackageElementVisibilityIndicator;
   interface VisibilityIndicator;
 }
