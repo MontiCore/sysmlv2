@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml;
 
-component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.SysMLAdvanced
+component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.SysMLConstraints
   {
 
   /* REQUIREMENT DEFINITIONS */

@@ -58,6 +58,9 @@ component grammar SysMLUsages extends de.monticore.lang.sysml.basics.SysMLCommon
 
   ParameterStd implements Parameter = ParameterTypePart?;
   ParameterTypePart = (TypedByKeyword (FeatureTyping | "any" ) MultiplicityPart? )
-    | (MultiplicityPart) ;
+    | (MultiplicityPart);
 
+  ActionOrStateUsageDeclaration = (SysMLNameAndTypePart ActionParameterList? SubsettingPart ValuePart?)
+       | (TypePart? ActionParameterList? ValuePart?)
+       | (RedefinesKeyword Redefinition TypePart ActionParameterList? ValuePart?);
 }

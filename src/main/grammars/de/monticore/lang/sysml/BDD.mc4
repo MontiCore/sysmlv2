@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml;
 
-component grammar BDD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
+component grammar BDD extends de.monticore.lang.sysml.basics.SysMLCommon {
 
   /* BLOCKS */
 

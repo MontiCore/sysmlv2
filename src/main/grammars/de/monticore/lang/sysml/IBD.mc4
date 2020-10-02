@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml;
 
-component grammar IBD extends de.monticore.lang.sysml.advanced.SysMLAdvanced
+component grammar IBD extends de.monticore.lang.sysml.basics.SysMLCommon
   {
 
   PartUnit implements Unit = UnitPrefix PartDeclaration UsageCompletion;
