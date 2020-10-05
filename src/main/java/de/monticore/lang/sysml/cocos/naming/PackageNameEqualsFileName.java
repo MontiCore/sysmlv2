@@ -1,7 +1,9 @@
-package de.monticore.lang.sysml.cocos;
+package de.monticore.lang.sysml.cocos.naming;
 
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageUnit;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTPackageUnitCoCo;
+import de.monticore.lang.sysml.cocos.SysMLCoCoName;
+import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.se_rwth.commons.logging.Log;
 
 import java.nio.file.Path;

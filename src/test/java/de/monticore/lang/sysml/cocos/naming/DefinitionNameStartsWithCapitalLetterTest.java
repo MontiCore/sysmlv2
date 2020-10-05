@@ -1,7 +1,8 @@
-package de.monticore.lang.sysml.cocos;
+package de.monticore.lang.sysml.cocos.naming;
 
 import de.monticore.cocos.helper.Assert;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.cocos.naming.DefinitionNameStartsWithCapitalLetter;
 import de.monticore.lang.sysml.sysml._cocos.SysMLCoCoChecker;
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;
 import de.se_rwth.commons.SourcePosition;
@@ -22,7 +23,7 @@ import static org.junit.Assert.assertTrue;
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class NamingConventionTest extends AbstractSysMLTest {
+public class DefinitionNameStartsWithCapitalLetterTest extends AbstractSysMLTest {
 
   @BeforeClass
   public static void init() {
@@ -41,7 +42,7 @@ public class NamingConventionTest extends AbstractSysMLTest {
     ASTUnit astUnit =
         this.parseSysMLSingleModel(this.pathToOfficialSysMLTrainingExamples + "/02. Blocks/Blocks Example.sysml");
     //System.out.println("Parsed Model.");
-    NamingConvention coco = new NamingConvention();
+    DefinitionNameStartsWithCapitalLetter coco = new DefinitionNameStartsWithCapitalLetter();
     //System.out.println("New SysMLCoCoChecker.");
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
     //System.out.println("coCoChecker.addCoCo(coco);");
@@ -59,7 +60,7 @@ public class NamingConventionTest extends AbstractSysMLTest {
     ASTUnit astUnit = this.parseSysMLSingleModel(this.pathToInvalidModels
         + "/NamingConvention/Blocks Example.sysml");
 
-    NamingConvention coco = new NamingConvention();
+    DefinitionNameStartsWithCapitalLetter coco = new DefinitionNameStartsWithCapitalLetter();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
     coCoChecker.addCoCo(coco);
     coCoChecker.checkAll(astUnit);

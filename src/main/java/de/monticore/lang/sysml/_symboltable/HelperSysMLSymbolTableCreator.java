@@ -6,6 +6,7 @@ import de.monticore.lang.sysml.sysml._symboltable.SysMLArtifactScope;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLSymbolTableCreatorDelegator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**

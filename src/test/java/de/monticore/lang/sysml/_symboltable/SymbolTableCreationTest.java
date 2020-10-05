@@ -47,6 +47,7 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
     //Testing Symboltable
     // Optional<PackageSymbol> packageSymbol = topScope.resolvePackage("Blocks Example");
     Optional<PackageSymbol> packageSymbol = topScope.resolvePackage("Blocks Example");
+    // Optional<BlockSymbol> blockSymbol = topScope.getSubScopes().get(0).resolveBlockDown("Vehicle");
     Optional<BlockSymbol> blockSymbol = topScope.getSubScopes().get(0).resolveBlockDown("Vehicle");
     Optional<ValueTypeStdSymbol> valueTypeSymbol = topScope.getSubScopes().get(0).resolveValueTypeStdDown(
         "VehicleStatus");

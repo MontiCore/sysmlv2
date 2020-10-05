@@ -58,6 +58,14 @@ public class SysMLTool {
 
   }
 
+  public static SysMLArtifactScope buildSymbolTablePathToSingleFile(String pathToFile, ASTUnit model){
+    Log.info("Creating Symbol Table.", SysMLTool.class.getName());
+    final ModelPath mp = createModelpath(pathToFile);
+    HelperSysMLSymbolTableCreator helperSysMLSymbolTableCreator = new HelperSysMLSymbolTableCreator();
+    SysMLArtifactScope scope = helperSysMLSymbolTableCreator.createSymboltableSingleASTUnit(model,mp);
+    return scope;
+  }
+
   public static SysMLGlobalScope buildSymbolTable(String dir, List<ASTUnit> models){
     Log.info("Creating Symbol Table.", SysMLTool.class.getName());
     final ModelPath mp = createModelpath(getSysMLFilePathsInDirectory(dir));

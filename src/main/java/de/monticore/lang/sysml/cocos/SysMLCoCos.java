@@ -1,5 +1,6 @@
 package de.monticore.lang.sysml.cocos;
 
+import de.monticore.lang.sysml.cocos.naming.DefinitionNameStartsWithCapitalLetter;
 import de.monticore.lang.sysml.sysml._cocos.SysMLCoCoChecker;
 import jline.internal.Log;
 
@@ -10,7 +11,7 @@ import jline.internal.Log;
 public class SysMLCoCos {
   public SysMLCoCoChecker getCheckerForAllCoCos() {
     final SysMLCoCoChecker checker = new SysMLCoCoChecker();
-    checker.addCoCo(new NamingConvention());
+    checker.addCoCo(new DefinitionNameStartsWithCapitalLetter());
     //checker.addCoCo(new StateNameStartsWithCapitalLetter());
 
     return checker;
@@ -28,8 +29,10 @@ public class SysMLCoCos {
         return res.append("02").toString();
       case PackageNameEqualsFileName:
         return res.append("03").toString();
-      case NamingConvention:
+      case DefinitionNameStartsWithCapitalLetter:
         return res.append("04").toString();
+      case NameReference:
+        return res.append("05").toString();
       default:
         Log.error("Internal error: One CoCo was not registered correctly.");
         return res.append("00").toString();
