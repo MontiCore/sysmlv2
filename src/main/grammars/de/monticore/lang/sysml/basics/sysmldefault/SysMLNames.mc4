@@ -2,16 +2,21 @@
 package de.monticore.lang.sysml.basics.sysmldefault;
 
 component grammar SysMLNames extends de.monticore.MCBasics,
- de.monticore.lang.sysml.basics.interfaces.SysMLNamesBasis{
+ de.monticore.lang.sysml.basics.interfaces.SysMLNamesBasis {
 
-  SimpleName implements QualifiedName = SysMLName;
-  ColonQualifiedName implements QualifiedName = (SysMLName || "::")+;
-  DotQualifiedName implements QualifiedName = (SysMLName || ".")+;
+  SimpleName implements QualifiedName, MCObjectType = SysMLName;
+  ColonQualifiedName implements QualifiedName, MCObjectType = (SysMLName || "::")+;
+  DotQualifiedName implements QualifiedName, MCObjectType = (SysMLName || ".")+;
+
+
+
 
   fragment token AnyText = ~ ('\'');
   token UNRESTRICTED_NAME = '\'' AnyText* '\'';
 
-  SysMLNameDefault implements SysMLName = (mcBasicsName:Name | unrestrictedName:UNRESTRICTED_NAME); //Remark in Xtext this is Name
+  //TODO  implements MCType ???
+  SysMLNameDefault implements SysMLName = (mcBasicsName:Name | unrestrictedName:UNRESTRICTED_NAME);
+  //Remark in Xtext this is Name
   astrule SysMLNameDefault =
     method public String getName(){
       if( this.isPresentMcBasicsName()){

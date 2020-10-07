@@ -7,6 +7,7 @@ import de.monticore.lang.sysml.basics.sysmlclassifiers._ast.ASTClassifierDeclara
 import de.monticore.lang.sysml.basics.sysmlclassifiers._ast.ASTSuperclassingList;
 import de.monticore.lang.sysml.basics.sysmlclassifiers._cocos.SysMLClassifiersASTClassifierDeclarationCompletionStdCoCo;
 import de.monticore.lang.sysml.basics.sysmlclassifiers._symboltable.ISysMLClassifiersScope;
+import de.monticore.lang.sysml.basics.sysmlclassifiers._symboltable.SysMLClassifiersScope;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlnames._ast.ASTColonQualifiedName;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlnames._ast.ASTDotQualifiedName;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlnames._ast.ASTSimpleName;
@@ -17,6 +18,7 @@ import de.monticore.lang.sysml.cocos.SysMLCoCoName;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLArtifactScope;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
+import de.monticore.types.typesymbols._symboltable.TypeSymbol;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
@@ -82,14 +84,21 @@ public class NameReference implements SysMLClassifiersASTClassifierDeclarationCo
 
       Log.info("Checking to resolve name " + reference, this.getClass().getName());
       ISysMLClassifiersScope scope =  node.getEnclosingScope();
-      /*Optional<BlockSymbol> blockSymbol = scope.resolveBlock(reference);
-      if(blockSymbol.isPresent()){
+      /*SysMLClassifiersScope scope;
+      if(iSysMLClassifiersScope instanceof SysMLClassifiersScope){
+        scope = (SysMLClassifiersScope) iSysMLClassifiersScope;
+      }else {
+        Log.error("Internal error. Could not cast to SysMLArtifactScope." + this.getClass().getName());
+        return;
+      }*/
+      Optional<TypeSymbol> type = scope.resolveType(reference);
+      if(type.isPresent()){
         Log.info("Block could be resolved. " + reference, this.getClass().getName());
       }else {
-        Log.error(SysMLCoCos.getErrorCode(SysMLCoCoName.NameReference) +
+        Log.error(SysMLCoCos.getErrorCode(SysMLCoCoName.NameReference) + " "+
             node.getName() + " does superclass "
             + " " +reference +", but " + reference + " could not be resolved.");
-      }*/
+      }
       // node.getEnclosingScope().resolveType(reference);
       //TODO
     }

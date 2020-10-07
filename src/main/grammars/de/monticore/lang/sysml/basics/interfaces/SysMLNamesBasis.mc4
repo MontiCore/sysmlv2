@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics.interfaces;
 
-component grammar SysMLNamesBasis {
-  interface QualifiedName;
+component grammar SysMLNamesBasis extends de.monticore.types.MCBasicTypes {
+  interface QualifiedName extends MCType;
   interface SysMLName; //Default Name for SysML
 
   astrule SysMLName =
@@ -16,5 +16,9 @@ component grammar SysMLNamesBasis {
 
      }
     ;
+
+  // SysMLQualifiedType implements MCObjectType  = QualifiedName;
+
+
 
 }

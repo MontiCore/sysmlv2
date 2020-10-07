@@ -18,12 +18,13 @@ component grammar SysMLShared extends de.monticore.lang.sysml.basics.interfaces.
 
   interface Parameter;
 
-  interface TypePart;
+
 
   token FromToDigitsDotDot = ('0'..'9')+ "..";
   /*Remark: The following does not exist in Xtext, but since many NTs use the following structure we introduced this NT.
   */
 
+  interface TypePart;
   symbol SysMLNameAndTypePart = SysMLName TypePart?;
   astrule SysMLNameAndTypePart =
     method public String getName(){

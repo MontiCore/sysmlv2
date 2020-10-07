@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
  * @version 1.0
  */
 public class NameReferenceTest extends AbstractSysMLTest {
-  /*@BeforeClass
+  @BeforeClass
   public static void init() {
     Log.enableFailQuick(false);
   }
@@ -35,7 +35,7 @@ public class NameReferenceTest extends AbstractSysMLTest {
   @Before
   public void setUp() throws RecognitionException {
     this.setUpLog();
-  }*/
+  }
 
   @Ignore
   @Test
@@ -48,6 +48,7 @@ public class NameReferenceTest extends AbstractSysMLTest {
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
     coCoChecker.addCoCo(coco);
     coCoChecker.checkAll(astUnit);
+    printAllFindings();
     assertTrue(Log.getFindings().isEmpty());
   }
 
@@ -55,7 +56,7 @@ public class NameReferenceTest extends AbstractSysMLTest {
   @Test
   public void testInvalidDoesNotStartWithCapitalLetter() {
     ASTUnit astUnit = this.parseSysMLSingleModel(this.pathToInvalidModels
-        + "/WrongPackageName/Blocks Example.sysml");
+        + "/WrongPackageName/Blocks Example.sysml"); //TODO
 
     PackageNameEqualsFileName coco = new PackageNameEqualsFileName();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
