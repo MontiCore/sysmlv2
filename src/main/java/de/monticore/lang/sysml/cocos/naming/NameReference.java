@@ -2,7 +2,7 @@ package de.monticore.lang.sysml.cocos.naming;
 
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTQualifiedName;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTSysMLName;
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._cocos.SysMLNamesBasisASTQualifiedNameCoCo;
+import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysml.basics.sysmlclassifiers._ast.ASTClassifierDeclarationCompletionStd;
 import de.monticore.lang.sysml.basics.sysmlclassifiers._ast.ASTSuperclassingList;
 import de.monticore.lang.sysml.basics.sysmlclassifiers._cocos.SysMLClassifiersASTClassifierDeclarationCompletionStdCoCo;
@@ -11,13 +11,8 @@ import de.monticore.lang.sysml.basics.sysmlclassifiers._symboltable.SysMLClassif
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlnames._ast.ASTColonQualifiedName;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlnames._ast.ASTDotQualifiedName;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlnames._ast.ASTSimpleName;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlnames._cocos.SysMLNamesASTColonQualifiedNameCoCo;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlnames._symboltable.ISysMLNamesScope;
-import de.monticore.lang.sysml.bdd._symboltable.BlockSymbol;
 import de.monticore.lang.sysml.cocos.SysMLCoCoName;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLArtifactScope;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
 import de.monticore.types.typesymbols._symboltable.TypeSymbol;
 import de.se_rwth.commons.logging.Log;
 
@@ -31,7 +26,7 @@ import java.util.Optional;
  */
 public class NameReference implements SysMLClassifiersASTClassifierDeclarationCompletionStdCoCo {
 
-  /* @Override
+  /*@Override
   public void check(ASTQualifiedName node) {
     List<ASTSysMLName> fullQualifiedName = new ArrayList<>();
     String reference;
@@ -62,7 +57,7 @@ public class NameReference implements SysMLClassifiersASTClassifierDeclarationCo
       return;
     }
     ASTSuperclassingList superclassing = node.getSuperclassingList();
-    for (ASTQualifiedName qualifiedName : superclassing.getQualifiedNameList()) {
+    /*for (ASTQualifiedName qualifiedName : superclassing.getQualifiedNameList()) {
       List<ASTSysMLName> fullQualifiedName = new ArrayList<>();
       String reference;
       if(qualifiedName instanceof ASTSimpleName){
@@ -80,24 +75,25 @@ public class NameReference implements SysMLClassifiersASTClassifierDeclarationCo
         Log.error("Internal error. Please add a coco for the this Qualified Name instance " + node.toString() +
             " in class " + this.getClass().getName());
         return;
-      }
+      }*/
+    for (ASTQualifiedName qualifiedName : superclassing.getQualifiedNameList()) {
+      String reference = qualifiedName.getReferencedName();
 
       Log.info("Checking to resolve name " + reference, this.getClass().getName());
       ISysMLClassifiersScope scope =  node.getEnclosingScope();
-      /*SysMLClassifiersScope scope;
-      if(iSysMLClassifiersScope instanceof SysMLClassifiersScope){
+      /*if(iSysMLClassifiersScope instanceof SysMLClassifiersScope){
         scope = (SysMLClassifiersScope) iSysMLClassifiersScope;
       }else {
         Log.error("Internal error. Could not cast to SysMLArtifactScope." + this.getClass().getName());
         return;
       }*/
-      Optional<TypeSymbol> type = scope.resolveType(reference);
+      Optional<SysMLTypeSymbol> type = scope.resolveSysMLType(reference);
       if(type.isPresent()){
         Log.info("Block could be resolved. " + reference, this.getClass().getName());
       }else {
         Log.error(SysMLCoCos.getErrorCode(SysMLCoCoName.NameReference) + " "+
             node.getName() + " does superclass "
-            + " " +reference +", but " + reference + " could not be resolved.");
+            + " " +reference +", but " + reference + " could not be resolved.",  node.get_SourcePositionStart());
       }
       // node.getEnclosingScope().resolveType(reference);
       //TODO

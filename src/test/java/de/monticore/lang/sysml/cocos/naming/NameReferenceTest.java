@@ -3,6 +3,8 @@ package de.monticore.lang.sysml.cocos.naming;
 import de.monticore.cocos.helper.Assert;
 import de.monticore.lang.sysml.SysMLTool;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.cocos.SysMLCoCoName;
+import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.monticore.lang.sysml.cocos.naming.PackageNameEqualsFileName;
 import de.monticore.lang.sysml.sysml._cocos.SysMLCoCoChecker;
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;
@@ -37,7 +39,6 @@ public class NameReferenceTest extends AbstractSysMLTest {
     this.setUpLog();
   }
 
-  @Ignore
   @Test
   public void testValid() {
     ASTUnit astUnit =
@@ -52,23 +53,25 @@ public class NameReferenceTest extends AbstractSysMLTest {
     assertTrue(Log.getFindings().isEmpty());
   }
 
-  @Ignore
   @Test
   public void testInvalidDoesNotStartWithCapitalLetter() {
-    ASTUnit astUnit = this.parseSysMLSingleModel(this.pathToInvalidModels
-        + "/WrongPackageName/Blocks Example.sysml"); //TODO
+    String modelPath = this.pathToInvalidModels + "/naming/ReferenceIsMissing.sysml";
+    ASTUnit astUnit =
+        this.parseSysMLSingleModel(modelPath);
 
-    PackageNameEqualsFileName coco = new PackageNameEqualsFileName();
+    SysMLTool.buildSymbolTablePathToSingleFile(modelPath, astUnit);
+    NameReference coco = new NameReference();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
     coCoChecker.addCoCo(coco);
     coCoChecker.checkAll(astUnit);
+    //printAllFindings();
 
     assertEquals(1, Log.getFindings().size());
-    assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
-    //this.printAllFindings();
+    assertTrue(Log.getFindings().stream().findFirst().get().isError());
     Collection<Finding> expectedWarnings = Arrays.asList(
-        Finding.warning("0xSysML03 package WrongName should be equal to the Filename.",
-            new SourcePosition(1, 0, "Blocks Example.sysml"))
+        Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.NameReference)) +
+                " Car does superclass  NeverDefined, but NeverDefined could not be resolved.",
+            new SourcePosition(2, 7, "ReferenceIsMissing.sysml"))
     );
 
     Assert.assertErrors(expectedWarnings, Log.getFindings());

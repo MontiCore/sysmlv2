@@ -2,13 +2,12 @@ package de.monticore.lang.sysml._symboltable;
 
 import de.monticore.io.paths.ModelPath;
 import de.monticore.lang.sysml.SysMLTool;
+import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageUnit;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._symboltable.PackageSymbol;
 import de.monticore.lang.sysml.basics.sysmlvaluetypes._symboltable.ValueTypeStdSymbol;
 import de.monticore.lang.sysml.bdd._ast.ASTBlock;
-import de.monticore.lang.sysml.bdd._symboltable.BlockSymbol;
-import de.monticore.lang.sysml.sysml._symboltable.ISysMLScope;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLArtifactScope;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;
@@ -48,7 +47,7 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
     // Optional<PackageSymbol> packageSymbol = topScope.resolvePackage("Blocks Example");
     Optional<PackageSymbol> packageSymbol = topScope.resolvePackage("Blocks Example");
     // Optional<BlockSymbol> blockSymbol = topScope.getSubScopes().get(0).resolveBlockDown("Vehicle");
-    Optional<BlockSymbol> blockSymbol = topScope.getSubScopes().get(0).resolveBlockDown("Vehicle");
+    Optional<SysMLTypeSymbol> blockSymbol = topScope.getSubScopes().get(0).resolveSysMLType("Vehicle");
     Optional<ValueTypeStdSymbol> valueTypeSymbol = topScope.getSubScopes().get(0).resolveValueTypeStdDown(
         "VehicleStatus");
     Optional<PackageSymbol> notExistingSymbol = topScope.resolvePackage("WrongName Example");
@@ -65,7 +64,7 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
     SysMLArtifactScope scope = (SysMLArtifactScope) astUnit.getEnclosingScope();
     //Testing resolving with astUnit
     Optional<PackageSymbol> packageSymbolEnclosingScope = scope.resolvePackage("Blocks Example");
-    Optional<BlockSymbol> blockSymbolEnclosingScope = scope.getSubScopes().get(0).resolveBlockDown("Vehicle");
+    Optional<SysMLTypeSymbol> blockSymbolEnclosingScope = scope.getSubScopes().get(0).resolveSysMLType("Vehicle");
     Optional<ValueTypeStdSymbol> valueTypeSymbolEnclosingScope = scope.getSubScopes().get(0).resolveValueTypeStdDown(
         "VehicleStatus");
     Optional<PackageSymbol> notExistingSymbolEnclosingScope = scope.resolvePackage("WrongName Example");

@@ -8,7 +8,22 @@ component grammar SysMLNames extends de.monticore.MCBasics,
   ColonQualifiedName implements QualifiedName, MCObjectType = (SysMLName || "::")+;
   DotQualifiedName implements QualifiedName, MCObjectType = (SysMLName || ".")+;
 
+  astrule SimpleName =
+   method public String getReferencedName(){
+      return  this.getSysMLName().getName();
+     }
+   ;
 
+  astrule ColonQualifiedName =
+    method public String getReferencedName(){
+      return  this.getSysMLName(this.getSysMLNameList().size()-1).getName();
+    }
+  ;
+  astrule DotQualifiedName =
+    method public String getReferencedName(){
+      return  this.getSysMLName(this.getSysMLNameList().size()-1).getName();
+    }
+  ;
 
 
   fragment token AnyText = ~ ('\'');

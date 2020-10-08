@@ -7,7 +7,14 @@ component grammar BDD extends de.monticore.lang.sysml.basics.SysMLCommon {
 
   BlockUnit implements Unit = UnitPrefix Block; //Remark: in Xtext BlockDeclaration DefinitionBody
 
-  symbol scope Block implements PackagedDefinitionMember = BlockDeclaration DefinitionBody;
+  //If symbol is added [ERROR] BDD.mc4:<10,2>: 0xA0125 The rule Block inherits symbols from more than one class.
+  /*if scope
+  C:\Users\robin\Documents\AAAAMasterarbeit\Gits\sysml2official\target\generated-sources\monticore\sourcecode\de\monticore\lang\sysml\bdd\_symboltable\BDDSymbolTableCreator.java:
+  [159,6122] The method setSpannedScope(IBDDScope) is undefined for the type SysMLTypeSymbol
+  [ERROR] C:\Users\robin\Documents\AAAAMasterarbeit\Gits\sysml2official\target\generated-sources\monticore\sourcecode\de\monticore\lang\sysml\bdd\_symboltable\BDDSymbolTableCreator.java:
+  [175,6715] The method getSpannedScope() is undefined for the type SysMLTypeSymbol
+*/
+  Block implements PackagedDefinitionMember, SysMLType = BlockDeclaration DefinitionBody;
   astrule Block =
     method public String getName(){
       return this.getBlockDeclaration().getName();
