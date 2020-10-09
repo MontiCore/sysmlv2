@@ -9,7 +9,8 @@ component grammar SysMLSuccessionsAndItemFlows extends de.monticore.lang.sysml.b
     ["abstract"]? "succession" Succession;
 
   Succession = SuccessionDeclaration ";";
-  symbol SuccessionDeclaration = ( SysMLName? TypePart? "first" )? ConnectorEndMember "then" ConnectorEndMember;
+  SuccessionDeclaration implements SysMLType =
+   ( SysMLName? TypePart? "first" )? ConnectorEndMember "then" ConnectorEndMember;
   astrule SuccessionDeclaration =
     method public String getName(){
       if( this.isPresentSysMLName()){
@@ -20,7 +21,7 @@ component grammar SysMLSuccessionsAndItemFlows extends de.monticore.lang.sysml.b
   ;
   TargetSuccession = "then" MultiplicitySourceEndMember ConnectorEndMember;
   EmptySuccession =  "then" MultiplicitySourceEndMember EmptyTargetEndMember;
-  symbol GuardedSuccession = "succession" (SysMLName? TypePart? "first")?
+  GuardedSuccession implements SysMLType = "succession" (SysMLName? TypePart? "first")?
     TransitionSourceMember GuardExpressionMember "then" TransitionSuccessionMember;
   astrule GuardedSuccession =
     method public String getName(){
@@ -40,7 +41,7 @@ component grammar SysMLSuccessionsAndItemFlows extends de.monticore.lang.sysml.b
   TargetTransitionStep = TriggerStepMember? GuardExpressionMember? EffectBehaviorMember? "then"
   TransitionSuccessionMember;
   TriggerStep = EmptyParameterMember ItemFeatureMember;
-  EffectBehaviourUsage = EmptyActionUsage | PerformedActionUsage ( "{" ActivityBodyItem* "}" )?;
+  scope EffectBehaviourUsage = EmptyActionUsage | PerformedActionUsage ( "{" ActivityBodyItem* "}" )?;
   TransitionSuccession = EmptySourceEndMember ConnectorEndMember;
 
   /* TRANSITION MEMBERSHIPS */
@@ -58,7 +59,7 @@ component grammar SysMLSuccessionsAndItemFlows extends de.monticore.lang.sysml.b
 
   ItemFlow = ItemFlowDeclaration DefinitionBody;
   SuccessionItemFlow = ItemFlowDeclaration DefinitionBody;
-  symbol ItemFlowDeclaration = ( (SysMLName)? TypePart?
+  ItemFlowDeclaration implements SysMLType = ( (SysMLName)? TypePart?
     (( "of" ItemFeatureMember) | (EmptyItemFeatureMember))
     "from" | EmptyItemFeatureMember )
     ItemFlowEndMember "to" ItemFlowEndMember;

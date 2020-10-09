@@ -6,7 +6,8 @@ component grammar SysMLValueTypes extends de.monticore.lang.sysml.basics.SysMLUs
 
   /* VALUE TYPES */
   ValueTypeUnit = UnitPrefix ValueType;
-  symbol scope ValueTypeStd implements ValueType, PackagedDefinitionMember =
+  //TODO check scope
+  ValueTypeStd implements SysMLType, ValueType, PackagedDefinitionMember =
     ValueTypeDeclaration DefinitionBody;
   astrule ValueTypeStd =
     method public String getName(){

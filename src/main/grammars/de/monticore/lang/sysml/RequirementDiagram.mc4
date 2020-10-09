@@ -6,7 +6,7 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.Sy
 
   /* REQUIREMENT DEFINITIONS */
 
-  symbol RequirementDefinition implements PackagedDefinitionMember = RequirementDefDeclaration RequirementBody;
+  RequirementDefinition implements SysMLType, PackagedDefinitionMember = RequirementDefDeclaration RequirementBody;
   astrule RequirementDefinition =
     method public String getName(){
       return this.getRequirementDefDeclaration().getName();
@@ -26,7 +26,8 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.Sy
   scope RequirementBody = ";" | ( "{" RequirementMembers "}" );
   RequirementMembers = (NestedDefinitionMember | NestedUsageMember |  RequirementConstraintMember | ImportUnit )*;
 
-  symbol RequirementConstraintUsage = ((( SysMLName)? TypePart? "as")? Subset | "constraint" (SysMLName)? TypePart?)
+  RequirementConstraintUsage implements SysMLType = ((( SysMLName)? TypePart? "as")? Subset | "constraint" (SysMLName)?
+  TypePart?)
      ConstraintParameterPart ConstraintBody;
   astrule RequirementConstraintUsage =
     method public String getName(){
@@ -57,7 +58,8 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.Sy
   	TypePart? ActionParameterList? EmptyReturnParameterPart ValuePart?
   	);
 
-  symbol scope SatisfyRequirementUsage =
+  //TODO check scope
+  SatisfyRequirementUsage implements SysMLType =
     ((( SysMLName)? TypePart? "as")? Subset
     | "requirement" (SysMLName)? TypePart?)
     ( "by" SatisfactionConnectorMember)?

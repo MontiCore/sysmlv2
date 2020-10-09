@@ -8,7 +8,7 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLDefinitions,
 
   ActivityUnit implements Unit = UnitPrefix Activity;
   Activity implements PackagedDefinitionMember = ActivityDeclaration ActivityBody;
-  symbol ActivityDeclaration = ["abstract"]? "activity" SysMLName ParameterList? SuperclassingList?;
+  ActivityDeclaration implements SysMLType = ["abstract"]? "activity" SysMLName ParameterList? SuperclassingList?;
   astrule ActivityDeclaration =
 
      method public String getName(){
@@ -16,7 +16,7 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLDefinitions,
      };
 
   ParameterListStd implements ParameterList = "(" (ParameterMember || "," )* ")";
-  ActivityBodyStd implements ActivityBody = ";" | ("{" ActivityBodyItem* "}");
+  scope ActivityBodyStd implements ActivityBody = ";" | ("{" ActivityBodyItem* "}");
   ActivityBodyItemStd implements ActivityBodyItem =
     NestedDefinitionMember
     | StructureUsageMember
@@ -28,7 +28,7 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLDefinitions,
 
   /* ACTIVITIY MEMBERSHIPS */
 
-  symbol ParameterMemberStd implements ParameterMember = direction:FeatureDirection? memberName:SysMLName Parameter;
+  ParameterMemberStd implements SysMLType, ParameterMember = direction:FeatureDirection? memberName:SysMLName Parameter;
   astrule ParameterMemberStd =
       method public String getName(){
         return this.getMemberName().getName();
@@ -62,7 +62,7 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLDefinitions,
     ("stream" | "flow") EmptyItemFeatureMember "from" ItemFlowEndMember;
 
   PerformActionUsage = PerformActionUsageDeclaration ActivityBody;
-  symbol PerformActionUsageDeclaration = ((( SysMLName TypePart? "as" )? Subset+)
+  PerformActionUsageDeclaration implements SysMLType = ((( SysMLName TypePart? "as" )? Subset+)
     |( "action" (SysMLName)? TypePart?)) ActionParameterList? SubsettingPart ValuePart?;
   astrule PerformActionUsageDeclaration =
     method public String getName(){

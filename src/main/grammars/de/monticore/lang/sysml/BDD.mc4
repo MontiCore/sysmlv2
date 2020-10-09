@@ -14,7 +14,8 @@ component grammar BDD extends de.monticore.lang.sysml.basics.SysMLCommon {
   [ERROR] C:\Users\robin\Documents\AAAAMasterarbeit\Gits\sysml2official\target\generated-sources\monticore\sourcecode\de\monticore\lang\sysml\bdd\_symboltable\BDDSymbolTableCreator.java:
   [175,6715] The method getSpannedScope() is undefined for the type SysMLTypeSymbol
 */
-  Block implements PackagedDefinitionMember, SysMLType = BlockDeclaration DefinitionBody;
+  //TODO check scope
+  Block implements SysMLType, PackagedDefinitionMember = BlockDeclaration DefinitionBody;
   astrule Block =
     method public String getName(){
       return this.getBlockDeclaration().getName();

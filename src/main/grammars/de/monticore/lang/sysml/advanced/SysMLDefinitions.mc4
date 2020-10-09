@@ -5,7 +5,9 @@ component grammar SysMLDefinitions extends de.monticore.lang.sysml.basics.SysMLC
 
   /* DEFINITIONS */
 
-  DefinitionBodyStd implements DefinitionBody = "{" (NestedDefinitionMember | NestedUsageMember | ImportUnit)* "}";
+  scope DefinitionBodyStd implements DefinitionBody = "{"
+    (NestedDefinitionMember | NestedUsageMember | ImportUnit)*
+  "}";
   DefinitionBodyEmpty implements DefinitionBody = ";";
 
   /* DEFINITION MEMBERSHIPS */

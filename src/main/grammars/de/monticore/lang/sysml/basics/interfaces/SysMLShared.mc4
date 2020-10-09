@@ -25,7 +25,7 @@ component grammar SysMLShared extends de.monticore.lang.sysml.basics.interfaces.
   */
 
   interface TypePart;
-  symbol SysMLNameAndTypePart = SysMLName TypePart?;
+  SysMLNameAndTypePart implements SysMLType = SysMLName TypePart?;
   astrule SysMLNameAndTypePart =
     method public String getName(){
       return this.getSysMLName().getName();

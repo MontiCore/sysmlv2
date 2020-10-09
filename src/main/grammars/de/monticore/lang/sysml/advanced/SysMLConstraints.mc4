@@ -7,7 +7,7 @@ component grammar SysMLConstraints extends de.monticore.lang.sysml.basics.SysMLC
 
   ConstraintDefinitionUnit implements Unit = UnitPrefix ConstraintDefinition;
   ConstraintDefinition implements PackagedDefinitionMember = ConstraintDefDeclaration ConstraintBody;
-  symbol ConstraintDefDeclaration = ["abstract"]? "constraint" "def" SysMLName ParameterList?
+  ConstraintDefDeclaration implements SysMLType = ["abstract"]? "constraint" "def" SysMLName ParameterList?
     EmptyReturnParameterPart SuperclassingList?;
   astrule ConstraintDefDeclaration =
     method public String getName(){
@@ -35,7 +35,7 @@ component grammar SysMLConstraints extends de.monticore.lang.sysml.basics.SysMLC
     | (TypePart? (ActionParameterList EmptyReturnParameterPart)? ValuePart?)
     | (RedefinesKeyword Redefinition TypePart? ActionParameterList? EmptyReturnParameterPart ValuePart?);
   ConstraintParameterPart = ActionParameterList? EmptyReturnParameterPart SubsettingPart ValuePart?;
-  symbol AssertConstraintUsage =
+  AssertConstraintUsage implements SysMLType =
     (((SysMLName? TypePart? "as" )? Subset+ ) | ("constraint" SysMLName? TypePart?) )
     ConstraintParameterPart InvariantPart ConstraintBody;
   astrule AssertConstraintUsage =

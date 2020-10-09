@@ -6,7 +6,8 @@ component grammar SysMLPorts extends de.monticore.lang.sysml.basics.SysMLUsages,
 
   /* PORT DEFINITIONS */
 
-  symbol scope PortDefinitionStd implements PortDefinition, PackagedDefinitionMember  = PortDeclaration DefinitionBody;
+  //TODO check scope
+  PortDefinitionStd implements SysMLType, PortDefinition, PackagedDefinitionMember  = PortDeclaration DefinitionBody;
   astrule PortDefinitionStd =
     method public String getName(){
       return this.getPortDeclaration().getName();
@@ -29,7 +30,7 @@ component grammar SysMLPorts extends de.monticore.lang.sysml.basics.SysMLUsages,
 
   PortUsageStd implements PortUsage = Usage;
   ConjugatedPortUsageStd implements ConjugatedPortUsage= ConjugatePortUsageDeclaration UsageCompletion;
-  symbol ConjugatePortUsageDeclaration =
+  ConjugatePortUsageDeclaration implements SysMLType =
     SysMLName? ConjugatePortTypePart MultiplicityPart? SubsettingPart
     | RedefinesKeyword Redefinition ConjugatePortTypePart MultiplicityPart SubsettingPart;
   astrule ConjugatePortUsageDeclaration =
@@ -81,8 +82,8 @@ component grammar SysMLPorts extends de.monticore.lang.sysml.basics.SysMLUsages,
   NonPortStructureUsageMemberBindingConnector implements NonPortStructureUsageMember =
     "bind" BindingConnector;
 
-  symbol BindingConnector = (SysMLName? TypePart? "as")?
-    ConnectorEndMember "=" ConnectorEndMember DefinitionBody;
+  BindingConnector implements SysMLType = (SysMLName? TypePart? "as")?
+  ConnectorEndMember "=" ConnectorEndMember DefinitionBody;
   astrule BindingConnector =
     method public String getName(){
       if( this.isPresentSysMLName()){
@@ -96,7 +97,7 @@ component grammar SysMLPorts extends de.monticore.lang.sysml.basics.SysMLUsages,
   InterfaceDefinitionUnit implements Unit = UnitPrefix InterfaceDefinition;
   InterfaceDefinition implements PackagedDefinitionMember = InterfaceDeclaration InterfaceBody;
   InterfaceDeclaration = ["abstract"]? "interface" "def" ClassifierDeclarationCompletion;
-  InterfaceBody = ";" | (
+  scope InterfaceBody = ";" | (
      "{"
       (NestedDefinitionMember | InterfaceUsageMember | ImportUnit)*
      "}"

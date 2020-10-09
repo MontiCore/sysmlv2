@@ -9,7 +9,7 @@ component grammar SysMLComments extends de.monticore.lang.sysml.basics.interface
   * but we do not have ML_Comment (Because MCBasics saves these in the AST) and we
   * do not need an Empty Annotation
   */
-  symbol Comment implements PackagedDefinitionMember= "comment" SysMLName? SysMLAnnotation?;
+  Comment implements SysMLType, PackagedDefinitionMember= "comment" SysMLName? SysMLAnnotation?;
   astrule Comment =
     method public String getName(){
       if( this.isPresentSysMLName()){
@@ -22,7 +22,7 @@ component grammar SysMLComments extends de.monticore.lang.sysml.basics.interface
 
   UnitPrefixStd implements UnitPrefix = PrefixAnnotation*;
   PrefixAnnotationStd implements PrefixAnnotation = Documentation+;
-  symbol Documentation = "comment" SysMLName?;
+  Documentation implements SysMLType = "comment" SysMLName?;
   astrule Documentation =
     method public String getName(){
       if( this.isPresentSysMLName()){

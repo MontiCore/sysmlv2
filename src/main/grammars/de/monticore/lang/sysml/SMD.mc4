@@ -8,14 +8,14 @@ component grammar SMD extends de.monticore.lang.sysml.advanced.SysMLSuccessionsA
 
   StateDefinitionUnit implements Unit = UnitPrefix StateDefinition;
   StateDefinition implements PackagedDefinitionMember = StateDefDeclaration StateBody;
-  symbol StateDefDeclaration = ["abstract"]? "state" "def" SysMLName ParameterList? SuperclassingList?;
+  StateDefDeclaration implements SysMLType = ["abstract"]? "state" "def" SysMLName ParameterList? SuperclassingList?;
   astrule StateDefDeclaration =
     method public String getName(){
       return this.getSysMLName().getName();
     }
     ;
 
-  StateBody = ";" | "{" StateBodyPart "}";
+  scope StateBody = ";" | "{" StateBodyPart "}";
   StateBodyPart = (EntryActionMember EntryTransitionMember*)? DoActionMember? ExitActionMember? StateBodyItem*;
   StateBodyItem = NestedDefinitionMember
     | StructureUsageMember
@@ -43,7 +43,7 @@ component grammar SMD extends de.monticore.lang.sysml.advanced.SysMLSuccessionsA
   StateUnit implements Unit = UnitPrefix StateDeclaration StateBody;
   StateDeclaration = ["abstract"]? "state" SysMLNameAndTypePart ActionParameterList? SubsettingPart ValuePart?;
   StateUsage = ActionOrStateUsageDeclaration StateBody;
-  symbol ExhibitStateUsage = ((((SysMLName) TypePart? "as")? Subset)
+  ExhibitStateUsage implements SysMLType = ((((SysMLName) TypePart? "as")? Subset)
     | ( "state" SysMLName? TypePart? )) ActionParameterList? SubsettingPart ValuePart? StateBody;
   astrule ExhibitStateUsage =
     method public String getName(){

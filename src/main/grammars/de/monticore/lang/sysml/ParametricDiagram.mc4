@@ -5,7 +5,8 @@ component grammar ParametricDiagram extends de.monticore.lang.sysml.basics.SysML
   
   /* INDIVIDUAL DEFINITIONS */
   IndividualDefinitionUnit implements Unit = UnitPrefix IndividualDefinition;
-  symbol scope IndividualDefinition implements PackagedDefinitionMember = IndividualDefDeclaration DefinitionBody;
+  //TODO scope
+  IndividualDefinition implements SysMLType, PackagedDefinitionMember = IndividualDefDeclaration DefinitionBody;
   astrule IndividualDefinition =
     method public String getName(){
       return this.getIndividualDefDeclaration().getName();
