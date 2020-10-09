@@ -69,7 +69,7 @@ public class UniqueNameTest extends AbstractSysMLTest {
 
     // System.out.println(getFindingsOutput());
 
-    assertTrue(getFindingsOutput().contains("0xSysML05 Name Car "
+    assertTrue(getFindingsOutput().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.UniqueName)) +" Name Car "
             + "is not unique in its scope. Check definitions in scope at:"));
     /*
     Cannot test the following way, because the order is random (3,2 or 2,2 first)
