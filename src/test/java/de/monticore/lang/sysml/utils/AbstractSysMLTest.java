@@ -46,4 +46,12 @@ public class AbstractSysMLTest {
       System.out.println("    -> Finding: " + f.toString());
     }
   }
+  public static String getFindingsOutput() {
+    String output = "";
+    List<Finding> findingsList = Log.getFindings();
+    for (Finding f : findingsList) {
+     output += f + "\n";
+    }
+    return output;
+  }
 }

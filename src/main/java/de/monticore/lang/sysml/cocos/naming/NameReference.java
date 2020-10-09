@@ -2,6 +2,8 @@ package de.monticore.lang.sysml.cocos.naming;
 
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTQualifiedName;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTSysMLName;
+import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._cocos.SysMLNamesBasisASTQualifiedNameCoCo;
+import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.ISysMLNamesBasisScope;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysml.basics.sysmlclassifiers._ast.ASTClassifierDeclarationCompletionStd;
 import de.monticore.lang.sysml.basics.sysmlclassifiers._ast.ASTSuperclassingList;
@@ -24,80 +26,20 @@ import java.util.Optional;
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class NameReference implements SysMLClassifiersASTClassifierDeclarationCompletionStdCoCo {
-
-  /*@Override
-  public void check(ASTQualifiedName node) {
-    List<ASTSysMLName> fullQualifiedName = new ArrayList<>();
-    String reference;
-    if(node instanceof ASTSimpleName){
-      ASTSimpleName current = (ASTSimpleName) node;
-      reference = current.getSysMLName().getName();
-    }else if(node instanceof ASTDotQualifiedName) {
-      ASTDotQualifiedName current = (ASTDotQualifiedName) node;
-      reference = current.getSysMLName(current.getSysMLNameList().size()-1).getName();
-      fullQualifiedName = current.getSysMLNameList();
-    }else if(node instanceof ASTColonQualifiedName){
-      ASTColonQualifiedName current = (ASTColonQualifiedName) node;
-      reference = current.getSysMLName(current.getSysMLNameList().size()-1).getName();
-      fullQualifiedName = current.getSysMLNameList();
-    }else {
-      Log.error("Internal error. Please add a coco for the this Qualified Name instance " + node.toString() +
-          " in class " + this.getClass().getName());
-      return;
-    }
-
-    System.out.println("Checking to resolve name " + reference);
-  }*/
+public class NameReference implements SysMLNamesBasisASTQualifiedNameCoCo {
 
   @Override
-  public void check(ASTClassifierDeclarationCompletionStd node) {
-    if(!node.isPresentSuperclassingList()){
-      Log.info("Node has no superclassing " + node.getName(), this.getClass().getName());
-      return;
-    }
-    ASTSuperclassingList superclassing = node.getSuperclassingList();
-    /*for (ASTQualifiedName qualifiedName : superclassing.getQualifiedNameList()) {
-      List<ASTSysMLName> fullQualifiedName = new ArrayList<>();
-      String reference;
-      if(qualifiedName instanceof ASTSimpleName){
-        ASTSimpleName current = (ASTSimpleName) qualifiedName;
-        reference = current.getSysMLName().getName();
-      }else if(qualifiedName instanceof ASTDotQualifiedName) {
-        ASTDotQualifiedName current = (ASTDotQualifiedName) qualifiedName;
-        reference = current.getSysMLName(current.getSysMLNameList().size()-1).getName();
-        fullQualifiedName = current.getSysMLNameList();
-      }else if(qualifiedName instanceof ASTColonQualifiedName){
-        ASTColonQualifiedName current = (ASTColonQualifiedName) qualifiedName;
-        reference = current.getSysMLName(current.getSysMLNameList().size()-1).getName();
-        fullQualifiedName = current.getSysMLNameList();
-      }else {
-        Log.error("Internal error. Please add a coco for the this Qualified Name instance " + node.toString() +
-            " in class " + this.getClass().getName());
-        return;
-      }*/
-    for (ASTQualifiedName qualifiedName : superclassing.getQualifiedNameList()) {
-      String reference = qualifiedName.getReferencedName();
+  public void check(ASTQualifiedName qualifiedName) {
+    String reference = qualifiedName.getReferencedName();
 
-      Log.info("Checking to resolve name " + reference, this.getClass().getName());
-      ISysMLClassifiersScope scope =  node.getEnclosingScope();
-      /*if(iSysMLClassifiersScope instanceof SysMLClassifiersScope){
-        scope = (SysMLClassifiersScope) iSysMLClassifiersScope;
-      }else {
-        Log.error("Internal error. Could not cast to SysMLArtifactScope." + this.getClass().getName());
-        return;
-      }*/
-      Optional<SysMLTypeSymbol> type = scope.resolveSysMLType(reference);
-      if(type.isPresent()){
-        Log.info("Block could be resolved. " + reference, this.getClass().getName());
-      }else {
-        Log.error(SysMLCoCos.getErrorCode(SysMLCoCoName.NameReference) + " "+
-            node.getName() + " does superclass "
-            + " " +reference +", but " + reference + " could not be resolved.",  node.get_SourcePositionStart());
-      }
-      // node.getEnclosingScope().resolveType(reference);
-      //TODO
+    Log.info("Checking to resolve name " + reference, this.getClass().getName());
+    ISysMLNamesBasisScope scope =  qualifiedName.getEnclosingScope();
+    Optional<SysMLTypeSymbol> type = scope.resolveSysMLType(reference);
+    if(type.isPresent()){
+      Log.info("Block could be resolved. " + reference, this.getClass().getName());
+    }else {
+      Log.error(SysMLCoCos.getErrorCode(SysMLCoCoName.NameReference) + " "+
+          "Reference " + reference + " could not be resolved.",  qualifiedName.get_SourcePositionStart());
     }
-
   }
 }

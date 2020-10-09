@@ -33,6 +33,8 @@ public class SysMLCoCos {
         return res.append("04").toString();
       case NameReference:
         return res.append("05").toString();
+      case UniqueName:
+        return res.append("05").toString();
       default:
         Log.error("Internal error: One CoCo was not registered correctly.");
         return res.append("00").toString();
