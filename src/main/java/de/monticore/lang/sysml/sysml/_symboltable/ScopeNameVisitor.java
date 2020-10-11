@@ -23,14 +23,14 @@ public class ScopeNameVisitor implements SysMLInheritanceVisitor {
   public void startTraversal(ASTUnit ast) {
     this.traverse((ASTPackageUnit) ast);//TODO all possible casts
   }
-  /*
+
   @Override
   public void visit(SysMLScope scope) { //TODO
     if(!this.stack.empty()){
       System.out.println("Adding name to current scope " + stack.peek().getName());
       scope.setName(this.stack.peek().getName());
     }
-  }*/
+  }
 
   @Override
   public void visit(SysMLTypeSymbol node) {

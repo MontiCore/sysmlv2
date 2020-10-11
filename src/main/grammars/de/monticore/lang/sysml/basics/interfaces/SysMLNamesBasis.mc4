@@ -26,6 +26,7 @@ component grammar SysMLNamesBasis extends de.monticore.types.MCBasicTypes {
   // SysMLQualifiedType implements MCObjectType  = QualifiedName;
 
   interface symbol SysMLType;
+  // interface scope SysMLBodyScope;
 
 
 }
