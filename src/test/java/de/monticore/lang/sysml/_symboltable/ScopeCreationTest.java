@@ -16,12 +16,10 @@ import java.util.List;
  */
 public class ScopeCreationTest extends AbstractSysMLTest {
 
-
   @Ignore
   @Test
   public void scopeNames(){
     String modelPath = this.pathToValidModels + "/naming/";
-    String currentPath = this.pathToOfficialSysMLTrainingExamples;
     List<ASTUnit> models = SysMLTool.parseDirectory(modelPath);
     SysMLGlobalScope topScope = SysMLTool.buildSymbolTable(modelPath, models);
     // System.out.println("Top scope name: " + topScope.getName());

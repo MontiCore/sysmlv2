@@ -8,6 +8,7 @@ import de.monticore.lang.sysml.bdd._ast.ASTBlock;
 import de.monticore.lang.sysml.sysml._visitor.SysMLInheritanceVisitor;
 import de.monticore.lang.sysml.sysml._visitor.SysMLParentAwareVisitor;
 import de.monticore.lang.sysml.sysml._visitor.SysMLVisitor;
+import de.monticore.symboltable.IScope;
 import groovyjarjarantlr.collections.AST;
 
 import java.util.Stack;
@@ -16,16 +17,20 @@ import java.util.Stack;
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class ScopeNameVisitor implements SysMLInheritanceVisitor {
- Stack<SysMLTypeSymbol> stack = new Stack<SysMLTypeSymbol>();
+public class ScopeNameVisitor implements SysMLVisitor {
+ Stack<SysMLTypeSymbol> stack = new Stack<>();
 
 
   public void startTraversal(ASTUnit ast) {
-    this.traverse((ASTPackageUnit) ast);//TODO all possible casts
+    this.handle((ASTPackageUnit) ast);//TODO all possible casts
+  }
+  public void startScopeTraversal(SysMLArtifactScope artifactScope){
+    this.handle(artifactScope);
   }
 
   @Override
   public void visit(SysMLScope scope) { //TODO
+    System.out.println("Visiting scope");
     if(!this.stack.empty()){
       System.out.println("Adding name to current scope " + stack.peek().getName());
       scope.setName(this.stack.peek().getName());
@@ -36,7 +41,7 @@ public class ScopeNameVisitor implements SysMLInheritanceVisitor {
   public void visit(SysMLTypeSymbol node) {
     if (!node.getName().equals("NotNamed1232454123534j4jn43")) {
       //TODO remove this if the visitor is correctly set up.
-      // System.out.println("Stacking name " + node.getName());
+      System.out.println("Stacking name " + node.getName());
       this.stack.push(node);
     }
   }
@@ -45,7 +50,7 @@ public class ScopeNameVisitor implements SysMLInheritanceVisitor {
   public void endVisit(SysMLTypeSymbol node) {
     if (!node.getName().equals("NotNamed1232454123534j4jn43")) {
       //TODO remove this if the visitor is correctly set up.
-      // System.out.println("Pop name " + node.getName());
+      System.out.println("Pop name " + node.getName());
       this.stack.pop();
     }
 

@@ -40,14 +40,11 @@ public class HelperSysMLSymbolTableCreator {
 
   public SysMLArtifactScope createSymboltable(ASTUnit ast,SysMLLanguageSub sysMLLanguage, SysMLGlobalScope globalScope) {
 
-    /*SysMLSymbolTableCreatorDelegator symbolTableDelegator = sysMLLanguage.getSymbolTableCreator(globalScope);
-    SysMLArtifactScope artifactScope =  symbolTableDelegator.createFromAST(ast);
-    ScopeNameVisitor scopeNameVisitor = new ScopeNameVisitor(); TODO
-    scopeNameVisitor.handle(ast);*/
     SysMLSymbolTableCreatorDelegator symbolTableDelegator = sysMLLanguage.getSymbolTableCreator(globalScope);
     SysMLArtifactScope artifactScope =  symbolTableDelegator.createFromAST(ast);
     ScopeNameVisitor scopeNameVisitor = new ScopeNameVisitor();
-    scopeNameVisitor.startTraversal(ast);
+    // scopeNameVisitor.startTraversal(ast);
+    // scopeNameVisitor.startScopeTraversal(artifactScope); TODO
     return artifactScope;
   }
 
