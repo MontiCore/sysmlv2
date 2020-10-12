@@ -8,4 +8,5 @@ import java.util.List;
  */
 public interface ASTQualifiedName extends ASTQualifiedNameTOP{
   public List<String> getNamesList();
+  public String getFullQualifiedName();
 }

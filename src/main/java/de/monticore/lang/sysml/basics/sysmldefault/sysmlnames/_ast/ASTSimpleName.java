@@ -10,9 +10,18 @@ import java.util.List;
  * @version 1.0
  */
 public class ASTSimpleName extends ASTSimpleNameTOP {
+  @Override
   public List<String> getNamesList(){
     List<String> names = new ArrayList<>();
     names.add(this.getReferencedName());
     return names;
+  }
+  @Override
+  public String getFullQualifiedName() {
+    String res = "";
+    for (String name : this.getNamesList()) {
+      res += name;
+    }
+    return res;
   }
 }

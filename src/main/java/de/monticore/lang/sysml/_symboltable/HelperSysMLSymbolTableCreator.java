@@ -41,8 +41,6 @@ public class HelperSysMLSymbolTableCreator {
     SysMLArtifactScope artifactScope =  symbolTableDelegator.createFromAST(ast);
     ScopeNameVisitor scopeNameVisitor = new ScopeNameVisitor();
     scopeNameVisitor.startTraversal(ast);
-    AddImportToScopeVisitor addImportToScopeVisitor = new AddImportToScopeVisitor();
-    addImportToScopeVisitor.startTraversal(ast);
     return artifactScope;
   }
 
@@ -55,6 +53,12 @@ public class HelperSysMLSymbolTableCreator {
     for (ASTUnit astUnit : astUnits) {
       createSymboltable(astUnit, lang,globalScope );
     }
+
+    AddImportToScopeVisitor addImportToScopeVisitor = new AddImportToScopeVisitor();
+    for(ASTUnit model: astUnits){
+      addImportToScopeVisitor.startTraversal(model, globalScope);
+    }
+
     return globalScope;
   }
 }

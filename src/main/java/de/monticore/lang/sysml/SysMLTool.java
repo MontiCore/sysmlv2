@@ -7,6 +7,7 @@ import de.monticore.lang.sysml._symboltable.SysMLLanguageSub;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.monticore.lang.sysml.parser.SysMLParserMultipleFiles;
+import de.monticore.lang.sysml.sysml._symboltable.AddImportToScopeVisitor;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLArtifactScope;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLLanguage;
