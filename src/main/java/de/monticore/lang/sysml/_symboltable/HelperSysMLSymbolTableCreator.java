@@ -2,10 +2,7 @@ package de.monticore.lang.sysml._symboltable;
 
 import de.monticore.io.paths.ModelPath;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
-import de.monticore.lang.sysml.sysml._symboltable.ScopeNameVisitor;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLArtifactScope;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLSymbolTableCreatorDelegator;
+import de.monticore.lang.sysml.sysml._symboltable.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +41,8 @@ public class HelperSysMLSymbolTableCreator {
     SysMLArtifactScope artifactScope =  symbolTableDelegator.createFromAST(ast);
     ScopeNameVisitor scopeNameVisitor = new ScopeNameVisitor();
     scopeNameVisitor.startTraversal(ast);
+    AddImportToScopeVisitor addImportToScopeVisitor = new AddImportToScopeVisitor();
+    addImportToScopeVisitor.startTraversal(ast);
     return artifactScope;
   }
 

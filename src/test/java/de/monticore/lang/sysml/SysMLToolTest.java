@@ -30,7 +30,7 @@ public class SysMLToolTest {
   @Test
   public void checkFailOnZeroArgs(){
     Collection<Finding> expectedErrors = Arrays.asList(
-        Finding.error("Please specify only one single path to the input directory containing the input models.")
+        Finding.error("Please specify exact one single path to the input directory containing the input models.")
     );
 
     SysMLTool.main(new String[]{});
@@ -39,7 +39,7 @@ public class SysMLToolTest {
   @Test
   public void checkFailOnMultipleArgs(){
     Collection<Finding> expectedErrors = Arrays.asList(
-        Finding.error("Please specify only one single path to the input directory containing the input models.")
+        Finding.error("Please specify exact one single path to the input directory containing the input models.")
     );
 
     SysMLTool.main(new String[]{"arg1", "arg2"});

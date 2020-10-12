@@ -26,8 +26,6 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
   @Test
   public void testSuccessfulCreationInOneFile() {
     String currentPath = this.pathToOfficialSysMLTrainingExamples + "/02. Blocks/Blocks Example.sysml";
-
-    //Ensure successful parsing
     ASTUnit astUnit =  this.parseSysMLSingleModel(currentPath);
     ASTPackageUnit packageUnit  = (ASTPackageUnit) astUnit;
     Log.debug("Package name is " + packageUnit.getPackage().getName(), this.getClass().getName());

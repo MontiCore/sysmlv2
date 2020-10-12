@@ -5,6 +5,7 @@ import de.se_rwth.commons.Symbol;
 
 import java.util.List;
 
+//TODO delete this
 /**
  * @author Robin Muenstermann
  * @version 1.0

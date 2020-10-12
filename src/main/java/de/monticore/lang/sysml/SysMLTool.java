@@ -32,13 +32,15 @@ public class SysMLTool {
   public static final String DEFAULT_SYMBOL_LOCATION = "target";
 
   public static void main(String[] args) {
+    mainForJava(args);
+  }
+
+  public static List<ASTUnit> mainForJava(String[] args) {
     if (args.length != 1) {
-      Log.error("Please specify only one single path to the input directory containing the input models.");
-      return;
+      Log.error("Please specify exact one single path to the input directory containing the input models.");
+      return null;
     }
     String dir = args[0];
-
-
 
     // Parsing
     List<ASTUnit> models = parseDirectory(dir);
@@ -55,7 +57,7 @@ public class SysMLTool {
     }
 
     Log.info("Parsed and checked all models successfully.", SysMLTool.class.getName());
-
+    return models;
   }
 
   public static SysMLArtifactScope buildSymbolTablePathToSingleFile(String pathToFile, ASTUnit model){
@@ -113,7 +115,11 @@ public class SysMLTool {
         }
       }
       Log.info("Found " + onlySysMLFiles.size() + " \".sysml\" Files.", SysMLParserMultipleFiles.class.getName());
-      return result;
+      if(onlySysMLFiles.size()==0){
+        Log.error("There was not a single \".sysml\" in the given directory."+
+            "It is likely that the directory was wrong or that the files have not the ending \".sysml\".");
+      }
+      return onlySysMLFiles;
     }
     catch (IOException e) {
       e.printStackTrace();
