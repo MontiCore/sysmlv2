@@ -9,6 +9,7 @@ import de.monticore.lang.sysml.sysml._visitor.SysMLVisitor;
  * @version 1.0
  */
 public class PrettyPrinter implements SysMLVisitor {
+  ///TODO remove this and de.monticore.lang.sysml.print .PrintAstOfTrainingExamplesTest
   private String result = "";
 
   private int indention = 0;

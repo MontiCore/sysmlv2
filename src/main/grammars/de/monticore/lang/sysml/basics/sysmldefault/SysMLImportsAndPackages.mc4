@@ -24,7 +24,7 @@ component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics
 
   //Following has the name "Import" in Xtext
   ImportUnitStd implements SysMLType, ImportUnit = PrefixAnnotation* (visibility:PackageElementVisibilityIndicator)?
-    "import" QualifiedName (star:["::*"]? | star:[".*"]?) {noSpace()}? ("as" SysMLName)? ";";
+    "import" QualifiedName (("::" | ".") star:["*"])? {noSpace()}? ("as" SysMLName)? ";";
   astrule ImportUnitStd =
     method public String getName(){
       if( this.isPresentSysMLName()){

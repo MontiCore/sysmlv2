@@ -5,12 +5,10 @@ import de.monticore.lang.sysml.ad._ast.ASTActivityBodyStd;
 import de.monticore.lang.sysml.advanced.sysmlconstraints._ast.ASTAssertConstraintUsage;
 import de.monticore.lang.sysml.advanced.sysmldefinitions._ast.ASTDefinitionBodyStd;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTSysMLType;
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.basics.sysmlassociations._ast.ASTAssociationBlock;
 import de.monticore.lang.sysml.basics.sysmlcommonbasis._ast.ASTActivityBody;
 import de.monticore.lang.sysml.basics.sysmlcommonbasis._ast.ASTDefinitionBody;
-import de.monticore.lang.sysml.basics.sysmlcommonbasis._ast.ASTPortDefinition;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackage;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageUnit;
 import de.monticore.lang.sysml.basics.sysmlports._ast.ASTInterfaceDefinition;
@@ -22,11 +20,6 @@ import de.monticore.lang.sysml.requirementdiagram._ast.ASTRequirementDefinition;
 import de.monticore.lang.sysml.requirementdiagram._ast.ASTSatisfyRequirementUsage;
 import de.monticore.lang.sysml.smd._ast.ASTStateDefinition;
 import de.monticore.lang.sysml.sysml._visitor.SysMLInheritanceVisitor;
-import groovyjarjarantlr.collections.AST;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Stack;
 
 /**
  * @author Robin Muenstermann
@@ -34,7 +27,7 @@ import java.util.Stack;
  */
 public class ScopeNameVisitor implements SysMLInheritanceVisitor {
   public void startTraversal(ASTUnit ast) {
-    this.handle((ASTPackageUnit) ast);//TODO all possible casts
+    ast.accept(this);
   }
 
   @Override
