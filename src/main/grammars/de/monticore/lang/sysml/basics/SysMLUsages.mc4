@@ -5,7 +5,7 @@ package de.monticore.lang.sysml.basics;
 component grammar SysMLUsages extends de.monticore.lang.sysml.basics.SysMLCommonBasis {
 
   /* USAGES */
-  scope UsageStd implements Usage =
+  UsageStd implements Usage =
      UsageDeclaration UsageCompletion;
   astrule UsageStd =
     method public String getName(){

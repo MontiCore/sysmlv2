@@ -43,8 +43,7 @@ public class HelperSysMLSymbolTableCreator {
     SysMLSymbolTableCreatorDelegator symbolTableDelegator = sysMLLanguage.getSymbolTableCreator(globalScope);
     SysMLArtifactScope artifactScope =  symbolTableDelegator.createFromAST(ast);
     ScopeNameVisitor scopeNameVisitor = new ScopeNameVisitor();
-    // scopeNameVisitor.startTraversal(ast);
-    // scopeNameVisitor.startScopeTraversal(artifactScope); TODO
+    scopeNameVisitor.startTraversal(ast);
     return artifactScope;
   }
 
