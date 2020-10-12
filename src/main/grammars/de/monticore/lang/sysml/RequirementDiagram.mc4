@@ -58,7 +58,6 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.Sy
   	TypePart? ActionParameterList? EmptyReturnParameterPart ValuePart?
   	);
 
-  //TODO check scope
   SatisfyRequirementUsage implements SysMLType =
     ((( SysMLName)? TypePart? "as")? Subset
     | "requirement" (SysMLName)? TypePart?)

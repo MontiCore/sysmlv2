@@ -6,7 +6,6 @@ component grammar SysMLPorts extends de.monticore.lang.sysml.basics.SysMLUsages,
 
   /* PORT DEFINITIONS */
 
-  //TODO check scope
   PortDefinitionStd implements SysMLType, PortDefinition, PackagedDefinitionMember  = PortDeclaration DefinitionBody;
   astrule PortDefinitionStd =
     method public String getName(){
@@ -95,7 +94,12 @@ component grammar SysMLPorts extends de.monticore.lang.sysml.basics.SysMLUsages,
 
   /* INTERFACE DEFINITIONS */
   InterfaceDefinitionUnit implements Unit = UnitPrefix InterfaceDefinition;
-  InterfaceDefinition implements PackagedDefinitionMember = InterfaceDeclaration InterfaceBody;
+  InterfaceDefinition implements SysMLType, PackagedDefinitionMember = InterfaceDeclaration InterfaceBody;
+  astrule InterfaceDefinition =
+    method public String getName(){
+      return this.getInterfaceDeclaration().getClassifierDeclarationCompletion().getName();
+    }
+  ;
   InterfaceDeclaration = ["abstract"]? "interface" "def" ClassifierDeclarationCompletion;
   scope InterfaceBody = ";" | (
      "{"

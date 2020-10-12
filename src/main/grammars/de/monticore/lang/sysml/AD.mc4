@@ -7,10 +7,13 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLDefinitions,
   /* ACTIVITIES */
 
   ActivityUnit implements Unit = UnitPrefix Activity;
-  Activity implements PackagedDefinitionMember = ActivityDeclaration ActivityBody;
-  ActivityDeclaration implements SysMLType = ["abstract"]? "activity" SysMLName ParameterList? SuperclassingList?;
+  Activity implements SysMLType, PackagedDefinitionMember = ActivityDeclaration ActivityBody;
+  astrule Activity =
+     method public String getName(){
+       return this.getActivityDeclaration().getName();
+     };
+  ActivityDeclaration = ["abstract"]? "activity" SysMLName ParameterList? SuperclassingList?;
   astrule ActivityDeclaration =
-
      method public String getName(){
        return this.getSysMLName().getName();
      };

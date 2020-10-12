@@ -30,10 +30,10 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
     //Ensure successful parsing
     ASTUnit astUnit =  this.parseSysMLSingleModel(currentPath);
     ASTPackageUnit packageUnit  = (ASTPackageUnit) astUnit;
-    System.out.println("Package name is " + packageUnit.getPackage().getName());
+    Log.debug("Package name is " + packageUnit.getPackage().getName(), this.getClass().getName());
     assertEquals("Blocks Example", packageUnit.getPackage().getName());
     ASTBlock block = (ASTBlock) packageUnit.getPackage().getPackageBody().getPackageMember(0).getPackagedDefinitionMember();
-    System.out.println("Block name is " + block.getName());
+    Log.debug("Block name is " + block.getName(), this.getClass().getName());
     assertEquals("Blocks Example", packageUnit.getPackage().getName());
 
     //Creating Symboltable
