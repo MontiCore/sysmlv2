@@ -54,7 +54,7 @@ public class ResolveBetweenScopesTest extends AbstractSysMLTest {
     assertTrue(vehicleSym.isPresent());
     assertFalse(busSym.isPresent());
     assertTrue(alreadyInScopeSym.isPresent());
-    //assertEquals(0, Log.getFindings());
+    assertTrue(Log.getFindings().isEmpty());
   }
   @Test
   public void resolveToOtherScopeStarImportTest(){
@@ -77,7 +77,7 @@ public class ResolveBetweenScopesTest extends AbstractSysMLTest {
     assertTrue(vehicleSym.isPresent());
     assertTrue(busSym.isPresent());
     assertTrue(alreadyInScopeSym.isPresent());
-    //assertEquals(0, Log.getFindings());
+    assertTrue(Log.getFindings().isEmpty());
   }
 
   @Test
@@ -105,5 +105,6 @@ public class ResolveBetweenScopesTest extends AbstractSysMLTest {
     assertFalse(busSym.isPresent());
     assertTrue(alreadyInScopeSym.isPresent());
     assertTrue(myVehicleNameInThisScopeSym.isPresent());
+    assertTrue(Log.getFindings().isEmpty());
   }
 }
