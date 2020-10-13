@@ -4,7 +4,6 @@ import de.monticore.io.paths.ModelPath;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.sysml._symboltable.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,7 +55,10 @@ public class HelperSysMLSymbolTableCreator {
 
     AddImportToScopeVisitor addImportToScopeVisitor = new AddImportToScopeVisitor();
     for(ASTUnit model: astUnits){
-      addImportToScopeVisitor.startTraversal(model, globalScope);
+      addImportToScopeVisitor.memorizeImportsPhase1of2(model);
+    }
+    for(ASTUnit model: astUnits){
+      addImportToScopeVisitor.addImportsToScopePhase2of2(model);
     }
 
     return globalScope;

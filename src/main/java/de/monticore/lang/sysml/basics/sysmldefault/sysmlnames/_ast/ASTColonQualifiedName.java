@@ -1,6 +1,8 @@
 package de.monticore.lang.sysml.basics.sysmldefault.sysmlnames._ast;
 
+import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTQualifiedName;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTSysMLName;
+import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,5 +28,10 @@ public class ASTColonQualifiedName extends ASTColonQualifiedNameTOP {
       res += "." + name;
     }
     return res.substring(1);
+  }
+
+  @Override
+  public List<SysMLTypeSymbol> resolveSymbols() {
+    return ASTQualifiedName.resolveSymbolsHelper(this);
   }
 }

@@ -80,7 +80,6 @@ public class ResolveBetweenScopesTest extends AbstractSysMLTest {
     //assertEquals(0, Log.getFindings());
   }
 
-  @Ignore
   @Test
   public void resolveToOtherScopeAsImportTest(){
 
@@ -92,8 +91,19 @@ public class ResolveBetweenScopesTest extends AbstractSysMLTest {
     Optional<SysMLTypeSymbol> vehicleSym =
         ((ASTPackage)packageWithImport.get().getAstNode())
             .getPackageBody().getSpannedScope().resolveSysMLType("Vehicle");
-    //this.printAllFindings();
-    assertTrue(vehicleSym.isPresent());
-    assertEquals(0, Log.getFindings());
+    Optional<SysMLTypeSymbol> busSym =
+        ((ASTPackage)packageWithImport.get().getAstNode())
+            .getPackageBody().getSpannedScope().resolveSysMLType("Bus");
+    Optional<SysMLTypeSymbol> alreadyInScopeSym =
+        ((ASTPackage)packageWithImport.get().getAstNode())
+            .getPackageBody().getSpannedScope().resolveSysMLType("AlreadyInScope");
+    Optional<SysMLTypeSymbol> myVehicleNameInThisScopeSym =
+        ((ASTPackage)packageWithImport.get().getAstNode())
+            .getPackageBody().getSpannedScope().resolveSysMLType("MyVehicleNameInThisScope");
+    this.printAllFindings();
+    assertFalse(vehicleSym.isPresent());
+    assertFalse(busSym.isPresent());
+    assertTrue(alreadyInScopeSym.isPresent());
+    assertTrue(myVehicleNameInThisScopeSym.isPresent());
   }
 }

@@ -10,7 +10,6 @@ component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics
   de.monticore.lang.sysml.basics.interfaces.SysMLShared {
 
   /* IMPORTS */
-
   AliasPackagedDefinitionMember implements SysMLType, PackagedDefinitionMember =
       ("import" | "alias") QualifiedName ("as" SysMLName)? ";";
   astrule AliasPackagedDefinitionMember =
