@@ -19,8 +19,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Robin Muenstermann
@@ -35,27 +34,66 @@ public class ResolveBetweenScopesTest extends AbstractSysMLTest {
   }
 
   @Test
-  public void resolveToOtherScope(){
+  public void resolveToOtherScopeDirectImportTest(){
 
     String modelPath = this.pathToValidModels + "/scopes/simple";
     List<ASTUnit> models = SysMLTool.parseDirectory(modelPath);
     SysMLGlobalScope topScope = SysMLTool.buildSymbolTable(modelPath, models);
     Optional<SysMLTypeSymbol> packageWithImport = topScope.resolveSysMLType("Import Vehicle");
-    /*for(ASTUnit model : models){
-      if(model instanceof ASTPackage){
-        Log.debug("Parsed model " + ((ASTPackage) model).getName(), this.getClass().getName());
-        if(((ASTPackage) model).getName().equals("Import Vehicle")){
-          packageWithImport = Optional.of((ASTPackage) model);
-        }
-      }
-    }*/
     assertTrue(packageWithImport.isPresent());
     Optional<SysMLTypeSymbol> vehicleSym =
         ((ASTPackage)packageWithImport.get().getAstNode())
             .getPackageBody().getSpannedScope().resolveSysMLType("Vehicle");
-    //TODO check if this is the correct scope
+    Optional<SysMLTypeSymbol> busSym =
+        ((ASTPackage)packageWithImport.get().getAstNode())
+            .getPackageBody().getSpannedScope().resolveSysMLType("Bus");
+    Optional<SysMLTypeSymbol> alreadyInScopeSym =
+        ((ASTPackage)packageWithImport.get().getAstNode())
+            .getPackageBody().getSpannedScope().resolveSysMLType("AlreadyInScope");
+    this.printAllFindings();
+    assertTrue(vehicleSym.isPresent());
+    assertFalse(busSym.isPresent());
+    assertTrue(alreadyInScopeSym.isPresent());
+    //assertEquals(0, Log.getFindings());
+  }
+  @Test
+  public void resolveToOtherScopeStarImportTest(){
+
+    String modelPath = this.pathToValidModels + "/scopes/starImport";
+    List<ASTUnit> models = SysMLTool.parseDirectory(modelPath);
+    SysMLGlobalScope topScope = SysMLTool.buildSymbolTable(modelPath, models);
+    Optional<SysMLTypeSymbol> packageWithImport = topScope.resolveSysMLType("Import Vehicle");
+    assertTrue(packageWithImport.isPresent());
+    Optional<SysMLTypeSymbol> vehicleSym =
+        ((ASTPackage)packageWithImport.get().getAstNode())
+            .getPackageBody().getSpannedScope().resolveSysMLType("Vehicle");
+    Optional<SysMLTypeSymbol> busSym =
+        ((ASTPackage)packageWithImport.get().getAstNode())
+            .getPackageBody().getSpannedScope().resolveSysMLType("Bus");
+    Optional<SysMLTypeSymbol> alreadyInScopeSym =
+        ((ASTPackage)packageWithImport.get().getAstNode())
+            .getPackageBody().getSpannedScope().resolveSysMLType("AlreadyInScope");
+    this.printAllFindings();
+    assertTrue(vehicleSym.isPresent());
+    assertTrue(busSym.isPresent());
+    assertTrue(alreadyInScopeSym.isPresent());
+    //assertEquals(0, Log.getFindings());
+  }
+
+  @Ignore
+  @Test
+  public void resolveToOtherScopeAsImportTest(){
+
+    String modelPath = this.pathToValidModels + "/scopes/importAs";
+    List<ASTUnit> models = SysMLTool.parseDirectory(modelPath);
+    SysMLGlobalScope topScope = SysMLTool.buildSymbolTable(modelPath, models);
+    Optional<SysMLTypeSymbol> packageWithImport = topScope.resolveSysMLType("Import Vehicle");
+    assertTrue(packageWithImport.isPresent());
+    Optional<SysMLTypeSymbol> vehicleSym =
+        ((ASTPackage)packageWithImport.get().getAstNode())
+            .getPackageBody().getSpannedScope().resolveSysMLType("Vehicle");
     //this.printAllFindings();
     assertTrue(vehicleSym.isPresent());
-    //assertEquals(0, Log.getFindings());
+    assertEquals(0, Log.getFindings());
   }
 }
