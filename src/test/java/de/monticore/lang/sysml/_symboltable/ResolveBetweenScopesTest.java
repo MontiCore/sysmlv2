@@ -36,7 +36,7 @@ public class ResolveBetweenScopesTest extends AbstractSysMLTest {
   @Test
   public void resolveToOtherScopeDirectImportTest(){
 
-    String modelPath = this.pathToValidModels + "/scopes/simple";
+    String modelPath = this.pathToValidModels + "/imports/simple";
     List<ASTUnit> models = SysMLTool.parseDirectory(modelPath);
     SysMLGlobalScope topScope = SysMLTool.buildSymbolTable(modelPath, models);
     Optional<SysMLTypeSymbol> packageWithImport = topScope.resolveSysMLType("Import Vehicle");
@@ -59,7 +59,7 @@ public class ResolveBetweenScopesTest extends AbstractSysMLTest {
   @Test
   public void resolveToOtherScopeStarImportTest(){
 
-    String modelPath = this.pathToValidModels + "/scopes/starImport";
+    String modelPath = this.pathToValidModels + "/imports/starImport";
     List<ASTUnit> models = SysMLTool.parseDirectory(modelPath);
     SysMLGlobalScope topScope = SysMLTool.buildSymbolTable(modelPath, models);
     Optional<SysMLTypeSymbol> packageWithImport = topScope.resolveSysMLType("Import Vehicle");
@@ -83,7 +83,7 @@ public class ResolveBetweenScopesTest extends AbstractSysMLTest {
   @Test
   public void resolveToOtherScopeAsImportTest(){
 
-    String modelPath = this.pathToValidModels + "/scopes/importAs";
+    String modelPath = this.pathToValidModels + "/imports/importAs";
     List<ASTUnit> models = SysMLTool.parseDirectory(modelPath);
     SysMLGlobalScope topScope = SysMLTool.buildSymbolTable(modelPath, models);
     Optional<SysMLTypeSymbol> packageWithImport = topScope.resolveSysMLType("Import Vehicle");

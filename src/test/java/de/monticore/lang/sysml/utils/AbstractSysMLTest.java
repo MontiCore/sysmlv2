@@ -1,6 +1,8 @@
 package de.monticore.lang.sysml.utils;
 
+import de.monticore.lang.sysml.SysMLTool;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
@@ -23,6 +25,19 @@ public class AbstractSysMLTest {
   public void setUpLog(){
     LogStub.init();
     Log.getFindings().clear();
+  }
+
+  public List<ASTUnit> validParseAndBuildSymbolsInSubDir(String path) {
+    String modelPath = this.pathToValidModels + path;
+    List<ASTUnit> models = SysMLTool.parseDirectory(modelPath);
+    SysMLGlobalScope topScope = SysMLTool.buildSymbolTable(modelPath, models);
+    return models;
+  }
+  public List<ASTUnit> invalidParseAndBuildSymbolsInSubDir(String path) {
+    String modelPath = this.pathToInvalidModels + path;
+    List<ASTUnit> models = SysMLTool.parseDirectory(modelPath);
+    SysMLGlobalScope topScope = SysMLTool.buildSymbolTable(modelPath, models);
+    return models;
   }
 
   public List<ASTUnit> parseSysMLSingleModelToList(String path) {

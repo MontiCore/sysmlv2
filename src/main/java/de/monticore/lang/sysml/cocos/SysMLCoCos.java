@@ -12,7 +12,7 @@ public class SysMLCoCos {
   public SysMLCoCoChecker getCheckerForAllCoCos() {
     final SysMLCoCoChecker checker = new SysMLCoCoChecker();
     checker.addCoCo(new DefinitionNameStartsWithCapitalLetter());
-    //checker.addCoCo(new StateNameStartsWithCapitalLetter());
+    //checker.addCoCo(new StateNameStartsWithCapitalLetter()); TODO
 
     return checker;
   }
@@ -42,6 +42,8 @@ public class SysMLCoCos {
       case PackageImportWithoutStar:
         return res.append("xx").toString();
       case AmbiguousImport:
+        return res.append("xx").toString();
+      case ImportedElementNameAlreadyExists:
         return res.append("xx").toString();
       default:
         Log.error("Internal error: One CoCo was not registered correctly.");
