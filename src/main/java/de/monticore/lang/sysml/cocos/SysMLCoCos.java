@@ -32,9 +32,17 @@ public class SysMLCoCos {
       case DefinitionNameStartsWithCapitalLetter:
         return res.append("04").toString();
       case NameReference:
-        return res.append("05").toString();
+        return res.append("xx").toString();
       case UniqueName:
-        return res.append("05").toString();
+        return res.append("xx").toString();
+      case ImportIsDefined:
+        return res.append("xx").toString();
+      case ImportWithStarAndWithAs:
+        return res.append("xx").toString();
+      case PackageImportWithoutStar:
+        return res.append("xx").toString();
+      case AmbiguousImport:
+        return res.append("xx").toString();
       default:
         Log.error("Internal error: One CoCo was not registered correctly.");
         return res.append("00").toString();

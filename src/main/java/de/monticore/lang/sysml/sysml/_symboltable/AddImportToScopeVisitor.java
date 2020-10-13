@@ -84,7 +84,7 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
       boolean starImport, Optional<ASTSysMLName> importAs, Optional<SysMLTypeSymbol> importAsCorrespondingSymbol){
     List<CoCoStatus> warnings = new ArrayList<>();
     if (resolvedTypes.size() == 0) {
-      warnings.add(new CoCoStatus(SysMLCoCoName.ImportIsDefined,"Could not resolve import.")); //TODO put in CoCo.
+      warnings.add(new CoCoStatus(SysMLCoCoName.ImportIsDefined,"Could not resolve import."));
     }
     else if (resolvedTypes.size() == 1 && resolvedTypes.get(0).getAstNode() instanceof ASTPackage) {
       //Importing a package.
@@ -97,30 +97,34 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
       else if (starImport) {
         LinkedListMultimap<String, SysMLTypeSymbol> imports = importThis.getSysMLTypeSymbols();
         for (SysMLTypeSymbol importSymbol : imports.values()) {
-          scopeToAddTo.add(importSymbol); //TODO check  if symbol is already in the current scope
+          if(!isAlreadyInScopeAndAddWarning(scopeToAddTo, importSymbol.getName(), warnings)){
+            scopeToAddTo.add(importSymbol);
+          }
         }
       }
       else {
         warnings.add(new CoCoStatus(SysMLCoCoName.PackageImportWithoutStar,
             "Importing a package without a star (e.g.\"::*\") will have no effect. " +
-                "If this Statement imports something else then a scope, this has no effect."));//TODO CoCo
+                "If this Statement imports something else then a scope, this has no effect."));
       }
     }
     else if (resolvedTypes.size() > 1) {
       warnings.add(new CoCoStatus(SysMLCoCoName.AmbiguousImport,
-          "The import statement was ambiguous, nothing will be imported. "));//TODO CoCo
+          "The import statement was ambiguous, nothing will be imported. "));
     }
     else if (resolvedTypes.size() == 1) {
-      //outForTesting("Adding symbol to scope : " + resolvedTypes.get(0).getName());
-      //TODO check if symbol is already in the scope
       if(importAs.isPresent()){
         if(!importAsCorrespondingSymbol.isPresent()){
           Log.error("Internal error \"Import as, but no given TypeSymbol\" in " + this.getClass().getName());
         }else{
-          importAsCorrespondingSymbol.get().setAstNode(resolvedTypes.get(0).getAstNode());
+          if(!isAlreadyInScopeAndAddWarning(scopeToAddTo, importAs.get().getName(), warnings)){
+            importAsCorrespondingSymbol.get().setAstNode(resolvedTypes.get(0).getAstNode());
+          }
         }
       }else{
-        scopeToAddTo.add(resolvedTypes.get(0));
+        if(!isAlreadyInScopeAndAddWarning(scopeToAddTo, resolvedTypes.get(0).getName(), warnings)){
+          scopeToAddTo.add(resolvedTypes.get(0));
+        }
       }
 
     }
@@ -128,5 +132,20 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
       Log.error("Internal Error in " + AddImportToScopeVisitor.class.getName() + ". Unexpected case.");
     }
     return warnings;
+  }
+
+  private boolean isAlreadyInScopeAndAddWarning(ISysMLNamesBasisScope scopeToAddTo, String name,
+      List<CoCoStatus> warnings){
+    if(scopeToAddTo.resolveSysMLTypeMany(name).size()!=0){
+      String scopeName = "";
+      if(scopeToAddTo.isPresentName()){
+        scopeName = scopeToAddTo.getName();
+      }
+      warnings.add(new CoCoStatus(SysMLCoCoName.ImportedElementNameAlreadyExists,
+          "The element  \"" + name  + "\" could not be imported, because it already exists in the scope "
+              + scopeName + "."));
+      return true;
+    }
+    return false;
   }
 }

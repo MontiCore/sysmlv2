@@ -13,11 +13,11 @@ public class CoCoStatus {
     this.message = message;
   }
 
-  public void setCoCoName(SysMLCoCoName coCoName) {
-    this.coCoName = coCoName;
+  public SysMLCoCoName getCoCoName() {
+    return coCoName;
   }
 
-  public void setMessage(String message) {
-    this.message = message;
+  public String getMessage() {
+    return message;
   }
 }
