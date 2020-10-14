@@ -2,6 +2,8 @@ package de.monticore.lang.sysml.cocos.imports;
 
 import de.monticore.cocos.helper.Assert;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTImportUnitStdCoCo;
 import de.monticore.lang.sysml.cocos.SysMLCoCoName;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.monticore.lang.sysml.cocos.naming.NameReference;
@@ -38,37 +40,37 @@ public class AmbiguousImportTest extends AbstractSysMLTest {
     this.setUpLog();
   }
 
-  @Ignore
   @Test
   public void testValid(){
     List<ASTUnit> models = this.validParseAndBuildSymbolsInSubDir("/imports/simple");
-    NameReference coco = new NameReference(); //TODO change this here
+    ImportStatementValid coco = new ImportStatementValid();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
-    coCoChecker.addCoCo(coco);
+    coCoChecker.addCoCo((SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo) coco);
+    coCoChecker.addCoCo((SysMLImportsAndPackagesASTImportUnitStdCoCo) coco);
     for (ASTUnit model : models) {
       coCoChecker.checkAll(model);
     }
     printAllFindings();
     assertTrue(Log.getFindings().isEmpty());
   }
-  @Ignore
   @Test
   public void testInvalid(){
-    List<ASTUnit> models = this.invalidParseAndBuildSymbolsInSubDir("/imports/simple"); //TODO
-    NameReference coco = new NameReference(); //TODO
+    List<ASTUnit> models = this.invalidParseAndBuildSymbolsInSubDir("/imports/AmbiguousImport");
+    ImportStatementValid coco = new ImportStatementValid();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
-    coCoChecker.addCoCo(coco);
+    coCoChecker.addCoCo((SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo) coco);
+    coCoChecker.addCoCo((SysMLImportsAndPackagesASTImportUnitStdCoCo) coco);
     for (ASTUnit model : models) {
       coCoChecker.checkAll(model);
     }
 
-    assertEquals(1, Log.getFindings().size()); //TODO
-    assertTrue(Log.getFindings().stream().findFirst().get().isError());
-    this.printAllFindings(); //TODO
+    assertEquals(1, Log.getFindings().size());
+    assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
+    //this.printAllFindings();
     Collection<Finding> expectedWarnings = Arrays.asList(
-        Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.NameReference)) + //TODO
-                " Reference NeverDefined could not be resolved.",
-            new SourcePosition(2, 14, "ReferenceIsMissing.sysml"))
+        Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.AmbiguousImport)) +
+                " The import statement was ambiguous, nothing will be imported.",
+            new SourcePosition(2, 2, "Import Vehicle.sysml"))
     );
 
     Assert.assertErrors(expectedWarnings, Log.getFindings());

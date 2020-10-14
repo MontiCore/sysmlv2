@@ -92,7 +92,7 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
       ISysMLNamesBasisScope importThis = astPackage.getPackageBody().getSpannedScope();
       if(starImport && importAs.isPresent()){
         warnings.add(new CoCoStatus(SysMLCoCoName.ImportWithStarAndWithAs,
-            "Cannot star import package with an \"as\"."));
+            "Cannot star import package with an alias \"as " + importAs.get().getName() +"\"."));
       }
       else if (starImport) {
         LinkedListMultimap<String, SysMLTypeSymbol> imports = importThis.getSysMLTypeSymbols();
@@ -142,7 +142,7 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
         scopeName = scopeToAddTo.getName();
       }
       warnings.add(new CoCoStatus(SysMLCoCoName.ImportedElementNameAlreadyExists,
-          "The element  \"" + name  + "\" could not be imported, because it already exists in the scope "
+          "The element \"" + name  + "\" could not be imported, because it already exists in the scope "
               + scopeName + "."));
       return true;
     }
