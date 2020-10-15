@@ -1,6 +1,11 @@
 package de.monticore.lang.sysml.cocos;
 
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTImportUnitStdCoCo;
+import de.monticore.lang.sysml.cocos.imports.ImportStatementValid;
 import de.monticore.lang.sysml.cocos.naming.DefinitionNameStartsWithCapitalLetter;
+import de.monticore.lang.sysml.cocos.naming.PackageNameEqualsFileName;
+import de.monticore.lang.sysml.cocos.naming.UniqueName;
 import de.monticore.lang.sysml.sysml._cocos.SysMLCoCoChecker;
 import jline.internal.Log;
 
@@ -12,6 +17,10 @@ public class SysMLCoCos {
   public SysMLCoCoChecker getCheckerForAllCoCos() {
     final SysMLCoCoChecker checker = new SysMLCoCoChecker();
     checker.addCoCo(new DefinitionNameStartsWithCapitalLetter());
+    checker.addCoCo((SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo) new ImportStatementValid());
+    checker.addCoCo((SysMLImportsAndPackagesASTImportUnitStdCoCo) new ImportStatementValid());
+    checker.addCoCo(new UniqueName());
+    checker.addCoCo(new PackageNameEqualsFileName());
     //checker.addCoCo(new StateNameStartsWithCapitalLetter()); TODO
 
     return checker;

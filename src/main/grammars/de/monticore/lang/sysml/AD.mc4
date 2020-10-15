@@ -31,7 +31,7 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLDefinitions,
 
   /* ACTIVITIY MEMBERSHIPS */
 
-  ParameterMemberStd implements SysMLType, ParameterMember = direction:FeatureDirection? memberName:SysMLName Parameter;
+  ParameterMemberStd implements ParameterMember = direction:FeatureDirection? memberName:SysMLName Parameter;
   astrule ParameterMemberStd =
       method public String getName(){
         return this.getMemberName().getName();

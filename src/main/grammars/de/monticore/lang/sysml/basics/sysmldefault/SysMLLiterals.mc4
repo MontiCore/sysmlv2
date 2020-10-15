@@ -10,5 +10,6 @@ component grammar SysMLLiterals extends de.monticore.literals.MCCommonLiterals {
 
   // Literal Expressions
   RealLiteralWithExponent implements Literal = DecimalDoublePointLiteral;
+  SysMLExponentValue implements Literal = ExponentPart;
   UnlimitedNaturalLiteralExpression = "*";
 }

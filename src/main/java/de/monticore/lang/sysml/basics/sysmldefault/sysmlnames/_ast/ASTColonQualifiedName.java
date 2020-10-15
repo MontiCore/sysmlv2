@@ -25,9 +25,9 @@ public class ASTColonQualifiedName extends ASTColonQualifiedNameTOP {
   public String getFullQualifiedName() {
     String res = "";
     for (String name : this.getNamesList()) {
-      res += "." + name;
+      res += "::" + name;
     }
-    return res.substring(1);
+    return res.substring(2);
   }
 
   @Override

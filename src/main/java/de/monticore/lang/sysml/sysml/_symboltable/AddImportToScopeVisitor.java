@@ -48,7 +48,8 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
         currentType = Optional.of(node.getSymbol());
       }
       List<CoCoStatus> warnings =
-          this.addToScope(node.getResolvedTypes(), node.getEnclosingScope(), false, importAs, currentType);
+          this.addToScope(node.getResolvedTypes(), node.getEnclosingScope(), false, importAs, currentType,
+              node.getQualifiedName());
       node.setWarnings(warnings);
     }
     else {
@@ -70,7 +71,8 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
         currentType = Optional.of(node.getSymbol());
       }
       List<CoCoStatus> warnings =
-          this.addToScope(node.getResolvedTypes(), node.getEnclosingScope(), node.isStar(), importAs, currentType);
+          this.addToScope(node.getResolvedTypes(), node.getEnclosingScope(), node.isStar(), importAs, currentType,
+              node.getQualifiedName());
       node.setWarnings(warnings);
     }
     else {
@@ -81,10 +83,12 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
 
 
   public List<CoCoStatus> addToScope(List<SysMLTypeSymbol> resolvedTypes, ISysMLNamesBasisScope scopeToAddTo,
-      boolean starImport, Optional<ASTSysMLName> importAs, Optional<SysMLTypeSymbol> importAsCorrespondingSymbol){
+      boolean starImport, Optional<ASTSysMLName> importAs, Optional<SysMLTypeSymbol> importAsCorrespondingSymbol,
+      ASTQualifiedName importName){
     List<CoCoStatus> warnings = new ArrayList<>();
     if (resolvedTypes.size() == 0) {
-      warnings.add(new CoCoStatus(SysMLCoCoName.ImportIsDefined,"Could not resolve import."));
+      warnings.add(new CoCoStatus(SysMLCoCoName.ImportIsDefined,"Could not resolve import \""+
+          importName.getFullQualifiedName() + "\"."));
     }
     else if (resolvedTypes.size() == 1 && resolvedTypes.get(0).getAstNode() instanceof ASTPackage) {
       //Importing a package.
@@ -136,6 +140,9 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
 
   private boolean isAlreadyInScopeAndAddWarning(ISysMLNamesBasisScope scopeToAddTo, String name,
       List<CoCoStatus> warnings){
+    if(name.equals("")){
+      return true;
+    }
     if(scopeToAddTo.resolveSysMLTypeMany(name).size()!=0){
       String scopeName = "";
       if(scopeToAddTo.isPresentName()){

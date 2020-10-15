@@ -11,7 +11,7 @@ component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics
 
   /* IMPORTS */
   AliasPackagedDefinitionMember implements SysMLType, PackagedDefinitionMember =
-      ("import" | "alias") QualifiedName ("as" SysMLName)? ";";
+      ("import" | ["alias"]) QualifiedName ("as" SysMLName)? ";";
   astrule AliasPackagedDefinitionMember =
     method public String getName(){
       if( this.isPresentSysMLName()){
@@ -36,7 +36,6 @@ component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics
   /* PACKAGES */
   PackageUnit implements Unit = UnitPrefix Package;
   AnonymousPackage implements Unit = PackageBody;
-  //TODO check scope
   Package implements SysMLType, PackagedDefinitionMember =  PackageDeclaration PackageBody;
   astrule Package =
       method public String getName(){

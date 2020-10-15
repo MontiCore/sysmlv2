@@ -70,7 +70,7 @@ public class ImportIsDefinedTest extends AbstractSysMLTest {
     //this.printAllFindings();
     Collection<Finding> expectedWarnings = Arrays.asList(
         Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportIsDefined)) +
-        " Could not resolve import.",
+        " Could not resolve import \"ThisPackageDoesNotExist::Vehicle\".",
             new SourcePosition(2, 2, "Import Vehicle.sysml")));
 
     Assert.assertErrors(expectedWarnings, Log.getFindings());
