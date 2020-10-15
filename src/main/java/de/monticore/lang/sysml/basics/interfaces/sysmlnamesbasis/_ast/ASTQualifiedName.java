@@ -28,14 +28,12 @@ public interface ASTQualifiedName extends ASTQualifiedNameTOP{
       scopeToSearchIn = scopeToSearchIn.getEnclosingScope();
     }
     searchingScope.addAll(scopeToSearchIn.getSubScopes());
-
-    ISysMLNamesBasisScope scope = qualifiedName.getEnclosingScope();
     List<String> names = qualifiedName.getNamesList();
     if (names.size() == 0) {
       Log.error("Internal error in " + qualifiedName.getClass().getName() +
           ". A Qualified Name should always start with a Name");
     }
-    Boolean lastNameOfList = false;
+    boolean lastNameOfList = false;
 
 
     for (int i = 0; i < names.size(); i++) {

@@ -37,7 +37,7 @@ component grammar SysMLPorts extends de.monticore.lang.sysml.basics.SysMLUsages,
       if( this.isPresentSysMLName()){
         return this.getSysMLName().getName();
       }
-      return "NotNamed1232454123534j4jn43";
+      return "";
     }
   ;
   ConjugatePortTypePart = TypedByKeyword "~" ConjugatedPortTyping; //TypedByKeyword is defined in Usages
@@ -88,7 +88,7 @@ component grammar SysMLPorts extends de.monticore.lang.sysml.basics.SysMLUsages,
       if( this.isPresentSysMLName()){
         return this.getSysMLName().getName();
       }
-      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+      return "";
     }
   ;
 

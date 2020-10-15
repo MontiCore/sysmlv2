@@ -15,7 +15,7 @@ component grammar SysMLComments extends de.monticore.lang.sysml.basics.interface
       if( this.isPresentSysMLName()){
         return this.getSysMLName().getName();
       }
-      return "NotNamed1232454123534j4jn43";
+      return "";
     }
   ;
   SysMLAnnotation = "about" QualifiedName;
@@ -28,7 +28,7 @@ component grammar SysMLComments extends de.monticore.lang.sysml.basics.interface
       if( this.isPresentSysMLName()){
         return this.getSysMLName().getName();
       }
-      return "NotNamed1232454123534j4jn43";
+      return "";
     }
   ;
 }

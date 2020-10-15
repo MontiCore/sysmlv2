@@ -32,7 +32,7 @@ public class ScopeNameVisitor implements SysMLInheritanceVisitor {
 
   @Override
   public void visit(ASTSysMLType node) {
-    if (!node.getName().equals("NotNamed1232454123534j4jn43")) {
+    if (!node.getName().equals("")) {
       String name = node.getName();
       if(node instanceof ASTBlock){
         ASTBlock block = (ASTBlock) node;

@@ -17,7 +17,7 @@ component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics
       if( this.isPresentSysMLName()){
         return this.getSysMLName().getName();
       }
-      return "NotNamed1232454123534j4jn43";
+      return "";
     }
   ;
 
@@ -29,7 +29,7 @@ component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics
       if( this.isPresentSysMLName()){
         return this.getSysMLName().getName();
       }
-      return "NotNamed1232454123534j4jn43";
+      return "";
     }
   ;
 

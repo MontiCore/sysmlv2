@@ -16,7 +16,7 @@ component grammar SysMLSuccessionsAndItemFlows extends de.monticore.lang.sysml.b
       if( this.isPresentSysMLName()){
         return this.getSysMLName().getName();
       }
-      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+      return "";
     }
   ;
   TargetSuccession = "then" MultiplicitySourceEndMember ConnectorEndMember;
@@ -28,7 +28,7 @@ component grammar SysMLSuccessionsAndItemFlows extends de.monticore.lang.sysml.b
       if( this.isPresentSysMLName()){
         return this.getSysMLName().getName();
       }
-      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+      return "";
     }
   ;
 
@@ -68,7 +68,7 @@ component grammar SysMLSuccessionsAndItemFlows extends de.monticore.lang.sysml.b
       if( this.isPresentSysMLName()){
         return this.getSysMLName().getName();
       }
-      return "NotNamed1232454123534j4jn43";
+      return "";
     }
   ;
 

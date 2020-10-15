@@ -72,7 +72,7 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLDefinitions,
       if( this.isPresentSysMLName()){
         return this.getSysMLName().getName();
       }
-      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+      return "";
     }
   ;
 

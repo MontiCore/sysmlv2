@@ -53,7 +53,7 @@ component grammar SMD extends de.monticore.lang.sysml.advanced.SysMLSuccessionsA
       if( this.isPresentSysMLName()){
         return this.getSysMLName().getName();
       }
-      return "NotNamed1232454123534j4jn43";
+      return "";
     }
   ;
 

@@ -18,8 +18,8 @@ public class UniqueName implements SysMLNamesBasisASTSysMLTypeCoCo {
   @Override
   public void check(ASTSysMLType node) {
     // System.out.println("Visiting node " + node.getName());
-    if(node.getName().equals("NotNamed1232454123534j4jn43")){
-      return; //TODO => do not create symbol
+    if(node.getName().equals("")){
+      return;
     }
     List<SysMLTypeSymbol> symbols = node.getEnclosingScope().resolveSysMLTypeMany(node.getName());
     // System.out.println("Resolved following symbols for " + node.getName() + symbols.toString());

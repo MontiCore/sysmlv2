@@ -34,7 +34,7 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.Sy
       if( this.isPresentSysMLName()){
         return this.getSysMLName().getName();
       }
-      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+      return "";
     }
   ;
   /* REQUIREMENT DEFINITION MEMBERSHIPS */
@@ -68,7 +68,7 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.Sy
       if( this.isPresentSysMLName()){
         return this.getSysMLName().getName();
       }
-      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+      return "";
     }
   ;
   SatisfactionConnector = EmptySourceEndMember ConnectorEndMember;
