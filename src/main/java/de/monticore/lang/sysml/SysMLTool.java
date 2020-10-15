@@ -57,7 +57,7 @@ public class SysMLTool {
 
 
 
-      if(args.length == 3 && (!libDir.isPresent() && !cocosOff)){
+      if(args.length == 3 && (!libDir.isPresent() || !cocosOff)){
         printUsage();
         return null;
       }if(args.length == 2 && !(libDir.isPresent() || cocosOff)){

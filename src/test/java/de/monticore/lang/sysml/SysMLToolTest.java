@@ -62,6 +62,25 @@ public class SysMLToolTest {
   }
 
   @Test
+  public void checkFailOnThreeArgsOnlyOneOption1(){
+    Collection<Finding> expectedErrors = Arrays.asList(
+        Finding.error(wrongUsageError)
+    );
+
+    SysMLTool.main(new String[]{"arg1", "arg2", "-cocosOff"});
+    Assert.assertErrors(expectedErrors, Log.getFindings());
+  }
+  @Test
+  public void checkFailOnThreeArgsOnlyOneOption2(){
+    Collection<Finding> expectedErrors = Arrays.asList(
+        Finding.error(wrongUsageError)
+    );
+
+    SysMLTool.main(new String[]{"arg1", "arg2", "-lib=something..."});
+    Assert.assertErrors(expectedErrors, Log.getFindings());
+  }
+
+  @Test
   public void toolParseAndCheckAllTrainingExamplesCoCosOffTest(){
     final String pathToDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src";
     SysMLTool.main(new String[]{pathToDir + "/training/", "-cocosOff"});
