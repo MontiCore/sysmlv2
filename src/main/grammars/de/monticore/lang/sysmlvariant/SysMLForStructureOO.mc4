@@ -1,0 +1,21 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysmlvariant;
+
+
+grammar SysMLForStructureOO extends
+  // de.monticore.lang.sysml.basics.sysmldefault.SysMLBasics // Do not import all the basics, but configure it here.
+  de.monticore.lang.sysmlvariant.basics.objectoriented.SysMLNamesObjectOriented, //New
+  de.monticore.lang.sysmlvariant.basics.objectoriented.SysMLImportsAndPackagesObjectOriented, //new
+  de.monticore.lang.sysmlvariant.basics.extended.SysMLExpressionsExtended, //new from SysMLExtended
+  de.monticore.lang.sysml.basics.sysmldefault.SysMLComments,
+  de.monticore.lang.sysml.basics.sysmldefault.SysMLLiterals,
+  de.monticore.lang.sysml.basics.sysmldefault.SysMLVisibility,
+  de.monticore.lang.sysml.BDD,
+  de.monticore.lang.sysml.IBD,
+  de.monticore.lang.sysml.advanced.SysMLDefinitions { //TODO
+
+  start Package;
+  NestedDefinitionMemberStd implements NestedDefinitionMember = DefinitionMemberPrefix PackagedDefinitionMember; //TODO
+  BehaviorUsageMemberEmpty implements BehaviorUsageMember = "NotUsed123531232435124135342"; //TODO
+  ActionParameterListEmpty implements ActionParameterList = "NotUsed123531232435124135342"; //TODO
+}

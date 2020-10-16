@@ -33,4 +33,8 @@ public class ASTDotQualifiedName extends ASTDotQualifiedNameTOP {
   public List<SysMLTypeSymbol> resolveSymbols() {
     return ASTQualifiedName.resolveSymbolsHelper(this);
   }
+
+  public String getReferencedName(){
+    return  this.getSysMLName(this.getSysMLNameList().size()-1).getName();
+  }
 }

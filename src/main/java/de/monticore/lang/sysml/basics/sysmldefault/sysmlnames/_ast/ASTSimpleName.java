@@ -31,4 +31,8 @@ public class ASTSimpleName extends ASTSimpleNameTOP {
   public List<SysMLTypeSymbol> resolveSymbols() {
     return ASTQualifiedName.resolveSymbolsHelper(this);
   }
+
+  public String getReferencedName(){
+    return  this.getSysMLName().getName();
+  }
 }

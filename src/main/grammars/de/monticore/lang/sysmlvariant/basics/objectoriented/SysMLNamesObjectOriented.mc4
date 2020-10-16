@@ -1,0 +1,14 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysmlvariant.basics.objectoriented;
+
+component grammar SysMLNamesObjectOriented extends de.monticore.lang.sysml.basics.sysmldefault.SysMLNames {
+ //TODO improve do not import SysMLNames
+
+  SysMLNameDefault implements SysMLName = name:Name;
+  //Remark in Xtext this is Name
+  astrule SysMLNameDefault =
+    method public String getNameForPrettyPrinting(){
+      return this.getName();
+    }
+  ;
+}
