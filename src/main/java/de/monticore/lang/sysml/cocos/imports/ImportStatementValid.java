@@ -29,5 +29,4 @@ public class ImportStatementValid implements SysMLImportsAndPackagesASTAliasPack
           cocoStatus.getMessage(), node.get_SourcePositionStart());
     }
   }
-  //TODO test me
 }

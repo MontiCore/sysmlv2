@@ -70,17 +70,25 @@ public class SysMLTool {
     // Parsing
     List<ASTUnit> models = parseDirectory(dir);
 
-    // Symboltable
-    SysMLGlobalScope sysMLGlobalScope = buildSymbolTable(dir, models);
-
+    List<ASTUnit> allModelsToBuildSymbolTable = new ArrayList<>(); //We do not execute CoCos on the library
+    for (ASTUnit model : models) {
+      allModelsToBuildSymbolTable.add(model);
+    }
     //Do it again for the SysML Lib.
     if(libDir.isPresent()){
       List<ASTUnit> libModels = parseDirectory(libDir.get()); // Parsing
-      SysMLGlobalScope libModelsGlobalScope = buildSymbolTable(libDir.get(), libModels);  // Symboltable
+      allModelsToBuildSymbolTable.addAll(libModels);
+      /*SysMLGlobalScope libModelsGlobalScope = buildSymbolTable(libDir.get(), libModels);  // Symboltable
       for (ISysMLScope libArtifactScope : libModelsGlobalScope.getSubScopes()) {  //Merge with the globalscope
         sysMLGlobalScope.addSubScope(libArtifactScope);
-      }
+      }*/
     }
+
+
+    // Symboltable
+    SysMLGlobalScope sysMLGlobalScope = buildSymbolTable(dir, allModelsToBuildSymbolTable);
+
+
 
 
     if(cocosOff){

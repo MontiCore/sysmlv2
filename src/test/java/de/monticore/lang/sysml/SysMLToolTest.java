@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -93,8 +94,8 @@ public class SysMLToolTest {
     final String pathToDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src";
     SysMLTool.main(new String[]{pathToDir + "/training/",
       "-lib=src/main/resources/SysML Domain Libraries", "-cocosOff"});
-    //AbstractSysMLTest.printAllFindings();
-    assertTrue(Log.getFindings().size() == 8); //TODO addToScope warning
+    AbstractSysMLTest.printAllFindings();
+    assertTrue(Log.getFindings().isEmpty());
   }
 
   @Test
@@ -103,7 +104,6 @@ public class SysMLToolTest {
     SysMLTool.main(new String[]{pathToDir + "/training/",
       "-lib=src/main/resources/SysML Domain Libraries"});
     //AbstractSysMLTest.printAllFindings();
-    assertTrue(Log.getFindings().size() == 38);
-        //TODO addToScope warning, equal to the filename, imports of libs
+    assertEquals(36, Log.getFindings().size()); //not equal to filename coco, double definition (e.g. mm) at SI
   }
 }
