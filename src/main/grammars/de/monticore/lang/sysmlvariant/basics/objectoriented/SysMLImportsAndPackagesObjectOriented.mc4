@@ -5,5 +5,7 @@ component grammar SysMLImportsAndPackagesObjectOriented
 extends de.monticore.lang.sysml.basics.sysmldefault.SysMLImportsAndPackages {
   Package implements SysMLType =  PackageDeclaration PackageBody;
 
+  ImportUnitStd implements SysMLType, ImportUnit = PrefixAnnotation* (visibility:PackageElementVisibilityIndicator)?
+      "import" QualifiedName ("." star:["*"])? {noSpace()}? ("as" SysMLName)? ";";
 
 }
