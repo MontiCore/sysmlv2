@@ -106,4 +106,14 @@ public class SysMLToolTest {
     //AbstractSysMLTest.printAllFindings();
     assertEquals(36, Log.getFindings().size()); //not equal to filename coco, double definition (e.g. mm) at SI
   }
+  @Test
+  public void toolParseAndCheckAllTrainingExamplesWithMultipleLibDirCoCosTest(){
+    final String pathToDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src";
+    SysMLTool.main(new String[]{pathToDir + "/training/",
+      "-lib=src/main/resources/SysML Domain Libraries/Geometry",
+        "-lib=src/main/resources/SysML Domain Libraries/Quantities and Units"
+    });
+    //AbstractSysMLTest.printAllFindings();
+    assertEquals(36, Log.getFindings().size()); //not equal to filename coco, double definition (e.g. mm) at SI
+  }
 }

@@ -39,28 +39,32 @@ public class SysMLTool {
       printUsage();
       return null;
     }
-    Optional<String> libDir = Optional.empty();
+    List<String> libDirs = new ArrayList<>();
     boolean cocosOff = false;
     if(args.length == 2 || args.length == 3){
-      for(String arg:args){
-        if(arg.length()>5){
-          if(arg.startsWith("-lib=")){
-            libDir = Optional.of(arg.substring(5));
-            Log.info("Searching for a lib directory here: " + libDir.get(), SysMLTool.class.getName());
+      for(int i= 0; i< args.length; i++){
+        String arg = args[i];
+        if(i!=0) { // expecting modeldirectory at 0
+          if (arg.length() > 5) {
+            if (arg.startsWith("-lib=")) {
+              libDirs.add(arg.substring(5));
+              Log.info("Searching for a lib directory here: " + arg.substring(5), SysMLTool.class.getName());
+            }
           }
-        }
-        if(arg.equals("-cocosOff")){
-          cocosOff=true;
+          if (arg.equals("-cocosOff")) {
+            cocosOff = true;
+          }
         }
       }
 
+      int numberOfProcessableArguments = 0;
+      numberOfProcessableArguments++; //model directory;
+      if(cocosOff){
+        numberOfProcessableArguments++;
+      }
+      numberOfProcessableArguments += libDirs.size();
 
-
-
-      if(args.length == 3 && (!libDir.isPresent() || !cocosOff)){
-        printUsage();
-        return null;
-      }if(args.length == 2 && !(libDir.isPresent() || cocosOff)){
+      if(args.length != numberOfProcessableArguments){
         printUsage();
         return null;
       }
@@ -75,13 +79,9 @@ public class SysMLTool {
       allModelsToBuildSymbolTable.add(model);
     }
     //Do it again for the SysML Lib.
-    if(libDir.isPresent()){
-      List<ASTUnit> libModels = parseDirectory(libDir.get()); // Parsing
+    for(int libIndex=0; libIndex<libDirs.size(); libIndex++) {
+      List<ASTUnit> libModels = parseDirectory(libDirs.get(libIndex)); // Parsing
       allModelsToBuildSymbolTable.addAll(libModels);
-      /*SysMLGlobalScope libModelsGlobalScope = buildSymbolTable(libDir.get(), libModels);  // Symboltable
-      for (ISysMLScope libArtifactScope : libModelsGlobalScope.getSubScopes()) {  //Merge with the globalscope
-        sysMLGlobalScope.addSubScope(libArtifactScope);
-      }*/
     }
 
 
@@ -96,8 +96,10 @@ public class SysMLTool {
     }else {
       // Context Conditions
       Log.info("Checking Context Conditions.", SysMLTool.class.getName());
-      if (libDir.isPresent()) {
-        Log.info("Currently the Context Conditions for the library is not checked, because KerML is not yet supported.", SysMLTool.class.getName());
+      if (libDirs.size()>1) {
+        Log.info("Currently the Context Conditions for the library are not checked."
+            + "If you want to check them, just parse them with the first argument set to the library path.",
+            SysMLTool.class.getName());
       }
       for (ASTUnit astUnit : models) {
         runDefaultCocos(astUnit);
@@ -163,10 +165,17 @@ public class SysMLTool {
 
       Log.info("Found " + result.size() + " Files.", SysMLParserMultipleFiles.class.getName());
       List<String> onlySysMLFiles = new ArrayList<>();
+      boolean foundKerML = false;
       for (String fullFileName : result) {
         if (fullFileName.endsWith(".sysml")) {
           onlySysMLFiles.add(fullFileName);
         }
+        if(fullFileName.endsWith(".kerml")){
+          foundKerML = true;
+        }
+      }
+      if(foundKerML){
+        Log.warn("KerML files are not yet supported.");
       }
       Log.info("Found " + onlySysMLFiles.size() + " \".sysml\" Files.", SysMLParserMultipleFiles.class.getName());
       if(onlySysMLFiles.size()==0){
