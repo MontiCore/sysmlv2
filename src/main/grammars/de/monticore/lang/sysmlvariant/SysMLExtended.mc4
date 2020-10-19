@@ -20,9 +20,4 @@ grammar SysMLExtended extends
   {
 
   start Unit;
-  OCLExtraConstraint implements PackagedDefinitionMember =
-    "inline" "condition" "{" ForallExpr "}" ";"; //TODO add in Expressions
-
-  EDeclaration = "something";
-  ExtType = "something";
 }
