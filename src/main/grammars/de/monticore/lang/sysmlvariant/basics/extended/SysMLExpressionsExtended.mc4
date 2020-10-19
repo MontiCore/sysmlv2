@@ -6,8 +6,8 @@ component grammar SysMLExpressionsExtended extends de.monticore.lang.sysml.basic
   de.monticore.lang.sysml.basics.interfaces.SysMLPackageBasis {
 
  OCLExtraConstraint implements PackagedDefinitionMember =
-     "inline" "condition" "{" ForallExpr "}" ";";
+     "inline" "condition" "{" Expression "}" ";";
 
- EDeclaration = "something";
- ExtType = "something";
+ ExtType = MCType; //required by OCLExpressions
+ EDeclaration = MCType Name (dim:"[" "]")*; //required by OCLExpressions
 }

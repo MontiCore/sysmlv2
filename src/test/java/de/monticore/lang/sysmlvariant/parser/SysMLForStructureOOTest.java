@@ -1,9 +1,7 @@
 package de.monticore.lang.sysmlvariant.parser;
 
-import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;
-import de.monticore.lang.sysmlvariant.basics.objectoriented.sysmlimportsandpackagesobjectoriented._ast.ASTPackage;
-import de.monticore.lang.sysmlvariant.sysmlextended._parser.SysMLExtendedParser;
+import de.monticore.lang.sysmlvariant.basics.objectoriented.sysmlimportsandpackagesoo._ast.ASTPackage;
 import de.monticore.lang.sysmlvariant.sysmlforstructureoo._parser.SysMLForStructureOOParser;
 import de.se_rwth.commons.logging.Log;
 import org.antlr.v4.runtime.RecognitionException;

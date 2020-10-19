@@ -1,0 +1,15 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysmlvariant.basics.objectoriented;
+
+component grammar SysMLNamesOO extends de.monticore.lang.sysml.basics.interfaces.SysMLNamesBasis  {
+  ColonQualifiedNameOO implements QualifiedName = (SysMLName || ".")+;
+
+  SysMLNameOO implements SysMLName = name:Name;
+
+  //Remark in Xtext this is Name
+  astrule SysMLNameOO =
+    method public String getNameForPrettyPrinting(){
+      return this.getName();
+    }
+  ;
+}
