@@ -35,7 +35,7 @@ public class SysMLTool {
   }
 
   public static List<ASTUnit> mainForJava(String[] args) {
-    if (args.length == 0 ||args.length>3) {
+    if (args.length == 0) {
       printUsage();
       return null;
     }
