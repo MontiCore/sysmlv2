@@ -17,7 +17,7 @@
     
     <guava.version>18.0</guava.version>
     <jsr305.version>3.0.0</jsr305.version>
-    <junit.version>4.11</junit.version>
+    <junit.version>4.13.1</junit.version>
     <antlr.version>4.7.1</antlr.version>
     <logback.version>1.1.2</logback.version>
     <emf.common.version>2.5.0</emf.common.version>
