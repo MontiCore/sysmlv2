@@ -6,7 +6,7 @@ grammar SysMLForStructureOO extends
   // de.monticore.lang.sysml.basics.sysmldefault.SysMLBasics // Do not import all the basics, but configure it here.
   de.monticore.lang.sysmlvariant.basics.objectoriented.SysMLNamesObjectOriented, //New
   de.monticore.lang.sysmlvariant.basics.objectoriented.SysMLImportsAndPackagesObjectOriented, //new
-  de.monticore.lang.sysmlvariant.basics.extended.SysMLExpressionsExtended, //new from SysMLExtended
+  de.monticore.lang.sysml.basics.sysmldefault.SysMLExpressions, //new from SysMLExtended TODO
   de.monticore.lang.sysml.basics.sysmldefault.SysMLComments,
   de.monticore.lang.sysml.basics.sysmldefault.SysMLLiterals,
   de.monticore.lang.sysml.basics.sysmldefault.SysMLVisibility,

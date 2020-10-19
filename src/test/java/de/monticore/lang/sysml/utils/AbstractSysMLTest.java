@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 public class AbstractSysMLTest {
   public final String pathToInvalidModels = "src/test/resources/cocos/invalid";
   public final String pathToValidModels = "src/test/resources/cocos/valid";
+  public final String pathToVariantModels = "src/test/resources/variant";
   public final String pathToOfficialSysMLTrainingExamples = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src/training";
 
   public void setUpLog(){

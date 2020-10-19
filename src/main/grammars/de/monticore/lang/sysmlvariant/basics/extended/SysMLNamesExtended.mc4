@@ -3,8 +3,8 @@ package de.monticore.lang.sysmlvariant.basics.extended;
 
 component grammar SysMLNamesExtended extends de.monticore.lang.sysml.basics.sysmldefault.SysMLNames {
 
-  fragment token AnyTextQuotesDouble = ~ ('"');
-  token UNRESTRICTED_NAME_DOUBLE_QOUTES = '"' AnyTextQuotesDouble* '"';
+  fragment token AnyTextQuotesDouble = ~ ('>');
+  token UNRESTRICTED_NAME_DOUBLE_QOUTES = '<' AnyTextQuotesDouble* '>';
 
   SysMLNameDoubleQuotes implements SysMLName = unrestrictedNameQuotes:UNRESTRICTED_NAME_DOUBLE_QOUTES;
   //Remark in Xtext this is Name

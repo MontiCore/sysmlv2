@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlvariant.basics.extended;
 
-component grammar SysMLExpressionsExtended extends de.monticore.lang.sysml.basics.sysmldefault.SysMLExpressions {
-  // TODO use , de.monticore.expressions.OCLExpressions
+component grammar SysMLExpressionsExtended extends de.monticore.lang.sysml.basics.sysmldefault.SysMLExpressions,
+ de.monticore.expressions.OCLExpressions {
 }
