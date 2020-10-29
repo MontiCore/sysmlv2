@@ -1,6 +1,5 @@
 package de.monticore.lang.sysml.cocos;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTImportUnitStdCoCo;
 import de.monticore.lang.sysml.cocos.imports.ImportStatementValid;
@@ -28,9 +27,9 @@ public class SysMLCoCos {
 
 
 
-  public static String getErrorCode(SysMLCoCoName name) { //Errorcode are from 0xA7150 - 0xA7200
+  public static String getErrorCode(SysMLCoCoName name) {
     StringBuilder res = new StringBuilder();
-    res.append("0xA71"); //Hexadezmal TODO
+    res.append("0xA71"); //Errorcode are from 0xA7150 - 0xA7200
     switch (name) {
       case CommonFileExtension:
         return res.append("50").toString();

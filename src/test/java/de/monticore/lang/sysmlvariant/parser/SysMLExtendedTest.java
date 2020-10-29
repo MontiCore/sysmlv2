@@ -1,7 +1,6 @@
 package de.monticore.lang.sysmlvariant.parser;
 
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
-import de.monticore.lang.sysml.sysml._parser.SysMLParser;
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;
 import de.monticore.lang.sysmlvariant.sysmlextended._parser.SysMLExtendedParser;
 import de.se_rwth.commons.logging.Log;

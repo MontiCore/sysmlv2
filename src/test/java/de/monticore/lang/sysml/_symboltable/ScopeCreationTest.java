@@ -5,10 +5,8 @@ import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.sysml._symboltable.ISysMLScope;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLArtifactScope;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLScope;
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;

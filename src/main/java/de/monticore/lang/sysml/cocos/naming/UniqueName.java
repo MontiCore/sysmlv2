@@ -1,7 +1,6 @@
 package de.monticore.lang.sysml.cocos.naming;
 
 import de.monticore.lang.sysml.ad._ast.ASTActivity;
-import de.monticore.lang.sysml.advanced.sysmlsuccessionsanditemflows._ast.ASTItemFlow;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTSysMLType;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._cocos.SysMLNamesBasisASTSysMLTypeCoCo;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
@@ -17,7 +16,6 @@ import de.monticore.lang.sysml.requirementdiagram._ast.ASTRequirementDefinition;
 import de.monticore.lang.sysml.smd._ast.ASTStateDefinition;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

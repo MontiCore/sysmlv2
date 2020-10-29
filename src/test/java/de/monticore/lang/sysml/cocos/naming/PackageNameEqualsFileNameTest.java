@@ -4,7 +4,6 @@ import de.monticore.cocos.helper.Assert;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.cocos.SysMLCoCoName;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
-import de.monticore.lang.sysml.cocos.naming.PackageNameEqualsFileName;
 import de.monticore.lang.sysml.sysml._cocos.SysMLCoCoChecker;
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;
 import de.se_rwth.commons.SourcePosition;

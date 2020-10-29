@@ -15,7 +15,6 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Robin Muenstermann

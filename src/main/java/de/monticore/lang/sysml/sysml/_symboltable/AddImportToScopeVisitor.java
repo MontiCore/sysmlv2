@@ -9,8 +9,6 @@ import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTAliasPackagedDefinitionMember;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTImportUnitStd;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackage;
-import de.monticore.lang.sysml.bdd._ast.ASTBlock;
-import de.monticore.lang.sysml.bdd._ast.ASTBlockBuilder;
 import de.monticore.lang.sysml.cocos.CoCoStatus;
 import de.monticore.lang.sysml.cocos.SysMLCoCoName;
 import de.monticore.lang.sysml.sysml._visitor.SysMLInheritanceVisitor;
