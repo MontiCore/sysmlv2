@@ -15,9 +15,6 @@ grammar SysMLExtended extends
   de.monticore.lang.sysml.IBD,
   de.monticore.lang.sysml.ParametricDiagram,
   de.monticore.lang.sysml.RequirementDiagram,
-  de.monticore.lang.sysml.SMD
-
-  {
-
+  de.monticore.lang.sysml.SMD  {
   start Unit;
 }

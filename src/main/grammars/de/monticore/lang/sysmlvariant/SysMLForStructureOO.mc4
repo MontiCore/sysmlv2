@@ -12,8 +12,8 @@ grammar SysMLForStructureOO extends
   de.monticore.lang.sysml.basics.sysmldefault.SysMLVisibility,
   de.monticore.lang.sysml.BDD,
   de.monticore.lang.sysml.IBD{
-
   start Package;
+
   /*Implementing all interfaces is required by MontiCore. Since we do not want to use these Interfaces, we add
   sommething, which will (in practice) not occur in a model. => The interface is disabled.*/
   BehaviorUsageMemberEmpty implements BehaviorUsageMember = "NotUsed123531232435124135342";

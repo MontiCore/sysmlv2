@@ -5,7 +5,6 @@ component grammar SysMLNamesBasis extends de.monticore.types.MCBasicTypes {
   interface QualifiedName extends MCType;
   interface SysMLName; //Default Name for SysML
 
-
   astrule SysMLName =
     method public void setName(String name){
 
@@ -27,6 +26,4 @@ component grammar SysMLNamesBasis extends de.monticore.types.MCBasicTypes {
 
   interface symbol SysMLType;
   // interface scope SysMLBodyScope;
-
-
 }

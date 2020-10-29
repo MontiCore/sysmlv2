@@ -20,7 +20,4 @@ component grammar SysMLDefinitions extends de.monticore.lang.sysml.basics.SysMLP
   // Remark: in Xtext DefinitionMemberPrefix is a part of NonPortStructureUsageMember
   // Remark: NonPortStructureUsageMember is an interface
   // Remark: BehaviorUsageMember is an interface
-
-
-
 }
