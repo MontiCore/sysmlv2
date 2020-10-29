@@ -3,7 +3,6 @@ package BumperBotCyber {
 	private part UltraSonic {
 		port data : FOHP;
 	}
-	// TODO: Do in/out need to be item defs?
 	private port def FloatOutHistoryPort {
 		out distance : Float;
 		value history : History;

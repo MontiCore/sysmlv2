@@ -6,7 +6,6 @@ component grammar SysMLAssociations extends de.monticore.lang.sysml.basics.SysML
   /* ASSOCIATION BLOCKS */
 
   AssociationBlockUnit implements Unit = UnitPrefix AssociationBlock;
-  //TODO scope
   AssociationBlock implements SysMLType, PackagedDefinitionMember =
     AssociationBlockDeclaration AssociationBlockBody;
   astrule AssociationBlock =

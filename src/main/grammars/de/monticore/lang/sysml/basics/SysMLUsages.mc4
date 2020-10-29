@@ -33,8 +33,6 @@ component grammar SysMLUsages extends de.monticore.lang.sysml.basics.SysMLCommon
   TypePartStd implements TypePart = (TypedByKeyword ((FeatureTyping || ",")+ | "any") MultiplicityPart? )
     | MultiplicityPart;
   TypedByKeyword = ":" | "typed" "by";
-  //FeatureTypingStd implements FeatureTyping = QualifiedName; TODO
-  //FeatureTypingStd implements Type, FeatureTyping = MCType;
   FeatureTypingStd implements FeatureTyping = name:QualifiedName;
   MultiplicityPart = MultiplicityMember (["ordered"]? ["nonunique"]? | ["nonunique"]? ["ordered"]?);
     //Sequence of keywords does not matter here.
@@ -53,7 +51,6 @@ component grammar SysMLUsages extends de.monticore.lang.sysml.basics.SysMLCommon
   //Usage Memberships
   MultiplicityMember = Multiplicity;
 
-  //Remark: literal type is enforced by CoCo (write CoCo) or by Exact Literal TODO
   UnlimitedNaturalLiteralMember = limitedLiteral:Literal | isUnlimited:["*"];
 
   /* PARAMETERS */
