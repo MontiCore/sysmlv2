@@ -1,8 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml;
 
-component grammar AD extends de.monticore.lang.sysml.advanced.SysMLDefinitions,
- de.monticore.lang.sysml.advanced.SysMLSuccessionsAndItemFlows {
+component grammar AD extends de.monticore.lang.sysml.advanced.SysMLSuccessionsAndItemFlows {
 
   /* ACTIVITIES */
 

@@ -1,0 +1,3 @@
+package Invalid4 {
+	state def VehicleStates;
+}

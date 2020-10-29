@@ -3,7 +3,7 @@ package de.monticore.lang.sysml.sysml._symboltable;
 import de.monticore.lang.sysml.ad._ast.ASTActivity;
 import de.monticore.lang.sysml.ad._ast.ASTActivityBodyStd;
 import de.monticore.lang.sysml.advanced.sysmlconstraints._ast.ASTAssertConstraintUsage;
-import de.monticore.lang.sysml.advanced.sysmldefinitions._ast.ASTDefinitionBodyStd;
+import de.monticore.lang.sysml.basics.sysmldefinitions._ast.ASTDefinitionBodyStd;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTSysMLType;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.basics.sysmlassociations._ast.ASTAssociationBlock;

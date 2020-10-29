@@ -11,11 +11,9 @@ grammar SysMLForStructureOO extends
   de.monticore.lang.sysml.basics.sysmldefault.SysMLLiterals,
   de.monticore.lang.sysml.basics.sysmldefault.SysMLVisibility,
   de.monticore.lang.sysml.BDD,
-  de.monticore.lang.sysml.IBD,
-  de.monticore.lang.sysml.advanced.SysMLDefinitions { //TODO
+  de.monticore.lang.sysml.IBD{
 
   start Package;
-  NestedDefinitionMemberStd implements NestedDefinitionMember = DefinitionMemberPrefix PackagedDefinitionMember; //TODO
   BehaviorUsageMemberEmpty implements BehaviorUsageMember = "NotUsed123531232435124135342"; //TODO
   ActionParameterListEmpty implements ActionParameterList = "NotUsed123531232435124135342"; //TODO
 }

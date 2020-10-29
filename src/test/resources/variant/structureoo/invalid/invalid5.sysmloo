@@ -1,0 +1,3 @@
+package Invalid5 {
+		activity SomeActivity ();
+}

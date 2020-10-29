@@ -1,8 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml;
 
-component grammar SMD extends de.monticore.lang.sysml.advanced.SysMLSuccessionsAndItemFlows,
- de.monticore.lang.sysml.advanced.SysMLDefinitions {
+component grammar SMD extends de.monticore.lang.sysml.advanced.SysMLSuccessionsAndItemFlows {
 
   /* STATE DEFINITIONS */
 

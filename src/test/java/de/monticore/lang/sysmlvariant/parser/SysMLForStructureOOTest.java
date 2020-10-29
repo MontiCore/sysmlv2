@@ -88,4 +88,31 @@ public class SysMLForStructureOOTest extends AbstractSysMLTest {
     //printAllFindings();
     assertTrue(parser.hasErrors());
   }
+
+  @Test
+  public void parseSysMLVariantInvalid4Test() {
+    Log.enableFailQuick(false);
+    SysMLForStructureOOParser parser = new SysMLForStructureOOParser();
+    Path model = Paths.get(this.pathToVariantModels + "/structureoo/invalid/invalid4.sysmloo");
+    try {
+      Optional<ASTPackage> sysmlPackage = parser.parse(model.toString());
+    }
+    catch (IOException e) {
+    }
+    //printAllFindings();
+    assertTrue(parser.hasErrors());
+  }
+  @Test
+  public void parseSysMLVariantInvalid5Test() {
+    Log.enableFailQuick(false);
+    SysMLForStructureOOParser parser = new SysMLForStructureOOParser();
+    Path model = Paths.get(this.pathToVariantModels + "/structureoo/invalid/invalid5.sysmloo");
+    try {
+      Optional<ASTPackage> sysmlPackage = parser.parse(model.toString());
+    }
+    catch (IOException e) {
+    }
+    //printAllFindings();
+    assertTrue(parser.hasErrors());
+  }
 }
