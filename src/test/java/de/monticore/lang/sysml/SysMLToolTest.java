@@ -1,6 +1,8 @@
 package de.monticore.lang.sysml;
 
 import de.monticore.cocos.helper.Assert;
+import de.monticore.lang.sysml.cocos.SysMLCoCoName;
+import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
@@ -102,8 +104,17 @@ public class SysMLToolTest {
     final String pathToDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src";
     SysMLTool.main(new String[]{pathToDir + "/training/",
       "-lib=src/main/resources/SysML Domain Libraries"});
-    AbstractSysMLTest.printAllFindings();
-    assertEquals(36, Log.getFindings().size()); //not equal to filename coco, double definition (e.g. mm) at SI
+    //AbstractSysMLTest.printAllFindings();
+    //assertEquals(36, Log.getFindings().size());
+    for (Finding f:Log.getFindings()) { //not equal to filename coco, double definition (e.g. mm) at SI
+      boolean filenameCoCo = f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsFileName)));
+      boolean doubleImport = f.toString().contains(
+          SysMLCoCos.getErrorCode((SysMLCoCoName.ImportedElementNameAlreadyExists)));
+      assertTrue(filenameCoCo || doubleImport);
+      if(!(filenameCoCo || doubleImport)){
+        System.out.println("Did not expect the Finding:" + f.toString() );
+      }
+    }
   }
   @Test
   public void toolParseAndCheckAllTrainingExamplesWithMultipleLibDirCoCosTest(){
@@ -112,7 +123,16 @@ public class SysMLToolTest {
       "-lib=src/main/resources/SysML Domain Libraries/Geometry",
         "-lib=src/main/resources/SysML Domain Libraries/Quantities and Units"
     });
-    AbstractSysMLTest.printAllFindings();
-    assertEquals(36, Log.getFindings().size()); //not equal to filename coco, double definition (e.g. mm) at SI
+    //AbstractSysMLTest.printAllFindings();
+    //assertEquals(36, Log.getFindings().size());
+    for (Finding f:Log.getFindings()) { //not equal to filename coco, double definition (e.g. mm) at SI
+      boolean filenameCoCo = f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsFileName)));
+      boolean doubleImport = f.toString().contains(
+          SysMLCoCos.getErrorCode((SysMLCoCoName.ImportedElementNameAlreadyExists)));
+      assertTrue(filenameCoCo || doubleImport);
+      if(!(filenameCoCo || doubleImport)){
+        System.out.println("Did not expect the Finding:" + f.toString() );
+      }
+    }
   }
 }
