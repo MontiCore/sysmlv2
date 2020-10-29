@@ -69,7 +69,7 @@ public class ImportWithStarAndWithAsTest extends AbstractSysMLTest {
     assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
     //this.printAllFindings();
     Collection<Finding> expectedWarnings = Arrays.asList(
-        Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportWithStarAndWithAs)) + //TODO
+        Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportWithStarAndWithAs)) +
         " Cannot star import package with an alias \"as Car\".",
             new SourcePosition(2, 2, "Import Vehicle.sysml")));
 

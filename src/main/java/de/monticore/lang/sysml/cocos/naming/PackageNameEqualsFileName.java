@@ -27,7 +27,6 @@ public class PackageNameEqualsFileName implements SysMLImportsAndPackagesASTPack
       if(filename.length()>6){ //If this is false, an warning will be printed anyway, so there is no need for else-block
         filename = filename.substring(0, filename.length()-6); // Remove .sysml
       }
-      // TODO remove me System.out.println("Filename" + filename);
       if(!name.equals(filename)){
         warnMessage(name, node);
       }

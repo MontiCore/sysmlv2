@@ -2,6 +2,8 @@ package de.monticore.lang.sysml.cocos.naming;
 
 import de.monticore.cocos.helper.Assert;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.cocos.SysMLCoCoName;
+import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.monticore.lang.sysml.cocos.naming.PackageNameEqualsFileName;
 import de.monticore.lang.sysml.sysml._cocos.SysMLCoCoChecker;
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;
@@ -60,7 +62,8 @@ public class PackageNameEqualsFileNameTest extends AbstractSysMLTest {
     assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
     //this.printAllFindings();
     Collection<Finding> expectedWarnings = Arrays.asList(
-        Finding.warning("0xSysML03 package WrongName should be equal to the Filename.",
+        Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsFileName)) + " package WrongName should "
+                + "be equal to the Filename.",
             new SourcePosition(1, 0, "Blocks Example.sysml"))
     );
 

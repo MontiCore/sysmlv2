@@ -11,18 +11,6 @@ import java.util.List;
  * @version 1.0
  */
 public class HelperSysMLSymbolTableCreator {
- /* TODO delete public SysMLArtifactScope buildSymbolTable(ASTUnit astUnit, SysMLArtifactScope scope){
-    SysMLSymbolTableCreator symbolTableCreator = new SysMLSymbolTableCreator(scope);
-    SysMLArtifactScope newScope = symbolTableCreator.createFromAST(astUnit);
-    return newScope;
-  }
-  public SysMLArtifactScope buildSymbolTableWithGlobalScope(ASTUnit astUnit,
-      de.monticore.io.paths.ModelPath modelPath, SysMLLanguage language){
-    SysMLGlobalScope globalScope = new SysMLGlobalScope(modelPath, language);
-    SysMLSymbolTableCreator symbolTableCreator = new SysMLSymbolTableCreator(globalScope);
-    SysMLArtifactScope newScope = symbolTableCreator.createFromAST(astUnit);
-    return newScope;
-  }*/
 
   public SysMLLanguageSub initSysMLLang() {
     SysMLLanguageSub sysMLLanguage = new SysMLLanguageSub("SysML", ".sysml");

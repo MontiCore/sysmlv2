@@ -69,10 +69,6 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
     assertTrue(blockSymbolEnclosingScope.isPresent());
     assertTrue(valueTypeSymbolEnclosingScope.isPresent());
     assertFalse(notExistingSymbolEnclosingScope.isPresent());
-
-    /* TODO assertTrue(scope.resolveType("Blocks Example").isPresent());
-    assertTrue(scope.resolveType("Vehicle").isPresent());
-    assertTrue(scope.resolveType("VehicleStatus").isPresent());*/
   }
 
 

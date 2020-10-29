@@ -17,7 +17,6 @@ public class DefinitionNameStartsWithCapitalLetter implements SysMLClassifiersAS
     String name =  node.getName();
     boolean startsWithUpperCase = Character.isUpperCase(name.charAt(0));
     if(!startsWithUpperCase){
-      //TODO use String format?
       Log.warn(SysMLCoCos.getErrorCode(SysMLCoCoName.DefinitionNameStartsWithCapitalLetter)+ " Name "+name+
           " should start with a capital letter.", node.get_SourcePositionStart());
     }

@@ -50,7 +50,8 @@ public class UniqueName implements SysMLNamesBasisASTSysMLTypeCoCo {
             allnames += ("," + symbol.getSourcePosition().toString());
           }
           allnames = allnames.substring(1);
-          Log.error(SysMLCoCos.getErrorCode(SysMLCoCoName.NameReference) + " " + "Name " + node.getName() + " is not unique in its scope. Check definitions in scope at: " + allnames);
+          Log.error(SysMLCoCos.getErrorCode(SysMLCoCoName.UniqueName) + " " + "Name " + node.getName() + " is not unique in "
+              + "its scope. Check definitions in scope at: " + allnames);
         }
       }
     }else {

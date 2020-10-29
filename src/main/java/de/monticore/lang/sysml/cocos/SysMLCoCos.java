@@ -1,5 +1,6 @@
 package de.monticore.lang.sysml.cocos;
 
+import com.sun.xml.internal.bind.v2.TODO;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTImportUnitStdCoCo;
 import de.monticore.lang.sysml.cocos.imports.ImportStatementValid;
@@ -21,42 +22,41 @@ public class SysMLCoCos {
     checker.addCoCo((SysMLImportsAndPackagesASTImportUnitStdCoCo) new ImportStatementValid());
     checker.addCoCo(new UniqueName());
     checker.addCoCo(new PackageNameEqualsFileName());
-    //checker.addCoCo(new StateNameStartsWithCapitalLetter()); TODO
 
     return checker;
   }
 
 
 
-  public static String getErrorCode(SysMLCoCoName name) {
+  public static String getErrorCode(SysMLCoCoName name) { //Errorcode are from 0xA7150 - 0xA7200
     StringBuilder res = new StringBuilder();
-    res.append("0xSysML"); //Hexadezmal TODO
+    res.append("0xA71"); //Hexadezmal TODO
     switch (name) {
       case CommonFileExtension:
-        return res.append("01").toString();
+        return res.append("50").toString();
       case ValidImportStatement:
-        return res.append("02").toString();
+        return res.append("51").toString();
       case PackageNameEqualsFileName:
-        return res.append("03").toString();
+        return res.append("52").toString();
       case DefinitionNameStartsWithCapitalLetter:
-        return res.append("04").toString();
+        return res.append("53").toString();
       case NameReference:
-        return res.append("xx").toString();
+        return res.append("54").toString();
       case UniqueName:
-        return res.append("xx").toString();
+        return res.append("55").toString();
       case ImportIsDefined:
-        return res.append("xx").toString();
+        return res.append("56").toString();
       case ImportWithStarAndWithAs:
-        return res.append("xx").toString();
+        return res.append("57").toString();
       case PackageImportWithoutStar:
-        return res.append("xx").toString();
+        return res.append("58").toString();
       case AmbiguousImport:
-        return res.append("xx").toString();
+        return res.append("59").toString();
       case ImportedElementNameAlreadyExists:
-        return res.append("xx").toString();
+        return res.append("60").toString();
       default:
         Log.error("Internal error: One CoCo was not registered correctly.");
-        return res.append("00").toString();
+        return res.append("CouldNotResolveErrorCode").toString();
     }
   }
 }

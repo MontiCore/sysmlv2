@@ -2,6 +2,8 @@ package de.monticore.lang.sysml.cocos.naming;
 
 import de.monticore.cocos.helper.Assert;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.cocos.SysMLCoCoName;
+import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.monticore.lang.sysml.cocos.naming.DefinitionNameStartsWithCapitalLetter;
 import de.monticore.lang.sysml.sysml._cocos.SysMLCoCoChecker;
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;
@@ -68,7 +70,8 @@ public class DefinitionNameStartsWithCapitalLetterTest extends AbstractSysMLTest
     assertEquals(1,Log.getFindings().size());
     assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
     Collection<Finding> expectedWarnings = Arrays.asList(
-        Finding.warning("0xSysML04 Name vehicle should start with a capital letter.",
+        Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.DefinitionNameStartsWithCapitalLetter))+" Name vehicle should start "
+                + "with a capital letter.",
             new SourcePosition(4, 7, "Blocks Example.sysml"))
     );
 
