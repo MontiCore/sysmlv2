@@ -1,12 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.lang.sysml.basics;
+package de.monticore.lang.sysml.common;
 
 
-component grammar SysMLCommon extends de.monticore.lang.sysml.basics.SysMLClassifiers,
+component grammar SysMLCommon extends de.monticore.lang.sysml.common.SysMLClassifiers,
   // de.monticore.lang.sysml.basics.Usages, <- imported transitively
-  de.monticore.lang.sysml.basics.SysMLDefinitions,
+  de.monticore.lang.sysml.common.SysMLDefinitions,
   // de.monticore.lang.sysml.basics.Associations, <- imported transitively
-  de.monticore.lang.sysml.basics.SysMLValueTypes
+  de.monticore.lang.sysml.common.SysMLValueTypes
   //de.monticore.lang.sysml.basics.SysMLCommonBasis  <- imported transitively
   {
 

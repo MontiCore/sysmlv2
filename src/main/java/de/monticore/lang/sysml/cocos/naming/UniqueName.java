@@ -5,12 +5,12 @@ import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTSysMLTy
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._cocos.SysMLNamesBasisASTSysMLTypeCoCo;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackage;
-import de.monticore.lang.sysml.basics.sysmlports._ast.ASTInterfaceDefinition;
-import de.monticore.lang.sysml.basics.sysmlports._ast.ASTPortDefinitionStd;
-import de.monticore.lang.sysml.basics.sysmlvaluetypes._ast.ASTValueTypeStd;
 import de.monticore.lang.sysml.bdd._ast.ASTBlock;
 import de.monticore.lang.sysml.cocos.SysMLCoCoName;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
+import de.monticore.lang.sysml.common.sysmlports._ast.ASTInterfaceDefinition;
+import de.monticore.lang.sysml.common.sysmlports._ast.ASTPortDefinitionStd;
+import de.monticore.lang.sysml.common.sysmlvaluetypes._ast.ASTValueTypeStd;
 import de.monticore.lang.sysml.parametricdiagram._ast.ASTIndividualDefinition;
 import de.monticore.lang.sysml.requirementdiagram._ast.ASTRequirementDefinition;
 import de.monticore.lang.sysml.smd._ast.ASTStateDefinition;

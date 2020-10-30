@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.lang.sysml.basics;
+package de.monticore.lang.sysml.common;
 
-component grammar SysMLAssociations extends de.monticore.lang.sysml.basics.SysMLCommonBasis {
+component grammar SysMLAssociations extends de.monticore.lang.sysml.common.SysMLCommonBasis {
 
   /* ASSOCIATION BLOCKS */
 
