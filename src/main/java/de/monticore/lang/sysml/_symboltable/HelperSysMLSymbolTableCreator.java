@@ -2,6 +2,7 @@ package de.monticore.lang.sysml._symboltable;
 
 import de.monticore.io.paths.ModelPath;
 import de.monticore.lang.sysml.basics.interfaces.sharedbasis._ast.ASTUnit;
+import de.monticore.lang.sysml.sysml.SysMLMill;
 import de.monticore.lang.sysml.sysml._symboltable.*;
 
 import java.util.List;
@@ -24,30 +25,24 @@ public class HelperSysMLSymbolTableCreator {
     return newScope;
   }*/
 
-  public SysMLLanguageSub initSysMLLang() {
-    SysMLLanguageSub sysMLLanguage = new SysMLLanguageSub("SysML", ".sysml");
-    return sysMLLanguage;
-  }
-
-  public SysMLGlobalScope initGlobalScope(ModelPath mp, SysMLLanguageSub sysMLLanguage) {
-    SysMLGlobalScope sysMLGlobalScope = new SysMLGlobalScope(mp, sysMLLanguage);
+  public ISysMLGlobalScope initGlobalScope(ModelPath mp) {
+    ISysMLGlobalScope sysMLGlobalScope = SysMLMill.sysMLGlobalScopeBuilder().setModelPath(mp).setModelFileExtension("sysml").build();
     return sysMLGlobalScope;
   }
 
-  public SysMLArtifactScope createSymboltable(ASTUnit ast,SysMLLanguageSub sysMLLanguage, SysMLGlobalScope globalScope) {
+  public ISysMLArtifactScope createSymboltable(ASTUnit ast, ISysMLGlobalScope globalScope) {
 
-    SysMLSymbolTableCreatorDelegator symbolTableDelegator = sysMLLanguage.getSymbolTableCreator(globalScope);
+    SysMLSymbolTableCreatorDelegator symbolTableDelegator = SysMLMill.sysMLSymbolTableCreatorDelegatorBuilder().setGlobalScope(globalScope).build();
     return symbolTableDelegator.createFromAST(ast);
   }
 
-  public SysMLArtifactScope createSymboltableSingleASTUnit(ASTUnit astUnit, ModelPath mp){
-    return createSymboltable(astUnit, initSysMLLang(), initGlobalScope(mp, initSysMLLang()));
+  public ISysMLArtifactScope createSymboltableSingleASTUnit(ASTUnit astUnit, ModelPath mp){
+    return createSymboltable(astUnit, initGlobalScope(mp));
   }
-  public SysMLGlobalScope createSymboltableMultipleASTUnit(List<ASTUnit> astUnits, ModelPath mp){ //TODO test
-    SysMLLanguageSub lang = initSysMLLang();
-    SysMLGlobalScope globalScope = initGlobalScope(mp, lang);
+  public ISysMLGlobalScope createSymboltableMultipleASTUnit(List<ASTUnit> astUnits, ModelPath mp){ //TODO test
+    ISysMLGlobalScope globalScope = initGlobalScope(mp);
     for (ASTUnit astUnit : astUnits) {
-      createSymboltable(astUnit, lang,globalScope );
+      createSymboltable(astUnit,globalScope );
     }
     return globalScope;
   }

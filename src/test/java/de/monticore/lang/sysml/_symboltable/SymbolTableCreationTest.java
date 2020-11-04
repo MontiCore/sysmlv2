@@ -12,9 +12,7 @@ import de.monticore.lang.sysml.basics.valuetypes._ast.ASTValueTypeStd;
 import de.monticore.lang.sysml.basics.valuetypes._symboltable.ValueTypeStdSymbol;
 import de.monticore.lang.sysml.bdd._ast.ASTBlock;
 import de.monticore.lang.sysml.bdd._symboltable.BlockSymbol;
-import de.monticore.lang.sysml.sysml._symboltable.ISysMLScope;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLArtifactScope;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
+import de.monticore.lang.sysml.sysml._symboltable.*;
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;
 import de.se_rwth.commons.logging.Log;
 import org.junit.Ignore;
@@ -46,7 +44,7 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
     //Creating Symboltable
     ModelPath mp = SysMLTool.createModelpath(currentPath);
     HelperSysMLSymbolTableCreator helperSysMLSymbolTableCreator = new HelperSysMLSymbolTableCreator();
-    SysMLArtifactScope topScope = helperSysMLSymbolTableCreator.createSymboltableSingleASTUnit(astUnit, mp);
+    ISysMLArtifactScope topScope = helperSysMLSymbolTableCreator.createSymboltableSingleASTUnit(astUnit, mp);
 
     //Testing Symboltable
     Optional<PackageSymbol> packageSymbol = topScope.resolvePackage("Blocks Example");
@@ -83,7 +81,7 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
   public void testSuccessfulCreationInMultipleFiles() {
     String currentPath = this.pathToOfficialSysMLTrainingExamples;
     List<ASTUnit> models = SysMLTool.parseDirectory(currentPath);
-    SysMLGlobalScope topScope = SysMLTool.buildSymbolTable(currentPath, models);
+    ISysMLGlobalScope topScope = SysMLTool.buildSymbolTable(currentPath, models);
 
     //Testing Symboltable
     Optional<PackageSymbol> packageSymbolBlocksExample = topScope.resolvePackage("Blocks Example");

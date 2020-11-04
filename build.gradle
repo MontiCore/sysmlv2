@@ -6,7 +6,7 @@
 
 plugins {
     id 'java'
-    id "monticore" version "6.1.0-SNAPSHOT"
+    id "monticore" version "6.5.0-SNAPSHOT"
     id 'maven-publish'
     id "com.github.johnrengelman.shadow" version "4.0.4"
     id "com.adarshr.test-logger" version "2.0.0"
@@ -25,10 +25,14 @@ sourceCompatibility = '1.8'
 /* ========================= Versions ========================= */
 /* ============================================================ */
 
-def monticore_version = "6.1.0"
+def monticore_version = "6.5.0-SNAPSHOT"
 def junit_version = "4.12"
+ def commons_cli_version = "1.4"
+ def sclang_version = "1.1.5-SNAPSHOT"
+ def montiarc_version = "6.0.0-SNAPSHOT"
 def grammar_classifier = "grammars"
 def grammarDir = "src/main/grammars"
+ def archiveBaseName = "SysML"
 
 /* ============================================================ */
 /* ======================= Configuration ====================== */
@@ -60,18 +64,23 @@ repositories {
     mavenCentral()
     maven {
         credentials.username mavenUser
-        credentials.password System.getenv("cibuild")
-        url = 'https://nexus.se.rwth-aachen.de/content/groups/se/'
+        credentials.password mavenPassword
+        url = 'https://nexus.se.rwth-aachen.de/content/groups/public/'
     }
 }
 
 dependencies {
     grammar "de.monticore:monticore-grammar:$monticore_version:$grammar_classifier"
+    grammar "de.monticore.lang:scgrammar:$sclang_version:$grammar_classifier"
+    //grammar "montiarc.languages:montiarc-fe:$montiarc_version:$grammar_classifier"
     implementation "org.antlr:antlr4-runtime:4.7.1"
     implementation "de.monticore:monticore-generator:$monticore_version"
     implementation "de.monticore:monticore-runtime:$monticore_version"
     implementation "de.monticore:monticore-grammar:$monticore_version"
+    implementation "de.monticore.lang:scgrammar:$sclang_version"
     implementation "org.assertj:assertj-core:3.7.0"
+    implementation "commons-cli:commons-cli:$commons_cli_version"
+    //implementation "montiarc.languages:montiarc-fe:$montiarc_version"
     testImplementation "junit:junit:$junit_version"
     testImplementation "de.monticore:monticore-runtime:$monticore_version:tests"
     testImplementation "de.monticore:monticore-runtime:$monticore_version"
@@ -147,15 +156,15 @@ generateBDD.dependsOn generateSysMLCommon
 
 generateIBD.dependsOn generateSysMLCommon
 
-generateNotDistributed.dependsOn generateSysMLCommon
+//generateNotDistributed.dependsOn generateSysMLCommon
 
-generatePackageDiagram.dependsOn generateSysMLCommon
+//generatePackageDiagram.dependsOn generateSysMLCommon
 
 generateParametricDiagram.dependsOn generateSysMLCommon
 
 generateRequirementDiagram.dependsOn generateSysMLCommon
 
-generateSD.dependsOn generateSysMLCommon
+//generateSD.dependsOn generateSysMLCommon
 
 generateSMD.dependsOn generateSysMLCommon
 
@@ -164,7 +173,7 @@ generateSysML.dependsOn generateIBD
 generateSysML.dependsOn generateAD
 generateSysML.dependsOn generateSysMLBasicsDefault
 
-generateUseCaseDiagram.dependsOn generateSysMLCommon
+//generateUseCaseDiagram.dependsOn generateSysMLCommon
 
 
 compileJava.dependsOn(
@@ -191,14 +200,14 @@ generateUsages,
 generateValueTypes,
 generateBDD,
 generateIBD,
-generateNotDistributed,
-generatePackageDiagram,
+//generateNotDistributed,
+//generatePackageDiagram,
 generateParametricDiagram,
 generateRequirementDiagram,
-generateSD,
+//generateSD,
 generateSMD,
 generateSysML,
-generateUseCaseDiagram,
+//generateUseCaseDiagram,
 )
 /*This was generated*/
 
@@ -228,6 +237,17 @@ task grammarJar(type: Jar) {
     from("$projectDir/src/main/grammars/") { include "**/*.mc4" }
     archiveClassifier = "grammars"
 }
+ // all in one cli-jar
+ shadowJar {
+     manifest {
+         attributes "Main-Class": "de.monticore.SYSMLCLI"
+     }
+     archiveFileName = "SysML-cli.jar"
+     minimize()
+ }
+
+ jar.dependsOn shadowJar
+
 
 /* ============================================================ */
 /* ======================= Publishing ========================= */

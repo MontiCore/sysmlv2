@@ -3,15 +3,12 @@ package de.monticore.lang.sysml;
 import com.google.common.collect.Sets;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.lang.sysml._symboltable.HelperSysMLSymbolTableCreator;
-import de.monticore.lang.sysml._symboltable.SysMLLanguageSub;
 import de.monticore.lang.sysml.basics.interfaces.sharedbasis._ast.ASTUnit;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.monticore.lang.sysml.parser.SysMLParserMultipleFiles;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLArtifactScope;
+import de.monticore.lang.sysml.sysml._symboltable.ISysMLGlobalScope;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLLanguage;
-import de.monticore.lang.sysml.sysml._symboltable.serialization.SysMLScopeDeSer;
-import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +42,7 @@ public class SysMLTool {
 
 
     // Symboltable
-    SysMLGlobalScope sysMLGlobalScope = buildSymbolTable(dir, models);
+    ISysMLGlobalScope sysMLGlobalScope = buildSymbolTable(dir, models);
 
 
     // Context Conditions
@@ -58,11 +55,11 @@ public class SysMLTool {
 
   }
 
-  public static SysMLGlobalScope buildSymbolTable(String dir, List<ASTUnit> models){
+  public static ISysMLGlobalScope buildSymbolTable(String dir, List<ASTUnit> models){
     Log.info("Creating Symbol Table.", SysMLTool.class.getName());
-    final ModelPath mp = createModelpath(getSysMLFilePathsInDirectory(dir));
+    final ModelPath mp = createModelpath(dir);
     HelperSysMLSymbolTableCreator helperSysMLSymbolTableCreator = new HelperSysMLSymbolTableCreator();
-    SysMLGlobalScope sysMLGlobalScope = helperSysMLSymbolTableCreator.createSymboltableMultipleASTUnit(models,mp);
+    ISysMLGlobalScope sysMLGlobalScope = helperSysMLSymbolTableCreator.createSymboltableMultipleASTUnit(models,mp);
     return sysMLGlobalScope;
   }
 
@@ -117,6 +114,10 @@ public class SysMLTool {
     SysMLCoCos cocos = new SysMLCoCos();
     cocos.getCheckerForAllCoCos().checkAll(unit);
   }
+  public static ModelPath createModelpath(String dirOrFile){
+    List<String> filePathAsList = getSysMLFilePathsInDirectory(dirOrFile);
+    return createModelpath(filePathAsList);
+  }
   public static ModelPath createModelpath(List<String> filePaths){
     Set<Path> p = Sets.newHashSet();
     for (String mP : filePaths) {
@@ -125,9 +126,5 @@ public class SysMLTool {
     }
     final ModelPath mp = new ModelPath(p);
     return mp;
-  }
-  public static ModelPath createModelpath(String dirOrFile){
-    List<String> filePathAsList = getSysMLFilePathsInDirectory(dirOrFile);
-    return createModelpath(filePathAsList);
   }
 }
