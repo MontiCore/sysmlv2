@@ -17,7 +17,7 @@ import de.monticore.lang.sysml.common.sysmlvaluetypes._ast.ASTValueTypeStd;
 import de.monticore.lang.sysml.parametricdiagram._ast.ASTIndividualDefinition;
 import de.monticore.lang.sysml.requirementdiagram._ast.ASTRequirementDefinition;
 import de.monticore.lang.sysml.requirementdiagram._ast.ASTSatisfyRequirementUsage;
-import de.monticore.lang.sysml.smd._ast.ASTStateDefinition;
+import de.monticore.lang.sysml.stm._ast.ASTStateDefinition;
 import de.monticore.lang.sysml.sysml._visitor.SysMLInheritanceVisitor;
 
 /**

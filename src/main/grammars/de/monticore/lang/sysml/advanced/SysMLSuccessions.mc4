@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml.advanced;
 
 
-component grammar SysMLSuccessionsAndItemFlows extends de.monticore.lang.sysml.common.SysMLCommon {
+component grammar SysMLSuccessions extends de.monticore.lang.sysml.advanced.ItemFlows {
 
   /* SUCCESSIONS */
   NonPortStructureUsageMemberSuccession implements NonPortStructureUsageMember =
@@ -51,35 +51,5 @@ component grammar SysMLSuccessionsAndItemFlows extends de.monticore.lang.sysml.c
   GuardExpressionMember = "if" Expression;
   EffectBehaviorMember = "do" EffectBehaviourUsage;
 
- /* ITEM FLOWS */
-  NonPortStructureUsageMemberItemFlow implements NonPortStructureUsageMember =
-    ["abstract"]? "stream" ItemFlow;
-  NonPortStructureUsageMemberSuccessionItemFlow implements NonPortStructureUsageMember =
-    ["abstract"]? "flow" SuccessionItemFlow;
 
-  ItemFlow = ItemFlowDeclaration DefinitionBody;
-  SuccessionItemFlow = ItemFlowDeclaration DefinitionBody;
-  ItemFlowDeclaration implements SysMLType = ( (SysMLName)? TypePart?
-    (( "of" ItemFeatureMember) | (EmptyItemFeatureMember))
-    "from" | EmptyItemFeatureMember )
-    ItemFlowEndMember "to" ItemFlowEndMember;
-  astrule ItemFlowDeclaration =
-    method public String getName(){
-      if( this.isPresentSysMLName()){
-        return this.getSysMLName().getName();
-      }
-      return "";
-    }
-  ;
-
-  ItemFeatureTyping = FeatureTyping MultiplicityMember?;
-  EmptyItemFeature;
-  ItemFlowEnd = ItemFlowFeatureMember;
-  ItemFlowFeature = Redefinition;
-
-  /* ITEM FLOW MEMBERSHIPS */
-  ItemFeatureMember = (memberName:SysMLName TypedByKeyword)? ItemFeatureTyping;
-  ItemFlowEndMember = ItemFlowEnd;
-  ItemFlowFeatureMember = ItemFlowFeature;
-  EmptyItemFeatureMember = EmptyItemFeature;
 }
