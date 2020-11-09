@@ -36,7 +36,6 @@
  interface Usage;
 
  interface ActionUsage;
- interface AbstractActionUsage;
  interface PortUsage;
  interface ConjugatedPortUsage;
 
