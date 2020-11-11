@@ -8,17 +8,8 @@ component grammar SysMLAssociations extends de.monticore.lang.sysml.common.SysML
   AssociationBlockUnit implements Unit = UnitPrefix AssociationBlock;
   AssociationBlock implements SysMLType, PackagedDefinitionMember =
     AssociationBlockDeclaration AssociationBlockBody;
-  astrule AssociationBlock =
-    method public String getName(){
-      return this.getAssociationBlockDeclaration().getName();
-    }
-  ;
   AssociationBlockDeclaration = ["abstract"]? "assoc" "block" ClassifierDeclarationCompletion;
-  astrule AssociationBlockDeclaration =
-    method public String getName(){
-      return this.getClassifierDeclarationCompletion().getName();
-    }
-  ;
+
   scope AssociationBlockBody = (";") | ("{"
     (
         NestedDefinitionMember
@@ -27,6 +18,19 @@ component grammar SysMLAssociations extends de.monticore.lang.sysml.common.SysML
     )* "}"
   );
 
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+  astrule AssociationBlock =
+    method public String getName(){
+      return this.getAssociationBlockDeclaration().getName();
+    }
+  ;
+  astrule AssociationBlockDeclaration =
+    method public String getName(){
+      return this.getClassifierDeclarationCompletion().getName();
+    }
+  ;
   /* ASSOCIATION BLOCK MEMBERSHIPS */
 
   AssociationUsageMemberStd implements AssociationUsageMember =

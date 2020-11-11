@@ -6,28 +6,34 @@ component grammar SysMLConstraints extends de.monticore.lang.sysml.common.SysMLC
   /* CONSTRAINT DEFINITIONS */
 
   ConstraintDefinitionUnit implements Unit = UnitPrefix ConstraintDefinition;
-  ConstraintDefinition implements PackagedDefinitionMember = ConstraintDefDeclaration ConstraintBody;
-  ConstraintDefDeclaration implements SysMLType = ["abstract"]? "constraint" "def" SysMLName ParameterList?
+  ConstraintDefinition implements SysMLType, PackagedDefinitionMember = ConstraintDefDeclaration ConstraintBody;
+  ConstraintDefDeclaration = ["abstract"]? "constraint" "def" SysMLName ParameterList?
     EmptyReturnParameterPart SuperclassingList?;
-  astrule ConstraintDefDeclaration =
-    method public String getName(){
-      return this.getSysMLName().getName();
-    }
-  ;
+
   scope ConstraintBody = ";" | "{" ConstraintMembers "}";
   ConstraintMembers = (NestedDefinitionMember | NestedUsageMember | ImportUnit)* ConstraintExpressionMember?;
   EmptyReturnParameterPart = EmptyReturnParameterMember;
+
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+  astrule ConstraintDefinition =
+    method public String getName(){
+      return this.getConstraintDefDeclaration().getSysMLName().getName();
+    }
+  ;
 
   /* CONSTRAINT DEFINITION MEMBERSHIPS */
   EmptyReturnParameterMember = EmptyParameter;
   ConstraintExpressionMember = DefinitionMemberPrefix Expression;
 
   /* CONSTRAINTS */
-  ConstraintUsagePackagedUsageMember implements PackagedUsageMember =  ["abstract"]? "constraint" ConstraintUsage;
-  BehaviorUsageMemberConstraintUsage implements BehaviorUsageMember =
+  ConstraintUsagePackagedUsageMember implements SysMLType, PackagedUsageMember =
+    ["abstract"]? "constraint" ConstraintUsage;
+  BehaviorUsageMemberConstraintUsage implements SysMLType, BehaviorUsageMember =
     DefinitionMemberPrefix ["abstract"]?  ("ref" "constraint" | isComposite:"constraint") ConstraintUsage;
-  BehaviorUsageMemberAssertConstraintUsage implements BehaviorUsageMember =
-      DefinitionMemberPrefix "assert" AssertConstraintUsage;
+  BehaviorUsageMemberAssertConstraintUsage implements SysMLType, BehaviorUsageMember =
+     DefinitionMemberPrefix "assert" AssertConstraintUsage;
 
   ConstraintUsage = ConstraintDeclaration ConstraintBody;
   ConstraintDeclaration =
@@ -35,9 +41,38 @@ component grammar SysMLConstraints extends de.monticore.lang.sysml.common.SysMLC
     | (TypePart? (ActionParameterList EmptyReturnParameterPart)? ValuePart?)
     | (RedefinesKeyword Redefinition TypePart? ActionParameterList? EmptyReturnParameterPart ValuePart?);
   ConstraintParameterPart = ActionParameterList? EmptyReturnParameterPart SubsettingPart ValuePart?;
-  AssertConstraintUsage implements SysMLType =
-    (((SysMLName? TypePart? "as" )? Subset+ ) | ("constraint" SysMLName? TypePart?) )
+  AssertConstraintUsage = (((SysMLName? TypePart? "as" )? Subset+ ) | ("constraint" SysMLName? TypePart?) )
     ConstraintParameterPart InvariantPart ConstraintBody;
+  InvariantPart = TrueLiteralMember;
+  TrueLiteralExpression;
+
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+  astrule ConstraintUsagePackagedUsageMember =
+    method public String getName(){
+      return this.getConstraintUsage().getName();
+    }
+  ;
+  astrule BehaviorUsageMemberConstraintUsage =
+    method public String getName(){
+      return this.getConstraintUsage().getName();
+    }
+  ;
+  astrule ConstraintUsage =
+    method public String getName(){
+      if( this.getConstraintDeclaration().isPresentSysMLNameAndTypePart()){
+        return this.getConstraintDeclaration().getSysMLNameAndTypePart().getName();
+      }
+      return "";
+    }
+  ;
+  astrule BehaviorUsageMemberAssertConstraintUsage =
+    method public String getName(){
+      return this.getAssertConstraintUsage().getName();
+    }
+  ;
+
   astrule AssertConstraintUsage =
     method public String getName(){
       if( this.isPresentSysMLName()){
@@ -46,8 +81,6 @@ component grammar SysMLConstraints extends de.monticore.lang.sysml.common.SysMLC
       return "";
     }
   ;
-  InvariantPart = TrueLiteralMember;
-  TrueLiteralExpression;
 
   /* CONSTRAINT MEMBERSHIPS */
   TrueLiteralMember = TrueLiteralExpression;

@@ -4,25 +4,18 @@ package de.monticore.lang.sysml.advanced;
 
 component grammar SysMLItemFlows extends de.monticore.lang.sysml.common.SysMLCommon {
  /* ITEM FLOWS */
-  NonPortStructureUsageMemberItemFlow implements NonPortStructureUsageMember =
+  NonPortStructureUsageMemberItemFlow implements SysMLType, NonPortStructureUsageMember =
     ["abstract"]? "stream" ItemFlow;
-  NonPortStructureUsageMemberSuccessionItemFlow implements NonPortStructureUsageMember =
+  NonPortStructureUsageMemberSuccessionItemFlow implements SysMLType, NonPortStructureUsageMember =
     ["abstract"]? "flow" SuccessionItemFlow;
 
   ItemFlow = ItemFlowDeclaration DefinitionBody;
   SuccessionItemFlow = ItemFlowDeclaration DefinitionBody;
-  ItemFlowDeclaration implements SysMLType = ( (SysMLName)? TypePart?
+  ItemFlowDeclaration = ( (SysMLName)? TypePart?
     (( "of" ItemFeatureMember) | (EmptyItemFeatureMember))
     "from" | EmptyItemFeatureMember )
     ItemFlowEndMember "to" ItemFlowEndMember;
-  astrule ItemFlowDeclaration =
-    method public String getName(){
-      if( this.isPresentSysMLName()){
-        return this.getSysMLName().getName();
-      }
-      return "";
-    }
-  ;
+
 
   ItemFeatureTyping = FeatureTyping MultiplicityMember?;
   EmptyItemFeature;
@@ -34,4 +27,26 @@ component grammar SysMLItemFlows extends de.monticore.lang.sysml.common.SysMLCom
   ItemFlowEndMember = ItemFlowEnd;
   ItemFlowFeatureMember = ItemFlowFeature;
   EmptyItemFeatureMember = EmptyItemFeature;
+
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+  astrule NonPortStructureUsageMemberItemFlow =
+    method public String getName(){
+      return this.getItemFlow().getItemFlowDeclaration().getName();
+    }
+  ;
+  astrule NonPortStructureUsageMemberSuccessionItemFlow =
+    method public String getName(){
+      return this.getSuccessionItemFlow().getItemFlowDeclaration().getName();
+    }
+  ;
+  astrule ItemFlowDeclaration =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "";
+    }
+  ;
 }
