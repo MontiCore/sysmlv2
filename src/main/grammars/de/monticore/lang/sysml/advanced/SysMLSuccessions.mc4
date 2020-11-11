@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml.advanced;
 
 
-component grammar SysMLSuccessions extends de.monticore.lang.sysml.advanced.ItemFlows {
+component grammar SysMLSuccessions extends de.monticore.lang.sysml.advanced.SysMLItemFlows {
 
   /* SUCCESSIONS */
   NonPortStructureUsageMemberSuccession implements NonPortStructureUsageMember =

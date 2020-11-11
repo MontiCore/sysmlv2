@@ -2,7 +2,7 @@
 package de.monticore.lang.sysml.advanced;
 
 
-component grammar ItemFlows extends de.monticore.lang.sysml.common.SysMLCommon {
+component grammar SysMLItemFlows extends de.monticore.lang.sysml.common.SysMLCommon {
  /* ITEM FLOWS */
   NonPortStructureUsageMemberItemFlow implements NonPortStructureUsageMember =
     ["abstract"]? "stream" ItemFlow;

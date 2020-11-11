@@ -6,20 +6,24 @@ component grammar ParametricDiagram extends de.monticore.lang.sysml.common.SysML
   /* INDIVIDUAL DEFINITIONS */
   IndividualDefinitionUnit implements Unit = UnitPrefix IndividualDefinition;
   IndividualDefinition implements SysMLType, PackagedDefinitionMember = IndividualDefDeclaration DefinitionBody;
+  IndividualDefDeclaration = ["abstract"]? "individual" "def" ClassifierDeclarationCompletion
+    LifeClassMembership;
+
+
+  LifeClass; //This is probably left emtpy for later versions.
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
   astrule IndividualDefinition =
     method public String getName(){
       return this.getIndividualDefDeclaration().getName();
     }
   ;
-  IndividualDefDeclaration = ["abstract"]? "individual" "def" ClassifierDeclarationCompletion
-    LifeClassMembership;
   astrule IndividualDefDeclaration =
     method public String getName(){
       return this.getClassifierDeclarationCompletion().getName();
     }
   ;
-
-  LifeClass;
 
   /* INDIVIDUAL DEFINITION MEMBERSHIPS */
   LifeClassMembership = LifeClass;
@@ -33,15 +37,67 @@ component grammar ParametricDiagram extends de.monticore.lang.sysml.common.SysML
   SnapshotUsage = UsageDeclaration SnapshotFeatureMember UsageCompletion;
   SnapshotFeature;
 
-  IndividualUsagePackagedUsageMember implements PackagedUsageMember =  ["abstract"]? "individual" IndividualUsage;
-  TimeSliceUsagePackagedUsageMember implements PackagedUsageMember =   ["abstract"]? "timeslice" TimeSliceUsage;
-  SnapshotUsagePackagedUsageMember implements PackagedUsageMember =    ["abstract"]? "snapshot" SnapshotUsage;
-  NonPortStructureUsageMemberIndividualUsage implements NonPortStructureUsageMember =
+  IndividualUsagePackagedUsageMember implements SysMLType, PackagedUsageMember =
+    ["abstract"]? "individual" IndividualUsage;
+  TimeSliceUsagePackagedUsageMember implements SysMLType, PackagedUsageMember =
+    ["abstract"]? "timeslice" TimeSliceUsage;
+  SnapshotUsagePackagedUsageMember implements SysMLType, PackagedUsageMember =
+    ["abstract"]? "snapshot" SnapshotUsage;
+  NonPortStructureUsageMemberIndividualUsage implements SysMLType, NonPortStructureUsageMember =
     ["abstract"]? ( "ref" "individual" | isComposite:"individual") direction:FeatureDirection? IndividualUsage;
-  NonPortStructureUsageMemberTimeSliceUsage implements NonPortStructureUsageMember =
+  NonPortStructureUsageMemberTimeSliceUsage implements SysMLType, NonPortStructureUsageMember =
     ["abstract"]? ( "ref" "timeslice" | isComposite:"timeslice") direction:FeatureDirection? TimeSliceUsage;
-  NonPortStructureUsageMemberSnapshotUsage implements NonPortStructureUsageMember =
+  NonPortStructureUsageMemberSnapshotUsage implements SysMLType, NonPortStructureUsageMember =
     ["abstract"]? ( "ref" "snapshot" | isComposite:"snapshot") direction:FeatureDirection? SnapshotUsage;
+
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+  astrule IndividualUsage =
+    method public String getName(){
+      return this.getUsage().getName();
+    }
+  ;
+  astrule TimeSliceUsage =
+    method public String getName(){
+      return this.getUsageDeclaration().getName();
+    }
+  ;
+  astrule SnapshotUsage =
+    method public String getName(){
+      return this.getUsageDeclaration().getName();
+    }
+  ;
+  astrule IndividualUsagePackagedUsageMember =
+    method public String getName(){
+      return this.getIndividualUsage().getName();
+    }
+  ;
+  astrule TimeSliceUsagePackagedUsageMember =
+    method public String getName(){
+      return this.getTimeSliceUsage().getName();
+    }
+  ;
+  astrule SnapshotUsagePackagedUsageMember =
+    method public String getName(){
+      return this.getSnapshotUsage().getName();
+    }
+  ;
+  astrule NonPortStructureUsageMemberIndividualUsage =
+    method public String getName(){
+      return this.getIndividualUsage().getName();
+    }
+  ;
+  astrule NonPortStructureUsageMemberTimeSliceUsage =
+    method public String getName(){
+      return this.getTimeSliceUsage().getName();
+    }
+  ;
+  astrule NonPortStructureUsageMemberSnapshotUsage =
+    method public String getName(){
+      return this.getSnapshotUsage().getName();
+    }
+  ;
 
   /* INDIVIDUAL MEMBERSHIPS */
 

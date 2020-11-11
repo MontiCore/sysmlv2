@@ -61,8 +61,6 @@ component grammar STM extends de.monticore.lang.sysml.advanced.SysMLSuccessions 
   /* ===================================================*/
   /* ============ ASTRULES getName() for symbols =======*/
   /* ===================================================*/
-
-
   astrule StateUnit =
     method public String getName(){
       return this.getStateDeclaration().getSysMLNameAndTypePart().getName();
@@ -87,7 +85,4 @@ component grammar STM extends de.monticore.lang.sysml.advanced.SysMLSuccessions 
     method public String getName(){
       return this.getStateUsage().getName();
     };
-
-
-
 }
