@@ -8,21 +8,41 @@ component grammar BDD extends de.monticore.lang.sysml.common.SysMLCommon {
   BlockUnit implements Unit = UnitPrefix Block; //Remark: in Xtext BlockDeclaration DefinitionBody
 
   Block implements SysMLType, PackagedDefinitionMember = BlockDeclaration DefinitionBody;
+
+  BlockDeclaration = ["abstract"]? "block" ClassifierDeclarationCompletion;
+
+  AssociationEndMemberReferenceProperty implements SysMLType, AssociationEndMember =
+     DefinitionMemberPrefix ["abstract"]? "end" ["ref"]? ReferenceProperty;
+  ReferencePropertyNonPortStructureUsageMember implements SysMLType, NonPortStructureUsageMember =
+     ["abstract"]? "ref" direction:FeatureDirection? ReferenceProperty;
+  ReferenceProperty = Usage;
+
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
   astrule Block =
     method public String getName(){
       return this.getBlockDeclaration().getName();
     }
   ;
-  BlockDeclaration = ["abstract"]? "block" ClassifierDeclarationCompletion;
   astrule BlockDeclaration =
     method public String getName(){
       return this.getClassifierDeclarationCompletion().getName();
     }
   ;
-
-  AssociationEndMemberReferenceProperty implements AssociationEndMember =
-     DefinitionMemberPrefix ["abstract"]? "end" ["ref"]? ReferenceProperty;
-  ReferencePropertyNonPortStructureUsageMember implements NonPortStructureUsageMember =
-     ["abstract"]? "ref" direction:FeatureDirection? ReferenceProperty;
-  ReferenceProperty = Usage;
+  astrule ReferenceProperty =
+    method public String getName(){
+      return this.getUsage().getName();
+    }
+  ;
+  astrule AssociationEndMemberReferenceProperty =
+    method public String getName(){
+      return this.getReferenceProperty().getName();
+    }
+  ;
+  astrule ReferencePropertyNonPortStructureUsageMember =
+    method public String getName(){
+      return this.getReferenceProperty().getName();
+    }
+  ;
 }

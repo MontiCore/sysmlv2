@@ -7,15 +7,8 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLSuccessions {
 
   ActivityUnit implements Unit = UnitPrefix Activity;
   Activity implements SysMLType, PackagedDefinitionMember = ActivityDeclaration ActivityBody;
-  astrule Activity =
-     method public String getName(){
-       return this.getActivityDeclaration().getName();
-     };
+
   ActivityDeclaration = ["abstract"]? "activity" SysMLName ParameterList? SuperclassingList?;
-  astrule ActivityDeclaration =
-     method public String getName(){
-       return this.getSysMLName().getName();
-     };
 
   ParameterListStd implements ParameterList = "(" (ParameterMember || "," )* ")";
   scope ActivityBodyStd implements ActivityBody = ";" | ("{" ActivityBodyItem* "}");
@@ -26,6 +19,18 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLSuccessions {
     | EmptySuccessionMember? ActivityNodeMember TargetSuccessionMember*
     | GuardedSuccessionMember
     | ImportUnit;
+
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+  astrule Activity =
+    method public String getName(){
+      return this.getActivityDeclaration().getName();
+    };
+  astrule ActivityDeclaration =
+     method public String getName(){
+       return this.getSysMLName().getName();
+  };
 
 
   /* ACTIVITIY MEMBERSHIPS */
@@ -49,7 +54,7 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLSuccessions {
   /* ACTIONS */
   ActionUnit implements Unit = UnitPrefix ActionDeclaration ActivityBody;
   ActionDeclaration = ["abstract"]? "action" SysMLNameAndTypePart ActionParameterList? SubsettingPart ValuePart?;
-  ActionUsageStd implements ActionUsage = ActionOrStateUsageDeclaration ActivityBody;
+  ActionUsageStd implements SysMLType, ActionUsage = ActionOrStateUsageDeclaration ActivityBody;
 
   ActionUsagePackagedUsageMember implements PackagedUsageMember =      ["abstract"]? "action" ActionUsage;
   BehaviorUsageMemberActionUsage implements BehaviorUsageMember =
@@ -66,6 +71,15 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLSuccessions {
   PerformActionUsage = PerformActionUsageDeclaration ActivityBody;
   PerformActionUsageDeclaration implements SysMLType = ((( SysMLName TypePart? "as" )? Subset+)
     |( "action" (SysMLName)? TypePart?)) ActionParameterList? SubsettingPart ValuePart?;
+
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+  astrule ActionUsageStd =
+    method public String getName(){
+      return this.getActionOrStateUsageDeclaration().getName();
+    }
+  ;
   astrule PerformActionUsageDeclaration =
     method public String getName(){
       if( this.isPresentSysMLName()){
@@ -74,6 +88,7 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLSuccessions {
       return "";
     }
   ;
+
 
   /* ACTIVITY NODES */
   ActivityNode = ActionNode | ControlNode;
@@ -95,5 +110,8 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLSuccessions {
   ActionParameterFlowMember = ActionParameterFlow;
   EmptySuccessionMember = EmptySuccession;
 
-  PerformedActionUsageStd implements PerformedActionUsage = PerformActionUsageDeclaration | AcceptActionNodeDeclaration | SendActionNodeDeclaration;
+  PerformedActionUsageStd implements PerformedActionUsage =
+    PerformActionUsageDeclaration | AcceptActionNodeDeclaration | SendActionNodeDeclaration;
+
+
 }

@@ -5,6 +5,13 @@ package de.monticore.lang.sysml.common;
 component grammar SysMLUsages extends de.monticore.lang.sysml.common.SysMLCommonBasis {
 
   /* USAGES */
+  SysMLNameAndTypePart = SysMLName TypePart?; //TODO implements SysMLType in higher AST nodes.
+  astrule SysMLNameAndTypePart =
+    method public String getName(){
+      return this.getSysMLName().getName();
+    }
+  ;
+
   UsageStd implements Usage =
      UsageDeclaration UsageCompletion;
   astrule UsageStd =
@@ -53,6 +60,10 @@ component grammar SysMLUsages extends de.monticore.lang.sysml.common.SysMLCommon
 
   UnlimitedNaturalLiteralMember = limitedLiteral:Literal | isUnlimited:["*"];
 
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+
   /* PARAMETERS */
 
   ParameterStd implements Parameter = ParameterTypePart?;
@@ -62,4 +73,13 @@ component grammar SysMLUsages extends de.monticore.lang.sysml.common.SysMLCommon
   ActionOrStateUsageDeclaration = (SysMLNameAndTypePart ActionParameterList? SubsettingPart ValuePart?)
        | (TypePart? ActionParameterList? ValuePart?)
        | (RedefinesKeyword Redefinition TypePart ActionParameterList? ValuePart?);
+
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+  astrule ActionOrStateUsageDeclaration =
+    method public String getName(){
+      return this.getSysMLNameAndTypePart().getName();
+    }
+  ;
 }

@@ -7,16 +7,7 @@ component grammar STM extends de.monticore.lang.sysml.advanced.SysMLSuccessions 
 
   StateDefinitionUnit implements Unit = UnitPrefix StateDefinition;
   StateDefinition implements SysMLType, PackagedDefinitionMember = StateDefDeclaration StateBody;
-  astrule StateDefinition =
-    method public String getName(){
-      return this.getStateDefDeclaration().getName();
-    };
   StateDefDeclaration = ["abstract"]? "state" "def" SysMLName ParameterList? SuperclassingList?;
-  astrule StateDefDeclaration =
-    method public String getName(){
-      return this.getSysMLName().getName();
-    };
-
   scope StateBody = ";" | "{" StateBodyPart "}";
   StateBodyPart = (EntryActionMember EntryTransitionMember*)? DoActionMember? ExitActionMember? StateBodyItem*;
   StateBodyItem = NestedDefinitionMember
@@ -25,6 +16,18 @@ component grammar STM extends de.monticore.lang.sysml.advanced.SysMLSuccessions 
     | TransitionStepMember
     | ImportUnit;
   StateActionUsage = EmptyActionUsage ";" | PerformedActionUsage ActivityBody;
+
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+  astrule StateDefinition =
+    method public String getName(){
+      return this.getStateDefDeclaration().getName();
+    };
+  astrule StateDefDeclaration =
+    method public String getName(){
+      return this.getSysMLName().getName();
+    };
 
   /* STATE MEMBERSHIPS */
 
@@ -42,11 +45,32 @@ component grammar STM extends de.monticore.lang.sysml.advanced.SysMLSuccessions 
   TransitionStepMember = DefinitionMemberPrefix TransitionStep ";";
 
  /* STATES */
-  StateUnit implements Unit = UnitPrefix StateDeclaration StateBody;
+  StateUnit implements SysMLType, Unit = UnitPrefix StateDeclaration StateBody;
   StateDeclaration = ["abstract"]? "state" SysMLNameAndTypePart ActionParameterList? SubsettingPart ValuePart?;
   StateUsage = ActionOrStateUsageDeclaration StateBody;
   ExhibitStateUsage implements SysMLType = ((((SysMLName) TypePart? "as")? Subset)
     | ( "state" SysMLName? TypePart? )) ActionParameterList? SubsettingPart ValuePart? StateBody;
+
+  StateUsagePackagedUsageMember implements SysMLType, PackagedUsageMember = ["abstract"]? "state" StateUsage;
+  BehaviorUsageMemberStateUsage implements SysMLType, BehaviorUsageMember =
+    DefinitionMemberPrefix ["abstract"]?  ("ref" "state" | isComposite:"state") StateUsage;
+
+  BehaviorUsageMemberExhibitStateUsage implements BehaviorUsageMember =
+    DefinitionMemberPrefix  "exhibit" ExhibitStateUsage;
+
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+
+
+  astrule StateUnit =
+    method public String getName(){
+      return this.getStateDeclaration().getSysMLNameAndTypePart().getName();
+    };
+  astrule StateUsage =
+    method public String getName(){
+      return this.getActionOrStateUsageDeclaration().getName();
+    };
   astrule ExhibitStateUsage =
     method public String getName(){
       if( this.isPresentSysMLName()){
@@ -55,11 +79,15 @@ component grammar STM extends de.monticore.lang.sysml.advanced.SysMLSuccessions 
       return "";
     }
   ;
+  astrule StateUsagePackagedUsageMember =
+    method public String getName(){
+      return this.getStateUsage().getName();
+    };
+  astrule BehaviorUsageMemberStateUsage =
+    method public String getName(){
+      return this.getStateUsage().getName();
+    };
 
 
-  StateUsagePackagedUsageMember implements PackagedUsageMember =       ["abstract"]? "state" StateUsage;
-  BehaviorUsageMemberStateUsage implements BehaviorUsageMember =
-    DefinitionMemberPrefix ["abstract"]?  ("ref" "state" | isComposite:"state") StateUsage;
-  BehaviorUsageMemberExhibitStateUsage implements BehaviorUsageMember =
-    DefinitionMemberPrefix  "exhibit" ExhibitStateUsage;
+
 }
