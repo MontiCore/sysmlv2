@@ -1,4 +1,4 @@
-package de.monticore.lang.sysmlvariant.basics.objectoriented.sysmlnamesoo._ast;
+package de.monticore.lang.sysmlvariant.basics.objectoriented.sysmlnamesjava._ast;
 
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTQualifiedName;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTSysMLName;
@@ -11,7 +11,7 @@ import java.util.List;
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class ASTDotQualifiedNameOO extends ASTDotQualifiedNameOOTOP {
+public class ASTDotQualifiedNameJava extends ASTDotQualifiedNameJavaTOP {
 
   @Override
   public List<String> getNamesList(){

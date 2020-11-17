@@ -4,8 +4,8 @@ package de.monticore.lang.sysmlvariant;
 
 grammar SysMLForStructure extends
   // de.monticore.lang.sysml.basics.sysmldefault.SysMLBasics // Do not import all the basics, but configure it here.
-  de.monticore.lang.sysmlvariant.basics.objectoriented.SysMLNamesOO, //New
-  de.monticore.lang.sysmlvariant.basics.objectoriented.SysMLImportsAndPackagesOO, //new
+  de.monticore.lang.sysmlvariant.basics.objectoriented.SysMLNamesJava, //New
+  de.monticore.lang.sysmlvariant.basics.objectoriented.SysMLImportsAndPackagesJava, //new
    de.monticore.lang.sysmlvariant.basics.extended.SysMLExpressionsExtended, //new from SysMLExtended
   de.monticore.lang.sysml.basics.sysmldefault.SysMLComments,
   de.monticore.lang.sysml.basics.sysmldefault.SysMLLiterals,

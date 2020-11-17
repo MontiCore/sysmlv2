@@ -1,7 +1,7 @@
 package de.monticore.lang.sysmlvariant.parser;
 
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;
-import de.monticore.lang.sysmlvariant.basics.objectoriented.sysmlimportsandpackagesoo._ast.ASTPackage;
+import de.monticore.lang.sysmlvariant.basics.objectoriented.sysmlimportsandpackagesjava._ast.ASTPackage;
 import de.monticore.lang.sysmlvariant.sysmlforstructure._parser.SysMLForStructureParser;
 import de.se_rwth.commons.logging.Log;
 import org.antlr.v4.runtime.RecognitionException;
