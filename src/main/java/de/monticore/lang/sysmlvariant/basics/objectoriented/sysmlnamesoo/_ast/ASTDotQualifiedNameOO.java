@@ -11,7 +11,8 @@ import java.util.List;
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class ASTColonQualifiedNameOO extends ASTColonQualifiedNameOOTOP{
+public class ASTDotQualifiedNameOO extends ASTDotQualifiedNameOOTOP {
+
   @Override
   public List<String> getNamesList(){
     List<String> names = new ArrayList<>();

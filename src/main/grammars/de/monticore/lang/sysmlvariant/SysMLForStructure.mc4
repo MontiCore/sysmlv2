@@ -2,7 +2,7 @@
 package de.monticore.lang.sysmlvariant;
 
 
-grammar SysMLForStructureOO extends
+grammar SysMLForStructure extends
   // de.monticore.lang.sysml.basics.sysmldefault.SysMLBasics // Do not import all the basics, but configure it here.
   de.monticore.lang.sysmlvariant.basics.objectoriented.SysMLNamesOO, //New
   de.monticore.lang.sysmlvariant.basics.objectoriented.SysMLImportsAndPackagesOO, //new
