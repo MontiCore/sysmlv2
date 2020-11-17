@@ -16,27 +16,27 @@ component grammar SysMLExpressions extends de.monticore.expressions.CommonExpres
       condition:Expression (
     		"?" doOnTrue:Expression+ ":" doOnFalse:Expression+
     	);
-  NullCoalescingExpression implements Expression = left:Expression "??" right:Expression;
+  NullCoalescingExpression implements Expression <120> = left:Expression "??" right:Expression;
   // ConditionalOrExpression implements Expression = Expression  ( "||" Expression);
     // covered in CommonExpressions ->  BooleanOrOpExpression
   // ConditionalAndExpression implements Expression = left:Expression "&&" right:Expression;
     // covered in CommonExpressions -> BooleanOrOpExpression
-  OrExpression implements Expression = left:Expression "|" right:Expression;
-  XorExpression implements Expression = left:Expression "^" right:Expression;
-  AndExpression implements Expression = left:Expression "&" right:Expression;
+  OrExpression implements Expression <119> = left:Expression "|" right:Expression;
+  XorExpression implements Expression <118> = left:Expression "^" right:Expression;
+  AndExpression implements Expression <120> = left:Expression "&" right:Expression;
   //EqualityExpression implements Expression = Expression ((equal:["=="] | notEqual:["!="]) Expression);
     // covered in CommonExpressions ->  EqualsExpression, NotEqualsExpression
-  ClassificationExpression  implements Expression= Expression ("instanceof"| "hastype") Expression;
+  ClassificationExpression  implements Expression <240> = Expression ("instanceof"| "hastype") Expression;
   //RelationalExpression implements Expression = Expression RelationalOperator Expression;
   //RelationalOperator = "<" | ">" | "<=" | ">=";
     // covered in CommonExpressions -> LessEqualExpression, GreaterEqualExpression, LessThanExpression, GreaterThanExpression
   //AdditiveExpression implements Expression =  Expression (plus:["+"]|minus:["-"]) Expression;
     // covered in CommonExpressions -> PlusExpression, MinusExpression
-  MultiplicativeExpression implements Expression =
+  MultiplicativeExpression implements Expression <220> =
     left:Expression (times:["*"]|divide:["/"]|exp:["**"]) right:Expression;
-  UnitsExpression implements Expression =  Expression "@"  "[" Expression "]";
-  UnaryExpression implements Expression =  (plus:"+"|minus:"-"| not:"!" | tilde:"~") Expression;
-  SequenceAccessExpression implements Expression = Expression "[" Expression+ "]";
+  UnitsExpression implements Expression <219> =  Expression "@"  "[" Expression "]";
+  UnaryExpression implements Expression <171> =  (plus:"+"|minus:"-"| not:"!" | tilde:"~") Expression;
+  SequenceAccessExpression implements Expression <300> = Expression "[" Expression+ "]";
   PrimaryExpression implements Expression <300> = Expression ("->" SysMLName BodyMember+)+;
   BodyExpression =
     ( BodyParameterMember+ ( BodyParameterMember )* "(" ExpressionMember* ")" ) | ExpressionTyping+;
@@ -44,7 +44,7 @@ component grammar SysMLExpressions extends de.monticore.expressions.CommonExpres
 
 
   // Base Expressions
-  BaseExpression implements Expression =
+  BaseExpression implements Expression <300> =
      NullExpression
     	| LiteralExpression
     	| FeatureReferenceExpression
@@ -79,7 +79,7 @@ component grammar SysMLExpressions extends de.monticore.expressions.CommonExpres
   BodyParameterMember = memberName:SysMLName Parameter;
 
   /* QUERY PATH EXPRESSIONS */
-  SysMLQueryPathExpression implements Expression =
+  SysMLQueryPathExpression implements Expression <299> =
     	QueryHeadExpression
     	( "[" BodyMember+ "]" )?
     	( "/"  QueryNameExpression+	( "[" BodyMember+ "]" )?)*;
