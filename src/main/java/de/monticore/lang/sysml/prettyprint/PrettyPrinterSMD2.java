@@ -4,155 +4,86 @@ import de.monticore.lang.sysml.smd._ast.*;
 import de.monticore.lang.sysml.smd._visitor.SMDVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterSMD2 extends IndentPrinter implements SMDVisitor2 {
+public class PrettyPrinterSMD2 implements SMDVisitor2 {
+	private IndentPrinter printer;
+
+	public PrettyPrinterSMD2(IndentPrinter print) {
+		this.printer = print;
+	}
 	@Override
 	public void visit(ASTStateDefDeclaration node) {
-		println("");
+		printer.println("");
 		if (node.isAbstract()) {
-			print("abstract ");
+			printer.print("abstract ");
 		}
-		print("state def " + node.getSysMLName().getNameForPrettyPrinting() + " ");
-	}
-
-	@Override
-	public void endVisit(ASTStateDefDeclaration node) {
-
+		printer.print("state def " + node.getSysMLName().getNameForPrettyPrinting() + " ");
 	}
 
 	@Override
 	public void visit(ASTStateBody node) {
-		println("");
+		printer.println("");
 		if (node.isPresentStateBodyPart()) {
-			print("{");
-			indent();
+			printer.print("{");
+			printer.indent();
 		} else {
-			print(";");
+			printer.print(";");
 		}
 	}
 
 	@Override
 	public void endVisit(ASTStateBody node) {
 		if (node.isPresentStateBodyPart()) {
-			unindent();
-			print("}");
+			printer.unindent();
+			printer.print("}");
 		}
-	}
-
-	@Override
-	public void visit(ASTStateActionUsage node) {
-		println("");
-
-	}
-
-	@Override
-	public void endVisit(ASTStateActionUsage node) {
-		;
-		if (!node.isPresentPerformedActionUsage()) {
-			print(";");
-		}
-		print(node.getActivityBody().toString());
 	}
 
 	@Override
 	public void visit(ASTEntryActionKind node) {
-		println("");
-		print("entry ");
+		printer.print("entry ");
 	}
 
 	@Override
 	public void visit(ASTDoActionKind node) {
-		println("");
-		print("do ");
+		printer.print("do ");
 	}
 
 	@Override
 	public void visit(ASTExitActionKind node) {
-		println("");
-		print("exit ");
-	}
-
-	@Override
-	public void visit(ASTStateMember node) {
-		println("");
-		print(node.getDefinitionMemberPrefix() + " ");
-		if (node.isAbstract()) {
-			print("abstract ");
-		}
-		if (node.isIsComposite()) {
-			print("state ");
-		} else {
-			print("ref state ");
-		}
+		printer.print("exit ");
 	}
 
 	@Override
 	public void endVisit(ASTEntryTransitionMember node) {
-		print(";");
+		printer.print(";");
 	}
 
 	@Override
 	public void endVisit(ASTTargetTransitionSuccessionMember node) {
-		println("");
-		print(";");
+		printer.print(";");
 	}
 
 	@Override
 	public void endVisit(ASTTransitionStepMember node) {
-		println("");
-		print(";");
+		printer.println("");
+		printer.print(";");
 	}
 
 	@Override
 	public void visit(ASTStateDeclaration node) {
-		println("");
+		printer.println("");
 		if (node.isAbstract()) {
-			print("abstract ");
+			printer.print("abstract ");
 		}
-		print("state ");
-	}
-
-	@Override
-	public void visit(ASTExhibitStateUsage node) {
-		println("");
-		if (node.isPresentSubset()) {
-			if (node.isPresentSysMLName()) {
-				print(node.getSysMLName().getNameForPrettyPrinting() + " ");
-				if (node.isPresentTypePart()) {
-					print(node.getTypePart().toString() + " ");
-				}
-				print("as ");
-			}
-		} else {
-			print("state ");
-			if (node.isPresentSysMLName()) {
-				print(node.getSysMLName().getNameForPrettyPrinting() + " ");
-			}
-		}
+		printer.print("state ");
 	}
 
 	@Override
 	public void visit(ASTStateUsagePackagedUsageMember node) {
-		println("");
+		printer.println("");
 		if (node.isAbstract()) {
-			print("abstract ");
+			printer.print("abstract ");
 		}
-		print("state");
-	}
-
-	@Override
-	public void visit(ASTBehaviorUsageMemberStateUsage node) {
-		println("");
-		print(node.getDefinitionMemberPrefix().toString() + " ");
-		if (node.isPresentIsComposite()) {
-			print("state ");
-		} else {
-			print("ref state ");
-		}
-	}
-
-	@Override
-	public void visit(ASTBehaviorUsageMemberExhibitStateUsage node) {
-		println("");
-		print(node.getDefinitionMemberPrefix().toString() + " exhibit ");
+		printer.print("state");
 	}
 }

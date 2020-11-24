@@ -4,147 +4,86 @@ import de.monticore.lang.sysml.requirementdiagram._ast.*;
 import de.monticore.lang.sysml.requirementdiagram._visitor.RequirementDiagramVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterRequirementDiagram2 extends IndentPrinter implements RequirementDiagramVisitor2 {
+public class PrettyPrinterRequirementDiagram2 implements RequirementDiagramVisitor2 {
+	private IndentPrinter printer;
+
+	public PrettyPrinterRequirementDiagram2(IndentPrinter print) {
+		this.printer = print;
+	}
+
 	@Override
 	public void visit(ASTRequirementDefDeclaration node) {
-		println("");
+		printer.println("");
 		if (node.isAbstract()) {
-			print("abstract ");
+			printer.print("abstract ");
 		}
-		print("requirement def ");
+		printer.print("requirement def ");
 		if (node.isPresentReqId()) {
-			print("id " + node.getReqId().getNameForPrettyPrinting() + " ");
+			printer.print("id " + node.getReqId().getNameForPrettyPrinting() + " ");
 		}
-		print(node.getSysMLName().getNameForPrettyPrinting());
+		printer.print(node.getSysMLName().getNameForPrettyPrinting());
 	}
 
 	@Override
 	public void visit(ASTRequirementDefParameterList node) {
-		println("");
-		print("(");
+		printer.println("");
+		printer.print("(");
 		if (!(node.isPresentEmptyParameterMember() || node.isEmptyParameterMembers())) {
-			print(";");
+			printer.print(";");
 		}
 	}
 
 	@Override
 	public void endVisit(ASTRequirementDefParameterList node) {
-		print(")");
+		printer.print(")");
 	}
 
 	@Override
 	public void visit(ASTRequirementBody node) {
-		println("");
+		printer.println("");
 		if (node.isPresentRequirementMembers()) {
-			print("{");
-			indent();
+			printer.print("{");
+			printer.indent();
 		} else {
-			print(";");
+			printer.print(";");
 		}
 	}
 
 	@Override
 	public void endVisit(ASTRequirementBody node) {
 		if (node.isPresentRequirementMembers()) {
-			unindent();
-			println("}");
-		}
-	}
-
-	@Override
-	public void visit(ASTRequirementConstraintUsage node) {
-		println("");
-		if (node.isPresentSubset()) {
-			if (node.isPresentSysMLName()) {
-				print(node.getSysMLName().getNameForPrettyPrinting());
-			}
-			if (node.isPresentTypePart()) {
-				print(node.getTypePart().toString());
-			}
-			if (node.isPresentSymbol()) {
-				print("as");
-			}
-		} else {
-			print("constraint ");
-			if (node.isPresentSysMLName()) {
-				print(node.getSysMLName().getNameForPrettyPrinting() + " ");
-			}
+			printer.unindent();
+			printer.println("}");
 		}
 	}
 
 	@Override
 	public void visit(ASTRequirementConstraintKind node) {
-		println("");
+		printer.println("");
 		if (node.isAssumption()) {
-			print("assume ");
+			printer.print("assume ");
 		} else if (node.isRequirement()) {
-			print("require ");
+			printer.print("require ");
 		}
 	}
 
 	@Override
 	public void visit(ASTRequirementUsagePackagedUsageMember node) {
-		println("");
+		printer.println("");
 		if (node.isAbstract()) {
-			print("abstract ");
+			printer.print("abstract ");
 		}
-		print("requirement ");
-	}
-
-	@Override
-	public void visit(ASTBehaviorUsageMemberRequirementUsage node) {
-		println("");
-		print(node.getDefinitionMemberPrefix().toString() + " ");
-		if (node.isAbstract()) {
-			print("abstract ");
-		}
-		if (node.isPresentIsComposite()) {
-			print("requirement ");
-		} else {
-			print("ref requirement ");
-		}
-	}
-
-	@Override
-	public void visit(ASTBehaviorUsageMemberSatisfyRequirementUsage node) {
-		println("");
-		print(node.getDefinitionMemberPrefix().toString() + " satisfy ");
+		printer.print("requirement ");
 	}
 
 	@Override
 	public void visit(ASTRequirementDeclaration node) {
-		println("");
+		printer.println("");
 		if (node.isPresentReqId()) {
-			print("id " + node.getReqId().getNameForPrettyPrinting() + " ");
+			printer.print("id " + node.getReqId().getNameForPrettyPrinting() + " ");
 		}
 		if (node.isPresentSysMLNameAndTypePart()) {
-			print(node.getSysMLNameAndTypePart().getName() + " ");
-		}
-	}
-
-	@Override
-	public void visit(ASTSatisfyRequirementUsage node) {
-		println("");
-		if (node.isPresentSubset()) {
-			if (node.isPresentSysMLName()) {
-				print(node.getSysMLName().getNameForPrettyPrinting());
-			}
-			if (node.isPresentTypePart()) {
-				print(node.getTypePart().toString() + " ");
-			}
-			if (node.isPresentSymbol()) {
-				print("as ");
-			}
-			print(node.getSubset().toString());
-		} else {
-			print("requirement ");
-			if (node.isPresentSysMLName()) {
-				print(node.getSysMLName() + " ");
-			}
-			print(node.getTypePart().toString() + " ");
-		}
-		if (node.isPresentSatisfactionConnectorMember()) {
-			print("by ");
+			printer.print(node.getSysMLNameAndTypePart().getName() + " ");
 		}
 	}
 }

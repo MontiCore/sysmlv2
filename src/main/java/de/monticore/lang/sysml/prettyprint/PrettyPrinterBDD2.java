@@ -6,35 +6,29 @@ import de.monticore.lang.sysml.bdd._ast.ASTReferencePropertyNonPortStructureUsag
 import de.monticore.lang.sysml.bdd._visitor.BDDVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterBDD2 extends IndentPrinter implements BDDVisitor2 {
-	@Override
-	public void visit(ASTBlockDeclaration node) {
-		println("");
-		if (node.isAbstract()) {
-			print("abstract ");
-		}
-		print("block " + node.getName());
+public class PrettyPrinterBDD2 implements BDDVisitor2 {
+	private IndentPrinter printer;
+
+	public PrettyPrinterBDD2(IndentPrinter print) {
+		this.printer = print;
 	}
 
 	@Override
-	public void visit(ASTAssociationEndMemberReferenceProperty node) {
-		println("");
-		print(node.getDefinitionMemberPrefix().toString() + "");
+	public void visit(ASTBlockDeclaration node) {
+		printer.println("");
 		if (node.isAbstract()) {
-			print("abstract ");
+			printer.print("abstract ");
 		}
-		print("end ");
-		if (node.isRef()) {
-			print("ref ");
-		}
+		printer.print("block " + node.getName());
 	}
 
 	@Override
 	public void visit(ASTReferencePropertyNonPortStructureUsageMember node) {
-		println("");
+		printer.println("");
 		if (node.isAbstract()) {
-			print("abstract ");
+			printer.print("abstract ");
 		}
-		print("ref ");
+		printer.print("ref ");
 	}
+
 }

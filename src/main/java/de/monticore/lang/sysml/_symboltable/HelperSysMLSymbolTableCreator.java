@@ -23,24 +23,28 @@ public class HelperSysMLSymbolTableCreator {
     SysMLSymbolTableCreator symbolTableCreator = new SysMLSymbolTableCreator(globalScope);
     SysMLArtifactScope newScope = symbolTableCreator.createFromAST(astUnit);
     return newScope;
-  }*/
+    }*/
 
   public ISysMLGlobalScope initGlobalScope(ModelPath mp) {
-    ISysMLGlobalScope sysMLGlobalScope = SysMLMill.sysMLGlobalScopeBuilder().setModelPath(mp).setModelFileExtension("sysml").build();
+    ISysMLGlobalScope sysMLGlobalScope = SysMLMill.sysMLGlobalScope();
+    sysMLGlobalScope.clear();
+    sysMLGlobalScope.setModelPath(mp);
+    sysMLGlobalScope.setModelFileExtension("sysml");
     return sysMLGlobalScope;
   }
 
   public ISysMLArtifactScope createSymboltable(ASTUnit ast, ISysMLGlobalScope globalScope) {
 
-    SysMLSymbolTableCreatorDelegator symbolTableDelegator = SysMLMill.sysMLSymbolTableCreatorDelegatorBuilder().setGlobalScope(globalScope).build();
-    return symbolTableDelegator.createFromAST(ast);
+    SysMLSymbolTableCreatorDelegator symbolTableDelegator = SysMLMill.sysMLSymbolTableCreatorDelegator();
+        return symbolTableDelegator.createFromAST(ast);
   }
 
   public ISysMLArtifactScope createSymboltableSingleASTUnit(ASTUnit astUnit, ModelPath mp){
     return createSymboltable(astUnit, initGlobalScope(mp));
   }
+
   public ISysMLGlobalScope createSymboltableMultipleASTUnit(List<ASTUnit> astUnits, ModelPath mp){ //TODO test
-    ISysMLGlobalScope globalScope = initGlobalScope(mp);
+    ISysMLGlobalScope globalScope= initGlobalScope(mp);
     for (ASTUnit astUnit : astUnits) {
       createSymboltable(astUnit,globalScope );
     }

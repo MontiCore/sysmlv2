@@ -4,79 +4,84 @@ import de.monticore.lang.sysml.parametricdiagram._ast.*;
 import de.monticore.lang.sysml.parametricdiagram._visitor.ParametricDiagramVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterParametricDiagram2 extends IndentPrinter implements ParametricDiagramVisitor2 {
+public class PrettyPrinterParametricDiagram2 implements ParametricDiagramVisitor2 {
+	private IndentPrinter printer;
+
+	public PrettyPrinterParametricDiagram2(IndentPrinter print) {
+		this.printer = print;
+	}
 	@Override
 	public void visit(ASTIndividualDefDeclaration node) {
-		println("");
+		printer.println("");
 		if (node.isAbstract()) {
-			print("abstract ");
+			printer.print("abstract ");
 		}
-		print("individual def ");
+		printer.print("individual def ");
 	}
 
 	@Override
 	public void visit(ASTIndividualUsagePackagedUsageMember node) {
-		println("");
+		printer.println("");
 		if (node.isAbstract()) {
-			print("abstract ");
+			printer.print("abstract ");
 		}
-		print("individual ");
+		printer.print("individual ");
 	}
 
 	@Override
 	public void visit(ASTTimeSliceUsagePackagedUsageMember node) {
-		println("");
+		printer.println("");
 		if (node.isAbstract()) {
-			print("abstract ");
+			printer.print("abstract ");
 		}
-		print("timeslice ");
+		printer.print("timeslice ");
 	}
 
 	@Override
 	public void visit(ASTSnapshotUsagePackagedUsageMember node) {
-		println("");
+		printer.println("");
 		if (node.isAbstract()) {
-			print("abstract ");
+			printer.print("abstract ");
 		}
-		print("snapshot ");
+		printer.print("snapshot ");
 	}
 
 	@Override
 	public void visit(ASTNonPortStructureUsageMemberIndividualUsage node) {
-		println("");
+		printer.println("");
 		if (node.isAbstract()) {
-			print("abstract ");
+			printer.print("abstract ");
 		}
 		if (node.isPresentIsComposite()) {
-			print("individual ");
+			printer.print("individual ");
 		} else {
-			print("ref individual ");
+			printer.print("ref individual ");
 		}
 	}
 
 	@Override
 	public void visit(ASTNonPortStructureUsageMemberTimeSliceUsage node) {
-		println("");
+		printer.println("");
 		if (node.isAbstract()) {
-			print("abstract ");
+			printer.print("abstract ");
 		}
 		if (node.isPresentIsComposite()) {
-			print("timeslice ");
+			printer.print("timeslice ");
 		} else {
-			print("ref timeslice ");
+			printer.print("ref timeslice ");
 		}
 	}
 
 	@Override
 	public void visit(ASTNonPortStructureUsageMemberSnapshotUsage node) {
-		println("");
+		printer.println("");
 		if (node.isAbstract()) {
-			print("abstract ");
+			printer.print("abstract ");
 		}
 		if (node.isPresentIsComposite()) {
-			print("snapshot ");
+			printer.print("snapshot ");
 		} else {
-			print("ref snapshot ");
+			printer.print("ref snapshot ");
 		}
 	}
 }

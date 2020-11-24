@@ -1,12 +1,12 @@
 package de.monticore;
 
-import de.monticore.MontiCoreNodeIdentifierHelper;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.lang.sysml._symboltable.HelperSysMLSymbolTableCreator;
 import de.monticore.lang.sysml.basics.interfaces.sharedbasis._ast.ASTUnit;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.monticore.lang.sysml.parser.SysMLParserMultipleFiles;
+import de.monticore.lang.sysml.prettyprint.PrettyPrinter2;
 import de.monticore.lang.sysml.sysml._ast.ASTSysMLNode;
 import de.monticore.lang.sysml.sysml._od.SysML2OD;
 import de.monticore.lang.sysml.sysml._symboltable.ISysMLArtifactScope;
@@ -25,12 +25,26 @@ import java.nio.file.Paths;
 
 public class SYSMLCLI {
 
+  /* Part 1: Handling the arguments and options
+  /*=================================================================*/
+
+	/**
+	 * Main method that is called from command line and runs the SysML tool.
+	 *
+	 * @param args The input parameters for configuring the SysML tool.
+	 */
 	public static void main(String[] args) {
 		SYSMLCLI cli = new SYSMLCLI();
 
 		cli.run(args);
 	}
 
+	/**
+	 * Processes user input from command line and delegates to the corresponding
+	 * tools.
+	 *
+	 * @param args The input parameters for configuring the SysML tool.
+	 */
 	public void run(String[] args) {
 		Options options = initOptions();
 
@@ -62,7 +76,7 @@ public class SYSMLCLI {
 
 			// -option path
 			if (cmd.hasOption("path")) {
-				for (String p : cmd.getOptionValue("path").split(":")) {
+				for (String p : cmd.getOptionValue("path").split(" ")) {
 					mp.addEntry(Paths.get(p));
 				}
 			}
@@ -104,12 +118,29 @@ public class SYSMLCLI {
 			Log.error("0xA7199 Could not process CLI parameters: " + e.getMessage());
 		}
 	}
+	/*=================================================================*/
+  /* Part 2: Executing arguments
+  /*=================================================================*/
 
+	/**
+	 * Prints the contents of the SysML-AST to stdout or a specified file.
+	 *
+	 * @param model The SysML-AST to be pretty printed
+	 * @param path  The target file name for printing the SysML artifact. If empty,
+	 *              *               the content is printed to stdout instead
+	 */
 	private void prettyPrint(ASTUnit model, String path) {
-		//SOON
-		System.out.println("soon");
+		PrettyPrinter2 pp = new PrettyPrinter2();
+		String s = pp.prettyPrint(model);
+		print(s, path);
 	}
 
+	/**
+	 * stores the symbol table of a passed ast in a file created in the passed output directory.
+	 * The file path for the stored symbol table of an SysML "abc.BasicPhone.sysml" and the output
+	 * path "target" will be: "target/abc/BasicPhone.sysmlsym"
+	 *
+	 */
 	private void storeSymbols(ISysMLArtifactScope symbolTable, Path output, SysMLScopeDeSer deser) {
 		Path f = output
 			.resolve(Paths.get(Names.getPathFromPackage(symbolTable.getPackageName())))
@@ -118,13 +149,27 @@ public class SYSMLCLI {
 		print(serialized, f.toString());
 	}
 
+	/**
+	 * stores the symbol table of a passed ast in a file created in the passed output directory.
+	 * The file path for the stored symbol table of an SysML "abc.BasicPhone.sysml" and the output
+	 * path "target" will be: "target/abc/BasicPhone.sysmlsym"
+	 *
+	 */
 	private void storeSymbols(ISysMLArtifactScope symbolTable, String output, SysMLScopeDeSer deser) {
 		String serialized = deser.serialize(symbolTable);
 		print(serialized, output);
 	}
 
+	/**
+	 * Creates an object diagram for the SysML-AST to stdout or a specified file.
+	 *
+	 * @param model The SysML-AST for which the object diagram is created
+	 * @param input Input file path to derive modelname from
+	 * @param path  The target file name for printing the object diagram. If empty,
+	 *              the content is printed to stdout instead
+	 */
 	private void sysML2od(ASTUnit model, String input, String path) {
-		// initialize s4mn2od printer
+		// initialize sysML2od printer
 		IndentPrinter printer = new IndentPrinter();
 		MontiCoreNodeIdentifierHelper identifierHelper = new MontiCoreNodeIdentifierHelper();
 		ReportingRepository repository = new ReportingRepository(identifierHelper);
@@ -182,6 +227,11 @@ public class SYSMLCLI {
 		return helperSysMLSymbolTableCreator.createSymboltableSingleASTUnit(models, mp);
 	}
 
+	/**
+	 * Parses the contents of a given file as SysML.
+	 *
+	 * @param dir The path to the SysML-file as String
+	 */
 	public ASTUnit parseDirectory(String dir) {
 		SysMLParserMultipleFiles sysMLParserMultipleFiles = new SysMLParserMultipleFiles();
 		File checkingIfDirOrFileExists = new File(dir);
@@ -199,6 +249,11 @@ public class SYSMLCLI {
 		return model;
 	}
 
+	/**
+	 * Check for default CoCos
+	 *
+	 * @param unit Unit for CoCos to be checked on
+	 */
 	public void runDefaultCocos(ASTUnit unit) {
 		SysMLCoCos cocos = new SysMLCoCos();
 		cocos.getCheckerForAllCoCos().checkAll(unit);

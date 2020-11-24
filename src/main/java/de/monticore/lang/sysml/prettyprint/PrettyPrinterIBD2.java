@@ -7,36 +7,42 @@ import de.monticore.lang.sysml.ibd._ast.ASTPartPropertyUsageMember;
 import de.monticore.lang.sysml.ibd._visitor.IBDVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterIBD2 extends IndentPrinter implements IBDVisitor2 {
+public class PrettyPrinterIBD2 implements IBDVisitor2 {
+	private IndentPrinter printer;
+
+	public PrettyPrinterIBD2(IndentPrinter print) {
+		this.printer = print;
+	}
+
 	@Override
 	public void visit(ASTPartDeclaration node) {
-		println("");
-		if (node.isAbstract())
-		{print("abstract ");}
-		print("part "+node.getSysMLNameAndTypePart().getName());
+		printer.println("");
+		if (node.isAbstract()) {
+			printer.print("abstract ");
+		}
 	}
 
 	@Override
 	public void visit(ASTPartPropertyUsageMember node) {
-		println("");
-		if (node.isAbstract()){
-			print("abstract ");
+		printer.println("");
+		if (node.isAbstract()) {
+			printer.print("abstract ");
 		}
 	}
 
 	@Override
 	public void visit(ASTAssociationEndMemberPartProperty node) {
-		println("");
-		print(node.getDefinitionMemberPrefix().toString()+" ");
-		if (node.isAbstract()){
-			print("abstract ");
+		printer.println("");
+		printer.print(node.getDefinitionMemberPrefix().toString() + " ");
+		if (node.isAbstract()) {
+			printer.print("abstract ");
 		}
-		print("end");
+		printer.print("end");
 	}
 
 	@Override
 	public void visit(ASTPartProperty node) {
-		println("");
-		print("part ");
+		printer.println("");
+		printer.print("part ");
 	}
 }
