@@ -84,7 +84,8 @@ component grammar SysMLExpressions extends de.monticore.expressions.CommonExpres
   SysMLQueryPathExpression implements Expression <299> =
     	QueryHeadExpression
     	( "[" firstBodyMember:BodyMember "]" )?
-    	( "/"  QueryNameExpression	( "[" secondBodyMembers:BodyMember "]" )?)*;
+    	SysMLQueryPathExpressionPart*;
+  SysMLQueryPathExpressionPart = "/"  QueryNameExpression	( "[" BodyMember "]" )?;
   QueryNameExpression = FeatureReference+;
   QueryHeadExpression = "./" FeatureReference+;
 
