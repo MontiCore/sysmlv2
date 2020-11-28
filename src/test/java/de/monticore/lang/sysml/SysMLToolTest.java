@@ -34,6 +34,9 @@ public class SysMLToolTest {
     Log.enableFailQuick(false);
   }
 
+  private final String pathToSrcDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src";
+  private final String pathToLibDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/"
+      + "library/Domain Libraries";
   @Test
   public void checkFailOnZeroArgs(){
     Collection<Finding> expectedErrors = Arrays.asList(
@@ -84,16 +87,14 @@ public class SysMLToolTest {
 
   @Test
   public void toolParseAndCheckAllTrainingExamplesCoCosOffTest(){
-    final String pathToDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src";
-    SysMLTool.main(new String[]{pathToDir + "/training/", "-cocosOff"});
+    SysMLTool.main(new String[]{ pathToSrcDir + "/training/", "-cocosOff"});
     AbstractSysMLTest.printAllFindings();
     assertTrue(Log.getFindings().isEmpty());
   }
 
   @Test
   public void toolParseAndCheckAllTrainingExamplesWithLibDirTest(){
-    final String pathToDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src";
-    SysMLTool.main(new String[]{pathToDir + "/training/",
+    SysMLTool.main(new String[]{ pathToSrcDir + "/training/",
       "-lib=src/main/resources/SysML Domain Libraries", "-cocosOff"});
     AbstractSysMLTest.printAllFindings();
     assertTrue(Log.getFindings().isEmpty());
@@ -101,9 +102,9 @@ public class SysMLToolTest {
 
   @Test
   public void toolParseAndCheckAllTrainingExamplesWithLibDirCoCosTest(){
-    final String pathToDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src";
-    SysMLTool.main(new String[]{pathToDir + "/training/",
-      "-lib=src/main/resources/SysML Domain Libraries"});
+
+    SysMLTool.main(new String[]{ pathToSrcDir + "/training/",
+      "-lib="+pathToLibDir}); //Same files as in src/main/resources/SysML Domain Libraries but for testing.
     //AbstractSysMLTest.printAllFindings();
     //assertEquals(36, Log.getFindings().size());
     for (Finding f:Log.getFindings()) { //not equal to filename coco, double definition (e.g. mm) at SI
@@ -118,10 +119,9 @@ public class SysMLToolTest {
   }
   @Test
   public void toolParseAndCheckAllTrainingExamplesWithMultipleLibDirCoCosTest(){
-    final String pathToDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src";
-    SysMLTool.main(new String[]{pathToDir + "/training/",
-      "-lib=src/main/resources/SysML Domain Libraries/Geometry",
-        "-lib=src/main/resources/SysML Domain Libraries/Quantities and Units"
+    SysMLTool.main(new String[]{ pathToSrcDir + "/training/",
+      "-lib="+pathToLibDir+"/Geometry",
+        "-lib="+pathToLibDir+"/Quantities and Units"
     });
     //AbstractSysMLTest.printAllFindings();
     //assertEquals(36, Log.getFindings().size());

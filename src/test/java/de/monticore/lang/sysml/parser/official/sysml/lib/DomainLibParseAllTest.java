@@ -8,8 +8,8 @@ import org.junit.Test;
  * @version 1.0
  */
 public class DomainLibParseAllTest {
-  private final String pathToDir= "src/test/resources/examples/officialPilotImplementation/2020/03/sysml"
-      + ".library/Domain Libraries" ;
+  private final String pathToDir= "src/test/resources/examples/officialPilotImplementation/2020/03/"
+      + "library/Domain Libraries" ;
 
   public void parseSysML(String path) {
     SysMLParserForTesting parser = new SysMLParserForTesting();

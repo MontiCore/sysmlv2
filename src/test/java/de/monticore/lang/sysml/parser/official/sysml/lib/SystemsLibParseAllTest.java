@@ -9,8 +9,8 @@ import org.junit.Test;
  */
 public class SystemsLibParseAllTest {
 
-  private final String pathToDir= "src/test/resources/examples/officialPilotImplementation/2020/03/sysml"
-      + ".library/Systems Library" ;
+  private final String pathToDir= "src/test/resources/examples/officialPilotImplementation/2020/03/"
+      + "library/Systems Library" ;
 
   public void parseSysML(String path) {
     SysMLParserForTesting parser = new SysMLParserForTesting();
