@@ -75,6 +75,6 @@ public class DefinitionNameStartsWithCapitalLetterTest extends AbstractSysMLTest
     );
 
     Assert.assertErrors(expectedWarnings, Log.getFindings());
-    System.out.println("Finished testing valid " + this.getClass().getName());
+    //System.out.println("Finished testing valid " + this.getClass().getName());
   }
 }
