@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 public class ScopeCreationTest extends AbstractSysMLTest {
 
   @Test
-  public void scopeNames() {
+  public void testScopeNames() {
     String modelPath = this.pathToValidModels + "/naming/";
     List<ASTUnit> models = SysMLTool.parseDirectory(modelPath);
     SysMLGlobalScope topScope = SysMLTool.buildSymbolTable(modelPath, models);
