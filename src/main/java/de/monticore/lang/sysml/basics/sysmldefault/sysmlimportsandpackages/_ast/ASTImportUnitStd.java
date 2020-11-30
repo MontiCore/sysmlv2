@@ -14,11 +14,16 @@ import java.util.List;
 public class ASTImportUnitStd extends ASTImportUnitStdTOP{
   List<SysMLTypeSymbol> resolvedTypes = new ArrayList<>();
   List<CoCoStatus> warnings = new ArrayList<>();
+  List<SysMLTypeSymbol> transitiveImports = new ArrayList<>();
   boolean init  = false;
 
   public void setResolvedTypes(List<SysMLTypeSymbol> resolvedTypes) {
     this.resolvedTypes = resolvedTypes;
     init = true;
+  }
+
+  public boolean isInit() {
+    return init;
   }
 
   public void setWarnings(List<CoCoStatus> warnings) {
@@ -35,5 +40,13 @@ public class ASTImportUnitStd extends ASTImportUnitStdTOP{
           + ". Trying to getWarnings without resolving Types first.");
     }
     return warnings;
+  }
+
+  public List<SysMLTypeSymbol> getTransitiveImports() {
+    return transitiveImports;
+  }
+
+  public void setTransitiveImports(List<SysMLTypeSymbol> transitiveImports) {
+    this.transitiveImports = transitiveImports;
   }
 }

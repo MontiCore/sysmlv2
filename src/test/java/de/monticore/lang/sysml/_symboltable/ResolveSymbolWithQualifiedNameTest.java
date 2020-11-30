@@ -37,6 +37,46 @@ public class ResolveSymbolWithQualifiedNameTest extends AbstractSysMLTest {
   }
 
   @Test
+  public void testResolveQNInOneFileWithSpaces() {
+    List<ASTUnit> models = this.validParseAndBuildSymbolsInSubDir("/imports/qualifiedNameWithSpaces");
+
+    //Checking Resolving with a name without ASTQualifiedName
+    assertTrue(models.size() != 0);
+    List<String> packageWithImportsQN = new ArrayList();
+    /* Vehicles{
+	      package Automobile{
+		        package ModellY{*/
+    packageWithImportsQN.add("Vehicles");
+    packageWithImportsQN.add("Automobile Luxus");
+    packageWithImportsQN.add("Modell Y");
+    List<SysMLTypeSymbol> packageWithImportsSymbol = ResolveQualifiedNameHelper.
+        resolveQualifiedNameAsListInASpecificScope(packageWithImportsQN,
+            models.get(0).getEnclosingScope().getEnclosingScope());
+
+    assertTrue(packageWithImportsSymbol.size() == 1);
+  }
+
+  @Test
+  public void testCannotResolveQNInOneFileWithSpaces() {
+    List<ASTUnit> models = this.validParseAndBuildSymbolsInSubDir("/imports/qualifiedNameWithSpaces");
+
+    //Checking Resolving with a name without ASTQualifiedName
+    assertTrue(models.size() != 0);
+    List<String> packageWithImportsQN = new ArrayList();
+    /* Vehicles{
+	      package Automobile{
+		        package ModellY{*/
+    packageWithImportsQN.add("VehiclesWrong");
+    packageWithImportsQN.add("Automobile Luxus");
+    packageWithImportsQN.add("Modell Y");
+    List<SysMLTypeSymbol> packageWithImportsSymbol =
+        ResolveQualifiedNameHelper.resolveQualifiedNameAsListInASpecificScope(packageWithImportsQN,
+            models.get(0).getEnclosingScope().getEnclosingScope());
+
+    assertTrue(packageWithImportsSymbol.size() == 0);
+  }
+
+  @Test
   public void testComplexResolveQNInOneFile() {
     List<ASTUnit> models = this.validParseAndBuildSymbolsInSubDir("/imports/complexQualifiedName");
 

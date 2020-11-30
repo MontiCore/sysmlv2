@@ -41,12 +41,20 @@ public class HelperSysMLSymbolTableCreator {
       createSymboltable(astUnit, lang,globalScope );
     }
 
+    AddVisibilityToSymbolVisitor addVisibilityToSymbolVisitor = new AddVisibilityToSymbolVisitor();
+    for (ASTUnit astUnit : astUnits) {
+      addVisibilityToSymbolVisitor.startTraversal(astUnit);
+    }
+
     AddImportToScopeVisitor addImportToScopeVisitor = new AddImportToScopeVisitor();
     for(ASTUnit model: astUnits){
-      addImportToScopeVisitor.memorizeImportsPhase1of2(model);
+      addImportToScopeVisitor.memorizeImportsPhase1of3(model);
     }
     for(ASTUnit model: astUnits){
-      addImportToScopeVisitor.addImportsToScopePhase2of2(model);
+      addImportToScopeVisitor.addReexportedSymbolsOfPackagesPhase2of3(model);
+    }
+    for(ASTUnit model: astUnits){
+      addImportToScopeVisitor.addImportsToScopePhase3of3(model);
     }
 
     return globalScope;

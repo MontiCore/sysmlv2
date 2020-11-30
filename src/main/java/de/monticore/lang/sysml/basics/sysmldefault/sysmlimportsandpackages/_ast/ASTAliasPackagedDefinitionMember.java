@@ -14,11 +14,16 @@ import java.util.List;
 public class ASTAliasPackagedDefinitionMember extends ASTAliasPackagedDefinitionMemberTOP {
   List<SysMLTypeSymbol> resolvedTypes = new ArrayList<>();
   List<CoCoStatus> warnings = new ArrayList<>();
+  List<SysMLTypeSymbol> transitiveImports = new ArrayList<>();
   boolean init  = false;
 
   public void setResolvedTypes(List<SysMLTypeSymbol> resolvedTypes) {
     this.resolvedTypes = resolvedTypes;
     init = true;
+  }
+
+  public boolean isInit() {
+    return init;
   }
 
   public void setWarnings(List<CoCoStatus> warnings) {
@@ -35,5 +40,13 @@ public class ASTAliasPackagedDefinitionMember extends ASTAliasPackagedDefinition
           + ". Trying to getWarnings without resolving Types first.");
     }
     return warnings;
+  }
+
+  public void setTransitiveImports(List<SysMLTypeSymbol> transitiveImports) {
+    this.transitiveImports = transitiveImports;
+  }
+
+  public List<SysMLTypeSymbol> getTransitiveImports() {
+    return transitiveImports;
   }
 }
