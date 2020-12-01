@@ -211,6 +211,9 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
     else if (importName.getReferencedName().equals("ScalarFunctions")) {
       return true;
     }
+    else if (importName.getReferencedName().equals("Base")) {
+      return true;
+    }
     else {
       return false;
     }

@@ -34,12 +34,6 @@ package ActionInterfaceProtocol {
 	 	then action sendRequest2 (out request2);	 	
 	}
 	
-	port def Requests {
-		out request1;
-		in reply1;	
-		in request2;
-	}
-	
 	part system {
 		import sequence::*;
 		
