@@ -102,10 +102,6 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
     else if (phase == 3) {
       Optional<ASTSysMLName> importAs = Optional.empty();
       Optional<SysMLTypeSymbol> currentType = Optional.empty();
-      if (node.isPresentSysMLName()) {
-        importAs = Optional.of(node.getSysMLName());
-        currentType = Optional.of(node.getSymbol());
-      }
       List<CoCoStatus> warnings = this.addToScope(node.getResolvedTypes(), node.getTransitiveImports(),
           node.getEnclosingScope(),
           node.isStar(), importAs, currentType, node.getQualifiedName(), false);
@@ -131,10 +127,7 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
       //Importing a package.
       ASTPackage astPackage = (ASTPackage) resolvedTypes.get(0).getAstNode();
       ISysMLNamesBasisScope importThis = astPackage.getPackageBody().getSpannedScope();
-      if (starImport && importAs.isPresent()) {
-        warnings.add(new CoCoStatus(SysMLCoCoName.ImportWithStarAndWithAs, "Cannot star import package with an alias \"as " + importAs.get().getName() + "\"."));
-      }
-      else if (starImport) {
+      if (starImport) {
         LinkedListMultimap<String, SysMLTypeSymbol> imports = importThis.getSysMLTypeSymbols();
         for (SysMLTypeSymbol importSymbol : imports.values()) {
           if (!isAlreadyInScopeAndAddWarning(scopeToAddTo, importSymbol.getName(), warnings, false)) {
