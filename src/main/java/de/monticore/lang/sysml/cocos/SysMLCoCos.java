@@ -51,6 +51,8 @@ public class SysMLCoCos {
         return res.append("59").toString();
       case ImportedElementNameAlreadyExists:
         return res.append("60").toString();
+      case DoubleImportOfDifferentSymbolsSameName:
+        return res.append("61").toString();
       default:
         Log.error("Internal error: One CoCo was not registered correctly.");
         return res.append("CouldNotResolveErrorCode").toString();

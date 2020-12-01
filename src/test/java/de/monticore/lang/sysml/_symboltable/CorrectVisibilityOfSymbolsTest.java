@@ -152,4 +152,11 @@ public class CorrectVisibilityOfSymbolsTest extends AbstractSysMLTest {
         ((ASTClassifierDeclarationCompletionStd )classifierAPrivate).getSuperclassingList().getQualifiedName(0).resolveSymbols().size());
 
   }
+
+
+  @Test
+  public void testIfCyclicImportsLeadToInfiniyLoop() {
+    List<ASTUnit> models = this.validParseAndBuildSymbolsInSubDir("/imports/cyclicImport");
+    assertTrue(models.size() != 0);
+  }
 }

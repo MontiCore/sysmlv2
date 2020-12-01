@@ -103,10 +103,10 @@ public class SysMLToolTest {
       boolean filenameCoCo = f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsFileName)));
       boolean doubleImport =
           f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportedElementNameAlreadyExists)));
-      assertTrue(filenameCoCo || doubleImport);
-      if (!(filenameCoCo || doubleImport)) {
-        System.out.println("Did not expect the Finding:" + f.toString());
-      }
+      boolean twoImportsWithDifferentSymbolButSameName =
+          f.toString().contains("0xA7161 Did not import symbol nano");
+      assertTrue("Did not expect the Finding:" + f.toString(), filenameCoCo || doubleImport
+          ||twoImportsWithDifferentSymbolButSameName);
     }
   }
 
@@ -118,7 +118,10 @@ public class SysMLToolTest {
       boolean filenameCoCo = f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsFileName)));
       boolean doubleImport =
           f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportedElementNameAlreadyExists)));
-      assertTrue("Did not expect the Finding:" + f.toString(), filenameCoCo || doubleImport);
+      boolean twoImportsWithDifferentSymbolButSameName =
+          f.toString().contains("0xA7161 Did not import symbol nano");
+      assertTrue("Did not expect the Finding:" + f.toString(), filenameCoCo || doubleImport
+        ||twoImportsWithDifferentSymbolButSameName);
     }
   }
 

@@ -27,7 +27,11 @@ public class ASTAliasPackagedDefinitionMember extends ASTAliasPackagedDefinition
   }
 
   public void setWarnings(List<CoCoStatus> warnings) {
-    this.warnings = warnings;
+    if(this.warnings.size()!=0){
+      this.warnings.addAll(warnings);
+    }else{
+      this.warnings = warnings;
+    }
   }
 
   public List<SysMLTypeSymbol> getResolvedTypes() {

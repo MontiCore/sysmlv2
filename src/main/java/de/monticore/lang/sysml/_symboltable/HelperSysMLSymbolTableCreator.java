@@ -3,6 +3,8 @@ package de.monticore.lang.sysml._symboltable;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.sysml._symboltable.*;
+import de.monticore.lang.sysml.sysml._symboltable.doubleimports.AmbigousImportCheck;
+import de.monticore.lang.sysml.sysml._symboltable.doubleimports.RemoveDoubleImportsFromScope;
 
 import java.util.List;
 
@@ -50,8 +52,18 @@ public class HelperSysMLSymbolTableCreator {
     for(ASTUnit model: astUnits){
       addImportToScopeVisitor.memorizeImportsPhase1of3(model);
     }
+
+    AmbigousImportCheck ambigousImportCheck = new AmbigousImportCheck();
+    for(ASTUnit model: astUnits){
+      ambigousImportCheck.addWarningForAmbigousImport(model);
+    }
+
     for(ASTUnit model: astUnits){
       addImportToScopeVisitor.addReexportedSymbolsOfPackagesPhase2of3(model);
+    }
+    RemoveDoubleImportsFromScope removeDoubleImportsFromScope = new RemoveDoubleImportsFromScope();
+    for (ASTUnit model : astUnits) {
+      removeDoubleImportsFromScope.removeDoubleImportsAndAddWarning3of4(model);
     }
     for(ASTUnit model: astUnits){
       addImportToScopeVisitor.addImportsToScopePhase3of3(model);

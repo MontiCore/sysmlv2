@@ -77,12 +77,12 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
         currentType = Optional.of(node.getSymbol());
       }
       List<CoCoStatus> warnings = this.addToScope(node.getResolvedTypes(), node.getTransitiveImports(),
-          node.getEnclosingScope(), false, importAs
-          , currentType, node.getQualifiedName(), node.isAlias());
+          node.getEnclosingScope(), false, importAs, currentType, node.getQualifiedName(), node.isAlias(), node.getWarnings());
       node.setWarnings(warnings);
     }
     else {
-      Log.error("Internal error in " + this.getClass().getName() + " Do not call this Visitor with ast.accept. There are explicit methods.");
+      Log.error("Internal error in " + this.getClass().getName() + " Do not call this Visitor with ast.accept. There "
+          + "are explicit methods.");
     }
   }
 
@@ -93,8 +93,30 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
       node.setResolvedTypes(resolvedTypes);
     }
     else if (phase == 2) {
-      if(node.isStar()) {
+      if (node.isStar()) {
         node.setTransitiveImports(getTransitiveImports(node.getResolvedTypes()));
+        //Adding symbol of the first package:
+        for (SysMLTypeSymbol shouldBePackage : node.getResolvedTypes()) {
+          if (!(shouldBePackage.getAstNode() instanceof ASTPackage)) {
+            node.getWarnings().add(new CoCoStatus(SysMLCoCoName.PackageImportWithoutStar, "Importing a package " +
+                "without a " + "star (e.g.\"::*\") will have no effect. " + "If this Statement imports something " +
+                "else then a scope, this has no effect."));
+          }
+          else {
+            ASTPackage astPackage = (ASTPackage) shouldBePackage.getAstNode();
+            ISysMLNamesBasisScope importThis = astPackage.getPackageBody().getSpannedScope();
+            LinkedListMultimap<String, SysMLTypeSymbol> imports = importThis.getSysMLTypeSymbols();
+            for (SysMLTypeSymbol importSymbol : imports.values()) {
+              if (!isAlreadyInScopeAndAddWarning(node.getEnclosingScope(), importSymbol.getName(), node.getWarnings(), false)) {
+                if (!(importSymbol.getAccessModifier() instanceof SysMLAccessModifierPrivate)) {
+                  // Do not import private symbols
+                  node.getTransitiveImports().add(importSymbol);
+                  //System.out.println("Adding symbol to transitive imports " + importSymbol.getName());
+                }
+              }
+            }
+          }
+        }
         //System.out.print("There were " + node.getTransitiveImports().size() + " transitive import symbols.");
       }
 
@@ -103,52 +125,65 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
       Optional<ASTSysMLName> importAs = Optional.empty();
       Optional<SysMLTypeSymbol> currentType = Optional.empty();
       List<CoCoStatus> warnings = this.addToScope(node.getResolvedTypes(), node.getTransitiveImports(),
-          node.getEnclosingScope(),
-          node.isStar(), importAs, currentType, node.getQualifiedName(), false);
+          node.getEnclosingScope(), node.isStar(), importAs, currentType, node.getQualifiedName(), false, node.getWarnings());
       node.setWarnings(warnings);
     }
     else {
-      Log.error("Internal error in " + this.getClass().getName() + " Do not call this Visitor with ast.accept. There are explicit methods.");
+      Log.error("Internal error in " + this.getClass().getName() + " Do not call this Visitor with ast.accept. There "
+          + "are explicit methods.");
     }
   }
 
   public List<CoCoStatus> addToScope(List<SysMLTypeSymbol> resolvedTypes,
-      List<SysMLTypeSymbol> transitiveImportedTypes,
-      ISysMLNamesBasisScope scopeToAddTo,      boolean starImport, Optional<ASTSysMLName> importAs,
-      Optional<SysMLTypeSymbol> importAsCorrespondingSymbol, ASTQualifiedName importName, boolean onlyAlias) {
+      List<SysMLTypeSymbol> transitiveImportedTypes, ISysMLNamesBasisScope scopeToAddTo, boolean starImport,
+      Optional<ASTSysMLName> importAs, Optional<SysMLTypeSymbol> importAsCorrespondingSymbol,
+      ASTQualifiedName importName, boolean onlyAlias,  List<CoCoStatus> existingWarnings) {
     List<CoCoStatus> warnings = new ArrayList<>();
     if (importIsOfTypeKerML(resolvedTypes, importName)) {
       // Do nothing, import is fine.
     }
-    else if (resolvedTypes.size() == 0) {
-      warnings.add(new CoCoStatus(SysMLCoCoName.ImportIsDefined, "Could not resolve import \"" + importName.getFullQualifiedName() + "\"."));
+    else if (resolvedTypes.size() == 0 && !starImport && existingWarnings.size()==0) {
+      warnings.add(new CoCoStatus(SysMLCoCoName.ImportIsDefined,
+          "Could not resolve import \"" + importName.getFullQualifiedName() + "\"."));
+    }
+    else if (resolvedTypes.size() == 0 && starImport) {
+      for (SysMLTypeSymbol importTransitiveSymbol : transitiveImportedTypes) {
+        //System.out.println("Adding import of transitive symbol " + importTransitiveSymbol.getName());
+        if (!isAlreadyInScopeAndAddWarning(scopeToAddTo, importTransitiveSymbol.getName(), warnings, false)) {
+          scopeToAddTo.add(importTransitiveSymbol);
+        }
+      }
     }
     else if (resolvedTypes.size() == 1 && resolvedTypes.get(0).getAstNode() instanceof ASTPackage) {
       //Importing a package.
       ASTPackage astPackage = (ASTPackage) resolvedTypes.get(0).getAstNode();
       ISysMLNamesBasisScope importThis = astPackage.getPackageBody().getSpannedScope();
       if (starImport) {
-        LinkedListMultimap<String, SysMLTypeSymbol> imports = importThis.getSysMLTypeSymbols();
+        /*LinkedListMultimap<String, SysMLTypeSymbol> imports = importThis.getSysMLTypeSymbols();
         for (SysMLTypeSymbol importSymbol : imports.values()) {
           if (!isAlreadyInScopeAndAddWarning(scopeToAddTo, importSymbol.getName(), warnings, false)) {
-            if(!(importSymbol.getAccessModifier() instanceof SysMLAccessModifierPrivate)){
+            if (!(importSymbol.getAccessModifier() instanceof SysMLAccessModifierPrivate)) {
               // Do not import private symbols
               scopeToAddTo.add(importSymbol);
             }
           }
-        }
-        for (SysMLTypeSymbol importTransitiveSymbol : transitiveImportedTypes){
+        }*/
+        for (SysMLTypeSymbol importTransitiveSymbol : transitiveImportedTypes) {
           //System.out.println("Adding import of transitive symbol " + importTransitiveSymbol.getName());
-          scopeToAddTo.add(importTransitiveSymbol);
+          if (!isAlreadyInScopeAndAddWarning(scopeToAddTo, importTransitiveSymbol.getName(), warnings, false)) {
+            scopeToAddTo.add(importTransitiveSymbol);
+          }
         }
-
       }
       else {
-        warnings.add(new CoCoStatus(SysMLCoCoName.PackageImportWithoutStar, "Importing a package without a star (e.g.\"::*\") will have no effect. " + "If this Statement imports something else then a scope, this has no effect."));
+        warnings.add(new CoCoStatus(SysMLCoCoName.PackageImportWithoutStar,
+            "Importing a package without a star (e.g" + ".\"::*\") will have no effect. " + "If this Statement "
+                + "imports something else then a scope, this has no" + " effect."));
       }
     }
     else if (resolvedTypes.size() > 1) {
-      warnings.add(new CoCoStatus(SysMLCoCoName.AmbiguousImport, "The import statement was ambiguous, nothing will be imported. "));
+      warnings.add(new CoCoStatus(SysMLCoCoName.AmbiguousImport, "The import statement was ambiguous, nothing will "
+          + "be" + " imported. "));
     }
     else if (resolvedTypes.size() == 1) {
       if (importAs.isPresent()) {
@@ -172,13 +207,17 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
       }
 
     }
-    else {
+    else if(existingWarnings.size()==0){
       Log.error("Internal Error in " + AddImportToScopeVisitor.class.getName() + ". Unexpected case.");
+    }else{
+      // Some other check removed the resolved types such as Ambigous Import Check and added warnings
+      // => Nothing to do here
     }
     return warnings;
   }
 
-  private boolean isAlreadyInScopeAndAddWarning(ISysMLNamesBasisScope scopeToAddTo, String name, List<CoCoStatus> warnings, boolean importAs) {
+  private boolean isAlreadyInScopeAndAddWarning(ISysMLNamesBasisScope scopeToAddTo, String name,
+      List<CoCoStatus> warnings, boolean importAs) {
     if (name.equals("")) {
       return true;
     }
@@ -187,7 +226,8 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
       if (scopeToAddTo.isPresentName()) {
         scopeName = scopeToAddTo.getName();
       }
-      warnings.add(new CoCoStatus(SysMLCoCoName.ImportedElementNameAlreadyExists, "The element \"" + name + "\" could not be imported, because it already exists in the scope " + scopeName + "."));
+      warnings.add(new CoCoStatus(SysMLCoCoName.ImportedElementNameAlreadyExists, "The element \"" + name + "\" "
+          + "could" + " not be imported, because it already exists in the scope " + scopeName + "."));
       return true;
     }
     else if (scopeToAddTo.resolveSysMLTypeMany(name).size() != 1 && importAs) {
@@ -197,7 +237,8 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
       if (scopeToAddTo.isPresentName()) {
         scopeName = scopeToAddTo.getName();
       }
-      warnings.add(new CoCoStatus(SysMLCoCoName.ImportedElementNameAlreadyExists, "The element \"" + name + "\" could not be imported, because it already exists in the scope " + scopeName + "."));
+      warnings.add(new CoCoStatus(SysMLCoCoName.ImportedElementNameAlreadyExists, "The element \"" + name + "\" "
+          + "could" + " not be imported, because it already exists in the scope " + scopeName + "."));
       return true;
     }
     return false;
@@ -232,17 +273,17 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
 
   //The currentResolvedTypes are the symbols in the importing scope. E.g., package a imports package b, then
   // the currentResolvedTypes are the symbols of package b.
-  private List<SysMLTypeSymbol> getTransitiveImports(List<SysMLTypeSymbol> currentResolvedTypes){
+  private List<SysMLTypeSymbol> getTransitiveImports(List<SysMLTypeSymbol> currentResolvedTypes) {
     List<SysMLTypeSymbol> resultingResolvedTypesWithPackages = new ArrayList<>();
     for (SysMLTypeSymbol symbol : currentResolvedTypes) {
       if (symbol.getAstNode() instanceof ASTPackage) {
-        //System.out.println("Transitive package import found at line" +symbol.getAstNode().get_SourcePositionStart().getLine() +
+        //System.out.println("Transitive package import found at line" +symbol.getAstNode().get_SourcePositionStart()
+        // .getLine() +
         //    " in "
         //  + symbol.getAstNode().get_SourcePositionStart().getFileName());
         List<ASTPackage> alreadyVisitedPackages = new ArrayList<>();
         resultingResolvedTypesWithPackages.addAll(getSymbolsFromRexportedImports((ASTPackage) symbol.getAstNode(),
             alreadyVisitedPackages));
-
 
       }
     }
@@ -254,7 +295,8 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
       if (symbol.getAstNode() instanceof ASTPackage) {
         //System.out.println("--Adding Symbols from package "+ symbol.getName());
         transitiveImports.addAll(addSymbolsOfPackageByStarImport((ASTPackage) symbol.getAstNode()));
-      }else{
+      }
+      else {
         //System.out.println("--Adding Symbols from "+ symbol.getName());
         transitiveImports.add(symbol);
       }
@@ -263,14 +305,12 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
     return transitiveImports;
   }
 
-
-
   //This function assumes that all qualified names are already resolved from Phase1
   //alreadyVisitedPackages is checked, so that we do not run in an infinty loop
   // returns a list of Symbols. If this is a package and a star import, we have to extract the symbols of the star
   // import in a later step.
-  private Set<SysMLTypeSymbol> getSymbolsFromRexportedImports(
-      ASTPackage checkThisPackageForRexports, List<ASTPackage> alreadyVisitedPackages) {
+  private Set<SysMLTypeSymbol> getSymbolsFromRexportedImports(ASTPackage checkThisPackageForRexports,
+      List<ASTPackage> alreadyVisitedPackages) {
     Set<SysMLTypeSymbol> resolvedTypes = new HashSet<>();
     for (ASTPackageMember member : checkThisPackageForRexports.getPackageBody().getPackageMemberList()) {
       boolean isPrivate = false;
@@ -281,8 +321,8 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
       //Now if we have a public import add all the symbols also to the AST.
       if (!isPrivate && member.isPresentPackagedDefinitionMember()) {
         if (member.getPackagedDefinitionMember() instanceof ASTAliasPackagedDefinitionMember) {
-          ASTAliasPackagedDefinitionMember aliasOrImport = (ASTAliasPackagedDefinitionMember)
-              member.getPackagedDefinitionMember();
+          ASTAliasPackagedDefinitionMember aliasOrImport =
+              (ASTAliasPackagedDefinitionMember) member.getPackagedDefinitionMember();
 
           //We have a public import.
           resolvedTypes.addAll(aliasOrImport.getResolvedTypes());
@@ -293,8 +333,7 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
 
               if (!alreadyVisitedPackages.contains(astPackage)) {//If we did not visit it yet.
                 alreadyVisitedPackages.add(astPackage);
-                resolvedTypes.addAll(getSymbolsFromRexportedImports(
-                    astPackage, alreadyVisitedPackages));
+                resolvedTypes.addAll(getSymbolsFromRexportedImports(astPackage, alreadyVisitedPackages));
               }
             }
           }
@@ -319,17 +358,17 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
 
             if (!alreadyVisitedPackages.contains(astPackage)) {//If we did not visit it yet.
               alreadyVisitedPackages.add(astPackage);
-              Set<SysMLTypeSymbol> newSymbols = getSymbolsFromRexportedImports(
-                  astPackage, alreadyVisitedPackages);
-
+              Set<SysMLTypeSymbol> newSymbols = getSymbolsFromRexportedImports(astPackage, alreadyVisitedPackages);
 
               //if it is a star import add all symbols of this package. => CoCos are checked elsewhere so we do not
               // have to add further checking here.
-              for (SysMLTypeSymbol possiblePackage: newSymbols) {
-                if(importUnitStd.isStar() && possiblePackage.getAstNode() instanceof ASTPackage){
-                  //System.out.println("--- 1 ---  Found a reexported package resolved Types before " + resolvedTypes.size());
+              for (SysMLTypeSymbol possiblePackage : newSymbols) {
+                if (importUnitStd.isStar() && possiblePackage.getAstNode() instanceof ASTPackage) {
+                  //System.out.println("--- 1 ---  Found a reexported package resolved Types before " + resolvedTypes
+                  // .size());
                   resolvedTypes.addAll(addSymbolsOfPackageByStarImport((ASTPackage) possiblePackage.getAstNode()));
-                  //System.out.println("--- 2 ---- Found a reexported package resolved Types after " + resolvedTypes.size());
+                  //System.out.println("--- 2 ---- Found a reexported package resolved Types after " + resolvedTypes
+                  // .size());
                 }
                 else { // Not a star import, just add the symbol
                   resolvedTypes.add(possiblePackage);
@@ -343,16 +382,15 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
     return resolvedTypes;
   }
 
-
-
-  private List<SysMLTypeSymbol> addSymbolsOfPackageByStarImport(ASTPackage astPackage){
+  private List<SysMLTypeSymbol> addSymbolsOfPackageByStarImport(ASTPackage astPackage) {
     List<SysMLTypeSymbol> symbolsInPackage = new ArrayList<>();
-    LinkedListMultimap<String, SysMLTypeSymbol> imports = astPackage.getPackageBody().getSpannedScope()
-        .getSysMLTypeSymbols();
+    LinkedListMultimap<String, SysMLTypeSymbol> imports =
+        astPackage.getPackageBody().getSpannedScope().getSysMLTypeSymbols();
     for (SysMLTypeSymbol importSymbol : imports.values()) {
-      if((importSymbol.getAccessModifier() instanceof SysMLAccessModifierPrivate)){ // Do not import private symbols
+      if ((importSymbol.getAccessModifier() instanceof SysMLAccessModifierPrivate)) { // Do not import private symbols
         //System.out.println("Did not import symbol " + importSymbol.getName() + ", because it is private." );
-      }else{
+      }
+      else {
         //System.out.println("Adding symbol " + importSymbol.getName() + " to transitive imports");
         symbolsInPackage.add(importSymbol);
       }
