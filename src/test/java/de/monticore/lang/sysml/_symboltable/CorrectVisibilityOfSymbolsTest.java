@@ -8,6 +8,9 @@ import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTAliasPackagedDefinitionMember;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackage;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._symboltable.ISysMLImportsAndPackagesScope;
+import de.monticore.lang.sysml.bdd._ast.ASTBlock;
+import de.monticore.lang.sysml.common.sysmlclassifiers._ast.ASTClassifierDeclarationCompletionStd;
+import de.monticore.lang.sysml.common.sysmlcommonbasis._ast.ASTClassifierDeclarationCompletion;
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;
 import de.se_rwth.commons.logging.Log;
 import org.antlr.v4.runtime.RecognitionException;
@@ -37,8 +40,9 @@ public class CorrectVisibilityOfSymbolsTest extends AbstractSysMLTest {
     this.setUpLog();
   }
 
+
   @Test
-  public void testIfVisibilityIsConsidered() {
+  public void testIfVisibilityIsConsideredInImport() {
     List<ASTUnit> models = this.validParseAndBuildSymbolsInSubDir("/imports/visibilityOfSymbols");
     //System.out.println("Parsed and build, now testing.");
     //Checking Resolving with a name without ASTQualifiedName
@@ -103,5 +107,50 @@ public class CorrectVisibilityOfSymbolsTest extends AbstractSysMLTest {
     assert(!scopeToLookIn.resolveSysMLType("VehiclePrivate").isPresent());
     assert(!scopeToLookIn.resolveSysMLType("VehicleDef1").isPresent());
     assert(!scopeToLookIn.resolveSysMLType("BusDef1").isPresent());
+  }
+
+
+  @Test
+  public void  testQualifiedNameVisibility(){
+    List<ASTUnit> models = this.validParseAndBuildSymbolsInSubDir("/imports/qualifiedNameVisibility");
+    //System.out.println("Parsed and build, now testing.");
+    //Checking Resolving with a name without ASTQualifiedName
+    assertTrue(models.size() != 0);
+    List<String> blockAQN = new ArrayList();
+    blockAQN.add("Vehicles");
+    blockAQN.add("useOfDefs");
+    blockAQN.add("a");
+    List<SysMLTypeSymbol> blockA =
+        ResolveQualifiedNameHelper.resolveQualifiedNameAsListInASpecificScope(blockAQN,
+            models.get(0).getEnclosingScope().getEnclosingScope());
+    assertTrue(blockA.size() ==1);
+    List<String> blockAprivateQN = new ArrayList();
+    blockAprivateQN.add("Vehicles");
+    blockAprivateQN.add("useOfDefs");
+    blockAprivateQN.add("aPrivate");
+    List<SysMLTypeSymbol> blockAprivate =
+        ResolveQualifiedNameHelper.resolveQualifiedNameAsListInASpecificScope(blockAprivateQN,
+            models.get(0).getEnclosingScope().getEnclosingScope());
+    assertTrue(blockAprivate.size() ==1);
+
+    assertTrue(blockA.get(0).getAstNode() instanceof ASTBlock);
+    assertTrue(blockAprivate.get(0).getAstNode() instanceof ASTBlock);
+    ASTBlock blockACasted = (ASTBlock)blockA.get(0).getAstNode();
+    ASTBlock blockAPrivatedCasted = (ASTBlock)blockAprivate.get(0).getAstNode();
+
+    ASTClassifierDeclarationCompletion classifierA =
+        (blockACasted.getBlockDeclaration().getClassifierDeclarationCompletion());
+
+    assertTrue(classifierA instanceof ASTClassifierDeclarationCompletionStd);
+    assertEquals(1,
+        ((ASTClassifierDeclarationCompletionStd )classifierA).getSuperclassingList().getQualifiedName(0).resolveSymbols().size());
+
+    ASTClassifierDeclarationCompletion classifierAPrivate =
+        (blockAPrivatedCasted.getBlockDeclaration().getClassifierDeclarationCompletion());
+
+    assertTrue(classifierAPrivate instanceof ASTClassifierDeclarationCompletionStd);
+    assertEquals(0,
+        ((ASTClassifierDeclarationCompletionStd )classifierAPrivate).getSuperclassingList().getQualifiedName(0).resolveSymbols().size());
+
   }
 }
