@@ -93,7 +93,7 @@ public class RemoveDoubleImportsFromScope implements SysMLInheritanceVisitor {
       if(checkIfSymbolIsDuplicateAndNotSame(checkList, current)){
         i.remove();
         warnings.add(new CoCoStatus(SysMLCoCoName.DoubleImportOfDifferentSymbolsSameName,
-            "Did not import symbol " + current.getName() + "\", "
+            "Did not import symbol \"" + current.getName() + "\", "
             + "because a symbol with "
             + "the " + "same "  + "name also gets "
             + "imported into the scope.") );

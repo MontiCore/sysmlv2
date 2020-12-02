@@ -4,9 +4,12 @@ import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._coco
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTImportUnitStdCoCo;
 import de.monticore.lang.sysml.cocos.imports.ImportStatementValid;
 import de.monticore.lang.sysml.cocos.naming.DefinitionNameStartsWithCapitalLetter;
+import de.monticore.lang.sysml.cocos.naming.NameReference;
 import de.monticore.lang.sysml.cocos.naming.PackageNameEqualsFileName;
 import de.monticore.lang.sysml.cocos.naming.UniqueName;
 import de.monticore.lang.sysml.sysml._cocos.SysMLCoCoChecker;
+import de.monticore.lang.sysml.sysml._symboltable.SysMLScope;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import jline.internal.Log;
 
 /**
@@ -21,6 +24,9 @@ public class SysMLCoCos {
     checker.addCoCo((SysMLImportsAndPackagesASTImportUnitStdCoCo) new ImportStatementValid());
     checker.addCoCo(new UniqueName());
     checker.addCoCo(new PackageNameEqualsFileName());
+    // checker.addCoCo(new NameReference()); Currently we cannot resolve all Name references, so it is no use to test
+    // it.
+
 
     return checker;
   }

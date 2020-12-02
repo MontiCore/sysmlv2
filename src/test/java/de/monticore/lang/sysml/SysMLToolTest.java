@@ -98,15 +98,18 @@ public class SysMLToolTest {
     SysMLTool.main(new String[] { pathToSrcDir + "/training/", "-lib=" + pathToLibDir }); //Same files as in
     // src/main/resources/SysML Domain Libraries but for testing.
     //AbstractSysMLTest.printAllFindings();
+    //System.out.println("Found " + Log.getFindings().size() + " findings.");
     //assertEquals(36, Log.getFindings().size());
     for (Finding f : Log.getFindings()) { //not equal to filename coco, double definition (e.g. mm) at SI
       boolean filenameCoCo = f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsFileName)));
       boolean doubleImport =
           f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportedElementNameAlreadyExists)));
       boolean twoImportsWithDifferentSymbolButSameName =
-          f.toString().contains("0xA7161 Did not import symbol nano");
+          f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.DoubleImportOfDifferentSymbolsSameName)));
+      boolean resolveQualifiedName =
+          f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.NameReference)));
       assertTrue("Did not expect the Finding:" + f.toString(), filenameCoCo || doubleImport
-          ||twoImportsWithDifferentSymbolButSameName);
+          ||twoImportsWithDifferentSymbolButSameName || resolveQualifiedName);
     }
   }
 
@@ -114,14 +117,17 @@ public class SysMLToolTest {
   public void toolParseAndCheckAllTrainingExamplesWithMultipleLibDirCoCosTest() {
     SysMLTool.main(new String[] { pathToSrcDir + "/training/", "-lib=" + pathToLibDir + "/Geometry",
         "-lib=" + pathToLibDir + "/Quantities and Units" });
+
     for (Finding f : Log.getFindings()) {
       boolean filenameCoCo = f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsFileName)));
       boolean doubleImport =
           f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportedElementNameAlreadyExists)));
       boolean twoImportsWithDifferentSymbolButSameName =
-          f.toString().contains("0xA7161 Did not import symbol nano");
+          f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.DoubleImportOfDifferentSymbolsSameName)));
+      boolean resolveQualifiedName =
+          f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.NameReference)));
       assertTrue("Did not expect the Finding:" + f.toString(), filenameCoCo || doubleImport
-        ||twoImportsWithDifferentSymbolButSameName);
+        ||twoImportsWithDifferentSymbolButSameName || resolveQualifiedName);
     }
   }
 

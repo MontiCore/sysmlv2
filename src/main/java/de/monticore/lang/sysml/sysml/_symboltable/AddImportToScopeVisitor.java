@@ -4,7 +4,9 @@ import com.google.common.collect.LinkedListMultimap;
 import de.monticore.lang.sysml.basics.interfaces.sysmlimportbasis._ast.ASTImportUnit;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTQualifiedName;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTSysMLName;
+import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ResolveQualifiedNameHelper;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.ISysMLNamesBasisScope;
+import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLNamesBasisScope;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.basics.interfaces.sysmlvisibilitybasis._ast.ASTPackageElementVisibilityIndicator;
@@ -107,7 +109,7 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
             ISysMLNamesBasisScope importThis = astPackage.getPackageBody().getSpannedScope();
             LinkedListMultimap<String, SysMLTypeSymbol> imports = importThis.getSysMLTypeSymbols();
             for (SysMLTypeSymbol importSymbol : imports.values()) {
-              if (!isAlreadyInScopeAndAddWarning(node.getEnclosingScope(), importSymbol.getName(), node.getWarnings(), false)) {
+              if (!isAlreadyInScopeAndAddWarning(node.getEnclosingScope(), importSymbol, node.getWarnings(), false)) {
                 if (!(importSymbol.getAccessModifier() instanceof SysMLAccessModifierPrivate)) {
                   // Do not import private symbols
                   node.getTransitiveImports().add(importSymbol);
@@ -149,7 +151,7 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
     else if (resolvedTypes.size() == 0 && starImport) {
       for (SysMLTypeSymbol importTransitiveSymbol : transitiveImportedTypes) {
         //System.out.println("Adding import of transitive symbol " + importTransitiveSymbol.getName());
-        if (!isAlreadyInScopeAndAddWarning(scopeToAddTo, importTransitiveSymbol.getName(), warnings, false)) {
+        if (!isAlreadyInScopeAndAddWarning(scopeToAddTo, importTransitiveSymbol, warnings, false)) {
           scopeToAddTo.add(importTransitiveSymbol);
         }
       }
@@ -170,7 +172,7 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
         }*/
         for (SysMLTypeSymbol importTransitiveSymbol : transitiveImportedTypes) {
           //System.out.println("Adding import of transitive symbol " + importTransitiveSymbol.getName());
-          if (!isAlreadyInScopeAndAddWarning(scopeToAddTo, importTransitiveSymbol.getName(), warnings, false)) {
+          if (!isAlreadyInScopeAndAddWarning(scopeToAddTo, importTransitiveSymbol, warnings, false)) {
             scopeToAddTo.add(importTransitiveSymbol);
           }
         }
@@ -194,14 +196,14 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
           if (onlyAlias) {
             importAsCorrespondingSymbol.get().setAstNode(resolvedTypes.get(0).getAstNode());
           }
-          else if (!isAlreadyInScopeAndAddWarning(scopeToAddTo, importAs.get().getName(), warnings, true)) {
+          else if (!isAlreadyInScopeAndAddWarning(scopeToAddTo, importAsCorrespondingSymbol.get(), warnings, true)) {
             importAsCorrespondingSymbol.get().setAstNode(resolvedTypes.get(0).getAstNode());
           }
 
         }
       }
       else {
-        if (!isAlreadyInScopeAndAddWarning(scopeToAddTo, resolvedTypes.get(0).getName(), warnings, false)) {
+        if (!isAlreadyInScopeAndAddWarning(scopeToAddTo, resolvedTypes.get(0), warnings, false)) {
           scopeToAddTo.add(resolvedTypes.get(0));
         }
       }
@@ -216,8 +218,27 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
     return warnings;
   }
 
-  private boolean isAlreadyInScopeAndAddWarning(ISysMLNamesBasisScope scopeToAddTo, String name,
+  private ISysMLNamesBasisScope cloneScope(ISysMLNamesBasisScope original){ //This can be extended for cloning deep.
+    ISysMLNamesBasisScope clone = (ISysMLNamesBasisScope) new SysMLNamesBasisScope();
+    clone.setName(original.getName());
+    LinkedListMultimap<String, SysMLTypeSymbol> imports = original.getSysMLTypeSymbols();
+    for (SysMLTypeSymbol importSymbol : imports.values()) {
+      clone.add(importSymbol);
+    }
+    return clone;
+  }
+
+  private boolean isAlreadyInScopeAndAddWarning(ISysMLNamesBasisScope scopeToAddTo, SysMLTypeSymbol symbolToAdd,
       List<CoCoStatus> warnings, boolean importAs) {
+    String name = symbolToAdd.getName();
+    //If already in scope by other import
+    if(scopeToAddTo.resolveSysMLTypeMany(name).size()==1){
+      if(scopeToAddTo.resolveSysMLTypeMany(name).get(0) == symbolToAdd){
+        //Exactly the same symbol exists in scope => because of other import -> that is fine, but we do not have to
+        // add this. So we do not warn, but also do not add this.
+        return true;
+      }
+    }
     if (name.equals("")) {
       return true;
     }

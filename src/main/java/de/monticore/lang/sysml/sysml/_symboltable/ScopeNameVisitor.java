@@ -13,6 +13,7 @@ import de.monticore.lang.sysml.common.sysmlcommonbasis._ast.ASTDefinitionBody;
 import de.monticore.lang.sysml.common.sysmldefinitions._ast.ASTDefinitionBodyStd;
 import de.monticore.lang.sysml.common.sysmlports._ast.ASTInterfaceDefinition;
 import de.monticore.lang.sysml.common.sysmlports._ast.ASTPortDefinitionStd;
+import de.monticore.lang.sysml.common.sysmlusages._ast.ASTUsageStd;
 import de.monticore.lang.sysml.common.sysmlvaluetypes._ast.ASTValueTypeStd;
 import de.monticore.lang.sysml.parametricdiagram._ast.ASTIndividualDefinition;
 import de.monticore.lang.sysml.requirementdiagram._ast.ASTRequirementDefinition;
@@ -27,6 +28,14 @@ import de.monticore.lang.sysml.sysml._visitor.SysMLInheritanceVisitor;
 public class ScopeNameVisitor implements SysMLInheritanceVisitor {
   public void startTraversal(ASTUnit ast) {
     ast.accept(this);
+  }
+
+  @Override
+  public void visit(ASTUsageStd node) {
+    if(node.getUsageDeclaration().isPresentSysMLNameAndTypePart()){
+      addNameToDefinitionBody(node.getUsageCompletion().getDefinitionBody(),
+          node.getUsageDeclaration().getSysMLNameAndTypePart().getName());
+    }
   }
 
   @Override

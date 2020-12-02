@@ -18,16 +18,16 @@ public class NameReference implements SysMLNamesBasisASTQualifiedNameCoCo {
 
   @Override
   public void check(ASTQualifiedName qualifiedName) {
-    String reference = qualifiedName.getReferencedName();
+    //String reference = qualifiedName.getReferencedName();
 
-    Log.info("Checking to resolve name " + reference, this.getClass().getName());
-    ISysMLNamesBasisScope scope =  qualifiedName.getEnclosingScope();
-    Optional<SysMLTypeSymbol> type = scope.resolveSysMLType(reference);
-    if(type.isPresent()){
-      Log.info("Block could be resolved. " + reference, this.getClass().getName());
+    //Log.info("Checking to resolve name " + reference, this.getClass().getName());
+    //ISysMLNamesBasisScope scope =  qualifiedName.getEnclosingScope();
+    //Optional<SysMLTypeSymbol> type = scope.resolveSysMLType(reference);
+    if(qualifiedName.resolveSymbols().size()>0){
+      //Log.info("Block could be resolved. " + reference, this.getClass().getName());
     }else {
       Log.error(SysMLCoCos.getErrorCode(SysMLCoCoName.NameReference) + " "+
-          "Reference " + reference + " could not be resolved.",  qualifiedName.get_SourcePositionStart());
+          "Reference " + qualifiedName.getFullQualifiedName() + " could not be resolved.",  qualifiedName.get_SourcePositionStart());
     }
   }
 }

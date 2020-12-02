@@ -61,8 +61,11 @@ public class ResolveQualifiedNameHelper {
       //Artifact scope is not the scope to search in, but global scope.
       scopeToSearchIn = scopeToSearchIn.getEnclosingScope();
     }
-    searchingScope.addAll(scopeToSearchIn.getSubScopes());
-    if (names.size() == 0) {
+    if(names.size()>1){ // Qualified Nmae
+      searchingScope.addAll(scopeToSearchIn.getSubScopes());
+    }else if(names.size()==1){ // Just look in current scope.
+      return scopeToSearchIn.resolveSysMLTypeMany(names.get(0));
+    }else if (names.size() == 0) {
       Log.error("Internal error in " + ResolveQualifiedNameHelper.class.getName() +
           ". The list of names (possibly belonging to a qualified name), should not have size 0.");
     }
@@ -90,7 +93,18 @@ public class ResolveQualifiedNameHelper {
       else { //Else look to resolve the scopes.
         for (ISysMLNamesBasisScope searchHere : currentSearchingScopes) {
           searchingScope.addAll(resolveNameAsScope(name, searchHere, firstName));
+          //Could also be in an imported scope
+          List<SysMLTypeSymbol> possibleImportedScopes = resolveNameAsSysMLType(name,searchHere);
+          if(possibleImportedScopes.size()==1){ //unique
+            List<ISysMLNamesBasisScope> possibleScope = resolveNameAsScope(name,
+                possibleImportedScopes.get(0).getAstNode().getEnclosingScope(),
+                firstName);
+            if(possibleScope.size()==1){ //unique
+              searchingScope.add(possibleScope.get(0));
+            }
+          }
         }
+
       }
     }
 
@@ -108,7 +122,8 @@ public class ResolveQualifiedNameHelper {
     return resultingSymbols;
   }
 
-  private static List<ISysMLNamesBasisScope> resolveNameAsScope(String name, ISysMLNamesBasisScope top, boolean firstName) {
+  public static List<ISysMLNamesBasisScope> resolveNameAsScope(String name, ISysMLNamesBasisScope top,
+      boolean firstName) {
     List<ISysMLNamesBasisScope> res = new ArrayList<>();
     for (ISysMLNamesBasisScope currentScope : top.getSubScopes()) {
       //outForTesting("Looking for scope with Name " + name + " current scope has name " + currentScope.getName());
