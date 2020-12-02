@@ -27,7 +27,7 @@ public class RemoveDoubleImportsFromScope implements SysMLInheritanceVisitor {
   //Works together with
   // AddImportToScopeVisitor
 
-  public void removeDoubleImportsAndAddWarning3of4(ASTUnit ast) {
+  public void removeDoubleImportsAndAddWarningPhase4of5(ASTUnit ast) {
     ast.accept(this);
   }
 

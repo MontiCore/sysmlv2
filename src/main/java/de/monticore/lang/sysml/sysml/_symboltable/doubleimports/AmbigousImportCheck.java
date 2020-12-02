@@ -17,7 +17,7 @@ import java.util.ArrayList;
  */
 public class AmbigousImportCheck implements SysMLInheritanceVisitor {
 
-  public void addWarningForAmbigousImport(ASTUnit ast) {
+  public void addWarningForAmbigousImport2of5(ASTUnit ast) {
     ast.accept(this);
   }
 

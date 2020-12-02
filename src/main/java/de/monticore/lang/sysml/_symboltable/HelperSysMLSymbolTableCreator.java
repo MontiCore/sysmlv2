@@ -50,23 +50,23 @@ public class HelperSysMLSymbolTableCreator {
 
     AddImportToScopeVisitor addImportToScopeVisitor = new AddImportToScopeVisitor();
     for(ASTUnit model: astUnits){
-      addImportToScopeVisitor.memorizeImportsPhase1of3(model);
+      addImportToScopeVisitor.memorizeImportsPhase1of5(model);
     }
 
     AmbigousImportCheck ambigousImportCheck = new AmbigousImportCheck();
     for(ASTUnit model: astUnits){
-      ambigousImportCheck.addWarningForAmbigousImport(model);
+      ambigousImportCheck.addWarningForAmbigousImport2of5(model);
     }
 
     for(ASTUnit model: astUnits){
-      addImportToScopeVisitor.addReexportedSymbolsOfPackagesPhase2of3(model);
+      addImportToScopeVisitor.addReexportedSymbolsOfPackagesPhase3of5(model);
     }
     RemoveDoubleImportsFromScope removeDoubleImportsFromScope = new RemoveDoubleImportsFromScope();
     for (ASTUnit model : astUnits) {
-      removeDoubleImportsFromScope.removeDoubleImportsAndAddWarning3of4(model);
+      removeDoubleImportsFromScope.removeDoubleImportsAndAddWarningPhase4of5(model);
     }
     for(ASTUnit model: astUnits){
-      addImportToScopeVisitor.addImportsToScopePhase3of3(model);
+      addImportToScopeVisitor.addImportsToScopePhase5of5(model);
     }
 
     return globalScope;

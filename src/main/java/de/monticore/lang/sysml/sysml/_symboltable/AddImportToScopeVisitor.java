@@ -29,12 +29,12 @@ import java.util.*;
 public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
   int phase = 0;
 
-  public void memorizeImportsPhase1of3(ASTUnit ast) { // Resolves all qualified names for imports.
+  public void memorizeImportsPhase1of5(ASTUnit ast) { // Resolves all qualified names for imports.
     this.phase = 1;
     ast.accept(this);
   }
 
-  public void addReexportedSymbolsOfPackagesPhase2of3(ASTUnit ast) {
+  public void addReexportedSymbolsOfPackagesPhase3of5(ASTUnit ast) {
     // Collects all imports recusively, which are exported from a packedDefinitionMember with public.
     // Because of phase 1 we can assume, that all imports are already resolved here.
     // This works basically like this:
@@ -48,7 +48,7 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
     ast.accept(this);
   }
 
-  public void addImportsToScopePhase3of3(ASTUnit ast) { // Adds all resolved imports to the enclosing scope.
+  public void addImportsToScopePhase5of5(ASTUnit ast) { // Adds all resolved imports to the enclosing scope.
     this.phase = 3;
     ast.accept(this);
   }
