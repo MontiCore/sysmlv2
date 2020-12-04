@@ -30,22 +30,22 @@ public class PrettyPrinterHandlerAssociations2 implements AssociationsHandler {
 	@Override
 	public void handle(ASTEndPortMember node) {
 		printer.println("");
-		getTraverser().handle(node.getDefinitionMemberPrefix());
+		node.getDefinitionMemberPrefix().accept(getTraverser());
 		if (node.isAbstract()){
 			printer.print("abstract ");
 		}
 		printer.print("end port ");
-		getTraverser().handle(node.getPortUsage());
+		node.getPortUsage().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTConjugatedEndPortMember node) {
 		printer.println("");
-		getTraverser().handle(node.getDefinitionMemberPrefix());
+		node.getDefinitionMemberPrefix().accept(getTraverser());
 		if (node.isAbstract()){
 			printer.print("abstract ");
 		}
 		printer.print("end port ");
-		getTraverser().handle(node.getConjugatedPortUsage());
+		node.getConjugatedPortUsage().accept(getTraverser());
 	}
 }

@@ -46,13 +46,11 @@ public class SysMLToolTest {
     Assert.assertErrors(expectedErrors, Log.getFindings());
   }
 
-
   @Test
   public void toolParseAndCheckAllTrainingExamples(){
     final String pathToDir = "src/test/resources/examples" + "/officialPilotImplementation/2020/03/sysml/src";
     SysMLTool.main(new String[]{pathToDir + "/training/"});
     AbstractSysMLTest.printAllFindings();
     assertTrue(Log.getFindings().isEmpty());
-
   }
 }

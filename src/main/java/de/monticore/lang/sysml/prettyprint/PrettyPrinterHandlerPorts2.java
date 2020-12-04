@@ -28,71 +28,66 @@ public class PrettyPrinterHandlerPorts2 implements PortsHandler {
 
 	@Override
 	public void handle(ASTConnectionUsage node) {
-		printer.println("");
-		getTraverser().handle(node.getUsageDeclaration());
+		node.getUsageDeclaration().accept(getTraverser());
 		printer.print("connect ");
-		getTraverser().handle(node.getConnectionPart());
-		getTraverser().handle(node.getAssociationBlockBody());
+		node.getConnectionPart().accept(getTraverser());
+		node.getAssociationBlockBody().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTConnectionPart node) {
-		printer.println("");
-		getTraverser().handle(node.getOwnedFeatureMembership_compFrom());
+		node.getOwnedFeatureMembership_compFrom().accept(getTraverser());
 		printer.print("to ");
 		if (node.isPresentOwnedFeatureMembership_compTo()) {
-			getTraverser().handle(node.getOwnedFeatureMembership_compTo());
+			node.getOwnedFeatureMembership_compTo().accept(getTraverser());
 		} else {
 			printer.print("(");
 			for (int i = 0; i < node.getConnectorEndMemberList().size(); i++) {
-				getTraverser().handle(node.getConnectorEndMember(i));
+				node.getConnectorEndMember(i).accept(getTraverser());
 				if (i + 1 < node.getConnectorEndMemberList().size()) {
 					printer.print(",");
 				}
 			}
-			printer.print(")");
+			printer.print(") ");
 		}
 	}
 
 	@Override
 	public void handle(ASTInterfaceUsage node) {
-		printer.println("");
-		getTraverser().handle(node.getUsageDeclaration());
+		node.getUsageDeclaration().accept(getTraverser());
 		printer.print("connect ");
-		getTraverser().handle(node.getConnectionPart());
-		getTraverser().handle(node.getInterfaceBody());
+		node.getConnectionPart().accept(getTraverser());
+		node.getInterfaceBody().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTConjugatePortTypePart node) {
-		printer.println("");
-		getTraverser().handle(node.getTypedByKeyword());
+		node.getTypedByKeyword().accept(getTraverser());
 		printer.print("~ ");
-		getTraverser().handle(node.getConjugatedPortTyping());
+		node.getConjugatedPortTyping().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTBindingConnector node) {
-		printer.println("");
 		if (node.isPresentSysMLName() || node.isPresentTypePart()) {
 			if (node.isPresentSysMLName()) {
 				printer.print(node.getSysMLName().getNameForPrettyPrinting() + " ");
 			}
 			if (node.isPresentTypePart()) {
-				getTraverser().handle(node.getTypePart());
+				node.getTypePart().accept(getTraverser());
 			}
 			printer.print("as ");
 		}
-		getTraverser().handle(node.getConnectorEndMember(0));
+		node.getConnectorEndMember(0).accept(getTraverser());
 		printer.print("= ");
-		getTraverser().handle(node.getConnectorEndMember(1));
-		getTraverser().handle(node.getDefinitionBody());
+		node.getConnectorEndMember(1).accept(getTraverser());
+		node.getDefinitionBody().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTInterfaceEndMember node) {
 		printer.println("");
-		getTraverser().handle(node.getDefinitionMemberPrefix());
+		node.getDefinitionMemberPrefix().accept(getTraverser());
 		if (node.isAbstract()) {
 			printer.print("abstract ");
 		}
@@ -100,13 +95,13 @@ public class PrettyPrinterHandlerPorts2 implements PortsHandler {
 		if (node.isPort()) {
 			printer.print("port ");
 		}
-		getTraverser().handle(node.getPortUsage());
+		node.getPortUsage().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTConjugatedInterfaceEndMember node) {
 		printer.println("");
-		getTraverser().handle(node.getDefinitionMemberPrefix());
+		node.getDefinitionMemberPrefix().accept(getTraverser());
 		if (node.isAbstract()) {
 			printer.print("abstract ");
 		}
@@ -114,6 +109,6 @@ public class PrettyPrinterHandlerPorts2 implements PortsHandler {
 		if (node.isPort()) {
 			printer.print("port ");
 		}
-		getTraverser().handle(node.getConjugatedPortUsage());
+		node.getConjugatedPortUsage().accept(getTraverser());
 	}
 }

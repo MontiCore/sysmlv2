@@ -30,57 +30,57 @@ public class PrettyPrinterHandlerExpressions2 implements ExpressionsHandler {
 
 	@Override
 	public void handle(ASTSysMLConditionalExpression node) {
-		getTraverser().handle(node.getCondition());
+		node.getCondition().accept(getTraverser());
 		printer.print("?");
 		for (ASTExpression e :
 			node.getDoOnTrueList()) {
-			getTraverser().handle(e);
+			e.accept(getTraverser());
 		}
 		printer.print(":");
 		for (ASTExpression e :
 			node.getDoOnFalseList()) {
-			getTraverser().handle(e);
+			e.accept(getTraverser());
 		}
 	}
 
 	@Override
 	public void handle(ASTNullCoalescingExpression node) {
-		getTraverser().handle(node.getLeft());
+		node.getLeft().accept(getTraverser());
 		printer.print("?? ");
-		getTraverser().handle(node.getRight());
+		node.getRight().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTOrExpression node) {
-		getTraverser().handle(node.getLeft());
+		node.getLeft().accept(getTraverser());
 		printer.print("| ");
-		getTraverser().handle(node.getRight());
+		node.getRight().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTXorExpression node) {
-		getTraverser().handle(node.getLeft());
+		node.getLeft().accept(getTraverser());
 		printer.print("^ ");
-		getTraverser().handle(node.getRight());
+		node.getRight().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTAndExpression node) {
-		getTraverser().handle(node.getLeft());
+		node.getLeft().accept(getTraverser());
 		printer.print("& ");
-		getTraverser().handle(node.getRight());
+		node.getRight().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTClassificationExpression node) {
-		getTraverser().handle(node.getExpression(0));
+		node.getExpression(0).accept(getTraverser());
 		printer.print("instanceof ");
-		getTraverser().handle(node.getExpression(1));
+		node.getExpression(1).accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTMultiplicativeExpression node) {
-		getTraverser().handle(node.getLeft());
+		node.getLeft().accept(getTraverser());
 		if (node.isTimes()) {
 			printer.print("* ");
 		}
@@ -90,14 +90,14 @@ public class PrettyPrinterHandlerExpressions2 implements ExpressionsHandler {
 		if (node.isExp()) {
 			printer.print("** ");
 		}
-		getTraverser().handle(node.getRight());
+		node.getRight().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTUnitsExpression node) {
-		getTraverser().handle(node.getExpression(0));
+		node.getExpression(0).accept(getTraverser());
 		printer.print("@ [");
-		getTraverser().handle(node.getExpression(1));
+		node.getExpression(1).accept(getTraverser());
 		printer.print("]");
 	}
 
@@ -115,26 +115,34 @@ public class PrettyPrinterHandlerExpressions2 implements ExpressionsHandler {
 		if (node.isPresentTilde()) {
 			printer.print("~ ");
 		}
-		getTraverser().handle(node.getExpression());
+		node.getExpression().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTSequenceAccessExpression node) {
-		getTraverser().handle(node.getExpression(0));
+		node.getExpression(0).accept(getTraverser());
 		printer.print("[");
 		for (int i = 1; i < node.getExpressionList().size(); i++) {
-			getTraverser().handle(node.getExpression(i));
+			node.getExpression(i).accept(getTraverser());
 		}
 		printer.print("]");
 	}
 
 	@Override
 	public void handle(ASTPrimaryExpression node) {
-		getTraverser().handle(node.getExpression());
-		for (ASTSysMLName n :
-			node.getSysMLNameList()) {
-			printer.print("-> " + n.getNameForPrettyPrinting() + " ");
-			//TODO Expression ("->" SysMLName BodyMember+)+
+		node.getExpression().accept(getTraverser());
+		for (ASTPrimaryExpressionPart p :
+			node.getPrimaryExpressionPartList()) {
+			p.accept(getTraverser());
+		}
+	}
+
+	@Override
+	public void handle(ASTPrimaryExpressionPart node) {
+		printer.print("-> " + node.getSysMLName().getNameForPrettyPrinting() + " ");
+		for (ASTBodyMember b :
+			node.getBodyMemberList()) {
+			b.accept(getTraverser());
 		}
 	}
 
@@ -143,36 +151,36 @@ public class PrettyPrinterHandlerExpressions2 implements ExpressionsHandler {
 		if (!node.isEmptyBodyParameterMembers()) {
 			for (ASTBodyParameterMember b :
 				node.getBodyParameterMemberList()) {
-				getTraverser().handle(b);
+				b.accept(getTraverser());
 			}
 			printer.print("(");
 			for (ASTExpressionMember e :
 				node.getExpressionMemberList()) {
-				getTraverser().handle(e);
+				e.accept(getTraverser());
 			}
-			printer.print(")");
+			printer.print(") ");
 		} else {
 			for (ASTExpressionTyping et :
 				node.getExpressionTypingList()) {
-				getTraverser().handle(et);
+				et.accept(getTraverser());
 			}
 		}
 	}
 
 	@Override
 	public void handle(ASTInvocationExpression node) {
-		getTraverser().handle(node.getFeatureTyping());
+		node.getFeatureTyping().accept(getTraverser());
 		printer.print("(");
-		getTraverser().handle(node.getTuple());
-		printer.print(")");
+		node.getTuple().accept(getTraverser());
+		printer.print(") ");
 	}
 
 	@Override
 	public void handle(ASTPositionalTuple node) {
 		for (int i = 0; i < node.getExpressionMemberList().size(); i++) {
-			getTraverser().handle(node.getExpressionMember(i));
+			node.getExpressionMember(i).accept(getTraverser());
 			if (i + 1 < node.getExpressionMemberList().size()) {
-				printer.print("; ");
+				printer.print(", ");
 			}
 		}
 	}
@@ -180,9 +188,9 @@ public class PrettyPrinterHandlerExpressions2 implements ExpressionsHandler {
 	@Override
 	public void handle(ASTNamedTuple node) {
 		for (int i = 0; i < node.getNamedExpressionMemberList().size(); i++) {
-			getTraverser().handle(node.getNamedExpressionMember(i));
+			node.getNamedExpressionMember(i).accept(getTraverser());
 			if (i + 1 < node.getNamedExpressionMemberList().size()) {
-				printer.print("; ");
+				printer.print(", ");
 			}
 		}
 	}
@@ -196,12 +204,12 @@ public class PrettyPrinterHandlerExpressions2 implements ExpressionsHandler {
 			printer.indent();
 			if (node.isPresentFromToDigitsDotDot()) {
 				printer.print(node.getFromToDigitsDotDot() + " ");
-				getTraverser().handle(node.getExpression());
+				node.getExpression().accept(getTraverser());
 			} else {
-				getTraverser().handle(node.getExpression());
+				node.getExpression().accept(getTraverser());
 				if (node.isPresentSequenceElementList()) {
 					printer.print(", ");
-					getTraverser().handle(node.getSequenceElementList());
+					node.getSequenceElementList().accept(getTraverser());
 				}
 			}
 			printer.println("");
@@ -212,26 +220,37 @@ public class PrettyPrinterHandlerExpressions2 implements ExpressionsHandler {
 
 	@Override
 	public void handle(ASTSequenceElementList node) {
-		getTraverser().handle(node.getExpression());
+		node.getExpression().accept(getTraverser());
 		if (node.isPresentSequenceElementList()) {
 			printer.print(", ");
-			getTraverser().handle(node.getSequenceElementList());
+			node.getSequenceElementList().accept(getTraverser());
 		}
 	}
 
 	@Override
 	public void handle(ASTSysMLQueryPathExpression node) {
-		getTraverser().handle(node.getQueryHeadExpression());
-		if (node.isEmptyBodyMembers()){
+		node.getQueryHeadExpression().accept(getTraverser());
+		if (node.isPresentFirstBodyMember()) {
 			printer.print("[");
-			for (ASTBodyMember b:
-					 node.getBodyMemberList()) {
-				getTraverser().handle(b);
-			}
+			node.getFirstBodyMember().accept(getTraverser());
 			printer.print("]");
 		}
-		//TODO: QueryHeadExpression
-		//    	( "[" BodyMember+ "]" )?
-		//    	( "/"  QueryNameExpression+	( "[" BodyMember+ "]" )?)*;
+		if (!node.isEmptySysMLQueryPathExpressionParts()) {
+			for (ASTSysMLQueryPathExpressionPart q :
+				node.getSysMLQueryPathExpressionPartList()) {
+				q.accept(getTraverser());
+			}
+		}
+	}
+
+	@Override
+	public void handle(ASTSysMLQueryPathExpressionPart node) {
+		printer.print("/ ");
+		node.getQueryNameExpression().accept(getTraverser());
+		if (node.isPresentBodyMember()) {
+			printer.print("[");
+			node.getBodyMember().accept(getTraverser());
+			printer.print("] ");
+		}
 	}
 }

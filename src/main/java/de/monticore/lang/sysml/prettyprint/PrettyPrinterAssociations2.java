@@ -26,7 +26,6 @@ public class PrettyPrinterAssociations2 implements AssociationsVisitor2 {
 		if (node.isEmptyImportUnits() && node.isEmptyAssociationUsageMembers() && node.isEmptyNestedDefinitionMembers()) {
 			printer.print(";");
 		} else {
-			printer.println("");
 			printer.println("{");
 			printer.indent();
 		}

@@ -26,10 +26,10 @@ public class HelperSysMLSymbolTableCreator {
     }*/
 
   public ISysMLGlobalScope initGlobalScope(ModelPath mp) {
-    ISysMLGlobalScope sysMLGlobalScope = SysMLMill.sysMLGlobalScope();
+    ISysMLGlobalScope sysMLGlobalScope = SysMLMill.globalScope();
     sysMLGlobalScope.clear();
     sysMLGlobalScope.setModelPath(mp);
-    sysMLGlobalScope.setModelFileExtension("sysml");
+    sysMLGlobalScope.setFileExt("sysml");
     return sysMLGlobalScope;
   }
 

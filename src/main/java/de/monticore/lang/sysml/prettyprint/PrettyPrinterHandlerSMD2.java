@@ -28,20 +28,23 @@ public class PrettyPrinterHandlerSMD2 implements SMDHandler {
 
 	@Override
 	public void handle(ASTStateActionUsage node) {
-		printer.println("");
-		getTraverser().handle(node.getEmptyActionUsage());
+		if (node.isPresentEmptyActionUsage()) {
+			node.getEmptyActionUsage().accept(getTraverser());
+		}
 		if (!node.isPresentPerformedActionUsage()) {
 			printer.print(";");
 		} else {
-			getTraverser().handle(node.getPerformedActionUsage());
+			node.getPerformedActionUsage().accept(getTraverser());
 		}
-		getTraverser().handle(node.getActivityBody());
+		if (node.isPresentActivityBody()) {
+			node.getActivityBody().accept(getTraverser());
+		}
 	}
 
 	@Override
 	public void handle(ASTStateMember node) {
 		printer.println("");
-		getTraverser().handle(node.getDefinitionMemberPrefix());
+		node.getDefinitionMemberPrefix().accept(getTraverser());
 		if (node.isAbstract()) {
 			printer.print("abstract ");
 		}
@@ -50,18 +53,18 @@ public class PrettyPrinterHandlerSMD2 implements SMDHandler {
 		} else {
 			printer.print("state ");
 		}
-		getTraverser().handle(node.getStateUsage());
+		node.getStateUsage().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTEntryTransitionMember node) {
 		printer.println("");
-		getTraverser().handle(node.getDefinitionMemberPrefix());
+		node.getDefinitionMemberPrefix().accept(getTraverser());
 		if (node.isPresentGuardedTargetSuccession()) {
-			getTraverser().handle(node.getGuardedTargetSuccession());
+			node.getGuardedTargetSuccession().accept(getTraverser());
 		} else {
 			printer.print("then ");
-			getTraverser().handle(node.getTransitionSuccession());
+			node.getTransitionSuccession().accept(getTraverser());
 		}
 		printer.print(";");
 	}
@@ -73,47 +76,72 @@ public class PrettyPrinterHandlerSMD2 implements SMDHandler {
 			if (node.isPresentSysMLName()) {
 				printer.print(node.getSysMLName().getNameForPrettyPrinting() + " ");
 				if (node.isPresentTypePart()) {
-					getTraverser().handle(node.getTypePart());
+					node.getTypePart().accept(getTraverser());
 				}
 				printer.print("as ");
 			}
-			getTraverser().handle(node.getSubset());
+			node.getSubset().accept(getTraverser());
 		} else {
 			printer.print("state ");
 			if (node.isPresentSysMLName()) {
 				printer.print(node.getSysMLName().getNameForPrettyPrinting() + " ");
 			}
 			if (node.isPresentTypePart()) {
-				getTraverser().handle(node.getTypePart());
+				node.getTypePart().accept(getTraverser());
 			}
 		}
 		if (node.isPresentActionParameterList()) {
-			getTraverser().handle(node.getActionParameterList());
+			node.getActionParameterList().accept(getTraverser());
 		}
-		getTraverser().handle(node.getSubsettingPart());
+		node.getSubsettingPart().accept(getTraverser());
 		if (node.isPresentValuePart()) {
-			getTraverser().handle(node.getValuePart());
+			node.getValuePart().accept(getTraverser());
 		}
-		getTraverser().handle(node.getStateBody());
+		node.getStateBody().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTBehaviorUsageMemberStateUsage node) {
 		printer.println("");
-		getTraverser().handle(node.getDefinitionMemberPrefix());
+		node.getDefinitionMemberPrefix().accept(getTraverser());
 		if (node.isPresentIsComposite()) {
 			printer.print("state ");
 		} else {
 			printer.print("ref state ");
 		}
-		getTraverser().handle(node.getStateUsage());
+		node.getStateUsage().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTBehaviorUsageMemberExhibitStateUsage node) {
 		printer.println("");
-		getTraverser().handle(node.getDefinitionMemberPrefix());
+		node.getDefinitionMemberPrefix().accept(getTraverser());
 		printer.print("exhibit ");
-		getTraverser().handle(node.getExhibitStateUsage());
+		node.getExhibitStateUsage().accept(getTraverser());
+	}
+
+	@Override
+	public void handle(ASTStateBodyPart node) {
+		if (node.isPresentEntryActionMember()) {
+			printer.println("");
+			node.getEntryActionMember().accept(getTraverser());
+			for (ASTEntryTransitionMember t :
+				node.getEntryTransitionMemberList()) {
+				t.accept(getTraverser());
+			}
+		}
+		if (node.isPresentDoActionMember()) {
+			printer.println("");
+			node.getDoActionMember().accept(getTraverser());
+		}
+		if (node.isPresentExitActionMember()) {
+			printer.println("");
+			node.getExitActionMember().accept(getTraverser());
+		}
+		for (ASTStateBodyItem sbi :
+			node.getStateBodyItemList()) {
+			printer.println("");
+			sbi.accept(getTraverser());
+		}
 	}
 }

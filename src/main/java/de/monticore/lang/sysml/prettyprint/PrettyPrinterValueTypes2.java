@@ -27,7 +27,6 @@ public class PrettyPrinterValueTypes2 implements ValueTypesVisitor2 {
 
 	@Override
 	public void visit(ASTValueTypeDeclaration node) {
-		printer.println("");
 		if (node.isAbstract()) {
 			printer.print("abstract ");
 		}

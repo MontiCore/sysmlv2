@@ -31,7 +31,7 @@ public class PrettyPrinterHandlerBDD2 implements BDDHandler {
 	@Override
 	public void handle(ASTAssociationEndMemberReferenceProperty node) {
 		printer.println("");
-		getTraverser().handle(node.getDefinitionMemberPrefix());
+		node.getDefinitionMemberPrefix().accept(getTraverser());
 		if (node.isAbstract()) {
 			printer.print("abstract ");
 		}
@@ -39,5 +39,6 @@ public class PrettyPrinterHandlerBDD2 implements BDDHandler {
 		if (node.isRef()) {
 			printer.print("ref ");
 		}
+		node.getReferenceProperty().accept(getTraverser());
 	}
 }

@@ -12,10 +12,10 @@ import de.monticore.lang.sysml.basics.valuetypes._ast.ASTValueTypeStd;
 import de.monticore.lang.sysml.basics.valuetypes._symboltable.ValueTypeStdSymbol;
 import de.monticore.lang.sysml.bdd._ast.ASTBlock;
 import de.monticore.lang.sysml.bdd._symboltable.BlockSymbol;
+import de.monticore.lang.sysml.sysml.SysMLMill;
 import de.monticore.lang.sysml.sysml._symboltable.*;
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -76,9 +76,9 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
     assertFalse(notExistingSymbolEnclosingScope.isPresent());
   }
 
-
   @Test
   public void testSuccessfulCreationInMultipleFiles() {
+    SysMLMill.globalScope().clear();
     String currentPath = this.pathToOfficialSysMLTrainingExamples;
     List<ASTUnit> models = SysMLTool.parseDirectory(currentPath);
     ISysMLGlobalScope topScope = SysMLTool.buildSymbolTable(currentPath, models);

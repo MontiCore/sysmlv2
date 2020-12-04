@@ -28,40 +28,43 @@ public class PrettyPrinterHandlerUsages2 implements UsagesHandler {
 	@Override
 	public void handle(ASTTypePartStd node) {
 		if (node.isPresentTypedByKeyword()) {
-			getTraverser().handle(node.getTypedByKeyword());
+			node.getTypedByKeyword().accept(getTraverser());
 			if (node.isEmptyFeatureTypings()) {
 				printer.print("any ");
 			} else {
 				for (int i = 0; i < node.getFeatureTypingList().size(); i++) {
-					getTraverser().handle(node.getFeatureTyping(i));
+					node.getFeatureTyping(i).accept(getTraverser());
 					if (i + 1 < node.getFeatureTypingList().size()) {
 						printer.print(", ");
 					} else {
 						printer.print(" ");
 					}
 				}
+				if(node.isPresentMultiplicityPart()) {
+					node.getMultiplicityPart().accept(getTraverser());
+				}
 			}
 		} else {
-			getTraverser().handle(node.getMultiplicityPart());
+			node.getMultiplicityPart().accept(getTraverser());
 		}
 	}
 
 	@Override
 	public void handle(ASTSubsettingPart node) {
-		if (!node.isEmptySubsets()) {
-			getTraverser().handle(node.getSubsets(0));
+		if (node.getSubsetsList().size()>0) {
+			node.getSubsets(0).accept(getTraverser());
 			for (ASTSubset s:
 					 node.getSubsetList()) {
 				printer.print(", ");
-				getTraverser().handle(s);
+				s.accept(getTraverser());
 			}
 		}
-		if(!node.isEmptyRedefiness()){
-			getTraverser().handle(node.getRedefines(0));
+		if(node.getRedefinesList().size()>0){
+			node.getRedefines(0).accept(getTraverser());
 			for (ASTRedefinition r:
 				node.getRedefinitionList()) {
 				printer.print(", ");
-				getTraverser().handle(r);
+				r.accept(getTraverser());
 			}
 		}
 	}
@@ -69,17 +72,17 @@ public class PrettyPrinterHandlerUsages2 implements UsagesHandler {
 	@Override
 	public void handle(ASTParameterTypePart node) {
 		if (node.isPresentTypedByKeyword()) {
-			getTraverser().handle(node.getTypedByKeyword());
+			node.getTypedByKeyword().accept(getTraverser());
 			if (!node.isPresentFeatureTyping()) {
 				printer.print("any ");
 			} else {
-				getTraverser().handle(node.getFeatureTyping());
+				node.getFeatureTyping().accept(getTraverser());
 			}
 			if (node.isPresentMultiplicityPart()){
-				getTraverser().handle(node.getMultiplicityPart());
+				node.getMultiplicityPart().accept(getTraverser());
 			}
 		} else {
-			getTraverser().handle(node.getMultiplicityPart());
+			node.getMultiplicityPart().accept(getTraverser());
 		}
 	}
 }

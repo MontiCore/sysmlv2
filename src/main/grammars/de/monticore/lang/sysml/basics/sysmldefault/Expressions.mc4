@@ -37,7 +37,8 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
   UnitsExpression implements Expression =  Expression "@"  "[" Expression "]";
   UnaryExpression implements Expression =  (plus:"+"|minus:"-"| not:"!" | tilde:"~") Expression;
   SequenceAccessExpression implements Expression = Expression "[" Expression+ "]";
-  PrimaryExpression implements Expression <300> = Expression ("->" SysMLName BodyMember+)+;
+  PrimaryExpression implements Expression <300> = Expression PrimaryExpressionPart+;
+  PrimaryExpressionPart = "->" SysMLName BodyMember+;
   BodyExpression =
     ( BodyParameterMember+ ( BodyParameterMember )* "(" ExpressionMember* ")" ) | ExpressionTyping+;
   ExpressionTyping = type:QualifiedName;
@@ -80,9 +81,9 @@ component grammar Expressions extends de.monticore.expressions.CommonExpressions
 
   /* QUERY PATH EXPRESSIONS */
   SysMLQueryPathExpression implements Expression =
-    	QueryHeadExpression
-    	( "[" BodyMember+ "]" )?
-    	( "/"  QueryNameExpression+	( "[" BodyMember+ "]" )?)*;
+    	QueryHeadExpression ( "[" firstBodyMember:BodyMember "]" )?
+        SysMLQueryPathExpressionPart*;
+  SysMLQueryPathExpressionPart = "/"  QueryNameExpression	( "[" BodyMember "]" )?;
   QueryNameExpression = FeatureReference+;
   QueryHeadExpression = "./" FeatureReference+;
 

@@ -20,6 +20,7 @@ public class PrettyPrinterIBD2 implements IBDVisitor2 {
 		if (node.isAbstract()) {
 			printer.print("abstract ");
 		}
+		printer.print("part ");
 	}
 
 	@Override

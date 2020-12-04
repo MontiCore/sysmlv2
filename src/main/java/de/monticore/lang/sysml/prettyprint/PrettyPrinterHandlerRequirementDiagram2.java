@@ -27,50 +27,50 @@ public class PrettyPrinterHandlerRequirementDiagram2 implements RequirementDiagr
 
 	@Override
 	public void handle(ASTRequirementDefParameterList node) {
-		printer.println("");
 		printer.print("(");
 		if (node.isPresentEmptyParameterMember()) {
-			getTraverser().handle(node.getEmptyParameterMember());
+			node.getEmptyParameterMember().accept(getTraverser());
 		} else {
 			for (int i = 0; i < node.getParameterMemberList().size(); i++) {
-				getTraverser().handle(node.getParameterMember(i));
+				node.getParameterMember(i).accept(getTraverser());
 				if (i + 1 < node.getParameterMemberList().size()) {
 					printer.print(", ");
 				}
 			}
 		}
-		printer.print(")");
+		printer.print(") ");
 	}
 
 	@Override
 	public void handle(ASTRequirementConstraintUsage node) {
-		printer.println("");
 		if (node.isPresentSysMLName() || node.isPresentTypePart()) {
 			if (node.isPresentSysMLName()) {
 				printer.print(node.getSysMLName().getNameForPrettyPrinting() + " ");
 			}
 			if (node.isPresentTypePart()) {
-				getTraverser().handle(node.getTypePart());
+				node.getTypePart().accept(getTraverser());
 			}
 			printer.print("as ");
-			getTraverser().handle(node.getSubset());
+		}
+		if (node.isPresentSubset()){
+			node.getSubset().accept(getTraverser());
 		} else {
 			printer.print("constraint ");
 			if (node.isPresentSysMLName()) {
 				printer.print(node.getSysMLName().getNameForPrettyPrinting() + " ");
 			}
 			if (node.isPresentTypePart()) {
-				getTraverser().handle(node.getTypePart());
+				node.getTypePart().accept(getTraverser());
 			}
 		}
-		getTraverser().handle(node.getConstraintParameterPart());
-		getTraverser().handle(node.getConstraintBody());
+		node.getConstraintParameterPart().accept(getTraverser());
+		node.getConstraintBody().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTBehaviorUsageMemberRequirementUsage node) {
 		printer.println("");
-		getTraverser().handle(node.getDefinitionMemberPrefix());
+		node.getDefinitionMemberPrefix().accept(getTraverser());
 		if (node.isAbstract()) {
 			printer.print("abstract ");
 		}
@@ -79,40 +79,45 @@ public class PrettyPrinterHandlerRequirementDiagram2 implements RequirementDiagr
 		} else {
 			printer.print("ref requirement ");
 		}
-		getTraverser().handle(node.getRequirementUsage());
+		node.getRequirementUsage().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTBehaviorUsageMemberSatisfyRequirementUsage node) {
 		printer.println("");
-		getTraverser().handle(node.getDefinitionMemberPrefix());
+		node.getDefinitionMemberPrefix().accept(getTraverser());
 		printer.print("satisfy ");
-		getTraverser().handle(node.getSatisfyRequirementUsage());
+		node.getSatisfyRequirementUsage().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTSatisfyRequirementUsage node) {
 		printer.println("");
-		if (node.isPresentSysMLName() || node.isPresentTypePart()) {
-			if (node.isPresentSysMLName()) {
-				printer.print(node.getSysMLName().getNameForPrettyPrinting() + " ");
-			}
-			if (node.isPresentTypePart()) {
-				getTraverser().handle(node.getTypePart());
-			}
-			printer.print("as ");
-			getTraverser().handle(node.getSubset());
+		if (node.isPresentFirstName()) {
+			printer.print(node.getFirstName().getNameForPrettyPrinting() + " ");
+		}
+		if (node.isPresentFirstType()) {
+			node.getFirstType().accept(getTraverser());
+		}
+		printer.print("as ");
+		if (node.isPresentSubset()) {
+			node.getSubset().accept(getTraverser());
 		} else {
 			printer.print("requirement ");
-			if (node.isPresentSysMLName()) {
-				printer.print(node.getSysMLName().getNameForPrettyPrinting() + " ");
-			}
-			getTraverser().handle(node.getTypePart());
 		}
+			if (node.isPresentSecondName()) {
+				printer.print(node.getSecondName().getNameForPrettyPrinting() + " ");
+			}
+			if (node.isPresentSecondType()) {
+				node.getSecondType().accept(getTraverser());
+			}
 		if (node.isPresentSatisfactionConnectorMember()) {
 			printer.print("by ");
-			getTraverser().handle(node.getSatisfactionConnectorMember());
+			node.getSatisfactionConnectorMember().accept(getTraverser());
 		}
+		node.getConstraintParameterPart().accept(getTraverser());
+		node.getInvariantPart().accept(getTraverser());
+		node.getRequirementBody().accept(getTraverser());
 	}
 }
 

@@ -30,40 +30,41 @@ public class PrettyPrinterHandlerConstraints2 implements ConstraintsHandler {
 
 	@Override
 	public void handle(ASTBehaviorUsageMemberConstraintUsage node) {
-		getTraverser().handle(node.getDefinitionMemberPrefix());
+		node.getDefinitionMemberPrefix().accept(getTraverser());
 		if (node.isAbstract()) {
 			printer.print("abstract ");
 		}
 		if (!node.isPresentIsComposite()) {
 			printer.print("ref constraint ");
 		} else {
-			printer.print("constraint");
+			printer.print("constraint ");
 		}
-		getTraverser().handle(node.getConstraintUsage());
+		node.getConstraintUsage().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTBehaviorUsageMemberAssertConstraintUsage node) {
-		getTraverser().handle(node.getDefinitionMemberPrefix());
+		printer.println("");
+		node.getDefinitionMemberPrefix().accept(getTraverser());
 		printer.print("assert ");
-		getTraverser().handle(node.getAssertConstraintUsage());
+		node.getAssertConstraintUsage().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTAssertConstraintUsage node) {
-		if (node.isEmptySubsets()) {
+		if (!node.isEmptySubsets()) {
 			if (node.isPresentSysMLName()) {
 				printer.print(node.getSysMLName().getNameForPrettyPrinting() + " ");
 			}
 			if (node.isPresentTypePart()) {
-				getTraverser().handle(node.getTypePart());
+				node.getTypePart().accept(getTraverser());
 			}
 			if (node.isPresentSysMLName() || node.isPresentTypePart()) {
 				printer.print("as");
 			}
 			for (ASTSubset s :
 				node.getSubsetList()) {
-				getTraverser().handle(s);
+				s.accept(getTraverser());
 			}
 		} else {
 			printer.print("constraint ");
@@ -71,8 +72,11 @@ public class PrettyPrinterHandlerConstraints2 implements ConstraintsHandler {
 				printer.print(node.getSysMLName().getNameForPrettyPrinting() + " ");
 			}
 			if (node.isPresentTypePart()) {
-				getTraverser().handle(node.getTypePart());
+				node.getTypePart().accept(getTraverser());
 			}
 		}
+		node.getConstraintParameterPart().accept(getTraverser());
+		node.getInvariantPart().accept(getTraverser());
+		node.getConstraintBody().accept(getTraverser());
 	}
 }

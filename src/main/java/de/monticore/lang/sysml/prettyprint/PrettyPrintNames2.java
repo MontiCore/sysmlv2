@@ -14,17 +14,15 @@ public class PrettyPrintNames2 implements NamesVisitor2 {
 	}
 	@Override
 	public void visit(ASTSimpleName node) {
-		printer.println("");
-		printer.print(node.getSysMLName().getNameForPrettyPrinting() + " ");
+		printer.print(node.getSysMLName().getNameForPrettyPrinting() +" ");
 	}
 
 	@Override
 	public void visit(ASTColonQualifiedName node) {
-		printer.println("");
 		for (int i = 0; i < node.getSysMLNameList().size(); i++) {
-			printer.print(node.getSysMLName(i).getNameForPrettyPrinting());
+			printer.print(node.getSysMLName(i).getNameForPrettyPrinting()+" ");
 			if (i == node.getSysMLNameList().size() - 1) {
-				printer.print(" ");
+				printer.print("");
 			} else {
 				printer.print("::");
 			}
@@ -33,11 +31,10 @@ public class PrettyPrintNames2 implements NamesVisitor2 {
 
 	@Override
 	public void visit(ASTDotQualifiedName node) {
-		printer.println("");
 		for (int i = 0; i < node.getSysMLNameList().size(); i++) {
-			printer.print(node.getSysMLName(i).getNameForPrettyPrinting());
+			printer.print(node.getSysMLName(i).getNameForPrettyPrinting()+" ");
 			if (i == node.getSysMLNameList().size() - 1) {
-				printer.print(" ");
+				printer.print("");
 			} else {
 				printer.print(".");
 			}

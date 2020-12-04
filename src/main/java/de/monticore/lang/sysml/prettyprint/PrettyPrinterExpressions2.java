@@ -14,8 +14,7 @@ public class PrettyPrinterExpressions2 implements ExpressionsVisitor2 {
 	@Override
 	public void visit(ASTBaseExpression node) {
 		if (node.isPresentExpression()) {
-			printer.println("");
-			printer.print("{");
+			printer.println("{");
 			printer.indent();
 		}
 	}

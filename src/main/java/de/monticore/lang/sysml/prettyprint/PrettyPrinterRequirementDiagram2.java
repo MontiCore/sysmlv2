@@ -21,7 +21,7 @@ public class PrettyPrinterRequirementDiagram2 implements RequirementDiagramVisit
 		if (node.isPresentReqId()) {
 			printer.print("id " + node.getReqId().getNameForPrettyPrinting() + " ");
 		}
-		printer.print(node.getSysMLName().getNameForPrettyPrinting());
+		printer.print(node.getSysMLName().getNameForPrettyPrinting()+" ");
 	}
 
 	@Override
@@ -35,14 +35,13 @@ public class PrettyPrinterRequirementDiagram2 implements RequirementDiagramVisit
 
 	@Override
 	public void endVisit(ASTRequirementDefParameterList node) {
-		printer.print(")");
+		printer.print(") ");
 	}
 
 	@Override
 	public void visit(ASTRequirementBody node) {
-		printer.println("");
 		if (node.isPresentRequirementMembers()) {
-			printer.print("{");
+			printer.println("{");
 			printer.indent();
 		} else {
 			printer.print(";");
@@ -81,9 +80,6 @@ public class PrettyPrinterRequirementDiagram2 implements RequirementDiagramVisit
 		printer.println("");
 		if (node.isPresentReqId()) {
 			printer.print("id " + node.getReqId().getNameForPrettyPrinting() + " ");
-		}
-		if (node.isPresentSysMLNameAndTypePart()) {
-			printer.print(node.getSysMLNameAndTypePart().getName() + " ");
 		}
 	}
 }

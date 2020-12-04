@@ -15,11 +15,10 @@ public class PrettyPrinterBDD2 implements BDDVisitor2 {
 
 	@Override
 	public void visit(ASTBlockDeclaration node) {
-		printer.println("");
 		if (node.isAbstract()) {
 			printer.print("abstract ");
 		}
-		printer.print("block " + node.getName());
+		printer.print("block ");
 	}
 
 	@Override

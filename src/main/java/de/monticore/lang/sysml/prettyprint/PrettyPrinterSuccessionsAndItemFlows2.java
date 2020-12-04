@@ -22,11 +22,6 @@ public class PrettyPrinterSuccessionsAndItemFlows2 implements SuccessionsAndItem
 	}
 
 	@Override
-	public void visit(ASTSuccession node) {
-		printer.println("");
-	}
-
-	@Override
 	public void endVisit(ASTSuccession node) {
 		printer.print(";");
 	}
@@ -51,7 +46,6 @@ public class PrettyPrinterSuccessionsAndItemFlows2 implements SuccessionsAndItem
 
 	@Override
 	public void visit(ASTTriggerStepMember node) {
-		printer.println("");
 		printer.print("accept ");
 	}
 
@@ -59,6 +53,11 @@ public class PrettyPrinterSuccessionsAndItemFlows2 implements SuccessionsAndItem
 	public void visit(ASTGuardExpressionMember node) {
 		printer.println("");
 		printer.print("if ");
+	}
+
+	@Override
+	public void endVisit(ASTGuardExpressionMember node){
+		printer.print(" ");
 	}
 
 	@Override
@@ -78,10 +77,16 @@ public class PrettyPrinterSuccessionsAndItemFlows2 implements SuccessionsAndItem
 
 	@Override
 	public void visit(ASTNonPortStructureUsageMemberSuccessionItemFlow node) {
-		printer.println("");
 		if (node.isAbstract()) {
 			printer.print("abstract ");
 		}
 		printer.print("flow ");
+	}
+
+	@Override
+	public void visit(ASTItemFeatureMember node){
+		if(node.isPresentMemberName()){
+			printer.print(node.getMemberName().getNameForPrettyPrinting()+" ");
+		}
 	}
 }

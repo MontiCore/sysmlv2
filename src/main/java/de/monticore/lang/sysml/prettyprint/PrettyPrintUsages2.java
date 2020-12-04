@@ -33,7 +33,10 @@ public class PrettyPrintUsages2 implements UsagesVisitor2 {
 
 	@Override
 	public void visit(ASTMultiplicity node) {
-		printer.print("[ ");
+		printer.print("[");
+		if(node.isPresentFromToDigitsDotDot()){
+			printer.print(node.getFromToDigitsDotDot());
+		}
 	}
 
 	@Override

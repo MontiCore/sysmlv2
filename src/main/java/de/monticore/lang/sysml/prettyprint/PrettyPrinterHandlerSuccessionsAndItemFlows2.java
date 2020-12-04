@@ -28,19 +28,18 @@ public class PrettyPrinterHandlerSuccessionsAndItemFlows2 implements Successions
 
 	@Override
 	public void handle(ASTSuccessionDeclaration node) {
-		printer.println("");
 		if (node.isPresentSysMLName() || node.isPresentTypePart()) {
 			if (node.isPresentSysMLName()) {
 				printer.print(node.getSysMLName().getNameForPrettyPrinting() + " ");
 			}
 			if (node.isPresentTypePart()) {
-				getTraverser().handle(node.getTypePart());
+				node.getTypePart().accept(getTraverser());
 			}
 			printer.print("first ");
 		}
-		getTraverser().handle(node.getConnectorEndMember(0));
+		node.getConnectorEndMember(0).accept(getTraverser());
 		printer.print("then ");
-		getTraverser().handle(node.getConnectorEndMember(1));
+		node.getConnectorEndMember(1).accept(getTraverser());
 	}
 
 	@Override
@@ -52,22 +51,22 @@ public class PrettyPrinterHandlerSuccessionsAndItemFlows2 implements Successions
 				printer.print(node.getSysMLName().getNameForPrettyPrinting() + " ");
 			}
 			if (node.isPresentTypePart()) {
-				getTraverser().handle(node.getTypePart());
+				node.getTypePart().accept(getTraverser());
 			}
 			printer.print("first ");
 		}
-		getTraverser().handle(node.getTransitionSourceMember());
-		getTraverser().handle(node.getGuardExpressionMember());
+		node.getTransitionSourceMember().accept(getTraverser());
+		node.getGuardExpressionMember().accept(getTraverser());
 		printer.print("then ");
-		getTraverser().handle(node.getTransitionSuccessionMember());
+		node.getTransitionSuccessionMember().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTGuardedTargetSuccession node) {
 		printer.println("");
-		getTraverser().handle(node.getGuardExpressionMember());
+		node.getGuardExpressionMember().accept(getTraverser());
 		printer.print("then ");
-		getTraverser().handle(node.getTransitionSuccessionMember());
+		node.getTransitionSuccessionMember().accept(getTraverser());
 	}
 
 	@Override
@@ -75,79 +74,82 @@ public class PrettyPrinterHandlerSuccessionsAndItemFlows2 implements Successions
 		printer.println("");
 		printer.print("transition ");
 		if (node.isPresentSysMLNameAndTypePart()) {
-			getTraverser().handle(node.getSysMLNameAndTypePart());
+			node.getSysMLNameAndTypePart().accept(getTraverser());
 		}
 		printer.print("first ");
-		getTraverser().handle(node.getTransitionSourceMember());
+		node.getTransitionSourceMember().accept(getTraverser());
 		if (node.isPresentTriggerStepMember()) {
-			getTraverser().handle(node.getTriggerStepMember());
+			node.getTriggerStepMember().accept(getTraverser());
 		}
 		if (node.isPresentGuardExpressionMember()) {
-			getTraverser().handle(node.getGuardExpressionMember());
+			node.getGuardExpressionMember().accept(getTraverser());
 		}
 		if (node.isPresentEffectBehaviorMember()) {
-			getTraverser().handle(node.getEffectBehaviorMember());
+			node.getEffectBehaviorMember().accept(getTraverser());
 		}
 		printer.print("then ");
-		getTraverser().handle(node.getTransitionSuccessionMember());
+		node.getTransitionSuccessionMember().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTTargetTransitionStep node) {
 		printer.println("");
 		if (node.isPresentTriggerStepMember()) {
-			getTraverser().handle(node.getTriggerStepMember());
+			node.getTriggerStepMember().accept(getTraverser());
 		}
 		if (node.isPresentGuardExpressionMember()) {
-			getTraverser().handle(node.getGuardExpressionMember());
+			node.getGuardExpressionMember().accept(getTraverser());
 		}
 		if (node.isPresentEffectBehaviorMember()) {
-			getTraverser().handle(node.getEffectBehaviorMember());
+			node.getEffectBehaviorMember().accept(getTraverser());
 		}
-		printer.print("then ");
-		getTraverser().handle(node.getTransitionSuccessionMember());
+		printer.print(" then ");
+		node.getTransitionSuccessionMember().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTEffectBehaviourUsage node) {
-		if (node.isPresentPerformedActionUsage()){
-			getTraverser().handle(node.getPerformedActionUsage());
-			if (!node.isEmptyActivityBodyItems()){
-				printer.println("{");
-				printer.indent();
-				for (ASTActivityBodyItem a:
-						 node.getActivityBodyItemList()) {
-					getTraverser().handle(a);
-				}
-				printer.unindent();
-				printer.println("");
-				printer.println("}");
+		if (node.isPresentPerformedActionUsage()) {
+			node.getPerformedActionUsage().accept(getTraverser());
+		} else {
+			node.getEmptyActionUsage().accept(getTraverser());
+		}
+		if (!node.isEmptyActivityBodyItems()) {
+			printer.println("{");
+			printer.indent();
+			for (ASTActivityBodyItem a :
+				node.getActivityBodyItemList()) {
+				a.accept(getTraverser());
 			}
+			printer.unindent();
+			printer.println("");
+			printer.println("}");
 		}
 	}
 
 	@Override
 	public void handle(ASTItemFlowDeclaration node) {
-		printer.println("");
-		if (node.isPresentSysMLName()){
-			printer.print(node.getSysMLName().getNameForPrettyPrinting()+" ");
+		boolean b = false;
+		if (node.isPresentSysMLName()) {
+			printer.print(node.getSysMLName().getNameForPrettyPrinting() + " ");
 		}
-		if (node.isPresentTypePart()){
-			getTraverser().handle(node.getTypePart());
+		if (node.isPresentTypePart()) {
+			node.getTypePart().accept(getTraverser());
 		}
-		if (node.isPresentItemFeatureMember()){
+		if (node.isPresentItemFeatureMember()) {
 			printer.print("of ");
-			getTraverser().handle(node.getItemFeatureMember());
+			node.getItemFeatureMember().accept(getTraverser());
 		} else {
-			getTraverser().handle(node.getEmptyItemFeatureMember());
+			node.getEmptyItemFeatureMember().accept(getTraverser());
+			b = true;
 		}
-		if (node.isPresentEmptyItemFeatureMember()){
-			getTraverser().handle(node.getEmptyItemFeatureMember());
+		if (node.isPresentEmptyItemFeatureMember() && (!b)) {
+			node.getEmptyItemFeatureMember().accept(getTraverser());
 		} else {
 			printer.print("from ");
 		}
-		getTraverser().handle(node.getItemFlowEndMember(0));
+		node.getItemFlowEndMember(0).accept(getTraverser());
 		printer.print("to ");
-		getTraverser().handle(node.getItemFlowEndMember(1));
+		node.getItemFlowEndMember(1).accept(getTraverser());
 	}
 }

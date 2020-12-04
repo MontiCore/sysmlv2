@@ -21,9 +21,8 @@ public class PrettyPrinterConstraints2 implements ConstraintsVisitor2 {
 
 	@Override
 	public void visit(ASTConstraintBody node) {
-		printer.println("");
 		if (node.isPresentConstraintMembers()) {
-			printer.print("{");
+			printer.println("{");
 			printer.indent();
 		} else {
 			printer.print(";");

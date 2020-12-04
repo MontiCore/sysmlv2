@@ -13,7 +13,6 @@ public class PrettyPrinterPorts2 implements PortsVisitor2 {
 
 	@Override
 	public void visit(ASTPortDeclaration node) {
-		printer.println("");
 		if (node.isAbstract()) {
 			printer.print("abstract ");
 		}
@@ -22,7 +21,6 @@ public class PrettyPrinterPorts2 implements PortsVisitor2 {
 
 	@Override
 	public void visit(ASTConjugatePortUsageDeclaration node) {
-		printer.println("");
 		if (node.isPresentSysMLName()) {
 			printer.print(node.getSysMLName().getNameForPrettyPrinting() + " ");
 		}
@@ -53,7 +51,6 @@ public class PrettyPrinterPorts2 implements PortsVisitor2 {
 
 	@Override
 	public void visit(ASTConnectorEndMember node) {
-		printer.println("");
 		if (node.isPresentMemberName()) {
 			printer.print(node.getMemberName().getNameForPrettyPrinting() + " => ");
 		}
@@ -70,7 +67,6 @@ public class PrettyPrinterPorts2 implements PortsVisitor2 {
 
 	@Override
 	public void visit(ASTNonPortStructureUsageMemberBindingConnector node) {
-		printer.println("");
 		printer.print("bind ");
 	}
 
@@ -88,7 +84,6 @@ public class PrettyPrinterPorts2 implements PortsVisitor2 {
 		if (node.isEmptyImportUnits() && node.isEmptyInterfaceUsageMembers() && node.isEmptyNestedDefinitionMembers()) {
 			printer.print(";");
 		} else {
-			printer.println("");
 			printer.indent();
 			printer.println("{");
 		}

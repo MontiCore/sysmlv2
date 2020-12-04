@@ -1,9 +1,6 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._ast.ASTAliasPackagedDefinitionMember;
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._ast.ASTImportUnitStd;
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._ast.ASTPackageBody;
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._ast.ASTPackageDeclaration;
+import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._ast.*;
 import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._visitor.ImportsAndPackagesVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
@@ -15,7 +12,6 @@ public class PrettyPrinterImportsAndPackages2 implements ImportsAndPackagesVisit
 	}
 	@Override
 	public void visit(ASTAliasPackagedDefinitionMember node) {
-		printer.println("");
 		printer.print("import ");
 	}
 
@@ -24,24 +20,17 @@ public class PrettyPrinterImportsAndPackages2 implements ImportsAndPackagesVisit
 		if (node.isPresentSysMLName()) {
 			printer.print("as " + node.getSysMLName().getNameForPrettyPrinting());
 		}
+		printer.print(";");
 	}
 
 	@Override
 	public void visit(ASTPackageDeclaration node) {
-		printer.println("package ");
+		printer.print("package ");
+		printer.print(node.getSysMLName().getNameForPrettyPrinting()+" ");
 	}
 
 	@Override
-	public void visit(ASTPackageBody node) {
+	public void visit(ASTPackageMember node) {
 		printer.println("");
-		printer.print("{");
-		printer.indent();
-	}
-
-	@Override
-	public void endVisit(ASTPackageBody node) {
-		printer.println("");
-		printer.unindent();
-		printer.println("}");
 	}
 }

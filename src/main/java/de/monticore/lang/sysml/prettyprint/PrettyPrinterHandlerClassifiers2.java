@@ -26,12 +26,14 @@ public class PrettyPrinterHandlerClassifiers2 implements ClassifiersHandler {
 
 	@Override
 	public void handle(ASTSuperclassingList node) {
-		printer.print(node.getSpecializesKeyword());
+		node.getSpecializesKeyword().accept(getTraverser());
 		for (int i = 0; i < node.getQualifiedNameList().size(); i++) {
-			getTraverser().handle(node.getQualifiedName(i));
+			node.getQualifiedName(i).accept(getTraverser());
 			if (i + 1 < node.getQualifiedNameList().size()) {
 				printer.print(", ");
 			}
 		}
 	}
+
+
 }

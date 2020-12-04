@@ -10,19 +10,19 @@ public class PrettyPrinterAD2 implements ADVisitor2 {
 	public PrettyPrinterAD2(IndentPrinter print) {
 		this.printer = print;
 	}
+
 	@Override
 	public void visit(ASTActivityDeclaration node) {
-		printer.println("");
 		if (node.isAbstract()) {
 			printer.print("abstract ");
 		}
-		printer.print("activity " + node.getSysMLName().getNameForPrettyPrinting());
+		printer.print("activity " + node.getSysMLName().getNameForPrettyPrinting() + " ");
 	}
 
 	@Override
 	public void visit(ASTActivityBodyStd node) {
-		if (node.isEmptyActivityBodyItems()) {
-			printer.println(";");
+		if (node.getActivityBodyItemList().size()==0) {
+			printer.print(";");
 		} else {
 			printer.println("{");
 			printer.indent();
@@ -31,7 +31,7 @@ public class PrettyPrinterAD2 implements ADVisitor2 {
 
 	@Override
 	public void endVisit(ASTActivityBodyStd node) {
-		if (!node.isEmptyActivityBodyItems()) {
+		if (node.getActivityBodyItemList().size()>0) {
 			printer.unindent();
 			printer.println("");
 			printer.println("}");
@@ -115,52 +115,43 @@ public class PrettyPrinterAD2 implements ADVisitor2 {
 	}
 
 	@Override
-	public void visit(ASTSendActionNodeDeclaration node) {
-		printer.println("");
-		printer.print(node.getEmptyParameterMember() + " " + node.getEmptyItemFeatureMember() + "send ");
-		if (node.isPresentSysMLNameAndTypePart()) {
-			printer.print(node.getSysMLNameAndTypePart().toString() + " of ");
-		}
-		printer.print(node.getExpressionMember(0).toString() + " to " + node.getExpressionMember(1).toString());
+	public void visit(ASTMergeNode node) {
+		printer.print("merge ");
 	}
 
 	@Override
-	public void visit(ASTMergeNode node) {
-		printer.println("");
-		printer.print("merge");
-		if (node.isPresentSysMLNameAndTypePart()) {
-			printer.print(" " + node.getSysMLNameAndTypePart().getName());
-		}
+	public void endVisit(ASTMergeNode node) {
 		printer.print(";");
 	}
 
 	@Override
 	public void visit(ASTDecisionNode node) {
-		printer.println("");
-		printer.print("decide");
-		if (node.isPresentSysMLNameAndTypePart()) {
-			printer.print(" " + node.getSysMLNameAndTypePart().getName());
-		}
+		printer.print("decide ");
+	}
+
+	@Override
+	public void endVisit(ASTDecisionNode node) {
 		printer.print(";");
 	}
 
 	@Override
 	public void visit(ASTJoinNode node) {
 		printer.println("");
-		printer.print("join");
-		if (node.isPresentSysMLNameAndTypePart()) {
-			printer.print(" " + node.getSysMLNameAndTypePart().getName());
-		}
+		printer.print("join ");
+	}
+
+	@Override
+	public void endVisit(ASTJoinNode node) {
 		printer.print(";");
 	}
 
 	@Override
 	public void visit(ASTForkNode node) {
-		printer.println("");
-		printer.print("fork");
-		if (node.isPresentSysMLNameAndTypePart()) {
-			printer.print(" " + node.getSysMLNameAndTypePart().getName());
-		}
+		printer.print("fork ");
+	}
+
+	@Override
+	public void endVisit(ASTForkNode node) {
 		printer.print(";");
 	}
 }

@@ -13,8 +13,7 @@ public class PrettyPrinterDefinitions2 implements DefinitionsVisitor2 {
 	}
 	@Override
 	public void visit(ASTDefinitionBodyStd node) {
-		printer.println("");
-		printer.print("{");
+		printer.println("{");
 		printer.indent();
 	}
 
@@ -22,12 +21,11 @@ public class PrettyPrinterDefinitions2 implements DefinitionsVisitor2 {
 	public void endVisit(ASTDefinitionBodyStd node) {
 		printer.println("");
 		printer.unindent();
-		printer.print("}");
+		printer.println("}");
 	}
 
 	@Override
 	public void visit(ASTDefinitionBodyEmpty node) {
-		printer.println("");
-		printer.print(";");
+		printer.print("; ");
 	}
 }

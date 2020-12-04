@@ -16,11 +16,13 @@ public class PrettyPrinterComments2 implements CommentsVisitor2 {
 	public void visit(ASTComment node) {
 		printer.println();
 		printer.print("comment ");
+		if(node.isPresentSysMLName()){
+			printer.print(node.getSysMLName().getNameForPrettyPrinting()+" ");
+		}
 	}
 
 	@Override
 	public void visit(ASTSysMLAnnotation node) {
-		printer.println();
 		printer.print("about ");
 	}
 
@@ -28,5 +30,8 @@ public class PrettyPrinterComments2 implements CommentsVisitor2 {
 	public void visit(ASTDocumentation node) {
 		printer.println();
 		printer.print("comment ");
+		if(node.isPresentSysMLName()){
+			printer.print(node.getSysMLName().getNameForPrettyPrinting()+" ");
+		}
 	}
 }

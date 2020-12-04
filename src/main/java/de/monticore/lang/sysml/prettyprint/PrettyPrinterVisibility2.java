@@ -1,7 +1,9 @@
 package de.monticore.lang.sysml.prettyprint;
 
+import de.monticore.lang.sysml.basics.sysmldefault.visibility._ast.ASTPackageElementVisibilityIndicatorStd;
 import de.monticore.lang.sysml.basics.sysmldefault.visibility._ast.ASTVISIBILITYLONG;
 import de.monticore.lang.sysml.basics.sysmldefault.visibility._ast.ASTVISIBILITYSHORT;
+import de.monticore.lang.sysml.basics.sysmldefault.visibility._ast.ASTVisibilityIndicatorStd;
 import de.monticore.lang.sysml.basics.sysmldefault.visibility._visitor.VisibilityVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
@@ -46,5 +48,15 @@ public class PrettyPrinterVisibility2 implements VisibilityVisitor2 {
 			default:
 				Log.error("Error 0xA7196: Invalid Visibility");
 		}
+	}
+
+	@Override
+	public void visit(ASTPackageElementVisibilityIndicatorStd node) {
+		this.visit(node.getVis());
+	}
+
+	@Override
+	public void visit(ASTVisibilityIndicatorStd node) {
+		this.visit(node.getVis());
 	}
 }

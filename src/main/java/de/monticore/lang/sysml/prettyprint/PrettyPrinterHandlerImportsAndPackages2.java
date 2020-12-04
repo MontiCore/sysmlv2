@@ -1,7 +1,10 @@
 package de.monticore.lang.sysml.prettyprint;
 
 import de.monticore.lang.sysml.basics.interfaces.commentsbasis._ast.ASTPrefixAnnotation;
+import de.monticore.lang.sysml.basics.interfaces.importbasis._ast.ASTImportUnit;
 import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._ast.ASTImportUnitStd;
+import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._ast.ASTPackageBody;
+import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._ast.ASTPackageMember;
 import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._visitor.ImportsAndPackagesHandler;
 import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._visitor.ImportsAndPackagesTraverser;
 import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
@@ -29,28 +32,51 @@ public class PrettyPrinterHandlerImportsAndPackages2 implements ImportsAndPackag
 	@Override
 	public void handle(ASTImportUnitStd node) {
 		printer.println("");
-		if (node.isEmptyPrefixAnnotations()) {
+		if (!node.isEmptyPrefixAnnotations()) {
 			for (ASTPrefixAnnotation p :
 				node.getPrefixAnnotationList()) {
-				getTraverser().handle(p);
+				p.accept(getTraverser());
 			}
 		}
 		if (node.isPresentVisibility()) {
-			getTraverser().handle(node.getVisibility());
+			node.getVisibility().accept(getTraverser());
 		}
 		printer.print("import ");
-		getTraverser().handle(node.getQualifiedName());
+		node.getQualifiedName().accept(getTraverser());
+		String s = printer.getContent().trim();
+		printer.clearBuffer();
+		printer.print(s);
 		switch (node.getStar()) {
 			case 1:
-				printer.print("::*");
+				printer.print("::* ");
 				break;
 			case 2:
-				printer.print(".*");
+				printer.print(".* ");
 				break;
 		}
 		if (node.isPresentSysMLName()) {
 			printer.print("as " + node.getSysMLName().getNameForPrettyPrinting() + " ");
 		}
 		printer.print(";");
+	}
+
+	@Override
+	public void handle(ASTPackageBody node) {
+		printer.println("{");
+		printer.indent();
+
+		for (ASTImportUnit i:
+				 node.getImportUnitList()) {
+			i.accept(getTraverser());
+		}
+		printer.println("");
+		for (ASTPackageMember p:
+				 node.getPackageMemberList()){
+			p.accept(getTraverser());
+		}
+
+		printer.println("");
+		printer.unindent();
+		printer.println("}");
 	}
 }

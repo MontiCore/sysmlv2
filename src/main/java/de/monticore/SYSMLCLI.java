@@ -70,7 +70,7 @@ public class SYSMLCLI {
 			String dir = cmd.getOptionValue("i");
 			// parse input file, which is now available
 			// (only returns if successful)
-			ASTUnit model = parseDirectory(cmd.getOptionValue("i"));
+			ASTUnit model = parseDirectory(cmd.getOptionValue("i").trim());
 			runDefaultCocos(model);
 			ModelPath mp = new ModelPath();
 
@@ -104,13 +104,13 @@ public class SYSMLCLI {
 
 			// -option pretty print
 			if (cmd.hasOption("pp")) {
-				String path = cmd.getOptionValue("pp", StringUtils.EMPTY);
+				String path = cmd.getOptionValue("pp", StringUtils.EMPTY).trim();
 				prettyPrint(model, path);
 			}
 
 			// -option syntax objects
 			if (cmd.hasOption("so")) {
-				String path = cmd.getOptionValue("so", StringUtils.EMPTY);
+				String path = cmd.getOptionValue("so", StringUtils.EMPTY).trim();
 				sysML2od(model, getModelNameFromFile(cmd.getOptionValue("i")), path);
 			}
 		} catch (ParseException e) {

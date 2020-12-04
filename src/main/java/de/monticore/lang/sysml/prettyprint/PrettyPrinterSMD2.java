@@ -21,9 +21,8 @@ public class PrettyPrinterSMD2 implements SMDVisitor2 {
 
 	@Override
 	public void visit(ASTStateBody node) {
-		printer.println("");
 		if (node.isPresentStateBodyPart()) {
-			printer.print("{");
+			printer.println("{");
 			printer.indent();
 		} else {
 			printer.print(";");
@@ -33,6 +32,7 @@ public class PrettyPrinterSMD2 implements SMDVisitor2 {
 	@Override
 	public void endVisit(ASTStateBody node) {
 		if (node.isPresentStateBodyPart()) {
+			printer.println("");
 			printer.unindent();
 			printer.print("}");
 		}
@@ -65,7 +65,6 @@ public class PrettyPrinterSMD2 implements SMDVisitor2 {
 
 	@Override
 	public void endVisit(ASTTransitionStepMember node) {
-		printer.println("");
 		printer.print(";");
 	}
 
@@ -84,6 +83,6 @@ public class PrettyPrinterSMD2 implements SMDVisitor2 {
 		if (node.isAbstract()) {
 			printer.print("abstract ");
 		}
-		printer.print("state");
+		printer.print("state ");
 	}
 }

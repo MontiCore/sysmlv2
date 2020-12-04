@@ -29,39 +29,38 @@ public class PrettyPrinterHandlerAD2 implements ADHandler {
 	@Override
 	public void handle(ASTInitialNodeMember node) {
 		printer.println("");
-		getTraverser().handle(node.getDefinitionMemberPrefix());
+		node.getDefinitionMemberPrefix().accept(getTraverser());
 		printer.print("first ");
-		getTraverser().handle(node.getMemberFeature());
+		node.getMemberFeature().accept(getTraverser());
 		printer.print(";");
 	}
 
 	@Override
 	public void handle(ASTParameterListStd node) {
-		printer.println("");
 		printer.print("(");
 		if (!node.isEmptyParameterMembers()) {
 			for (int i = 0; i < node.getParameterMemberList().size(); i++) {
-				getTraverser().handle(node.getParameterMember(i));
+				node.getParameterMember(i).accept(getTraverser());
 				if (i + 1 < node.getParameterMemberList().size()) {
-					printer.print("; ");
+					printer.print(", ");
 				}
 			}
 		}
-		printer.print(")");
+		printer.print(") ");
 	}
 
 	@Override
 	public void handle(ASTBehaviorUsageMemberPerformActionUsage node) {
 		printer.println("");
-		getTraverser().handle(node.getDefinitionMemberPrefix());
+		node.getDefinitionMemberPrefix().accept(getTraverser());
 		printer.print("perform ");
-		getTraverser().handle(node.getPerformActionUsage());
+		node.getPerformActionUsage().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTBehaviorUsageMemberActionUsage node) {
 		printer.println("");
-		getTraverser().handle(node.getDefinitionMemberPrefix());
+		node.getDefinitionMemberPrefix().accept(getTraverser());
 		if (node.isAbstract()) {
 			printer.print("abstract ");
 		}
@@ -71,45 +70,46 @@ public class PrettyPrinterHandlerAD2 implements ADHandler {
 			printer.print("ref action ");
 		}
 		printer.print(" ");
-		getTraverser().handle(node.getActionUsage());
+		node.getActionUsage().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTActionParameterListStd node) {
-		printer.println("");
 		printer.print("(");
 		if (!node.isEmptyActionParameterMemberAndFlowMembers()) {
 			for (int i = 0; i < node.getActionParameterMemberAndFlowMemberList().size(); i++) {
-				getTraverser().handle(node.getActionParameterMemberAndFlowMember(i));
+				node.getActionParameterMemberAndFlowMember(i).accept(getTraverser());
 				if (i + 1 < node.getActionParameterMemberAndFlowMemberList().size()) {
-					printer.print("; ");
+					printer.print(", ");
 				}
 			}
 		}
-		printer.print(")");
+		printer.print(") ");
 	}
 
 	@Override
 	public void handle(ASTActionParameterFlow node) {
-		printer.println("");
 		printer.print("flow ");
-		getTraverser().handle(node.getEmptyItemFeatureMember());
+		node.getEmptyItemFeatureMember().accept(getTraverser());
 		printer.print("from ");
-		getTraverser().handle(node.getItemFlowEndMember());
+		node.getItemFlowEndMember().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTPerformActionUsageDeclaration node) {
-		printer.println("");
-		if (node.isPresentSysMLName()) {
-			printer.print(node.getSysMLName().getNameForPrettyPrinting() + " ");
-			if (node.isPresentTypePart()) {
-				getTraverser().handle(node.getTypePart());
+		if (!node.isEmptySubsets()) {
+			if (node.isPresentSysMLName()) {
+				printer.print(node.getSysMLName().getNameForPrettyPrinting() + " ");
 			}
-			printer.print("as ");
+			if (node.isPresentTypePart()) {
+				node.getTypePart().accept(getTraverser());
+			}
+			if (node.isPresentSysMLName() || node.isPresentTypePart()) {
+				printer.print("as ");
+			}
 			for (ASTSubset s :
 				node.getSubsetList()) {
-				getTraverser().handle(s);
+				s.accept(getTraverser());
 			}
 		} else {
 			printer.print("action ");
@@ -117,55 +117,66 @@ public class PrettyPrinterHandlerAD2 implements ADHandler {
 				printer.print(node.getSysMLName().getNameForPrettyPrinting() + " ");
 			}
 			if (node.isPresentTypePart()) {
-				getTraverser().handle(node.getTypePart());
+				node.getTypePart().accept(getTraverser());
 			}
 		}
 		if (node.isPresentActionParameterList()) {
-			getTraverser().handle(node.getActionParameterList());
+			node.getActionParameterList().accept(getTraverser());
 		}
-		getTraverser().handle(node.getSubsettingPart());
+		node.getSubsettingPart().accept(getTraverser());
 		if (node.isPresentValuePart()) {
-			getTraverser().handle(node.getValuePart());
+			node.getValuePart().accept(getTraverser());
 		}
+
+	}
+
+	@Override
+	public void handle(ASTParameterMemberStd node) {
+		if (node.isPresentDirection()) {
+			node.getDirection().accept(getTraverser());
+		}
+		printer.print(node.getMemberName().getNameForPrettyPrinting() + " ");
+		node.getParameter().accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTAcceptActionNodeDeclaration node) {
 		printer.println("");
-		getTraverser().handle(node.getEmptyParameterMember());
+		node.getEmptyParameterMember().accept(getTraverser());
 		printer.print(" accept ");
 		if (node.isPresentSysMLNameAndTypePart()) {
-			getTraverser().handle(node.getSysMLNameAndTypePart());
-			printer.print(" as ");
+			node.getSysMLNameAndTypePart().accept(getTraverser());
 		}
+		printer.print("(");
+		node.getItemFeatureMember().accept(getTraverser());
+		printer.print(") ");
 	}
 
 	@Override
 	public void handle(ASTSendActionNodeDeclaration node) {
 		printer.println("");
-		getTraverser().handle(node.getEmptyParameterMember());
-		getTraverser().handle(node.getEmptyItemFeatureMember());
+		node.getEmptyParameterMember().accept(getTraverser());
+		node.getEmptyItemFeatureMember().accept(getTraverser());
 		printer.print("send ");
 		if (node.isPresentSysMLNameAndTypePart()) {
-			getTraverser().handle(node.getSysMLNameAndTypePart());
+			node.getSysMLNameAndTypePart().accept(getTraverser());
 			printer.print("of ");
 		}
-		getTraverser().handle(node.getExpressionMember(0));
-		printer.print("to ");
-		getTraverser().handle(node.getExpressionMember(1));
+		node.getExpressionMember(0).accept(getTraverser());
+		printer.print(" to ");
+		node.getExpressionMember(1).accept(getTraverser());
 	}
 
 	@Override
 	public void handle(ASTActionParameterMember node) {
-		printer.println("");
 		if (node.isPresentMemberName()) {
 			if (node.isPresentDirection()) {
-				getTraverser().handle(node.getDirection());
+				node.getDirection().accept(getTraverser());
 			}
 			printer.print(node.getMemberName().getNameForPrettyPrinting() + " ");
 		} else {
-			getTraverser().handle(node.getDirection());
+			node.getDirection().accept(getTraverser());
 		}
-		getTraverser().handle(node.getActionParameter());
+		node.getActionParameter().accept(getTraverser());
 	}
 }
