@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -37,25 +38,26 @@ public class PackageNameEqualsFileNameTest extends AbstractSysMLTest {
 
   @Test
   public void testValid() {
-    ASTUnit astUnit =
-        this.parseSysMLSingleModel(this.pathToOfficialSysMLTrainingExamples + "/02. Blocks/Blocks Example.sysml");
+    List<ASTUnit> astUnits =
+        this.validParseAndBuildSymbolsInSubDir("/packageEqualFile");
 
     PackageNameEqualsFileName coco = new PackageNameEqualsFileName();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
     coCoChecker.addCoCo(coco);
-    coCoChecker.checkAll(astUnit);
+    assertEquals(1, astUnits.size());
+    coCoChecker.checkAll(astUnits.get(0));
     assertTrue(Log.getFindings().isEmpty());
   }
 
   @Test
-  public void testInvalidDoesNotStartWithCapitalLetter() {
-    ASTUnit astUnit = this.parseSysMLSingleModel(this.pathToInvalidModels
-        + "/WrongPackageName/Blocks Example.sysml");
+  public void testInvalid() {
+    List<ASTUnit> astUnits = this.invalidParseAndBuildSymbolsInSubDir("/WrongPackageName");
+    assertEquals(1, astUnits.size());
 
     PackageNameEqualsFileName coco = new PackageNameEqualsFileName();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
     coCoChecker.addCoCo(coco);
-    coCoChecker.checkAll(astUnit);
+    coCoChecker.checkAll(astUnits.get(0));
 
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().stream().findFirst().get().isWarning());

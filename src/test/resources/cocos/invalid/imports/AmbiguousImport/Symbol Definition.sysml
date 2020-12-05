@@ -7,5 +7,5 @@ package 'Symbol Definition' {
 
       ref driver : Person;
   }
-  block Vehicle;
+  activity Vehicle;
 }

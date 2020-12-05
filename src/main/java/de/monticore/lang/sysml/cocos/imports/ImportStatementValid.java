@@ -17,16 +17,26 @@ public class ImportStatementValid implements SysMLImportsAndPackagesASTAliasPack
   @Override
   public void check(ASTAliasPackagedDefinitionMember node) {
     for (CoCoStatus cocoStatus : node.getWarnings()) {
-      Log.warn(SysMLCoCos.getErrorCode(cocoStatus.getCoCoName()) + " " +
-          cocoStatus.getMessage(), node.get_SourcePositionStart());
+      if(!cocoStatus.throwError()){
+        Log.warn(SysMLCoCos.getErrorCode(cocoStatus.getCoCoName()) + " " +
+            cocoStatus.getMessage(), node.get_SourcePositionStart());
+      }else {
+        Log.error(SysMLCoCos.getErrorCode(cocoStatus.getCoCoName()) + " " +
+            cocoStatus.getMessage(), node.get_SourcePositionStart());
+      }
     }
   }
 
   @Override
   public void check(ASTImportUnitStd node) {
     for (CoCoStatus cocoStatus : node.getWarnings()) {
-      Log.warn(SysMLCoCos.getErrorCode(cocoStatus.getCoCoName()) + " " +
-          cocoStatus.getMessage(), node.get_SourcePositionStart());
+      if(!cocoStatus.throwError()){
+        Log.warn(SysMLCoCos.getErrorCode(cocoStatus.getCoCoName()) + " " +
+            cocoStatus.getMessage(), node.get_SourcePositionStart());
+      }else {
+        Log.error(SysMLCoCos.getErrorCode(cocoStatus.getCoCoName()) + " " +
+            cocoStatus.getMessage(), node.get_SourcePositionStart());
+      }
     }
   }
 }
