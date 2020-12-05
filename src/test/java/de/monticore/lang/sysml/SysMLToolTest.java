@@ -105,11 +105,12 @@ public class SysMLToolTest {
       boolean doubleImport =
           f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportedElementNameAlreadyExists)));
       boolean twoImportsWithDifferentSymbolButSameName =
-          f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.DoubleImportOfDifferentSymbolsSameName)));
+          f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportDifferentSymbolsWithDuplicateName)));
       boolean resolveQualifiedName =
           f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.NameReference)));
       assertTrue("Did not expect the Finding:" + f.toString(), filenameCoCo || doubleImport
           ||twoImportsWithDifferentSymbolButSameName || resolveQualifiedName);
+      assertTrue(!f.isError()); // Do not throw errors for the official examples
     }
   }
 
@@ -123,11 +124,12 @@ public class SysMLToolTest {
       boolean doubleImport =
           f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportedElementNameAlreadyExists)));
       boolean twoImportsWithDifferentSymbolButSameName =
-          f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.DoubleImportOfDifferentSymbolsSameName)));
+          f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportDifferentSymbolsWithDuplicateName)));
       boolean resolveQualifiedName =
           f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.NameReference)));
       assertTrue("Did not expect the Finding:" + f.toString(), filenameCoCo || doubleImport
         ||twoImportsWithDifferentSymbolButSameName || resolveQualifiedName);
+      assertTrue(!f.isError()); // Do not throw errors for the official examples
     }
   }
 

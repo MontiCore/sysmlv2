@@ -68,10 +68,10 @@ public class DoubleImportOfDifferentSymbolsSameNameTest extends AbstractSysMLTes
     assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
 
     Collection<Finding> expectedWarnings =
-        Arrays.asList(Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.DoubleImportOfDifferentSymbolsSameName))
+        Arrays.asList(Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportDifferentSymbolsWithDuplicateName))
             + " Did not import symbol \"Car\", because a symbol with the same name also gets imported into the scope."
             , new SourcePosition(9, 4, "Import Vehicle.sysml")),
-            Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.DoubleImportOfDifferentSymbolsSameName)) +
+            Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportDifferentSymbolsWithDuplicateName)) +
                 " Did not import symbol \"Car\", because a symbol with the same name also gets imported into the scope.", new SourcePosition(10, 4, "Import Vehicle.sysml")));
 
     Assert.assertErrors(expectedWarnings, Log.getFindings());

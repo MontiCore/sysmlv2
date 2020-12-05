@@ -1,19 +1,14 @@
 package de.monticore.lang.sysml.sysml._symboltable.doubleimports;
 
 import de.monticore.lang.sysml.basics.interfaces.sysmlimportbasis._ast.ASTImportUnit;
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.ISysMLNamesBasisScope;
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLNamesBasisScope;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTAliasPackagedDefinitionMember;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTImportUnitStd;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackage;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageMember;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._symboltable.ISysMLImportsAndPackagesScope;
 import de.monticore.lang.sysml.cocos.CoCoStatus;
 import de.monticore.lang.sysml.cocos.SysMLCoCoName;
-import de.monticore.lang.sysml.sysml._symboltable.ISysMLScope;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLScope;
 import de.monticore.lang.sysml.sysml._visitor.SysMLInheritanceVisitor;
 import de.se_rwth.commons.SourcePosition;
 
@@ -92,7 +87,7 @@ public class RemoveDoubleImportsFromScope implements SysMLInheritanceVisitor {
       SysMLTypeSymbol current = i.next();
       if(checkIfSymbolIsDuplicateAndNotSame(checkList, current)){
         i.remove();
-        warnings.add(new CoCoStatus(SysMLCoCoName.DoubleImportOfDifferentSymbolsSameName,
+        warnings.add(new CoCoStatus(SysMLCoCoName.ImportDifferentSymbolsWithDuplicateName,
             "Did not import symbol \"" + current.getName() + "\", "
             + "because a symbol with "
             + "the " + "same "  + "name also gets "

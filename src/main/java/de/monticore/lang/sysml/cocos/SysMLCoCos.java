@@ -4,12 +4,9 @@ import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._coco
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTImportUnitStdCoCo;
 import de.monticore.lang.sysml.cocos.imports.ImportStatementValid;
 import de.monticore.lang.sysml.cocos.naming.DefinitionNameStartsWithCapitalLetter;
-import de.monticore.lang.sysml.cocos.naming.NameReference;
 import de.monticore.lang.sysml.cocos.naming.PackageNameEqualsFileName;
 import de.monticore.lang.sysml.cocos.naming.UniqueName;
 import de.monticore.lang.sysml.sysml._cocos.SysMLCoCoChecker;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLScope;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import jline.internal.Log;
 
 /**
@@ -57,7 +54,7 @@ public class SysMLCoCos {
         return res.append("59").toString();
       case ImportedElementNameAlreadyExists:
         return res.append("60").toString();
-      case DoubleImportOfDifferentSymbolsSameName:
+      case ImportDifferentSymbolsWithDuplicateName:
         return res.append("61").toString();
       default:
         Log.error("Internal error: One CoCo was not registered correctly.");
