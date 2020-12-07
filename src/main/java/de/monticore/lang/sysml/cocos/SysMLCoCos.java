@@ -48,7 +48,7 @@ public class SysMLCoCos {
         return res.append("55").toString();
       case ImportIsDefined:
         return res.append("56").toString();
-      case PackageImportWithoutStar:
+      case PackageImportNeedsStar:
         return res.append("58").toString();
       case AmbiguousImport:
         return res.append("59").toString();

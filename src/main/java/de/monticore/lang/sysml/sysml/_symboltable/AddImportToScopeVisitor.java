@@ -4,7 +4,6 @@ import com.google.common.collect.LinkedListMultimap;
 import de.monticore.lang.sysml.basics.interfaces.sysmlimportbasis._ast.ASTImportUnit;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTQualifiedName;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTSysMLName;
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ResolveQualifiedNameHelper;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.ISysMLNamesBasisScope;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLNamesBasisScope;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
@@ -100,9 +99,9 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
         //Adding symbol of the first package:
         for (SysMLTypeSymbol shouldBePackage : node.getResolvedTypes()) {
           if (!(shouldBePackage.getAstNode() instanceof ASTPackage)) {
-            node.getWarnings().add(new CoCoStatus(SysMLCoCoName.PackageImportWithoutStar, "Importing a package " +
+            node.getWarnings().add(new CoCoStatus(SysMLCoCoName.PackageImportNeedsStar, "Importing a package " +
                 "without a " + "star (e.g.\"::*\") will have no effect. " + "If this Statement imports something " +
-                "else then a scope, this has no effect."));
+                "else then a package, this should not be a star import."));
           }
           else {
             ASTPackage astPackage = (ASTPackage) shouldBePackage.getAstNode();
@@ -178,9 +177,9 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
         }
       }
       else {
-        warnings.add(new CoCoStatus(SysMLCoCoName.PackageImportWithoutStar,
+        warnings.add(new CoCoStatus(SysMLCoCoName.PackageImportNeedsStar,
             "Importing a package without a star (e.g" + ".\"::*\") will have no effect. " + "If this Statement "
-                + "imports something else then a scope, this has no" + " effect."));
+                + "imports something else then a package, this should not be a star import"));
       }
     }
     else if (resolvedTypes.size() > 1) {

@@ -68,9 +68,9 @@ public class PackageImportWithoutStarTest extends AbstractSysMLTest {
     assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
     //this.printAllFindings();
     Collection<Finding> expectedWarnings = Arrays.asList(Finding.warning(
-        SysMLCoCos.getErrorCode((SysMLCoCoName.PackageImportWithoutStar)) +
+        SysMLCoCos.getErrorCode((SysMLCoCoName.PackageImportNeedsStar)) +
         " Importing a package without a star (e.g.\"::*\") will have no effect. "
-            + "If this Statement imports something else then a scope, this has no effect.",
+            + "If this Statement imports something else then a package, this should not be a star import",
         new SourcePosition(2, 2, "Import Vehicle.sysml")));
 
     Assert.assertErrors(expectedWarnings, Log.getFindings());
