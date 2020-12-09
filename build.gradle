@@ -6,7 +6,7 @@
 
 plugins {
     id 'java'
-    id "monticore" version "6.6.0-SNAPSHOT"
+    id "monticore" version "6.7.0-SNAPSHOT"
     id 'maven-publish'
     id "com.github.johnrengelman.shadow" version "4.0.4"
     id "com.adarshr.test-logger" version "2.0.0"
@@ -18,7 +18,7 @@ plugins {
 /* ============================================================ */
 
 group = 'de.monticore.lang'
-version = '0.1-SNAPSHOT'
+version = '6.7.0-SNAPSHOT'
 description = 'sysml2official'
 sourceCompatibility = '1.8'
 
@@ -26,7 +26,7 @@ sourceCompatibility = '1.8'
 /* ========================= Versions ========================= */
 /* ============================================================ */
 
-def monticore_version = "6.6.0-SNAPSHOT"
+def monticore_version = "6.7.0-SNAPSHOT"
 def junit_version = "4.12"
  def commons_cli_version = "1.4"
  def sclang_version = "1.1.5-SNAPSHOT"
