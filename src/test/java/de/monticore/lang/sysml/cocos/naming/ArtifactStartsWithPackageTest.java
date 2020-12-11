@@ -16,7 +16,6 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -25,7 +24,8 @@ import static org.junit.Assert.assertTrue;
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class PackageNameEqualsFileNameTest extends AbstractSysMLTest {
+public class ArtifactStartsWithPackageTest extends AbstractSysMLTest {
+
   @BeforeClass
   public static void init() {
     Log.enableFailQuick(false);
@@ -35,37 +35,32 @@ public class PackageNameEqualsFileNameTest extends AbstractSysMLTest {
   public void setUp() throws RecognitionException {
     this.setUpLog();
   }
-
   @Test
   public void testValid() {
-    List<ASTUnit> astUnits =
-        this.validParseAndBuildSymbolsInSubDir("/packageEqualFile");
-
-    PackageNameEqualsFileName coco = new PackageNameEqualsFileName();
+    ASTUnit astUnit =
+        this.parseSysMLSingleModel(this.pathToOfficialSysMLTrainingExamples + "/02. Blocks/Blocks Example.sysml");
+    ArtifactStartsWithPackage coco = new ArtifactStartsWithPackage();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
     coCoChecker.addCoCo(coco);
-    assertEquals(1, astUnits.size());
-    coCoChecker.checkAll(astUnits.get(0));
+    coCoChecker.checkAll(astUnit);
     assertTrue(Log.getFindings().isEmpty());
   }
 
   @Test
   public void testInvalid() {
-    List<ASTUnit> astUnits = this.invalidParseAndBuildSymbolsInSubDir("/WrongPackageName");
-    assertEquals(1, astUnits.size());
-
-    PackageNameEqualsFileName coco = new PackageNameEqualsFileName();
+    ASTUnit astUnit = this.parseSysMLSingleModel(this.pathToInvalidModels
+        + "/artifactStartsWithBlock/BlockIsFirstElement.sysml");
+    ArtifactStartsWithPackage coco = new ArtifactStartsWithPackage();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
     coCoChecker.addCoCo(coco);
-    coCoChecker.checkAll(astUnits.get(0));
+    coCoChecker.checkAll(astUnit);
 
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
-    //this.printAllFindings();
     Collection<Finding> expectedWarnings = Arrays.asList(
-        Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsArtifactName)) + " package WrongName should "
-                + "be equal to the Filename.",
-            new SourcePosition(1, 0, "Blocks Example.sysml"))
+        Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.ArtifactStartsWithPackage))+
+                " Each artifact should start with its a package to organize the model elements.",
+            new SourcePosition(1, 0, "BlockIsFirstElement.sysml"))
     );
 
     Assert.assertErrors(expectedWarnings, Log.getFindings());

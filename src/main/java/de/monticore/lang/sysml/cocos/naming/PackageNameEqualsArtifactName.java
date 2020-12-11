@@ -17,7 +17,7 @@ import java.nio.file.Paths;
  * This CoCos is a bit different than the normal MontiCore CoCos, because it compares the filename and the if the
  * hierarchical highest unit is a package unit with the same name as the filename.
  */
-public class PackageNameEqualsFileName implements SysMLImportsAndPackagesASTPackageUnitCoCo {
+public class PackageNameEqualsArtifactName implements SysMLImportsAndPackagesASTPackageUnitCoCo {
 
   @Override
   public void check(ASTPackageUnit node) {
