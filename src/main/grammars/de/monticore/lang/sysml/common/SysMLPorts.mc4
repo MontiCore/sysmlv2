@@ -33,7 +33,7 @@ component grammar SysMLPorts extends de.monticore.lang.sysml.common.SysMLUsages,
 
   PortUsageStd implements PortUsage = Usage;
   ConjugatedPortUsageStd implements ConjugatedPortUsage= ConjugatePortUsageDeclaration UsageCompletion;
-  ConjugatePortUsageDeclaration implements SysMLType =
+  ConjugatePortUsageDeclaration =
     SysMLName? ConjugatePortTypePart MultiplicityPart? SubsettingPart
     | RedefinesKeyword Redefinition ConjugatePortTypePart MultiplicityPart SubsettingPart;
 
@@ -142,10 +142,10 @@ component grammar SysMLPorts extends de.monticore.lang.sysml.common.SysMLUsages,
   /* INTERFACE DEFINITION MEMBERSHIPS */
 
   InterfaceUsageMember = NestedUsageMember | InterfaceEndMember | ConjugatedInterfaceEndMember ;
-  InterfaceEndMember implements SysMLType = DefinitionMemberPrefix
+  InterfaceEndMember = DefinitionMemberPrefix
     ( ["abstract"]? "end" ["port"]? PortUsage);
     //isPort ?= 'end' is in Xtext, which is most likely an error and should be isPort ?= 'port'. This is defined here.
-  ConjugatedInterfaceEndMember implements SysMLType = DefinitionMemberPrefix
+  ConjugatedInterfaceEndMember = DefinitionMemberPrefix
     (["abstract"]? "end" ["port"]? ConjugatedPortUsage);
     //isPort ?= 'end' is in Xtext, which is most likely an error and should be isPort ?= 'port'. This is defined here.
 

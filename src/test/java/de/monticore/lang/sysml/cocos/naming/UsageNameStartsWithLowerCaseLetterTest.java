@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class DefinitionNameStartsWithCapitalLetterTest extends AbstractSysMLTest {
+public class UsageNameStartsWithLowerCaseLetterTest extends AbstractSysMLTest {
 
   @BeforeClass
   public static void init() {
@@ -38,8 +38,8 @@ public class DefinitionNameStartsWithCapitalLetterTest extends AbstractSysMLTest
   @Test
   public void testValid() {
     ASTUnit astUnit =
-        this.parseSysMLSingleModel(this.pathToOfficialSysMLTrainingExamples + "/02. Blocks/Blocks Example.sysml");
-    DefinitionNameStartsWithCapitalLetter coco = new DefinitionNameStartsWithCapitalLetter();
+        this.parseSysMLSingleModel(this.pathToValidModels + "/naming/SimpleBlocksExample.sysml");
+    UsageNameStartsWithLowerCase coco = new UsageNameStartsWithLowerCase();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
     coCoChecker.addCoCo(coco);
     coCoChecker.checkAll(astUnit);
@@ -49,22 +49,25 @@ public class DefinitionNameStartsWithCapitalLetterTest extends AbstractSysMLTest
   @Test
   public void testInvalidDoesNotStartWithCapitalLetter() {
     ASTUnit astUnit = this.parseSysMLSingleModel(this.pathToInvalidModels
-        + "/NamingConvention/Blocks Example.sysml");
+        + "/NamingConvention/UsageNameUpperCase.sysml");
 
-    DefinitionNameStartsWithCapitalLetter coco = new DefinitionNameStartsWithCapitalLetter();
+    UsageNameStartsWithLowerCase coco = new UsageNameStartsWithLowerCase();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
     coCoChecker.addCoCo(coco);
     coCoChecker.checkAll(astUnit);
 
-    assertEquals(1,Log.getFindings().size());
+    assertEquals(2,Log.getFindings().size());
     assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
     Collection<Finding> expectedWarnings = Arrays.asList(
-        Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.DefinitionNameStartsWithCapitalLetter))+" Name "
-                + "\"vehicle\" should start "
-                + "with a capital letter.",
-            new SourcePosition(4, 7, "Blocks Example.sysml"))
+        Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.UsageNameStartsWithLowerCase))+
+            " Name " + "\"CapitalizedMass\"" + " should start with a lower case letter.",
+            new SourcePosition(3, 8, "UsageNameUpperCase.sysml")),
+        Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.UsageNameStartsWithLowerCase))+
+                " Name " + "\"CapitalizedStatus\"" + " should start with a lower case letter.",
+            new SourcePosition(6, 7, "UsageNameUpperCase.sysml"))
     );
 
     Assert.assertErrors(expectedWarnings, Log.getFindings());
+    //System.out.println("Finished testing valid " + this.getClass().getName());
   }
 }

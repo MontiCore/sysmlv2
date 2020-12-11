@@ -108,8 +108,14 @@ public class SysMLToolTest {
           f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportDifferentSymbolsWithDuplicateName)));
       boolean resolveQualifiedName =
           f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.NameReference)));
+      boolean namingConvention =
+          (f.toString().contains(
+              SysMLCoCos.getErrorCode(SysMLCoCoName.UsageNameStartsWithLowerCase)+
+                  " Name \"Vehicle c1 Design Context\" should start with a lower "
+                  + "case letter.")
+          );
       assertTrue("Did not expect the Finding:" + f.toString(), filenameCoCo || doubleImport
-          ||twoImportsWithDifferentSymbolButSameName || resolveQualifiedName);
+          ||twoImportsWithDifferentSymbolButSameName || resolveQualifiedName ||namingConvention);
       assertTrue(!f.isError()); // Do not throw errors for the official examples
     }
   }
@@ -127,8 +133,15 @@ public class SysMLToolTest {
           f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportDifferentSymbolsWithDuplicateName)));
       boolean resolveQualifiedName =
           f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.NameReference)));
-      assertTrue("Did not expect the Finding:" + f.toString(), filenameCoCo || doubleImport
-        ||twoImportsWithDifferentSymbolButSameName || resolveQualifiedName);
+      boolean namingConvention =
+          (f.toString().contains(
+              SysMLCoCos.getErrorCode(SysMLCoCoName.UsageNameStartsWithLowerCase)+
+                  " Name \"Vehicle c1 Design Context\" should start with a lower "
+                  + "case letter.")
+          );
+
+      assertTrue("Did not expect the Finding: " + f.toString(), filenameCoCo || doubleImport
+        ||twoImportsWithDifferentSymbolButSameName || resolveQualifiedName || namingConvention);
       assertTrue(!f.isError()); // Do not throw errors for the official examples
     }
   }

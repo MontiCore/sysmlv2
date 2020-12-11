@@ -6,6 +6,7 @@ import de.monticore.lang.sysml.cocos.imports.ImportStatementValid;
 import de.monticore.lang.sysml.cocos.naming.DefinitionNameStartsWithCapitalLetter;
 import de.monticore.lang.sysml.cocos.naming.PackageNameEqualsFileName;
 import de.monticore.lang.sysml.cocos.naming.UniqueName;
+import de.monticore.lang.sysml.cocos.naming.UsageNameStartsWithLowerCase;
 import de.monticore.lang.sysml.sysml._cocos.SysMLCoCoChecker;
 import jline.internal.Log;
 
@@ -17,13 +18,17 @@ public class SysMLCoCos {
   public SysMLCoCoChecker getCheckerForAllCoCos() {
     final SysMLCoCoChecker checker = new SysMLCoCoChecker();
     checker.addCoCo(new DefinitionNameStartsWithCapitalLetter());
-    //The following two checker include all checks for Imports
-    checker.addCoCo((SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo) new ImportStatementValid());
-    checker.addCoCo((SysMLImportsAndPackagesASTImportUnitStdCoCo) new ImportStatementValid());
+    checker.addCoCo(new UsageNameStartsWithLowerCase());
     checker.addCoCo(new UniqueName());
-    checker.addCoCo(new PackageNameEqualsFileName());
     // checker.addCoCo(new NameReference()); Currently we cannot resolve all Name references, so it is no use to test
     // it.
+    checker.addCoCo(new PackageNameEqualsFileName());
+    //The following two checker include all checks for imports, because the import nodes save their CoCo Violation
+    //while resolving import. This saves a significant amount of computational power, because resolving imports
+    //can lead to a lot of nodes being visited.
+    checker.addCoCo((SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo) new ImportStatementValid());
+    checker.addCoCo((SysMLImportsAndPackagesASTImportUnitStdCoCo) new ImportStatementValid());
+
 
 
 

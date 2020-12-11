@@ -11,7 +11,9 @@ component grammar SysMLItemFlows extends de.monticore.lang.sysml.common.SysMLCom
 
   ItemFlow = ItemFlowDeclaration DefinitionBody;
   SuccessionItemFlow = ItemFlowDeclaration DefinitionBody;
-  ItemFlowDeclaration = ( (SysMLName)? TypePart?
+  //In the official implementation, there is just SysMLName? TypePart?,
+  //but that leads to only specifying a type results in a name
+  ItemFlowDeclaration = ( (typeOfFlow:SysMLName | (SysMLName TypePart))?
     (( "of" ItemFeatureMember) | (EmptyItemFeatureMember))
     "from" | EmptyItemFeatureMember )
     ItemFlowEndMember "to" ItemFlowEndMember;
