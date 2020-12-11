@@ -98,8 +98,9 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLSuccessions {
   ActionUsageNodeDeclaration = ["abstract"]? (("ref" "action") | isComposite:["action"]) ActionOrStateUsageDeclaration;
   PerformActionNodeDeclaration = isComposite:["perform"] (SysMLNameAndTypePart "as")? Subset ActionParameterList?
     SubsettingPart ValuePart?;
-  AcceptActionNodeDeclaration = EmptyParameterMember "accept" SysMLNameAndTypePart? "(" ItemFeatureMember ")";
-  SendActionNodeDeclaration = EmptyParameterMember EmptyItemFeatureMember
+  AcceptActionNodeDeclaration implements SysMLType
+    = EmptyParameterMember "accept" SysMLNameAndTypePart? "(" ItemFeatureMember ")";
+  SendActionNodeDeclaration implements SysMLType = EmptyParameterMember EmptyItemFeatureMember
     "send" ( SysMLNameAndTypePart? "of")? ExpressionMember "to" ExpressionMember;
 
   ControlNode = (["merge"] | ["decide"] | ["join"] | ["fork"]) SysMLNameAndTypePart? ";";
@@ -113,5 +114,23 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLSuccessions {
   PerformedActionUsageStd implements PerformedActionUsage =
     PerformActionUsageDeclaration | AcceptActionNodeDeclaration | SendActionNodeDeclaration;
 
-
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+  astrule AcceptActionNodeDeclaration =
+    method public String getName(){
+      if( this.isPresentSysMLNameAndTypePart()){
+        return this.getSysMLNameAndTypePart().getName();
+      }
+      return "";
+    }
+  ;
+  astrule SendActionNodeDeclaration =
+      method public String getName(){
+        if( this.isPresentSysMLNameAndTypePart()){
+          return this.getSysMLNameAndTypePart().getName();
+        }
+        return "";
+      }
+    ;
 }
