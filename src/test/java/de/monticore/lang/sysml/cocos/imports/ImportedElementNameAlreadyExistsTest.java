@@ -53,8 +53,8 @@ public class ImportedElementNameAlreadyExistsTest extends AbstractSysMLTest {
   }
 
   @Test
-  public void testInvalid() {
-    List<ASTUnit> models = this.invalidParseAndBuildSymbolsInSubDir("/imports/elementNameAlreadyExists");
+  public void testInvalid1() {
+    List<ASTUnit> models = this.invalidParseAndBuildSymbolsInSubDir("/imports/elementNameAlreadyExists1");
     ImportStatementValid coco = new ImportStatementValid();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
     coCoChecker.addCoCo((SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo) coco);
@@ -69,6 +69,28 @@ public class ImportedElementNameAlreadyExistsTest extends AbstractSysMLTest {
     Collection<Finding> expectedWarnings = Arrays.asList(
         Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportedElementNameAlreadyExists)) +
         " The element \"AlreadyInScope\" could not be imported, because it already exists in the scope Import Vehicle.",
+            new SourcePosition(2, 2, "Import Vehicle.sysml")));
+
+    Assert.assertErrors(expectedWarnings, Log.getFindings());
+  }
+
+  @Test
+  public void testInvalid2() {
+    List<ASTUnit> models = this.invalidParseAndBuildSymbolsInSubDir("/imports/elementNameAlreadyExists2");
+    ImportStatementValid coco = new ImportStatementValid();
+    SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
+    coCoChecker.addCoCo((SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo) coco);
+    coCoChecker.addCoCo((SysMLImportsAndPackagesASTImportUnitStdCoCo) coco);
+    for (ASTUnit model : models) {
+      coCoChecker.checkAll(model);
+    }
+
+    assertEquals(1, Log.getFindings().size());
+    assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
+    //this.printAllFindings();
+    Collection<Finding> expectedWarnings = Arrays.asList(
+        Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportedElementNameAlreadyExists)) +
+                " The element \"AlreadyInScope\" could not be imported, because it already exists in the scope Import Vehicle.",
             new SourcePosition(2, 2, "Import Vehicle.sysml")));
 
     Assert.assertErrors(expectedWarnings, Log.getFindings());

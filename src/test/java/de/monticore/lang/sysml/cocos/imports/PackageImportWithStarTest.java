@@ -1,8 +1,6 @@
 package de.monticore.lang.sysml.cocos.imports;
 
 import de.monticore.cocos.helper.Assert;
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ResolveQualifiedNameHelper;
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTImportUnitStdCoCo;
@@ -18,7 +16,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -30,7 +27,8 @@ import static org.junit.Assert.assertTrue;
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class AmbiguousImportTest extends AbstractSysMLTest {
+public class PackageImportWithStarTest extends AbstractSysMLTest {
+
   @BeforeClass
   public static void init() {
     Log.enableFailQuick(false);
@@ -42,7 +40,7 @@ public class AmbiguousImportTest extends AbstractSysMLTest {
   }
 
   @Test
-  public void testValid(){
+  public void testValid() {
     List<ASTUnit> models = this.validParseAndBuildSymbolsInSubDir("/imports/simple");
     ImportStatementValid coco = new ImportStatementValid();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
@@ -54,17 +52,10 @@ public class AmbiguousImportTest extends AbstractSysMLTest {
     printAllFindings();
     assertTrue(Log.getFindings().isEmpty());
   }
-  @Test
-  public void testInvalid(){
-    List<ASTUnit> models = this.invalidParseAndBuildSymbolsInSubDir("/imports/AmbiguousImport");
-    List<String> blockAQN = new ArrayList();
-    blockAQN.add("Symbol Definition");
-    blockAQN.add("Vehicle");
-    List<SysMLTypeSymbol> blockA =
-        ResolveQualifiedNameHelper.resolveQualifiedNameAsListInASpecificScope(blockAQN,
-            models.get(0).getEnclosingScope().getEnclosingScope());
-    assertEquals(2, blockA.size());
 
+  @Test
+  public void testInvalid() {
+    List<ASTUnit> models = this.invalidParseAndBuildSymbolsInSubDir("/imports/PackageImportWithoutStar");
     ImportStatementValid coco = new ImportStatementValid();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
     coCoChecker.addCoCo((SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo) coco);
@@ -72,16 +63,15 @@ public class AmbiguousImportTest extends AbstractSysMLTest {
     for (ASTUnit model : models) {
       coCoChecker.checkAll(model);
     }
-    //this.printAllFindings();
+
     assertEquals(1, Log.getFindings().size());
-
     assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
-
-    Collection<Finding> expectedWarnings = Arrays.asList(
-        Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.NoAmbiguousImport)) +
-                " The import statement was ambiguous, nothing will be imported.",
-            new SourcePosition(2, 2, "Import Vehicle.sysml"))
-    );
+    //this.printAllFindings();
+    Collection<Finding> expectedWarnings = Arrays.asList(Finding.warning(
+        SysMLCoCos.getErrorCode((SysMLCoCoName.PackageImportWithStar)) +
+        " Importing a package without a star (e.g.\"::*\") will have no effect. "
+            + "If this Statement imports something else then a package, this should not be a star import",
+        new SourcePosition(2, 2, "Import Vehicle.sysml")));
 
     Assert.assertErrors(expectedWarnings, Log.getFindings());
   }

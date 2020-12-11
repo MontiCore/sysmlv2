@@ -63,7 +63,7 @@ public class PackageNameEqualsFileNameTest extends AbstractSysMLTest {
     assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
     //this.printAllFindings();
     Collection<Finding> expectedWarnings = Arrays.asList(
-        Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsFileName)) + " package WrongName should "
+        Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsArtifactName)) + " package WrongName should "
                 + "be equal to the Filename.",
             new SourcePosition(1, 0, "Blocks Example.sysml"))
     );

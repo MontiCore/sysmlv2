@@ -24,7 +24,7 @@ public class AmbigousImportCheck implements SysMLInheritanceVisitor {
   @Override
   public void visit(ASTAliasPackagedDefinitionMember node) {
     if (node.getResolvedTypes().size() >= 2) {
-      node.getWarnings().add(new CoCoStatus(SysMLCoCoName.AmbiguousImport, "The import statement was ambiguous, nothing"
+      node.getWarnings().add(new CoCoStatus(SysMLCoCoName.NoAmbiguousImport, "The import statement was ambiguous, nothing"
           + " will " + "be" + " imported. "));
       node.setResolvedTypes(new ArrayList<>());
     }
@@ -41,7 +41,7 @@ public class AmbigousImportCheck implements SysMLInheritanceVisitor {
         }
       }
       if (!isOnlyPackage) {
-        node.getWarnings().add(new CoCoStatus(SysMLCoCoName.AmbiguousImport, "The import statement was ambiguous, "
+        node.getWarnings().add(new CoCoStatus(SysMLCoCoName.NoAmbiguousImport, "The import statement was ambiguous, "
             + "nothing will " + "be" + " imported. "));
         node.setResolvedTypes(new ArrayList<>());
       }

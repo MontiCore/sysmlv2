@@ -27,8 +27,7 @@ import static org.junit.Assert.assertTrue;
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class PackageImportWithoutStarTest extends AbstractSysMLTest {
-
+public class ImportAliasNecessaryTest extends AbstractSysMLTest {
   @BeforeClass
   public static void init() {
     Log.enableFailQuick(false);
@@ -55,7 +54,7 @@ public class PackageImportWithoutStarTest extends AbstractSysMLTest {
 
   @Test
   public void testInvalid() {
-    List<ASTUnit> models = this.invalidParseAndBuildSymbolsInSubDir("/imports/PackageImportWithoutStar");
+    List<ASTUnit> models = this.invalidParseAndBuildSymbolsInSubDir("/imports/importAliasNecessary");
     ImportStatementValid coco = new ImportStatementValid();
     SysMLCoCoChecker coCoChecker = new SysMLCoCoChecker();
     coCoChecker.addCoCo((SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo) coco);
@@ -67,11 +66,11 @@ public class PackageImportWithoutStarTest extends AbstractSysMLTest {
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
     //this.printAllFindings();
-    Collection<Finding> expectedWarnings = Arrays.asList(Finding.warning(
-        SysMLCoCos.getErrorCode((SysMLCoCoName.PackageImportNeedsStar)) +
-        " Importing a package without a star (e.g.\"::*\") will have no effect. "
-            + "If this Statement imports something else then a package, this should not be a star import",
-        new SourcePosition(2, 2, "Import Vehicle.sysml")));
+    Collection<Finding> expectedWarnings =
+        Arrays.asList(Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportAliasNecessary)) +
+                " An alias name"
+                + " is required for importing symbols, which are already defined in the importing scope.",
+            new SourcePosition(2, 2, "Import Vehicle.sysml")));
 
     Assert.assertErrors(expectedWarnings, Log.getFindings());
   }

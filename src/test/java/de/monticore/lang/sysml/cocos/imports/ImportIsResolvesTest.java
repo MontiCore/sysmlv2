@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class ImportIsDefinedTest extends AbstractSysMLTest {
+public class ImportIsResolvesTest extends AbstractSysMLTest {
   @BeforeClass
   public static void init() {
     Log.enableFailQuick(false);
@@ -67,7 +67,7 @@ public class ImportIsDefinedTest extends AbstractSysMLTest {
     assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
     //this.printAllFindings();
     Collection<Finding> expectedWarnings = Arrays.asList(
-        Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportIsDefined)) +
+        Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportResolves)) +
         " Could not resolve import \"ThisPackageDoesNotExist::Vehicle\".",
             new SourcePosition(2, 2, "Import Vehicle.sysml")));
 

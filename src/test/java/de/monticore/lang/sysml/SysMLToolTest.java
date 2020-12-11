@@ -101,7 +101,7 @@ public class SysMLToolTest {
     //System.out.println("Found " + Log.getFindings().size() + " findings.");
     //assertEquals(36, Log.getFindings().size());
     for (Finding f : Log.getFindings()) { //not equal to filename coco, double definition (e.g. mm) at SI
-      boolean filenameCoCo = f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsFileName)));
+      boolean filenameCoCo = f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsArtifactName)));
       boolean doubleImport =
           f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportedElementNameAlreadyExists)));
       boolean twoImportsWithDifferentSymbolButSameName =
@@ -120,7 +120,7 @@ public class SysMLToolTest {
         "-lib=" + pathToLibDir + "/Quantities and Units" });
 
     for (Finding f : Log.getFindings()) {
-      boolean filenameCoCo = f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsFileName)));
+      boolean filenameCoCo = f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsArtifactName)));
       boolean doubleImport =
           f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportedElementNameAlreadyExists)));
       boolean twoImportsWithDifferentSymbolButSameName =

@@ -77,9 +77,26 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
         importAs = Optional.of(node.getSysMLName());
         currentType = Optional.of(node.getSymbol());
       }
-      List<CoCoStatus> warnings = this.addToScope(node.getResolvedTypes(), node.getTransitiveImports(),
-          node.getEnclosingScope(), false, importAs, currentType, node.getQualifiedName(), node.isAlias(), node.getWarnings());
-      node.setWarnings(warnings);
+      boolean importSuccess = true;
+      //Check if alias is necessary
+      if(node.getResolvedTypes().size()==1 && !node.isPresentSysMLName() && !node.isAlias()){
+        if(node.getEnclosingScope().resolveSysMLTypeMany(node.getResolvedTypes().get(0).getName()).size()>0){
+          if(!(node.getResolvedTypes().get(0).getAstNode() instanceof ASTPackage)) {
+            //If it is a package, another CoCo catches the case, that an alias should not import an package.
+            //Do not add => alias is necessary
+            importSuccess = false;
+            List<CoCoStatus> warnings = new ArrayList<>();
+            warnings.add(new CoCoStatus(SysMLCoCoName.ImportAliasNecessary, "An alias name" + " is required for importing symbols, which are already defined in the importing scope."));
+            node.setWarnings(warnings);
+          }
+        }
+      }
+      if(importSuccess){ //Add
+        List<CoCoStatus> warnings = this.addToScope(node.getResolvedTypes(), node.getTransitiveImports(),
+            node.getEnclosingScope(), false, importAs, currentType, node.getQualifiedName(),
+            node.isAlias(), node.getWarnings());
+        node.setWarnings(warnings);
+      }
     }
     else {
       Log.error("Internal error in " + this.getClass().getName() + " Do not call this Visitor with ast.accept. There "
@@ -99,7 +116,7 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
         //Adding symbol of the first package:
         for (SysMLTypeSymbol shouldBePackage : node.getResolvedTypes()) {
           if (!(shouldBePackage.getAstNode() instanceof ASTPackage)) {
-            node.getWarnings().add(new CoCoStatus(SysMLCoCoName.PackageImportNeedsStar, "Importing a package " +
+            node.getWarnings().add(new CoCoStatus(SysMLCoCoName.PackageImportWithStar, "Importing a package " +
                 "without a " + "star (e.g.\"::*\") will have no effect. " + "If this Statement imports something " +
                 "else then a package, this should not be a star import."));
           }
@@ -144,7 +161,7 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
       // Do nothing, import is fine.
     }
     else if (resolvedTypes.size() == 0 && !starImport && existingWarnings.size()==0) {
-      warnings.add(new CoCoStatus(SysMLCoCoName.ImportIsDefined,
+      warnings.add(new CoCoStatus(SysMLCoCoName.ImportResolves,
           "Could not resolve import \"" + importName.getFullQualifiedName() + "\"."));
     }
     else if (resolvedTypes.size() == 0 && starImport) {
@@ -177,13 +194,13 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
         }
       }
       else {
-        warnings.add(new CoCoStatus(SysMLCoCoName.PackageImportNeedsStar,
+        warnings.add(new CoCoStatus(SysMLCoCoName.PackageImportWithStar,
             "Importing a package without a star (e.g" + ".\"::*\") will have no effect. " + "If this Statement "
                 + "imports something else then a package, this should not be a star import"));
       }
     }
     else if (resolvedTypes.size() > 1) {
-      warnings.add(new CoCoStatus(SysMLCoCoName.AmbiguousImport, "The import statement was ambiguous, nothing will "
+      warnings.add(new CoCoStatus(SysMLCoCoName.NoAmbiguousImport, "The import statement was ambiguous, nothing will "
           + "be" + " imported. "));
     }
     else if (resolvedTypes.size() == 1) {

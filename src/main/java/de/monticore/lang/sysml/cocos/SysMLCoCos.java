@@ -17,12 +17,14 @@ public class SysMLCoCos {
   public SysMLCoCoChecker getCheckerForAllCoCos() {
     final SysMLCoCoChecker checker = new SysMLCoCoChecker();
     checker.addCoCo(new DefinitionNameStartsWithCapitalLetter());
+    //The following two checker include all checks for Imports
     checker.addCoCo((SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo) new ImportStatementValid());
     checker.addCoCo((SysMLImportsAndPackagesASTImportUnitStdCoCo) new ImportStatementValid());
     checker.addCoCo(new UniqueName());
     checker.addCoCo(new PackageNameEqualsFileName());
     // checker.addCoCo(new NameReference()); Currently we cannot resolve all Name references, so it is no use to test
     // it.
+
 
 
     return checker;
@@ -34,27 +36,31 @@ public class SysMLCoCos {
     StringBuilder res = new StringBuilder();
     res.append("0xA71"); //Errorcode are from 0xA7150 - 0xA7200
     switch (name) {
-      case CommonFileExtension:
-        return res.append("50").toString();
-      case ValidImportStatement:
-        return res.append("51").toString();
-      case PackageNameEqualsFileName:
-        return res.append("52").toString();
+      //Naming
       case DefinitionNameStartsWithCapitalLetter:
-        return res.append("53").toString();
-      case NameReference:
-        return res.append("54").toString();
+        return res.append("50").toString();
+      case UsageNameStartsWithLowerCase:
+        return res.append("51").toString();
       case UniqueName:
+        return res.append("52").toString();
+      case NameReference:
+        return res.append("53").toString();
+      case ArtifactStartsWithPackage:
+        return res.append("54").toString();
+      case PackageNameEqualsArtifactName:
         return res.append("55").toString();
-      case ImportIsDefined:
+      //Imports
+      case ImportResolves:
         return res.append("56").toString();
-      case PackageImportNeedsStar:
+      case NoAmbiguousImport:
+        return res.append("57").toString();
+      case ImportAliasNecessary:
         return res.append("58").toString();
-      case AmbiguousImport:
-        return res.append("59").toString();
       case ImportedElementNameAlreadyExists:
-        return res.append("60").toString();
+        return res.append("59").toString();
       case ImportDifferentSymbolsWithDuplicateName:
+        return res.append("60").toString();
+      case PackageImportWithStar:
         return res.append("61").toString();
       default:
         Log.error("Internal error: One CoCo was not registered correctly.");
