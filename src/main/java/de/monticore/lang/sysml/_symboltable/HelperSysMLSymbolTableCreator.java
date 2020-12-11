@@ -29,7 +29,6 @@ public class HelperSysMLSymbolTableCreator {
     ISysMLGlobalScope sysMLGlobalScope = SysMLMill.globalScope();
     sysMLGlobalScope.clear();
     sysMLGlobalScope.setModelPath(mp);
-    sysMLGlobalScope.setFileExt("sysml");
     return sysMLGlobalScope;
   }
 
