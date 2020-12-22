@@ -82,12 +82,8 @@ public class SysMLTool {
       allModelsToBuildSymbolTable.addAll(libModels);
     }
 
-
     // Symboltable
     SysMLGlobalScope sysMLGlobalScope = buildSymbolTable(dir, allModelsToBuildSymbolTable);
-
-
-
 
     if(cocosOff){
       Log.info("Context Conditions are deactivated by \"-cocosOff\".", SysMLTool.class.getName());
@@ -95,7 +91,7 @@ public class SysMLTool {
       // Context Conditions
       Log.info("Checking Context Conditions.", SysMLTool.class.getName());
       if (libDirs.size()>1) {
-        Log.info("Currently the Context Conditions for the library are not checked."
+        Log.info("Libraries are not checked by the Context Conditions."
             + "If you want to check them, just parse them with the first argument set to the library path.",
             SysMLTool.class.getName());
       }
@@ -110,7 +106,7 @@ public class SysMLTool {
 
   private static void printUsage(){
     Log.error("Please specify one single path to the input directory containing the input models."
-        + "\n - Optional: Add a directory for libraries with -lib=<path>"
+        + "\n - Optional: Add directories for libraries with -lib=<path>"
         + "\n - Optional: Turn off Context Conditions with -cocosOff");
   }
 
@@ -124,7 +120,7 @@ public class SysMLTool {
 
   public static SysMLGlobalScope buildSymbolTable(String dir, List<ASTUnit> models){
     Log.info("Creating Symbol Table.", SysMLTool.class.getName());
-    final ModelPath mp = createModelpath(getSysMLFilePathsInDirectory(dir));
+    final ModelPath mp = createModelpath(getSysMLFilePathsInDirectory(dir, false));
     HelperSysMLSymbolTableCreator helperSysMLSymbolTableCreator = new HelperSysMLSymbolTableCreator();
     SysMLGlobalScope sysMLGlobalScope = helperSysMLSymbolTableCreator.createSymboltableMultipleASTUnit(models,mp);
     return sysMLGlobalScope;
@@ -140,7 +136,7 @@ public class SysMLTool {
 
     Log.info("Parsing models in directory or file " + dir, SysMLTool.class.getName());
     // Gathering all models in given directory "dir".
-    List<String> filePaths = getSysMLFilePathsInDirectory(dir);
+    List<String> filePaths = getSysMLFilePathsInDirectory(dir, true);
 
     List<ASTUnit> models = new ArrayList<>();
     try {
@@ -156,12 +152,13 @@ public class SysMLTool {
     return models;
   }
 
-  public static List<String> getSysMLFilePathsInDirectory(String dir) {
+  public static List<String> getSysMLFilePathsInDirectory(String dir, Boolean printSizeOfFoundFiles) {
     try (Stream<Path> walk = Files.walk(Paths.get(dir))) {
 
       List<String> result = walk.filter(Files::isRegularFile).map(x -> x.toString()).collect(Collectors.toList());
-
-      Log.info("Found " + result.size() + " Files.", SysMLParserMultipleFiles.class.getName());
+      if(printSizeOfFoundFiles) {
+        Log.info("Found " + result.size() + " Files.", SysMLParserMultipleFiles.class.getName());
+      }
       List<String> onlySysMLFiles = new ArrayList<>();
       boolean foundKerML = false;
       for (String fullFileName : result) {
@@ -172,10 +169,12 @@ public class SysMLTool {
           foundKerML = true;
         }
       }
-      if(foundKerML){
-        Log.warn("KerML files are not yet supported.");
+      if(printSizeOfFoundFiles) {
+        if (foundKerML) {
+          Log.warn("KerML files are not yet supported.");
+        }
+        Log.info("Found " + onlySysMLFiles.size() + " \".sysml\" Files.", SysMLParserMultipleFiles.class.getName());
       }
-      Log.info("Found " + onlySysMLFiles.size() + " \".sysml\" Files.", SysMLParserMultipleFiles.class.getName());
       if(onlySysMLFiles.size()==0){
         Log.error("There was not a single \".sysml\" in the given directory."+
             "It is likely that the directory was wrong or that the files have not the ending \".sysml\".");
@@ -202,7 +201,7 @@ public class SysMLTool {
     return mp;
   }
   public static ModelPath createModelpath(String dirOrFile){
-    List<String> filePathAsList = getSysMLFilePathsInDirectory(dirOrFile);
+    List<String> filePathAsList = getSysMLFilePathsInDirectory(dirOrFile,false);
     return createModelpath(filePathAsList);
   }
 }

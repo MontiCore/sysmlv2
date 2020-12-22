@@ -23,9 +23,9 @@ import static org.junit.Assert.assertTrue;
  */
 public class SysMLToolTest {
 
-  private String wrongUsageError = "Please specify one single path to the input directory containing the input models"
-      + "." + "\n - Optional: Add a directory for libraries with -lib=<path>" + "\n - Optional: Turn off Context "
-      + "Conditions with -cocosOff";
+  private String wrongUsageError = "Please specify one single path to the input directory containing the input models."
+      + "\n - Optional: Add directories for libraries with -lib=<path>"
+      + "\n - Optional: Turn off Context Conditions with -cocosOff";
 
   @Before
   public void setUp() throws RecognitionException, IOException {
