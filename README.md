@@ -2,31 +2,14 @@
 # SysML 2 Official
 
 Project for the SysML 2 language familly in MontiCore. It is compatible with the general standard.
-The language should a strict compatible superset of the SysML 2 Syntax. It can also parse
-models which are not valid, because of the additional CoCos this project has.
 
-This project is based on the 2020-03 pilot implementation of SysML 2.
+## Further Information
 
-It reuses MontiCore language.
+* [Project root: MontiCore @github](https://github.com/MontiCore/monticore)
+* [MontiCore documentation](http://www.monticore.de/)
+* [**List of languages**](https://github.com/MontiCore/monticore/blob/dev/docs/Languages.md)
+* [**MontiCore Core Grammar Library**](https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/Grammars.md)
+* [Best Practices](https://github.com/MontiCore/monticore/blob/dev/docs/BestPractices.md)
+* [Publications about MBSE and MontiCore](https://www.se-rwth.de/publications/)
+* [Licence definition](https://github.com/MontiCore/monticore/blob/master/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL.md)
 
-Also a Pretty Printer should be written. 
-
-#Useful commands Maven build
-
-``mvn clean install `` (to build everything)
-
-``mvn install -DskipTests``
-
-``mvn install -Pdev-skip-slow-tests``  (Activates profile which skips slow tests)
-
-
-
-#Useful commands Gradle build (Gradle dependencies may not be up to date)
-
-``
-gradle build -i 
-`` (Often shows the reason, any tests failed.)
-
-``
-gradle test -i --fail-fast
-`` (Enables Info logging and fast fail)
