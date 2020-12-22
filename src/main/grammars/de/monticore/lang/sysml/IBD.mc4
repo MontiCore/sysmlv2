@@ -1,8 +1,18 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml;
 
+component grammar IBD extends de.monticore.lang.sysml.advanced.SysMLAdvanced
+  {
 
-grammar IBD extends de.monticore.lang.sysml.SysMLBasics {
-  
-  IBD = "ibd" Name;
+  PartUnit implements Unit = UnitPrefix PartDeclaration UsageCompletion;
+  PartDeclaration = ["abstract"]? "part" SysMLNameAndTypePart SubsettingPart;
+
+  PartPropertyUsageMember implements PackagedUsageMember, NonPortStructureUsageMember =
+    ["abstract"]? PartProperty;
+  AssociationEndMemberPartProperty implements AssociationEndMember =
+    DefinitionMemberPrefix ["abstract"]? isComposite:"end" PartProperty;
+
+
+  PartProperty = "part" Usage;
+
 }

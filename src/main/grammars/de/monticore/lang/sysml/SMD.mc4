@@ -1,8 +1,62 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml;
 
+component grammar SMD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
 
-grammar SMD extends de.monticore.lang.sysml.SysMLBasics {
-  
-  SMD = "state" "machine" Name;
+  /* STATE DEFINITIONS */
+
+  StateDefinitionUnit implements Unit = UnitPrefix StateDefinition;
+  StateDefinition implements PackagedDefinitionMember = StateDefDeclaration StateBody;
+  symbol StateDefDeclaration = ["abstract"]? "state" "def" SysMLName ParameterList? SuperclassingList?;
+  astrule StateDefDeclaration =
+    method public String getName(){
+      return this.getSysMLName().getName();
+    }
+    ;
+
+  StateBody = ";" | "{" StateBodyPart "}";
+  StateBodyPart = (EntryActionMember EntryTransitionMember*)? DoActionMember? ExitActionMember? StateBodyItem*;
+  StateBodyItem = NestedDefinitionMember
+    | StructureUsageMember
+    | StateMember TargetTransitionSuccessionMember*
+    | TransitionStepMember
+    | ImportUnit;
+  StateActionUsage = EmptyActionUsage ";" | PerformedActionUsage ActivityBody;
+
+  /* STATE MEMBERSHIPS */
+
+  EntryActionMember = DefinitionMemberPrefix kind:EntryActionKind StateActionUsage;
+  EntryActionKind = "entry";
+  DoActionMember = DefinitionMemberPrefix kind:DoActionKind StateActionUsage;
+  DoActionKind = "do";
+  ExitActionMember = DefinitionMemberPrefix kind:ExitActionKind StateActionUsage;
+  ExitActionKind = "exit";
+
+  StateMember = DefinitionMemberPrefix ["abstract"]? ("ref" "state" | isComposite:["state"]) StateUsage;
+  EntryTransitionMember = DefinitionMemberPrefix (GuardedTargetSuccession | "then" TransitionSuccession ) ";";
+
+  TargetTransitionSuccessionMember =  DefinitionMemberPrefix TargetTransitionStep ";";
+  TransitionStepMember = DefinitionMemberPrefix TransitionStep ";";
+
+ /* STATES */
+  StateUnit implements Unit = UnitPrefix StateDeclaration StateBody;
+  StateDeclaration = ["abstract"]? "state" SysMLNameAndTypePart ActionParameterList? SubsettingPart ValuePart?;
+  StateUsage = ActionOrStateUsageDeclaration StateBody;
+  symbol ExhibitStateUsage = ((((SysMLName) TypePart? "as")? Subset)
+    | ( "state" SysMLName? TypePart? )) ActionParameterList? SubsettingPart ValuePart? StateBody;
+  astrule ExhibitStateUsage =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43";
+    }
+  ;
+
+
+  StateUsagePackagedUsageMember implements PackagedUsageMember =       ["abstract"]? "state" StateUsage;
+  BehaviorUsageMemberStateUsage implements BehaviorUsageMember =
+    DefinitionMemberPrefix ["abstract"]?  ("ref" "state" | isComposite:"state") StateUsage;
+  BehaviorUsageMemberExhibitStateUsage implements BehaviorUsageMember =
+    DefinitionMemberPrefix  "exhibit" ExhibitStateUsage;
 }

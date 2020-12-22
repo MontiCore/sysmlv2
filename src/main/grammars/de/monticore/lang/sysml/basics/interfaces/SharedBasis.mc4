@@ -1,0 +1,33 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.basics.interfaces;
+
+component grammar SharedBasis extends de.monticore.lang.sysml.basics.interfaces.NamesBasis{
+  interface Unit; //A Unit is a starting production
+
+  interface NestedDefinitionMember;
+  interface NestedUsageMember;
+
+  /* DEFINITION MEMBERSHIPS */
+  interface NonPortStructureUsageMember; //Referencing other elements in a production
+  interface BehaviorUsageMember; //Referencing other elements in a production
+
+  /* ASSOCIATION BLOCK MEMBERSHIPS */
+  interface AssociationUsageMember;
+
+  interface FeatureTyping;
+
+  interface Parameter;
+
+  interface TypePart;
+
+  token FromToDigitsDotDot = ('0'..'9')+ "..";
+  /*Remark: The following does not exist in Xtext, but since many NTs use the following structure we introduced this NT.
+  */
+
+  symbol SysMLNameAndTypePart = SysMLName TypePart?;
+  astrule SysMLNameAndTypePart =
+    method public String getName(){
+      return this.getSysMLName().getName();
+    }
+  ;
+}

@@ -1,0 +1,55 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.basics.sysmldefault;
+
+
+component grammar ImportsAndPackages extends de.monticore.lang.sysml.basics.interfaces.CommentsBasis,
+  de.monticore.lang.sysml.basics.interfaces.ImportBasis,
+  de.monticore.lang.sysml.basics.interfaces.NamesBasis,
+  de.monticore.lang.sysml.basics.interfaces.PackageBasis,
+  de.monticore.lang.sysml.basics.interfaces.VisibilityBasis,
+  de.monticore.lang.sysml.basics.interfaces.SharedBasis {
+
+  /* IMPORTS */
+
+  symbol AliasPackagedDefinitionMember implements PackagedDefinitionMember =
+      ("import" | "alias") QualifiedName ("as" SysMLName)? ";";
+  astrule AliasPackagedDefinitionMember =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43";
+    }
+  ;
+
+  //Following has the name "Import" in Xtext
+  symbol ImportUnitStd implements ImportUnit = PrefixAnnotation* (visibility:PackageElementVisibilityIndicator)?
+    "import" QualifiedName (star:["::*"]? | star:[".*"]?) {noSpace()}? ("as" SysMLName)? ";";
+  astrule ImportUnitStd =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43";
+    }
+  ;
+
+  /* PACKAGES */
+  PackageUnit implements Unit = UnitPrefix Package;
+  AnonymousPackage implements Unit = PackageBody;
+  symbol scope Package implements PackagedDefinitionMember =  PackageDeclaration PackageBody;
+  astrule Package =
+      method public String getName(){
+         return this.getPackageDeclaration().getSysMLName().getName();
+      }
+    ;
+  PackageDeclaration = "package" SysMLName;
+  PackageBody = "{" (PackageMember | ImportUnit)* "}";
+
+
+  /* PACKAGE MEMBERSHIPS */
+  PackageMember = PackageMemberPrefix ( PackagedDefinitionMember | PackagedUsageMember);
+  PackageMemberPrefix = PrefixAnnotation* visibility:PackageElementVisibilityIndicator?;
+  // Remark: PackagedDefinitionMember is an interface
+  // Remark: PackagedUsageMember is an interface
+}

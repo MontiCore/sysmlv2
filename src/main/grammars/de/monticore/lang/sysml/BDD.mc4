@@ -1,8 +1,28 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml;
 
+component grammar BDD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
 
-grammar BDD extends de.monticore.lang.sysml.SysMLBasics {
-  
-  BDD = "bbd" Name;
+  /* BLOCKS */
+
+  BlockUnit implements Unit = UnitPrefix Block; //Remark: in Xtext BlockDeclaration DefinitionBody
+
+  symbol scope Block implements PackagedDefinitionMember = BlockDeclaration DefinitionBody;
+  astrule Block =
+    method public String getName(){
+      return this.getBlockDeclaration().getName();
+    }
+  ;
+  BlockDeclaration = ["abstract"]? "block" ClassifierDeclarationCompletion;
+  astrule BlockDeclaration =
+    method public String getName(){
+      return this.getClassifierDeclarationCompletion().getName();
+    }
+  ;
+
+  AssociationEndMemberReferenceProperty implements AssociationEndMember =
+     DefinitionMemberPrefix ["abstract"]? "end" ["ref"]? ReferenceProperty;
+  ReferencePropertyNonPortStructureUsageMember implements NonPortStructureUsageMember =
+     ["abstract"]? "ref" direction:FeatureDirection? ReferenceProperty;
+  ReferenceProperty = Usage;
 }

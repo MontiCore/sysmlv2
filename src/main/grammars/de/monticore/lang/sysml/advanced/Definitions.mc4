@@ -1,0 +1,24 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.advanced;
+
+component grammar Definitions extends de.monticore.lang.sysml.basics.SysMLCommon {
+
+  /* DEFINITIONS */
+
+  DefinitionBodyStd implements DefinitionBody = "{" (NestedDefinitionMember | NestedUsageMember | ImportUnit)* "}";
+  DefinitionBodyEmpty implements DefinitionBody = ";";
+
+  /* DEFINITION MEMBERSHIPS */
+
+  NestedDefinitionMemberStd implements NestedDefinitionMember = DefinitionMemberPrefix PackagedDefinitionMember;
+  NestedUsageMemberStd implements NestedUsageMember = StructureUsageMember | BehaviorUsageMember;
+  StructureUsageMember = (DefinitionMemberPrefix NonPortStructureUsageMember) | PortMember | ConjugatedPortMember;
+  // Remark: in Xtext DefinitionMemberPrefix is a part of NonPortStructureUsageMember
+  // Remark: NonPortStructureUsageMember is an interface
+  // Remark: BehaviorUsageMember is an interface
+  PortMember = DefinitionMemberPrefix (["abstract"]? "port" PortUsage); //Remark we do not use abstract Port Usage
+  ConjugatedPortMember = DefinitionMemberPrefix (["abstract"]? "port" ConjugatedPortUsage);
+
+  DefinitionMemberPrefixStd implements DefinitionMemberPrefix = PrefixAnnotation* visibility:VisibilityIndicator?;
+
+}

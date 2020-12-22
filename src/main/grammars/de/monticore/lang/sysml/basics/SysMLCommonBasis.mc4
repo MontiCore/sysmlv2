@@ -1,0 +1,56 @@
+/* (c) https://github.com/MontiCore/monticore */
+ package de.monticore.lang.sysml.basics;
+
+
+ component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.interfaces.CommentsBasis,
+   de.monticore.lang.sysml.basics.interfaces.LiteralsBasis,
+   de.monticore.lang.sysml.basics.interfaces.NamesBasis,
+   de.monticore.lang.sysml.basics.interfaces.PackageBasis,
+   de.monticore.lang.sysml.basics.interfaces.ImportBasis,
+   de.monticore.lang.sysml.basics.interfaces.VisibilityBasis,
+   de.monticore.lang.sysml.basics.interfaces.SysMLExpressionsBasis,
+   de.monticore.lang.sysml.basics.interfaces.SharedBasis {
+
+
+
+
+
+ FeatureDirection =  ["in"] | ["out"] | ["inout"];
+
+ interface DefinitionBody;
+ interface ValueType;
+ interface ClassifierDeclarationCompletion;
+ astrule ClassifierDeclarationCompletion =
+    method public String getName(){
+      return "NotImplemented12324182481524";
+    }
+  ;
+ interface PortDefinition;
+
+ /* ASSOCIATION BLOCK MEMBERSHIPS */
+ interface AssociationEndMember;
+
+
+
+ interface DefinitionMemberPrefix;
+ interface Usage;
+
+ interface ActionUsage;
+ interface AbstractActionUsage;
+ interface PortUsage;
+ interface ConjugatedPortUsage;
+
+
+
+ interface ParameterMember;
+ interface ParameterList;
+ interface ActivityBody;
+ interface ActivityBodyItem;
+ interface ActionParameterList;
+
+ EmptyActionUsage;
+ interface PerformedActionUsage;
+
+ EmptyParameter;
+ EmptyParameterMember = EmptyParameter;
+}

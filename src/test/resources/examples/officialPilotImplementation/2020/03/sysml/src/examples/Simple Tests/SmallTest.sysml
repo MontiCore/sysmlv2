@@ -1,0 +1,3 @@
+block A {
+	part a;	
+}

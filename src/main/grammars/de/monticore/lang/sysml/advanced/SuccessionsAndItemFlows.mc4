@@ -1,0 +1,84 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.advanced;
+
+
+component grammar SuccessionsAndItemFlows extends de.monticore.lang.sysml.basics.SysMLCommon {
+
+  /* SUCCESSIONS */
+  NonPortStructureUsageMemberSuccession implements NonPortStructureUsageMember =
+    ["abstract"]? "succession" Succession;
+
+  Succession = SuccessionDeclaration ";";
+  symbol SuccessionDeclaration = ( SysMLName? TypePart? "first" )? ConnectorEndMember "then" ConnectorEndMember;
+  astrule SuccessionDeclaration =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+    }
+  ;
+  TargetSuccession = "then" MultiplicitySourceEndMember ConnectorEndMember;
+  EmptySuccession =  "then" MultiplicitySourceEndMember EmptyTargetEndMember;
+  symbol GuardedSuccession = "succession" (SysMLName? TypePart? "first")?
+    TransitionSourceMember GuardExpressionMember "then" TransitionSuccessionMember;
+  astrule GuardedSuccession =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+    }
+  ;
+
+  GuardedTargetSuccession = GuardExpressionMember  "then" TransitionSuccessionMember;
+  DefaultTargetSuccession = "else" TransitionSuccessionMember;
+
+  /* TRANSITIONS */
+  TransitionStep = "transition" (SysMLNameAndTypePart? "first")? TransitionSourceMember
+    TriggerStepMember? GuardExpressionMember? EffectBehaviorMember? "then" TransitionSuccessionMember;
+  TargetTransitionStep = TriggerStepMember? GuardExpressionMember? EffectBehaviorMember? "then"
+  TransitionSuccessionMember;
+  TriggerStep = EmptyParameterMember ItemFeatureMember;
+  EffectBehaviourUsage = EmptyActionUsage | PerformedActionUsage ( "{" ActivityBodyItem* "}" )?;
+  TransitionSuccession = EmptySourceEndMember ConnectorEndMember;
+
+  /* TRANSITION MEMBERSHIPS */
+  TransitionSourceMember = memberFeature:QualifiedName;
+  TransitionSuccessionMember = TransitionSuccession;
+  TriggerStepMember = "accept" TriggerStep;
+  GuardExpressionMember = "if" Expression;
+  EffectBehaviorMember = "do" EffectBehaviourUsage;
+
+ /* ITEM FLOWS */
+  NonPortStructureUsageMemberItemFlow implements NonPortStructureUsageMember =
+    ["abstract"]? "stream" ItemFlow;
+  NonPortStructureUsageMemberSuccessionItemFlow implements NonPortStructureUsageMember =
+    ["abstract"]? "flow" SuccessionItemFlow;
+
+  ItemFlow = ItemFlowDeclaration DefinitionBody;
+  SuccessionItemFlow = ItemFlowDeclaration DefinitionBody;
+  symbol ItemFlowDeclaration = ( (SysMLName)? TypePart?
+    (( "of" ItemFeatureMember) | (EmptyItemFeatureMember))
+    "from" | EmptyItemFeatureMember )
+    ItemFlowEndMember "to" ItemFlowEndMember;
+  astrule ItemFlowDeclaration =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43";
+    }
+  ;
+
+  ItemFeatureTyping = FeatureTyping MultiplicityMember?;
+  EmptyItemFeature;
+  ItemFlowEnd = ItemFlowFeatureMember;
+  ItemFlowFeature = Redefinition;
+
+  /* ITEM FLOW MEMBERSHIPS */
+  ItemFeatureMember = (memberName:SysMLName TypedByKeyword)? ItemFeatureTyping;
+  ItemFlowEndMember = ItemFlowEnd;
+  ItemFlowFeatureMember = ItemFlowFeature;
+  EmptyItemFeatureMember = EmptyItemFeature;
+}

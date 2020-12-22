@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.basics.sysmldefault;
+
+component grammar Visibility extends de.monticore.lang.sysml.basics.interfaces.VisibilityBasis {
+ PackageElementVisibilityIndicatorStd implements PackageElementVisibilityIndicator = vis:VISIBILITYSHORT;
+ VisibilityIndicatorStd implements VisibilityIndicator = vis:VISIBILITYLONG;
+
+ enum VISIBILITYSHORT = "public" | "private";
+ enum VISIBILITYLONG = "public" | "private" | "protected" | "package";
+}

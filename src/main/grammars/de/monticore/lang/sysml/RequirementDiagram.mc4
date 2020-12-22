@@ -1,8 +1,79 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml;
 
+component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.SysMLAdvanced
+  {
 
-grammar RequirementDiagram extends de.monticore.lang.sysml.SysMLBasics {
-  
-  Requirement = "requirement" Name;
+  /* REQUIREMENT DEFINITIONS */
+
+  symbol RequirementDefinition implements PackagedDefinitionMember = RequirementDefDeclaration RequirementBody;
+  astrule RequirementDefinition =
+    method public String getName(){
+      return this.getRequirementDefDeclaration().getName();
+    }
+  ;
+  RequirementDefDeclaration = ["abstract"]? "requirement" "def" ("id" reqId:SysMLName)? SysMLName
+    RequirementDefParameterList EmptyReturnParameterPart SuperclassingList?;
+  astrule RequirementDefDeclaration =
+    method public String getName(){
+      return this.getSysMLName().getName();
+    }
+  ;
+
+  RequirementDefParameterList = EmptyParameterMember
+    | ( "(" EmptyParameterMember ")")
+    | ( "(" (ParameterMember || ",")+ ")" ) ;
+  scope RequirementBody = ";" | ( "{" RequirementMembers "}" );
+  RequirementMembers = (NestedDefinitionMember | NestedUsageMember |  RequirementConstraintMember | ImportUnit )*;
+
+  symbol RequirementConstraintUsage = ((( SysMLName)? TypePart? "as")? Subset | "constraint" (SysMLName)? TypePart?)
+     ConstraintParameterPart ConstraintBody;
+  astrule RequirementConstraintUsage =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+    }
+  ;
+  /* REQUIREMENT DEFINITION MEMBERSHIPS */
+
+  RequirementConstraintMember = DefinitionMemberPrefix RequirementConstraintKind RequirementConstraintUsage;
+  RequirementConstraintKind = assumption:["assume"] | requirement:["require"];
+
+  /* REQUIREMENTS */
+
+  RequirementUsagePackagedUsageMember implements PackagedUsageMember = ["abstract"]? "requirement" RequirementUsage;
+  BehaviorUsageMemberRequirementUsage implements BehaviorUsageMember =
+    DefinitionMemberPrefix ["abstract"]?  ("ref" "requirement" | isComposite:"requirement") RequirementUsage;
+  BehaviorUsageMemberSatisfyRequirementUsage implements BehaviorUsageMember =
+    DefinitionMemberPrefix  "satisfy" SatisfyRequirementUsage;
+
+  scope RequirementUsage = RequirementDeclaration RequirementBody;
+  RequirementDeclaration  = ( "id" reqId:SysMLName)?
+    (SysMLNameAndTypePart ConstraintParameterPart
+    | TypePart? ( ActionParameterList EmptyReturnParameterPart )? ValuePart?
+  	| RedefinesKeyword Redefinition
+  	TypePart? ActionParameterList? EmptyReturnParameterPart ValuePart?
+  	);
+
+  symbol scope SatisfyRequirementUsage =
+    (((firstName:SysMLName)? firstType:TypePart? "as")? Subset
+    | "requirement" (secondName:SysMLName)? secondType:TypePart?)
+    ( "by" SatisfactionConnectorMember)?
+    ConstraintParameterPart InvariantPart RequirementBody;
+  astrule SatisfyRequirementUsage =
+    method public String getName(){
+      if( this.isPresentFirstName()){
+        return this.getFirstName().getName();
+      } else  if (this.isPresentSecondName()){
+        return this.getSecondName().getName();
+      }
+      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+    }
+  ;
+  SatisfactionConnector = EmptySourceEndMember ConnectorEndMember;
+
+  /* REQUIREMENT MEMBERSHIPS */
+  SatisfactionConnectorMember = SatisfactionConnector;
 }

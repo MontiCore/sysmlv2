@@ -1,0 +1,115 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.basics;
+
+component grammar Ports extends de.monticore.lang.sysml.basics.Usages,
+  de.monticore.lang.sysml.basics.Associations{
+
+  /* PORT DEFINITIONS */
+
+  symbol scope PortDefinitionStd implements PortDefinition, PackagedDefinitionMember  = PortDeclaration DefinitionBody;
+  astrule PortDefinitionStd =
+    method public String getName(){
+      return this.getPortDeclaration().getName();
+    }
+  ;
+  PortDeclaration = ["abstract"]? "port" "def" ClassifierDeclarationCompletion ConjugatedPortDefinitionMember;
+  astrule PortDeclaration =
+    method public String getName(){
+      return this.getClassifierDeclarationCompletion().getName();
+    }
+  ;
+  ConjugatedPortDefinition = PortConjugation;
+  PortConjugation;
+
+  /* PORT DEFINITION MEMBERSHIPS */
+
+  ConjugatedPortDefinitionMember = ConjugatedPortDefinition;
+
+  /* PORT USAGE */
+
+  PortUsageStd implements PortUsage = Usage;
+  ConjugatedPortUsageStd implements ConjugatedPortUsage= ConjugatePortUsageDeclaration UsageCompletion;
+  symbol ConjugatePortUsageDeclaration =
+    SysMLName? ConjugatePortTypePart MultiplicityPart? SubsettingPart
+    | RedefinesKeyword Redefinition ConjugatePortTypePart MultiplicityPart SubsettingPart;
+  astrule ConjugatePortUsageDeclaration =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43";
+    }
+  ;
+  ConjugatePortTypePart = TypedByKeyword "~" ConjugatedPortTyping; //TypedByKeyword is defined in Usages
+  ConjugatedPortTyping = SysMLName; // Remark: [SysML::PortDefinition | QualifiedName]
+
+  /* Connectors */
+
+  NonPortStructureUsageMemberConnectionUsage implements NonPortStructureUsageMember =
+    ["abstract"]? "link" ConnectionUsage;
+  NonPortStructureUsageMemberConnector implements NonPortStructureUsageMember =
+    ["abstract"]? "connect" Connector;
+
+  Connector = ConnectionPart AssociationBlockBody;
+  ConnectionUsage = UsageDeclaration "connect" ConnectionPart AssociationBlockBody;
+  ConnectionPart =  ownedFeatureMembership_compFrom:ConnectorEndMember "to"
+      ownedFeatureMembership_compTo:ConnectorEndMember
+      | ( "(" ( ConnectorEndMember | ",") ( ConnectorEndMember | ",")+ ")");
+
+  ConnectorEnd = Subset MultiplicityMember?;
+
+  MultiplicitySourceEnd = MultiplicityMember?;
+  EmptySourceEnd;
+  EmptyTargetEnd;
+
+  /* CONNECTOR MEMBERSHIPS */
+  /*
+   * memberName may only referece property of an interface.
+   */
+  ConnectorEndMember = (memberName:SysMLName "=>" )? ConnectorEnd;
+
+  MultiplicitySourceEndMember = MultiplicitySourceEnd;
+  EmptySourceEndMember = EmptySourceEnd;
+  EmptyTargetEndMember = EmptyTargetEnd;
+
+  /* INTERFACE CONNECTORS */
+  InterfaceUsage = UsageDeclaration "connect" ConnectionPart InterfaceBody;
+  NonPortStructureUsageMemberInterfaceUsage implements NonPortStructureUsageMember =
+    ["abstract"]? "interface" InterfaceUsage;
+
+  /* BINDING CONNECTORS */
+  NonPortStructureUsageMemberBindingConnector implements NonPortStructureUsageMember =
+    "bind" BindingConnector;
+
+  symbol BindingConnector = (SysMLName? TypePart? "as")?
+    ConnectorEndMember "=" ConnectorEndMember DefinitionBody;
+  astrule BindingConnector =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+    }
+  ;
+
+  /* INTERFACE DEFINITIONS */
+  InterfaceDefinitionUnit implements Unit = UnitPrefix InterfaceDefinition;
+  InterfaceDefinition implements PackagedDefinitionMember = InterfaceDeclaration InterfaceBody;
+  InterfaceDeclaration = ["abstract"]? "interface" "def" ClassifierDeclarationCompletion;
+  InterfaceBody = ";" | (
+     "{"
+      (NestedDefinitionMember | InterfaceUsageMember | ImportUnit)*
+     "}"
+    );
+
+  /* INTERFACE DEFINITION MEMBERSHIPS */
+
+  InterfaceUsageMember = NestedUsageMember | InterfaceEndMember | ConjugatedInterfaceEndMember ;
+  InterfaceEndMember = DefinitionMemberPrefix
+    ( ["abstract"]? "end" ["port"]? PortUsage);
+    //isPort ?= 'end' is in Xtext, which is most likely an error and should be isPort ?= 'port'. This is defined here.
+  ConjugatedInterfaceEndMember = DefinitionMemberPrefix
+    (["abstract"]? "end" ["port"]? ConjugatedPortUsage);
+    //isPort ?= 'end' is in Xtext, which is most likely an error and should be isPort ?= 'port'. This is defined here.
+
+}

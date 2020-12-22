@@ -1,4 +1,4 @@
-// (c) https://github.com/MontiCore/monticore
+ // (c) https://github.com/MontiCore/monticore
 
 /* ============================================================ */
 /* ========================= Plugins ========================== */
@@ -6,10 +6,11 @@
 
 plugins {
     id 'java'
-    id "monticore" version "6.1.0-SNAPSHOT"
+    id "monticore" version "6.7.0-SNAPSHOT"
     id 'maven-publish'
     id "com.github.johnrengelman.shadow" version "4.0.4"
     id "com.adarshr.test-logger" version "2.0.0"
+    id "de.set.ecj" version "1.4.1"
 }
 
 /* ============================================================ */
@@ -17,7 +18,7 @@ plugins {
 /* ============================================================ */
 
 group = 'de.monticore.lang'
-version = '0.1-SNAPSHOT'
+version = '6.7.0-SNAPSHOT'
 description = 'sysml2official'
 sourceCompatibility = '1.8'
 
@@ -25,10 +26,16 @@ sourceCompatibility = '1.8'
 /* ========================= Versions ========================= */
 /* ============================================================ */
 
-def monticore_version = "6.1.0"
+def monticore_version = "6.7.0-SNAPSHOT"
 def junit_version = "4.13.1"
+ def commons_cli_version = "1.4"
+ def sclang_version = "1.1.5-SNAPSHOT"
+ def montiarc_version = "6.0.0-SNAPSHOT"
 def grammar_classifier = "grammars"
 def grammarDir = "src/main/grammars"
+ def se_commons_version = "1.7.11-SNAPSHOT"
+ def commons_lang_version = "3.0"
+ def archiveBaseName = "SysML"
 
 /* ============================================================ */
 /* ======================= Configuration ====================== */
@@ -36,7 +43,7 @@ def grammarDir = "src/main/grammars"
 
 // configure non-standard source sets
 sourceSets {
-    main.java.srcDirs += [ "$projectDir/target/generated-sources/monticore/sourcecode"]
+    main.java.srcDirs += ["$projectDir/target/generated-sources/monticore/sourcecode"]
 
     test {
         java.srcDir "$projectDir/src/test/java"
@@ -45,7 +52,7 @@ sourceSets {
 }
 buildDir = file("$projectDir/target")
 
-configurations {grammar}
+configurations { grammar }
 
 test {
     useJUnit()
@@ -60,18 +67,25 @@ repositories {
     mavenCentral()
     maven {
         credentials.username mavenUser
-        credentials.password System.getenv("cibuild")
-        url = 'https://nexus.se.rwth-aachen.de/content/groups/se/'
+        credentials.password mavenPassword
+        url = 'https://nexus.se.rwth-aachen.de/content/groups/public/'
     }
 }
 
 dependencies {
     grammar "de.monticore:monticore-grammar:$monticore_version:$grammar_classifier"
+    grammar "de.monticore.lang:scgrammar:$sclang_version:$grammar_classifier"
+    //grammar "montiarc.languages:montiarc-fe:$montiarc_version:$grammar_classifier"
+    implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
+    implementation "org.apache.commons:commons-lang3:$commons_lang_version"
     implementation "org.antlr:antlr4-runtime:4.7.1"
     implementation "de.monticore:monticore-generator:$monticore_version"
     implementation "de.monticore:monticore-runtime:$monticore_version"
     implementation "de.monticore:monticore-grammar:$monticore_version"
+    implementation "de.monticore.lang:scgrammar:$sclang_version"
     implementation "org.assertj:assertj-core:3.7.0"
+    implementation "commons-cli:commons-cli:$commons_cli_version"
+    //implementation "montiarc.languages:montiarc-fe:$montiarc_version"
     testImplementation "junit:junit:$junit_version"
     testImplementation "de.monticore:monticore-runtime:$monticore_version:tests"
     testImplementation "de.monticore:monticore-runtime:$monticore_version"
@@ -82,40 +96,98 @@ dependencies {
 /* ========================== Tasks =========================== */
 /* ============================================================ */
 
-fileTree(grammarDir).matching { include '**/*.mc4'}.each {
-  def g = it
-  task  "generate${it.getName().substring(0,it.getName().lastIndexOf('.'))}" (type: MCTask) {
-    grammar = file g
-    outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
-    def grammarIncludingPackage = file(grammarDir).toURI().relativize(g.toURI()).toString()
-    def uptoDate = incCheck(grammarIncludingPackage)
-    outputs.upToDateWhen { uptoDate }
-  }
+fileTree(grammarDir).matching { include '**/*.mc4' }.each {
+    def g = it
+    task "generate${it.getName().substring(0, it.getName().lastIndexOf('.'))}"(type: MCTask) {
+        grammar = file g
+        outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
+        def grammarIncludingPackage = file(grammarDir).toURI().relativize(g.toURI()).toString()
+        def uptoDate = incCheck(grammarIncludingPackage)
+        outputs.upToDateWhen { uptoDate }
+    }
 }
 
-generateAD.dependsOn generateSysMLBasics
-generateBDD.dependsOn generateSysMLBasics
-generateIBD.dependsOn generateSysMLBasics
-generatePackageDiagram.dependsOn generateSysMLBasics
-generateParametricDiagram.dependsOn generateSysMLBasics
-generateRequirementDiagram.dependsOn generateSysMLBasics
-generateSD.dependsOn generateSysMLBasics
-generateSMD.dependsOn generateSysMLBasics
-generateUseCaseDiagram.dependsOn generateSysMLBasics
+ /*This is generated*/
+generateAD.dependsOn generateSysMLCommon
 
-compileJava.dependsOn(
-  generateAD,
-  generateBDD,
-  generateIBD,
-  generatePackageDiagram,
-  generateParametricDiagram,
-  generateRequirementDiagram,
-  generateSD,generateSMD,
-  generateUseCaseDiagram,
-  generateSysML2)
+generateAssociations.dependsOn generateSysMLCommonBasis
+
+generateClassifiers.dependsOn generateSysMLCommonBasis
+/*
+generateCommentsBasis
+generateImportBasis
+
+generateNamesBasis
+generatePackageBasis
+generateVisibilityBasis*/
+generatePorts.dependsOn generateSysMLCommonBasis
+
+generateSysMLCommon.dependsOn generateClassifiers
+generateSysMLCommon.dependsOn generateValueTypes
+generateSysMLCommon.dependsOn generateUsages
+generateSysMLCommon.dependsOn generatePorts
+generateSysMLCommon.dependsOn generateSysMLCommonBasis
+
+generateSysMLCommonBasis.dependsOn generateCommentsBasis
+generateSysMLCommonBasis.dependsOn generateLiteralsBasis
+generateSysMLCommonBasis.dependsOn generateNamesBasis
+generateSysMLCommonBasis.dependsOn generatePackageBasis
+generateSysMLCommonBasis.dependsOn generateImportBasis
+generateSysMLCommonBasis.dependsOn generateVisibilityBasis
+
+generateComments.dependsOn generateSysMLCommonBasis
+
+generateExpressions.dependsOn generateSysMLCommonBasis
+
+generateImportsAndPackages.dependsOn generateSysMLCommonBasis
+
+
+generateNames.dependsOn generateSysMLCommonBasis
+
+generateSysMLBasicsDefault.dependsOn generateComments
+generateSysMLBasicsDefault.dependsOn generateExpressions
+generateSysMLBasicsDefault.dependsOn generateImportsAndPackages
+generateSysMLBasicsDefault.dependsOn generateLiterals
+generateSysMLBasicsDefault.dependsOn generateNames
+generateSysMLBasicsDefault.dependsOn generateVisibility
+
+generateVisibility.dependsOn generateSysMLCommonBasis
+
+generateUsages.dependsOn generateSysMLCommonBasis
+
+generateValueTypes.dependsOn generateSysMLCommonBasis
+
+generateBDD.dependsOn generateSysMLCommon
+
+ generateIBD.dependsOn generateSysMLCommon
+
+//generateNotDistributed.dependsOn generateSysMLCommon
+
+//generatePackageDiagram.dependsOn generateSysMLCommon
+
+ generateParametricDiagram.dependsOn generateSysMLCommon
+
+ generateRequirementDiagram.dependsOn generateSysMLCommon
+
+//generateSD.dependsOn generateSysMLCommon
+
+ generateSMD.dependsOn generateSysMLCommon
+
+ generateSysML.dependsOn generateBDD
+ generateSysML.dependsOn generateIBD
+ generateSysML.dependsOn generateAD
+ generateSysML.dependsOn generateSysMLBasicsDefault
+
+//generateUseCaseDiagram.dependsOn generateSysMLCommon
+
+
+compileJava.dependsOn (project.collect
+        { it.tasks.findAll { task -> task.name.startsWith("generate") } })
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 // build sources jar in addition
@@ -138,6 +210,17 @@ task grammarJar(type: Jar) {
     from("$projectDir/src/main/grammars/") { include "**/*.mc4" }
     archiveClassifier = "grammars"
 }
+ // all in one cli-jar
+ shadowJar {
+     manifest {
+         attributes "Main-Class": "de.monticore.SYSMLCLI"
+     }
+     archiveFileName = "SysML-cli.jar"
+     minimize()
+ }
+
+ jar.dependsOn shadowJar
+
 
 /* ============================================================ */
 /* ======================= Publishing ========================= */
@@ -163,3 +246,4 @@ publishing {
         url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
     }
 }
+

@@ -1,0 +1,34 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.basics;
+
+
+component grammar ValueTypes extends de.monticore.lang.sysml.basics.Usages{
+
+  /* VALUE TYPES */
+  ValueTypeUnit = UnitPrefix ValueType;
+  symbol scope ValueTypeStd implements ValueType, PackagedDefinitionMember =
+    ValueTypeDeclaration DefinitionBody;
+  astrule ValueTypeStd =
+    method public String getName(){
+      return this.getValueTypeDeclaration().getName();
+    }
+  ;
+
+  NonPortStructureUsageMemberValueProperty implements NonPortStructureUsageMember =
+      ["abstract"]? ["value"]? direction:FeatureDirection? ValueProperty;
+
+  ValueTypeDeclaration = ["abstract"]? "value" "type" ClassifierDeclarationCompletion;
+  astrule ValueTypeDeclaration =
+    method public String getName(){
+      return this.getClassifierDeclarationCompletion().getName();
+    }
+  ;
+
+  ValuePropertyStd implements PackagedUsageMember =
+    ["abstract"]? "value"? ValueProperty;
+  ValueProperty = Usage;
+
+  /* VALUE PROPERTIES */
+  ValueUnit implements Unit = UnitPrefix ValueDeclaration UsageCompletion;
+  ValueDeclaration = ["abstract"]? ["value"]? SysMLNameAndTypePart SubsettingPart;
+}

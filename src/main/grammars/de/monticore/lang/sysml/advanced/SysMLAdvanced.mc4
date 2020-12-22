@@ -1,0 +1,23 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.advanced;
+
+
+component grammar SysMLAdvanced extends de.monticore.lang.sysml.advanced.Definitions,
+ de.monticore.lang.sysml.advanced.SuccessionsAndItemFlows,
+ de.monticore.lang.sysml.advanced.Constraints {
+
+
+ /* ACTIVITIES */
+
+  ActionOrStateUsageDeclaration = (SysMLNameAndTypePart ActionParameterList? SubsettingPart ValuePart?)
+       | (TypePart? ActionParameterList? ValuePart?)
+       | (RedefinesKeyword Redefinition TypePart ActionParameterList? ValuePart?);
+  /*astrule ActionOrStateUsageDeclaration =  TODO how to handle this and how to handle optional names?
+       method public void setName(String name){
+         if(this.getSysMLName
+         this.getSysMLName().setName(name);
+       }
+       method public String getName(){
+         return this.getSysMLName().getName();
+       };*/
+}

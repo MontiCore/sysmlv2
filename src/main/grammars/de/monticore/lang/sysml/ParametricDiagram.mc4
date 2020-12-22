@@ -1,8 +1,50 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml;
 
-
-grammar ParametricDiagram extends de.monticore.lang.sysml.SysMLBasics {
+component grammar ParametricDiagram extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
   
-  Parametric = "param" Name;
+  /* INDIVIDUAL DEFINITIONS */
+  IndividualDefinitionUnit implements Unit = UnitPrefix IndividualDefinition;
+  symbol scope IndividualDefinition implements PackagedDefinitionMember = IndividualDefDeclaration DefinitionBody;
+  astrule IndividualDefinition =
+    method public String getName(){
+      return this.getIndividualDefDeclaration().getName();
+    }
+  ;
+  IndividualDefDeclaration = ["abstract"]? "individual" "def" ClassifierDeclarationCompletion
+    LifeClassMembership;
+  astrule IndividualDefDeclaration =
+    method public String getName(){
+      return this.getClassifierDeclarationCompletion().getName();
+    }
+  ;
+
+  LifeClass;
+
+  /* INDIVIDUAL DEFINITION MEMBERSHIPS */
+  LifeClassMembership = LifeClass;
+
+
+  /* INDIVIDUALS */
+
+  IndividualUsage = Usage;
+  TimeSliceUsage = UsageDeclaration TimeSliceFeatureMember UsageCompletion;
+  TimeSliceFeature;
+  SnapshotUsage = UsageDeclaration SnapshotFeatureMember UsageCompletion;
+  SnapshotFeature;
+
+  IndividualUsagePackagedUsageMember implements PackagedUsageMember =  ["abstract"]? "individual" IndividualUsage;
+  TimeSliceUsagePackagedUsageMember implements PackagedUsageMember =   ["abstract"]? "timeslice" TimeSliceUsage;
+  SnapshotUsagePackagedUsageMember implements PackagedUsageMember =    ["abstract"]? "snapshot" SnapshotUsage;
+  NonPortStructureUsageMemberIndividualUsage implements NonPortStructureUsageMember =
+    ["abstract"]? ( "ref" "individual" | isComposite:"individual") direction:FeatureDirection? IndividualUsage;
+  NonPortStructureUsageMemberTimeSliceUsage implements NonPortStructureUsageMember =
+    ["abstract"]? ( "ref" "timeslice" | isComposite:"timeslice") direction:FeatureDirection? TimeSliceUsage;
+  NonPortStructureUsageMemberSnapshotUsage implements NonPortStructureUsageMember =
+    ["abstract"]? ( "ref" "snapshot" | isComposite:"snapshot") direction:FeatureDirection? SnapshotUsage;
+
+  /* INDIVIDUAL MEMBERSHIPS */
+
+  TimeSliceFeatureMember = TimeSliceFeature;
+  SnapshotFeatureMember = SnapshotFeature;
 }
