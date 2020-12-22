@@ -10,7 +10,7 @@ import de.monticore.lang.sysml.prettyprint.PrettyPrinter2;
 import de.monticore.lang.sysml.sysml._ast.ASTSysMLNode;
 import de.monticore.lang.sysml.sysml._od.SysML2OD;
 import de.monticore.lang.sysml.sysml._symboltable.ISysMLArtifactScope;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLScopeDeSer;
+import de.monticore.lang.sysml.sysml._symboltable.SysMLDeSer;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.utils.Names;
 import de.se_rwth.commons.logging.Log;
@@ -88,7 +88,7 @@ public class SYSMLCLI {
 				Path output = Paths.get("target");
 				de.monticore.symboltable.serialization.JsonPrinter.disableIndentation();
 				String s = cmd.getOptionValue("symboltable", StringUtils.EMPTY);
-				SysMLScopeDeSer deser = new SysMLScopeDeSer();
+				SysMLDeSer deser = new SysMLDeSer();
 
 				if (!s.isEmpty()) {
 					String symbolFile = output.resolve(s.trim()).toAbsolutePath().toString();
@@ -141,7 +141,7 @@ public class SYSMLCLI {
 	 * path "target" will be: "target/abc/BasicPhone.sysmlsym"
 	 *
 	 */
-	private void storeSymbols(ISysMLArtifactScope symbolTable, Path output, SysMLScopeDeSer deser) {
+	private void storeSymbols(ISysMLArtifactScope symbolTable, Path output, SysMLDeSer deser) {
 		Path f = output
 			.resolve(Paths.get(Names.getPathFromPackage(symbolTable.getPackageName())))
 			.resolve(symbolTable.getName() + ".sysmlsym");
@@ -155,7 +155,7 @@ public class SYSMLCLI {
 	 * path "target" will be: "target/abc/BasicPhone.sysmlsym"
 	 *
 	 */
-	private void storeSymbols(ISysMLArtifactScope symbolTable, String output, SysMLScopeDeSer deser) {
+	private void storeSymbols(ISysMLArtifactScope symbolTable, String output, SysMLDeSer deser) {
 		String serialized = deser.serialize(symbolTable);
 		print(serialized, output);
 	}
