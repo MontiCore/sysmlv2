@@ -160,7 +160,7 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
     if (importIsOfTypeKerML(resolvedTypes, importName)) {
       // Do nothing, import is fine.
     }
-    else if (resolvedTypes.size() == 0 && !starImport && existingWarnings.size()==0) {
+    else if (resolvedTypes.size() == 0 && existingWarnings.size()==0) {
       warnings.add(new CoCoStatus(SysMLCoCoName.ImportResolves,
           "Could not resolve import \"" + importName.getFullQualifiedName() + "\"."));
     }

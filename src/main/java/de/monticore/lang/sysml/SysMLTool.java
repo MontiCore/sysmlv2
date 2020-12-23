@@ -46,7 +46,7 @@ public class SysMLTool {
           if (arg.length() > 5) {
             if (arg.startsWith("-lib=")) {
               libDirs.add(arg.substring(5));
-              Log.info("Searching for a lib directory here: " + arg.substring(5), SysMLTool.class.getName());
+              Log.info("Searching for a lib directory here: \"" + arg.substring(5)+ "\".", SysMLTool.class.getName());
             }
           }
           if (arg.equals("-cocosOff")) {
@@ -72,26 +72,26 @@ public class SysMLTool {
     // Parsing
     List<ASTUnit> models = parseDirectory(dir);
 
-    List<ASTUnit> allModelsToBuildSymbolTable = new ArrayList<>(); //We do not execute CoCos on the library
+    List<ASTUnit> allModels = new ArrayList<>(); //We do not execute CoCos on the library
     for (ASTUnit model : models) {
-      allModelsToBuildSymbolTable.add(model);
+      allModels.add(model);
     }
     //Do it again for the SysML Lib.
     for(int libIndex=0; libIndex<libDirs.size(); libIndex++) {
       List<ASTUnit> libModels = parseDirectory(libDirs.get(libIndex)); // Parsing
-      allModelsToBuildSymbolTable.addAll(libModels);
+      allModels.addAll(libModels);
     }
 
     // Symboltable
-    SysMLGlobalScope sysMLGlobalScope = buildSymbolTable(dir, allModelsToBuildSymbolTable);
+    SysMLGlobalScope sysMLGlobalScope = buildSymbolTable(dir, allModels);
 
     if(cocosOff){
       Log.info("Context Conditions are deactivated by \"-cocosOff\".", SysMLTool.class.getName());
     }else {
       // Context Conditions
       Log.info("Checking Context Conditions.", SysMLTool.class.getName());
-      if (libDirs.size()>1) {
-        Log.info("Libraries are not checked by the Context Conditions."
+      if (libDirs.size()>=1) {
+        Log.info("Libraries are not checked by the Context Conditions. "
             + "If you want to check them, just parse them with the first argument set to the library path.",
             SysMLTool.class.getName());
       }
@@ -101,7 +101,7 @@ public class SysMLTool {
     }
 
     Log.info("Models processed successfully.", SysMLTool.class.getName());
-    return models;
+    return allModels;
   }
 
   private static void printUsage(){
@@ -134,7 +134,7 @@ public class SysMLTool {
       return new ArrayList<>();
     }
 
-    Log.info("Parsing models in directory or file " + dir, SysMLTool.class.getName());
+    Log.info("Parsing models in directory or file: \"" + dir+ "\".", SysMLTool.class.getName());
     // Gathering all models in given directory "dir".
     List<String> filePaths = getSysMLFilePathsInDirectory(dir, true);
 

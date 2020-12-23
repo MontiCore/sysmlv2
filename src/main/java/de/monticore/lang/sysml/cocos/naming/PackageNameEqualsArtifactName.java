@@ -42,7 +42,7 @@ public class PackageNameEqualsArtifactName implements SysMLImportsAndPackagesAST
   }
 
   public void warnMessage(String name, ASTPackageUnit node){
-    Log.warn(SysMLCoCos.getErrorCode(SysMLCoCoName.PackageNameEqualsArtifactName) + " package " +name+
-        " should be equal to the Filename." , node.get_SourcePositionStart());
+    Log.warn(SysMLCoCos.getErrorCode(SysMLCoCoName.PackageNameEqualsArtifactName) + " package \"" +name+
+        "\" should be equal to the Filename." , node.get_SourcePositionStart());
   }
 }
