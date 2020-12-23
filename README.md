@@ -15,15 +15,7 @@ The language is a strict compatible superset of the SysML v2 syntax.
  this command skips the SysMLToolTest, which combines all Software Components. 
  This testing is especially useful when developing the parser.
 
-## About this project
-We fully support the official SysML  v2 models but currently do not support importing KerML models and some of the
- implemented CoCos restrict the official syntax. 
-Thus, CoCos for resolving importing models (possible KerML models) and CoCos, which restrict the official syntax 
- only emit warnings and not errors. 
-This project builds on the 2020-03 
- [official pilot implementation](http://openmbee.org/sysml-v2-release/2020-03)
- of SysML v2, but is realized with a new architecture,
- an improved abstract syntax and new functionality, such as the additional CoCos. 
+
  ## SysMLTool
  
  We provide the class `SysMLTool` to use our implementation of SysML v2. The main method takes the following parameters:
@@ -50,7 +42,16 @@ This project builds on the 2020-03
  ## Grammars - Composing SysML v2
  ![SysMLLangage](architecturedoc/SysMLAndAdvanced.png) 
  
- 
+ ## Context Conditions - Warnings instead of Errors
+ We fully support the official SysML  v2 models but currently do not support importing KerML models and some of the
+  implemented CoCos restrict the official syntax. 
+ Thus, CoCos for resolving importing models (possible KerML models) and CoCos, which restrict the official syntax 
+  only emit warnings and not errors. 
+ This project builds on the 2020-03 
+  [official pilot implementation](http://openmbee.org/sysml-v2-release/2020-03)
+  of SysML v2, but is realized with a new architecture,
+  an improved abstract syntax and new functionality, such as the additional CoCos. 
+  
  ## Further Information
  
  * [Project root: MontiCore @github](https://github.com/MontiCore/monticore)
