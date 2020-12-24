@@ -7,9 +7,9 @@ The language is a strict compatible superset of the SysML v2 syntax.
 
 ## Useful Maven commands
 
-``mvn clean install `` : Builds and tests everything)
+``mvn clean install `` : Builds and tests everything.
 
-``mvn install -DskipTests`` : Only builds the project
+``mvn install -DskipTests`` : Only builds the project.
 
 ``mvn install -Pdev-skip-slow-tests``:  Activates profile which skips slow tests, but should be used carefully, since
  this command skips the SysMLToolTest, which combines all Software Components. 
@@ -51,6 +51,8 @@ The language is a strict compatible superset of the SysML v2 syntax.
   [official pilot implementation](http://openmbee.org/sysml-v2-release/2020-03)
   of SysML v2, but is realized with a new architecture,
   an improved abstract syntax and new functionality, such as the additional CoCos. 
+  Since SysML v2 is currently in development, this MontiCore
+   project is not stable and will be updated in the future according to the future releases.
   
  ## Further Information
  
