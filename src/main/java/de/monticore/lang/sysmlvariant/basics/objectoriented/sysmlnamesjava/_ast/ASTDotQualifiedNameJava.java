@@ -1,8 +1,6 @@
 package de.monticore.lang.sysmlvariant.basics.objectoriented.sysmlnamesjava._ast;
 
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTQualifiedName;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTSysMLName;
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 
 import java.util.ArrayList;
 import java.util.List;

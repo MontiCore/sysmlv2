@@ -2,8 +2,6 @@ package de.monticore.lang.sysml.cocos.naming;
 
 import de.monticore.lang.sysml.cocos.SysMLCoCoName;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
-import de.monticore.lang.sysml.common.sysmlclassifiers._ast.ASTClassifierDeclarationCompletionStd;
-import de.monticore.lang.sysml.common.sysmlclassifiers._cocos.SysMLClassifiersASTClassifierDeclarationCompletionStdCoCo;
 import de.monticore.lang.sysml.common.sysmlusages._ast.ASTUsageDeclaration;
 import de.monticore.lang.sysml.common.sysmlusages._cocos.SysMLUsagesASTUsageDeclarationCoCo;
 import de.se_rwth.commons.logging.Log;

@@ -4,9 +4,6 @@ import de.monticore.cocos.helper.Assert;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ResolveQualifiedNameHelper;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
-import de.monticore.lang.sysml.cocos.SysMLCoCoName;
-import de.monticore.lang.sysml.cocos.SysMLCoCos;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Finding;
@@ -22,7 +19,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Robin Muenstermann

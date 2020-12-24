@@ -27,9 +27,6 @@ public class SysMLCoCos {
     checker.addCoCo((SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo) new ImportStatementValid());
     checker.addCoCo((SysMLImportsAndPackagesASTImportUnitStdCoCo) new ImportStatementValid());
 
-
-
-
     return checker;
   }
 

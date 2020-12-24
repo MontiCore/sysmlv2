@@ -2,9 +2,7 @@ package de.monticore.lang.sysml._symboltable;
 
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ResolveQualifiedNameHelper;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
-import de.monticore.lang.sysml.basics.interfaces.sysmlpackagebasis._ast.ASTPackagedDefinitionMember;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTAliasPackagedDefinitionMember;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackage;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._symboltable.ISysMLImportsAndPackagesScope;
 import de.monticore.lang.sysml.bdd._ast.ASTBlock;
@@ -15,7 +13,6 @@ import de.se_rwth.commons.logging.Log;
 import org.antlr.v4.runtime.RecognitionException;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;

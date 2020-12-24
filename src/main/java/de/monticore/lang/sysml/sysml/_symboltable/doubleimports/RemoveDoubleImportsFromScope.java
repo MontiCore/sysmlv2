@@ -12,7 +12,9 @@ import de.monticore.lang.sysml.cocos.SysMLCoCoName;
 import de.monticore.lang.sysml.sysml._visitor.SysMLInheritanceVisitor;
 import de.se_rwth.commons.SourcePosition;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Robin Muenstermann
@@ -75,8 +77,6 @@ public class RemoveDoubleImportsFromScope implements SysMLInheritanceVisitor {
       importUnit.getWarnings().addAll(checkForRemoveTheseAndAddWarning(allImports, importUnit.getTransitiveImports(),
           importUnit.get_SourcePositionStart()));
     }
-
-    //Remove and add warning.
   }
 
   private List<CoCoStatus> checkForRemoveTheseAndAddWarning(List<SysMLTypeSymbol> checkList, List<SysMLTypeSymbol> checkThese,

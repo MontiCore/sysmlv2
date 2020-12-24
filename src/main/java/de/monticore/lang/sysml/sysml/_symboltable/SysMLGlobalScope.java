@@ -1,10 +1,5 @@
 package de.monticore.lang.sysml.sysml._symboltable;
 
-import de.monticore.types.typesymbols._symboltable.MethodSymbol;
-import de.se_rwth.commons.logging.Log;
-
-import java.util.List;
-
 /**
  * @author Robin Muenstermann
  * @version 1.0

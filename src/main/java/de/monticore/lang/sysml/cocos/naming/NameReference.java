@@ -2,13 +2,9 @@ package de.monticore.lang.sysml.cocos.naming;
 
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTQualifiedName;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._cocos.SysMLNamesBasisASTQualifiedNameCoCo;
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.ISysMLNamesBasisScope;
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysml.cocos.SysMLCoCoName;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.se_rwth.commons.logging.Log;
-
-import java.util.Optional;
 
 /**
  * @author Robin Muenstermann
@@ -18,11 +14,6 @@ public class NameReference implements SysMLNamesBasisASTQualifiedNameCoCo {
 
   @Override
   public void check(ASTQualifiedName qualifiedName) {
-    //String reference = qualifiedName.getReferencedName();
-
-    //Log.info("Checking to resolve name " + reference, this.getClass().getName());
-    //ISysMLNamesBasisScope scope =  qualifiedName.getEnclosingScope();
-    //Optional<SysMLTypeSymbol> type = scope.resolveSysMLType(reference);
     if(qualifiedName.resolveSymbols().size()>0){
       //Log.info("Block could be resolved. " + reference, this.getClass().getName());
     }else {
