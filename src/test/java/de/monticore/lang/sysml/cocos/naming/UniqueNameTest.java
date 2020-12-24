@@ -61,8 +61,6 @@ public class UniqueNameTest extends AbstractSysMLTest {
     assertEquals(2, Log.getFindings().size());
     assertTrue(Log.getFindings().stream().findFirst().get().isWarning());
 
-    // System.out.println(getFindingsOutput());
-
     assertTrue(getFindingsOutput().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.UniqueName)) +" Name \"Car\" "
             + "is not unique in its scope. Check definitions in scope at:"));
     /*

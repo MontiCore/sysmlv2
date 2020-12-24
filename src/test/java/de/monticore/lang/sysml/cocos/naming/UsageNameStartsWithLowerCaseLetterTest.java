@@ -68,6 +68,5 @@ public class UsageNameStartsWithLowerCaseLetterTest extends AbstractSysMLTest {
     );
 
     Assert.assertErrors(expectedWarnings, Log.getFindings());
-    //System.out.println("Finished testing valid " + this.getClass().getName());
   }
 }

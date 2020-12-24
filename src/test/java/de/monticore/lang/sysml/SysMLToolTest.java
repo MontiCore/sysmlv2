@@ -97,9 +97,6 @@ public class SysMLToolTest {
 
     SysMLTool.main(new String[] { pathToSrcDir + "/training/", "-lib=" + pathToLibDir }); //Same files as in
     // src/main/resources/SysML Domain Libraries but for testing.
-    //AbstractSysMLTest.printAllFindings();
-    //System.out.println("Found " + Log.getFindings().size() + " findings.");
-    //assertEquals(36, Log.getFindings().size());
     for (Finding f : Log.getFindings()) { //not equal to filename coco, double definition (e.g. mm) at SI
       boolean filenameCoCo = f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsArtifactName)));
       boolean doubleImport =
@@ -153,12 +150,9 @@ public class SysMLToolTest {
     // We do not consider CoCos here, because the CoCos restrict the official models, which leads to many
     // CoCo violations. This method just tests, if any errors are thrown (e.g., when isPresent is not called before
     // the get method).
-    /*for (Finding f : Log.getFindings()) {
-      boolean filenameCoCo = f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsFileName)));
-      boolean doubleImport =
-          f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportedElementNameAlreadyExists)));
-      assertTrue("Did not expect the Finding:" + f.toString(), filenameCoCo || doubleImport);
-    }*/
+    for (Finding f : Log.getFindings()) {
+      assertTrue(!f.isError());
+    }
   }
   @Test
   public void toolParseAndCheckAllValidationExamplesWithMultipleLibDirCoCosTest() {
@@ -167,11 +161,8 @@ public class SysMLToolTest {
     // We do not consider CoCos here, because the CoCos restrict the official models, which leads to many
     // CoCo violations. This method just tests, if any errors are thrown (e.g., when isPresent is not called before
     // the get method).
-    /*for (Finding f : Log.getFindings()) {
-      boolean filenameCoCo = f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsFileName)));
-      boolean doubleImport =
-          f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportedElementNameAlreadyExists)));
-      assertTrue("Did not expect the Finding:" + f.toString(), filenameCoCo || doubleImport);
-    }*/
+    for (Finding f : Log.getFindings()) {
+      assertTrue(!f.isError());
+    }
   }
 }

@@ -2,6 +2,7 @@ package de.monticore.lang.sysml.cocos.naming;
 
 import de.monticore.lang.sysml.ad._ast.ASTActivity;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTSysMLType;
+import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ResolveQualifiedNameHelper;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._cocos.SysMLNamesBasisASTSysMLTypeCoCo;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackage;
@@ -16,6 +17,7 @@ import de.monticore.lang.sysml.requirementdiagram._ast.ASTRequirementDefinition;
 import de.monticore.lang.sysml.stm._ast.ASTStateDefinition;
 import de.se_rwth.commons.logging.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,21 +27,20 @@ import java.util.List;
 public class UniqueName implements SysMLNamesBasisASTSysMLTypeCoCo {
   @Override
   public void check(ASTSysMLType node) {
-    // System.out.println("Visiting node " + node.getName());
     if (node.getName().equals("")) {
       return;
     }
-    //All names definitions have to be unique.
-
-    List<SysMLTypeSymbol> symbols = node.getEnclosingScope().resolveSysMLTypeMany(node.getName());
-    // System.out.println("Resolved following symbols for " + node.getName() + symbols.toString());
-    if (symbols.size() != 1) {
-      if (symbols.size() == 0) {
+    //All name definitions in a scope have to be unique. Multiple same packages in different artifacts is okay, but
+    // not in the same artifact or two equal package definitions in the same enclosing scope (e.g., in a package).
+    List<SysMLTypeSymbol> symbolsWithEqualName = ResolveQualifiedNameHelper.
+        resolveNameAsSysMLType(node.getName(), node.getEnclosingScope());
+    if (symbolsWithEqualName.size() != 1) {
+      if (symbolsWithEqualName.size() == 0) {
         Log.error("Internal error. Resolved a symbol in its own scope and could not resolve it. " + this.getClass().getName());
       }
       else {
         String allnames = new String();
-        for (SysMLTypeSymbol symbol : symbols) {
+        for (SysMLTypeSymbol symbol : symbolsWithEqualName) {
           allnames += ("," + symbol.getSourcePosition().toString());
         }
         allnames = allnames.substring(1);
@@ -47,7 +48,7 @@ public class UniqueName implements SysMLNamesBasisASTSysMLTypeCoCo {
       }
     }
     else {
-      return; // Can have multiple definitions: ASTItemFlow
+      return;
     }
   }
 }

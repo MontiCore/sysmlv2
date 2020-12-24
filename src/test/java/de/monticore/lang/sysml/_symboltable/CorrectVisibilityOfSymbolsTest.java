@@ -43,7 +43,6 @@ public class CorrectVisibilityOfSymbolsTest extends AbstractSysMLTest {
   @Test
   public void testIfVisibilityIsConsideredInImport() {
     List<ASTUnit> models = this.validParseAndBuildSymbolsInSubDir("/imports/visibilityOfSymbols");
-    //System.out.println("Parsed and build, now testing.");
     //Checking Resolving with a name without ASTQualifiedName
     assertTrue(models.size() != 0);
     List<String> packageWithImportsQN = new ArrayList();
@@ -68,9 +67,7 @@ public class CorrectVisibilityOfSymbolsTest extends AbstractSysMLTest {
 
   @Test
   public void testIfRexportWorksWithCorrectVisibility() {
-    //System.out.println("Starting");
     List<ASTUnit> models = this.validParseAndBuildSymbolsInSubDir("/imports/reexportImports");
-    //System.out.println("Parsed and build, now testing.");
     //Checking Resolving with a name without ASTQualifiedName
     assertTrue(models.size() != 0);
     List<String> packageWithImportsQN = new ArrayList();

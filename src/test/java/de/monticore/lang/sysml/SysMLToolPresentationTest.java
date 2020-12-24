@@ -62,6 +62,28 @@ public class SysMLToolPresentationTest extends AbstractSysMLTest {
             models.get(0).getEnclosingScope().getEnclosingScope()); // This is the global scope
     assertEquals(1, packageWithImportsSymbol.size());
 
+
+    ArrayList<String> qualifiedNameWithDotCarSeat = new ArrayList<String>(
+        Arrays.asList(
+            "mySeats",
+            "Car.Seat"));
+
+    List<SysMLTypeSymbol> qualifiedNameWithDotCarSeatSymbol = ResolveQualifiedNameHelper.
+        resolveQualifiedNameAsListInASpecificScope(qualifiedNameWithDotCarSeat,
+            models.get(0).getEnclosingScope().getEnclosingScope());
+    assertEquals(1, qualifiedNameWithDotCarSeatSymbol.size());
+
+    ArrayList<String> qualifiedNameWithDotCarSeatWRONG = new ArrayList<String>(
+        Arrays.asList(
+            "mySeats",
+            "Car","Seat"));
+
+    List<SysMLTypeSymbol> qualifiedNameWithDotCarSeatWRONGSymbol = ResolveQualifiedNameHelper.
+        resolveQualifiedNameAsListInASpecificScope(qualifiedNameWithDotCarSeatWRONG,
+            models.get(0).getEnclosingScope().getEnclosingScope());
+    assertEquals(0, qualifiedNameWithDotCarSeatWRONGSymbol.size());
+
+
     assertEquals(0, Log.getErrorCount());
     Collection<Finding> expectedWarnings = Arrays.asList(
         Finding.warning("0xA7156 Could not resolve import \"wrongImport\".",

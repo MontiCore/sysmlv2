@@ -6,4 +6,6 @@ package 'mySeats' {
 	}
 
 	block LuxusSeat :> Seat;
+
+	block 'Car.Seat';
 }

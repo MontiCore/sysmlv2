@@ -126,7 +126,6 @@ public class ResolveQualifiedNameHelper {
       boolean firstName) {
     List<ISysMLNamesBasisScope> res = new ArrayList<>();
     for (ISysMLNamesBasisScope currentScope : top.getSubScopes()) {
-      //outForTesting("Looking for scope with Name " + name + " current scope has name " + currentScope.getName());
       if (currentScope.isPresentName()) {
         if (currentScope.getName().equals(name)) {
           /*if(!firstName && resolveNameAsSysMLType(name, top).size()==1){ // Do not add private scopes.
@@ -145,10 +144,14 @@ public class ResolveQualifiedNameHelper {
     return res;
   }
 
-  private static List<SysMLTypeSymbol> resolveNameAsSysMLType(String name, ISysMLNamesBasisScope scope) {
-    //outForTesting("Looking for SysMLSymbolType with Name " + name + " in scope " + scope.getName());
-    List<SysMLTypeSymbol> res = scope.resolveSysMLTypeMany(name);
-    //outForTesting("Found " + res.size() + " matching symbols.");
-    return res;
+  public static List<SysMLTypeSymbol> resolveNameAsSysMLType(String name, ISysMLNamesBasisScope scope) {
+    List<SysMLTypeSymbol> allSymbolsInScope = scope.getSysMLTypeSymbols().values();
+    List<SysMLTypeSymbol> symbolsWithEqualName = new ArrayList<>();
+    for (SysMLTypeSymbol s: allSymbolsInScope) {
+      if(s.getName().equals(name)){
+        symbolsWithEqualName.add(s);
+      }
+    }
+    return symbolsWithEqualName;
   }
 }
