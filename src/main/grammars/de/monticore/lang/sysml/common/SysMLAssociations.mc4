@@ -4,7 +4,6 @@ package de.monticore.lang.sysml.common;
 component grammar SysMLAssociations extends de.monticore.lang.sysml.common.SysMLCommonBasis {
 
   /* ASSOCIATION BLOCKS */
-
   AssociationBlockUnit implements Unit = UnitPrefix AssociationBlock;
   AssociationBlock implements SysMLType, PackagedDefinitionMember =
     AssociationBlockDeclaration AssociationBlockBody;
@@ -31,8 +30,8 @@ component grammar SysMLAssociations extends de.monticore.lang.sysml.common.SysML
       return this.getClassifierDeclarationCompletion().getName();
     }
   ;
-  /* ASSOCIATION BLOCK MEMBERSHIPS */
 
+  /* ASSOCIATION BLOCK MEMBERSHIPS */
   AssociationUsageMemberStd implements AssociationUsageMember =
     NestedUsageMember | AssociationEndMember | EndPortMember | ConjugatedEndPortMember;
   //NestedUsageMember is an interface and is implemented in SysMLCommon

@@ -4,13 +4,12 @@ package de.monticore.lang.sysmlvariant.basics.extended;
 component grammar SysMLNamesExtended extends de.monticore.lang.sysml.basics.sysmldefault.SysMLNames {
 
   fragment token AnyTextQuotesDouble = ~ ('>');
-  token UNRESTRICTED_NAME_DOUBLE_QOUTES = '<' AnyTextQuotesDouble* '>';
+  token UNRESTRICTED_NAME_ANGLED_BRACKETS = '<' AnyTextQuotesDouble* '>';
 
-  SysMLNameDoubleQuotes implements SysMLName = unrestrictedNameQuotes:UNRESTRICTED_NAME_DOUBLE_QOUTES;
-  //Remark in Xtext this is Name
-  astrule SysMLNameDoubleQuotes =
+  SysMLNameAngledBracket implements SysMLName = unrestrictedNameAngledBrackets:UNRESTRICTED_NAME_ANGLED_BRACKETS;
+  astrule SysMLNameAngledBracket =
     method public String getName(){
-        String name = this.getUnrestrictedNameQuotes();
+        String name = this.getUnrestrictedNameAngledBrackets();
         //Remove prefix " and suffix "
         name = name.substring(1);
         name = name.substring(0, name.length() - 1);
@@ -18,13 +17,13 @@ component grammar SysMLNamesExtended extends de.monticore.lang.sysml.basics.sysm
     }
     method public void setName(String name){
           //if the name is not surrounded by quotes add them
-       if(!name.substring(0,1).equals("\"") && !name.substring(name.length() - 1,name.length()).equals("\"")){
-         name = "\"" + name + "\"";
+       if(!name.substring(0,1).equals("<") && !name.substring(name.length() - 1,name.length()).equals(">")){
+         name = "<" + name + ">";
        }
-       this.setUnrestrictedNameQuotes(name);
+       this.setUnrestrictedNameAngledBrackets(name);
     }
     method public String getNameForPrettyPrinting(){
-      return "\"" + this.getName() + "\"";
+      return "<" + this.getName() + ">";
     }
   ;
 }

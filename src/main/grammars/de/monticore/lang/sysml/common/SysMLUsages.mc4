@@ -5,6 +5,7 @@ package de.monticore.lang.sysml.common;
 component grammar SysMLUsages extends de.monticore.lang.sysml.common.SysMLCommonBasis {
 
   /* USAGES */
+
   SysMLNameAndTypePart = SysMLName TypePart?;
 
   UsageStd implements Usage =

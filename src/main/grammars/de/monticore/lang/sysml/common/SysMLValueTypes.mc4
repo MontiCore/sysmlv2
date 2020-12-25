@@ -5,12 +5,14 @@ package de.monticore.lang.sysml.common;
 component grammar SysMLValueTypes extends de.monticore.lang.sysml.common.SysMLUsages{
 
   /* VALUE TYPES */
+
   ValueTypeUnit = UnitPrefix ValueType;
   ValueTypeStd implements ValueType, SysMLType, PackagedDefinitionMember =
     ValueTypeDeclaration DefinitionBody;
   ValueTypeDeclaration = ["abstract"]? "value" "type" ClassifierDeclarationCompletion;
 
   /* VALUE PROPERTIES */
+
   ValueUnit implements SysMLType, Unit = UnitPrefix ValueDeclaration UsageCompletion;
   ValueDeclaration = ["abstract"]? ["value"]? SysMLNameAndTypePart SubsettingPart;
 

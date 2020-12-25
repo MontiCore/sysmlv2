@@ -1,4 +1,4 @@
-package 'bolts' { // Not equal to artifact name.
+package 'bolts' {
 	import ScalarValues::*;
 	
 	block Bolts {

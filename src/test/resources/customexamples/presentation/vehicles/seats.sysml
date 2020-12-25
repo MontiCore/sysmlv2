@@ -1,4 +1,4 @@
-package 'mySeats' {
+package 'mySeats' { // Not equal to artifact name.
 	value type Euro;
 
 	block Seat {

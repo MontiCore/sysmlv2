@@ -23,7 +23,6 @@ component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.interf
   ;
   interface PortDefinition;
 
-  //ASSOCIATION BLOCK MEMBERSHIPS
   interface AssociationEndMember;
 
 

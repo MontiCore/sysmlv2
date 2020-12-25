@@ -5,6 +5,7 @@ package de.monticore.lang.sysml.common;
 component grammar SysMLClassifiers extends de.monticore.lang.sysml.common.SysMLCommonBasis {
 
   /* CLASSIFIERS */
+
   ClassifierDeclarationCompletionStd implements ClassifierDeclarationCompletion =
     SysMLName SuperclassingList?;
 

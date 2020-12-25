@@ -52,6 +52,7 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLSuccessions {
      ["abstract"]?"end" ("ref" "action" | isComposite:"action" ) ActionUsage;
 
   /* ACTIONS */
+
   ActionUnit implements Unit = UnitPrefix ActionDeclaration ActivityBody;
   ActionDeclaration = ["abstract"]? "action" SysMLNameAndTypePart ActionParameterList? SubsettingPart ValuePart?;
   ActionUsageStd implements SysMLType, ActionUsage = ActionOrStateUsageDeclaration ActivityBody;
@@ -91,6 +92,7 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLSuccessions {
 
 
   /* ACTIVITY NODES */
+
   ActivityNode = ActionNode | ControlNode;
   ActionNode = ActionNodeDeclaration ActivityBody;
   ActionNodeDeclaration = ActionUsageNodeDeclaration | PerformActionNodeDeclaration | AcceptActionNodeDeclaration |
@@ -106,6 +108,7 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLSuccessions {
   ControlNode = (["merge"] | ["decide"] | ["join"] | ["fork"]) SysMLNameAndTypePart? ";";
 
   /* ACTION MEMBERSHIPS */
+
   ActionParameterMember = (direction:FeatureDirection | direction:FeatureDirection? memberName:SysMLName)
     ActionParameter;
   ActionParameterFlowMember = ActionParameterFlow;

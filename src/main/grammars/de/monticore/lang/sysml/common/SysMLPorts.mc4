@@ -25,6 +25,7 @@ component grammar SysMLPorts extends de.monticore.lang.sysml.common.SysMLUsages,
       return this.getClassifierDeclarationCompletion().getName();
     }
   ;
+
   /* PORT DEFINITION MEMBERSHIPS */
 
   ConjugatedPortDefinitionMember = ConjugatedPortDefinition;
