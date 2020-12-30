@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.lang.sysmlvariant.basics.objectoriented;
+package de.monticore.lang.sysmlvariant.basics.javaoriented;
 
 component grammar SysMLImportsAndPackagesJava
   extends de.monticore.lang.sysml.basics.sysmldefault.SysMLImportsAndPackages {

@@ -1,4 +1,4 @@
-package de.monticore.lang.sysmlvariant.basics.objectoriented.sysmlnamesjava._ast;
+package de.monticore.lang.sysmlvariant.basics.javaoriented.sysmlnamesjava._ast;
 
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTSysMLName;
 
@@ -24,7 +24,7 @@ public class ASTDotQualifiedNameJava extends ASTDotQualifiedNameJavaTOP {
   public String getFullQualifiedName() {
     String res = "";
     for (String name : this.getNamesList()) {
-      res += "::" + name;
+      res += "." + name;
     }
     return res.substring(2);
   }

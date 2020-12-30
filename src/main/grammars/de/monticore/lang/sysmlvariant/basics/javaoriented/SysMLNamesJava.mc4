@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.lang.sysmlvariant.basics.objectoriented;
+package de.monticore.lang.sysmlvariant.basics.javaoriented;
 
 component grammar SysMLNamesJava extends de.monticore.lang.sysml.basics.interfaces.SysMLNamesBasis  {
   DotQualifiedNameJava implements QualifiedName = (SysMLName || ".")+; //Only dots allowed here, no "::"
