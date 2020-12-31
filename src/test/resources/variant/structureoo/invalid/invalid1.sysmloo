@@ -1,2 +1,2 @@
-package 'Invalid 1' {//No quotes allowed
+package 'Invalid 1' { //No quotes allowed
 }

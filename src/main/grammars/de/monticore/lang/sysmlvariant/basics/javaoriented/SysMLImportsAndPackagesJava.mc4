@@ -6,6 +6,6 @@ component grammar SysMLImportsAndPackagesJava
   Package implements SysMLType =  PackageDeclaration PackageBody;
 
   ImportUnitStd implements ImportUnit = PrefixAnnotation* (visibility:PackageElementVisibilityIndicator)?
-      "import" QualifiedName "." star:["*"] {noSpace()}?";"; // Here is no "::*"
+      "import" QualifiedName "." star:["*"] {noSpace()}? ";"; // Here is no "::*" allowed
 
 }

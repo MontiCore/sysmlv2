@@ -12,7 +12,7 @@ The language is a strict compatible superset of the SysML v2 syntax.
 ``mvn install -DskipTests`` : Only builds the project.
 
 ``mvn install -Pdev-skip-slow-tests``:  Activates profile which skips slow tests, but should be used carefully, since
- this command skips the SysMLToolTest, which combines all Software Components. 
+ this command skips the SysMLToolTest, which combines all software components. 
  This testing is especially useful when developing the parser.
 
 
