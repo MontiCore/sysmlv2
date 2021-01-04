@@ -6,7 +6,7 @@
 
 plugins {
     id 'java'
-    id "monticore" version "6.7.0-SNAPSHOT"
+    id "monticore" version "$mc_version"
     id 'maven-publish'
     id "com.github.johnrengelman.shadow" version "4.0.4"
     id "com.adarshr.test-logger" version "2.0.0"
@@ -18,7 +18,6 @@ plugins {
 /* ============================================================ */
 
 group = 'de.monticore.lang'
-version = '6.7.0-SNAPSHOT'
 description = 'sysml2official'
 sourceCompatibility = '1.8'
 
@@ -26,7 +25,6 @@ sourceCompatibility = '1.8'
 /* ========================= Versions ========================= */
 /* ============================================================ */
 
-def monticore_version = "6.7.0-SNAPSHOT"
 def junit_version = "4.13.1"
  def commons_cli_version = "1.4"
  def sclang_version = "1.1.5-SNAPSHOT"
@@ -35,6 +33,8 @@ def grammar_classifier = "grammars"
 def grammarDir = "src/main/grammars"
  def se_commons_version = "1.7.11-SNAPSHOT"
  def commons_lang_version = "3.0"
+ def cd4analysis_version ="1.7.0.2"
+ def logback_version = "1.1.2"
  def archiveBaseName = "SysML"
 
 /* ============================================================ */
@@ -63,7 +63,9 @@ test {
 /* ============================================================ */
 
 repositories {
-    mavenLocal()
+    if(("true").equals(getProperty('useLocalRepo'))){
+        mavenLocal()
+    }
     mavenCentral()
     maven {
         credentials.username mavenUser
@@ -73,23 +75,25 @@ repositories {
 }
 
 dependencies {
-    grammar "de.monticore:monticore-grammar:$monticore_version:$grammar_classifier"
+    grammar "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
     grammar "de.monticore.lang:scgrammar:$sclang_version:$grammar_classifier"
     //grammar "montiarc.languages:montiarc-fe:$montiarc_version:$grammar_classifier"
     implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
     implementation "org.apache.commons:commons-lang3:$commons_lang_version"
     implementation "org.antlr:antlr4-runtime:4.7.1"
-    implementation "de.monticore:monticore-generator:$monticore_version"
-    implementation "de.monticore:monticore-runtime:$monticore_version"
-    implementation "de.monticore:monticore-grammar:$monticore_version"
+    implementation "de.monticore:monticore-generator:$mc_version"
+    implementation "de.monticore:monticore-runtime:$mc_version"
+    implementation "de.monticore:monticore-grammar:$mc_version"
     implementation "de.monticore.lang:scgrammar:$sclang_version"
     implementation "org.assertj:assertj-core:3.7.0"
     implementation "commons-cli:commons-cli:$commons_cli_version"
-    //implementation "montiarc.languages:montiarc-fe:$montiarc_version"
+    implementation "de.monticore.lang:cd4analysis:$cd4analysis_version:$grammar_classifier"
+    implementation "de.monticore.lang:cd4analysis:$cd4analysis_version"
+    //implementation "montiarc.languages:montiarc-fe:$mc_version"
     testImplementation "junit:junit:$junit_version"
-    testImplementation "de.monticore:monticore-runtime:$monticore_version:tests"
-    testImplementation "de.monticore:monticore-runtime:$monticore_version"
-    compileOnly "de.monticore:monticore-grammar:$monticore_version"
+    testImplementation "de.monticore:monticore-runtime:$mc_version:tests"
+    testImplementation "org.reflections:reflections:0.9.9"
+    compileOnly "de.monticore:monticore-grammar:$mc_version"
 }
 
 /* ============================================================ */
