@@ -234,12 +234,7 @@ publishing {
     // configure what artifacts to publish
     publications {
         mavenJava(MavenPublication) {
-            artifactId = "$project.name"
             from components.java
-            artifact sourcesJar
-            artifact javadocJar
-            artifact shadowJar
-            artifact grammarJar
         }
     }
     repositories.maven {
