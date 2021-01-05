@@ -18,7 +18,7 @@ plugins {
 /* ============================================================ */
 
 group = 'de.monticore.lang'
-description = 'sysml2official'
+description = 'SysML_v2_official'
 sourceCompatibility = '1.8'
 
 /* ============================================================ */
@@ -26,16 +26,16 @@ sourceCompatibility = '1.8'
 /* ============================================================ */
 
 def junit_version = "4.13.1"
- def commons_cli_version = "1.4"
- def sclang_version = "1.1.5-SNAPSHOT"
- def montiarc_version = "6.0.0-SNAPSHOT"
+def commons_cli_version = "1.4"
+def sclang_version = "1.1.5-SNAPSHOT"
+def montiarc_version = "6.0.0-SNAPSHOT"
 def grammar_classifier = "grammars"
 def grammarDir = "src/main/grammars"
- def se_commons_version = "1.7.11-SNAPSHOT"
- def commons_lang_version = "3.0"
- def cd4analysis_version ="1.7.0.2"
- def logback_version = "1.1.2"
- def archiveBaseName = "SysML"
+def se_commons_version = "1.7.11-SNAPSHOT"
+def commons_lang_version = "3.0"
+def cd4analysis_version ="1.7.0.2"
+def logback_version = "1.1.2"
+def archiveBaseName = "SysML"
 
 /* ============================================================ */
 /* ======================= Configuration ====================== */
@@ -163,24 +163,24 @@ generateValueTypes.dependsOn generateSysMLCommonBasis
 
 generateBDD.dependsOn generateSysMLCommon
 
- generateIBD.dependsOn generateSysMLCommon
+generateIBD.dependsOn generateSysMLCommon
 
 //generateNotDistributed.dependsOn generateSysMLCommon
 
 //generatePackageDiagram.dependsOn generateSysMLCommon
 
- generateParametricDiagram.dependsOn generateSysMLCommon
+generateParametricDiagram.dependsOn generateSysMLCommon
 
- generateRequirementDiagram.dependsOn generateSysMLCommon
+generateRequirementDiagram.dependsOn generateSysMLCommon
 
 //generateSD.dependsOn generateSysMLCommon
 
- generateSMD.dependsOn generateSysMLCommon
+generateSMD.dependsOn generateSysMLCommon
 
- generateSysML.dependsOn generateBDD
- generateSysML.dependsOn generateIBD
- generateSysML.dependsOn generateAD
- generateSysML.dependsOn generateSysMLBasicsDefault
+generateSysML.dependsOn generateBDD
+generateSysML.dependsOn generateIBD
+generateSysML.dependsOn generateAD
+generateSysML.dependsOn generateSysMLBasicsDefault
 
 //generateUseCaseDiagram.dependsOn generateSysMLCommon
 
@@ -215,15 +215,15 @@ task grammarJar(type: Jar) {
     archiveClassifier = "grammars"
 }
  // all in one cli-jar
- shadowJar {
-     manifest {
-         attributes "Main-Class": "de.monticore.SYSMLCLI"
-     }
-     archiveFileName = "SysML-cli.jar"
-     minimize()
- }
+shadowJar {
+    manifest {
+        attributes "Main-Class": "de.monticore.SYSMLCLI"
+    }
+    archiveFileName = "SysML-cli.jar"
+    minimize()
+}
 
- jar.dependsOn shadowJar
+jar.dependsOn shadowJar
 
 
 /* ============================================================ */
