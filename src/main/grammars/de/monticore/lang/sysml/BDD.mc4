@@ -13,7 +13,7 @@ component grammar BDD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
       return this.getBlockDeclaration().getName();
     }
   ;
-  BlockDeclaration = ["abstract"]? "block" ClassifierDeclarationCompletion;
+  BlockDeclaration = ["abstract"]? BlockKeyword ClassifierDeclarationCompletion;
   astrule BlockDeclaration =
     method public String getName(){
       return this.getClassifierDeclarationCompletion().getName();
