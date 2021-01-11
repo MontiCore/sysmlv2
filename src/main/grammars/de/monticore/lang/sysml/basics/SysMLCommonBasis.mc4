@@ -1,56 +1,52 @@
 /* (c) https://github.com/MontiCore/monticore */
- package de.monticore.lang.sysml.basics;
+package de.monticore.lang.sysml.basics;
 
 
- component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.interfaces.CommentsBasis,
-   de.monticore.lang.sysml.basics.interfaces.LiteralsBasis,
-   de.monticore.lang.sysml.basics.interfaces.NamesBasis,
-   de.monticore.lang.sysml.basics.interfaces.PackageBasis,
-   de.monticore.lang.sysml.basics.interfaces.ImportBasis,
-   de.monticore.lang.sysml.basics.interfaces.VisibilityBasis,
-   de.monticore.lang.sysml.basics.interfaces.SysMLExpressionsBasis,
-   de.monticore.lang.sysml.basics.interfaces.SharedBasis {
+component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.interfaces.CommentsBasis,
+    de.monticore.lang.sysml.basics.interfaces.LiteralsBasis,
+    de.monticore.lang.sysml.basics.interfaces.NamesBasis,
+    de.monticore.lang.sysml.basics.interfaces.PackageBasis,
+    de.monticore.lang.sysml.basics.interfaces.ImportBasis,
+    de.monticore.lang.sysml.basics.interfaces.VisibilityBasis,
+    de.monticore.lang.sysml.basics.interfaces.SysMLExpressionsBasis,
+    de.monticore.lang.sysml.basics.interfaces.SharedBasis {
 
+  FeatureDirection =  ["in"] | ["out"] | ["inout"];
 
-
-
-
- FeatureDirection =  ["in"] | ["out"] | ["inout"];
-
- interface DefinitionBody;
- interface ValueType;
- interface ClassifierDeclarationCompletion;
- astrule ClassifierDeclarationCompletion =
+  interface DefinitionBody;
+  interface ValueType;
+  interface ClassifierDeclarationCompletion;
+  astrule ClassifierDeclarationCompletion =
     method public String getName(){
       return "NotImplemented12324182481524";
     }
   ;
- interface PortDefinition;
+  interface PortDefinition;
 
- /* ASSOCIATION BLOCK MEMBERSHIPS */
- interface AssociationEndMember;
+  /* ASSOCIATION BLOCK MEMBERSHIPS */
+  interface AssociationEndMember;
 
+  interface DefinitionMemberPrefix;
+  interface Usage;
 
+  interface ActionUsage;
+  interface AbstractActionUsage;
+  interface PortUsage;
+  interface ConjugatedPortUsage;
 
- interface DefinitionMemberPrefix;
- interface Usage;
+  interface ParameterMember;
+  interface ParameterList;
+  interface ActivityBody;
+  interface ActivityBodyItem;
+  interface ActionParameterList;
 
- interface ActionUsage;
- interface AbstractActionUsage;
- interface PortUsage;
- interface ConjugatedPortUsage;
+  EmptyActionUsage;
+  interface PerformedActionUsage;
 
+  EmptyParameter;
+  EmptyParameterMember = EmptyParameter;
 
-
- interface ParameterMember;
- interface ParameterList;
- interface ActivityBody;
- interface ActivityBodyItem;
- interface ActionParameterList;
-
- EmptyActionUsage;
- interface PerformedActionUsage;
-
- EmptyParameter;
- EmptyParameterMember = EmptyParameter;
+  // Not yet found a better place - needed in BDD and Associations
+  // block is a synonym for part def - slide 9 of https://drive.google.com/drive/folders/1L0E3RwO9ch3Ta5Ye4EIdmn15yRPgwS4B
+  BlockKeyword = "block" | "part" "def";
 }

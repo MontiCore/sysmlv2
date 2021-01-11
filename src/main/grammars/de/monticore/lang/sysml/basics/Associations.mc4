@@ -12,7 +12,7 @@ component grammar Associations extends de.monticore.lang.sysml.basics.SysMLCommo
       return this.getAssociationBlockDeclaration().getName();
     }
   ;
-  AssociationBlockDeclaration = ["abstract"]? "assoc" "block" ClassifierDeclarationCompletion;
+  AssociationBlockDeclaration = ["abstract"]? "assoc" BlockKeyword ClassifierDeclarationCompletion;
   astrule AssociationBlockDeclaration =
     method public String getName(){
       return this.getClassifierDeclarationCompletion().getName();
