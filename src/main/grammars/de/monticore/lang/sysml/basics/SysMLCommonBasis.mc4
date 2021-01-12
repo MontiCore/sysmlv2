@@ -45,8 +45,4 @@ component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.interf
 
   EmptyParameter;
   EmptyParameterMember = EmptyParameter;
-
-  // Not yet found a better place - needed in BDD and Associations
-  // block is a synonym for part def - slide 9 of https://drive.google.com/drive/folders/1L0E3RwO9ch3Ta5Ye4EIdmn15yRPgwS4B
-  BlockKeyword = "block" | "part" "def";
 }
