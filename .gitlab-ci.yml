@@ -30,7 +30,8 @@ deploy:
   only:
     - master
 
-checkMDLinks:
+# TODO Kaputt: Vermutlich ist das "secibuildtoken" nicht konfiguriert
+.checkMDLinks:
   stage: check
   dependencies:
     - build
