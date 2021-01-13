@@ -6,6 +6,8 @@ import de.monticore.lang.sysml._symboltable.HelperSysMLSymbolTableCreator;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.monticore.lang.sysml.parser.SysMLParserMultipleFiles;
+import de.monticore.lang.sysml.sysml._symboltable.ISysMLArtifactScope;
+import de.monticore.lang.sysml.sysml._symboltable.ISysMLGlobalScope;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLArtifactScope;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
 import de.se_rwth.commons.logging.Log;
@@ -83,7 +85,7 @@ public class SysMLTool {
     }
 
     // Symboltable
-    SysMLGlobalScope sysMLGlobalScope = buildSymbolTable(dir, allModels);
+    ISysMLGlobalScope sysMLGlobalScope = buildSymbolTable(dir, allModels);
 
     if(cocosOff){
       Log.info("Context Conditions are deactivated by \"-cocosOff\".", SysMLTool.class.getName());
@@ -110,19 +112,19 @@ public class SysMLTool {
         + "\n - Optional: Turn off Context Conditions with -cocosOff");
   }
 
-  public static SysMLArtifactScope buildSymbolTablePathToSingleFile(String pathToFile, ASTUnit model){
+  public static ISysMLArtifactScope buildSymbolTablePathToSingleFile(String pathToFile, ASTUnit model){
     Log.info("Creating Symbol Table.", SysMLTool.class.getName());
     final ModelPath mp = createModelpath(pathToFile);
     HelperSysMLSymbolTableCreator helperSysMLSymbolTableCreator = new HelperSysMLSymbolTableCreator();
-    SysMLArtifactScope scope = helperSysMLSymbolTableCreator.createSymboltableSingleASTUnit(model,mp);
+    ISysMLArtifactScope scope = helperSysMLSymbolTableCreator.createSymboltableSingleASTUnit(model, mp);
     return scope;
   }
 
-  public static SysMLGlobalScope buildSymbolTable(String dir, List<ASTUnit> models){
+  public static ISysMLGlobalScope buildSymbolTable(String dir, List<ASTUnit> models){
     Log.info("Creating Symbol Table.", SysMLTool.class.getName());
     final ModelPath mp = createModelpath(getSysMLFilePathsInDirectory(dir, false));
     HelperSysMLSymbolTableCreator helperSysMLSymbolTableCreator = new HelperSysMLSymbolTableCreator();
-    SysMLGlobalScope sysMLGlobalScope = helperSysMLSymbolTableCreator.createSymboltableMultipleASTUnit(models,mp);
+    ISysMLGlobalScope sysMLGlobalScope = helperSysMLSymbolTableCreator.createSymboltableMultipleASTUnit(models,mp);
     return sysMLGlobalScope;
   }
 
@@ -191,6 +193,7 @@ public class SysMLTool {
     SysMLCoCos cocos = new SysMLCoCos();
     cocos.getCheckerForAllCoCos().checkAll(unit);
   }
+
   public static ModelPath createModelpath(List<String> filePaths){
     Set<Path> p = Sets.newHashSet();
     for (String mP : filePaths) {
@@ -200,6 +203,7 @@ public class SysMLTool {
     final ModelPath mp = new ModelPath(p);
     return mp;
   }
+  
   public static ModelPath createModelpath(String dirOrFile){
     List<String> filePathAsList = getSysMLFilePathsInDirectory(dirOrFile,false);
     return createModelpath(filePathAsList);

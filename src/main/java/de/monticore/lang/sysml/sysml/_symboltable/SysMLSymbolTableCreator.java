@@ -9,6 +9,11 @@ import java.util.Deque;
  * @version 1.0
  */
 public class SysMLSymbolTableCreator extends de.monticore.lang.sysml.sysml._symboltable.SysMLSymbolTableCreatorTOP {
+  
+  public SysMLSymbolTableCreator() {
+    super();
+  }
+  
   public SysMLSymbolTableCreator(ISysMLScope enclosingScope) {
     super(enclosingScope);
   }

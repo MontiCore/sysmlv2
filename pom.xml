@@ -13,17 +13,20 @@
 
     <!-- .. Libraries ..................................................... -->
 
-    <monticore.version>6.1.0</monticore.version>
-    
+    <monticore.version>6.7.0-SNAPSHOT</monticore.version>
+
     <guava.version>18.0</guava.version>
     <jsr305.version>3.0.0</jsr305.version>
-    <junit.version>4.11</junit.version>
+    <junit.version>4.13.1</junit.version>
     <antlr.version>4.7.1</antlr.version>
+    <commons_cli.version>1.4</commons_cli.version>
     <logback.version>1.1.2</logback.version>
     <emf.common.version>2.5.0</emf.common.version>
     <emf.ecore.version>2.5.0</emf.ecore.version>
     <emf.ecore.xmi.version>2.5.0</emf.ecore.xmi.version>
     <assertj.version>3.7.0</assertj.version>
+    <se_commons_logging.version>1.7.11-SNAPSHOT</se_commons_logging.version>
+    <commons_lang3.version>3.0</commons_lang3.version>
 
 
     <!-- .. Plugins ....................................................... -->
@@ -99,7 +102,6 @@
       </plugin>
 
       <!-- Other Configuration -->
-     <!-- Taking eclipse plugin
      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -108,7 +110,7 @@
           <source>${java.version}</source>
           <target>${java.version}</target>
         </configuration>
-      </plugin>-->
+      </plugin>
 
       <!-- Unit Tests -->
       <!-- default folder is src/test/java/ -->
@@ -189,12 +191,6 @@
   </build>
 
   <dependencies>
-   <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>${guava.version}</version>
-    </dependency>
-
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
       <artifactId>jsr305</artifactId>
@@ -202,9 +198,34 @@
     </dependency>
 
     <dependency>
+      <groupId>de.se_rwth.commons</groupId>
+      <artifactId>se-commons-logging</artifactId>
+      <version>${se_commons_logging.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>de.monticore.lang</groupId>
+      <artifactId>cd4analysis</artifactId>
+      <version>1.7.0.2</version>
+      <classifier>grammars</classifier>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons_lang3.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.antlr</groupId>
       <artifactId>antlr4-runtime</artifactId>
       <version>${antlr.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-cli</groupId>
+      <artifactId>commons-cli</artifactId>
+      <version>${commons_cli.version}</version>
     </dependency>
 
     <!-- MontiCore Dependencies -->
@@ -257,7 +278,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <reporting>
     <plugins>
       <plugin>

@@ -5,7 +5,7 @@ import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._coco
 import de.monticore.lang.sysml.cocos.imports.ImportStatementValid;
 import de.monticore.lang.sysml.cocos.naming.*;
 import de.monticore.lang.sysml.sysml._cocos.SysMLCoCoChecker;
-import jline.internal.Log;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * @author Robin Muenstermann

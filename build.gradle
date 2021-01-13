@@ -1,0 +1,274 @@
+ // (c) https://github.com/MontiCore/monticore
+
+/* ============================================================ */
+/* ========================= Plugins ========================== */
+/* ============================================================ */
+
+plugins {
+    id 'java'
+    id "monticore" version "$mc_version"
+    id 'maven-publish'
+    id "com.github.johnrengelman.shadow" version "4.0.4"
+    id "com.adarshr.test-logger" version "2.0.0"
+    id "de.set.ecj" version "1.4.1"
+}
+
+/* ============================================================ */
+/* ========================= Project ========================== */
+/* ============================================================ */
+
+group = 'de.monticore.lang'
+description = 'SysML_v2_official'
+sourceCompatibility = '1.8'
+
+/* ============================================================ */
+/* ========================= Versions ========================= */
+/* ============================================================ */
+
+def junit_version = "4.13.1"
+def commons_cli_version = "1.4"
+def sclang_version = "1.1.5-SNAPSHOT"
+def montiarc_version = "6.0.0-SNAPSHOT"
+def grammar_classifier = "grammars"
+def grammarDir = "src/main/grammars"
+def se_commons_version = "1.7.11-SNAPSHOT"
+def commons_lang_version = "3.0"
+def cd4analysis_version ="1.7.0.2"
+def logback_version = "1.1.2"
+def archiveBaseName = "SysML"
+
+/* ============================================================ */
+/* ======================= Configuration ====================== */
+/* ============================================================ */
+
+// configure non-standard source sets
+sourceSets {
+    main.java.srcDirs += ["$projectDir/target/generated-sources/monticore/sourcecode"]
+
+    test {
+        java.srcDir "$projectDir/src/test/java"
+        resources.srcDir "$projectDir/src/test/resources"
+    }
+}
+buildDir = file("$projectDir/target")
+
+configurations { grammar }
+
+test {
+    useJUnit()
+}
+
+/* ============================================================ */
+/* ======================= Dependencies ======================= */
+/* ============================================================ */
+
+repositories {
+    if(("true").equals(getProperty('useLocalRepo'))){
+        mavenLocal()
+    }
+    mavenCentral()
+    maven {
+        credentials.username mavenUser
+        credentials.password mavenPassword
+        url = 'https://nexus.se.rwth-aachen.de/content/groups/public/'
+    }
+}
+
+dependencies {
+    grammar "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
+    grammar "de.monticore.lang:scgrammar:$sclang_version:$grammar_classifier"
+    //grammar "montiarc.languages:montiarc-fe:$montiarc_version:$grammar_classifier"
+    implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
+    implementation "org.apache.commons:commons-lang3:$commons_lang_version"
+    implementation "org.antlr:antlr4-runtime:4.7.1"
+    implementation "de.monticore:monticore-generator:$mc_version"
+    implementation "de.monticore:monticore-runtime:$mc_version"
+    implementation "de.monticore:monticore-grammar:$mc_version"
+    implementation "de.monticore.lang:scgrammar:$sclang_version"
+    implementation "org.assertj:assertj-core:3.7.0"
+    implementation "commons-cli:commons-cli:$commons_cli_version"
+    implementation "de.monticore.lang:cd4analysis:$cd4analysis_version:$grammar_classifier"
+    implementation "de.monticore.lang:cd4analysis:$cd4analysis_version"
+    //implementation "montiarc.languages:montiarc-fe:$mc_version"
+    testImplementation "junit:junit:$junit_version"
+    testImplementation "de.monticore:monticore-runtime:$mc_version:tests"
+    testImplementation "org.reflections:reflections:0.9.9"
+    compileOnly "de.monticore:monticore-grammar:$mc_version"
+}
+
+/* ============================================================ */
+/* ========================== Tasks =========================== */
+/* ============================================================ */
+
+fileTree(grammarDir).matching { include '**/*.mc4' }.each {
+    def g = it
+    task "generate${it.getName().substring(0, it.getName().lastIndexOf('.'))}"(type: MCTask) {
+        grammar = file g
+        outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
+        def grammarIncludingPackage = file(grammarDir).toURI().relativize(g.toURI()).toString()
+        def uptoDate = incCheck(grammarIncludingPackage)
+        outputs.upToDateWhen { uptoDate }
+    }
+}
+
+ /*This is generated*/
+generateAD.dependsOn generateSysMLCommon
+
+generateSysMLAssociations.dependsOn generateSysMLCommonBasis
+
+generateSysMLClassifiers.dependsOn generateSysMLCommonBasis
+/*
+generateCommentsBasis
+generateImportBasis
+
+generateNamesBasis
+generatePackageBasis
+generateVisibilityBasis*/
+generateSysMLPorts.dependsOn generateSysMLCommonBasis
+
+generateSysMLCommon.dependsOn generateSysMLClassifiers
+generateSysMLCommon.dependsOn generateSysMLValueTypes
+generateSysMLCommon.dependsOn generateSysMLUsages
+generateSysMLCommon.dependsOn generateSysMLPorts
+generateSysMLCommon.dependsOn generateSysMLCommonBasis
+
+generateSysMLCommonBasis.dependsOn generateSysMLCommentsBasis
+generateSysMLCommonBasis.dependsOn generateSysMLLiteralsBasis
+generateSysMLCommonBasis.dependsOn generateSysMLNamesBasis
+generateSysMLCommonBasis.dependsOn generateSysMLPackageBasis
+generateSysMLCommonBasis.dependsOn generateSysMLImportBasis
+generateSysMLCommonBasis.dependsOn generateSysMLVisibilityBasis
+
+generateSysMLComments.dependsOn generateSysMLCommonBasis
+
+generateSysMLExpressions.dependsOn generateSysMLCommonBasis
+
+generateSysMLImportsAndPackages.dependsOn generateSysMLCommonBasis
+
+
+generateSysMLNames.dependsOn generateSysMLCommonBasis
+
+generateSysMLBasics.dependsOn generateSysMLComments
+generateSysMLBasics.dependsOn generateSysMLExpressions
+generateSysMLBasics.dependsOn generateSysMLImportsAndPackages
+generateSysMLBasics.dependsOn generateSysMLLiterals
+generateSysMLBasics.dependsOn generateSysMLNames
+generateSysMLBasics.dependsOn generateSysMLVisibility
+
+generateSysMLVisibility.dependsOn generateSysMLCommonBasis
+
+generateSysMLUsages.dependsOn generateSysMLCommonBasis
+
+generateSysMLValueTypes.dependsOn generateSysMLCommonBasis
+
+generateBDD.dependsOn generateSysMLCommon
+
+generateIBD.dependsOn generateSysMLCommon
+
+//generateNotDistributed.dependsOn generateSysMLCommon
+
+//generatePackageDiagram.dependsOn generateSysMLCommon
+
+generateParametricDiagram.dependsOn generateSysMLCommon
+
+generateRequirementDiagram.dependsOn generateSysMLCommon
+
+//generateSD.dependsOn generateSysMLCommon
+
+generateSTM.dependsOn generateSysMLCommon
+
+generateSysML.dependsOn generateBDD
+generateSysML.dependsOn generateIBD
+generateSysML.dependsOn generateAD
+generateSysML.dependsOn generateSysMLBasics
+
+//generateUseCaseDiagram.dependsOn generateSysMLCommon
+
+generateSysMLExpressionsExtended.dependsOn generateSysMLExpressions
+generateSysMLNamesExtended.dependsOn generateSysMLNames
+generateSysMLImportsAndPackagesJava.dependsOn generateSysMLImportsAndPackages
+generateSysMLNamesJava.dependsOn generateSysMLNamesBasis
+
+generateSysMLExtended.dependsOn generateSysMLNamesExtended
+generateSysMLExtended.dependsOn generateSysMLExpressionsExtended
+generateSysMLExtended.dependsOn generateSysMLComments
+generateSysMLExtended.dependsOn generateSysMLImportsAndPackages
+generateSysMLExtended.dependsOn generateSysMLLiterals
+generateSysMLExtended.dependsOn generateSysMLVisibility
+generateSysMLExtended.dependsOn generateAD
+generateSysMLExtended.dependsOn generateBDD
+generateSysMLExtended.dependsOn generateIBD
+generateSysMLExtended.dependsOn generateParametricDiagram
+generateSysMLExtended.dependsOn generateRequirementDiagram
+generateSysMLExtended.dependsOn generateSTM
+
+generateSysMLForStructure.dependsOn generateSysMLNamesJava
+generateSysMLForStructure.dependsOn generateSysMLImportsAndPackagesJava
+generateSysMLForStructure.dependsOn generateSysMLExpressionsExtended
+generateSysMLForStructure.dependsOn generateSysMLComments
+generateSysMLForStructure.dependsOn generateSysMLLiterals
+generateSysMLForStructure.dependsOn generateSysMLVisibility
+generateSysMLForStructure.dependsOn generateBDD
+generateSysMLForStructure.dependsOn generateIBD
+
+compileJava.dependsOn (project.collect
+        { it.tasks.findAll { task -> task.name.startsWith("generate") } })
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+// build sources jar in addition
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = "sources"
+}
+
+// build javadoc jar in addition
+task javadocJar(type: Jar) {
+    from javadoc
+    archiveClassifier = "javadoc"
+}
+
+// generated java doc contains errors, disable for now
+javadoc.failOnError(false)
+
+// build grammar jar as well
+task grammarJar(type: Jar) {
+    from("$projectDir/src/main/grammars/") { include "**/*.mc4" }
+    archiveClassifier = "grammars"
+}
+ // all in one cli-jar
+shadowJar {
+    manifest {
+        attributes "Main-Class": "de.monticore.SYSMLCLI"
+    }
+    archiveFileName = "SysML-cli.jar"
+    minimize()
+}
+
+jar.dependsOn shadowJar
+
+
+/* ============================================================ */
+/* ======================= Publishing ========================= */
+/* ============================================================ */
+
+publishing {
+    // configure what artifacts to publish
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories.maven {
+        credentials.username mavenUser
+        credentials.password mavenPassword
+        def releasesRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/"
+        def snapshotsRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/"
+        url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
+    }
+}
+

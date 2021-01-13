@@ -65,8 +65,8 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.Sy
   	);
 
   SatisfyRequirementUsage =
-    ((( SysMLName)? TypePart? "as")? Subset
-    | "requirement" (SysMLName)? TypePart?)
+    (((firstName:SysMLName)? firstType:TypePart? "as")? Subset
+    | "requirement" (secondName:SysMLName)? secondType:TypePart?)
     ( "by" SatisfactionConnectorMember)?
     ConstraintParameterPart InvariantPart RequirementBody;
 
@@ -77,8 +77,10 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.Sy
   /* ===================================================*/
   astrule SatisfyRequirementUsage =
     method public String getName(){
-      if( this.isPresentSysMLName()){
-        return this.getSysMLName().getName();
+      if( this.isPresentFirstName()){
+        return this.getFirstName().getName();
+      } else  if (this.isPresentSecondName()){
+        return this.getSecondName().getName();
       }
       return "";
     }

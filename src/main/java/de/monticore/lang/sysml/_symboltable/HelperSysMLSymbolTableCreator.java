@@ -2,6 +2,7 @@ package de.monticore.lang.sysml._symboltable;
 
 import de.monticore.io.paths.ModelPath;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.sysml.SysMLMill;
 import de.monticore.lang.sysml.sysml._symboltable.*;
 import de.monticore.lang.sysml.sysml._symboltable.doubleimports.AmbigousImportCheck;
 import de.monticore.lang.sysml.sysml._symboltable.doubleimports.RemoveDoubleImportsFromScope;
@@ -14,33 +15,27 @@ import java.util.List;
  */
 public class HelperSysMLSymbolTableCreator {
 
-  public SysMLLanguageSub initSysMLLang() {
-    SysMLLanguageSub sysMLLanguage = new SysMLLanguageSub("SysML", ".sysml");
-    return sysMLLanguage;
-  }
-
-  public SysMLGlobalScope initGlobalScope(ModelPath mp, SysMLLanguageSub sysMLLanguage) {
-    SysMLGlobalScope sysMLGlobalScope = new SysMLGlobalScope(mp, sysMLLanguage);
+  public ISysMLGlobalScope initGlobalScope(ModelPath mp) {
+    ISysMLGlobalScope sysMLGlobalScope = SysMLMill.globalScope();
+    sysMLGlobalScope.clear();
+    sysMLGlobalScope.setModelPath(mp);
     return sysMLGlobalScope;
   }
 
-  public SysMLArtifactScope createSymboltable(ASTUnit ast,SysMLLanguageSub sysMLLanguage, SysMLGlobalScope globalScope) {
+  public ISysMLArtifactScope createSymboltable(ASTUnit ast, ISysMLGlobalScope globalScope) {
 
-    SysMLSymbolTableCreatorDelegator symbolTableDelegator = sysMLLanguage.getSymbolTableCreator(globalScope);
-    SysMLArtifactScope artifactScope =  symbolTableDelegator.createFromAST(ast);
-    ScopeNameVisitor scopeNameVisitor = new ScopeNameVisitor();
-    scopeNameVisitor.startTraversal(ast);
-    return artifactScope;
+    SysMLSymbolTableCreatorDelegator symbolTableDelegator = SysMLMill.sysMLSymbolTableCreatorDelegator();
+        return symbolTableDelegator.createFromAST(ast);
   }
 
-  public SysMLArtifactScope createSymboltableSingleASTUnit(ASTUnit astUnit, ModelPath mp){
-    return createSymboltable(astUnit, initSysMLLang(), initGlobalScope(mp, initSysMLLang()));
+  public ISysMLArtifactScope createSymboltableSingleASTUnit(ASTUnit astUnit, ModelPath mp){
+    return createSymboltable(astUnit, initGlobalScope(mp));
   }
-  public SysMLGlobalScope createSymboltableMultipleASTUnit(List<ASTUnit> astUnits, ModelPath mp){
-    SysMLLanguageSub lang = initSysMLLang();
-    SysMLGlobalScope globalScope = initGlobalScope(mp, lang);
+
+  public ISysMLGlobalScope createSymboltableMultipleASTUnit(List<ASTUnit> astUnits, ModelPath mp){ //TODO test
+    ISysMLGlobalScope globalScope= initGlobalScope(mp);
     for (ASTUnit astUnit : astUnits) {
-      createSymboltable(astUnit, lang,globalScope );
+      createSymboltable(astUnit,globalScope );
     }
 
     AddVisibilityToSymbolVisitor addVisibilityToSymbolVisitor = new AddVisibilityToSymbolVisitor();
