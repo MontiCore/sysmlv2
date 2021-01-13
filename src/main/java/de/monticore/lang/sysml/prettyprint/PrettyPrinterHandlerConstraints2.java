@@ -1,17 +1,17 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.advanced.constraints._ast.ASTAssertConstraintUsage;
-import de.monticore.lang.sysml.advanced.constraints._ast.ASTBehaviorUsageMemberAssertConstraintUsage;
-import de.monticore.lang.sysml.advanced.constraints._ast.ASTBehaviorUsageMemberConstraintUsage;
-import de.monticore.lang.sysml.advanced.constraints._visitor.ConstraintsHandler;
-import de.monticore.lang.sysml.advanced.constraints._visitor.ConstraintsTraverser;
-import de.monticore.lang.sysml.basics.usages._ast.ASTSubset;
+import de.monticore.lang.sysml.advanced.sysmlconstraints._ast.ASTAssertConstraintUsage;
+import de.monticore.lang.sysml.advanced.sysmlconstraints._ast.ASTBehaviorUsageMemberAssertConstraintUsage;
+import de.monticore.lang.sysml.advanced.sysmlconstraints._ast.ASTBehaviorUsageMemberConstraintUsage;
+import de.monticore.lang.sysml.advanced.sysmlconstraints._visitor.SysMLConstraintsHandler;
+import de.monticore.lang.sysml.advanced.sysmlconstraints._visitor.SysMLConstraintsTraverser;
+import de.monticore.lang.sysml.common.sysmlusages._ast.ASTSubset;
 import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterHandlerConstraints2 implements ConstraintsHandler {
+public class PrettyPrinterHandlerConstraints2 implements SysMLConstraintsHandler {
 	private IndentPrinter printer;
-	private ConstraintsTraverser traverser;
+	private SysMLConstraintsTraverser traverser;
 
 	public PrettyPrinterHandlerConstraints2(IndentPrinter print, SysMLTraverser traverser) {
 		this.printer = print;
@@ -19,12 +19,12 @@ public class PrettyPrinterHandlerConstraints2 implements ConstraintsHandler {
 	}
 
 	@Override
-	public ConstraintsTraverser getTraverser() {
+	public SysMLConstraintsTraverser getTraverser() {
 		return traverser;
 	}
 
 	@Override
-	public void setTraverser(ConstraintsTraverser realThis) {
+	public void setTraverser(SysMLConstraintsTraverser realThis) {
 		this.traverser = realThis;
 	}
 

@@ -1,0 +1,84 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.common;
+
+
+component grammar SysMLUsages extends de.monticore.lang.sysml.common.SysMLCommonBasis {
+
+  /* USAGES */
+
+  SysMLNameAndTypePart = SysMLName TypePart?;
+
+  UsageStd implements Usage =
+     UsageDeclaration UsageCompletion;
+
+  UsageDeclaration = (SysMLNameAndTypePart SubsettingPart)
+    | (TypePart  SubsettingPart)
+    | (RedefinesKeyword Redefinition TypePart? SubsettingPart); //SubsettingPart itself is optional
+
+  UsageCompletion = ValuePart? DefinitionBody;
+
+  ValuePart = "=" FeatureValue;
+  FeatureValue = Expression;
+  TypePartStd implements TypePart = (TypedByKeyword ((FeatureTyping || ",")+ | "any") MultiplicityPart? )
+    | MultiplicityPart;
+  TypedByKeyword = ":" | "typed" "by";
+  FeatureTypingStd implements FeatureTyping = name:QualifiedName;
+  MultiplicityPart = MultiplicityMember (["ordered"]? ["nonunique"]? | ["nonunique"]? ["ordered"]?);
+    //Sequence of keywords does not matter here.
+
+  Multiplicity = "[" ((FromToDigitsDotDot)? UnlimitedNaturalLiteralMember) "]";
+  SubsettingPart = (Subsets ("," Subset)* | Redefines  ("," Redefinition)*)*;
+
+  Subsets = SubsetsKeyword Subset;
+  SubsetsKeyword = ":>" | "subsets";
+  Subset = QualifiedName;
+
+  Redefines = RedefinesKeyword Redefinition+;
+  RedefinesKeyword = ":>>" | "redefines";
+  Redefinition = QualifiedName;
+
+  //Usage Memberships
+  MultiplicityMember = Multiplicity;
+
+  UnlimitedNaturalLiteralMember = limitedLiteral:Literal | isUnlimited:["*"];
+
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+  astrule SysMLNameAndTypePart =
+    method public String getName(){
+      return this.getSysMLName().getName();
+    }
+  ;
+  astrule UsageStd =
+    method public String getName(){
+      return this.getUsageDeclaration().getName();
+    }
+  ;
+  astrule UsageDeclaration =
+    method public String getName(){
+      if( this.isPresentSysMLNameAndTypePart()){
+        return this.getSysMLNameAndTypePart().getName();
+      }
+      return "";
+    }
+  ;
+  /* PARAMETERS */
+
+  ParameterStd implements Parameter = ParameterTypePart?;
+  ParameterTypePart = (TypedByKeyword (FeatureTyping | "any" ) MultiplicityPart? )
+    | (MultiplicityPart);
+
+  ActionOrStateUsageDeclaration = (SysMLNameAndTypePart ActionParameterList? SubsettingPart ValuePart?)
+       | (TypePart? ActionParameterList? ValuePart?)
+       | (RedefinesKeyword Redefinition TypePart ActionParameterList? ValuePart?);
+
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+  astrule ActionOrStateUsageDeclaration =
+    method public String getName(){
+      return this.getSysMLNameAndTypePart().getName();
+    }
+  ;
+}

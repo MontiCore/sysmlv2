@@ -2,16 +2,12 @@ package de.monticore.lang.sysml._symboltable;
 
 import de.monticore.io.paths.ModelPath;
 import de.monticore.lang.sysml.SysMLTool;
-import de.monticore.lang.sysml.basics.interfaces.sharedbasis._ast.ASTUnit;
-import de.monticore.lang.sysml.basics.interfaces.sharedbasis._symboltable.ISharedBasisScope;
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._ast.ASTPackageUnit;
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._symboltable.IImportsAndPackagesScope;
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._symboltable.ImportsAndPackagesScope;
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._symboltable.PackageSymbol;
-import de.monticore.lang.sysml.basics.valuetypes._ast.ASTValueTypeStd;
-import de.monticore.lang.sysml.basics.valuetypes._symboltable.ValueTypeStdSymbol;
+import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
+import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageUnit;
 import de.monticore.lang.sysml.bdd._ast.ASTBlock;
-import de.monticore.lang.sysml.bdd._symboltable.BlockSymbol;
+import de.monticore.lang.sysml.sysml._symboltable.SysMLArtifactScope;
+import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
 import de.monticore.lang.sysml.sysml.SysMLMill;
 import de.monticore.lang.sysml.sysml._symboltable.*;
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;
@@ -31,14 +27,12 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
   @Test
   public void testSuccessfulCreationInOneFile() {
     String currentPath = this.pathToOfficialSysMLTrainingExamples + "/02. Blocks/Blocks Example.sysml";
-
-    //Ensure successful parsing
     ASTUnit astUnit =  this.parseSysMLSingleModel(currentPath);
     ASTPackageUnit packageUnit  = (ASTPackageUnit) astUnit;
-    System.out.println("Package name is " + packageUnit.getPackage().getName());
+    Log.debug("Package name is " + packageUnit.getPackage().getName(), this.getClass().getName());
     assertEquals("Blocks Example", packageUnit.getPackage().getName());
     ASTBlock block = (ASTBlock) packageUnit.getPackage().getPackageBody().getPackageMember(0).getPackagedDefinitionMember();
-    System.out.println("Block name is " + block.getName());
+    Log.debug("Block name is " + block.getName(), this.getClass().getName());
     assertEquals("Blocks Example", packageUnit.getPackage().getName());
 
     //Creating Symboltable
@@ -47,11 +41,13 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
     ISysMLArtifactScope topScope = helperSysMLSymbolTableCreator.createSymboltableSingleASTUnit(astUnit, mp);
 
     //Testing Symboltable
-    Optional<PackageSymbol> packageSymbol = topScope.resolvePackage("Blocks Example");
-    Optional<BlockSymbol> blockSymbol = topScope.getSubScopes().get(0).resolveBlockDown("Vehicle");
-    Optional<ValueTypeStdSymbol> valueTypeSymbol = topScope.getSubScopes().get(0).resolveValueTypeStdDown(
+    // Optional<PackageSymbol> packageSymbol = topScope.resolvePackage("Blocks Example");
+    Optional<SysMLTypeSymbol> packageSymbol = topScope.resolveSysMLType("Blocks Example");
+    // Optional<BlockSymbol> blockSymbol = topScope.getSubScopes().get(0).resolveBlockDown("Vehicle");
+    Optional<SysMLTypeSymbol> blockSymbol = topScope.getSubScopes().get(0).resolveSysMLType("Vehicle");
+    Optional<SysMLTypeSymbol> valueTypeSymbol = topScope.getSubScopes().get(0).resolveSysMLType(
         "VehicleStatus");
-    Optional<PackageSymbol> notExistingSymbol = topScope.resolvePackage("WrongName Example");
+    Optional<SysMLTypeSymbol> notExistingSymbol = topScope.resolveSysMLType("WrongName Example");
 
     assertTrue(packageSymbol.isPresent());
     assertEquals("Blocks Example", packageSymbol.get().getName());
@@ -64,11 +60,11 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
 
     SysMLArtifactScope scope = (SysMLArtifactScope) astUnit.getEnclosingScope();
     //Testing resolving with astUnit
-    Optional<PackageSymbol> packageSymbolEnclosingScope = scope.resolvePackage("Blocks Example");
-    Optional<BlockSymbol> blockSymbolEnclosingScope = scope.getSubScopes().get(0).resolveBlockDown("Vehicle");
-    Optional<ValueTypeStdSymbol> valueTypeSymbolEnclosingScope = scope.getSubScopes().get(0).resolveValueTypeStdDown(
+    Optional<SysMLTypeSymbol> packageSymbolEnclosingScope = scope.resolveSysMLType("Blocks Example");
+    Optional<SysMLTypeSymbol> blockSymbolEnclosingScope = scope.getSubScopes().get(0).resolveSysMLType("Vehicle");
+    Optional<SysMLTypeSymbol> valueTypeSymbolEnclosingScope = scope.getSubScopes().get(0).resolveSysMLType(
         "VehicleStatus");
-    Optional<PackageSymbol> notExistingSymbolEnclosingScope = scope.resolvePackage("WrongName Example");
+    Optional<SysMLTypeSymbol> notExistingSymbolEnclosingScope = scope.resolveSysMLType("WrongName Example");
 
     assertTrue(packageSymbolEnclosingScope.isPresent());
     assertTrue(blockSymbolEnclosingScope.isPresent());
@@ -84,14 +80,14 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
     ISysMLGlobalScope topScope = SysMLTool.buildSymbolTable(currentPath, models);
 
     //Testing Symboltable
-    Optional<PackageSymbol> packageSymbolBlocksExample = topScope.resolvePackage("Blocks Example");
+    Optional<SysMLTypeSymbol> packageSymbolBlocksExample = topScope.resolveSysMLType("Blocks Example");
     assertTrue(packageSymbolBlocksExample.isPresent());
-    Optional<PackageSymbol> packageSymbolCommentExample = topScope.resolvePackage("Comment Example");
+    Optional<SysMLTypeSymbol> packageSymbolCommentExample = topScope.resolveSysMLType("Comment Example");
     assertTrue(packageSymbolCommentExample.isPresent());
-    Optional<PackageSymbol> packageSymbolPackageExample = topScope.resolvePackage("Package Example");
+    Optional<SysMLTypeSymbol> packageSymbolPackageExample = topScope.resolveSysMLType("Package Example");
     assertTrue(packageSymbolPackageExample.isPresent());
 
-    Optional<PackageSymbol> notExistingPackageSymbol = topScope.resolvePackage("WrongName...!");
+    Optional<SysMLTypeSymbol> notExistingPackageSymbol = topScope.resolveSysMLType("WrongName...!");
     assertFalse(notExistingPackageSymbol.isPresent());
 
   }

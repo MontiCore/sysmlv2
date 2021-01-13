@@ -1,16 +1,16 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.associations._ast.ASTConjugatedEndPortMember;
-import de.monticore.lang.sysml.basics.associations._ast.ASTEndPortMember;
-import de.monticore.lang.sysml.basics.associations._visitor.AssociationsHandler;
-import de.monticore.lang.sysml.basics.associations._visitor.AssociationsTraverser;
-import de.monticore.lang.sysml.basics.sysmldefault.expressions._visitor.ExpressionsTraverser;
+import de.monticore.lang.sysml.common.sysmlassociations._ast.ASTConjugatedEndPortMember;
+import de.monticore.lang.sysml.common.sysmlassociations._ast.ASTEndPortMember;
+import de.monticore.lang.sysml.common.sysmlassociations._visitor.SysMLAssociationsHandler;
+import de.monticore.lang.sysml.common.sysmlassociations._visitor.SysMLAssociationsTraverser;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlexpressions._visitor.SysMLExpressionsTraverser;
 import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterHandlerAssociations2 implements AssociationsHandler {
+public class PrettyPrinterHandlerAssociations2 implements SysMLAssociationsHandler {
 	private IndentPrinter printer;
-	private AssociationsTraverser traverser;
+	private SysMLAssociationsTraverser traverser;
 
 	public PrettyPrinterHandlerAssociations2(IndentPrinter print, SysMLTraverser traverser) {
 		this.printer = print;
@@ -18,12 +18,12 @@ public class PrettyPrinterHandlerAssociations2 implements AssociationsHandler {
 	}
 
 	@Override
-	public AssociationsTraverser getTraverser() {
+	public SysMLAssociationsTraverser getTraverser() {
 		return this.traverser;
 	}
 
 	@Override
-	public void setTraverser(AssociationsTraverser realThis) {
+	public void setTraverser(SysMLAssociationsTraverser realThis) {
 		this.traverser = realThis;
 	}
 

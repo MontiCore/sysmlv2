@@ -1,21 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml;
 
-component grammar AD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
+component grammar AD extends de.monticore.lang.sysml.advanced.SysMLSuccessions {
 
   /* ACTIVITIES */
 
   ActivityUnit implements Unit = UnitPrefix Activity;
-  Activity implements PackagedDefinitionMember = ActivityDeclaration ActivityBody;
-  symbol ActivityDeclaration = ["abstract"]? "activity" SysMLName ParameterList? SuperclassingList?;
-  astrule ActivityDeclaration =
+  Activity implements SysMLType, PackagedDefinitionMember = ActivityDeclaration ActivityBody;
 
-     method public String getName(){
-       return this.getSysMLName().getName();
-     };
+  ActivityDeclaration = ["abstract"]? "activity" SysMLName ParameterList? SuperclassingList?;
 
   ParameterListStd implements ParameterList = "(" (ParameterMember || "," )* ")";
-  ActivityBodyStd implements ActivityBody = ";" | ("{" ActivityBodyItem* "}");
+  scope ActivityBodyStd implements ActivityBody = ";" | ("{" ActivityBodyItem* "}");
   ActivityBodyItemStd implements ActivityBodyItem =
     NestedDefinitionMember
     | StructureUsageMember
@@ -24,10 +20,22 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
     | GuardedSuccessionMember
     | ImportUnit;
 
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+  astrule Activity =
+    method public String getName(){
+      return this.getActivityDeclaration().getName();
+    };
+  astrule ActivityDeclaration =
+     method public String getName(){
+       return this.getSysMLName().getName();
+  };
+
 
   /* ACTIVITIY MEMBERSHIPS */
 
-  symbol ParameterMemberStd implements ParameterMember = direction:FeatureDirection? memberName:SysMLName Parameter;
+  ParameterMemberStd implements ParameterMember = direction:FeatureDirection? memberName:SysMLName Parameter;
   astrule ParameterMemberStd =
       method public String getName(){
         return this.getMemberName().getName();
@@ -44,9 +52,10 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
      ["abstract"]?"end" ("ref" "action" | isComposite:"action" ) ActionUsage;
 
   /* ACTIONS */
+
   ActionUnit implements Unit = UnitPrefix ActionDeclaration ActivityBody;
   ActionDeclaration = ["abstract"]? "action" SysMLNameAndTypePart ActionParameterList? SubsettingPart ValuePart?;
-  ActionUsageStd implements ActionUsage = ActionOrStateUsageDeclaration ActivityBody;
+  ActionUsageStd implements SysMLType, ActionUsage = ActionOrStateUsageDeclaration ActivityBody;
 
   ActionUsagePackagedUsageMember implements PackagedUsageMember =      ["abstract"]? "action" ActionUsage;
   BehaviorUsageMemberActionUsage implements BehaviorUsageMember =
@@ -61,18 +70,29 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
     ("stream" | "flow") EmptyItemFeatureMember "from" ItemFlowEndMember;
 
   PerformActionUsage = PerformActionUsageDeclaration ActivityBody;
-  symbol PerformActionUsageDeclaration = ((( SysMLName TypePart? "as" )? Subset+)
+  PerformActionUsageDeclaration implements SysMLType = ((( SysMLName TypePart? "as" )? Subset+)
     |( "action" (SysMLName)? TypePart?)) ActionParameterList? SubsettingPart ValuePart?;
+
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+  astrule ActionUsageStd =
+    method public String getName(){
+      return this.getActionOrStateUsageDeclaration().getName();
+    }
+  ;
   astrule PerformActionUsageDeclaration =
     method public String getName(){
       if( this.isPresentSysMLName()){
         return this.getSysMLName().getName();
       }
-      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+      return "";
     }
   ;
 
+
   /* ACTIVITY NODES */
+
   ActivityNode = ActionNode | ControlNode;
   ActionNode = ActionNodeDeclaration ActivityBody;
   ActionNodeDeclaration = ActionUsageNodeDeclaration | PerformActionNodeDeclaration | AcceptActionNodeDeclaration |
@@ -80,22 +100,40 @@ component grammar AD extends de.monticore.lang.sysml.advanced.SysMLAdvanced {
   ActionUsageNodeDeclaration = ["abstract"]? (("ref" "action") | isComposite:["action"]) ActionOrStateUsageDeclaration;
   PerformActionNodeDeclaration = isComposite:["perform"] (SysMLNameAndTypePart "as")? Subset ActionParameterList?
     SubsettingPart ValuePart?;
-  AcceptActionNodeDeclaration = EmptyParameterMember "accept" SysMLNameAndTypePart? "(" ItemFeatureMember ")";
-  SendActionNodeDeclaration = EmptyParameterMember EmptyItemFeatureMember
+  AcceptActionNodeDeclaration implements SysMLType
+    = EmptyParameterMember "accept" SysMLNameAndTypePart? "(" ItemFeatureMember ")";
+  SendActionNodeDeclaration implements SysMLType = EmptyParameterMember EmptyItemFeatureMember
     "send" ( SysMLNameAndTypePart? "of")? ExpressionMember "to" ExpressionMember;
-  ControlNode = MergeNode	| DecisionNode | JoinNode | ForkNode;
 
-  MergeNode = "merge" SysMLNameAndTypePart? ";";
-  DecisionNode = "decide" SysMLNameAndTypePart? ";";
-  JoinNode = "join" SysMLNameAndTypePart? ";";
-  ForkNode = "fork" SysMLNameAndTypePart? ";";
-  //TODO improve to? => ControlNode = (["merge"] | ["decide"] | ["join"] | ["fork"]) SysMLNameAndTypePart? ";";
+  ControlNode = (["merge"] | ["decide"] | ["join"] | ["fork"]) SysMLNameAndTypePart? ";";
 
   /* ACTION MEMBERSHIPS */
+
   ActionParameterMember = (direction:FeatureDirection | direction:FeatureDirection? memberName:SysMLName)
     ActionParameter;
   ActionParameterFlowMember = ActionParameterFlow;
   EmptySuccessionMember = EmptySuccession;
 
-  PerformedActionUsageStd implements PerformedActionUsage = PerformActionUsageDeclaration | AcceptActionNodeDeclaration | SendActionNodeDeclaration;
+  PerformedActionUsageStd implements PerformedActionUsage =
+    PerformActionUsageDeclaration | AcceptActionNodeDeclaration | SendActionNodeDeclaration;
+
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+  astrule AcceptActionNodeDeclaration =
+    method public String getName(){
+      if( this.isPresentSysMLNameAndTypePart()){
+        return this.getSysMLNameAndTypePart().getName();
+      }
+      return "";
+    }
+  ;
+  astrule SendActionNodeDeclaration =
+      method public String getName(){
+        if( this.isPresentSysMLNameAndTypePart()){
+          return this.getSysMLNameAndTypePart().getName();
+        }
+        return "";
+      }
+    ;
 }

@@ -1,10 +1,10 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.ports._ast.*;
-import de.monticore.lang.sysml.basics.ports._visitor.PortsVisitor2;
+import de.monticore.lang.sysml.common.sysmlports._ast.*;
+import de.monticore.lang.sysml.common.sysmlports._visitor.SysMLPortsVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterPorts2 implements PortsVisitor2 {
+public class PrettyPrinterPorts2 implements SysMLPortsVisitor2 {
 	private IndentPrinter printer;
 
 	public PrettyPrinterPorts2(IndentPrinter print) {
@@ -24,11 +24,6 @@ public class PrettyPrinterPorts2 implements PortsVisitor2 {
 		if (node.isPresentSysMLName()) {
 			printer.print(node.getSysMLName().getNameForPrettyPrinting() + " ");
 		}
-	}
-
-	@Override
-	public void visit(ASTConjugatedPortTyping node) {
-		printer.print(node.getSysMLName().getNameForPrettyPrinting()+" ");
 	}
 
 	@Override

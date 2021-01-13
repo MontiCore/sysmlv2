@@ -1,9 +1,11 @@
 package de.monticore.lang.sysml._symboltable;
 
 import de.monticore.io.paths.ModelPath;
-import de.monticore.lang.sysml.basics.interfaces.sharedbasis._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.sysml.SysMLMill;
 import de.monticore.lang.sysml.sysml._symboltable.*;
+import de.monticore.lang.sysml.sysml._symboltable.doubleimports.AmbigousImportCheck;
+import de.monticore.lang.sysml.sysml._symboltable.doubleimports.RemoveDoubleImportsFromScope;
 
 import java.util.List;
 
@@ -12,18 +14,6 @@ import java.util.List;
  * @version 1.0
  */
 public class HelperSysMLSymbolTableCreator {
- /* TODO delete public SysMLArtifactScope buildSymbolTable(ASTUnit astUnit, SysMLArtifactScope scope){
-    SysMLSymbolTableCreator symbolTableCreator = new SysMLSymbolTableCreator(scope);
-    SysMLArtifactScope newScope = symbolTableCreator.createFromAST(astUnit);
-    return newScope;
-  }
-  public SysMLArtifactScope buildSymbolTableWithGlobalScope(ASTUnit astUnit,
-      de.monticore.io.paths.ModelPath modelPath, SysMLLanguage language){
-    SysMLGlobalScope globalScope = new SysMLGlobalScope(modelPath, language);
-    SysMLSymbolTableCreator symbolTableCreator = new SysMLSymbolTableCreator(globalScope);
-    SysMLArtifactScope newScope = symbolTableCreator.createFromAST(astUnit);
-    return newScope;
-    }*/
 
   public ISysMLGlobalScope initGlobalScope(ModelPath mp) {
     ISysMLGlobalScope sysMLGlobalScope = SysMLMill.globalScope();
@@ -47,6 +37,33 @@ public class HelperSysMLSymbolTableCreator {
     for (ASTUnit astUnit : astUnits) {
       createSymboltable(astUnit,globalScope );
     }
+
+    AddVisibilityToSymbolVisitor addVisibilityToSymbolVisitor = new AddVisibilityToSymbolVisitor();
+    for (ASTUnit astUnit : astUnits) {
+      addVisibilityToSymbolVisitor.startTraversal(astUnit);
+    }
+
+    AddImportToScopeVisitor addImportToScopeVisitor = new AddImportToScopeVisitor();
+    for(ASTUnit model: astUnits){
+      addImportToScopeVisitor.memorizeImportsPhase1of5(model);
+    }
+
+    AmbigousImportCheck ambigousImportCheck = new AmbigousImportCheck();
+    for(ASTUnit model: astUnits){
+      ambigousImportCheck.addWarningForAmbigousImport2of5(model);
+    }
+
+    for(ASTUnit model: astUnits){
+      addImportToScopeVisitor.addReexportedSymbolsOfPackagesPhase3of5(model);
+    }
+    RemoveDoubleImportsFromScope removeDoubleImportsFromScope = new RemoveDoubleImportsFromScope();
+    for (ASTUnit model : astUnits) {
+      removeDoubleImportsFromScope.removeDoubleImportsAndAddWarningPhase4of5(model);
+    }
+    for(ASTUnit model: astUnits){
+      addImportToScopeVisitor.addImportsToScopePhase5of5(model);
+    }
+
     return globalScope;
   }
 }

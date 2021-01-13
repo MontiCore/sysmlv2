@@ -1,12 +1,12 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.sysmldefault.comments._ast.ASTComment;
-import de.monticore.lang.sysml.basics.sysmldefault.comments._ast.ASTDocumentation;
-import de.monticore.lang.sysml.basics.sysmldefault.comments._ast.ASTSysMLAnnotation;
-import de.monticore.lang.sysml.basics.sysmldefault.comments._visitor.CommentsVisitor2;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlcomments._ast.ASTComment;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlcomments._ast.ASTDocumentation;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlcomments._ast.ASTSysMLAnnotation;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlcomments._visitor.SysMLCommentsVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterComments2 implements CommentsVisitor2 {
+public class PrettyPrinterComments2 implements SysMLCommentsVisitor2 {
 	private IndentPrinter printer;
 
 	public PrettyPrinterComments2(IndentPrinter print) {

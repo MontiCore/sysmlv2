@@ -1,26 +1,26 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.classifiers._ast.ASTSuperclassingList;
-import de.monticore.lang.sysml.basics.classifiers._visitor.ClassifiersHandler;
-import de.monticore.lang.sysml.basics.classifiers._visitor.ClassifiersTraverser;
+import de.monticore.lang.sysml.common.sysmlclassifiers._ast.ASTSuperclassingList;
+import de.monticore.lang.sysml.common.sysmlclassifiers._visitor.SysMLClassifiersHandler;
+import de.monticore.lang.sysml.common.sysmlclassifiers._visitor.SysMLClassifiersTraverser;
 import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterHandlerClassifiers2 implements ClassifiersHandler {
+public class PrettyPrinterHandlerClassifiers2 implements SysMLClassifiersHandler {
 	private IndentPrinter printer;
-	private ClassifiersTraverser traverser;
+	private SysMLClassifiersTraverser traverser;
 
 	public PrettyPrinterHandlerClassifiers2(IndentPrinter print, SysMLTraverser traverser) {
 		this.printer = print;
 		this.traverser = traverser;
 	}
 	@Override
-	public ClassifiersTraverser getTraverser() {
+	public SysMLClassifiersTraverser getTraverser() {
 		return this.traverser;
 	}
 
 	@Override
-	public void setTraverser(ClassifiersTraverser realThis) {
+	public void setTraverser(SysMLClassifiersTraverser realThis) {
 		this.traverser = realThis;
 	}
 

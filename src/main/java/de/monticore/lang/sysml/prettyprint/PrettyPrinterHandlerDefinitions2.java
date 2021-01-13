@@ -1,15 +1,13 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.advanced.definitions._ast.ASTConjugatedPortMember;
-import de.monticore.lang.sysml.advanced.definitions._ast.ASTPortMember;
-import de.monticore.lang.sysml.advanced.definitions._visitor.DefinitionsHandler;
-import de.monticore.lang.sysml.advanced.definitions._visitor.DefinitionsTraverser;
+import de.monticore.lang.sysml.common.sysmldefinitions._visitor.SysMLDefinitionsHandler;
+import de.monticore.lang.sysml.common.sysmldefinitions._visitor.SysMLDefinitionsTraverser;
 import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterHandlerDefinitions2 implements DefinitionsHandler {
+public class PrettyPrinterHandlerDefinitions2 implements SysMLDefinitionsHandler {
 	private IndentPrinter printer;
-	private DefinitionsTraverser traverser;
+	private SysMLDefinitionsTraverser traverser;
 
 	public PrettyPrinterHandlerDefinitions2(IndentPrinter printer, SysMLTraverser traverser) {
 		this.printer = printer;
@@ -17,34 +15,13 @@ public class PrettyPrinterHandlerDefinitions2 implements DefinitionsHandler {
 	}
 
 	@Override
-	public DefinitionsTraverser getTraverser() {
+	public SysMLDefinitionsTraverser getTraverser() {
 		return this.traverser;
 	}
 
 	@Override
-	public void setTraverser(DefinitionsTraverser traverser) {
+	public void setTraverser(SysMLDefinitionsTraverser traverser) {
 		this.traverser = traverser;
 	}
 
-	@Override
-	public void handle(ASTPortMember node) {
-		printer.println("");
-		node.getDefinitionMemberPrefix().accept(getTraverser());
-		if (node.isAbstract()) {
-			printer.print("abstract ");
-		}
-		printer.print("port ");
-		node.getPortUsage().accept(getTraverser());
-	}
-
-	@Override
-	public void handle(ASTConjugatedPortMember node) {
-		printer.println("");
-		node.getDefinitionMemberPrefix().accept(getTraverser());
-		if (node.isAbstract()) {
-			printer.print("abstract ");
-		}
-		printer.print("port ");
-		node.getConjugatedPortUsage().accept(getTraverser());
-	}
 }

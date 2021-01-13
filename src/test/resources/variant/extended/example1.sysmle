@@ -1,0 +1,24 @@
+package <Example1> {
+	import ScalarValues::*;
+
+	block ElectricSportCar {
+		value mass : Real;
+		value status : VehicleStatus;
+		part eng : Engine[4];
+
+    //could also be described with assert constraint and a constraint def.
+    inline condition {forall engine in eng: engine.ps>60};
+		ref driver : Person;
+	}
+	block Engine{
+  	ps : Integer;
+  }
+
+	value type VehicleStatus {
+		gearSetting : Integer;
+		acceleratorPosition : Real;
+	}
+
+
+	block Person;
+}

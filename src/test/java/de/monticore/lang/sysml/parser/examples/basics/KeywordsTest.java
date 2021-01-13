@@ -1,6 +1,6 @@
 package de.monticore.lang.sysml.parser.examples.basics;
 
-import de.monticore.lang.sysml.basics.interfaces.sharedbasis._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.bdd._ast.ASTBlockUnit;
 import de.monticore.lang.sysml.utils.SysMLParserForTesting;
 import org.junit.Assert;

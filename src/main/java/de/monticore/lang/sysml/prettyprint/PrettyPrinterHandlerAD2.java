@@ -3,7 +3,7 @@ package de.monticore.lang.sysml.prettyprint;
 import de.monticore.lang.sysml.ad._ast.*;
 import de.monticore.lang.sysml.ad._visitor.ADHandler;
 import de.monticore.lang.sysml.ad._visitor.ADTraverser;
-import de.monticore.lang.sysml.basics.usages._ast.ASTSubset;
+import de.monticore.lang.sysml.common.sysmlusages._ast.ASTSubset;
 import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
 import de.monticore.prettyprint.IndentPrinter;
 

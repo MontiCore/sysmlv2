@@ -1,11 +1,11 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.sysmldefault.expressions._ast.*;
-import de.monticore.lang.sysml.basics.sysmldefault.expressions._visitor.ExpressionsVisitor2;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlexpressions._ast.*;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlexpressions._visitor.SysMLExpressionsVisitor2;
 import de.monticore.lang.sysml.ibd._visitor.IBDVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterExpressions2 implements ExpressionsVisitor2 {
+public class PrettyPrinterExpressions2 implements SysMLExpressionsVisitor2 {
 	private IndentPrinter printer;
 
 	public PrettyPrinterExpressions2(IndentPrinter print) {

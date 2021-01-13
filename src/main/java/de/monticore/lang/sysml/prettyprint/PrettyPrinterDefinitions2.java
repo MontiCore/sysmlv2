@@ -1,11 +1,11 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.advanced.definitions._ast.ASTDefinitionBodyEmpty;
-import de.monticore.lang.sysml.advanced.definitions._ast.ASTDefinitionBodyStd;
-import de.monticore.lang.sysml.advanced.definitions._visitor.DefinitionsVisitor2;
+import de.monticore.lang.sysml.common.sysmldefinitions._ast.ASTDefinitionBodyEmpty;
+import de.monticore.lang.sysml.common.sysmldefinitions._ast.ASTDefinitionBodyStd;
+import de.monticore.lang.sysml.common.sysmldefinitions._visitor.SysMLDefinitionsVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterDefinitions2 implements DefinitionsVisitor2 {
+public class PrettyPrinterDefinitions2 implements SysMLDefinitionsVisitor2 {
 	private IndentPrinter printer;
 
 	public PrettyPrinterDefinitions2(IndentPrinter print) {

@@ -1,0 +1,20 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysmlvariant;
+
+
+grammar SysMLExtended extends
+  // de.monticore.lang.sysml.basics.sysmldefault.SysMLBasics // Do not import all the basics, but configure it here.
+  de.monticore.lang.sysmlvariant.basics.extended.SysMLNamesExtended, //New
+  de.monticore.lang.sysmlvariant.basics.extended.SysMLExpressionsExtended, //New
+  de.monticore.lang.sysml.basics.sysmldefault.SysMLComments,
+  de.monticore.lang.sysml.basics.sysmldefault.SysMLImportsAndPackages,
+  de.monticore.lang.sysml.basics.sysmldefault.SysMLLiterals,
+  de.monticore.lang.sysml.basics.sysmldefault.SysMLVisibility,
+  de.monticore.lang.sysml.AD,
+  de.monticore.lang.sysml.BDD,
+  de.monticore.lang.sysml.IBD,
+  de.monticore.lang.sysml.ParametricDiagram,
+  de.monticore.lang.sysml.RequirementDiagram,
+  de.monticore.lang.sysml.STM  {
+  start Unit;
+}

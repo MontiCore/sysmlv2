@@ -1,0 +1,3 @@
+package Example1 {
+	import VehiclesDefinition::Bus; //only . allowed
+}

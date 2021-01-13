@@ -1,0 +1,24 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.basics.interfaces;
+
+component grammar SysMLShared extends de.monticore.lang.sysml.basics.interfaces.SysMLNamesBasis{
+  interface Unit; //A Unit is a starting production
+
+  interface NestedDefinitionMember;
+  interface NestedUsageMember;
+
+  /* DEFINITION MEMBERSHIPS */
+  interface NonPortStructureUsageMember; //Referencing other elements in a production
+  interface BehaviorUsageMember; //Referencing other elements in a production
+
+  /* ASSOCIATION BLOCK MEMBERSHIPS */
+  interface AssociationUsageMember;
+
+  interface FeatureTyping;
+
+  interface Parameter;
+
+  token FromToDigitsDotDot = ('0'..'9')+ "..";
+
+  interface TypePart;
+}

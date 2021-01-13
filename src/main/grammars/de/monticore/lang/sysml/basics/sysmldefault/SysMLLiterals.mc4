@@ -1,0 +1,15 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.basics.sysmldefault;
+
+component grammar SysMLLiterals extends de.monticore.literals.MCCommonLiterals {
+  /* Remark: See "// Literal Expressions" in Xtext line 1739
+  * Literals are implemented very differently here, because we reuse MCCommonLiterals */
+
+  token DecimalDoublePointLiteral = Digits '.' (Digits)? (ExponentPart)? | Digits ExponentPart;
+  token ExponentPart = Digits ('e' | 'E') ('+' | '-')? Digits;
+
+  // Literal Expressions
+  RealLiteralWithExponent implements Literal = DecimalDoublePointLiteral;
+  SysMLExponentValue implements Literal = ExponentPart;
+  UnlimitedNaturalLiteralExpression = "*";
+}

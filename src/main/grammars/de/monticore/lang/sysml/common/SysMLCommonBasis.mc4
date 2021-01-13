@@ -1,0 +1,52 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.common;
+
+
+component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.interfaces.SysMLCommentsBasis,
+  de.monticore.lang.sysml.basics.interfaces.SysMLLiteralsBasis,
+  de.monticore.lang.sysml.basics.interfaces.SysMLNamesBasis,
+  de.monticore.lang.sysml.basics.interfaces.SysMLPackageBasis,
+  de.monticore.lang.sysml.basics.interfaces.SysMLImportBasis,
+  de.monticore.lang.sysml.basics.interfaces.SysMLVisibilityBasis,
+  de.monticore.lang.sysml.basics.interfaces.SysMLExpressionsBasis,
+  de.monticore.lang.sysml.basics.interfaces.SysMLShared {
+
+  FeatureDirection =  ["in"] | ["out"] | ["inout"];
+
+  interface DefinitionBody;
+  interface ValueType;
+  interface ClassifierDeclarationCompletion;
+  astrule ClassifierDeclarationCompletion =
+    method public String getName(){
+      return "NotImplemented12324182481524";
+    }
+  ;
+  interface PortDefinition;
+
+  interface AssociationEndMember;
+
+
+  interface DefinitionMemberPrefix;
+  interface Usage;
+  astrule Usage =
+    method public String getName(){}
+  ;
+
+  interface ActionUsage;
+  interface PortUsage;
+  interface ConjugatedPortUsage;
+  astrule PortUsage = method public String getName(){};
+  astrule ConjugatedPortUsage = method public String getName(){};
+
+  interface ParameterMember;
+  interface ParameterList;
+  interface ActivityBody;
+  interface ActivityBodyItem;
+  interface ActionParameterList;
+
+  EmptyActionUsage;
+  interface PerformedActionUsage;
+
+  EmptyParameter;
+  EmptyParameterMember = EmptyParameter;
+}

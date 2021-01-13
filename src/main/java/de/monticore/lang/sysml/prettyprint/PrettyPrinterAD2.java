@@ -115,43 +115,23 @@ public class PrettyPrinterAD2 implements ADVisitor2 {
 	}
 
 	@Override
-	public void visit(ASTMergeNode node) {
-		printer.print("merge ");
+	public void visit(ASTControlNode node) {
+	  if (node.isMerge()) {
+	    printer.print("merge ");
+	  } else if (node.isDecide()) {
+	    printer.print("decide ");
+	  } else if (node.isJoin()) {
+	    printer.println("");
+	    printer.print("join ");
+    } else if (node.isFork()) {
+      printer.print("fork ");
+    }
+		
 	}
 
 	@Override
-	public void endVisit(ASTMergeNode node) {
+	public void endVisit(ASTControlNode node) {
 		printer.print(";");
 	}
 
-	@Override
-	public void visit(ASTDecisionNode node) {
-		printer.print("decide ");
-	}
-
-	@Override
-	public void endVisit(ASTDecisionNode node) {
-		printer.print(";");
-	}
-
-	@Override
-	public void visit(ASTJoinNode node) {
-		printer.println("");
-		printer.print("join ");
-	}
-
-	@Override
-	public void endVisit(ASTJoinNode node) {
-		printer.print(";");
-	}
-
-	@Override
-	public void visit(ASTForkNode node) {
-		printer.print("fork ");
-	}
-
-	@Override
-	public void endVisit(ASTForkNode node) {
-		printer.print(";");
-	}
 }

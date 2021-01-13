@@ -1,0 +1,61 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.common;
+
+
+component grammar SysMLValueTypes extends de.monticore.lang.sysml.common.SysMLUsages{
+
+  /* VALUE TYPES */
+
+  ValueTypeUnit = UnitPrefix ValueType;
+  ValueTypeStd implements ValueType, SysMLType, PackagedDefinitionMember =
+    ValueTypeDeclaration DefinitionBody;
+  ValueTypeDeclaration = ["abstract"]? "value" "type" ClassifierDeclarationCompletion;
+
+  /* VALUE PROPERTIES */
+
+  ValueUnit implements SysMLType, Unit = UnitPrefix ValueDeclaration UsageCompletion;
+  ValueDeclaration = ["abstract"]? ["value"]? SysMLNameAndTypePart SubsettingPart;
+
+  NonPortStructureUsageMemberValueProperty implements SysMLType, NonPortStructureUsageMember =
+    ["abstract"]? ["value"]? direction:FeatureDirection? ValueProperty;
+
+  ValuePropertyPackagedUsageMember implements SysMLType, PackagedUsageMember =
+    ["abstract"]? "value"? ValueProperty;
+
+  ValueProperty = Usage;
+
+
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+  astrule ValueTypeStd =
+    method public String getName(){
+      return this.getValueTypeDeclaration().getName();
+    }
+  ;
+  astrule ValueTypeDeclaration =
+    method public String getName(){
+      return this.getClassifierDeclarationCompletion().getName();
+    }
+  ;
+  astrule ValueUnit =
+    method public String getName(){
+      return this.getValueDeclaration().getSysMLNameAndTypePart().getName();
+    }
+  ;
+  astrule NonPortStructureUsageMemberValueProperty =
+    method public String getName(){
+      return this.getValueProperty().getName();
+    }
+  ;
+  astrule ValuePropertyPackagedUsageMember =
+    method public String getName(){
+      return this.getValueProperty().getName();
+    }
+  ;
+  astrule ValueProperty =
+    method public String getName(){
+      return this.getUsage().getName();
+    }
+  ;
+}

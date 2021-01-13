@@ -1,15 +1,15 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.classifiers._visitor.ClassifiersTraverser;
-import de.monticore.lang.sysml.basics.ports._ast.*;
-import de.monticore.lang.sysml.basics.ports._visitor.PortsHandler;
-import de.monticore.lang.sysml.basics.ports._visitor.PortsTraverser;
+import de.monticore.lang.sysml.common.sysmlclassifiers._visitor.SysMLClassifiersTraverser;
+import de.monticore.lang.sysml.common.sysmlports._ast.*;
+import de.monticore.lang.sysml.common.sysmlports._visitor.SysMLPortsHandler;
+import de.monticore.lang.sysml.common.sysmlports._visitor.SysMLPortsTraverser;
 import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterHandlerPorts2 implements PortsHandler {
+public class PrettyPrinterHandlerPorts2 implements SysMLPortsHandler {
 	private IndentPrinter printer;
-	private PortsTraverser traverser;
+	private SysMLPortsTraverser traverser;
 
 	public PrettyPrinterHandlerPorts2(IndentPrinter print, SysMLTraverser traverser) {
 		this.printer = print;
@@ -17,12 +17,12 @@ public class PrettyPrinterHandlerPorts2 implements PortsHandler {
 	}
 
 	@Override
-	public PortsTraverser getTraverser() {
+	public SysMLPortsTraverser getTraverser() {
 		return this.traverser;
 	}
 
 	@Override
-	public void setTraverser(PortsTraverser realThis) {
+	public void setTraverser(SysMLPortsTraverser realThis) {
 		this.traverser = realThis;
 	}
 
@@ -111,4 +111,34 @@ public class PrettyPrinterHandlerPorts2 implements PortsHandler {
 		}
 		node.getConjugatedPortUsage().accept(getTraverser());
 	}
+	
+	@Override
+  public void handle(ASTPortMember node) {
+    printer.println("");
+    node.getDefinitionMemberPrefix().accept(getTraverser());
+    if (node.isAbstract()) {
+      printer.print("abstract ");
+    }
+    printer.print("port ");
+    node.getPortUsage().accept(getTraverser());
+  }
+
+  @Override
+  public void handle(ASTConjugatedPortMember node) {
+    printer.println("");
+    node.getDefinitionMemberPrefix().accept(getTraverser());
+    if (node.isAbstract()) {
+      printer.print("abstract ");
+    }
+    printer.print("port ");
+    node.getConjugatedPortUsage().accept(getTraverser());
+  }
+  
+  @Override
+  public void handle(ASTConjugatedPortTyping node) {
+    node.getQualifiedName().accept(getTraverser());
+    String s = printer.getContent().trim();
+    printer.clearBuffer();
+    printer.print(s + " ");
+  }
 }

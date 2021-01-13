@@ -1,0 +1,46 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml.basics.sysmldefault;
+
+
+component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics.interfaces.SysMLCommentsBasis,
+  de.monticore.lang.sysml.basics.interfaces.SysMLImportBasis,
+  de.monticore.lang.sysml.basics.interfaces.SysMLNamesBasis,
+  de.monticore.lang.sysml.basics.interfaces.SysMLPackageBasis,
+  de.monticore.lang.sysml.basics.interfaces.SysMLVisibilityBasis,
+  de.monticore.lang.sysml.basics.interfaces.SysMLShared {
+
+  /* IMPORTS */
+  AliasPackagedDefinitionMember implements SysMLType, PackagedDefinitionMember =
+      ("import" | ["alias"]) QualifiedName ("as" SysMLName)? ";";
+  astrule AliasPackagedDefinitionMember =
+    method public String getName(){
+      if( this.isPresentSysMLName()){
+        return this.getSysMLName().getName();
+      }
+      return "";
+    }
+  ;
+
+  //Following has the name "Import" in Xtext
+  ImportUnitStd implements ImportUnit = PrefixAnnotation* (visibility:PackageElementVisibilityIndicator)?
+    "import" QualifiedName ("::" | ".") star:["*"] {noSpace()}? ";";
+
+  /* PACKAGES */
+  PackageUnit implements Unit = UnitPrefix Package;
+  AnonymousPackage implements Unit = PackageBody;
+  Package implements SysMLType, PackagedDefinitionMember =  PackageDeclaration PackageBody;
+  astrule Package =
+      method public String getName(){
+         return this.getPackageDeclaration().getSysMLName().getName();
+      }
+    ;
+  PackageDeclaration = "package" SysMLName;
+  scope PackageBody = "{" (PackageMember | ImportUnit)* "}";
+
+
+  /* PACKAGE MEMBERSHIPS */
+  PackageMember = PackageMemberPrefix ( PackagedDefinitionMember | PackagedUsageMember);
+  PackageMemberPrefix = PrefixAnnotation* visibility:PackageElementVisibilityIndicator?;
+  // Remark: PackagedDefinitionMember is an interface
+  // Remark: PackagedUsageMember is an interface
+}

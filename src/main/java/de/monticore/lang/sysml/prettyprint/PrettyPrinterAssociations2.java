@@ -1,11 +1,11 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.associations._ast.ASTAssociationBlockBody;
-import de.monticore.lang.sysml.basics.associations._ast.ASTAssociationBlockDeclaration;
-import de.monticore.lang.sysml.basics.associations._visitor.AssociationsVisitor2;
+import de.monticore.lang.sysml.common.sysmlassociations._ast.ASTAssociationBlockBody;
+import de.monticore.lang.sysml.common.sysmlassociations._ast.ASTAssociationBlockDeclaration;
+import de.monticore.lang.sysml.common.sysmlassociations._visitor.SysMLAssociationsVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterAssociations2 implements AssociationsVisitor2 {
+public class PrettyPrinterAssociations2 implements SysMLAssociationsVisitor2 {
 	private IndentPrinter printer;
 
 	public PrettyPrinterAssociations2(IndentPrinter print) {

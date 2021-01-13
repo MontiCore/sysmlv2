@@ -1,18 +1,19 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.interfaces.commentsbasis._ast.ASTPrefixAnnotation;
-import de.monticore.lang.sysml.basics.interfaces.importbasis._ast.ASTImportUnit;
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._ast.ASTImportUnitStd;
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._ast.ASTPackageBody;
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._ast.ASTPackageMember;
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._visitor.ImportsAndPackagesHandler;
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._visitor.ImportsAndPackagesTraverser;
+import de.monticore.lang.sysml.basics.interfaces.sysmlcommentsbasis._ast.ASTPrefixAnnotation;
+import de.monticore.lang.sysml.basics.interfaces.sysmlimportbasis._ast.ASTImportUnit;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTAliasPackagedDefinitionMember;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTImportUnitStd;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageBody;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageMember;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._visitor.SysMLImportsAndPackagesHandler;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._visitor.SysMLImportsAndPackagesTraverser;
 import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterHandlerImportsAndPackages2 implements ImportsAndPackagesHandler {
+public class PrettyPrinterHandlerImportsAndPackages2 implements SysMLImportsAndPackagesHandler {
 	private IndentPrinter printer;
-	private ImportsAndPackagesTraverser traverser;
+	private SysMLImportsAndPackagesTraverser traverser;
 
 	public PrettyPrinterHandlerImportsAndPackages2(IndentPrinter print, SysMLTraverser traverser) {
 		this.printer = print;
@@ -20,12 +21,12 @@ public class PrettyPrinterHandlerImportsAndPackages2 implements ImportsAndPackag
 	}
 
 	@Override
-	public ImportsAndPackagesTraverser getTraverser() {
+	public SysMLImportsAndPackagesTraverser getTraverser() {
 		return this.traverser;
 	}
 
 	@Override
-	public void setTraverser(ImportsAndPackagesTraverser realThis) {
+	public void setTraverser(SysMLImportsAndPackagesTraverser realThis) {
 		this.traverser = realThis;
 	}
 
@@ -46,18 +47,27 @@ public class PrettyPrinterHandlerImportsAndPackages2 implements ImportsAndPackag
 		String s = printer.getContent().trim();
 		printer.clearBuffer();
 		printer.print(s);
-		switch (node.getStar()) {
-			case 1:
-				printer.print("::* ");
-				break;
-			case 2:
-				printer.print(".* ");
-				break;
-		}
-		if (node.isPresentSysMLName()) {
-			printer.print("as " + node.getSysMLName().getNameForPrettyPrinting() + " ");
-		}
+    if (node.isStar()) {
+      printer.print(".* ");
+    }
 		printer.print(";");
+	}
+	
+	@Override
+	public void handle(ASTAliasPackagedDefinitionMember node) {
+	  if (node.isAlias()) {
+	    printer.print("alias ");
+	  } else {
+	    printer.print("import ");
+	  }
+    node.getQualifiedName().accept(getTraverser());
+    String s = printer.getContent().trim();
+    printer.clearBuffer();
+    printer.print(s);
+    if (node.isPresentSysMLName()) {
+      printer.print("as " + node.getSysMLName().getNameForPrettyPrinting() + " ");
+    }
+    printer.print(";");
 	}
 
 	@Override

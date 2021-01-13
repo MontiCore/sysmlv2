@@ -1,15 +1,15 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.sysmldefault.visibility._ast.ASTPackageElementVisibilityIndicatorStd;
-import de.monticore.lang.sysml.basics.sysmldefault.visibility._ast.ASTVISIBILITYLONG;
-import de.monticore.lang.sysml.basics.sysmldefault.visibility._ast.ASTVISIBILITYSHORT;
-import de.monticore.lang.sysml.basics.sysmldefault.visibility._ast.ASTVisibilityIndicatorStd;
-import de.monticore.lang.sysml.basics.sysmldefault.visibility._visitor.VisibilityVisitor2;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlvisibility._ast.ASTPackageElementVisibilityIndicatorStd;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlvisibility._ast.ASTVISIBILITYLONG;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlvisibility._ast.ASTVISIBILITYSHORT;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlvisibility._ast.ASTVisibilityIndicatorStd;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlvisibility._visitor.SysMLVisibilityVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 
 
-public class PrettyPrinterVisibility2 implements VisibilityVisitor2 {
+public class PrettyPrinterVisibility2 implements SysMLVisibilityVisitor2 {
 	private IndentPrinter printer;
 
 	public PrettyPrinterVisibility2(IndentPrinter print) {

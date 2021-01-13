@@ -1,7 +1,7 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.sysmlcommonbasis._ast.ASTFeatureDirection;
-import de.monticore.lang.sysml.basics.sysmlcommonbasis._visitor.SysMLCommonBasisVisitor2;
+import de.monticore.lang.sysml.common.sysmlcommonbasis._ast.ASTFeatureDirection;
+import de.monticore.lang.sysml.common.sysmlcommonbasis._visitor.SysMLCommonBasisVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
 public class PrettyPrinterSysMLCommonBasis2 implements SysMLCommonBasisVisitor2 {

@@ -1,10 +1,10 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.advanced.constraints._ast.*;
-import de.monticore.lang.sysml.advanced.constraints._visitor.ConstraintsVisitor2;
+import de.monticore.lang.sysml.advanced.sysmlconstraints._ast.*;
+import de.monticore.lang.sysml.advanced.sysmlconstraints._visitor.SysMLConstraintsVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterConstraints2 implements ConstraintsVisitor2 {
+public class PrettyPrinterConstraints2 implements SysMLConstraintsVisitor2 {
 	private IndentPrinter printer;
 
 	public PrettyPrinterConstraints2(IndentPrinter print) {

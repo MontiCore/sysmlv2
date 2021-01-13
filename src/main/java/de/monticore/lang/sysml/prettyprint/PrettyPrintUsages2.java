@@ -1,10 +1,10 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.usages._ast.*;
-import de.monticore.lang.sysml.basics.usages._visitor.UsagesVisitor2;
+import de.monticore.lang.sysml.common.sysmlusages._ast.*;
+import de.monticore.lang.sysml.common.sysmlusages._visitor.SysMLUsagesVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrintUsages2 implements UsagesVisitor2 {
+public class PrettyPrintUsages2 implements SysMLUsagesVisitor2 {
 	private IndentPrinter printer;
 
 	public PrettyPrintUsages2(IndentPrinter print) {

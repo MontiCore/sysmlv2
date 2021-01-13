@@ -1,17 +1,17 @@
 package de.monticore.lang.sysml.prettyprint;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.lang.sysml.basics.interfaces.namesbasis._ast.ASTSysMLName;
+import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTSysMLName;
 import de.monticore.lang.sysml.basics.interfaces.sysmlexpressionsbasis._ast.ASTExpressionMember;
-import de.monticore.lang.sysml.basics.sysmldefault.expressions._ast.*;
-import de.monticore.lang.sysml.basics.sysmldefault.expressions._visitor.ExpressionsHandler;
-import de.monticore.lang.sysml.basics.sysmldefault.expressions._visitor.ExpressionsTraverser;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlexpressions._ast.*;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlexpressions._visitor.SysMLExpressionsHandler;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlexpressions._visitor.SysMLExpressionsTraverser;
 import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterHandlerExpressions2 implements ExpressionsHandler {
+public class PrettyPrinterHandlerExpressions2 implements SysMLExpressionsHandler {
 	private IndentPrinter printer;
-	private ExpressionsTraverser traverser;
+	private SysMLExpressionsTraverser traverser;
 
 	public PrettyPrinterHandlerExpressions2(IndentPrinter print, SysMLTraverser traverser) {
 		this.printer = print;
@@ -19,35 +19,35 @@ public class PrettyPrinterHandlerExpressions2 implements ExpressionsHandler {
 	}
 
 	@Override
-	public ExpressionsTraverser getTraverser() {
+	public SysMLExpressionsTraverser getTraverser() {
 		return this.traverser;
 	}
 
 	@Override
-	public void setTraverser(ExpressionsTraverser realThis) {
+	public void setTraverser(SysMLExpressionsTraverser realThis) {
 		this.traverser = realThis;
 	}
 
-	@Override
-	public void handle(ASTSysMLConditionalExpression node) {
-		node.getCondition().accept(getTraverser());
-		printer.print("?");
-		for (ASTExpression e :
-			node.getDoOnTrueList()) {
-			e.accept(getTraverser());
-		}
-		printer.print(":");
-		for (ASTExpression e :
-			node.getDoOnFalseList()) {
-			e.accept(getTraverser());
-		}
-	}
+//	@Override
+//	public void handle(ASTSysMLConditionalExpression node) {
+//		node.getCondition().accept(getTraverser());
+//		printer.print("?");
+//		for (ASTExpression e :
+//			node.getDoOnTrueList()) {
+//			e.accept(getTraverser());
+//		}
+//		printer.print(":");
+//		for (ASTExpression e :
+//			node.getDoOnFalseList()) {
+//			e.accept(getTraverser());
+//		}
+//	}
 
 	@Override
 	public void handle(ASTNullCoalescingExpression node) {
-		node.getLeft().accept(getTraverser());
+		node.getIfNotNull().accept(getTraverser());
 		printer.print("?? ");
-		node.getRight().accept(getTraverser());
+		node.getIfNullReturn().accept(getTraverser());
 	}
 
 	@Override

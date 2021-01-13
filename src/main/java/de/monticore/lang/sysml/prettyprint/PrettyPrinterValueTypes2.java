@@ -1,13 +1,13 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.valuetypes._ast.ASTNonPortStructureUsageMemberValueProperty;
-import de.monticore.lang.sysml.basics.valuetypes._ast.ASTValueDeclaration;
-import de.monticore.lang.sysml.basics.valuetypes._ast.ASTValuePropertyStd;
-import de.monticore.lang.sysml.basics.valuetypes._ast.ASTValueTypeDeclaration;
-import de.monticore.lang.sysml.basics.valuetypes._visitor.ValueTypesVisitor2;
+import de.monticore.lang.sysml.common.sysmlvaluetypes._ast.ASTNonPortStructureUsageMemberValueProperty;
+import de.monticore.lang.sysml.common.sysmlvaluetypes._ast.ASTValueDeclaration;
+import de.monticore.lang.sysml.common.sysmlvaluetypes._ast.ASTValuePropertyPackagedUsageMember;
+import de.monticore.lang.sysml.common.sysmlvaluetypes._ast.ASTValueTypeDeclaration;
+import de.monticore.lang.sysml.common.sysmlvaluetypes._visitor.SysMLValueTypesVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterValueTypes2 implements ValueTypesVisitor2 {
+public class PrettyPrinterValueTypes2 implements SysMLValueTypesVisitor2 {
 	private IndentPrinter printer;
 
 	public PrettyPrinterValueTypes2(IndentPrinter print) {
@@ -34,13 +34,13 @@ public class PrettyPrinterValueTypes2 implements ValueTypesVisitor2 {
 	}
 
 	@Override
-	public void visit(ASTValuePropertyStd node) {
-		printer.println("");
-		if (node.isAbstract()) {
-			printer.print("abstract ");
-		}
-		printer.print("value ");
-	}
+  public void visit(ASTValuePropertyPackagedUsageMember node) {
+    printer.println("");
+    if (node.isAbstract()) {
+      printer.print("abstract ");
+    }
+    printer.print("value ");
+  }
 
 	@Override
 	public void visit(ASTValueDeclaration node) {

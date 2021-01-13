@@ -1,24 +1,14 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml;
 
-component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.SysMLAdvanced
+component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.SysMLConstraints
   {
 
   /* REQUIREMENT DEFINITIONS */
 
-  symbol RequirementDefinition implements PackagedDefinitionMember = RequirementDefDeclaration RequirementBody;
-  astrule RequirementDefinition =
-    method public String getName(){
-      return this.getRequirementDefDeclaration().getName();
-    }
-  ;
+  RequirementDefinition implements SysMLType, PackagedDefinitionMember = RequirementDefDeclaration RequirementBody;
   RequirementDefDeclaration = ["abstract"]? "requirement" "def" ("id" reqId:SysMLName)? SysMLName
     RequirementDefParameterList EmptyReturnParameterPart SuperclassingList?;
-  astrule RequirementDefDeclaration =
-    method public String getName(){
-      return this.getSysMLName().getName();
-    }
-  ;
 
   RequirementDefParameterList = EmptyParameterMember
     | ( "(" EmptyParameterMember ")")
@@ -26,16 +16,32 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.Sy
   scope RequirementBody = ";" | ( "{" RequirementMembers "}" );
   RequirementMembers = (NestedDefinitionMember | NestedUsageMember |  RequirementConstraintMember | ImportUnit )*;
 
-  symbol RequirementConstraintUsage = ((( SysMLName)? TypePart? "as")? Subset | "constraint" (SysMLName)? TypePart?)
+  RequirementConstraintUsage implements SysMLType =
+    ((( SysMLName)? TypePart? "as")? Subset | "constraint" (SysMLName)?  TypePart?)
      ConstraintParameterPart ConstraintBody;
+
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
+  astrule RequirementDefinition =
+    method public String getName(){
+      return this.getRequirementDefDeclaration().getName();
+    }
+  ;
+  astrule RequirementDefDeclaration =
+    method public String getName(){
+      return this.getSysMLName().getName();
+    }
+  ;
   astrule RequirementConstraintUsage =
     method public String getName(){
       if( this.isPresentSysMLName()){
         return this.getSysMLName().getName();
       }
-      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+      return "";
     }
   ;
+
   /* REQUIREMENT DEFINITION MEMBERSHIPS */
 
   RequirementConstraintMember = DefinitionMemberPrefix RequirementConstraintKind RequirementConstraintUsage;
@@ -43,8 +49,9 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.Sy
 
   /* REQUIREMENTS */
 
-  RequirementUsagePackagedUsageMember implements PackagedUsageMember = ["abstract"]? "requirement" RequirementUsage;
-  BehaviorUsageMemberRequirementUsage implements BehaviorUsageMember =
+  RequirementUsagePackagedUsageMember implements SysMLType, PackagedUsageMember =
+    ["abstract"]? "requirement" RequirementUsage;
+  BehaviorUsageMemberRequirementUsage implements SysMLType, BehaviorUsageMember =
     DefinitionMemberPrefix ["abstract"]?  ("ref" "requirement" | isComposite:"requirement") RequirementUsage;
   BehaviorUsageMemberSatisfyRequirementUsage implements BehaviorUsageMember =
     DefinitionMemberPrefix  "satisfy" SatisfyRequirementUsage;
@@ -57,11 +64,17 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.Sy
   	TypePart? ActionParameterList? EmptyReturnParameterPart ValuePart?
   	);
 
-  symbol scope SatisfyRequirementUsage =
+  SatisfyRequirementUsage =
     (((firstName:SysMLName)? firstType:TypePart? "as")? Subset
     | "requirement" (secondName:SysMLName)? secondType:TypePart?)
     ( "by" SatisfactionConnectorMember)?
     ConstraintParameterPart InvariantPart RequirementBody;
+
+  SatisfactionConnector = EmptySourceEndMember ConnectorEndMember;
+
+  /* ===================================================*/
+  /* ============ ASTRULES getName() for symbols =======*/
+  /* ===================================================*/
   astrule SatisfyRequirementUsage =
     method public String getName(){
       if( this.isPresentFirstName()){
@@ -69,10 +82,32 @@ component grammar RequirementDiagram extends de.monticore.lang.sysml.advanced.Sy
       } else  if (this.isPresentSecondName()){
         return this.getSecondName().getName();
       }
-      return "NotNamed1232454123534j4jn43"; //<-------------------------Return EmptyString;
+      return "";
     }
   ;
-  SatisfactionConnector = EmptySourceEndMember ConnectorEndMember;
+  astrule RequirementUsage =
+    method public String getName(){
+      return this.getRequirementDeclaration().getName();
+    }
+  ;
+  astrule RequirementDeclaration =
+    method public String getName(){
+      if( this.isPresentSysMLNameAndTypePart()){
+        return this.getSysMLNameAndTypePart().getName();
+      }
+      return "";
+    }
+  ;
+  astrule RequirementUsagePackagedUsageMember =
+    method public String getName(){
+      return this.getRequirementUsage().getName();
+    }
+  ;
+  astrule BehaviorUsageMemberRequirementUsage =
+    method public String getName(){
+      return this.getRequirementUsage().getName();
+    }
+  ;
 
   /* REQUIREMENT MEMBERSHIPS */
   SatisfactionConnectorMember = SatisfactionConnector;

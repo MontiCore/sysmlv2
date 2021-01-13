@@ -1,10 +1,10 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._ast.*;
-import de.monticore.lang.sysml.basics.sysmldefault.importsandpackages._visitor.ImportsAndPackagesVisitor2;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.*;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._visitor.SysMLImportsAndPackagesVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterImportsAndPackages2 implements ImportsAndPackagesVisitor2 {
+public class PrettyPrinterImportsAndPackages2 implements SysMLImportsAndPackagesVisitor2 {
 	private IndentPrinter printer;
 
 	public PrettyPrinterImportsAndPackages2(IndentPrinter print) {

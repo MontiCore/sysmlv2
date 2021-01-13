@@ -1,11 +1,11 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.sysmldefault.literals._ast.ASTRealLiteralWithExponent;
-import de.monticore.lang.sysml.basics.sysmldefault.literals._ast.ASTUnlimitedNaturalLiteralExpression;
-import de.monticore.lang.sysml.basics.sysmldefault.literals._visitor.LiteralsVisitor2;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlliterals._ast.ASTRealLiteralWithExponent;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlliterals._ast.ASTUnlimitedNaturalLiteralExpression;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlliterals._visitor.SysMLLiteralsVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterLiterals2 implements LiteralsVisitor2 {
+public class PrettyPrinterLiterals2 implements SysMLLiteralsVisitor2 {
 	private IndentPrinter printer;
 
 	public PrettyPrinterLiterals2(IndentPrinter print) {
