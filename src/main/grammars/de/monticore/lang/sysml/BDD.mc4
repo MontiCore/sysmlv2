@@ -9,7 +9,7 @@ component grammar BDD extends de.monticore.lang.sysml.common.SysMLCommon {
 
   Block implements SysMLType, PackagedDefinitionMember = BlockDeclaration DefinitionBody;
 
-  BlockDeclaration = ["abstract"]? "block" ClassifierDeclarationCompletion;
+  BlockDeclaration = ["abstract"]? ("part" "def" | "block") ClassifierDeclarationCompletion;
 
   AssociationEndMemberReferenceProperty implements SysMLType, AssociationEndMember =
      DefinitionMemberPrefix ["abstract"]? "end" ["ref"]? ReferenceProperty;

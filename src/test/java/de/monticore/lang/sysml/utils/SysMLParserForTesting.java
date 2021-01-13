@@ -32,4 +32,20 @@ public class SysMLParserForTesting {
       return Optional.empty();
     }
   }
+
+  public Optional<ASTUnit> parseSysMLFromString(String model) {
+    Log.enableFailQuick(false);
+    SysMLParser parser = new SysMLParser();
+    try {
+      Optional<ASTUnit> sysmlPackage = parser.parse_String(model);
+      assertFalse(parser.hasErrors());
+      assertTrue(sysmlPackage.isPresent());
+      return sysmlPackage;
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+      fail("There was an exception when parsing the model " + model + ": " + e.getMessage());
+      return Optional.empty();
+    }
+  }
 }

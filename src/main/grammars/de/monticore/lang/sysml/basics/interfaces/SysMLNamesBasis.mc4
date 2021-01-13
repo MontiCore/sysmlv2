@@ -11,12 +11,11 @@ component grammar SysMLNamesBasis extends de.monticore.types.MCBasicTypes {
     }
     method public String getName(){
 
-        }
-     method public String getNameForPrettyPrinting(){
+    }
+    method public String getNameForPrettyPrinting(){
 
-     }
-    ;
-
+    }
+  ;
   astrule QualifiedName =
     method public String getReferencedName(){
 
