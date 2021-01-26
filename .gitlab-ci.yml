@@ -27,6 +27,8 @@ deploy:
     - build
   script:
     - "./gradlew publish -PmavenPassword=$pass -PmavenUser=$user $GRADLE_OPT $ARGS2"
+  only:
+    - master
 
 checkMDLinks:
   stage: check
