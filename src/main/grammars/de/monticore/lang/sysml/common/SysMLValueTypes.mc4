@@ -17,7 +17,7 @@ component grammar SysMLValueTypes extends de.monticore.lang.sysml.common.SysMLUs
   ValueDeclaration = ["abstract"]? ["value"]? SysMLNameAndTypePart SubsettingPart;
 
   NonPortStructureUsageMemberValueProperty implements SysMLType, NonPortStructureUsageMember =
-    ["abstract"]? ["value"]? direction:FeatureDirection? ValueProperty;
+    ["abstract"]? direction:FeatureDirection? ["value"]? ValueProperty;
 
   ValuePropertyPackagedUsageMember implements SysMLType, PackagedUsageMember =
     ["abstract"]? "value"? ValueProperty;
