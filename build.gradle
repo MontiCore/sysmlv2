@@ -220,12 +220,6 @@ sourceSets {
         }
     }
 }
-// and use them to define "grammars" as part of java (used in publishing)
-java {
-    registerFeature("grammars") {
-        usingSourceSet(sourceSets.grammars)
-    }
-}
 
 compileJava.dependsOn (project.collect
         { it.tasks.findAll { task -> task.name.startsWith("generate") } })
@@ -266,7 +260,6 @@ shadowJar {
 }
 
 jar.dependsOn shadowJar
-jar.dependsOn grammarJar
 
 
 /* ============================================================ */
@@ -277,7 +270,12 @@ publishing {
     // configure what artifacts to publish
     publications {
         mavenJava(MavenPublication) {
-            from components.java // feature "grammars" is part of java, will also publish grammars-jar
+            from components.java
+            // publish all JARs
+            artifact sourcesJar
+            artifact javadocJar
+            artifact shadowJar
+            artifact grammarJar
         }
     }
     repositories.maven {
