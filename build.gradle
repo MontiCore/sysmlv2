@@ -211,16 +211,6 @@ generateSysMLForStructure.dependsOn generateSysMLVisibility
 generateSysMLForStructure.dependsOn generateBDD
 generateSysMLForStructure.dependsOn generateIBD
 
-// configure non-standard source sets
-sourceSets {
-    grammars {
-        resources {
-            srcDirs(grammarDir)
-            include "**/*.mc4"
-        }
-    }
-}
-
 compileJava.dependsOn (project.collect
         { it.tasks.findAll { task -> task.name.startsWith("generate") } })
 
@@ -274,7 +264,6 @@ publishing {
             // publish all JARs
             artifact sourcesJar
             artifact javadocJar
-            artifact shadowJar
             artifact grammarJar
         }
     }
