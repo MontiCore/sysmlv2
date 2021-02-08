@@ -45,7 +45,7 @@ package '4a1-Functional Allocation' {
 		
 		part transmission redefines vehicle1_c1::transmission {
 			port clutchPort redefines vehicle1_c1::transmission::clutchPort {
-				value in engineTorque: Torque;
+				in value engineTorque: Torque;
 			}
 			
 			perform 'amplify torque' (
