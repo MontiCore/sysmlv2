@@ -28,7 +28,6 @@ sourceCompatibility = '1.8'
 def junit_version = "4.13.1"
 def commons_cli_version = "1.4"
 def sclang_version = "1.1.5-SNAPSHOT"
-def montiarc_version = "6.0.0-SNAPSHOT"
 def grammar_classifier = "grammars"
 def grammarDir = "src/main/grammars"
 def se_commons_version = "1.7.11-SNAPSHOT"
@@ -77,7 +76,6 @@ repositories {
 dependencies {
     grammar "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
     grammar "de.monticore.lang:scgrammar:$sclang_version:$grammar_classifier"
-    //grammar "montiarc.languages:montiarc-fe:$montiarc_version:$grammar_classifier"
     implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
     implementation "org.apache.commons:commons-lang3:$commons_lang_version"
     implementation "org.antlr:antlr4-runtime:4.7.1"
@@ -89,7 +87,6 @@ dependencies {
     implementation "commons-cli:commons-cli:$commons_cli_version"
     implementation "de.monticore.lang:cd4analysis:$cd4analysis_version:$grammar_classifier"
     implementation "de.monticore.lang:cd4analysis:$cd4analysis_version"
-    //implementation "montiarc.languages:montiarc-fe:$mc_version"
     testImplementation "junit:junit:$junit_version"
     testImplementation "de.monticore:monticore-runtime:$mc_version:tests"
     testImplementation "org.reflections:reflections:0.9.9"
