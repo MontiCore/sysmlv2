@@ -1,9 +1,9 @@
 package de.monticore.lang.sysml._symboltable;
 
 import de.monticore.lang.sysml.SysMLTool;
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
-import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackage;
+import de.monticore.lang.sysml.basics.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
+import de.monticore.lang.sysml.basics.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTPackage;
 import de.monticore.lang.sysml.sysml._symboltable.ISysMLGlobalScope;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;

@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlvariant.basics.extended;
 
-component grammar SysMLNamesExtended extends de.monticore.lang.sysml.basics.sysmldefault.SysMLNames {
+component grammar SysMLNamesExtended extends de.monticore.lang.sysml.basics.SysMLNames {
 
   fragment token AnyTextQuotesDouble = ~ ('>');
   token UNRESTRICTED_NAME_ANGLED_BRACKETS = '<' AnyTextQuotesDouble* '>';

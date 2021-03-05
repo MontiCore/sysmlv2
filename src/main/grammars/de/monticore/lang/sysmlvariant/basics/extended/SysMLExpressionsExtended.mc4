@@ -1,9 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlvariant.basics.extended;
 
-component grammar SysMLExpressionsExtended extends de.monticore.lang.sysml.basics.sysmldefault.SysMLExpressions,
+component grammar SysMLExpressionsExtended extends de.monticore.lang.sysml.basics.SysMLExpressions,
  de.monticore.expressions.OCLExpressions,
-  de.monticore.lang.sysml.basics.interfaces.SysMLPackageBasis {
+  de.monticore.lang.sysml.basics.SysMLPackageBasis {
 
  OCLExtraConstraint implements PackagedDefinitionMember =
      "inline" "condition" "{" Expression "}" ";";

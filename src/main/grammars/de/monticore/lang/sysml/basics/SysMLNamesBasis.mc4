@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.lang.sysml.basics.interfaces;
+package de.monticore.lang.sysml.basics;
 
 component grammar SysMLNamesBasis extends de.monticore.types.MCBasicTypes {
   interface QualifiedName extends MCType;

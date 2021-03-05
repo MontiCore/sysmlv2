@@ -1,7 +1,7 @@
 package de.monticore.lang.sysml._symboltable;
 
 import de.monticore.io.paths.ModelPath;
-import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.sysml.SysMLMill;
 import de.monticore.lang.sysml.sysml._symboltable.*;
 import de.monticore.lang.sysml.sysml._symboltable.doubleimports.AmbigousImportCheck;

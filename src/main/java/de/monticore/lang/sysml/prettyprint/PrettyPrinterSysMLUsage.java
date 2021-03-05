@@ -1,6 +1,6 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.interfaces.sysmlshared._visitor.SysMLSharedVisitor2;
+import de.monticore.lang.sysml.basics.sysmlshared._visitor.SysMLSharedVisitor2;
 import de.monticore.lang.sysml.common.sysmlusages._ast.ASTSysMLNameAndTypePart;
 import de.monticore.lang.sysml.common.sysmlusages._visitor.SysMLUsagesVisitor2;
 import de.monticore.prettyprint.IndentPrinter;

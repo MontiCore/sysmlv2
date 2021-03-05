@@ -2,7 +2,7 @@ package de.monticore.lang.sysml.prettyprint;
 
 import de.monticore.expressions.prettyprint.CommonExpressionsPrettyPrinter;
 import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
-import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.sysml.SysMLMill;
 import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
 import de.monticore.literals.prettyprint.MCCommonLiteralsPrettyPrinter;

@@ -1,6 +1,6 @@
 package de.monticore;
 
-import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.sysml._parser.SysMLParser;
 import de.se_rwth.commons.logging.Log;
 

@@ -1,13 +1,13 @@
 package de.monticore.lang.sysml.sysml._symboltable;
 
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
-import de.monticore.lang.sysml.basics.interfaces.sysmlpackagebasis._ast.ASTPackagedDefinitionMember;
-import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
-import de.monticore.lang.sysml.basics.interfaces.sysmlvisibilitybasis._ast.ASTPackageElementVisibilityIndicator;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTAliasPackagedDefinitionMember;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackage;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageMember;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlvisibility._ast.ASTPackageElementVisibilityIndicatorStd;
+import de.monticore.lang.sysml.basics.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
+import de.monticore.lang.sysml.basics.sysmlpackagebasis._ast.ASTPackagedDefinitionMember;
+import de.monticore.lang.sysml.basics.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.sysmlvisibilitybasis._ast.ASTPackageElementVisibilityIndicator;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTAliasPackagedDefinitionMember;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTPackage;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTPackageMember;
+import de.monticore.lang.sysml.basics.sysmlvisibility._ast.ASTPackageElementVisibilityIndicatorStd;
 import de.monticore.lang.sysml.common.sysmlassociations._ast.ASTAssociationBlock;
 import de.monticore.lang.sysml.common.sysmlports._ast.ASTInterfaceDefinition;
 import de.monticore.lang.sysml.common.sysmlports._ast.ASTPortDefinitionStd;

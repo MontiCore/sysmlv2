@@ -4,7 +4,7 @@ import de.monticore.lang.sysml.common.sysmlassociations._ast.ASTConjugatedEndPor
 import de.monticore.lang.sysml.common.sysmlassociations._ast.ASTEndPortMember;
 import de.monticore.lang.sysml.common.sysmlassociations._visitor.SysMLAssociationsHandler;
 import de.monticore.lang.sysml.common.sysmlassociations._visitor.SysMLAssociationsTraverser;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlexpressions._visitor.SysMLExpressionsTraverser;
+import de.monticore.lang.sysml.basics.sysmlexpressions._visitor.SysMLExpressionsTraverser;
 import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
 import de.monticore.prettyprint.IndentPrinter;
 

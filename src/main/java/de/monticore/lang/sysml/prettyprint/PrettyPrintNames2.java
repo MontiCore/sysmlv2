@@ -1,9 +1,9 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlnames._ast.ASTColonQualifiedName;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlnames._ast.ASTDotQualifiedName;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlnames._ast.ASTSimpleName;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlnames._visitor.SysMLNamesVisitor2;
+import de.monticore.lang.sysml.basics.symlnames._ast.ASTColonQualifiedName;
+import de.monticore.lang.sysml.basics.symlnames._ast.ASTDotQualifiedName;
+import de.monticore.lang.sysml.basics.symlnames._ast.ASTSimpleName;
+import de.monticore.lang.sysml.basics.sysmlnames._visitor.SysMLNamesVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
 public class PrettyPrintNames2 implements SysMLNamesVisitor2 {

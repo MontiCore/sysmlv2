@@ -1,13 +1,13 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.interfaces.sysmlcommentsbasis._ast.ASTPrefixAnnotation;
-import de.monticore.lang.sysml.basics.interfaces.sysmlimportbasis._ast.ASTImportUnit;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTAliasPackagedDefinitionMember;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTImportUnitStd;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageBody;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageMember;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._visitor.SysMLImportsAndPackagesHandler;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._visitor.SysMLImportsAndPackagesTraverser;
+import de.monticore.lang.sysml.basics.sysmlcommentsbasis._ast.ASTPrefixAnnotation;
+import de.monticore.lang.sysml.basics.sysmlimportbasis._ast.ASTImportUnit;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTAliasPackagedDefinitionMember;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTImportUnitStd;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTPackageBody;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTPackageMember;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._visitor.SysMLImportsAndPackagesHandler;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._visitor.SysMLImportsAndPackagesTraverser;
 import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
 import de.monticore.prettyprint.IndentPrinter;
 

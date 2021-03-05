@@ -23,7 +23,7 @@ public class SysMLSymbolTableCreator extends de.monticore.lang.sysml.sysml._symb
   }
 
   /* Overwritting the generated code by template core.Method*/
-  public  void addToScope (de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol symbol) {
+  public  void addToScope (de.monticore.lang.sysml.basics.sysmlnamesbasis._symboltable.SysMLTypeSymbol symbol) {
     if (getCurrentScope().isPresent()) {
       if(symbol.getName().equals("")){
         Log.debug("I do not create a symbol, because the name is empty;" , "SymbolTablerCreator");

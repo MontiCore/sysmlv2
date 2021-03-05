@@ -1,13 +1,13 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.lang.sysml.basics.sysmldefault;
+package de.monticore.lang.sysml.basics;
 
 
-component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics.interfaces.SysMLCommentsBasis,
-  de.monticore.lang.sysml.basics.interfaces.SysMLImportBasis,
-  de.monticore.lang.sysml.basics.interfaces.SysMLNamesBasis,
-  de.monticore.lang.sysml.basics.interfaces.SysMLPackageBasis,
-  de.monticore.lang.sysml.basics.interfaces.SysMLVisibilityBasis,
-  de.monticore.lang.sysml.basics.interfaces.SysMLShared {
+component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics.SysMLCommentsBasis,
+  de.monticore.lang.sysml.basics.SysMLImportBasis,
+  de.monticore.lang.sysml.basics.SysMLNamesBasis,
+  de.monticore.lang.sysml.basics.SysMLPackageBasis,
+  de.monticore.lang.sysml.basics.SysMLVisibilityBasis,
+  de.monticore.lang.sysml.basics.SysMLShared {
 
   /* IMPORTS */
   AliasPackagedDefinitionMember implements SysMLType, PackagedDefinitionMember =

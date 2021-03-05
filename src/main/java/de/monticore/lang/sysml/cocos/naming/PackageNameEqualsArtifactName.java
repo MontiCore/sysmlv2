@@ -1,7 +1,7 @@
 package de.monticore.lang.sysml.cocos.naming;
 
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageUnit;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTPackageUnitCoCo;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTPackageUnit;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTPackageUnitCoCo;
 import de.monticore.lang.sysml.cocos.SysMLCoCoName;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLArtifactScope;

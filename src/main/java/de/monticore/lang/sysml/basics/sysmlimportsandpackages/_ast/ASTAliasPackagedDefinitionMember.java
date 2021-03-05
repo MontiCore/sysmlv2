@@ -1,6 +1,6 @@
-package de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast;
+package de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast;
 
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
+import de.monticore.lang.sysml.basics.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysml.cocos.CoCoStatus;
 import de.se_rwth.commons.logging.Log;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class ASTImportUnitStd extends ASTImportUnitStdTOP{
+public class ASTAliasPackagedDefinitionMember extends ASTAliasPackagedDefinitionMemberTOP {
   List<SysMLTypeSymbol> resolvedTypes = new ArrayList<>();
   List<CoCoStatus> warnings = new ArrayList<>();
   List<SysMLTypeSymbol> transitiveImports = new ArrayList<>();
@@ -46,11 +46,11 @@ public class ASTImportUnitStd extends ASTImportUnitStdTOP{
     return warnings;
   }
 
-  public List<SysMLTypeSymbol> getTransitiveImports() {
-    return transitiveImports;
-  }
-
   public void setTransitiveImports(List<SysMLTypeSymbol> transitiveImports) {
     this.transitiveImports = transitiveImports;
+  }
+
+  public List<SysMLTypeSymbol> getTransitiveImports() {
+    return transitiveImports;
   }
 }

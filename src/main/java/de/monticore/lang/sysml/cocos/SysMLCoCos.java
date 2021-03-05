@@ -1,7 +1,7 @@
 package de.monticore.lang.sysml.cocos;
 
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTImportUnitStdCoCo;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTImportUnitStdCoCo;
 import de.monticore.lang.sysml.cocos.imports.ImportStatementValid;
 import de.monticore.lang.sysml.cocos.naming.*;
 import de.monticore.lang.sysml.sysml._cocos.SysMLCoCoChecker;

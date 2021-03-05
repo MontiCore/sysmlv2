@@ -1,6 +1,6 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.parser.SysMLParserMultipleFiles;
 import de.monticore.lang.sysml.prettyprint.PrettyPrinter2;
 import de.monticore.lang.sysml.sysml._parser.SysMLParser;

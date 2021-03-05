@@ -1,4 +1,4 @@
-package de.monticore.lang.sysml.basics.sysmldefault.sysmlnames._ast;
+package de.monticore.lang.sysml.basics.sysmlnames._ast;
 
 import java.util.ArrayList;
 import java.util.List;

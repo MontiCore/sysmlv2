@@ -1,11 +1,11 @@
 package de.monticore.lang.sysml.prettyprint;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTSysMLName;
-import de.monticore.lang.sysml.basics.interfaces.sysmlexpressionsbasis._ast.ASTExpressionMember;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlexpressions._ast.*;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlexpressions._visitor.SysMLExpressionsHandler;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlexpressions._visitor.SysMLExpressionsTraverser;
+import de.monticore.lang.sysml.basics.sysmlnamesbasis._ast.ASTSysMLName;
+import de.monticore.lang.sysml.basics.sysmlexpressionsbasis._ast.ASTExpressionMember;
+import de.monticore.lang.sysml.basics.sysmlexpressions._ast.*;
+import de.monticore.lang.sysml.basics.sysmlexpressions._visitor.SysMLExpressionsHandler;
+import de.monticore.lang.sysml.basics.sysmlexpressions._visitor.SysMLExpressionsTraverser;
 import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
 import de.monticore.prettyprint.IndentPrinter;
 

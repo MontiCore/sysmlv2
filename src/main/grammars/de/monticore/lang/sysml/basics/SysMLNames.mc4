@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.lang.sysml.basics.sysmldefault;
+package de.monticore.lang.sysml.basics;
 
 component grammar SysMLNames extends de.monticore.MCBasics,
- de.monticore.lang.sysml.basics.interfaces.SysMLNamesBasis {
+ de.monticore.lang.sysml.basics.SysMLNamesBasis {
 
   SimpleName implements QualifiedName <150> = SysMLName;
   ColonQualifiedName implements QualifiedName <100> = (SysMLName || "::")+;

@@ -3,13 +3,13 @@ package de.monticore.lang.sysmlvariant;
 
 
 grammar SysMLExtended extends
-  // de.monticore.lang.sysml.basics.sysmldefault.SysMLBasics // Do not import all the basics, but configure it here.
+  // de.monticore.lang.sysml.basics.SysMLBasics // Do not import all the basics, but configure it here.
   de.monticore.lang.sysmlvariant.basics.extended.SysMLNamesExtended, //New
   de.monticore.lang.sysmlvariant.basics.extended.SysMLExpressionsExtended, //New
-  de.monticore.lang.sysml.basics.sysmldefault.SysMLComments,
-  de.monticore.lang.sysml.basics.sysmldefault.SysMLImportsAndPackages,
-  de.monticore.lang.sysml.basics.sysmldefault.SysMLLiterals,
-  de.monticore.lang.sysml.basics.sysmldefault.SysMLVisibility,
+  de.monticore.lang.sysml.basics.SysMLComments,
+  de.monticore.lang.sysml.basics.SysMLImportsAndPackages,
+  de.monticore.lang.sysml.basics.SysMLLiterals,
+  de.monticore.lang.sysml.basics.SysMLVisibility,
   de.monticore.lang.sysml.SysMLAD,
   de.monticore.lang.sysml.SysMLBDD,
   de.monticore.lang.sysml.SysMLIBD,

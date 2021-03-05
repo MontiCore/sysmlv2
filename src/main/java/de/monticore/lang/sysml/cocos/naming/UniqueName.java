@@ -1,9 +1,9 @@
 package de.monticore.lang.sysml.cocos.naming;
 
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTSysMLType;
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ResolveQualifiedNameHelper;
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._cocos.SysMLNamesBasisASTSysMLTypeCoCo;
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
+import de.monticore.lang.sysml.basics.sysmlnamesbasis._ast.ASTSysMLType;
+import de.monticore.lang.sysml.basics.sysmlnamesbasis._ast.ResolveQualifiedNameHelper;
+import de.monticore.lang.sysml.basics.sysmlnamesbasis._cocos.SysMLNamesBasisASTSysMLTypeCoCo;
+import de.monticore.lang.sysml.basics.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysml.cocos.SysMLCoCoName;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.se_rwth.commons.logging.Log;

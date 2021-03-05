@@ -1,10 +1,10 @@
 package de.monticore.lang.sysml._symboltable;
 
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ResolveQualifiedNameHelper;
-import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
-import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackage;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._symboltable.ISysMLImportsAndPackagesScope;
+import de.monticore.lang.sysml.basics.sysmlnamesbasis._ast.ResolveQualifiedNameHelper;
+import de.monticore.lang.sysml.basics.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
+import de.monticore.lang.sysml.basics.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTPackage;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._symboltable.ISysMLImportsAndPackagesScope;
 import de.monticore.lang.sysml.common.sysmlclassifiers._ast.ASTClassifierDeclarationCompletionStd;
 import de.monticore.lang.sysml.common.sysmlcommonbasis._ast.ASTClassifierDeclarationCompletion;
 import de.monticore.lang.sysml.sysmlbdd._ast.ASTBlock;

@@ -2,7 +2,7 @@
 package de.monticore.lang.sysmlvariant.basics.javaoriented;
 
 component grammar SysMLImportsAndPackagesJava
-  extends de.monticore.lang.sysml.basics.sysmldefault.SysMLImportsAndPackages {
+  extends de.monticore.lang.sysml.basics.SysMLImportsAndPackages {
   Package implements SysMLType =  PackageDeclaration PackageBody;
 
   ImportUnitStd implements ImportUnit = PrefixAnnotation* (visibility:PackageElementVisibilityIndicator)?

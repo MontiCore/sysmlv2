@@ -1,9 +1,9 @@
 package de.monticore.lang.sysml.cocos.imports;
 
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTAliasPackagedDefinitionMember;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTImportUnitStd;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTImportUnitStdCoCo;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTAliasPackagedDefinitionMember;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTImportUnitStd;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTAliasPackagedDefinitionMemberCoCo;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTImportUnitStdCoCo;
 import de.monticore.lang.sysml.cocos.CoCoStatus;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.se_rwth.commons.logging.Log;

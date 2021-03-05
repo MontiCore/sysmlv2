@@ -1,8 +1,8 @@
 package de.monticore.lang.sysml.cocos.naming;
 
-import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
-import de.monticore.lang.sysml.basics.interfaces.sysmlshared._cocos.SysMLSharedASTUnitCoCo;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageUnit;
+import de.monticore.lang.sysml.basics.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.sysmlshared._cocos.SysMLSharedASTUnitCoCo;
+import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTPackageUnit;
 import de.monticore.lang.sysml.cocos.SysMLCoCoName;
 import de.monticore.lang.sysml.cocos.SysMLCoCos;
 import de.se_rwth.commons.logging.Log;

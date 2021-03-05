@@ -7,7 +7,7 @@ grammar SysML extends de.monticore.lang.sysml.SysMLAD,
   de.monticore.lang.sysml.SysMLPD,
   de.monticore.lang.sysml.SysMLRD,
   de.monticore.lang.sysml.SysMLSTM,
-  de.monticore.lang.sysml.basics.sysmldefault.SysMLBasics {
+  de.monticore.lang.sysml.basics.SysMLBasics {
 
   start Unit;
 }

@@ -1,7 +1,7 @@
 package de.monticore.lang.sysml.utils;
 
 import de.monticore.lang.sysml.SysMLTool;
-import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.sysml._symboltable.ISysMLGlobalScope;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
 import de.se_rwth.commons.logging.Finding;
