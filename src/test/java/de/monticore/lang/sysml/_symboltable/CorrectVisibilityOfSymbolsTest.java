@@ -5,9 +5,9 @@ import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.Sy
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackage;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._symboltable.ISysMLImportsAndPackagesScope;
-import de.monticore.lang.sysml.bdd._ast.ASTBlock;
 import de.monticore.lang.sysml.common.sysmlclassifiers._ast.ASTClassifierDeclarationCompletionStd;
 import de.monticore.lang.sysml.common.sysmlcommonbasis._ast.ASTClassifierDeclarationCompletion;
+import de.monticore.lang.sysml.sysmlbdd._ast.ASTBlock;
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;
 import de.se_rwth.commons.logging.Log;
 import org.antlr.v4.runtime.RecognitionException;

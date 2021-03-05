@@ -1,14 +1,14 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.requirementdiagram._ast.*;
-import de.monticore.lang.sysml.requirementdiagram._visitor.RequirementDiagramHandler;
-import de.monticore.lang.sysml.requirementdiagram._visitor.RequirementDiagramTraverser;
 import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
+import de.monticore.lang.sysml.sysmlrd._ast.*;
+import de.monticore.lang.sysml.sysmlrd._visitor.SysMLRDHandler;
+import de.monticore.lang.sysml.sysmlrd._visitor.SysMLRDTraverser;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterHandlerRequirementDiagram2 implements RequirementDiagramHandler {
+public class PrettyPrinterHandlerRequirementDiagram2 implements SysMLRDHandler {
 	private IndentPrinter printer;
-	private RequirementDiagramTraverser traverser;
+	private SysMLRDTraverser traverser;
 
 	public PrettyPrinterHandlerRequirementDiagram2(IndentPrinter print, SysMLTraverser traverser) {
 		this.printer = print;
@@ -16,12 +16,12 @@ public class PrettyPrinterHandlerRequirementDiagram2 implements RequirementDiagr
 	}
 
 	@Override
-	public RequirementDiagramTraverser getTraverser() {
+	public SysMLRDTraverser getTraverser() {
 		return this.traverser;
 	}
 
 	@Override
-	public void setTraverser(RequirementDiagramTraverser realThis) {
+	public void setTraverser(SysMLRDTraverser realThis) {
 		this.traverser = realThis;
 	}
 

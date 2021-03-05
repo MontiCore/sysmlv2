@@ -1,12 +1,9 @@
 package de.monticore.lang.sysml.sysml._symboltable;
 
-import de.monticore.lang.sysml.ad._ast.ASTActivity;
-import de.monticore.lang.sysml.ad._ast.ASTActivityBodyStd;
 import de.monticore.lang.sysml.advanced.sysmlconstraints._ast.ASTAssertConstraintUsage;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTSysMLType;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackage;
-import de.monticore.lang.sysml.bdd._ast.ASTBlock;
 import de.monticore.lang.sysml.common.sysmlassociations._ast.ASTAssociationBlock;
 import de.monticore.lang.sysml.common.sysmlcommonbasis._ast.ASTActivityBody;
 import de.monticore.lang.sysml.common.sysmlcommonbasis._ast.ASTDefinitionBody;
@@ -15,11 +12,14 @@ import de.monticore.lang.sysml.common.sysmlports._ast.ASTInterfaceDefinition;
 import de.monticore.lang.sysml.common.sysmlports._ast.ASTPortDefinitionStd;
 import de.monticore.lang.sysml.common.sysmlusages._ast.ASTUsageStd;
 import de.monticore.lang.sysml.common.sysmlvaluetypes._ast.ASTValueTypeStd;
-import de.monticore.lang.sysml.parametricdiagram._ast.ASTIndividualDefinition;
-import de.monticore.lang.sysml.requirementdiagram._ast.ASTRequirementDefinition;
-import de.monticore.lang.sysml.requirementdiagram._ast.ASTSatisfyRequirementUsage;
-import de.monticore.lang.sysml.stm._ast.ASTStateDefinition;
 import de.monticore.lang.sysml.sysml._visitor.SysMLInheritanceVisitor;
+import de.monticore.lang.sysml.sysmlad._ast.ASTActivity;
+import de.monticore.lang.sysml.sysmlad._ast.ASTActivityBodyStd;
+import de.monticore.lang.sysml.sysmlbdd._ast.ASTBlock;
+import de.monticore.lang.sysml.sysmlpd._ast.ASTIndividualDefinition;
+import de.monticore.lang.sysml.sysmlrd._ast.ASTRequirementDefinition;
+import de.monticore.lang.sysml.sysmlrd._ast.ASTSatisfyRequirementUsage;
+import de.monticore.lang.sysml.sysmlstm._ast.ASTStateDefinition;
 
 /**
  * @author Robin Muenstermann

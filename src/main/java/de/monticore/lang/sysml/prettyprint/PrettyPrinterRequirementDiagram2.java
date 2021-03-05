@@ -1,10 +1,10 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.requirementdiagram._ast.*;
-import de.monticore.lang.sysml.requirementdiagram._visitor.RequirementDiagramVisitor2;
+import de.monticore.lang.sysml.sysmlrd._ast.*;
+import de.monticore.lang.sysml.sysmlrd._visitor.SysMLRDVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterRequirementDiagram2 implements RequirementDiagramVisitor2 {
+public class PrettyPrinterRequirementDiagram2 implements SysMLRDVisitor2 {
 	private IndentPrinter printer;
 
 	public PrettyPrinterRequirementDiagram2(IndentPrinter print) {

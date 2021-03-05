@@ -1,22 +1,22 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.ibd._ast.ASTAssociationEndMemberPartProperty;
-import de.monticore.lang.sysml.ibd._visitor.IBDHandler;
-import de.monticore.lang.sysml.ibd._visitor.IBDTraverser;
 import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
+import de.monticore.lang.sysml.sysmlibd._ast.ASTAssociationEndMemberPartProperty;
+import de.monticore.lang.sysml.sysmlibd._visitor.SysMLIBDHandler;
+import de.monticore.lang.sysml.sysmlibd._visitor.SysMLIBDTraverser;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterHandlerIBD2 implements IBDHandler {
+public class PrettyPrinterHandlerIBD2 implements SysMLIBDHandler {
 	private IndentPrinter printer;
-	private IBDTraverser traverser;
+	private SysMLIBDTraverser traverser;
 
 	@Override
-	public IBDTraverser getTraverser() {
+	public SysMLIBDTraverser getTraverser() {
 		return this.traverser;
 	}
 
 	@Override
-	public void setTraverser(IBDTraverser realThis) {
+	public void setTraverser(SysMLIBDTraverser realThis) {
 		this.traverser = realThis;
 	}
 

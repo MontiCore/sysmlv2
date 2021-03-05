@@ -1,12 +1,11 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.bdd._ast.ASTAssociationEndMemberReferenceProperty;
-import de.monticore.lang.sysml.bdd._ast.ASTBlockDeclaration;
-import de.monticore.lang.sysml.bdd._ast.ASTReferencePropertyNonPortStructureUsageMember;
-import de.monticore.lang.sysml.bdd._visitor.BDDVisitor2;
+import de.monticore.lang.sysml.sysmlbdd._ast.ASTBlockDeclaration;
+import de.monticore.lang.sysml.sysmlbdd._ast.ASTReferencePropertyNonPortStructureUsageMember;
+import de.monticore.lang.sysml.sysmlbdd._visitor.SysMLBDDVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterBDD2 implements BDDVisitor2 {
+public class PrettyPrinterBDD2 implements SysMLBDDVisitor2 {
 	private IndentPrinter printer;
 
 	public PrettyPrinterBDD2(IndentPrinter print) {

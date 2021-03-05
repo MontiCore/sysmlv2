@@ -1,10 +1,10 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.stm._ast.*;
-import de.monticore.lang.sysml.stm._visitor.STMVisitor2;
+import de.monticore.lang.sysml.sysmlstm._ast.*;
+import de.monticore.lang.sysml.sysmlstm._visitor.SysMLSTMVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterSTM2 implements STMVisitor2 {
+public class PrettyPrinterSTM2 implements SysMLSTMVisitor2 {
 	private IndentPrinter printer;
 
 	public PrettyPrinterSTM2(IndentPrinter print) {

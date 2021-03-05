@@ -1,6 +1,5 @@
 package de.monticore.lang.sysml.sysml._symboltable;
 
-import de.monticore.lang.sysml.ad._ast.ASTActivity;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysml.basics.interfaces.sysmlpackagebasis._ast.ASTPackagedDefinitionMember;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
@@ -9,15 +8,16 @@ import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackage;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageMember;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlvisibility._ast.ASTPackageElementVisibilityIndicatorStd;
-import de.monticore.lang.sysml.bdd._ast.ASTBlock;
 import de.monticore.lang.sysml.common.sysmlassociations._ast.ASTAssociationBlock;
 import de.monticore.lang.sysml.common.sysmlports._ast.ASTInterfaceDefinition;
 import de.monticore.lang.sysml.common.sysmlports._ast.ASTPortDefinitionStd;
 import de.monticore.lang.sysml.common.sysmlvaluetypes._ast.ASTValueTypeStd;
-import de.monticore.lang.sysml.parametricdiagram._ast.ASTIndividualDefinition;
-import de.monticore.lang.sysml.requirementdiagram._ast.ASTRequirementDefinition;
-import de.monticore.lang.sysml.stm._ast.ASTStateDefinition;
 import de.monticore.lang.sysml.sysml._visitor.SysMLVisitor;
+import de.monticore.lang.sysml.sysmlad._ast.ASTActivity;
+import de.monticore.lang.sysml.sysmlbdd._ast.ASTBlock;
+import de.monticore.lang.sysml.sysmlpd._ast.ASTIndividualDefinition;
+import de.monticore.lang.sysml.sysmlrd._ast.ASTRequirementDefinition;
+import de.monticore.lang.sysml.sysmlstm._ast.ASTStateDefinition;
 import de.monticore.symboltable.modifiers.AccessModifier;
 
 /**

@@ -1,17 +1,14 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.ad._visitor.ADTraverser;
-import de.monticore.lang.sysml.bdd._ast.ASTAssociationEndMemberReferenceProperty;
-import de.monticore.lang.sysml.bdd._ast.ASTBlockDeclaration;
-import de.monticore.lang.sysml.bdd._ast.ASTReferencePropertyNonPortStructureUsageMember;
-import de.monticore.lang.sysml.bdd._visitor.BDDHandler;
-import de.monticore.lang.sysml.bdd._visitor.BDDTraverser;
 import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
+import de.monticore.lang.sysml.sysmlbdd._ast.ASTAssociationEndMemberReferenceProperty;
+import de.monticore.lang.sysml.sysmlbdd._visitor.SysMLBDDHandler;
+import de.monticore.lang.sysml.sysmlbdd._visitor.SysMLBDDTraverser;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterHandlerBDD2 implements BDDHandler {
+public class PrettyPrinterHandlerBDD2 implements SysMLBDDHandler {
 	private IndentPrinter printer;
-	private BDDTraverser traverser;
+	private SysMLBDDTraverser traverser;
 
 	public PrettyPrinterHandlerBDD2(IndentPrinter print, SysMLTraverser traverser) {
 		this.printer = print;
@@ -19,12 +16,12 @@ public class PrettyPrinterHandlerBDD2 implements BDDHandler {
 	}
 
 	@Override
-	public BDDTraverser getTraverser() {
+	public SysMLBDDTraverser getTraverser() {
 		return traverser;
 	}
 
 	@Override
-	public void setTraverser(BDDTraverser realThis) {
+	public void setTraverser(SysMLBDDTraverser realThis) {
 		this.traverser = realThis;
 	}
 

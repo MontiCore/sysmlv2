@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml;
 
-component grammar AD extends de.monticore.lang.sysml.advanced.SysMLSuccessions {
+component grammar SysMLAD extends de.monticore.lang.sysml.advanced.SysMLSuccessions {
 
   /* ACTIVITIES */
 

@@ -17,13 +17,13 @@ public class PrettyPrinter2 {
 		traverser = SysMLMill.traverser();
 
 		//Handler
-		traverser.setADHandler(new PrettyPrinterHandlerAD2(printer,traverser));
-		traverser.setBDDHandler(new PrettyPrinterHandlerBDD2(printer,traverser));
-		traverser.setRequirementDiagramHandler(new PrettyPrinterHandlerRequirementDiagram2(printer,traverser));
-		traverser.setSTMHandler(new PrettyPrinterHandlerSMD2(printer, traverser));
+		traverser.setSysMLADHandler(new PrettyPrinterHandlerAD2(printer,traverser));
+		traverser.setSysMLBDDHandler(new PrettyPrinterHandlerBDD2(printer,traverser));
+		traverser.setSysMLRDHandler(new PrettyPrinterHandlerRequirementDiagram2(printer,traverser));
+		traverser.setSysMLSTMHandler(new PrettyPrinterHandlerSMD2(printer, traverser));
 		traverser.setSysMLConstraintsHandler(new PrettyPrinterHandlerConstraints2(printer, traverser));
 		traverser.setSysMLItemFlowsHandler(new PrettyPrinterHandlerSysMLItemFlows2(printer,traverser));
-		traverser.setIBDHandler(new PrettyPrinterHandlerIBD2(printer, traverser));
+		traverser.setSysMLIBDHandler(new PrettyPrinterHandlerIBD2(printer, traverser));
 		traverser.setSysMLExpressionsHandler(new PrettyPrinterHandlerExpressions2(printer,traverser));
 		traverser.setSysMLImportsAndPackagesHandler(new PrettyPrinterHandlerImportsAndPackages2(printer, traverser));
 		traverser.setSysMLAssociationsHandler(new PrettyPrinterHandlerAssociations2(printer, traverser));
@@ -33,18 +33,18 @@ public class PrettyPrinter2 {
 		traverser.setSysMLDefinitionsHandler(new PrettyPrinterHandlerDefinitions2(printer, traverser));
 
 		//Visitor
-		traverser.add4AD(new PrettyPrinterAD2(printer));
-		traverser.add4BDD(new PrettyPrinterBDD2(printer));
+		traverser.add4SysMLAD(new PrettyPrinterAD2(printer));
+		traverser.add4SysMLBDD(new PrettyPrinterBDD2(printer));
 		traverser.add4SysMLComments(new PrettyPrinterComments2(printer));
 		traverser.add4SysMLConstraints(new PrettyPrinterConstraints2(printer));
 		traverser.add4SysMLDefinitions(new PrettyPrinterDefinitions2(printer));
 		traverser.add4SysMLExpressions(new PrettyPrinterExpressions2(printer));
-		traverser.add4IBD(new PrettyPrinterIBD2(printer));
+		traverser.add4SysMLIBD(new PrettyPrinterIBD2(printer));
 		traverser.add4SysMLImportsAndPackages(new PrettyPrinterImportsAndPackages2(printer));
 		traverser.add4SysMLLiterals(new PrettyPrinterLiterals2(printer));
-		traverser.add4ParametricDiagram(new PrettyPrinterParametricDiagram2(printer));
-		traverser.add4RequirementDiagram(new PrettyPrinterRequirementDiagram2(printer));
-		traverser.add4STM(new PrettyPrinterSTM2(printer));
+		traverser.add4SysMLPD(new PrettyPrinterParametricDiagram2(printer));
+		traverser.add4SysMLRD(new PrettyPrinterRequirementDiagram2(printer));
+		traverser.add4SysMLSTM(new PrettyPrinterSTM2(printer));
 		traverser.add4SysMLItemFlows(new PrettyPrinterSysMLItemFlows2(printer));
 		traverser.add4SysMLVisibility(new PrettyPrinterVisibility2(printer));
 		traverser.add4SysMLNames(new PrettyPrintNames2(printer));

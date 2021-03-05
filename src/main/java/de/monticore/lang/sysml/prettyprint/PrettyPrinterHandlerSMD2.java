@@ -1,15 +1,15 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.stm._ast.*;
-import de.monticore.lang.sysml.stm._visitor.STMHandler;
-import de.monticore.lang.sysml.stm._visitor.STMTraverser;
 import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
+import de.monticore.lang.sysml.sysmlstm._ast.*;
+import de.monticore.lang.sysml.sysmlstm._visitor.SysMLSTMHandler;
+import de.monticore.lang.sysml.sysmlstm._visitor.SysMLSTMTraverser;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterHandlerSMD2 implements STMHandler {
+public class PrettyPrinterHandlerSMD2 implements SysMLSTMHandler {
 
 	private IndentPrinter printer;
-	private STMTraverser traverser;
+	private SysMLSTMTraverser traverser;
 
 	public PrettyPrinterHandlerSMD2(IndentPrinter print, SysMLTraverser traverser) {
 		this.printer = print;
@@ -17,12 +17,12 @@ public class PrettyPrinterHandlerSMD2 implements STMHandler {
 	}
 
 	@Override
-	public STMTraverser getTraverser() {
+	public SysMLSTMTraverser getTraverser() {
 		return this.traverser;
 	}
 
 	@Override
-	public void setTraverser(STMTraverser realThis) {
+	public void setTraverser(SysMLSTMTraverser realThis) {
 		this.traverser = realThis;
 	}
 

@@ -1,10 +1,10 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.parametricdiagram._ast.*;
-import de.monticore.lang.sysml.parametricdiagram._visitor.ParametricDiagramVisitor2;
+import de.monticore.lang.sysml.sysmlpd._ast.*;
+import de.monticore.lang.sysml.sysmlpd._visitor.SysMLPDVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterParametricDiagram2 implements ParametricDiagramVisitor2 {
+public class PrettyPrinterParametricDiagram2 implements SysMLPDVisitor2 {
 	private IndentPrinter printer;
 
 	public PrettyPrinterParametricDiagram2(IndentPrinter print) {

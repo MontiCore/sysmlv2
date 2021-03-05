@@ -109,7 +109,7 @@ fileTree(grammarDir).matching { include '**/*.mc4' }.each {
 }
 
  /*This is generated*/
-generateAD.dependsOn generateSysMLCommon
+generateSysMLAD.dependsOn generateSysMLCommon
 
 generateSysMLAssociations.dependsOn generateSysMLCommonBasis
 
@@ -158,25 +158,25 @@ generateSysMLUsages.dependsOn generateSysMLCommonBasis
 
 generateSysMLValueTypes.dependsOn generateSysMLCommonBasis
 
-generateBDD.dependsOn generateSysMLCommon
+generateSysMLBDD.dependsOn generateSysMLCommon
 
-generateIBD.dependsOn generateSysMLCommon
+generateSysMLIBD.dependsOn generateSysMLCommon
 
 //generateNotDistributed.dependsOn generateSysMLCommon
 
 //generatePackageDiagram.dependsOn generateSysMLCommon
 
-generateParametricDiagram.dependsOn generateSysMLCommon
+generateSysMLPD.dependsOn generateSysMLCommon
 
-generateRequirementDiagram.dependsOn generateSysMLCommon
+generateSysMLRD.dependsOn generateSysMLCommon
 
 //generateSD.dependsOn generateSysMLCommon
 
-generateSTM.dependsOn generateSysMLCommon
+generateSysMLSTM.dependsOn generateSysMLCommon
 
-generateSysML.dependsOn generateBDD
-generateSysML.dependsOn generateIBD
-generateSysML.dependsOn generateAD
+generateSysML.dependsOn generateSysMLBDD
+generateSysML.dependsOn generateSysMLIBD
+generateSysML.dependsOn generateSysMLAD
 generateSysML.dependsOn generateSysMLBasics
 
 //generateUseCaseDiagram.dependsOn generateSysMLCommon
@@ -192,12 +192,12 @@ generateSysMLExtended.dependsOn generateSysMLComments
 generateSysMLExtended.dependsOn generateSysMLImportsAndPackages
 generateSysMLExtended.dependsOn generateSysMLLiterals
 generateSysMLExtended.dependsOn generateSysMLVisibility
-generateSysMLExtended.dependsOn generateAD
-generateSysMLExtended.dependsOn generateBDD
-generateSysMLExtended.dependsOn generateIBD
-generateSysMLExtended.dependsOn generateParametricDiagram
-generateSysMLExtended.dependsOn generateRequirementDiagram
-generateSysMLExtended.dependsOn generateSTM
+generateSysMLExtended.dependsOn generateSysMLAD
+generateSysMLExtended.dependsOn generateSysMLBDD
+generateSysMLExtended.dependsOn generateSysMLIBD
+generateSysMLExtended.dependsOn generateSysMLPD
+generateSysMLExtended.dependsOn generateSysMLRD
+generateSysMLExtended.dependsOn generateSysMLSTM
 
 generateSysMLForStructure.dependsOn generateSysMLNamesJava
 generateSysMLForStructure.dependsOn generateSysMLImportsAndPackagesJava
@@ -205,8 +205,8 @@ generateSysMLForStructure.dependsOn generateSysMLExpressionsExtended
 generateSysMLForStructure.dependsOn generateSysMLComments
 generateSysMLForStructure.dependsOn generateSysMLLiterals
 generateSysMLForStructure.dependsOn generateSysMLVisibility
-generateSysMLForStructure.dependsOn generateBDD
-generateSysMLForStructure.dependsOn generateIBD
+generateSysMLForStructure.dependsOn generateSysMLBDD
+generateSysMLForStructure.dependsOn generateSysMLIBD
 
 compileJava.dependsOn (project.collect
         { it.tasks.findAll { task -> task.name.startsWith("generate") } })

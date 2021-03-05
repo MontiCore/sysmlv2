@@ -1,15 +1,15 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.ad._ast.*;
-import de.monticore.lang.sysml.ad._visitor.ADHandler;
-import de.monticore.lang.sysml.ad._visitor.ADTraverser;
 import de.monticore.lang.sysml.common.sysmlusages._ast.ASTSubset;
 import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
+import de.monticore.lang.sysml.sysmlad._ast.*;
+import de.monticore.lang.sysml.sysmlad._visitor.SysMLADHandler;
+import de.monticore.lang.sysml.sysmlad._visitor.SysMLADTraverser;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterHandlerAD2 implements ADHandler {
+public class PrettyPrinterHandlerAD2 implements SysMLADHandler {
 	private IndentPrinter printer;
-	private ADTraverser traverser;
+	private SysMLADTraverser traverser;
 
 	public PrettyPrinterHandlerAD2(IndentPrinter print, SysMLTraverser traverser) {
 		this.printer = print;
@@ -17,12 +17,12 @@ public class PrettyPrinterHandlerAD2 implements ADHandler {
 	}
 
 	@Override
-	public ADTraverser getTraverser() {
+	public SysMLADTraverser getTraverser() {
 		return traverser;
 	}
 
 	@Override
-	public void setTraverser(ADTraverser realThis) {
+	public void setTraverser(SysMLADTraverser realThis) {
 		this.traverser = realThis;
 	}
 

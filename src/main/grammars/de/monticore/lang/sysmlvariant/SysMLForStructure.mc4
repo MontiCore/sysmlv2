@@ -10,8 +10,8 @@ grammar SysMLForStructure extends
   de.monticore.lang.sysml.basics.sysmldefault.SysMLComments,
   de.monticore.lang.sysml.basics.sysmldefault.SysMLLiterals,
   de.monticore.lang.sysml.basics.sysmldefault.SysMLVisibility,
-  de.monticore.lang.sysml.BDD,
-  de.monticore.lang.sysml.IBD {
+  de.monticore.lang.sysml.SysMLBDD,
+  de.monticore.lang.sysml.SysMLIBD {
   start Package;
 
   /* Implementing all interfaces is required by MontiCore. Since we do not want to use these Interfaces, we add

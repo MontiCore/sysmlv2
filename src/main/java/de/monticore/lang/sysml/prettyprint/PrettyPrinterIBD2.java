@@ -1,13 +1,13 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.ibd._ast.ASTAssociationEndMemberPartProperty;
-import de.monticore.lang.sysml.ibd._ast.ASTPartDeclaration;
-import de.monticore.lang.sysml.ibd._ast.ASTPartProperty;
-import de.monticore.lang.sysml.ibd._ast.ASTPartPropertyUsageMember;
-import de.monticore.lang.sysml.ibd._visitor.IBDVisitor2;
+import de.monticore.lang.sysml.sysmlibd._ast.ASTAssociationEndMemberPartProperty;
+import de.monticore.lang.sysml.sysmlibd._ast.ASTPartDeclaration;
+import de.monticore.lang.sysml.sysmlibd._ast.ASTPartProperty;
+import de.monticore.lang.sysml.sysmlibd._ast.ASTPartPropertyUsageMember;
+import de.monticore.lang.sysml.sysmlibd._visitor.SysMLIBDVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class PrettyPrinterIBD2 implements IBDVisitor2 {
+public class PrettyPrinterIBD2 implements SysMLIBDVisitor2 {
 	private IndentPrinter printer;
 
 	public PrettyPrinterIBD2(IndentPrinter print) {

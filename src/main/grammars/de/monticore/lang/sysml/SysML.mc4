@@ -1,13 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml;
 
-
-grammar SysML extends de.monticore.lang.sysml.AD,
-  de.monticore.lang.sysml.BDD,
-  de.monticore.lang.sysml.IBD,
-  de.monticore.lang.sysml.ParametricDiagram,
-  de.monticore.lang.sysml.RequirementDiagram,
-  de.monticore.lang.sysml.STM,
+grammar SysML extends de.monticore.lang.sysml.SysMLAD,
+  de.monticore.lang.sysml.SysMLBDD,
+  de.monticore.lang.sysml.SysMLIBD,
+  de.monticore.lang.sysml.SysMLPD,
+  de.monticore.lang.sysml.SysMLRD,
+  de.monticore.lang.sysml.SysMLSTM,
   de.monticore.lang.sysml.basics.sysmldefault.SysMLBasics {
 
   start Unit;
