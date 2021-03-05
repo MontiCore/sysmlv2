@@ -51,27 +51,6 @@ public class PrettyPrinterHandlerExpressions2 implements SysMLExpressionsHandler
 	}
 
 	@Override
-	public void handle(ASTOrExpression node) {
-		node.getLeft().accept(getTraverser());
-		printer.print("| ");
-		node.getRight().accept(getTraverser());
-	}
-
-	@Override
-	public void handle(ASTXorExpression node) {
-		node.getLeft().accept(getTraverser());
-		printer.print("^ ");
-		node.getRight().accept(getTraverser());
-	}
-
-	@Override
-	public void handle(ASTAndExpression node) {
-		node.getLeft().accept(getTraverser());
-		printer.print("& ");
-		node.getRight().accept(getTraverser());
-	}
-
-	@Override
 	public void handle(ASTClassificationExpression node) {
 		node.getExpression(0).accept(getTraverser());
 		printer.print("instanceof ");
@@ -79,17 +58,9 @@ public class PrettyPrinterHandlerExpressions2 implements SysMLExpressionsHandler
 	}
 
 	@Override
-	public void handle(ASTMultiplicativeExpression node) {
+	public void handle(ASTPowersetExpression node) {
 		node.getLeft().accept(getTraverser());
-		if (node.isTimes()) {
-			printer.print("* ");
-		}
-		if (node.isDivide()) {
-			printer.print("/ ");
-		}
-		if (node.isExp()) {
-			printer.print("** ");
-		}
+		printer.print("** ");
 		node.getRight().accept(getTraverser());
 	}
 

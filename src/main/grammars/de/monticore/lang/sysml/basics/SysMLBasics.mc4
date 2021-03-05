@@ -6,5 +6,8 @@ component grammar SysMLBasics extends de.monticore.lang.sysml.basics.SysMLCommen
  de.monticore.lang.sysml.basics.SysMLImportsAndPackages,
  de.monticore.lang.sysml.basics.SysMLLiterals,
  de.monticore.lang.sysml.basics.SysMLNames,
- de.monticore.lang.sysml.basics.SysMLVisibility{
+ de.monticore.lang.sysml.basics.SysMLVisibility,
+ de.monticore.expressions.AssignmentExpressions,
+ de.monticore.expressions.CommonExpressions,
+ de.monticore.expressions.BitExpressions {
 }

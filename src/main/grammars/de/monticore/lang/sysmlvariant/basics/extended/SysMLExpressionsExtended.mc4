@@ -2,6 +2,9 @@
 package de.monticore.lang.sysmlvariant.basics.extended;
 
 component grammar SysMLExpressionsExtended extends de.monticore.lang.sysml.basics.SysMLExpressions,
+ de.monticore.expressions.AssignmentExpressions,
+ de.monticore.expressions.CommonExpressions,
+ de.monticore.expressions.BitExpressions,
  de.monticore.expressions.OCLExpressions,
   de.monticore.lang.sysml.basics.SysMLPackageBasis {
 
