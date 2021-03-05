@@ -2,5 +2,6 @@
 package de.monticore.lang.sysml.basics;
 
 component grammar SysMLExpressionsBasis extends de.monticore.expressions.ExpressionsBasis  {
+  //TODO: Remove
   interface ExpressionMember;
 }
