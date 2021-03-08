@@ -1,5 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics;
 
+//TODO: Remove
 component grammar SysMLLiteralsBasis extends de.monticore.literals.MCLiteralsBasis   {
 }

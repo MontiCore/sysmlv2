@@ -1,14 +1,18 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics;
 
+
+//TODO: Add skip to comments such that they don't need to be included everywhere?
 component grammar SysMLComments extends de.monticore.lang.sysml.basics.SysMLCommentsBasis,
   de.monticore.lang.sysml.basics.SysMLPackageBasis,
   de.monticore.lang.sysml.basics.SysMLNamesBasis {
 
+  //TODO: Remove remark and replace with explanation
   /*Remark: Xtext suggests "comment" SysMLName? (Annotation | EmptyAnnotation) ML_Comment
   * but we do not have ML_Comment (Because MCBasics saves these in the AST) and we
   * do not need an Empty Annotation
   */
+  //TODO: Implement TypeSymbol of MontiCore?
   Comment implements SysMLType, PackagedDefinitionMember = "comment" SysMLName? SysMLAnnotation?;
   astrule Comment =
     method public String getName(){
@@ -18,10 +22,19 @@ component grammar SysMLComments extends de.monticore.lang.sysml.basics.SysMLComm
       return "";
     }
   ;
+
+  //TODO: Replace by MCType?
   SysMLAnnotation = "about" QualifiedName;
 
+  //TODO: Remove interface and make standard the default
+  //TODO: Always a list of lists of documentation, needed? How does this look in the concrete syntax?
   UnitPrefixStd implements UnitPrefix = PrefixAnnotation*;
+
+  //TODO: Remove interface and make standard the default
+  //TODO: Always a list of documentation, remove?
   PrefixAnnotationStd implements PrefixAnnotation = Documentation+;
+
+  //TODO: Merge with Comments?
   Documentation implements SysMLType = "comment" SysMLName?;
   astrule Documentation =
     method public String getName(){

@@ -10,6 +10,7 @@ component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics
   de.monticore.lang.sysml.basics.SysMLShared {
 
   /* IMPORTS */
+  //TODO: Override MC Imports?
   AliasPackagedDefinitionMember implements SysMLType, PackagedDefinitionMember =
       ("import" | ["alias"]) QualifiedName ("as" SysMLName)? ";";
   astrule AliasPackagedDefinitionMember =
@@ -21,6 +22,7 @@ component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics
     }
   ;
 
+  //TODO: Remove interface and make standard the default
   //Following has the name "Import" in Xtext
   ImportUnitStd implements ImportUnit = PrefixAnnotation* (visibility:PackageElementVisibilityIndicator)?
     "import" QualifiedName ("::" | ".") star:["*"] {noSpace()}? ";";

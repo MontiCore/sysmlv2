@@ -8,8 +8,12 @@ component grammar SysMLLiterals extends de.monticore.literals.MCCommonLiterals {
   token DecimalDoublePointLiteral = Digits '.' (Digits)? (ExponentPart)? | Digits ExponentPart;
   token ExponentPart = Digits ('e' | 'E') ('+' | '-')? Digits;
 
+
   // Literal Expressions
+  //TODO: Why here, export to expressions, or check naming? (See MC)
   RealLiteralWithExponent implements Literal = DecimalDoublePointLiteral;
   SysMLExponentValue implements Literal = ExponentPart;
+
+  //TODO: Useless, remove?
   UnlimitedNaturalLiteralExpression = "*";
 }

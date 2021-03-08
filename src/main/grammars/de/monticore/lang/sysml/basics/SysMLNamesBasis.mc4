@@ -2,6 +2,8 @@
 package de.monticore.lang.sysml.basics;
 
 component grammar SysMLNamesBasis extends de.monticore.types.MCBasicTypes {
+  //TODO: Remove
+  //TODO: Naming
   interface QualifiedName extends MCType;
   interface SysMLName; //Default Name for SysML
 
@@ -23,6 +25,7 @@ component grammar SysMLNamesBasis extends de.monticore.types.MCBasicTypes {
   ;
   // SysMLQualifiedType implements MCObjectType  = QualifiedName;
 
+  //TODO: Replace through Type? Why is this needed?
   interface symbol SysMLType;
   // interface scope SysMLBodyScope;
 }
