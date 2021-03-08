@@ -2,6 +2,7 @@
 package de.monticore.lang.sysml.basics;
 
 component grammar SysMLPackageBasis {
+  //TODO: Remove
   interface PackagedDefinitionMember; //Can be everything what is an element of a package
   interface PackagedUsageMember;
 }

@@ -2,8 +2,10 @@
 package de.monticore.lang.sysml.basics;
 
 component grammar SysMLShared extends de.monticore.lang.sysml.basics.SysMLNamesBasis{
+  //TODO: Rename (Compilation Unit)
   interface Unit; //A Unit is a starting production
 
+  //TODO All: Remove to other grammars?
   interface NestedDefinitionMember;
   interface NestedUsageMember;
 
@@ -12,13 +14,16 @@ component grammar SysMLShared extends de.monticore.lang.sysml.basics.SysMLNamesB
   interface BehaviorUsageMember; //Referencing other elements in a production
 
   /* ASSOCIATION BLOCK MEMBERSHIPS */
+  //TODO: Remove
   interface AssociationUsageMember;
 
+  //TODO: Replace with MC Type?
   interface FeatureTyping;
 
   interface Parameter;
 
   token FromToDigitsDotDot = ('0'..'9')+ "..";
 
+  //TODO: Remove
   interface TypePart;
 }

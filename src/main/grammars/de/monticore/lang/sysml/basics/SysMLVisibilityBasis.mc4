@@ -2,6 +2,7 @@
 package de.monticore.lang.sysml.basics;
 
 component grammar SysMLVisibilityBasis{
+  //TODO: Remove
   interface PackageElementVisibilityIndicator;
   interface VisibilityIndicator;
 }
