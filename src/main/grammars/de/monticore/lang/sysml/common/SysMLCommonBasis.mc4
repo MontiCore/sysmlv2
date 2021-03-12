@@ -3,10 +3,10 @@ package de.monticore.lang.sysml.common;
 
 
 component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.SysMLPackageBasis,
-  de.monticore.lang.sysml.basics.SysMLImportBasis,
   de.monticore.lang.sysml.basics.SysMLExpressionsBasis,
   de.monticore.lang.sysml.basics.SysMLShared,
-  de.monticore.lang.sysml.basics.SysMLBasics {
+  de.monticore.lang.sysml.basics.SysMLBasics,
+  de.monticore.lang.sysml.basics.SysMLImportsAndPackages {
 
   FeatureDirection =  ["in"] | ["out"] | ["inout"];
 

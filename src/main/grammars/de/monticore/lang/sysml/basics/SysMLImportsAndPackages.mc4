@@ -2,8 +2,7 @@
 package de.monticore.lang.sysml.basics;
 
 
-component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics.SysMLImportBasis,
-  de.monticore.lang.sysml.basics.SysMLPackageBasis,
+component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics.SysMLPackageBasis,
   de.monticore.lang.sysml.basics.SysMLBasics,
   de.monticore.lang.sysml.basics.SysMLVisibility,
   de.monticore.lang.sysml.basics.SysMLShared {
@@ -15,7 +14,7 @@ component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics
 
   //TODO: Remove interface and make standard the default
   //Following has the name "Import" in Xtext
-  ImportUnitStd implements ImportUnit = (visibility:PackageElementVisibilityIndicator)?
+  ImportUnit = (visibility:PackageElementVisibilityIndicator)?
     "import" MCQualifiedName ("::" | ".") star:["*"] {noSpace()}? ";";
 
   /* PACKAGES */

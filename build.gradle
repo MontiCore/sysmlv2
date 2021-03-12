@@ -102,6 +102,17 @@ dependencies {
 fileTree(grammarDir).matching { include '**/*.mc4' }.each {
     def g = it
     task "generate${it.getName().substring(0, it.getName().lastIndexOf('.'))}"(type: MCTask) {
+        doFirst {
+            System.setSecurityManager(new SecurityManager()
+            {
+                @Override public void checkExit(int status) {
+                    throw new GradleException(de.se_rwth.commons.logging.Log.getFindings().get(0).buildMsg())
+                }
+                @Override public void checkPermission(Permission perm) {
+                    // Allow other activities by default
+                }
+            })
+        }
         grammar = file g
         outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
         def grammarIncludingPackage = file(grammarDir).toURI().relativize(g.toURI()).toString()
@@ -132,7 +143,6 @@ generateSysMLCommon.dependsOn generateSysMLPorts
 generateSysMLCommon.dependsOn generateSysMLCommonBasis
 
 generateSysMLCommonBasis.dependsOn generateSysMLPackageBasis
-generateSysMLCommonBasis.dependsOn generateSysMLImportBasis
 
 generateSysMLExpressions.dependsOn generateSysMLCommonBasis
 

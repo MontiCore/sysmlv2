@@ -2,7 +2,8 @@
 package de.monticore.lang.sysml.common;
 
 component grammar SysMLPorts extends de.monticore.lang.sysml.common.SysMLUsages,
-  de.monticore.lang.sysml.common.SysMLAssociations{
+  de.monticore.lang.sysml.common.SysMLAssociations,
+  de.monticore.lang.sysml.basics.SysMLImportsAndPackages{
 
   /* PORT DEFINITIONS */
 
