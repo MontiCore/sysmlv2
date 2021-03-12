@@ -141,7 +141,6 @@ generateSysMLImportsAndPackages.dependsOn generateSysMLCommonBasis
 
 generateSysMLBasics.dependsOn generateSysMLExpressions
 generateSysMLBasics.dependsOn generateSysMLImportsAndPackages
-generateSysMLBasics.dependsOn generateSysMLLiterals
 generateSysMLBasics.dependsOn generateSysMLVisibility
 
 generateSysMLVisibility.dependsOn generateSysMLCommonBasis
