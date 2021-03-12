@@ -11,4 +11,9 @@ component grammar SysMLBasics extends de.monticore.lang.sysml.basics.SysMLCommen
  de.monticore.expressions.AssignmentExpressions,
  de.monticore.expressions.CommonExpressions,
  de.monticore.expressions.BitExpressions {
+ 
+ token SysMLComment =
+  'c''o''m''m''e''n''t' (WS* Name)? (WS* 'a''b''o''u''t' WS* Name)? WS* ML_COMMENT : -> skip
+  {storeComment();};
+	
 }
