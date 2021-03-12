@@ -30,6 +30,7 @@ component grammar SysMLBasics extends de.monticore.lang.sysml.basics.SysMLVisibi
 
   SysMLQualifiedName extends MCQualifiedName = parts:(Name || "::")+;
 
+  @Override
   token Name = CharSequence | ( 'a'..'z' | 'A'..'Z' | '_' | '$' )
                               ( 'a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '$' )*;
 
