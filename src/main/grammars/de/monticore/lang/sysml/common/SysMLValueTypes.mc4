@@ -6,14 +6,14 @@ component grammar SysMLValueTypes extends de.monticore.lang.sysml.common.SysMLUs
 
   /* VALUE TYPES */
 
-  ValueTypeUnit = UnitPrefix ValueType;
+  ValueTypeUnit =  ValueType;
   ValueTypeStd implements ValueType, SysMLType, PackagedDefinitionMember =
     ValueTypeDeclaration DefinitionBody;
   ValueTypeDeclaration = ["abstract"]? "value" "type" ClassifierDeclarationCompletion;
 
   /* VALUE PROPERTIES */
 
-  ValueUnit implements SysMLType, Unit = UnitPrefix ValueDeclaration UsageCompletion;
+  ValueUnit implements SysMLType, Unit =  ValueDeclaration UsageCompletion;
   ValueDeclaration = ["abstract"]? ["value"]? SysMLNameAndTypePart SubsettingPart;
 
   NonPortStructureUsageMemberValueProperty implements SysMLType, NonPortStructureUsageMember =

@@ -4,7 +4,7 @@ package de.monticore.lang.sysml.common;
 component grammar SysMLAssociations extends de.monticore.lang.sysml.common.SysMLCommonBasis {
 
   /* ASSOCIATION BLOCKS */
-  AssociationBlockUnit implements Unit = UnitPrefix AssociationBlock;
+  AssociationBlockUnit implements Unit =  AssociationBlock;
   AssociationBlock implements SysMLType, PackagedDefinitionMember =
     AssociationBlockDeclaration AssociationBlockBody;
   AssociationBlockDeclaration = ["abstract"]? "assoc" "block" ClassifierDeclarationCompletion;

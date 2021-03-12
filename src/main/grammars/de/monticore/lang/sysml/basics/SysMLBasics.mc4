@@ -2,8 +2,7 @@
 package de.monticore.lang.sysml.basics;
 
 //TODO: Check if needed or if expressions should be added later
-component grammar SysMLBasics extends de.monticore.lang.sysml.basics.SysMLComments,
- de.monticore.lang.sysml.basics.SysMLExpressions,
+component grammar SysMLBasics extends de.monticore.lang.sysml.basics.SysMLExpressions,
  de.monticore.lang.sysml.basics.SysMLImportsAndPackages,
  de.monticore.lang.sysml.basics.SysMLLiterals,
  de.monticore.lang.sysml.basics.SysMLNames,

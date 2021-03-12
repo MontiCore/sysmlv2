@@ -5,7 +5,7 @@ component grammar SysMLSTM extends de.monticore.lang.sysml.advanced.SysMLSuccess
 
   /* STATE DEFINITIONS */
 
-  StateDefinitionUnit implements Unit = UnitPrefix StateDefinition;
+  StateDefinitionUnit implements Unit =  StateDefinition;
   StateDefinition implements SysMLType, PackagedDefinitionMember = StateDefDeclaration StateBody;
   StateDefDeclaration = ["abstract"]? "state" "def" SysMLName ParameterList? SuperclassingList?;
   scope StateBody = ";" | "{" StateBodyPart "}";
@@ -45,7 +45,7 @@ component grammar SysMLSTM extends de.monticore.lang.sysml.advanced.SysMLSuccess
   TransitionStepMember = DefinitionMemberPrefix TransitionStep ";";
 
  /* STATES */
-  StateUnit implements SysMLType, Unit = UnitPrefix StateDeclaration StateBody;
+  StateUnit implements SysMLType, Unit =  StateDeclaration StateBody;
   StateDeclaration = ["abstract"]? "state" SysMLNameAndTypePart ActionParameterList? SubsettingPart ValuePart?;
   StateUsage = ActionOrStateUsageDeclaration StateBody;
   ExhibitStateUsage implements SysMLType = ((((SysMLName) TypePart? "as")? Subset)

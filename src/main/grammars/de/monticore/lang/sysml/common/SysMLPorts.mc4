@@ -122,7 +122,7 @@ component grammar SysMLPorts extends de.monticore.lang.sysml.common.SysMLUsages,
   ;
 
   /* INTERFACE DEFINITIONS */
-  InterfaceDefinitionUnit implements Unit = UnitPrefix InterfaceDefinition;
+  InterfaceDefinitionUnit implements Unit =  InterfaceDefinition;
   InterfaceDefinition implements SysMLType, PackagedDefinitionMember = InterfaceDeclaration InterfaceBody;
   InterfaceDeclaration = ["abstract"]? "interface" "def" ClassifierDeclarationCompletion;
   scope InterfaceBody = ";" | (

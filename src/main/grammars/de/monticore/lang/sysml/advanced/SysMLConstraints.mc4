@@ -5,7 +5,7 @@ component grammar SysMLConstraints extends de.monticore.lang.sysml.common.SysMLC
 
   /* CONSTRAINT DEFINITIONS */
 
-  ConstraintDefinitionUnit implements Unit = UnitPrefix ConstraintDefinition;
+  ConstraintDefinitionUnit implements Unit =  ConstraintDefinition;
   ConstraintDefinition implements SysMLType, PackagedDefinitionMember = ConstraintDefDeclaration ConstraintBody;
   ConstraintDefDeclaration = ["abstract"]? "constraint" "def" SysMLName ParameterList?
     EmptyReturnParameterPart SuperclassingList?;

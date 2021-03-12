@@ -16,7 +16,7 @@ component grammar SysMLDefinitions extends de.monticore.lang.sysml.common.SysMLP
   NestedDefinitionMemberStd implements NestedDefinitionMember = DefinitionMemberPrefix PackagedDefinitionMember;
   NestedUsageMemberStd implements NestedUsageMember = StructureUsageMember | BehaviorUsageMember;
   StructureUsageMember = (DefinitionMemberPrefix NonPortStructureUsageMember) | PortMember | ConjugatedPortMember;
-  DefinitionMemberPrefixStd implements DefinitionMemberPrefix = PrefixAnnotation* visibility:VisibilityIndicator?;
+  DefinitionMemberPrefixStd implements DefinitionMemberPrefix = visibility:VisibilityIndicator?;
 
   // Remark: in Xtext DefinitionMemberPrefix is a part of NonPortStructureUsageMember
   // Remark: NonPortStructureUsageMember is an interface

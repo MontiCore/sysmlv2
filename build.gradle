@@ -129,12 +129,9 @@ generateSysMLCommon.dependsOn generateSysMLUsages
 generateSysMLCommon.dependsOn generateSysMLPorts
 generateSysMLCommon.dependsOn generateSysMLCommonBasis
 
-generateSysMLCommonBasis.dependsOn generateSysMLCommentsBasis
 generateSysMLCommonBasis.dependsOn generateSysMLNamesBasis
 generateSysMLCommonBasis.dependsOn generateSysMLPackageBasis
 generateSysMLCommonBasis.dependsOn generateSysMLImportBasis
-
-generateSysMLComments.dependsOn generateSysMLCommonBasis
 
 generateSysMLExpressions.dependsOn generateSysMLCommonBasis
 
@@ -143,7 +140,6 @@ generateSysMLImportsAndPackages.dependsOn generateSysMLCommonBasis
 
 generateSysMLNames.dependsOn generateSysMLCommonBasis
 
-generateSysMLBasics.dependsOn generateSysMLComments
 generateSysMLBasics.dependsOn generateSysMLExpressions
 generateSysMLBasics.dependsOn generateSysMLImportsAndPackages
 generateSysMLBasics.dependsOn generateSysMLLiterals

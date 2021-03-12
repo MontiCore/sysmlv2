@@ -4,7 +4,7 @@ package de.monticore.lang.sysml;
 component grammar SysMLPD extends de.monticore.lang.sysml.common.SysMLCommon {
   
   /* INDIVIDUAL DEFINITIONS */
-  IndividualDefinitionUnit implements Unit = UnitPrefix IndividualDefinition;
+  IndividualDefinitionUnit implements Unit =  IndividualDefinition;
   IndividualDefinition implements SysMLType, PackagedDefinitionMember = IndividualDefDeclaration DefinitionBody;
   IndividualDefDeclaration = ["abstract"]? "individual" "def" ClassifierDeclarationCompletion
     LifeClassMembership;

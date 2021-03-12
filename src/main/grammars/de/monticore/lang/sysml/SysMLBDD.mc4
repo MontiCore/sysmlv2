@@ -5,7 +5,7 @@ component grammar SysMLBDD extends de.monticore.lang.sysml.common.SysMLCommon {
 
   /* BLOCKS */
 
-  BlockUnit implements Unit = UnitPrefix Block; //Remark: in Xtext BlockDeclaration DefinitionBody
+  BlockUnit implements Unit =  Block; //Remark: in Xtext BlockDeclaration DefinitionBody
 
   Block implements SysMLType, PackagedDefinitionMember = BlockDeclaration DefinitionBody;
 

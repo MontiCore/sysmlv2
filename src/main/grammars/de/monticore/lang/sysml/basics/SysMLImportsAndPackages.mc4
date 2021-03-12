@@ -2,8 +2,7 @@
 package de.monticore.lang.sysml.basics;
 
 
-component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics.SysMLCommentsBasis,
-  de.monticore.lang.sysml.basics.SysMLImportBasis,
+component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics.SysMLImportBasis,
   de.monticore.lang.sysml.basics.SysMLNamesBasis,
   de.monticore.lang.sysml.basics.SysMLPackageBasis,
   de.monticore.lang.sysml.basics.SysMLVisibility,
@@ -24,11 +23,11 @@ component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics
 
   //TODO: Remove interface and make standard the default
   //Following has the name "Import" in Xtext
-  ImportUnitStd implements ImportUnit = PrefixAnnotation* (visibility:PackageElementVisibilityIndicator)?
+  ImportUnitStd implements ImportUnit = (visibility:PackageElementVisibilityIndicator)?
     "import" QualifiedName ("::" | ".") star:["*"] {noSpace()}? ";";
 
   /* PACKAGES */
-  PackageUnit implements Unit = UnitPrefix Package;
+  PackageUnit implements Unit =  Package;
   AnonymousPackage implements Unit = PackageBody;
   Package implements SysMLType, PackagedDefinitionMember =  PackageDeclaration PackageBody;
   astrule Package =
@@ -42,7 +41,7 @@ component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics
 
   /* PACKAGE MEMBERSHIPS */
   PackageMember = PackageMemberPrefix ( PackagedDefinitionMember | PackagedUsageMember);
-  PackageMemberPrefix = PrefixAnnotation* visibility:PackageElementVisibilityIndicator?;
+  PackageMemberPrefix = visibility:PackageElementVisibilityIndicator?;
   // Remark: PackagedDefinitionMember is an interface
   // Remark: PackagedUsageMember is an interface
 }

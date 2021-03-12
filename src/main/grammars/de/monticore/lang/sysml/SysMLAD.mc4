@@ -5,7 +5,7 @@ component grammar SysMLAD extends de.monticore.lang.sysml.advanced.SysMLSuccessi
 
   /* ACTIVITIES */
 
-  ActivityUnit implements Unit = UnitPrefix Activity;
+  ActivityUnit implements Unit = Activity;
   Activity implements SysMLType, PackagedDefinitionMember = ActivityDeclaration ActivityBody;
 
   ActivityDeclaration = ["abstract"]? "activity" SysMLName ParameterList? SuperclassingList?;
@@ -53,7 +53,7 @@ component grammar SysMLAD extends de.monticore.lang.sysml.advanced.SysMLSuccessi
 
   /* ACTIONS */
 
-  ActionUnit implements Unit = UnitPrefix ActionDeclaration ActivityBody;
+  ActionUnit implements Unit =  ActionDeclaration ActivityBody;
   ActionDeclaration = ["abstract"]? "action" SysMLNameAndTypePart ActionParameterList? SubsettingPart ValuePart?;
   ActionUsageStd implements SysMLType, ActionUsage = ActionOrStateUsageDeclaration ActivityBody;
 
