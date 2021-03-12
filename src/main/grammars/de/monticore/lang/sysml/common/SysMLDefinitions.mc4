@@ -1,7 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.common;
 
-component grammar SysMLDefinitions extends de.monticore.lang.sysml.common.SysMLPorts {
+component grammar SysMLDefinitions extends de.monticore.lang.sysml.common.SysMLPorts,
+ de.monticore.lang.sysml.basics.SysMLVisibility {
 
   /* DEFINITIONS */
 

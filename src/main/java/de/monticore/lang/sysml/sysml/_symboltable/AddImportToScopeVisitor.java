@@ -8,12 +8,11 @@ import de.monticore.lang.sysml.basics.sysmlnamesbasis._symboltable.ISysMLNamesBa
 import de.monticore.lang.sysml.basics.sysmlnamesbasis._symboltable.SysMLNamesBasisScope;
 import de.monticore.lang.sysml.basics.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysml.basics.sysmlshared._ast.ASTUnit;
-import de.monticore.lang.sysml.basics.sysmlvisibilitybasis._ast.ASTPackageElementVisibilityIndicator;
 import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTAliasPackagedDefinitionMember;
 import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTImportUnitStd;
 import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTPackage;
 import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTPackageMember;
-import de.monticore.lang.sysml.basics.sysmlvisibility._ast.ASTPackageElementVisibilityIndicatorStd;
+import de.monticore.lang.sysml.basics.sysmlvisibility._ast.ASTPackageElementVisibilityIndicator;
 import de.monticore.lang.sysml.cocos.CoCoStatus;
 import de.monticore.lang.sysml.cocos.SysMLCoCoName;
 import de.monticore.lang.sysml.sysml._visitor.SysMLInheritanceVisitor;
@@ -298,8 +297,8 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
   }
 
   private boolean isPrivate(ASTPackageElementVisibilityIndicator visNoCasted) {
-    if (visNoCasted instanceof ASTPackageElementVisibilityIndicatorStd) {
-      ASTPackageElementVisibilityIndicatorStd vis = (ASTPackageElementVisibilityIndicatorStd) visNoCasted;
+    if (visNoCasted instanceof ASTPackageElementVisibilityIndicator) {
+      ASTPackageElementVisibilityIndicator vis = (ASTPackageElementVisibilityIndicator) visNoCasted;
 
       if (vis.getVis().getIntValue() == 2) {
         return true;

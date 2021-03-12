@@ -6,7 +6,6 @@ component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.SysMLC
   de.monticore.lang.sysml.basics.SysMLNamesBasis,
   de.monticore.lang.sysml.basics.SysMLPackageBasis,
   de.monticore.lang.sysml.basics.SysMLImportBasis,
-  de.monticore.lang.sysml.basics.SysMLVisibilityBasis,
   de.monticore.lang.sysml.basics.SysMLExpressionsBasis,
   de.monticore.lang.sysml.basics.SysMLShared {
 

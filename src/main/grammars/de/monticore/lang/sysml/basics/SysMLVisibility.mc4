@@ -1,10 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics;
 
-component grammar SysMLVisibility extends de.monticore.lang.sysml.basics.SysMLVisibilityBasis {
+component grammar SysMLVisibility {
  //TODO: Remove
- PackageElementVisibilityIndicatorStd implements PackageElementVisibilityIndicator = vis:VISIBILITYSHORT;
- VisibilityIndicatorStd implements VisibilityIndicator = vis:VISIBILITYLONG;
+ PackageElementVisibilityIndicator = vis:VISIBILITYSHORT;
+ VisibilityIndicator = vis:VISIBILITYLONG;
 
  //TODO: Do as in MC, check MCModifier
  enum VISIBILITYSHORT = "public" | "private";

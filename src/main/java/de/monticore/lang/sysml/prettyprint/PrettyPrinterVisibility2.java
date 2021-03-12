@@ -1,9 +1,9 @@
 package de.monticore.lang.sysml.prettyprint;
 
-import de.monticore.lang.sysml.basics.sysmlvisibility._ast.ASTPackageElementVisibilityIndicatorStd;
+import de.monticore.lang.sysml.basics.sysmlvisibility._ast.ASTPackageElementVisibilityIndicator;
 import de.monticore.lang.sysml.basics.sysmlvisibility._ast.ASTVISIBILITYLONG;
 import de.monticore.lang.sysml.basics.sysmlvisibility._ast.ASTVISIBILITYSHORT;
-import de.monticore.lang.sysml.basics.sysmlvisibility._ast.ASTVisibilityIndicatorStd;
+import de.monticore.lang.sysml.basics.sysmlvisibility._ast.ASTVisibilityIndicator;
 import de.monticore.lang.sysml.basics.sysmlvisibility._visitor.SysMLVisibilityVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
@@ -51,12 +51,7 @@ public class PrettyPrinterVisibility2 implements SysMLVisibilityVisitor2 {
 	}
 
 	@Override
-	public void visit(ASTPackageElementVisibilityIndicatorStd node) {
-		this.visit(node.getVis());
-	}
-
-	@Override
-	public void visit(ASTVisibilityIndicatorStd node) {
+	public void visit(ASTVisibilityIndicator node) {
 		this.visit(node.getVis());
 	}
 }

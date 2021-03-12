@@ -3,11 +3,10 @@ package de.monticore.lang.sysml.sysml._symboltable;
 import de.monticore.lang.sysml.basics.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysml.basics.sysmlpackagebasis._ast.ASTPackagedDefinitionMember;
 import de.monticore.lang.sysml.basics.sysmlshared._ast.ASTUnit;
-import de.monticore.lang.sysml.basics.sysmlvisibilitybasis._ast.ASTPackageElementVisibilityIndicator;
 import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTAliasPackagedDefinitionMember;
 import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTPackage;
 import de.monticore.lang.sysml.basics.sysmlimportsandpackages._ast.ASTPackageMember;
-import de.monticore.lang.sysml.basics.sysmlvisibility._ast.ASTPackageElementVisibilityIndicatorStd;
+import de.monticore.lang.sysml.basics.sysmlvisibility._ast.ASTPackageElementVisibilityIndicator;
 import de.monticore.lang.sysml.common.sysmlassociations._ast.ASTAssociationBlock;
 import de.monticore.lang.sysml.common.sysmlports._ast.ASTInterfaceDefinition;
 import de.monticore.lang.sysml.common.sysmlports._ast.ASTPortDefinitionStd;
@@ -34,8 +33,8 @@ public class AddVisibilityToSymbolVisitor implements SysMLVisitor {
   public void visit (ASTPackageMember packageMember)  {
     if(packageMember.getPackageMemberPrefix().isPresentVisibility() && packageMember.isPresentPackagedDefinitionMember()) {
       ASTPackageElementVisibilityIndicator visibilityInterface = packageMember.getPackageMemberPrefix().getVisibility();
-      if (visibilityInterface instanceof ASTPackageElementVisibilityIndicatorStd) {
-        ASTPackageElementVisibilityIndicatorStd visibility = (ASTPackageElementVisibilityIndicatorStd) visibilityInterface;
+      if (visibilityInterface instanceof ASTPackageElementVisibilityIndicator) {
+        ASTPackageElementVisibilityIndicator visibility = (ASTPackageElementVisibilityIndicator) visibilityInterface;
 
         int vis = visibility.getVis().getIntValue();
         setVisibilityToPackagedDefinitionMember(packageMember.getPackagedDefinitionMember(), vis);

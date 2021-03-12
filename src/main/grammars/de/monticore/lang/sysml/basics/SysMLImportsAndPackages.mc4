@@ -6,7 +6,7 @@ component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics
   de.monticore.lang.sysml.basics.SysMLImportBasis,
   de.monticore.lang.sysml.basics.SysMLNamesBasis,
   de.monticore.lang.sysml.basics.SysMLPackageBasis,
-  de.monticore.lang.sysml.basics.SysMLVisibilityBasis,
+  de.monticore.lang.sysml.basics.SysMLVisibility,
   de.monticore.lang.sysml.basics.SysMLShared {
 
   /* IMPORTS */
