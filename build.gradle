@@ -180,33 +180,6 @@ generateSysML.dependsOn generateSysMLBasics
 
 //generateUseCaseDiagram.dependsOn generateSysMLCommon
 
-generateSysMLExpressionsExtended.dependsOn generateSysMLExpressions
-generateSysMLNamesExtended.dependsOn generateSysMLNames
-generateSysMLImportsAndPackagesJava.dependsOn generateSysMLImportsAndPackages
-generateSysMLNamesJava.dependsOn generateSysMLNamesBasis
-
-generateSysMLExtended.dependsOn generateSysMLNamesExtended
-generateSysMLExtended.dependsOn generateSysMLExpressionsExtended
-generateSysMLExtended.dependsOn generateSysMLComments
-generateSysMLExtended.dependsOn generateSysMLImportsAndPackages
-generateSysMLExtended.dependsOn generateSysMLLiterals
-generateSysMLExtended.dependsOn generateSysMLVisibility
-generateSysMLExtended.dependsOn generateSysMLAD
-generateSysMLExtended.dependsOn generateSysMLBDD
-generateSysMLExtended.dependsOn generateSysMLIBD
-generateSysMLExtended.dependsOn generateSysMLPD
-generateSysMLExtended.dependsOn generateSysMLRD
-generateSysMLExtended.dependsOn generateSysMLSTM
-
-generateSysMLForStructure.dependsOn generateSysMLNamesJava
-generateSysMLForStructure.dependsOn generateSysMLImportsAndPackagesJava
-generateSysMLForStructure.dependsOn generateSysMLExpressionsExtended
-generateSysMLForStructure.dependsOn generateSysMLComments
-generateSysMLForStructure.dependsOn generateSysMLLiterals
-generateSysMLForStructure.dependsOn generateSysMLVisibility
-generateSysMLForStructure.dependsOn generateSysMLBDD
-generateSysMLForStructure.dependsOn generateSysMLIBD
-
 compileJava.dependsOn (project.collect
         { it.tasks.findAll { task -> task.name.startsWith("generate") } })
 
