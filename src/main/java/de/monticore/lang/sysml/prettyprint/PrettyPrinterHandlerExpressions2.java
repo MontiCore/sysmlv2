@@ -73,23 +73,6 @@ public class PrettyPrinterHandlerExpressions2 implements SysMLExpressionsHandler
 	}
 
 	@Override
-	public void handle(ASTUnaryExpression node) {
-		if (node.isPresentPlus()) {
-			printer.print("+ ");
-		}
-		if (node.isPresentMinus()) {
-			printer.print("- ");
-		}
-		if (node.isPresentNot()) {
-			printer.print("! ");
-		}
-		if (node.isPresentTilde()) {
-			printer.print("~ ");
-		}
-		node.getExpression().accept(getTraverser());
-	}
-
-	@Override
 	public void handle(ASTSequenceAccessExpression node) {
 		node.getExpression(0).accept(getTraverser());
 		printer.print("[");
