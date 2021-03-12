@@ -2,8 +2,8 @@
 package de.monticore.lang.sysml.basics;
 
 component grammar SysMLExpressions extends de.monticore.lang.sysml.basics.SysMLShared,
-  de.monticore.lang.sysml.basics.SysMLNamesBasis,
-  de.monticore.lang.sysml.basics.SysMLExpressionsBasis {
+  de.monticore.lang.sysml.basics.SysMLExpressionsBasis,
+  de.monticore.lang.sysml.basics.SysMLBasics {
 
   NullCoalescingExpression implements Expression <110> = ifNotNull:Expression "??" ifNullReturn:Expression;
 
@@ -16,12 +16,12 @@ component grammar SysMLExpressions extends de.monticore.lang.sysml.basics.SysMLS
   //TODO: Check usage with SysMLv2 Standard
   SequenceAccessExpression implements Expression <300> = Expression "[" Expression+ "]";
   PrimaryExpression implements Expression <300> = Expression PrimaryExpressionPart+;
-  PrimaryExpressionPart = "->" SysMLName BodyMember+;
+  PrimaryExpressionPart = "->" Name BodyMember+;
   BodyExpression =
     ( BodyParameterMember+ ( BodyParameterMember )* "(" ExpressionMember* ")" ) | ExpressionTyping+;
 
   //TODO: Use this to replace MCType?
-  ExpressionTyping = type:QualifiedName;
+  ExpressionTyping = type:MCQualifiedName;
 
   // Base Expressions
 
@@ -58,11 +58,11 @@ component grammar SysMLExpressions extends de.monticore.lang.sysml.basics.SysMLS
   ExpressionMemberStd implements ExpressionMember = Expression;
 
   //TODO: Remove duplicate to ExpressionTyping
-  FeatureReference = memberFeature:QualifiedName;
+  FeatureReference = memberFeature:MCQualifiedName;
   TypeReferenceMember = TypeReference;
-  NamedExpressionMember = memberName:SysMLName "=>" Expression;
+  NamedExpressionMember = memberName:Name "=>" Expression;
   BodyMember = BodyExpression;
-  BodyParameterMember = memberName:SysMLName Parameter;
+  BodyParameterMember = memberName: Name Parameter;
 
   //TODO: Check usage with SysMLv2 Standard
   /* QUERY PATH EXPRESSIONS */

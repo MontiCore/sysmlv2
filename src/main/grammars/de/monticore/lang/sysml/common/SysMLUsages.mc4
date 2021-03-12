@@ -6,7 +6,7 @@ component grammar SysMLUsages extends de.monticore.lang.sysml.common.SysMLCommon
 
   /* USAGES */
 
-  SysMLNameAndTypePart = SysMLName TypePart?;
+  SysMLNameAndTypePart =  Name TypePart?;
 
   UsageStd implements Usage =
      UsageDeclaration UsageCompletion;
@@ -22,7 +22,7 @@ component grammar SysMLUsages extends de.monticore.lang.sysml.common.SysMLCommon
   TypePartStd implements TypePart = (TypedByKeyword ((FeatureTyping || ",")+ | "any") MultiplicityPart? )
     | MultiplicityPart;
   TypedByKeyword = ":" | "typed" "by";
-  FeatureTypingStd implements FeatureTyping = name:QualifiedName;
+  FeatureTypingStd implements FeatureTyping = name:MCQualifiedName;
   MultiplicityPart = MultiplicityMember (["ordered"]? ["nonunique"]? | ["nonunique"]? ["ordered"]?);
     //Sequence of keywords does not matter here.
 
@@ -31,11 +31,11 @@ component grammar SysMLUsages extends de.monticore.lang.sysml.common.SysMLCommon
 
   Subsets = SubsetsKeyword Subset;
   SubsetsKeyword = ":>" | "subsets";
-  Subset = QualifiedName;
+  Subset = SysMLQualifiedName;
 
   Redefines = RedefinesKeyword Redefinition+;
   RedefinesKeyword = ":>>" | "redefines";
-  Redefinition = QualifiedName;
+  Redefinition = MCType;
 
   //Usage Memberships
   MultiplicityMember = Multiplicity;
@@ -45,11 +45,6 @@ component grammar SysMLUsages extends de.monticore.lang.sysml.common.SysMLCommon
   /* ===================================================*/
   /* ============ ASTRULES getName() for symbols =======*/
   /* ===================================================*/
-  astrule SysMLNameAndTypePart =
-    method public String getName(){
-      return this.getSysMLName().getName();
-    }
-  ;
   astrule UsageStd =
     method public String getName(){
       return this.getUsageDeclaration().getName();

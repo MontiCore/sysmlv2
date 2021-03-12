@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.basics;
 
-component grammar SysMLShared extends de.monticore.lang.sysml.basics.SysMLNamesBasis{
+component grammar SysMLShared {
   //TODO: Rename (Compilation Unit)
   interface Unit; //A Unit is a starting production
 

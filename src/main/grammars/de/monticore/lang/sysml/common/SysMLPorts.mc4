@@ -35,23 +35,15 @@ component grammar SysMLPorts extends de.monticore.lang.sysml.common.SysMLUsages,
   PortUsageStd implements PortUsage = Usage;
   ConjugatedPortUsageStd implements ConjugatedPortUsage= ConjugatePortUsageDeclaration UsageCompletion;
   ConjugatePortUsageDeclaration =
-    SysMLName? ConjugatePortTypePart MultiplicityPart? SubsettingPart
+    Name? ConjugatePortTypePart MultiplicityPart? SubsettingPart
     | RedefinesKeyword Redefinition ConjugatePortTypePart MultiplicityPart SubsettingPart;
 
   ConjugatePortTypePart = TypedByKeyword "~" ConjugatedPortTyping; //TypedByKeyword is defined in Usages
-  ConjugatedPortTyping = QualifiedName;
+  ConjugatedPortTyping = MCType;
 
   /* ===================================================*/
   /* ============ ASTRULES getName() for symbols =======*/
   /* ===================================================*/
-  astrule ConjugatePortUsageDeclaration =
-    method public String getName(){
-      if( this.isPresentSysMLName()){
-        return this.getSysMLName().getName();
-      }
-      return "";
-    }
-  ;
   astrule PortUsageStd =
     method public String getName(){
       return this.getUsage().getName();
@@ -86,7 +78,7 @@ component grammar SysMLPorts extends de.monticore.lang.sysml.common.SysMLUsages,
   /*
    * memberName may only referece property of an interface.
    */
-  ConnectorEndMember = (memberName:SysMLName "=>" )? ConnectorEnd;
+  ConnectorEndMember = (memberName:Name "=>" )? ConnectorEnd;
 
   MultiplicitySourceEndMember = MultiplicitySourceEnd;
   EmptySourceEndMember = EmptySourceEnd;
@@ -101,20 +93,12 @@ component grammar SysMLPorts extends de.monticore.lang.sysml.common.SysMLUsages,
   NonPortStructureUsageMemberBindingConnector implements SysMLType, NonPortStructureUsageMember =
     "bind" BindingConnector;
 
-  BindingConnector  = (SysMLName? TypePart? "as")?
+  BindingConnector  = (Name? TypePart? "as")?
     ConnectorEndMember "=" ConnectorEndMember DefinitionBody;
 
   /* ===================================================*/
   /* ============ ASTRULES getName() for symbols =======*/
   /* ===================================================*/
-  astrule BindingConnector =
-    method public String getName(){
-      if( this.isPresentSysMLName()){
-        return this.getSysMLName().getName();
-      }
-      return "";
-    }
-  ;
   astrule NonPortStructureUsageMemberBindingConnector =
     method public String getName(){
       return this.getBindingConnector().getName();

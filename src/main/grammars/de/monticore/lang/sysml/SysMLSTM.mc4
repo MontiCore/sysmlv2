@@ -7,7 +7,7 @@ component grammar SysMLSTM extends de.monticore.lang.sysml.advanced.SysMLSuccess
 
   StateDefinitionUnit implements Unit =  StateDefinition;
   StateDefinition implements SysMLType, PackagedDefinitionMember = StateDefDeclaration StateBody;
-  StateDefDeclaration = ["abstract"]? "state" "def" SysMLName ParameterList? SuperclassingList?;
+  StateDefDeclaration = ["abstract"]? "state" "def"  Name ParameterList? SuperclassingList?;
   scope StateBody = ";" | "{" StateBodyPart "}";
   StateBodyPart = (EntryActionMember EntryTransitionMember*)? DoActionMember? ExitActionMember? StateBodyItem*;
   StateBodyItem = NestedDefinitionMember
@@ -23,10 +23,6 @@ component grammar SysMLSTM extends de.monticore.lang.sysml.advanced.SysMLSuccess
   astrule StateDefinition =
     method public String getName(){
       return this.getStateDefDeclaration().getName();
-    };
-  astrule StateDefDeclaration =
-    method public String getName(){
-      return this.getSysMLName().getName();
     };
 
   /* STATE MEMBERSHIPS */
@@ -48,8 +44,8 @@ component grammar SysMLSTM extends de.monticore.lang.sysml.advanced.SysMLSuccess
   StateUnit implements SysMLType, Unit =  StateDeclaration StateBody;
   StateDeclaration = ["abstract"]? "state" SysMLNameAndTypePart ActionParameterList? SubsettingPart ValuePart?;
   StateUsage = ActionOrStateUsageDeclaration StateBody;
-  ExhibitStateUsage implements SysMLType = ((((SysMLName) TypePart? "as")? Subset)
-    | ( "state" SysMLName? TypePart? )) ActionParameterList? SubsettingPart ValuePart? StateBody;
+  ExhibitStateUsage implements SysMLType = (((( Name) TypePart? "as")? Subset)
+    | ( "state"  Name? TypePart? )) ActionParameterList? SubsettingPart ValuePart? StateBody;
 
   StateUsagePackagedUsageMember implements SysMLType, PackagedUsageMember = ["abstract"]? "state" StateUsage;
   BehaviorUsageMemberStateUsage implements SysMLType, BehaviorUsageMember =
@@ -69,14 +65,6 @@ component grammar SysMLSTM extends de.monticore.lang.sysml.advanced.SysMLSuccess
     method public String getName(){
       return this.getActionOrStateUsageDeclaration().getName();
     };
-  astrule ExhibitStateUsage =
-    method public String getName(){
-      if( this.isPresentSysMLName()){
-        return this.getSysMLName().getName();
-      }
-      return "";
-    }
-  ;
   astrule StateUsagePackagedUsageMember =
     method public String getName(){
       return this.getStateUsage().getName();

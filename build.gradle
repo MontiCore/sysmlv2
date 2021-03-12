@@ -1,4 +1,6 @@
- // (c) https://github.com/MontiCore/monticore
+import java.security.Permission
+
+// (c) https://github.com/MontiCore/monticore
 
 /* ============================================================ */
 /* ========================= Plugins ========================== */
@@ -129,7 +131,6 @@ generateSysMLCommon.dependsOn generateSysMLUsages
 generateSysMLCommon.dependsOn generateSysMLPorts
 generateSysMLCommon.dependsOn generateSysMLCommonBasis
 
-generateSysMLCommonBasis.dependsOn generateSysMLNamesBasis
 generateSysMLCommonBasis.dependsOn generateSysMLPackageBasis
 generateSysMLCommonBasis.dependsOn generateSysMLImportBasis
 
@@ -138,12 +139,9 @@ generateSysMLExpressions.dependsOn generateSysMLCommonBasis
 generateSysMLImportsAndPackages.dependsOn generateSysMLCommonBasis
 
 
-generateSysMLNames.dependsOn generateSysMLCommonBasis
-
 generateSysMLBasics.dependsOn generateSysMLExpressions
 generateSysMLBasics.dependsOn generateSysMLImportsAndPackages
 generateSysMLBasics.dependsOn generateSysMLLiterals
-generateSysMLBasics.dependsOn generateSysMLNames
 generateSysMLBasics.dependsOn generateSysMLVisibility
 
 generateSysMLVisibility.dependsOn generateSysMLCommonBasis

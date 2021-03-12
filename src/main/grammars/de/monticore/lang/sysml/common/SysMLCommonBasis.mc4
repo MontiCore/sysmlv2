@@ -2,11 +2,11 @@
 package de.monticore.lang.sysml.common;
 
 
-component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.SysMLNamesBasis,
-  de.monticore.lang.sysml.basics.SysMLPackageBasis,
+component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.SysMLPackageBasis,
   de.monticore.lang.sysml.basics.SysMLImportBasis,
   de.monticore.lang.sysml.basics.SysMLExpressionsBasis,
-  de.monticore.lang.sysml.basics.SysMLShared {
+  de.monticore.lang.sysml.basics.SysMLShared,
+  de.monticore.lang.sysml.basics.SysMLBasics {
 
   FeatureDirection =  ["in"] | ["out"] | ["inout"];
 

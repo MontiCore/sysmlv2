@@ -11,9 +11,9 @@ component grammar SysMLItemFlows extends de.monticore.lang.sysml.common.SysMLCom
 
   ItemFlow = ItemFlowDeclaration DefinitionBody;
   SuccessionItemFlow = ItemFlowDeclaration DefinitionBody;
-  //In the official implementation, there is just SysMLName? TypePart?,
+  //In the official implementation, there is just  Name? TypePart?,
   //but that leads to only specifying a type results in a name
-  ItemFlowDeclaration = ( (typeOfFlow:SysMLName | (SysMLName TypePart))?
+  ItemFlowDeclaration = ( (typeOfFlow: Name | ( Name TypePart))?
     (( "of" ItemFeatureMember) | (EmptyItemFeatureMember))
     "from" | EmptyItemFeatureMember )
     ItemFlowEndMember "to" ItemFlowEndMember;
@@ -25,7 +25,7 @@ component grammar SysMLItemFlows extends de.monticore.lang.sysml.common.SysMLCom
   ItemFlowFeature = Redefinition;
 
   /* ITEM FLOW MEMBERSHIPS */
-  ItemFeatureMember = (memberName:SysMLName TypedByKeyword)? ItemFeatureTyping;
+  ItemFeatureMember = (memberName: Name TypedByKeyword)? ItemFeatureTyping;
   ItemFlowEndMember = ItemFlowEnd;
   ItemFlowFeatureMember = ItemFlowFeature;
   EmptyItemFeatureMember = EmptyItemFeature;
@@ -41,14 +41,6 @@ component grammar SysMLItemFlows extends de.monticore.lang.sysml.common.SysMLCom
   astrule NonPortStructureUsageMemberSuccessionItemFlow =
     method public String getName(){
       return this.getSuccessionItemFlow().getItemFlowDeclaration().getName();
-    }
-  ;
-  astrule ItemFlowDeclaration =
-    method public String getName(){
-      if( this.isPresentSysMLName()){
-        return this.getSysMLName().getName();
-      }
-      return "";
     }
   ;
 }

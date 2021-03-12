@@ -7,7 +7,7 @@ component grammar SysMLConstraints extends de.monticore.lang.sysml.common.SysMLC
 
   ConstraintDefinitionUnit implements Unit =  ConstraintDefinition;
   ConstraintDefinition implements SysMLType, PackagedDefinitionMember = ConstraintDefDeclaration ConstraintBody;
-  ConstraintDefDeclaration = ["abstract"]? "constraint" "def" SysMLName ParameterList?
+  ConstraintDefDeclaration = ["abstract"]? "constraint" "def"  Name ParameterList?
     EmptyReturnParameterPart SuperclassingList?;
 
   scope ConstraintBody = ";" | "{" ConstraintMembers "}";
@@ -19,7 +19,7 @@ component grammar SysMLConstraints extends de.monticore.lang.sysml.common.SysMLC
   /* ===================================================*/
   astrule ConstraintDefinition =
     method public String getName(){
-      return this.getConstraintDefDeclaration().getSysMLName().getName();
+      return this.getConstraintDefDeclaration().getName();
     }
   ;
 
@@ -41,7 +41,7 @@ component grammar SysMLConstraints extends de.monticore.lang.sysml.common.SysMLC
     | (TypePart? (ActionParameterList EmptyReturnParameterPart)? ValuePart?)
     | (RedefinesKeyword Redefinition TypePart? ActionParameterList? EmptyReturnParameterPart ValuePart?);
   ConstraintParameterPart = ActionParameterList? EmptyReturnParameterPart SubsettingPart ValuePart?;
-  AssertConstraintUsage = (((SysMLName? TypePart? "as" )? Subset+ ) | ("constraint" SysMLName? TypePart?) )
+  AssertConstraintUsage = ((( Name? TypePart? "as" )? Subset+ ) | ("constraint"  Name? TypePart?) )
     ConstraintParameterPart InvariantPart ConstraintBody;
   InvariantPart = TrueLiteralMember;
   TrueLiteralExpression;
@@ -70,15 +70,6 @@ component grammar SysMLConstraints extends de.monticore.lang.sysml.common.SysMLC
   astrule BehaviorUsageMemberAssertConstraintUsage =
     method public String getName(){
       return this.getAssertConstraintUsage().getName();
-    }
-  ;
-
-  astrule AssertConstraintUsage =
-    method public String getName(){
-      if( this.isPresentSysMLName()){
-        return this.getSysMLName().getName();
-      }
-      return "";
     }
   ;
 

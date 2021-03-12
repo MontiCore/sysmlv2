@@ -2,17 +2,33 @@
 package de.monticore.lang.sysml.basics;
 
 //TODO: Check if needed or if expressions should be added later
-component grammar SysMLBasics extends de.monticore.lang.sysml.basics.SysMLExpressions,
- de.monticore.lang.sysml.basics.SysMLImportsAndPackages,
- de.monticore.lang.sysml.basics.SysMLLiterals,
- de.monticore.lang.sysml.basics.SysMLNames,
+component grammar SysMLBasics extends de.monticore.lang.sysml.basics.SysMLLiterals,
  de.monticore.lang.sysml.basics.SysMLVisibility,
  de.monticore.expressions.AssignmentExpressions,
  de.monticore.expressions.CommonExpressions,
- de.monticore.expressions.BitExpressions {
+ de.monticore.expressions.BitExpressions,
+ de.monticore.types.MCBasicTypes {
  
- token SysMLComment =
-  'c''o''m''m''e''n''t' (WS* Name)? (WS* 'a''b''o''u''t' WS* Name)? WS* ML_COMMENT : -> skip
-  {storeComment();};
-	
+  token SysMLComment =
+    'c''o''m''m''e''n''t' (WS* Name)? (WS* 'a''b''o''u''t' WS* Name)? WS* ML_COMMENT : -> skip
+    {storeComment();}
+  ;
+
+  /**
+    A sequence of characters in single quotation marks. Covers a similar
+    purpose as the String token provided by MontiCore.
+  */
+  token CharSequence
+    = '\'' (SingleCharacter|EscapeSequence)+ '\''
+    : {setText(getText().substring(1, getText().length() - 1));}
+  ;
+
+  SysMLQualifiedName extends MCQualifiedName = parts:(Name || "::")+;
+
+  token Name = CharSequence | ( 'a'..'z' | 'A'..'Z' | '_' | '$' )
+                              ( 'a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '$' )*;
+
+  //TODO: Replace through Type? Why is this needed?
+  interface symbol SysMLType;
+  // interface scope SysMLBodyScope;
 }

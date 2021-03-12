@@ -7,17 +7,8 @@ component grammar SysMLClassifiers extends de.monticore.lang.sysml.common.SysMLC
   /* CLASSIFIERS */
 
   ClassifierDeclarationCompletionStd implements ClassifierDeclarationCompletion =
-    SysMLName SuperclassingList?;
+    Name SuperclassingList?;
 
-  astrule ClassifierDeclarationCompletionStd =
-    method public void setName(String name){
-      this.getSysMLName().setName(name);
-    }
-    method public String getName(){
-      return this.getSysMLName().getName();
-    }
-  ;
-
-  SuperclassingList = SpecializesKeyword (QualifiedName || ",")+;
+  SuperclassingList = SpecializesKeyword (MCType || ",")+;
   SpecializesKeyword = ":>" | "specializes";
 }

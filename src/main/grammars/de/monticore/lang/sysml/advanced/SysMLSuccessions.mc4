@@ -2,7 +2,8 @@
 package de.monticore.lang.sysml.advanced;
 
 
-component grammar SysMLSuccessions extends de.monticore.lang.sysml.advanced.SysMLItemFlows {
+component grammar SysMLSuccessions extends de.monticore.lang.sysml.advanced.SysMLItemFlows,
+ de.monticore.lang.sysml.basics.SysMLBasics {
 
   /* SUCCESSIONS */
   NonPortStructureUsageMemberSuccession implements NonPortStructureUsageMember =
@@ -10,27 +11,11 @@ component grammar SysMLSuccessions extends de.monticore.lang.sysml.advanced.SysM
 
   Succession = SuccessionDeclaration ";";
   SuccessionDeclaration implements SysMLType =
-   ( SysMLName? TypePart? "first" )? ConnectorEndMember "then" ConnectorEndMember;
-  astrule SuccessionDeclaration =
-    method public String getName(){
-      if( this.isPresentSysMLName()){
-        return this.getSysMLName().getName();
-      }
-      return "";
-    }
-  ;
+   (  Name? TypePart? "first" )? ConnectorEndMember "then" ConnectorEndMember;
   TargetSuccession = "then" MultiplicitySourceEndMember ConnectorEndMember;
   EmptySuccession =  "then" MultiplicitySourceEndMember EmptyTargetEndMember;
-  GuardedSuccession implements SysMLType = "succession" (SysMLName? TypePart? "first")?
+  GuardedSuccession implements SysMLType = "succession" ( Name? TypePart? "first")?
     TransitionSourceMember GuardExpressionMember "then" TransitionSuccessionMember;
-  astrule GuardedSuccession =
-    method public String getName(){
-      if( this.isPresentSysMLName()){
-        return this.getSysMLName().getName();
-      }
-      return "";
-    }
-  ;
 
   GuardedTargetSuccession = GuardExpressionMember  "then" TransitionSuccessionMember;
   DefaultTargetSuccession = "else" TransitionSuccessionMember;
@@ -45,7 +30,7 @@ component grammar SysMLSuccessions extends de.monticore.lang.sysml.advanced.SysM
   TransitionSuccession = EmptySourceEndMember ConnectorEndMember;
 
   /* TRANSITION MEMBERSHIPS */
-  TransitionSourceMember = memberFeature:QualifiedName;
+  TransitionSourceMember = memberFeature:MCQualifiedName;
   TransitionSuccessionMember = TransitionSuccession;
   TriggerStepMember = "accept" TriggerStep;
   GuardExpressionMember = "if" Expression;

@@ -8,7 +8,7 @@ component grammar SysMLAD extends de.monticore.lang.sysml.advanced.SysMLSuccessi
   ActivityUnit implements Unit = Activity;
   Activity implements SysMLType, PackagedDefinitionMember = ActivityDeclaration ActivityBody;
 
-  ActivityDeclaration = ["abstract"]? "activity" SysMLName ParameterList? SuperclassingList?;
+  ActivityDeclaration = ["abstract"]? "activity" Name ParameterList? SuperclassingList?;
 
   ParameterListStd implements ParameterList = "(" (ParameterMember || "," )* ")";
   scope ActivityBodyStd implements ActivityBody = ";" | ("{" ActivityBodyItem* "}");
@@ -27,21 +27,12 @@ component grammar SysMLAD extends de.monticore.lang.sysml.advanced.SysMLSuccessi
     method public String getName(){
       return this.getActivityDeclaration().getName();
     };
-  astrule ActivityDeclaration =
-     method public String getName(){
-       return this.getSysMLName().getName();
-  };
-
 
   /* ACTIVITIY MEMBERSHIPS */
 
-  ParameterMemberStd implements ParameterMember = direction:FeatureDirection? memberName:SysMLName Parameter;
-  astrule ParameterMemberStd =
-      method public String getName(){
-        return this.getMemberName().getName();
-      }
-    ;
-  InitialNodeMember = DefinitionMemberPrefix "first" memberFeature:QualifiedName ";";
+  ParameterMemberStd implements ParameterMember = direction:FeatureDirection? Name Parameter;
+
+  InitialNodeMember = DefinitionMemberPrefix "first" memberFeature:MCQualifiedName ";";
   ActivityNodeMember = DefinitionMemberPrefix ActivityNode;
   TargetSuccessionMember = DefinitionMemberPrefix
     (DefaultTargetSuccession | TargetSuccession | GuardedTargetSuccession) ";";
@@ -70,8 +61,8 @@ component grammar SysMLAD extends de.monticore.lang.sysml.advanced.SysMLSuccessi
     ("stream" | "flow") EmptyItemFeatureMember "from" ItemFlowEndMember;
 
   PerformActionUsage = PerformActionUsageDeclaration ActivityBody;
-  PerformActionUsageDeclaration implements SysMLType = ((( SysMLName TypePart? "as" )? Subset+)
-    |( "action" (SysMLName)? TypePart?)) ActionParameterList? SubsettingPart ValuePart?;
+  PerformActionUsageDeclaration implements SysMLType = (((  Name TypePart? "as" )? Subset+)
+    |( "action" ( Name)? TypePart?)) ActionParameterList? SubsettingPart ValuePart?;
 
   /* ===================================================*/
   /* ============ ASTRULES getName() for symbols =======*/
@@ -81,15 +72,6 @@ component grammar SysMLAD extends de.monticore.lang.sysml.advanced.SysMLSuccessi
       return this.getActionOrStateUsageDeclaration().getName();
     }
   ;
-  astrule PerformActionUsageDeclaration =
-    method public String getName(){
-      if( this.isPresentSysMLName()){
-        return this.getSysMLName().getName();
-      }
-      return "";
-    }
-  ;
-
 
   /* ACTIVITY NODES */
 
@@ -109,7 +91,7 @@ component grammar SysMLAD extends de.monticore.lang.sysml.advanced.SysMLSuccessi
 
   /* ACTION MEMBERSHIPS */
 
-  ActionParameterMember = (direction:FeatureDirection | direction:FeatureDirection? memberName:SysMLName)
+  ActionParameterMember = (direction:FeatureDirection | direction:FeatureDirection? memberName: Name)
     ActionParameter;
   ActionParameterFlowMember = ActionParameterFlow;
   EmptySuccessionMember = EmptySuccession;
