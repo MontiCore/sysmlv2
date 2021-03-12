@@ -14,7 +14,7 @@ component grammar SysMLRD extends de.monticore.lang.sysml.advanced.SysMLConstrai
     | ( "(" EmptyParameterMember ")")
     | ( "(" (ParameterMember || ",")+ ")" ) ;
   scope RequirementBody = ";" | ( "{" RequirementMembers "}" );
-  RequirementMembers = (NestedDefinitionMember | NestedUsageMember |  RequirementConstraintMember | ImportUnit )*;
+  RequirementMembers = (NestedDefinitionMember | NestedUsageMember |  RequirementConstraintMember | SysMLImportStatement )*;
 
   RequirementConstraintUsage implements SysMLType =
     (((  Name)? TypePart? "as")? Subset | "constraint" ( Name)?  TypePart?)

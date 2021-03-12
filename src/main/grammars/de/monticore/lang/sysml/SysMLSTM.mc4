@@ -14,7 +14,7 @@ component grammar SysMLSTM extends de.monticore.lang.sysml.advanced.SysMLSuccess
     | StructureUsageMember
     | StateMember TargetTransitionSuccessionMember*
     | TransitionStepMember
-    | ImportUnit;
+    | SysMLImportStatement;
   StateActionUsage = EmptyActionUsage ";" | PerformedActionUsage ActivityBody;
 
   /* ===================================================*/

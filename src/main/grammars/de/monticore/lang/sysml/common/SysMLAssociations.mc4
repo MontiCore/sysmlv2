@@ -13,7 +13,7 @@ component grammar SysMLAssociations extends de.monticore.lang.sysml.common.SysML
     (
         NestedDefinitionMember
         | AssociationUsageMember
-        | ImportUnit
+        | SysMLImportStatement
     )* "}"
   );
 

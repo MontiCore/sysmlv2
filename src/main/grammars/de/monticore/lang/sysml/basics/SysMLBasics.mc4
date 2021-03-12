@@ -37,4 +37,8 @@ component grammar SysMLBasics extends de.monticore.lang.sysml.basics.SysMLVisibi
   //TODO: Replace through Type? Why is this needed?
   interface symbol SysMLType;
   // interface scope SysMLBodyScope;
+
+  SysMLImportStatement = (visibility:PackageElementVisibilityIndicator)?
+    "import" MCQualifiedName ("::" | ".") star:["*"] {noSpace()}? ";"
+  ;
 }

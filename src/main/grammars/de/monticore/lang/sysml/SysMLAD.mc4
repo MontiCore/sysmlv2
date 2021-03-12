@@ -18,7 +18,7 @@ component grammar SysMLAD extends de.monticore.lang.sysml.advanced.SysMLSuccessi
     | InitialNodeMember TargetSuccessionMember*
     | EmptySuccessionMember? ActivityNodeMember TargetSuccessionMember*
     | GuardedSuccessionMember
-    | ImportUnit;
+    | SysMLImportStatement;
 
   /* ===================================================*/
   /* ============ ASTRULES getName() for symbols =======*/

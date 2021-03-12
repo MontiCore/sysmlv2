@@ -11,7 +11,7 @@ component grammar SysMLConstraints extends de.monticore.lang.sysml.common.SysMLC
     EmptyReturnParameterPart SuperclassingList?;
 
   scope ConstraintBody = ";" | "{" ConstraintMembers "}";
-  ConstraintMembers = (NestedDefinitionMember | NestedUsageMember | ImportUnit)* ConstraintExpressionMember?;
+  ConstraintMembers = (NestedDefinitionMember | NestedUsageMember | SysMLImportStatement)* ConstraintExpressionMember?;
   EmptyReturnParameterPart = EmptyReturnParameterMember;
 
   /* ===================================================*/

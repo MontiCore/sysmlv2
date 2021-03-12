@@ -3,7 +3,7 @@ package de.monticore.lang.sysml.common;
 
 component grammar SysMLPorts extends de.monticore.lang.sysml.common.SysMLUsages,
   de.monticore.lang.sysml.common.SysMLAssociations,
-  de.monticore.lang.sysml.basics.SysMLImportsAndPackages{
+  de.monticore.lang.sysml.basics.SysMLBasics{
 
   /* PORT DEFINITIONS */
 
@@ -112,7 +112,7 @@ component grammar SysMLPorts extends de.monticore.lang.sysml.common.SysMLUsages,
   InterfaceDeclaration = ["abstract"]? "interface" "def" ClassifierDeclarationCompletion;
   scope InterfaceBody = ";" | (
      "{"
-      (NestedDefinitionMember | InterfaceUsageMember | ImportUnit)*
+      (NestedDefinitionMember | InterfaceUsageMember | SysMLImportStatement)*
      "}"
     );
 

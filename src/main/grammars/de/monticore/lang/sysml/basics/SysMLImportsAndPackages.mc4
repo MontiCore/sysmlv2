@@ -12,11 +12,6 @@ component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics
   AliasPackagedDefinitionMember implements SysMLType, PackagedDefinitionMember =
       ("import" | ["alias"]) MCQualifiedName ("as"  Name)? ";";
 
-  //TODO: Remove interface and make standard the default
-  //Following has the name "Import" in Xtext
-  ImportUnit = (visibility:PackageElementVisibilityIndicator)?
-    "import" MCQualifiedName ("::" | ".") star:["*"] {noSpace()}? ";";
-
   /* PACKAGES */
   PackageUnit implements Unit =  Package;
   AnonymousPackage implements Unit = PackageBody;
@@ -27,7 +22,7 @@ component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics
       }
     ;
   PackageDeclaration = "package" Name;
-  scope PackageBody = "{" (PackageMember | ImportUnit)* "}";
+  scope PackageBody = "{" (PackageMember | SysMLImportStatement)* "}";
 
 
   /* PACKAGE MEMBERSHIPS */
