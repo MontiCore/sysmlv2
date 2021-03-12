@@ -3,7 +3,6 @@ package de.monticore.lang.sysml.common;
 
 
 component grammar SysMLCommonBasis extends de.monticore.lang.sysml.basics.SysMLCommentsBasis,
-  de.monticore.lang.sysml.basics.SysMLLiteralsBasis,
   de.monticore.lang.sysml.basics.SysMLNamesBasis,
   de.monticore.lang.sysml.basics.SysMLPackageBasis,
   de.monticore.lang.sysml.basics.SysMLImportBasis,
