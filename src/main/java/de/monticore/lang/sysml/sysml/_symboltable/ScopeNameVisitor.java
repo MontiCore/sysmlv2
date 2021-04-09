@@ -4,7 +4,9 @@ import de.monticore.lang.sysml.ad._ast.ASTActivity;
 import de.monticore.lang.sysml.ad._ast.ASTActivityBodyStd;
 import de.monticore.lang.sysml.advanced.sysmlconstraints._ast.ASTAssertConstraintUsage;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast.ASTSysMLType;
+import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._visitor.SysMLNamesBasisVisitor2;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlbasics._visitor.SysMLBasicsVisitor2;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackage;
 import de.monticore.lang.sysml.bdd._ast.ASTBlock;
 import de.monticore.lang.sysml.common.sysmlassociations._ast.ASTAssociationBlock;
@@ -14,20 +16,34 @@ import de.monticore.lang.sysml.common.sysmldefinitions._ast.ASTDefinitionBodyStd
 import de.monticore.lang.sysml.common.sysmlports._ast.ASTInterfaceDefinition;
 import de.monticore.lang.sysml.common.sysmlports._ast.ASTPortDefinitionStd;
 import de.monticore.lang.sysml.common.sysmlusages._ast.ASTUsageStd;
+import de.monticore.lang.sysml.common.sysmlusages._visitor.SysMLUsagesVisitor2;
 import de.monticore.lang.sysml.common.sysmlvaluetypes._ast.ASTValueTypeStd;
 import de.monticore.lang.sysml.parametricdiagram._ast.ASTIndividualDefinition;
 import de.monticore.lang.sysml.requirementdiagram._ast.ASTRequirementDefinition;
 import de.monticore.lang.sysml.requirementdiagram._ast.ASTSatisfyRequirementUsage;
 import de.monticore.lang.sysml.stm._ast.ASTStateDefinition;
-import de.monticore.lang.sysml.sysml._visitor.SysMLInheritanceVisitor;
+import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
+import de.monticore.lang.sysml.sysml._visitor.SysMLTraverserImplementation;
 
 /**
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class ScopeNameVisitor implements SysMLInheritanceVisitor {
+public class ScopeNameVisitor implements SysMLUsagesVisitor2, SysMLNamesBasisVisitor2 {
+
+  SysMLTraverser traverser;
+
+  public void init() {
+    if(traverser != null)
+      return;
+    this.traverser = new SysMLTraverserImplementation();
+    traverser.add4SysMLNamesBasis(this);
+    traverser.add4SysMLUsages(this);
+  }
+
   public void startTraversal(ASTUnit ast) {
-    ast.accept(this);
+    init();
+    ast.accept(traverser);
   }
 
   @Override

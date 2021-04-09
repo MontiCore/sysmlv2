@@ -2,9 +2,7 @@ package de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._ast;
 
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.ISysMLNamesBasisScope;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLAccessModifierPrivate;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLArtifactScope;
-import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
+import de.monticore.lang.sysml.sysml._symboltable.*;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
@@ -18,18 +16,18 @@ public class ResolveQualifiedNameHelper {
   public static List<SysMLTypeSymbol> resolveSymbolsHelper(ASTQualifiedName qualifiedName) {
     ISysMLNamesBasisScope scopeToSearchIn = qualifiedName.getEnclosingScope();
     List<SysMLTypeSymbol> resolvedTypes = new ArrayList<>();
-    Boolean continueResolving = true;
+    boolean continueResolving = true;
     while (continueResolving) {
       continueResolving = false;
       resolvedTypes = resolveQualifiedNameAsListInASpecificScope(qualifiedName.getNamesList(), scopeToSearchIn);
 
       //If we could not resolve anything go a scope higher
       if (resolvedTypes.size() == 0) {
-        if (!(scopeToSearchIn instanceof SysMLGlobalScope)) { //Is there a higher scope?
+        if (!(scopeToSearchIn instanceof ISysMLGlobalScope)) { //Is there a higher scope?
 
           //Get higher scope
           scopeToSearchIn = scopeToSearchIn.getEnclosingScope();
-          if (scopeToSearchIn instanceof SysMLArtifactScope) {
+          if (scopeToSearchIn instanceof ISysMLArtifactScope) {
             //Artifact scope is not the scope to search in, but global scope.
             scopeToSearchIn = scopeToSearchIn.getEnclosingScope();
           }
@@ -65,7 +63,7 @@ public class ResolveQualifiedNameHelper {
       searchingScope.addAll(scopeToSearchIn.getSubScopes());
     }else if(names.size()==1){ // Just look in current scope.
       return scopeToSearchIn.resolveSysMLTypeMany(names.get(0));
-    }else if (names.size() == 0) {
+    }else {
       Log.error("Internal error in " + ResolveQualifiedNameHelper.class.getName() +
           ". The list of names (possibly belonging to a qualified name), should not have size 0.");
     }
@@ -81,26 +79,28 @@ public class ResolveQualifiedNameHelper {
         lastNameOfList = true; //Now it can also be a direct reference
       }
       List<ISysMLNamesBasisScope> currentSearchingScopes = new ArrayList<>();
-      for (ISysMLNamesBasisScope s : searchingScope) {
-        currentSearchingScopes.add(s);
-      }
+      currentSearchingScopes.addAll(searchingScope);
       searchingScope = new ArrayList<>(); //Reset SearchingScope
       if (lastNameOfList) { //If all the scopes are resolved, we are looking for a SysMLType.
-        for (ISysMLNamesBasisScope searchHere : currentSearchingScopes) {
-          resolvedTypes = resolveNameAsSysMLType(name, searchHere);
+        for (ISysMLNamesBasisScope scope : currentSearchingScopes) {
+          for (ISysMLNamesBasisScope subScope : scope.getSubScopes()) {
+            resolvedTypes.addAll(resolveNameAsSysMLType(name, subScope));
+          }
         }
       }
       else { //Else look to resolve the scopes.
         for (ISysMLNamesBasisScope searchHere : currentSearchingScopes) {
           searchingScope.addAll(resolveNameAsScope(name, searchHere, firstName));
-          //Could also be in an imported scope
-          List<SysMLTypeSymbol> possibleImportedScopes = resolveNameAsSysMLType(name,searchHere);
-          if(possibleImportedScopes.size()==1){ //unique
-            List<ISysMLNamesBasisScope> possibleScope = resolveNameAsScope(name,
-                possibleImportedScopes.get(0).getAstNode().getEnclosingScope(),
-                firstName);
-            if(possibleScope.size()==1){ //unique
-              searchingScope.add(possibleScope.get(0));
+          if(searchingScope.size()==0){
+            //Could also be in an imported scope
+            List<SysMLTypeSymbol> possibleImportedScopes = resolveNameAsSysMLType(name,searchHere);
+            if(possibleImportedScopes.size()==1){ //unique
+              List<ISysMLNamesBasisScope> possibleScope = resolveNameAsScope(name,
+                      possibleImportedScopes.get(0).getAstNode().getEnclosingScope(),
+                      firstName);
+              if(possibleScope.size()==1){ //unique
+                searchingScope.add(possibleScope.get(0));
+              }
             }
           }
         }
@@ -125,7 +125,11 @@ public class ResolveQualifiedNameHelper {
   public static List<ISysMLNamesBasisScope> resolveNameAsScope(String name, ISysMLNamesBasisScope top,
       boolean firstName) {
     List<ISysMLNamesBasisScope> res = new ArrayList<>();
-    for (ISysMLNamesBasisScope currentScope : top.getSubScopes()) {
+    // search in given scope & subscopes
+    List<ISysMLNamesBasisScope> scopesToSearchIn = new ArrayList<>();
+    scopesToSearchIn.add(top);
+    scopesToSearchIn.addAll(top.getSubScopes());
+    for (ISysMLNamesBasisScope currentScope : scopesToSearchIn) {
       if (currentScope.isPresentName()) {
         if (currentScope.getName().equals(name)) {
           /*if(!firstName && resolveNameAsSysMLType(name, top).size()==1){ // Do not add private scopes.

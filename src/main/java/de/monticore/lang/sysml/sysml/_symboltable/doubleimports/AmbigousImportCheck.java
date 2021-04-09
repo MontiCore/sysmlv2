@@ -5,9 +5,11 @@ import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTAliasPackagedDefinitionMember;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTImportUnitStd;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackage;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._visitor.SysMLImportsAndPackagesVisitor2;
 import de.monticore.lang.sysml.cocos.CoCoStatus;
 import de.monticore.lang.sysml.cocos.SysMLCoCoName;
-import de.monticore.lang.sysml.sysml._visitor.SysMLInheritanceVisitor;
+import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
+import de.monticore.lang.sysml.sysml._visitor.SysMLTraverserImplementation;
 
 import java.util.ArrayList;
 
@@ -15,10 +17,27 @@ import java.util.ArrayList;
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class AmbigousImportCheck implements SysMLInheritanceVisitor {
+public class AmbigousImportCheck implements SysMLImportsAndPackagesVisitor2 {
+
+  SysMLTraverser traverser = null;
+
+  public AmbigousImportCheck(){}
+
+  public AmbigousImportCheck(SysMLTraverser traverser) {
+    this.traverser=traverser;
+    this.traverser.add4SysMLImportsAndPackages(this);
+  }
+
+  public void init() {
+    if(traverser != null)
+      return;
+    this.traverser = new SysMLTraverserImplementation();
+    traverser.add4SysMLImportsAndPackages(this);
+  }
 
   public void addWarningForAmbigousImport2of5(ASTUnit ast) {
-    ast.accept(this);
+    init();
+    ast.accept(traverser);
   }
 
   @Override

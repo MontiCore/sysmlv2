@@ -13,10 +13,12 @@ import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTImportUnitStd;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackage;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageMember;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._visitor.SysMLImportsAndPackagesVisitor2;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlvisibility._ast.ASTPackageElementVisibilityIndicatorStd;
 import de.monticore.lang.sysml.cocos.CoCoStatus;
 import de.monticore.lang.sysml.cocos.SysMLCoCoName;
-import de.monticore.lang.sysml.sysml._visitor.SysMLInheritanceVisitor;
+import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
+import de.monticore.lang.sysml.sysml._visitor.SysMLTraverserImplementation;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.*;
@@ -25,12 +27,29 @@ import java.util.*;
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
+public class AddImportToScopeVisitor implements SysMLImportsAndPackagesVisitor2 {
   int phase = 0;
+
+  SysMLTraverser traverser = null;
+
+  public AddImportToScopeVisitor(){}
+
+  public AddImportToScopeVisitor(SysMLTraverser traverser) {
+    this.traverser = traverser;
+    this.traverser.add4SysMLImportsAndPackages(this);
+  }
+
+  public void init() {
+    if(traverser != null)
+      return;
+    this.traverser = new SysMLTraverserImplementation();
+    traverser.add4SysMLImportsAndPackages(this);
+  }
 
   public void memorizeImportsPhase1of5(ASTUnit ast) { // Resolves all qualified names for imports.
     this.phase = 1;
-    ast.accept(this);
+    init();
+    ast.accept(traverser);
   }
 
   public void addReexportedSymbolsOfPackagesPhase3of5(ASTUnit ast) {
@@ -44,12 +63,14 @@ public class AddImportToScopeVisitor implements SysMLInheritanceVisitor {
     //   We save all visited import statements, so that we do not run into infinity loops, if two packages import
     //   each other.
     this.phase = 2;
-    ast.accept(this);
+    init();
+    ast.accept(traverser);
   }
 
   public void addImportsToScopePhase5of5(ASTUnit ast) { // Adds all resolved imports to the enclosing scope.
     this.phase = 3;
-    ast.accept(this);
+    init();
+    ast.accept(traverser);
   }
 
   @Override

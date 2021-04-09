@@ -76,6 +76,8 @@ repositories {
 dependencies {
     grammar "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
     grammar "de.monticore.lang:scgrammar:$sclang_version:$grammar_classifier"
+    grammar "de.monticore.lang:ocl:$mc_version:$grammar_classifier"
+    implementation "de.monticore.lang:ocl:$mc_version"
     implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
     implementation "org.apache.commons:commons-lang3:$commons_lang_version"
     implementation "org.antlr:antlr4-runtime:4.7.1"
@@ -210,6 +212,7 @@ generateSysMLForStructure.dependsOn generateIBD
 
 compileJava.dependsOn (project.collect
         { it.tasks.findAll { task -> task.name.startsWith("generate") } })
+
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"

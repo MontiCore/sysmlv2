@@ -7,9 +7,11 @@ import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTImportUnitStd;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackage;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageMember;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._visitor.SysMLImportsAndPackagesVisitor2;
 import de.monticore.lang.sysml.cocos.CoCoStatus;
 import de.monticore.lang.sysml.cocos.SysMLCoCoName;
-import de.monticore.lang.sysml.sysml._visitor.SysMLInheritanceVisitor;
+import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
+import de.monticore.lang.sysml.sysml._visitor.SysMLTraverserImplementation;
 import de.se_rwth.commons.SourcePosition;
 
 import java.util.ArrayList;
@@ -20,12 +22,29 @@ import java.util.List;
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class RemoveDoubleImportsFromScope implements SysMLInheritanceVisitor {
+public class RemoveDoubleImportsFromScope implements SysMLImportsAndPackagesVisitor2 {
   //Works together with
   // AddImportToScopeVisitor
 
+  SysMLTraverser traverser = null;
+
+  public RemoveDoubleImportsFromScope(){}
+
+  public RemoveDoubleImportsFromScope(SysMLTraverser traverser) {
+    this.traverser=traverser;
+    this.traverser.add4SysMLImportsAndPackages(this);
+  }
+
+  public void init() {
+    if(traverser != null)
+      return;
+    this.traverser = new SysMLTraverserImplementation();
+    traverser.add4SysMLImportsAndPackages(this);
+  }
+
   public void removeDoubleImportsAndAddWarningPhase4of5(ASTUnit ast) {
-    ast.accept(this);
+    init();
+    ast.accept(traverser);
   }
 
   @Override
@@ -98,9 +117,7 @@ public class RemoveDoubleImportsFromScope implements SysMLInheritanceVisitor {
   }
 
   private void addSysMLTypeSymbolsToList(List<SysMLTypeSymbol> addTo, List<SysMLTypeSymbol> addFrom) {
-    for (SysMLTypeSymbol s : addFrom) {
-      addTo.add(s);
-    }
+    addTo.addAll(addFrom);
   }
   private boolean checkIfSymbolIsDuplicateAndNotSame(List<SysMLTypeSymbol> checkHere, SysMLTypeSymbol checkForThis){
     for (SysMLTypeSymbol potentialDuplicate : checkHere) {
