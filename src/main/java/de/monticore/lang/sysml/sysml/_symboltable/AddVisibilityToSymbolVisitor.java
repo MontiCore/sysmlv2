@@ -5,9 +5,11 @@ import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.Sy
 import de.monticore.lang.sysml.basics.interfaces.sysmlpackagebasis._ast.ASTPackagedDefinitionMember;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
 import de.monticore.lang.sysml.basics.interfaces.sysmlvisibilitybasis._ast.ASTPackageElementVisibilityIndicator;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlbasics._visitor.SysMLBasicsVisitor2;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTAliasPackagedDefinitionMember;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackage;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageMember;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._visitor.SysMLImportsAndPackagesVisitor2;
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlvisibility._ast.ASTPackageElementVisibilityIndicatorStd;
 import de.monticore.lang.sysml.bdd._ast.ASTBlock;
 import de.monticore.lang.sysml.common.sysmlassociations._ast.ASTAssociationBlock;
@@ -17,17 +19,31 @@ import de.monticore.lang.sysml.common.sysmlvaluetypes._ast.ASTValueTypeStd;
 import de.monticore.lang.sysml.parametricdiagram._ast.ASTIndividualDefinition;
 import de.monticore.lang.sysml.requirementdiagram._ast.ASTRequirementDefinition;
 import de.monticore.lang.sysml.stm._ast.ASTStateDefinition;
-import de.monticore.lang.sysml.sysml._visitor.SysMLVisitor;
+import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
+import de.monticore.lang.sysml.sysml._visitor.SysMLTraverserImplementation;
+import de.monticore.lang.sysml.sysml._visitor.SysMLVisitor2;
 import de.monticore.symboltable.modifiers.AccessModifier;
 
 /**
  * @author Robin Muenstermann
  * @version 1.0
  */
-public class AddVisibilityToSymbolVisitor implements SysMLVisitor {
+public class AddVisibilityToSymbolVisitor implements SysMLImportsAndPackagesVisitor2 {
+
+  SysMLTraverser traverser = null;
+
+  public AddVisibilityToSymbolVisitor(){}
+
+  public AddVisibilityToSymbolVisitor(SysMLTraverser traverser) {
+    this.traverser = traverser;
+  }
 
   public void startTraversal(ASTUnit ast) {
-    ast.accept(this);
+    if(traverser == null) {
+      traverser = new SysMLTraverserImplementation();
+    }
+    traverser.add4SysMLImportsAndPackages(this);
+    ast.accept(traverser);
     }
 
   @Override

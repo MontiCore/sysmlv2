@@ -6,6 +6,8 @@ import de.monticore.lang.sysml.sysml.SysMLMill;
 import de.monticore.lang.sysml.sysml._symboltable.*;
 import de.monticore.lang.sysml.sysml._symboltable.doubleimports.AmbigousImportCheck;
 import de.monticore.lang.sysml.sysml._symboltable.doubleimports.RemoveDoubleImportsFromScope;
+import de.monticore.lang.sysml.sysml._visitor.SysMLTraverser;
+import de.monticore.lang.sysml.sysml._visitor.SysMLTraverserImplementation;
 
 import java.util.List;
 
@@ -24,7 +26,8 @@ public class HelperSysMLSymbolTableCreator {
 
   public ISysMLArtifactScope createSymboltable(ASTUnit ast, ISysMLGlobalScope globalScope) {
 
-    SysMLSymbolTableCreatorDelegator symbolTableDelegator = SysMLMill.sysMLSymbolTableCreatorDelegator();
+    SysMLMill.init();
+    SysMLScopesGenitorDelegator symbolTableDelegator = SysMLMill.scopesGenitorDelegator();
         return symbolTableDelegator.createFromAST(ast);
   }
 
@@ -56,10 +59,12 @@ public class HelperSysMLSymbolTableCreator {
     for(ASTUnit model: astUnits){
       addImportToScopeVisitor.addReexportedSymbolsOfPackagesPhase3of5(model);
     }
+
     RemoveDoubleImportsFromScope removeDoubleImportsFromScope = new RemoveDoubleImportsFromScope();
     for (ASTUnit model : astUnits) {
       removeDoubleImportsFromScope.removeDoubleImportsAndAddWarningPhase4of5(model);
     }
+
     for(ASTUnit model: astUnits){
       addImportToScopeVisitor.addImportsToScopePhase5of5(model);
     }
