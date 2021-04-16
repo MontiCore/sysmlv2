@@ -74,9 +74,13 @@ repositories {
 }
 
 dependencies {
-    grammar "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
-    grammar "de.monticore.lang:scgrammar:$sclang_version:$grammar_classifier"
-    grammar "de.monticore.lang:ocl:$mc_version:$grammar_classifier"
+    grammar("de.monticore.lang:ocl:$mc_version:grammars") {
+        exclude group: 'de.monticore', module: 'monticore-grammar'
+    }
+    grammar("de.monticore.lang:scgrammar:$sclang_version:$grammar_classifier") {
+        exclude group: 'de.monticore', module: 'monticore-grammar'
+    }
+    grammar "de.monticore:monticore-grammar:$mc_version"
     implementation "de.monticore.lang:ocl:$mc_version"
     implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
     implementation "org.apache.commons:commons-lang3:$commons_lang_version"
