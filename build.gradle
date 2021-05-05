@@ -5,12 +5,11 @@
 /* ============================================================ */
 
 plugins {
-    id 'java'
-    id "monticore" version "$mc_version"
-    id 'maven-publish'
-    id "com.github.johnrengelman.shadow" version "4.0.4"
-    id "com.adarshr.test-logger" version "2.0.0"
-    id "de.set.ecj" version "1.4.1"
+  id 'java'
+  id "monticore" version "$mc_version"
+  id 'maven-publish'
+  id "com.github.johnrengelman.shadow" version "4.0.4"
+  id "de.set.ecj" version "1.4.1"
 }
 
 /* ============================================================ */
@@ -19,22 +18,21 @@ plugins {
 
 group = 'de.monticore.lang'
 description = 'SysML_v2_official'
-sourceCompatibility = '1.8'
+sourceCompatibility = JavaVersion.VERSION_1_8
+buildDir = file("$projectDir/target")
 
 /* ============================================================ */
 /* ========================= Versions ========================= */
 /* ============================================================ */
 
+def grammarDir = "src/main/grammars"
+def grammar_classifier = "grammars"
+
+def se_commons_version = "1.7.11-SNAPSHOT"
 def junit_version = "4.13.1"
 def commons_cli_version = "1.4"
-def sclang_version = "1.1.5-SNAPSHOT"
-def grammar_classifier = "grammars"
-def grammarDir = "src/main/grammars"
-def se_commons_version = "1.7.11-SNAPSHOT"
-def commons_lang_version = "3.0"
-def cd4analysis_version ="1.7.0.2"
-def logback_version = "1.1.2"
-def archiveBaseName = "SysML"
+def antlr_version = '4.7.1'
+def commons_lang_version = "3.11"
 
 /* ============================================================ */
 /* ======================= Configuration ====================== */
@@ -42,14 +40,16 @@ def archiveBaseName = "SysML"
 
 // configure non-standard source sets
 sourceSets {
-    main.java.srcDirs += ["$projectDir/target/generated-sources/monticore/sourcecode"]
+  main.java.srcDirs += ["$projectDir/target/generated-sources/monticore/sourcecode"]
 
-    test {
-        java.srcDir "$projectDir/src/test/java"
-        resources.srcDir "$projectDir/src/test/resources"
+  grammars {
+    resources {
+      srcDirs(grammarDir)
+      include "**/*.mc4"
     }
+  }
 }
-buildDir = file("$projectDir/target")
+
 
 configurations { grammar }
 
@@ -61,153 +61,81 @@ test {
 /* ======================= Dependencies ======================= */
 /* ============================================================ */
 
-repositories {
-    if(("true").equals(getProperty('useLocalRepo'))){
-        mavenLocal()
-    }
-    mavenCentral()
-    maven {
-        credentials.username mavenUser
-        credentials.password mavenPassword
-        url = 'https://nexus.se.rwth-aachen.de/content/groups/public/'
-    }
+dependencies {
+  grammar "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
+  implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
+  implementation "org.apache.commons:commons-lang3:$commons_lang_version"
+  implementation "org.antlr:antlr4-runtime:$antlr_version"
+  implementation "de.monticore:monticore-runtime:$mc_version"
+  implementation "de.monticore:monticore-grammar:$mc_version"
+  implementation "commons-cli:commons-cli:$commons_cli_version"
+  testImplementation "junit:junit:$junit_version"
 }
 
-dependencies {
-    grammar "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
-    grammar "de.monticore.lang:scgrammar:$sclang_version:$grammar_classifier"
-    implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
-    implementation "org.apache.commons:commons-lang3:$commons_lang_version"
-    implementation "org.antlr:antlr4-runtime:4.7.1"
-    implementation "de.monticore:monticore-generator:$mc_version"
-    implementation "de.monticore:monticore-runtime:$mc_version"
-    implementation "de.monticore:monticore-grammar:$mc_version"
-    implementation "de.monticore.lang:scgrammar:$sclang_version"
-    implementation "org.assertj:assertj-core:3.7.0"
-    implementation "commons-cli:commons-cli:$commons_cli_version"
-    implementation "de.monticore.lang:cd4analysis:$cd4analysis_version:$grammar_classifier"
-    implementation "de.monticore.lang:cd4analysis:$cd4analysis_version"
-    testImplementation "junit:junit:$junit_version"
-    testImplementation "de.monticore:monticore-runtime:$mc_version:tests"
-    testImplementation "org.reflections:reflections:0.9.9"
-    compileOnly "de.monticore:monticore-grammar:$mc_version"
+repositories {
+  if(("true").equals(getProperty('useLocalRepo'))){
+    mavenLocal()
+  }
+  maven {
+    credentials.username mavenUser
+    credentials.password mavenPassword
+    url = repo
+  }
 }
 
 /* ============================================================ */
 /* ========================== Tasks =========================== */
 /* ============================================================ */
 
-fileTree(grammarDir).matching { include '**/*.mc4' }.each {
-    def g = it
-    task "generate${it.getName().substring(0, it.getName().lastIndexOf('.'))}"(type: MCTask) {
-        grammar = file g
-        outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
-        def grammarIncludingPackage = file(grammarDir).toURI().relativize(g.toURI()).toString()
-        def uptoDate = incCheck(grammarIncludingPackage)
-        outputs.upToDateWhen { uptoDate }
-    }
+task generate {}
+
+fileTree(grammarDir).matching { include '**/*.mc4' }.each { g ->
+    def taskname = "generateGrammar${g.getName().substring(0,g.getName().lastIndexOf('.'))}"
+
+  task "$taskname" (type: MCTask) {
+    grammar = g
+    outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
+    def grammarIncludingPackage = file(grammarDir).toURI().relativize(g.toURI()).toString()
+    outputs.upToDateWhen { incCheck(grammarIncludingPackage) }
+  }
+  generate.dependsOn ("$taskname")
 }
 
- /*This is generated*/
-generateSysMLAD.dependsOn generateSysMLCommon
+compileJava.dependsOn generate
 
-generateSysMLAssociations.dependsOn generateSysMLCommonBasis
+// Fixes issue with java plugin in projects without resources
+compileTestJava.doFirst { mkdir sourceSets.main.output.resourcesDir }
 
-generateSysMLClassifiers.dependsOn generateSysMLCommonBasis
-/*
-generateCommentsBasis
-generateImportBasis
-
-generateNamesBasis
-generatePackageBasis
-generateVisibilityBasis*/
-generateSysMLPorts.dependsOn generateSysMLCommonBasis
-
-generateSysMLCommon.dependsOn generateSysMLClassifiers
-generateSysMLCommon.dependsOn generateSysMLValueTypes
-generateSysMLCommon.dependsOn generateSysMLUsages
-generateSysMLCommon.dependsOn generateSysMLPorts
-generateSysMLCommon.dependsOn generateSysMLCommonBasis
-
-generateSysMLCommonBasis.dependsOn generateSysMLPackageBasis
-
-generateSysMLExpressions.dependsOn generateSysMLCommonBasis
-
-generateSysMLImportsAndPackages.dependsOn generateSysMLCommonBasis
-
-
-generateSysMLBasics.dependsOn generateSysMLExpressions
-generateSysMLBasics.dependsOn generateSysMLImportsAndPackages
-generateSysMLBasics.dependsOn generateSysMLVisibility
-
-generateSysMLVisibility.dependsOn generateSysMLCommonBasis
-
-generateSysMLUsages.dependsOn generateSysMLCommonBasis
-
-generateSysMLValueTypes.dependsOn generateSysMLCommonBasis
-
-generateSysMLBDD.dependsOn generateSysMLCommon
-
-generateSysMLIBD.dependsOn generateSysMLCommon
-
-//generateNotDistributed.dependsOn generateSysMLCommon
-
-//generatePackageDiagram.dependsOn generateSysMLCommon
-
-generateSysMLPD.dependsOn generateSysMLCommon
-
-generateSysMLRD.dependsOn generateSysMLCommon
-
-//generateSD.dependsOn generateSysMLCommon
-
-generateSysMLSTM.dependsOn generateSysMLCommon
-
-generateSysML.dependsOn generateSysMLBDD
-generateSysML.dependsOn generateSysMLIBD
-generateSysML.dependsOn generateSysMLAD
-generateSysML.dependsOn generateSysMLBasics
-
-//generateUseCaseDiagram.dependsOn generateSysMLCommon
-
-compileJava.dependsOn (project.collect
-        { it.tasks.findAll { task -> task.name.startsWith("generate") } })
+tasks.withType(Test) {
+    maxParallelForks = Runtime.runtime.availableProcessors() ?: 1
+}
 
 tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+  options.fork = true
+  options.encoding = "UTF-8"
+  options.deprecation false
+  options.warnings = false
+  options.headerOutputDirectory.convention(null)
 }
 
-// build sources jar in addition
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allJava
-    archiveClassifier = "sources"
-}
-
-// build javadoc jar in addition
-task javadocJar(type: Jar) {
-    from javadoc
-    archiveClassifier = "javadoc"
-}
-
-// generated java doc contains errors, disable for now
-javadoc.failOnError(false)
-
-// build grammar jar as well
-task grammarJar(type: Jar) {
-    from("$projectDir/src/main/grammars/") { include "**/*.mc4" }
-    archiveClassifier = "grammars"
-}
- // all in one cli-jar
+// all in one cli-jar
 shadowJar {
-    manifest {
-        attributes "Main-Class": "de.monticore.SYSMLCLI"
-    }
-    archiveFileName = "SysML-cli.jar"
-    minimize()
+  manifest {
+    attributes "Main-Class": "de.monticore.SYSMLCLI"
+  }
+  archiveFileName = "SysML-cli.jar"
+  minimize()
 }
 
-jar.dependsOn shadowJar
+java {
+//  withJavadocJar()
+  withSourcesJar()
+  registerFeature('grammars') {
+    usingSourceSet(sourceSets.grammars)
+  }
+}
+
+jar.dependsOn grammarsJar, shadowJar
 
 
 /* ============================================================ */
@@ -219,10 +147,6 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            // publish all JARs
-            artifact sourcesJar
-            artifact javadocJar
-            artifact grammarJar
         }
     }
     repositories.maven {
@@ -234,3 +158,8 @@ publishing {
     }
 }
 
+task buildAll(type: GradleBuild) {
+  tasks = [ 'build' ]
+}
+
+defaultTasks('build')
