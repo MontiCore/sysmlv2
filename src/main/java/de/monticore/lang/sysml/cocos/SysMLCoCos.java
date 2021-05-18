@@ -20,7 +20,6 @@ public class SysMLCoCos {
     // checker.addCoCo(new NameReference()); Currently we cannot resolve all Name references, so it is no use to test
     // it.
     checker.addCoCo(new ArtifactStartsWithPackage());
-    checker.addCoCo(new PackageNameEqualsArtifactName());
     //The following two checker include all checks for imports, because the import nodes save their CoCo Violation
     //while resolving import. This saves a significant amount of computational power, because resolving imports
     //can lead to a lot of nodes being visited.
@@ -47,8 +46,6 @@ public class SysMLCoCos {
         return res.append("53").toString();
       case ArtifactStartsWithPackage:
         return res.append("54").toString();
-      case PackageNameEqualsArtifactName:
-        return res.append("55").toString();
       //Imports
       case ImportResolves:
         return res.append("56").toString();

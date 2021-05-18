@@ -99,7 +99,6 @@ public class SysMLToolTest {
     SysMLTool.main(new String[] { pathToSrcDir + "/training/", "-lib=" + pathToLibDir }); //Same files as in
     // src/main/resources/SysML Domain Libraries but for testing.
     for (Finding f : Log.getFindings()) { //not equal to filename coco, double definition (e.g. mm) at SI
-      boolean filenameCoCo = f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsArtifactName)));
       boolean doubleImport =
           f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportedElementNameAlreadyExists)));
       boolean twoImportsWithDifferentSymbolButSameName =
@@ -112,7 +111,7 @@ public class SysMLToolTest {
                   " Name \"Vehicle c1 Design Context\" should start with a lower "
                   + "case letter.")
           );
-      assertTrue("Did not expect the Finding:" + f.toString(), filenameCoCo || doubleImport
+      assertTrue("Did not expect the Finding:" + f.toString(), doubleImport
           ||twoImportsWithDifferentSymbolButSameName || resolveQualifiedName ||namingConvention);
       assertTrue(!f.isError()); // Do not throw errors for the official examples
     }
@@ -125,7 +124,6 @@ public class SysMLToolTest {
         "-lib=" + pathToLibDir + "/Quantities and Units" });
 
     for (Finding f : Log.getFindings()) {
-      boolean filenameCoCo = f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.PackageNameEqualsArtifactName)));
       boolean doubleImport =
           f.toString().contains(SysMLCoCos.getErrorCode((SysMLCoCoName.ImportedElementNameAlreadyExists)));
       boolean twoImportsWithDifferentSymbolButSameName =
@@ -139,7 +137,7 @@ public class SysMLToolTest {
                   + "case letter.")
           );
 
-      assertTrue("Did not expect the Finding: " + f.toString(), filenameCoCo || doubleImport
+      assertTrue("Did not expect the Finding: " + f.toString(), doubleImport
         ||twoImportsWithDifferentSymbolButSameName || resolveQualifiedName || namingConvention);
       assertTrue(!f.isError()); // Do not throw errors for the official examples
     }

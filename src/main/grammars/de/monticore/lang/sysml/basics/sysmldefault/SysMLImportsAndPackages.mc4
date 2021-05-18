@@ -26,7 +26,7 @@ component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.basics
     "import" QualifiedName ("::" | ".") star:["*"] {noSpace()}? ";";
 
   /* PACKAGES */
-  PackageUnit implements Unit = UnitPrefix Package;
+  RootNamespace implements Unit = (PrefixAnnotation* Package)*;
   AnonymousPackage implements Unit = PackageBody;
   Package implements SysMLType, PackagedDefinitionMember =  PackageDeclaration PackageBody;
   astrule Package =

@@ -4,7 +4,7 @@ import de.monticore.io.paths.ModelPath;
 import de.monticore.lang.sysml.SysMLTool;
 import de.monticore.lang.sysml.basics.interfaces.sysmlnamesbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;
-import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTPackageUnit;
+import de.monticore.lang.sysml.basics.sysmldefault.sysmlimportsandpackages._ast.ASTRootNamespace;
 import de.monticore.lang.sysml.bdd._ast.ASTBlock;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLArtifactScope;
 import de.monticore.lang.sysml.sysml._symboltable.SysMLGlobalScope;
@@ -28,12 +28,12 @@ public class SymbolTableCreationTest extends AbstractSysMLTest {
   public void testSuccessfulCreationInOneFile() {
     String currentPath = this.pathToOfficialSysMLTrainingExamples + "/02. Blocks/Blocks Example.sysml";
     ASTUnit astUnit =  this.parseSysMLSingleModel(currentPath);
-    ASTPackageUnit packageUnit  = (ASTPackageUnit) astUnit;
-    Log.debug("Package name is " + packageUnit.getPackage().getName(), this.getClass().getName());
-    assertEquals("Blocks Example", packageUnit.getPackage().getName());
-    ASTBlock block = (ASTBlock) packageUnit.getPackage().getPackageBody().getPackageMember(0).getPackagedDefinitionMember();
+    ASTRootNamespace rootNamespace  = (ASTRootNamespace) astUnit;
+    Log.debug("Package name is " + rootNamespace.getPackage(0).getName(), this.getClass().getName());
+    assertEquals("Blocks Example", rootNamespace.getPackage(0).getName());
+    ASTBlock block = (ASTBlock) rootNamespace.getPackage(0).getPackageBody().getPackageMember(0).getPackagedDefinitionMember();
     Log.debug("Block name is " + block.getName(), this.getClass().getName());
-    assertEquals("Blocks Example", packageUnit.getPackage().getName());
+    assertEquals("Blocks Example", rootNamespace.getPackage(0).getName());
 
     //Creating Symboltable
     ModelPath mp = SysMLTool.createModelpath(currentPath);
