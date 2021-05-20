@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml;
+
+grammar SysMLv2 extends de.monticore.lang.sysml.SysMLBlockDiagrams { //,
+ //                       de.monticore.lang.sysml.SysMLActivityDiagrams {
+
+  start SysMLElement;
+
+}

@@ -1,0 +1,51 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml;
+
+component grammar SysMLBasis extends de.monticore.literals.MCCommonLiterals,
+  de.monticore.types.MCBasicTypes,
+  de.monticore.symbols.OOSymbols,
+  de.monticore.expressions.ExpressionsBasis,
+  de.monticore.Cardinality {
+
+  interface SysMLElement;
+
+  interface symbol SysMLType extends SysMLElement, OOType;
+
+  SysMLQualifiedName extends MCQualifiedName = parts:(Name || "::")+;
+
+  /*
+   * Use custom SysMLModifier as UMLModifier is not applicable and would
+   * lead to a complete override or a non-conservative extension.
+   */
+  SysMLModifier = (["public"] | ["private"] | ["protected"] | ["package"] | ["abstract"])*;
+
+  SysMLMultiplicity = Cardinality ["ordered"]? ["nonunique"]? | ["nonunique"]? ["ordered"]?;
+
+  SysMLFeatureDirection =  ["in"] | ["out"] | ["inout"];
+
+  DoubleLiteral implements NumericLiteral<1> =
+  { noSpace(2,3) }? pre:Digits "." post:Digits Exponent | pre:Digits Exponent;
+
+  token Exponent = ('e' | 'E') ('+' | '-')? Digits;
+
+  token SysMLComment =
+    'c''o''m''m''e''n''t' (WS* Name)? (WS* 'a''b''o''u''t' WS* Name)? WS* ML_COMMENT : -> skip
+    {storeComment();} ;
+
+  token SysMLDoc =
+    'd''o''c' WS* ML_COMMENT : -> skip
+    {storeComment();} ;
+
+  @Override
+  token Name = CharSequence | ( 'a'..'z' | 'A'..'Z' | '_' | '$' )
+                              ( 'a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '$' )*;
+
+  /**
+    A sequence of characters in single quotation marks. Covers a similar
+    purpose as the String token provided by MontiCore.
+  */
+  token CharSequence
+    = '\'' (SingleCharacter|EscapeSequence)+ '\''
+    : {setText(getText().substring(1, getText() .length() - 1));}
+  ;
+}

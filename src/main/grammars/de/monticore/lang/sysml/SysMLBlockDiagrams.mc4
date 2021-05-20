@@ -1,0 +1,84 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml;
+
+grammar SysMLBlockDiagrams extends de.monticore.lang.sysml.SysMLImportsAndPackages,
+                                             de.monticore.lang.sysml.SysMLCommons {
+
+  start SysMLElement;
+
+  interface BDUsageMember extends SysMLElement;
+
+  symbol scope PartDef implements SysMLType =
+    SysMLModifier? ("part" "def" | "block") Name SysMLSpecialization?
+    ("{"
+      (BDUsageMember | SysMLElement | SysMLImportStatement)*
+    "}" | ";") ;
+
+  symbol scope AttributeDef implements SysMLType =
+    SysMLModifier? ("attribute" "def" | "value" "type") Name SysMLSpecialization
+    ("{"
+      (BDUsageMember | SysMLImportStatement)*
+    "}" | ";") ;
+
+  symbol scope EnumDef implements SysMLType =
+    SysMLModifier? "enum" "def" Name SysMLSpecialization?
+    ("{"
+      (SysMLEnumConstant ";")*
+    "}" | ";") ;
+
+  SysMLEnumConstant implements Field = "enum"? Name ("=" initial:Expression)?;
+
+  symbol scope PartProperty implements BDUsageMember = SysMLModifier? SysMLFeatureDirection? "part"
+    Name ":" types:(MCType || ",")+ SysMLMultiplicity? SysMLSubsetting? SysMLRedefinition? ("=" binding:MCQualifiedName)?
+    ("{"
+      BDUsageMember*
+    "}" | ";") ;
+
+  symbol scope SysMLReference implements BDUsageMember = SysMLModifier? SysMLFeatureDirection? "ref"
+    ["part"]? ["item"]? ["individual"]?
+    Name ":" types:(MCType || ",")+ SysMLMultiplicity? SysMLSubsetting? SysMLRedefinition? ("=" binding:MCQualifiedName)? ":";
+
+  SysMLAttribute implements BDUsageMember, Field = SysMLModifier? SysMLFeatureDirection? ("attribute" | "value")?
+    Name ":" types:(MCType || ",")+ SysMLMultiplicity? SysMLSubsetting? SysMLRedefinition? ("=" initial:Expression)? ";";
+
+  // TODO exchange when possible
+  // ItemProperty implements BDUsageMember;
+  symbol scope ItemProperty = SysMLModifier? SysMLFeatureDirection? "item"
+    Name (":" types:(MCType || ",")+)? SysMLMultiplicity? SysMLSubsetting? SysMLRedefinition?
+    ("=" binding:MCQualifiedName)? (("flow" | ["stream"]) "from" flowSrc:MCQualifiedName)? ";";
+
+  symbol scope SysMLPortDef implements SysMLType = SysMLModifier? "port" "def" Name
+    ("{"
+      BDUsageMember*
+    "}" | ";") ;
+
+  symbol SysMLPortUsage implements BDUsageMember = "port" Name ":" conjugated:["~"] MCType";";
+
+  symbol scope ConnectionDef implements SysMLType = ("connection" | ["interface"]) "def" Name
+    ("{"
+      (ConnectionDefEnd | ItemStream)*
+    "}" | ";") ;
+
+  symbol scope ConnectionDefEnd = "end" Name? ":" MCType SysMLMultiplicity?
+    ("{"
+      NestedConnection*
+    "}" | ";") ;
+
+  symbol NestedConnection = "port" Name ":" MCType ";";
+
+  symbol scope ConnectionUsage implements BDUsageMember =
+    (("connection" | ["interface"]) Name ":" MCType)?
+    "connect" src:ConnectionUsageEnd "to" tgt:ConnectionUsageEnd ";";
+
+  ConnectionUsageEnd = (Name "=>")? field:MCQualifiedName SysMLMultiplicity?;
+
+  // TODO exchange when possible
+  // BindingConnectionUsage implements BDUsageMember;
+  BindingConnectionUsage = "bind" fields:MCQualifiedName "=" fields:MCQualifiedName ";";
+
+  ItemStream implements BDUsageMember =
+    "stream" ("of" MCType)? "from"? src:MCQualifiedName "to" tgt:MCQualifiedName ";";
+
+  BDActivityUsage implements BDUsageMember =
+    "perform" "action"? (Name ":")? MCType SysMLMultiplicity? ["ordered"]? SysMLSubsetting? ";";
+}

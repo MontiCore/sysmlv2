@@ -1,0 +1,28 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang.sysml;
+
+component grammar SysMLCommons extends de.monticore.lang.sysml.SysMLBasis {
+
+  /* Common connections */
+  // TODO activate when possible
+//  BindingConnectionUsage =
+//    "bind" fields:MCQualifiedName "=" fields:MCQualifiedName ";";
+
+  SysMLInstantiation = MCType "(" (SysMLParameter || ",")* ")";
+
+  SysMLParameter implements Field = SysMLFeatureDirection? Name ":" MCType;
+
+
+  /* Inheritance */
+  SysMLSpecialization = (":>" | "specializes") superDef:(MCObjectType || ",")+;
+  SysMLSubsetting = (":>" | "subsets") fields:(MCQualifiedName || ",")+;
+  SysMLRedefinition = (":>>" | "redefines") fields:(MCQualifiedName || ",")+;
+
+
+  /* Common properties */
+  // TODO activate when possible
+//  symbol scope ItemProperty = SysMLModifier? SysMLFeatureDirection? "item"
+//    Name (":" types:(MCType || ",")+)? SysMLMultiplicity? SysMLSubsetting? SysMLRedefinition?
+//    ("=" binding:MCQualifiedName)? (("flow" | ["stream"]) "from" flowSrc:MCQualifiedName)? ";";
+
+}
