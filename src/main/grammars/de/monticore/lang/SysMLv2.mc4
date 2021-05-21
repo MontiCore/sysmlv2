@@ -4,6 +4,6 @@ package de.monticore.lang;
 grammar SysMLv2 extends de.monticore.lang.SysMLBlockDiagrams,
                         de.monticore.lang.SysMLActivityDiagrams {
 
-  start SysMLElement;
+  SysMLModel = SysMLElement*;
 
 }

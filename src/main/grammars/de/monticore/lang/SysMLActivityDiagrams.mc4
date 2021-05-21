@@ -7,20 +7,20 @@ grammar SysMLActivityDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
   start SysMLElement;
 
   symbol scope ActionDef implements SysMLType =
-    SysMLModifier? "action" "def" Name "(" (SysMLParameter || ",")* ")"
+    SysMLModifier? "action" "def" Name ("(" (SysMLParameter || ",")* ")")?
     ("{"
       (ADElement | SysMLImportStatement)*
     "}" | ";") ;
 
   symbol scope ADOpaqueAction implements SysMLType =
-    SysMLModifier? "action" "def" Name "(" (SysMLParameter || ",")* ")" "{"
+    SysMLModifier? "action" "def" Name ("(" (SysMLParameter || ",")* ")")? "{"
       "language" lang:String
     "}";
 
   interface ADElement extends SysMLElement;
 
   symbol scope ActionUsage implements ADElement =
-    suc:["then"]? "action" Name (":" MCType)? "(" (SysMLParameter || ",")* ")"
+    suc:["then"]? "action" Name (":" MCType)? ("(" (SysMLParameter || ",")* ")")?
     ("{"
       ADElement*
     "}" | ";") ;

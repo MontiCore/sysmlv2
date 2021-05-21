@@ -9,7 +9,7 @@ component grammar SysMLCommons extends de.monticore.lang.SysMLBasis {
 
   SysMLInstantiation = MCType "(" (SysMLParameter || ",")* ")";
 
-  SysMLParameter implements Field = SysMLFeatureDirection? Name ":" MCType;
+  SysMLParameter implements Field = SysMLFeatureDirection? Name (":" MCType)? SysMLMultiplicity?;
 
 
   /* Inheritance */
@@ -19,7 +19,7 @@ component grammar SysMLCommons extends de.monticore.lang.SysMLBasis {
 
 
   /* Common properties */
-  symbol scope ItemProperty = SysMLModifier? SysMLFeatureDirection? "item"
+  symbol scope ItemProperty = SysMLModifier? SysMLFeatureDirection? "item"?
     Name (":" types:(MCType || ",")+)? SysMLMultiplicity? SysMLSubsetting? SysMLRedefinition?
     ("=" binding:MCQualifiedName)? (("flow" | ["stream"]) "from" flowSrc:MCQualifiedName)? ";";
 
