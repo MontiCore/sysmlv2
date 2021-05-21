@@ -29,13 +29,11 @@ grammar SysMLActivityDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
 
   // TODO exchange when possible
   // BindingConnectionUsage implements ADElement;
-  BindingConnectionUsage = "bind" fields:MCQualifiedName "=" fields:MCQualifiedName ";";
+  ACBindingConnectionUsage implements ADElement = BindingConnectionUsage;
 
   // TODO exchange when possible
   // ItemProperty implements ADElement;
-  symbol scope ItemProperty = SysMLModifier? SysMLFeatureDirection? "item"
-    Name (":" types:(MCType || ",")+)? SysMLMultiplicity? SysMLSubsetting? SysMLRedefinition?
-    ("=" binding:MCQualifiedName)? (("flow" | ["stream"]) "from" flowSrc:MCQualifiedName)? ";";
+  ACItemProperty implements ADElement = ItemProperty;
 
   ADSuccession implements ADElement =
     ("succession" src:MCQualifiedName)? ("if" constraint:Expression)? ("else")?

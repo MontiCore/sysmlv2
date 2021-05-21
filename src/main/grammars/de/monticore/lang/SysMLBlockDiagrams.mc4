@@ -43,9 +43,7 @@ grammar SysMLBlockDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
 
   // TODO exchange when possible
   // ItemProperty implements BDUsageMember;
-  symbol scope ItemProperty = SysMLModifier? SysMLFeatureDirection? "item"
-    Name (":" types:(MCType || ",")+)? SysMLMultiplicity? SysMLSubsetting? SysMLRedefinition?
-    ("=" binding:MCQualifiedName)? (("flow" | ["stream"]) "from" flowSrc:MCQualifiedName)? ";";
+  BDItemProperty implements BDUsageMember = ItemProperty;
 
   symbol scope SysMLPortDef implements SysMLType = SysMLModifier? "port" "def" Name
     ("{"
@@ -74,7 +72,7 @@ grammar SysMLBlockDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
 
   // TODO exchange when possible
   // BindingConnectionUsage implements BDUsageMember;
-  BindingConnectionUsage = "bind" fields:MCQualifiedName "=" fields:MCQualifiedName ";";
+  BDBindingConnectionUsage implements BDUsageMember = BindingConnectionUsage; //= "bind" fields:MCQualifiedName "=" fields:MCQualifiedName ";";
 
   ItemStream implements BDUsageMember =
     "stream" ("of" MCType)? "from"? src:MCQualifiedName "to" tgt:MCQualifiedName ";";

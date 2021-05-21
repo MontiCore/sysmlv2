@@ -5,8 +5,8 @@ component grammar SysMLCommons extends de.monticore.lang.SysMLBasis {
 
   /* Common connections */
   // TODO activate when possible
-//  BindingConnectionUsage =
-//    "bind" fields:MCQualifiedName "=" fields:MCQualifiedName ";";
+  BindingConnectionUsage =
+    "bind" fields:MCQualifiedName "=" fields:MCQualifiedName ";";
 
   SysMLInstantiation = MCType "(" (SysMLParameter || ",")* ")";
 
@@ -21,8 +21,8 @@ component grammar SysMLCommons extends de.monticore.lang.SysMLBasis {
 
   /* Common properties */
   // TODO activate when possible
-//  symbol scope ItemProperty = SysMLModifier? SysMLFeatureDirection? "item"
-//    Name (":" types:(MCType || ",")+)? SysMLMultiplicity? SysMLSubsetting? SysMLRedefinition?
-//    ("=" binding:MCQualifiedName)? (("flow" | ["stream"]) "from" flowSrc:MCQualifiedName)? ";";
+  symbol scope ItemProperty = SysMLModifier? SysMLFeatureDirection? "item"
+    Name (":" types:(MCType || ",")+)? SysMLMultiplicity? SysMLSubsetting? SysMLRedefinition?
+    ("=" binding:MCQualifiedName)? (("flow" | ["stream"]) "from" flowSrc:MCQualifiedName)? ";";
 
 }
