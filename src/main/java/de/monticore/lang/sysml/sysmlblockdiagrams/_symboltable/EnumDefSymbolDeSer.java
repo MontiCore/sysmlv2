@@ -3,6 +3,7 @@ package de.monticore.lang.sysml.sysmlblockdiagrams._symboltable;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.SymTypeExpression;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EnumDefSymbolDeSer extends EnumDefSymbolDeSerTOP {
@@ -13,6 +14,6 @@ public class EnumDefSymbolDeSer extends EnumDefSymbolDeSerTOP {
 
   @Override
   protected List<SymTypeExpression> deserializeSuperTypes(JsonObject symbolJson) {
-    return null;
+    return new ArrayList<>();
   }
 }
