@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.lang.sysml;
+package de.monticore.lang;
 
 
-component grammar SysMLImportsAndPackages extends de.monticore.lang.sysml.SysMLBasis {
+component grammar SysMLImportsAndPackages extends de.monticore.lang.SysMLBasis {
 
   SysMLImportStatement extends MCImportStatement = SysMLModifier
     ("import" | ["alias"]) MCQualifiedName (("::" | ".") Star:["*"])? ("as"  Name)? ";" ;

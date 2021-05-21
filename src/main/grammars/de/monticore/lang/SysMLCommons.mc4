@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.lang.sysml;
+package de.monticore.lang;
 
-component grammar SysMLCommons extends de.monticore.lang.sysml.SysMLBasis {
+component grammar SysMLCommons extends de.monticore.lang.SysMLBasis {
 
   /* Common connections */
   // TODO activate when possible

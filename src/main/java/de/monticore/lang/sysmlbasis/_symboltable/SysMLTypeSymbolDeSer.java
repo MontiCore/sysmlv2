@@ -1,4 +1,4 @@
-package de.monticore.lang.sysml.sysmlbasis._symboltable;
+package de.monticore.lang.sysmlbasis._symboltable;
 
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.SymTypeExpression;
