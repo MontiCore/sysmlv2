@@ -63,7 +63,7 @@ grammar SysMLBlockDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
 
   symbol scope ConnectionDef implements SysMLType = ("connection" | ["interface"]) "def" Name
     ("{"
-      (ConnectionDefEnd | ItemStream)*
+      (ConnectionDefEnd | ItemStream | SysMLLink)*
     "}" | ";") ;
 
   symbol scope ConnectionDefEnd = "end" Name? ":" MCType SysMLMultiplicity?
@@ -74,8 +74,9 @@ grammar SysMLBlockDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
   symbol NestedConnection = "port" Name ":" MCType ";";
 
   symbol scope ConnectionUsage implements BDUsageMember =
-    (("connection" | ["interface"]) Name? ":" MCType)?
-    "connect" src:ConnectionUsageEnd "to" tgt:ConnectionUsageEnd ";";
+    (("connection" | ["interface"]) Name? ":" MCType)? SysMLLink;
+
+  SysMLLink = "connect" src:ConnectionUsageEnd "to" tgt:ConnectionUsageEnd ";";
 
   ConnectionUsageEnd = (Name "=>")? field:MCQualifiedName SysMLMultiplicity?;
 

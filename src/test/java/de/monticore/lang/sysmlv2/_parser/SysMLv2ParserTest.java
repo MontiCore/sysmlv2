@@ -240,7 +240,6 @@ public class SysMLv2ParserTest {
     assertTrue(ast.isPresent());
   }
 
-  @Ignore
   @Test
   public void testS30() throws IOException {
     Path model = Paths.get(INTRO_PATH + "s30.sysml");
