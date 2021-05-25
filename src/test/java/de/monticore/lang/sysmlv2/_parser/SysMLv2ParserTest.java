@@ -102,7 +102,6 @@ public class SysMLv2ParserTest {
     assertTrue(ast.isPresent());
   }
 
-  @Ignore
   @Test
   public void testS12() throws IOException {
     Path model = Paths.get(INTRO_PATH + "s12.sysml");
@@ -140,7 +139,6 @@ public class SysMLv2ParserTest {
     assertTrue(ast.isPresent());
   }
 
-  @Ignore
   @Test
   public void testS15() throws IOException {
     Path model = Paths.get(INTRO_PATH + "s15.sysml");
@@ -153,7 +151,6 @@ public class SysMLv2ParserTest {
     assertTrue(ast.isPresent());
   }
 
-  @Ignore
   @Test
   public void testS16() throws IOException {
     Path model = Paths.get(INTRO_PATH + "s16.sysml");
@@ -214,7 +211,6 @@ public class SysMLv2ParserTest {
     assertTrue(ast.isPresent());
   }
 
-  @Ignore
   @Test
   public void testS27() throws IOException {
     Path model = Paths.get(INTRO_PATH + "s27.sysml");
@@ -227,7 +223,6 @@ public class SysMLv2ParserTest {
     assertTrue(ast.isPresent());
   }
 
-  @Ignore
   @Test
   public void testS28() throws IOException {
     Path model = Paths.get(INTRO_PATH + "s28.sysml");

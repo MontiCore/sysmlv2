@@ -38,17 +38,24 @@ grammar SysMLBlockDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
     "}") ;
 
   symbol scope PartProperty implements BDUsageMember = SysMLModifier? SysMLFeatureDirection? "part"
-    Name? (":" types:(MCType || ",")+)? SysMLMultiplicity? SysMLSubsetting? SysMLRedefinition? ("=" binding:MCQualifiedName)?
+    Name? SysMLPropertyModifier
     ("{"
       BDUsageMember*
     "}" | ";") ;
 
   symbol scope SysMLReference implements BDUsageMember = SysMLModifier? SysMLFeatureDirection? "ref"
     ["part"]? ["item"]? ["individual"]?
-    Name ":" types:(MCType || ",")+ SysMLMultiplicity? SysMLSubsetting? SysMLRedefinition? ("=" binding:MCQualifiedName)? ";";
+    Name SysMLPropertyModifier ";";
 
   SysMLAttribute implements BDUsageMember, Field = SysMLModifier? SysMLFeatureDirection? ("attribute" | "value")?
-    Name (":" types:(MCType || ",")+)? SysMLMultiplicity? SysMLSubsetting? SysMLRedefinition? ("=" initial:Expression)? ";";
+    Name SysMLPropertyModifier ";";
+
+  SysMLPropertyModifier =
+    ( ":" types:(MCType || ",")+ |
+      SysMLMultiplicity |
+      SysMLSubsetting |
+      SysMLRedefinition |
+      "=" Expression )* ;
 
   // TODO exchange when possible
   // ItemProperty implements BDUsageMember;
@@ -59,7 +66,8 @@ grammar SysMLBlockDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
       BDUsageMember*
     "}" | ";") ;
 
-  symbol SysMLPortUsage implements BDUsageMember = "port" Name ":" conjugated:["~"]? MCType";";
+  symbol SysMLPortUsage implements BDUsageMember =
+    "port" (Name ":" conjugated:["~"]? MCType | SysMLRedefinition) ";";
 
   symbol scope ConnectionDef implements SysMLType = ("connection" | ["interface"]) "def" Name
     ("{"

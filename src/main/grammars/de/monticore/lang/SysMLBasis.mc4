@@ -18,7 +18,7 @@ component grammar SysMLBasis extends de.monticore.literals.MCCommonLiterals,
    */
   SysMLModifier = (["public"] | ["private"] | ["protected"] | ["package"] | ["abstract"])*;
 
-  SysMLMultiplicity = Cardinality ["ordered"]? ["nonunique"]? | ["nonunique"]? ["ordered"]?;
+  SysMLMultiplicity = Cardinality ["ordered"]? ["nonunique"]? ;
 
   SysMLFeatureDirection =  ["in"] | ["out"] | ["inout"];
 
