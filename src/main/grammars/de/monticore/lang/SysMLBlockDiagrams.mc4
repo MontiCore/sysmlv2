@@ -29,10 +29,13 @@ grammar SysMLBlockDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
   symbol scope EnumDef implements SysMLType =
     SysMLModifier? "enum" "def" Name SysMLSpecialization?
     ("{"
-      (SysMLEnumConstant ";")*
+      SysMLEnumConstant*
     "}" | ";") ;
 
-  SysMLEnumConstant implements Field = "enum"? Name ("=" initial:Expression)?;
+  SysMLEnumConstant implements Field = "enum"? Name ( ("=" initial:Expression)? ";" |
+    "{"
+       (":>>" Expression ";")*
+    "}") ;
 
   symbol scope PartProperty implements BDUsageMember = SysMLModifier? SysMLFeatureDirection? "part"
     Name? (":" types:(MCType || ",")+)? SysMLMultiplicity? SysMLSubsetting? SysMLRedefinition? ("=" binding:MCQualifiedName)?

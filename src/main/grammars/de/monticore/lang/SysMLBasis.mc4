@@ -4,7 +4,6 @@ package de.monticore.lang;
 component grammar SysMLBasis extends de.monticore.literals.MCCommonLiterals,
   de.monticore.types.MCBasicTypes,
   de.monticore.symbols.OOSymbols,
-  de.monticore.expressions.ExpressionsBasis,
   de.monticore.Cardinality {
 
   interface SysMLElement;

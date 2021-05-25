@@ -128,7 +128,6 @@ public class SysMLv2ParserTest {
     assertTrue(ast.isPresent());
   }
 
-  @Ignore
   @Test
   public void testS14() throws IOException {
     Path model = Paths.get(INTRO_PATH + "s14.sysml");
