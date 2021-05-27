@@ -455,4 +455,88 @@ public class SysMLv2ParserTest {
     assertTrue(ast.isPresent());
   }
 
+  @Test
+  public void testS50() throws IOException {
+    Path model = Paths.get(INTRO_PATH + "s50.sysml");
+
+    SysMLv2Mill.init();
+    SysMLv2Parser parser = SysMLv2Mill.parser();
+    Optional<ASTSysMLModel> ast = parser.parse(model.toString());
+
+    assertFalse(parser.hasErrors());
+    assertTrue(ast.isPresent());
+  }
+
+  @Test
+  public void testS51() throws IOException {
+    Path model = Paths.get(INTRO_PATH + "s51.sysml");
+
+    SysMLv2Mill.init();
+    SysMLv2Parser parser = SysMLv2Mill.parser();
+    Optional<ASTSysMLModel> ast = parser.parse(model.toString());
+
+    assertFalse(parser.hasErrors());
+    assertTrue(ast.isPresent());
+  }
+
+  @Test
+  public void testS52() throws IOException {
+    Path model = Paths.get(INTRO_PATH + "s52.sysml");
+
+    SysMLv2Mill.init();
+    SysMLv2Parser parser = SysMLv2Mill.parser();
+    Optional<ASTSysMLModel> ast = parser.parse(model.toString());
+
+    assertFalse(parser.hasErrors());
+    assertTrue(ast.isPresent());
+  }
+
+  @Test
+  public void testS53() throws IOException {
+    Path model = Paths.get(INTRO_PATH + "s53.sysml");
+
+    SysMLv2Mill.init();
+    SysMLv2Parser parser = SysMLv2Mill.parser();
+    Optional<ASTSysMLModel> ast = parser.parse(model.toString());
+
+    assertFalse(parser.hasErrors());
+    assertTrue(ast.isPresent());
+  }
+
+  @Test
+  public void testS54() throws IOException {
+    Path model = Paths.get(INTRO_PATH + "s54.sysml");
+
+    SysMLv2Mill.init();
+    SysMLv2Parser parser = SysMLv2Mill.parser();
+    Optional<ASTSysMLModel> ast = parser.parse(model.toString());
+
+    assertFalse(parser.hasErrors());
+    assertTrue(ast.isPresent());
+  }
+
+  @Test
+  public void testS55() throws IOException {
+    Path model = Paths.get(INTRO_PATH + "s55.sysml");
+
+    SysMLv2Mill.init();
+    SysMLv2Parser parser = SysMLv2Mill.parser();
+    Optional<ASTSysMLModel> ast = parser.parse(model.toString());
+
+    assertFalse(parser.hasErrors());
+    assertTrue(ast.isPresent());
+  }
+
+  @Test
+  public void testS56() throws IOException {
+    Path model = Paths.get(INTRO_PATH + "s56.sysml");
+
+    SysMLv2Mill.init();
+    SysMLv2Parser parser = SysMLv2Mill.parser();
+    Optional<ASTSysMLModel> ast = parser.parse(model.toString());
+
+    assertFalse(parser.hasErrors());
+    assertTrue(ast.isPresent());
+  }
+
 }
