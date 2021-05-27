@@ -6,13 +6,13 @@ grammar SysMLActivityDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
 
   start SysMLElement;
 
-  symbol scope ActionDef implements SysMLType =
+  symbol scope ActionDef implements SysMLType, ADElement =
     SysMLModifier? "action" "def" Name ("(" (SysMLParameter || ",")* ")")?
     ("{"
       (ADElement | SysMLImportStatement)*
     "}" | ";") ;
 
-  symbol scope ADOpaqueAction implements SysMLType =
+  ADOpaqueActionDef extends ActionDef =
     SysMLModifier? "action" "def" Name ("(" (SysMLParameter || ",")* ")")? "{"
       "language" lang:String
     "}";

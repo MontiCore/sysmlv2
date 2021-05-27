@@ -14,7 +14,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class SysMLv2ParserTest {
+public class SysMLv2SlidesParserTest {
 
   private static final String INTRO_PATH = "src/test/resources/parser/";
 
