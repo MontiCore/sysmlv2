@@ -42,5 +42,29 @@ public class SysMLv2CustomParserTest {
     assertTrue(ast.isPresent());
   }
 
+  @Test
+  public void testACDefInACElement() throws IOException {
+    Path model = Paths.get(INTRO_PATH + "acdef_in_element.sysml");
+
+    SysMLv2Mill.init();
+    SysMLv2Parser parser = SysMLv2Mill.parser();
+    Optional<ASTSysMLModel> ast = parser.parse(model.toString());
+
+    assertFalse(parser.hasErrors());
+    assertTrue(ast.isPresent());
+  }
+
+  @Test
+  public void testOpaqueACDefInACElement() throws IOException {
+    Path model = Paths.get(INTRO_PATH + "opaque_acdef_in_element.sysml");
+
+    SysMLv2Mill.init();
+    SysMLv2Parser parser = SysMLv2Mill.parser();
+    Optional<ASTSysMLModel> ast = parser.parse(model.toString());
+
+    assertFalse(parser.hasErrors());
+    assertTrue(ast.isPresent());
+  }
+
 
 }
