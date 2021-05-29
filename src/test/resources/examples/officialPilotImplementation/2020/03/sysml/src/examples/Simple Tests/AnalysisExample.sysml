@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package AnalysisExample {
 	import ISQ::*;
 	import ScalarFunctions::*;

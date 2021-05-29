@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package Vehicles{
 	package useOfDefs{
 	  block a :> Vehicles::defs::b;

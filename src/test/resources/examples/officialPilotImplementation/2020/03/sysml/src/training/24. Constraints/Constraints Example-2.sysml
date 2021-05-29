@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'Constraints Example-2' {
 	import ISQ::*;
 	import SI::*;

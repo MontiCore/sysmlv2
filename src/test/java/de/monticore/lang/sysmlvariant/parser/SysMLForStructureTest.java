@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlvariant.parser;
 
 import de.monticore.lang.sysml.utils.AbstractSysMLTest;

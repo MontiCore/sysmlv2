@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'Requirement Groups' {
 	import 'Requirement Definitions'::*;
 	import 'Requirement Usages'::*;

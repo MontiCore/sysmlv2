@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '15_08-Range Restriction' {
 	import SI::*;
 	import '15_01-Constants'::'Mathematical Constants'::pi;

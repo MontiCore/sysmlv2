@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'Parts Example-1' {
 	
 	// Definitions

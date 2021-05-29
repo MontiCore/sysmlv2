@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * Example usages of elements from the vehicle definitions model.
  **/

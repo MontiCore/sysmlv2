@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'Conditional Succession Example' {
 	block Scene;
 	block Image {

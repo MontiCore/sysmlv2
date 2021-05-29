@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'INCOSE IW 2020 Demo' {
 	value type FuelCmd;
 	

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '6-Individual and Snapshots' {
 	import ScalarValues::Real;
 	import Time::DateTime;

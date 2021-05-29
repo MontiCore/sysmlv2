@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 block Camera {
 	
 	perform takePicture[*] as PictureTaking::takePicture;

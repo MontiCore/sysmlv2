@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '5-State-based Behavior-1' {
 	import ScalarValues::*;
 	

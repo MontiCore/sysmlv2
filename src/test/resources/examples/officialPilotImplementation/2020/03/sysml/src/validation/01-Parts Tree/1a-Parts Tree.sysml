@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '1a-Parts Tree' {
 	import Base::*;
 	import ScalarValues::*;

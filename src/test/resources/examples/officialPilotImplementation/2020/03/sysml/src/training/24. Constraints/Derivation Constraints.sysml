@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'Derivation Constraints' {
 	import 'Constraints Example-1'::*;
 	

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'Individuals and Roles' {
 	import 'Blocks Example'::*;
 	

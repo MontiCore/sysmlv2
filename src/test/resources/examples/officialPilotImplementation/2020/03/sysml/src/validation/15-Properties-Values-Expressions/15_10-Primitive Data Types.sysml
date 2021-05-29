@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '15.10-Primitive Data Types' {
 	/*
 	 * The following primitive data types are defined in the normative Kernel model library.

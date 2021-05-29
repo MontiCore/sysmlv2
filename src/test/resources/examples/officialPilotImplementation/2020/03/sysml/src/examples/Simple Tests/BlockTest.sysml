@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package BlockTest {
 	
 	part f: A;

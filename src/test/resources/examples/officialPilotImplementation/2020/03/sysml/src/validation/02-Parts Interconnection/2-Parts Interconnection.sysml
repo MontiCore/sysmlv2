@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '2-Parts Interconnection' {
 	import '1a-Parts Tree'::*;
 	

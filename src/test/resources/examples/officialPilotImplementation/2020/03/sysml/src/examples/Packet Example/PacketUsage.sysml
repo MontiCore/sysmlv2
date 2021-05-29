@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'Packet Usage' {
 	public import Packets::*;
 	private import ScalarValues::Real;

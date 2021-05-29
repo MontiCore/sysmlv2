@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /** This is the very start of a library for Arrowhead Framework
  * I will be experimenting
  */

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * International system of quantities (ISQ), as defined in ISO/IEC 80000
  */

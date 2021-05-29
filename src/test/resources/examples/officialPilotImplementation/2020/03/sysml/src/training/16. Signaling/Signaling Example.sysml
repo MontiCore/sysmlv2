@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'Signaling Example' {
 	block Scene;
 	block Image;

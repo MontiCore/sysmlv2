@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'Fork Join Example' {
 	import ScalarValues::*;
 	

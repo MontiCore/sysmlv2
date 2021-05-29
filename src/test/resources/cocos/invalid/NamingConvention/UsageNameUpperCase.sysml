@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'UsageNameUpperCase' {
 	block Vehicle {
 		value CapitalizedMass : Real;

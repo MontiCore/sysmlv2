@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package eseidewitz_VehicleModel_update{
     package ModelLibrary{
         package PartDefinitions{

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package HSUVDynamics {
 	import ScalarValues::Real;
 	import BaseFunctions::size;

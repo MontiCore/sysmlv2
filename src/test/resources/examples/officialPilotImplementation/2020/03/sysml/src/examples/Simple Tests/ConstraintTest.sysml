@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package ConstraintTest {
 	import ISQ::MassValue;
 	import SI::kg;

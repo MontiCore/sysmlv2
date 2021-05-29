@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '15_11-Variable Length Collection Types' {
 	import ScalarValues::*;
 	import NonScalarValues::*;

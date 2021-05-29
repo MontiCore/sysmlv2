@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'Individuals and Snapshots Example' {
 	import 'Blocks Example'::*;
 	

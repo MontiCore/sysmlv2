@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 // Need ability to expand and collapse containment structures. - Done
 package sfriedenthal_VehicleModel_1{
     package Definitions{

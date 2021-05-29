@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /** Mandatory Services and Systems */
 package AHFCoreLib {
 	import AHFProfileLib::*;

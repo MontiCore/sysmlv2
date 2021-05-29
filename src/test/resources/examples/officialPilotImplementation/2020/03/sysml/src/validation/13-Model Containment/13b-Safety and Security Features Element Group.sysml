@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '13b-Safety and Security Features Element Group' {
 	
 	part vehicle1_c1: '2-Parts Interconnection'::VehicleA {
