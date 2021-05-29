@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '15_13-Discretely Sampled Function Value' {
 	import NonScalarValues::SampledFunctionValue;
 	import ISQ::*;

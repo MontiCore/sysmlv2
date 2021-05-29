@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '15_19-Materials with Properties' {
 	import SI::*;
 	

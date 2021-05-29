@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '4a1-Functional Allocation' {
 	import '2-Parts Interconnection'::*;
 	import '3a-Function-based Behavior'::*;

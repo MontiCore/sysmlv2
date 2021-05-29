@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'Activity Example-1' {
 	block Scene;
 	block Image;

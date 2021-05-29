@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'Requirement Usages' {
 	import SI::*;
 	import 'Requirement Definitions'::*;

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'State Decomposition-1' {
 	
 	value type VehicleStartSignal;

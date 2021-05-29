@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '1c-Parts Tree Redefinition' {
 	import Base::*;
 	import ScalarValues::*;

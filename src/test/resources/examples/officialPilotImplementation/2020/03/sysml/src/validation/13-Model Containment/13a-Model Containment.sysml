@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '13a-Model Containment' {
 	import '2-Parts Interconnection'::*;
 	// import '8-Requirements';

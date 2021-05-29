@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package Packets {
 	private import ScalarValues::*;
 	private import Time::DateTime;

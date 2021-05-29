@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * Definition of SI unit prefixes as specified in ISO/IEC 80000-1
  */

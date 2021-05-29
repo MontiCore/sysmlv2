@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * US customary units defined w.r.t. SI units
  * Conversion factors are taken from NIST SP 811 Appendix B

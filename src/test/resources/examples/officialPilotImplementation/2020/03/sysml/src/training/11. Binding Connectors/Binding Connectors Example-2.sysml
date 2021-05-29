@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'Binding Connectors Example-2' {
 	import 'Port Example'::*;
 	

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.prettyprint;
 
 import de.monticore.lang.sysml.basics.sysmldefault.sysmlvisibility._ast.ASTPackageElementVisibilityIndicatorStd;

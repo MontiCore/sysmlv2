@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /** This is the Norwegian use-case for Arrowhead Framework */
 package AHFNorway {
 	// The use-case is for Productive4.0 and Arrowhead Tools

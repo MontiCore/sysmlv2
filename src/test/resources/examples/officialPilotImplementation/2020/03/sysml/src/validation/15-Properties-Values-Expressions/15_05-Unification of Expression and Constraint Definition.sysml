@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '15_05-Unification of Expression and Constraint Definition' {
 	import '15_03-Value Expression'::*;
 	

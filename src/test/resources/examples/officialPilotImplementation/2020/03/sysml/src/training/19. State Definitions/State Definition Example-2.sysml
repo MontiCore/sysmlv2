@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'State Definition Example-2' {
 	
 	value type VehicleStartSignal;

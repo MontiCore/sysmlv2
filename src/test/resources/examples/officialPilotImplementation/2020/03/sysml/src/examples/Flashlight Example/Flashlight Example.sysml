@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'Flashlight Example' {
 	
 	value type OnOffCmd;

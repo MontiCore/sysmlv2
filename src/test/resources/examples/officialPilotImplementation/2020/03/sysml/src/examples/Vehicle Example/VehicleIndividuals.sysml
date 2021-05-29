@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package VehicleIndividuals {
 	import VehicleUsages::*;
 	import Time::DateTime;

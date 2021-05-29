@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.parser.examples.basics;
 
 import de.monticore.lang.sysml.basics.interfaces.sysmlshared._ast.ASTUnit;

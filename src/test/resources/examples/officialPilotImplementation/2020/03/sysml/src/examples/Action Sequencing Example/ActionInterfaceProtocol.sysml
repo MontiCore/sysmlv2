@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package ActionInterfaceProtocol {
 	
 	activity SendRequest1 (out request1);

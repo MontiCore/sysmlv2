@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package BumperBotCyber {
 	import ScalarValues::*; // not ex-exported
 	private part UltraSonic {

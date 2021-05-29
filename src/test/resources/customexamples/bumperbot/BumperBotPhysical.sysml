@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package BumperBotPhysical {
   	/* Comment regarding the package BumperBotPhysical */
 	private import ScalarValues::*; // not ex-exported

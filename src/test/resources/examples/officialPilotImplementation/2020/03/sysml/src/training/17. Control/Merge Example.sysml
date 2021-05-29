@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'Merge Example' {
 	block Scene;
 	block Image;

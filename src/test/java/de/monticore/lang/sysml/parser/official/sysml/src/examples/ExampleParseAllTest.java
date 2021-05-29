@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml.parser.official.sysml.src.examples;
 
 import de.monticore.lang.sysml.utils.SysMLParserForTesting;

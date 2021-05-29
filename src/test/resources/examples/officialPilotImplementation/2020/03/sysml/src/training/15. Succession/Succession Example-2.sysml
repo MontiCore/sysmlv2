@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'Succession Example-2' {
 	block Scene;
 	block Image;

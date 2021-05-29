@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 activity DecisionTest {
 	value x = 1;
 	

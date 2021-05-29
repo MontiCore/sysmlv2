@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '15_03-Value Expression' {
     import SI::*;
     import USCustomaryUnits::*;

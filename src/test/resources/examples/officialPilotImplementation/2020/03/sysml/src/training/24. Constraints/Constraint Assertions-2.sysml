@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package 'Constraint Assertions-2' {
 	import ISQ::*;
 	import SI::*;

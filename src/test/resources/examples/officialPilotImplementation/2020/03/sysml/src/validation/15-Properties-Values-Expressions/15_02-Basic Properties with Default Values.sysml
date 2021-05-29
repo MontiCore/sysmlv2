@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '15_02-Basic Properties with Default Values' {
     import SI::*;
     import USCustomaryUnits::*;

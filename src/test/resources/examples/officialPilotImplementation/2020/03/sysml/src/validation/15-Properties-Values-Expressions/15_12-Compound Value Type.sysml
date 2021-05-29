@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '15_12-Compound Value Type' {
     import ISQ::*;
     import BasicGeometry::*;

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 activity ControlNodeTest {
 	action A1;
 	then J;

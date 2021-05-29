@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '3a-Function-based Behavior-' {
 	
 	// ITEMS

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * Example from the SysML 1.6 spec, subclause 8.4.5 Constraining Decomposition.
  */

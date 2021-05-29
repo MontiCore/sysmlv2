@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 // SysML v2 Interpretation of the SysML v1 Room Connection Example
 package RoomModel { 
     package RoomDefinitionModelLibrary{

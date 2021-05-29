@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package '8-Requirements' {
 	import ISQ::*;
 	import SI::*;

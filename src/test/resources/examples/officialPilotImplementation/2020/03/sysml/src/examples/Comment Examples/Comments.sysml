@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /** Documentation Comment */
 package Comments {
 	comment doc_about_doc /** Comment about Comment */
