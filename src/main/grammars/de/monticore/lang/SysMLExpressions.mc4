@@ -15,4 +15,11 @@ component grammar SysMLExpressions extends de.monticore.expressions.CommonExpres
    */
   SysMLFieldAccessExpression extends FieldAccessExpression implements Expression <290> =
     Expression "::" Name;
+
+  SysMLCollectionExpression implements Expression <310> =
+    "{" (Expression || ",")* "}";
+
+  SysMLAndOpExpression implements Expression <120>, InfixExpression =
+    left:Expression operator:"&" right:Expression;
+
 }

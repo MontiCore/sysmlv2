@@ -48,7 +48,10 @@ grammar SysMLBlockDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
     Name SysMLPropertyModifier ";";
 
   SysMLAttribute implements BDUsageMember, Field = SysMLModifier? SysMLFeatureDirection? ("attribute" | "value")?
-    Name SysMLPropertyModifier ";";
+    Name SysMLPropertyModifier
+    ("{"
+      SysMLAttribute*
+    "}" | ";") ;
 
   SysMLPropertyModifier =
     ( ":" types:(MCType || ",")+ |

@@ -539,4 +539,75 @@ public class SysMLv2SlidesParserTest {
     assertTrue(ast.isPresent());
   }
 
+  @Test
+  public void testS62() throws IOException {
+    Path model = Paths.get(INTRO_PATH + "s62.sysml");
+
+    SysMLv2Mill.init();
+    SysMLv2Parser parser = SysMLv2Mill.parser();
+    Optional<ASTSysMLModel> ast = parser.parse(model.toString());
+
+    assertFalse(parser.hasErrors());
+    assertTrue(ast.isPresent());
+  }
+
+  @Test
+  public void testS63() throws IOException {
+    Path model = Paths.get(INTRO_PATH + "s63.sysml");
+
+    SysMLv2Mill.init();
+    SysMLv2Parser parser = SysMLv2Mill.parser();
+    Optional<ASTSysMLModel> ast = parser.parse(model.toString());
+
+    assertFalse(parser.hasErrors());
+    assertTrue(ast.isPresent());
+  }
+
+  @Test
+  public void testS64() throws IOException {
+    Path model = Paths.get(INTRO_PATH + "s64.sysml");
+
+    SysMLv2Mill.init();
+    SysMLv2Parser parser = SysMLv2Mill.parser();
+    Optional<ASTSysMLModel> ast = parser.parse(model.toString());
+
+    assertFalse(parser.hasErrors());
+    assertTrue(ast.isPresent());
+  }
+
+  @Test
+  public void testS65() throws IOException {
+    Path model = Paths.get(INTRO_PATH + "s65.sysml");
+
+    SysMLv2Mill.init();
+    SysMLv2Parser parser = SysMLv2Mill.parser();
+    Optional<ASTSysMLModel> ast = parser.parse(model.toString());
+
+    assertFalse(parser.hasErrors());
+    assertTrue(ast.isPresent());
+  }
+
+  @Test
+  public void testS66() throws IOException {
+    Path model = Paths.get(INTRO_PATH + "s66.sysml");
+
+    SysMLv2Mill.init();
+    SysMLv2Parser parser = SysMLv2Mill.parser();
+    Optional<ASTSysMLModel> ast = parser.parse(model.toString());
+
+    assertFalse(parser.hasErrors());
+    assertTrue(ast.isPresent());
+  }
+
+  @Test
+  public void testS67() throws IOException {
+    Path model = Paths.get(INTRO_PATH + "s67.sysml");
+
+    SysMLv2Mill.init();
+    SysMLv2Parser parser = SysMLv2Mill.parser();
+    Optional<ASTSysMLModel> ast = parser.parse(model.toString());
+
+    assertFalse(parser.hasErrors());
+    assertTrue(ast.isPresent());
+  }
 }
