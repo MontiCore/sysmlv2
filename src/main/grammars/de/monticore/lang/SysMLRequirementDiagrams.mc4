@@ -1,0 +1,31 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+grammar SysMLRequirementDiagrams extends de.monticore.lang.SysMLParametrics {
+
+  start SysMLElement;
+
+  symbol scope RequirementDef implements SysMLType =
+    "requirement" "def" ("id" id:Name)? Name SysMLSpecialization?
+    RequirementBody;
+
+  symbol scope RequirementUsage implements ParametricsElement =
+    "requirement" ("id" id:Name)? Name (":" MCType)?
+    RequirementBody;
+
+  RequirementBody =
+    ("{"
+      (RequirementSubject | SysMLAttribute | SysMLAssumption |
+       RequirementUsage   | RequirementReference)*
+    "}" | ";") ;
+
+  SysMLAssumption = (["require"] | ["assume"])? ConstraintUsage;
+
+  symbol RequirementSubject = "subject" Name (":" MCType | "=" binding:Expression ) ";";
+
+  RequirementReference = "require" Name@RequirementUsage;
+
+  RequirementSatisfaction implements BDUsageMember, ADElement =
+    "satisfy" req:MCQualifiedName "by" subject:MCQualifiedName ";" ;
+
+}
