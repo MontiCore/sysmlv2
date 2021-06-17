@@ -16,7 +16,7 @@ component grammar SysMLBasis extends de.monticore.literals.MCCommonLiterals,
    * Use custom SysMLModifier as UMLModifier is not applicable and would
    * lead to a complete override or a non-conservative extension.
    */
-  SysMLModifier = (["public"] | ["private"] | ["protected"] | ["package"] | ["abstract"])*;
+  SysMLModifier = (["public"] | ["private"] | ["protected"] | ["abstract"])*;
 
   SysMLMultiplicity = Cardinality ["ordered"]? ["nonunique"]? ;
 

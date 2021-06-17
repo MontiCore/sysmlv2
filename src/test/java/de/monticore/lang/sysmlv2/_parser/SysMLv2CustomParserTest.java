@@ -1,8 +1,12 @@
 package de.monticore.lang.sysmlv2._parser;
 
 
+import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
+import de.monticore.lang.sysmlparametrics._symboltable.ConstraintDefSymbol;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
+import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
+import de.monticore.lang.sysmlv2._symboltable.SysMLv2ScopesGenitorDelegator;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -11,8 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class SysMLv2CustomParserTest {
 
@@ -77,6 +80,23 @@ public class SysMLv2CustomParserTest {
     assertFalse(parser.hasErrors());
     assertTrue(ast.isPresent());
   }
+
+  @Test
+  public void testEmptyPackage() throws IOException {
+    Path model = Paths.get(MODEL_PATH + "EmptyPackage.sysml");
+
+    SysMLv2Mill.init();
+    SysMLv2Parser parser = SysMLv2Mill.parser();
+    Optional<ASTSysMLModel> ast = parser.parse(model.toString());
+
+    assertFalse(parser.hasErrors());
+    assertTrue(ast.isPresent());
+
+    assertEquals(1, ast.get().sizeSysMLElements());
+    assertTrue( ast.get().getSysMLElement(0)instanceof ASTSysMLPackage);
+    System.out.println(ast.get());
+  }
+
 
 
 }
