@@ -37,8 +37,8 @@ grammar SysMLActivityDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
   ACItemProperty implements ADElement = ItemProperty;
 
   ADSuccession implements ADElement =
-    ("succession" src:MCQualifiedName)? ("if" constraint:Expression)? ("else")?
-    "then" tgt:MCQualifiedName ";";
+    (("succession" src:MCQualifiedName)? ("if" constraint:Expression)?
+    "then" | "else") tgt:MCQualifiedName ";";
 
   ADStart implements ADElement = "first" node:MCQualifiedName ";";
 
