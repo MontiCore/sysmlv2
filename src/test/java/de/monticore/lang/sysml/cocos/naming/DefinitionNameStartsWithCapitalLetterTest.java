@@ -63,7 +63,7 @@ public class DefinitionNameStartsWithCapitalLetterTest extends AbstractSysMLTest
         Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.DefinitionNameStartsWithCapitalLetter))+" Name "
                 + "\"vehicle\" should start "
                 + "with a capital letter.",
-            new SourcePosition(4, 7, "Blocks Example.sysml"))
+            new SourcePosition(5, 7, "Blocks Example.sysml"))
     );
 
     Assert.assertErrors(expectedWarnings, Log.getFindings());

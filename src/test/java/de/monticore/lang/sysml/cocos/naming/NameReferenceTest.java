@@ -68,7 +68,7 @@ public class NameReferenceTest extends AbstractSysMLTest {
     Collection<Finding> expectedWarnings = Arrays.asList(
         Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.NameReference)) +
                 " Reference NeverDefined could not be resolved.",
-            new SourcePosition(2, 14, "ReferenceIsMissing.sysml"))
+            new SourcePosition(3, 14, "ReferenceIsMissing.sysml"))
     );
 
     Assert.assertErrors(expectedWarnings, Log.getFindings());

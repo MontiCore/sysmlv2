@@ -61,7 +61,7 @@ public class ArtifactStartsWithPackageTest extends AbstractSysMLTest {
     Collection<Finding> expectedWarnings = Arrays.asList(
         Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.ArtifactStartsWithPackage))+
                 " Each artifact should start with its a package to organize the model elements.",
-            new SourcePosition(1, 0, "BlockIsFirstElement.sysml"))
+            new SourcePosition(2, 0, "BlockIsFirstElement.sysml"))
     );
 
     Assert.assertErrors(expectedWarnings, Log.getFindings());

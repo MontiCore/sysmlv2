@@ -62,10 +62,10 @@ public class UsageNameStartsWithLowerCaseLetterTest extends AbstractSysMLTest {
     Collection<Finding> expectedWarnings = Arrays.asList(
         Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.UsageNameStartsWithLowerCase))+
             " Name " + "\"CapitalizedMass\"" + " should start with a lower case letter.",
-            new SourcePosition(3, 8, "UsageNameUpperCase.sysml")),
+            new SourcePosition(4, 8, "UsageNameUpperCase.sysml")),
         Finding.warning(SysMLCoCos.getErrorCode((SysMLCoCoName.UsageNameStartsWithLowerCase))+
                 " Name " + "\"CapitalizedStatus\"" + " should start with a lower case letter.",
-            new SourcePosition(6, 7, "UsageNameUpperCase.sysml"))
+            new SourcePosition(7, 7, "UsageNameUpperCase.sysml"))
     );
 
     Assert.assertErrors(expectedWarnings, Log.getFindings());
