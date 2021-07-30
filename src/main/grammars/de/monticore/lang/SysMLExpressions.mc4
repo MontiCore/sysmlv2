@@ -1,0 +1,25 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+component grammar SysMLExpressions extends de.monticore.expressions.CommonExpressions,
+                                           de.monticore.expressions.AssignmentExpressions {
+
+  /** Extends the usual FieldAccessExpression by introducing a SysML specific
+   *  notation of writing qualified names.
+   *  This is syntactically similar to package names:
+   *  So when the language shall also allow QualifiedNames as Expressions,
+   *  they might be parsed here. E.g. in "x::y::Person", "x" is
+   *  parsed as NameExpression, even though it is a package name.
+   *  This is to be resolved via SymbolTable.
+   *  When resolved, the AST should be restructured directly after the parsing.
+   */
+  SysMLFieldAccessExpression extends FieldAccessExpression implements Expression <290> =
+    Expression "::" Name;
+
+  SysMLCollectionExpression implements Expression <310> =
+    "{" (Expression || ",")* "}";
+
+  SysMLAndOpExpression implements Expression <120>, InfixExpression =
+    left:Expression operator:"&" right:Expression;
+
+}

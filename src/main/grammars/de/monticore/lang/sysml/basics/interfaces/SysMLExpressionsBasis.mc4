@@ -1,6 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-package de.monticore.lang.sysml.basics.interfaces;
-
-component grammar SysMLExpressionsBasis extends de.monticore.expressions.ExpressionsBasis  {
-  interface ExpressionMember;
-}
