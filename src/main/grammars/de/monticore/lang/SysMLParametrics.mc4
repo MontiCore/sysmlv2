@@ -1,0 +1,28 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+grammar SysMLParametrics extends de.monticore.lang.SysMLBlockDiagrams,
+                                 de.monticore.lang.SysMLActivityDiagrams {
+
+  start SysMLElement;
+
+  interface ParametricsElement extends BDUsageMember, ADElement;
+
+  symbol scope ConstraintDef implements SysMLType, ParametricsElement =
+    "constraint" "def" Name ("(" (SysMLParameter || ",")* ")")?
+    ConstraintBody;
+
+  symbol scope ConstraintUsage implements ParametricsElement =
+    ["assert"]? "constraint"? Name? (":" MCType)? ("(" (SysMLParameter || ",")* ")")?
+    ConstraintBody;
+
+  ConstraintBody =
+    ("{"
+      SysMLAttribute*
+      Expression?
+    "}" | ";") ;
+
+  ConstraintReference implements ParametricsElement =
+    "assert" Name@ConstraintUsage ("(" (SysMLParameter || ",")* ")")? ;
+
+}

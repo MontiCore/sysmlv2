@@ -1,0 +1,60 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+grammar SysMLActivityDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
+                                      de.monticore.lang.SysMLCommons {
+
+  start SysMLElement;
+
+  interface ADElement extends SysMLElement;
+
+  symbol scope ActionDef implements SysMLType, ADElement =
+    SysMLModifier? "action" "def" Name ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      (ADElement | SysMLImportStatement)*
+    "}" | ";") ;
+
+  ADOpaqueActionDef extends ActionDef =
+    SysMLModifier? "action" "def" Name ("(" (SysMLParameter || ",")* ")")? "{"
+      "language" lang:String
+    "}";
+
+
+  symbol scope ActionUsage implements ADElement =
+    suc:["then"]? "action" Name (":" MCType)? ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      ADElement*
+    "}" | ";") ;
+
+  ItemFlow implements ADElement = "flow" src:MCQualifiedName "to" tgt:MCQualifiedName ";";
+
+  // TODO exchange when possible
+  // BindingConnectionUsage implements ADElement;
+  ACBindingConnectionUsage implements ADElement = BindingConnectionUsage;
+
+  // TODO exchange when possible
+  // ItemProperty implements ADElement;
+  ACItemProperty implements ADElement = ItemProperty;
+
+  ADSuccession implements ADElement =
+    (("succession" src:MCQualifiedName)? ("if" constraint:Expression)?
+    "then" | "else") tgt:MCQualifiedName ";";
+
+  ADStart implements ADElement = "first" node:MCQualifiedName ";";
+
+  ADEnd implements ADElement = suc:["then"]? name:"done" ";";
+
+  ADDecision implements ADElement = suc:["then"]? Name? ";" ADSuccession*;
+
+  ADMerge implements ADElement = suc:["then"]? "merge" Name ";";
+
+  ADFork implements ADElement = suc:["then"]? "fork" Name? ";" ADSuccession*;
+
+  ADJoin implements ADElement = suc:["then"]? "join" Name ";";
+
+  ADAcceptAction implements ADElement = "action" Name "accept" SysMLParameter ("for" MCType)? ";";
+
+  ADSendAction implements ADElement = suc:["then"]? "send" SysMLInstantiation "to" MCType ";";
+
+
+}

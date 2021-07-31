@@ -1,0 +1,41 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+grammar SysMLStateMachineDiagrams extends de.monticore.lang.SysMLActivityDiagrams {
+
+  start SysMLElement;
+
+  interface STMUsageMember extends SysMLElement;
+
+  symbol scope StateDef implements SysMLType = "state" "def" Name ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      STMEntryAction?
+      STMDoAction?
+      STMExitAction?
+      STMUsageMember*
+    "}" | ";") ;
+
+  symbol scope StateUsage implements STMUsageMember =
+    "state" Name (":" MCType)? ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      STMEntryAction?
+      STMDoAction?
+      STMExitAction?
+      STMUsageMember*
+    "}" | ";") ;
+
+  symbol STMTransition implements STMUsageMember =
+    ("transition" Name)?
+    ("first" src:Name@StateUsage)?
+    ("accept" MCType)?
+    ("if" guard:Expression)?
+    ("do" "send" actionSignal:SysMLInstantiation "to" actionTgt:MCQualifiedName)?
+    "then" tgt:Name@StateUsage ";" ;
+
+  STMEntryAction = "entry" (ActionUsage | ";") ("then" initial:Name@StateUsage)?;
+
+  STMDoAction = "do" ActionUsage;
+
+  STMExitAction = "exit" ActionUsage;
+
+}
