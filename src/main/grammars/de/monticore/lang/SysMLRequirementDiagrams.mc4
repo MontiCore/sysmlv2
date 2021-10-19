@@ -23,7 +23,7 @@ grammar SysMLRequirementDiagrams extends de.monticore.lang.SysMLParametrics {
 
   symbol RequirementSubject = "subject" Name (":" MCType | "=" binding:Expression ) ";";
 
-  RequirementReference = "require" Name@RequirementUsage;
+  RequirementReference = "require" Name@RequirementUsage ";";
 
   RequirementSatisfaction implements BDUsageMember, ADElement =
     "satisfy" req:MCQualifiedName "by" subject:MCQualifiedName ";" ;
