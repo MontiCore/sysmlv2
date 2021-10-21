@@ -32,7 +32,7 @@ grammar SysMLStateMachineDiagrams extends de.monticore.lang.SysMLActivityDiagram
     ("do" "send" actionSignal:SysMLInstantiation "to" actionTgt:MCQualifiedName)?
     "then" tgt:Name@StateUsage ";" ;
 
-  STMEntryAction = "entry" (ActionUsage | ";") ("then" initial:Name@StateUsage)?;
+  STMEntryAction = "entry" (ActionUsage | ";") ("then" initial:Name@StateUsage ";")?;
 
   STMDoAction = "do" ActionUsage;
 
