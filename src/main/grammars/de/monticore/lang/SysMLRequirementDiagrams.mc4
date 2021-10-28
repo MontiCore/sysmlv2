@@ -4,13 +4,17 @@ package de.monticore.lang;
 grammar SysMLRequirementDiagrams extends de.monticore.lang.SysMLParametrics {
 
   start SysMLElement;
+  ParameterList = ("(" (SysMLParameter || ",")* ")");
 
   symbol scope RequirementDef implements SysMLType =
-    "requirement" "def" ("id" id:Name)? Name SysMLSpecialization?
+    "requirement" "def" ("id" id:Name)? Name
+    ParameterList?
+    SysMLSpecialization?
     RequirementBody;
 
   symbol scope RequirementUsage implements ParametricsElement =
     "requirement" ("id" id:Name)? Name (":" MCType)?
+    ParameterList?
     RequirementBody;
 
   RequirementBody =
