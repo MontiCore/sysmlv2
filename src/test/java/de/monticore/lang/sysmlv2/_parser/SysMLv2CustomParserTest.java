@@ -93,10 +93,19 @@ public class SysMLv2CustomParserTest {
     assertTrue(ast.isPresent());
 
     assertEquals(1, ast.get().sizeSysMLElements());
-    assertTrue( ast.get().getSysMLElement(0)instanceof ASTSysMLPackage);
+    assertTrue(ast.get().getSysMLElement(0) instanceof ASTSysMLPackage);
     System.out.println(ast.get());
   }
 
+  @Test
+  public void testInitialOutput() throws IOException {
+    Path model = Paths.get(MODEL_PATH + "Aut_Initial_Output.sysml");
 
+    SysMLv2Mill.init();
+    SysMLv2Parser parser = SysMLv2Mill.parser();
+    Optional<ASTSysMLModel> ast = parser.parse(model.toString());
 
+    assertFalse(parser.hasErrors());
+    assertTrue(ast.isPresent());
+  }
 }

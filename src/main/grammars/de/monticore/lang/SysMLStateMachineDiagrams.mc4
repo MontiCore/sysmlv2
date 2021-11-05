@@ -29,10 +29,11 @@ grammar SysMLStateMachineDiagrams extends de.monticore.lang.SysMLActivityDiagram
     ("first" src:Name@StateUsage)?
     ("accept" MCType)?
     ("if" guard:Expression)?
-    ("do" "send" actionSignal:SysMLInstantiation "to" actionTgt:MCQualifiedName)?
+    ("do" "send" actionSignal:Expression "to" actionTgt:MCQualifiedName)?
     "then" tgt:Name@StateUsage ";" ;
 
-  STMEntryAction = "entry" (ActionUsage | ";") ("then" initial:Name@StateUsage ";")?;
+  STMEntryAction = "entry" ("send" actionSignal:Expression "to" actionTgt:MCQualifiedName ";" | ActionUsage | ";")
+    ("then" initial:Name@StateUsage ";")?;
 
   STMDoAction = "do" ActionUsage;
 
