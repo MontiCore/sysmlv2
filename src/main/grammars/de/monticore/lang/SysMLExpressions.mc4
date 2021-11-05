@@ -2,7 +2,8 @@
 package de.monticore.lang;
 
 component grammar SysMLExpressions extends de.monticore.expressions.CommonExpressions,
-                                           de.monticore.expressions.AssignmentExpressions {
+                                           de.monticore.expressions.AssignmentExpressions,
+                                           de.monticore.types.MCBasicTypes {
 
   /** Extends the usual FieldAccessExpression by introducing a SysML specific
    *  notation of writing qualified names.
@@ -18,6 +19,8 @@ component grammar SysMLExpressions extends de.monticore.expressions.CommonExpres
 
   SysMLCollectionExpression implements Expression <310> =
     "{" (Expression || ",")* "}";
+
+  SysMLInstantiation implements Expression = MCType Arguments;
 
   SysMLAndOpExpression implements Expression <120>, InfixExpression =
     left:Expression operator:"&" right:Expression;
