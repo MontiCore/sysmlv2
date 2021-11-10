@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
+// TODO Was soll diese Grammatik eigentlich? Weg damit -> Basis
 component grammar SysMLCommons extends de.monticore.lang.SysMLExpressions, de.monticore.lang.SysMLBasis {
 
   /* Common connections */
@@ -9,12 +10,10 @@ component grammar SysMLCommons extends de.monticore.lang.SysMLExpressions, de.mo
 
   SysMLParameter implements Field = SysMLFeatureDirection? Name (":" MCType)? SysMLMultiplicity? ("=" binding:Expression)?;
 
-
   /* Inheritance */
   SysMLSpecialization = (":>" | "specializes") superDef:(MCObjectType || ",")+;
   SysMLSubsetting = (":>" | "subsets") fields:(MCQualifiedName || ",")+;
   SysMLRedefinition = (":>>" | "redefines") fields:(MCQualifiedName || ",")+;
-
 
   /* Common properties */
   symbol scope ItemProperty = SysMLModifier? SysMLFeatureDirection? "item"?

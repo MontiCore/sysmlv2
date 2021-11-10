@@ -9,7 +9,7 @@ grammar SysMLActivityDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
   interface ADElement extends SysMLElement;
 
   symbol scope ActionDef implements SysMLType, ADElement =
-    SysMLModifier? "action" "def" Name ("(" (SysMLParameter || ",")* ")")?
+    SysMLModifier? ("action" "def" | "activity") Name ("(" (SysMLParameter || ",")* ")")?
     ("{"
       (ADElement | SysMLImportStatement)*
     "}" | ";") ;
@@ -55,6 +55,5 @@ grammar SysMLActivityDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
   ADAcceptAction implements ADElement = "action" Name "accept" SysMLParameter ("for" MCType)? ";";
 
   ADSendAction implements ADElement = suc:["then"]? "send" SysMLInstantiation "to" MCType ";";
-
 
 }
