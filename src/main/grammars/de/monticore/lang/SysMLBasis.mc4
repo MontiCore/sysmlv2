@@ -10,6 +10,12 @@ component grammar SysMLBasis extends de.monticore.literals.MCCommonLiterals,
 
   interface symbol SysMLType extends SysMLElement, OOType;
 
+  /*
+   * Interface symbol 'SysMLUsage' provides a common interface for usage symbols,
+   * allowing symbol resolution based on interface type.
+   */
+  interface symbol scope SysMLUsage;
+
   SysMLQualifiedName extends MCQualifiedName = parts:(Name || "::")+;
 
   /*
