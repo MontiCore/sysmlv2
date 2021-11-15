@@ -2,13 +2,12 @@ package de.monticore.lang.sysmlrequirementdiagrams._parser;
 
 import de.monticore.lang.sysmlcommons._ast.ASTSysMLParameter;
 import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
-import de.monticore.lang.sysmlrequirementdiagrams._ast.ASTParameterList;
-import de.monticore.lang.sysmlrequirementdiagrams._ast.ASTRequirementDef;
-import de.monticore.lang.sysmlrequirementdiagrams._ast.ASTRequirementUsage;
+import de.monticore.lang.sysmlrequirementdiagrams._ast.*;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;

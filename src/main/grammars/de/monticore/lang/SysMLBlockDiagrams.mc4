@@ -37,7 +37,7 @@ grammar SysMLBlockDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
        (":>>" Expression ";")*
     "}") ;
 
-  symbol scope PartProperty implements BDUsageMember = SysMLModifier? SysMLFeatureDirection? "part"
+  symbol scope PartProperty implements BDUsageMember, SysMLUsage = SysMLModifier? SysMLFeatureDirection? "part"
     Name? SysMLPropertyModifier
     ("{"
       BDUsageMember*
@@ -69,7 +69,7 @@ grammar SysMLBlockDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
       BDUsageMember*
     "}" | ";") ;
 
-  symbol SysMLPortUsage implements BDUsageMember =
+  symbol SysMLPortUsage implements BDUsageMember, SysMLUsage =
     "port" (Name ":" conjugated:["~"]? MCType | SysMLRedefinition) ";";
 
   symbol scope ConnectionDef implements SysMLType = ("connection" | ["interface"]) "def" Name
@@ -93,7 +93,7 @@ grammar SysMLBlockDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
 
   // TODO exchange when possible
   // BindingConnectionUsage implements BDUsageMember;
-  BDBindingConnectionUsage implements BDUsageMember = BindingConnectionUsage;
+  BDBindingConnectionUsage implements BDUsageMember= BindingConnectionUsage;
 
   ItemStream implements BDUsageMember =
     "stream" ("of" MCType)? "from"? src:MCQualifiedName "to" tgt:MCQualifiedName ";";
