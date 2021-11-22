@@ -7,7 +7,7 @@ grammar SysMLStateMachineDiagrams extends de.monticore.lang.SysMLActivityDiagram
 
   interface STMUsageMember extends SysMLElement;
 
-  symbol scope StateDef implements SysMLType = "state" "def" Name ("(" (SysMLParameter || ",")* ")")?
+  symbol scope (shadowing) StateDef implements SysMLType = "state" "def" Name ("(" (SysMLParameter || ",")* ")")?
     ("{"
       STMEntryAction?
       STMDoAction?
@@ -15,7 +15,7 @@ grammar SysMLStateMachineDiagrams extends de.monticore.lang.SysMLActivityDiagram
       STMUsageMember*
     "}" | ";") ;
 
-  symbol scope StateUsage implements STMUsageMember, SysMLUsage =
+  symbol scope (shadowing) StateUsage implements STMUsageMember, SysMLUsage =
     "state" Name (":" MCType)? ("(" (SysMLParameter || ",")* ")")?
     ("{"
       STMEntryAction?

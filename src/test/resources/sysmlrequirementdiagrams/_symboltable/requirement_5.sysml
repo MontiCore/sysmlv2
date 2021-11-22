@@ -5,7 +5,7 @@ package Requirement_5 {
 
   part vehicle: Vehicle;
 
-  requirement requirementGroup {
+  requirement requirementUsage {
     // Setting primitive type as subject.
     subject mass = vehicle.mass;
   }

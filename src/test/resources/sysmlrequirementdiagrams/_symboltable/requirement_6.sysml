@@ -29,7 +29,7 @@ package Requirement_6 {
   requirement requirementWithoutSubject: RequirementWithoutSubject;
 
   // Requirement usage with subject defined for the first time
-  requirement requirementWithoutSubject: RequirementWithoutSubject {
+  requirement requirementWithSubjectDefined: RequirementWithoutSubject {
     subject vehicle: Vehicle;
   }
 
@@ -37,7 +37,7 @@ package Requirement_6 {
   requirement requirementWithSubject: SpecializedRequirementWithDefinedSubject;
 
   // Requirement usage with redefined subject
-  requirement requirementWithSubject: SpecializedRequirementWithDefinedSubject {
+  requirement requirementWithSubjectRedefined: SpecializedRequirementWithDefinedSubject {
     subject vehicle: Car;
   }
 

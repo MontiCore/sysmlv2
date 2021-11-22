@@ -6,13 +6,13 @@ grammar SysMLRequirementDiagrams extends de.monticore.lang.SysMLParametrics {
   start SysMLElement;
   ParameterList = ("(" (SysMLParameter || ",")* ")");
 
-  symbol scope RequirementDef implements SysMLType =
+  symbol scope (shadowing) RequirementDef implements SysMLType =
     "requirement" "def" ("id" id:Name)? Name
     ParameterList?
     SysMLSpecialization?
     RequirementBody;
 
-  symbol scope RequirementUsage implements ParametricsElement, SysMLUsage =
+  symbol scope (shadowing) RequirementUsage implements ParametricsElement, SysMLUsage =
     "requirement" ("id" id:Name)? Name (":" MCType)?
     ParameterList?
     RequirementBody;
@@ -28,6 +28,5 @@ grammar SysMLRequirementDiagrams extends de.monticore.lang.SysMLParametrics {
   RequirementReference = "require" Name@RequirementUsage ";";
 
   RequirementSatisfaction implements BDUsageMember, ADElement =
-    "satisfy" req:MCQualifiedName
-    ("by" subject:MCQualifiedName | ParameterList) ";";
+    "satisfy" req:MCQualifiedName "by" subject:MCQualifiedName ";";
 }
