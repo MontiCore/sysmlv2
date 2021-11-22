@@ -8,10 +8,9 @@ package Requirement_8 {
   }
 
   // Requirement group with not defined subject,
-  // with nested requirement requiring a subject of type 'Vehicle'.
+  // with nested requirement that also doesn't define a subject.
   requirement requirementGroup {
     requirement nestedRequirement1InGroup;
-    requirement nestedRequirement2InGroup: RequirementWithSubject;
   }
 
   requirement def RequirementWithoutSubjectWithNestedRequirements {

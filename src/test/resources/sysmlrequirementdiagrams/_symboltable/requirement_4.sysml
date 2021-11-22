@@ -5,8 +5,7 @@ package Requirement_4 {
     }
   }
 
-  // Multiple symbols with same name cause issue.
-  //part vehicle: Vehicle;
+  part vehicle: Vehicle;
 
   requirement requirementGroup {
     subject vehicle: Vehicle;

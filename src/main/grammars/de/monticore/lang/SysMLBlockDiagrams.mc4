@@ -8,7 +8,7 @@ grammar SysMLBlockDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
 
   interface BDUsageMember extends SysMLElement;
 
-  symbol scope PartDef implements SysMLType =
+  symbol scope (shadowing) PartDef implements SysMLType =
     SysMLModifier? ("part" "def" | "block") Name SysMLSpecialization?
     ("{"
       (BDUsageMember | SysMLElement | SysMLImportStatement)*
@@ -37,7 +37,7 @@ grammar SysMLBlockDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
        (":>>" Expression ";")*
     "}") ;
 
-  symbol scope PartProperty implements BDUsageMember, SysMLUsage = SysMLModifier? SysMLFeatureDirection? "part"
+  symbol scope (shadowing) PartProperty implements BDUsageMember, SysMLUsage = SysMLModifier? SysMLFeatureDirection? "part"
     Name? SysMLPropertyModifier
     ("{"
       BDUsageMember*
@@ -64,7 +64,7 @@ grammar SysMLBlockDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
   // ItemProperty implements BDUsageMember;
   BDItemProperty implements BDUsageMember = ItemProperty;
 
-  symbol scope SysMLPortDef implements SysMLType = SysMLModifier? "port" "def" Name
+  symbol scope (shadowing) SysMLPortDef implements SysMLType = SysMLModifier? "port" "def" Name
     ("{"
       BDUsageMember*
     "}" | ";") ;

@@ -14,7 +14,7 @@ package Requirement_7 {
   }
 
   // Specialized requirement definition with inherited subject
-  requirement def RequirementWithSubjectSpecialized :> RequirementWithSubject;
+  requirement def SpecializedRequirementWithSubject :> RequirementWithSubject;
 
   // Specialized requirement definition that redefines inherited subject
   requirement def SpecializedRequirementWithRedefinedSubject :> RequirementWithSubject {
@@ -22,13 +22,13 @@ package Requirement_7 {
   }
 
   // Requirement usage with predefined subject given by definition
-  requirement requirementWithSubject: RequirementWithSubject;
+  requirement requirementWithSubject1: RequirementWithSubject;
 
   // Requirement usage with predefined subject (redefined in definition)
-  requirement requirementWithoutSubject: SpecializedRequirementWithRedefinedSubject;
+  requirement requirementWithSubject2: SpecializedRequirementWithRedefinedSubject;
 
   // Requirement usage with redefined subject
-  requirement requirementWithSubject: SpecializedRequirementWithRedefinedSubject {
+  requirement requirementWithSpecializedSubject: SpecializedRequirementWithRedefinedSubject {
     subject vehicle: FlyingCar;
   }
 }

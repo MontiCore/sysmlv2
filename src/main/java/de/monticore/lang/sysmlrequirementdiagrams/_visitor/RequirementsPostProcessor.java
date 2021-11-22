@@ -14,9 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static de.monticore.lang.sysmlrequirementdiagrams.RequirementDiagramsHelper.getSubjectType;
-import static de.monticore.lang.sysmlrequirementdiagrams.RequirementDiagramsHelper.isCompatible;
-
 /**
  * RequirementsPostProcessor finds and sets the correct subject in the requirements.
  */
@@ -36,22 +33,23 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
     return subjects;
   }
 
-  protected void getInheritedSubjects(ASTSysMLSpecialization specialization, ArrayList<RequirementSubjectSymbol> subjects) {
+  protected void getInheritedSubjects(ASTSysMLSpecialization specialization,
+                                      ArrayList<RequirementSubjectSymbol> subjects) {
     // We only look for subjects from the immediate super types, because the super types
     // themselves should already have their valid subjects set by this point.
     for (ASTMCObjectType superDef : specialization.getSuperDefList()) {
       Optional<RequirementDefSymbol> superDefSym = ((SysMLv2Scope) specialization.getEnclosingScope())
-              .resolveRequirementDef(((ASTMCQualifiedType) superDef).getMCQualifiedName().toString());
+          .resolveRequirementDef(((ASTMCQualifiedType) superDef).getMCQualifiedName().toString());
 
       if (!superDefSym.isPresent()) {
         Log.error("Super requirement not found!");
       }
 
       List<RequirementSubjectSymbol> requirementSubjects = superDefSym.get()
-              .getAstNode()
-              .getSpannedScope()
-              .getRequirementSubjectSymbols()
-              .values();
+          .getAstNode()
+          .getSpannedScope()
+          .getRequirementSubjectSymbols()
+          .values();
 
       switch (requirementSubjects.size()) {
         case 0:
@@ -82,13 +80,20 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
       if (reqDef.getSpannedScope().getRequirementSubjectSymbols().values().size() > 0) {
         subject = Optional.ofNullable(reqDef.getSpannedScope().getRequirementSubjectSymbols().values().get(0));
       }
-    } else if (node.getEnclosingScope().getAstNode() instanceof ASTRequirementUsage) {
+    }
+    else if (node.getEnclosingScope().getAstNode() instanceof ASTRequirementUsage) {
       ASTRequirementUsage reqUsage = ((ASTRequirementUsage) node.getEnclosingScope().getAstNode());
       if (reqUsage.getSpannedScope().getRequirementSubjectSymbols().values().size() > 0) {
         subject = Optional.ofNullable(reqUsage.getSpannedScope().getRequirementSubjectSymbols().values().get(0));
       }
     }
     return subject;
+  }
+
+  protected boolean isNestedRequirement(ASTRequirementUsage node) {
+    boolean isNested = node.getEnclosingScope().getAstNode() instanceof ASTRequirementDef
+        || node.getEnclosingScope().getAstNode() instanceof ASTRequirementUsage;
+    return isNested;
   }
 
   /**
@@ -102,7 +107,7 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
     if (node.isPresentMCType()) {
       ASTMCQualifiedType usageType = (ASTMCQualifiedType) node.getMCType();
       Optional<RequirementDefSymbol> requirementDefSymbol = node.getEnclosingScope()
-              .resolveRequirementDef(usageType.getMCQualifiedName().toString());
+          .resolveRequirementDef(usageType.getMCQualifiedName().toString());
 
       // If requirement definition symbol is not found, raise an error.
       if (!requirementDefSymbol.isPresent()) {
@@ -110,7 +115,7 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
       }
       // Otherwise, get subject from requirement definition.
       List<RequirementSubjectSymbol> subjectSymbols = requirementDefSymbol.get().getAstNode().getSpannedScope()
-              .getRequirementSubjectSymbols().values();
+          .getRequirementSubjectSymbols().values();
       if (subjectSymbols.size() > 0) {
         subject = Optional.ofNullable(subjectSymbols.get(0));
       }
@@ -128,7 +133,7 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
     RequirementSubjectSymbol current = subjects.get(0);
     for (RequirementSubjectSymbol subject : subjects) {
       // What happens if an inherited subject has a bound value?
-      if (!isCompatible(subject, current)) {
+      if (!current.isCompatible(subject)) {
         Log.error("Inherited requirements do not have the same subject type!");
       }
     }
@@ -163,7 +168,8 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
           break;
         case 1:
           // Check if the current requirement subject is compatible with the inherited subjects.
-          if (!isCompatible(inheritedSubjects.get(0), node.getSpannedScope().getRequirementSubjectSymbols().values().get(0))) {
+          if (!node.getSpannedScope().getRequirementSubjectSymbols().values().get(0).isCompatible(
+              inheritedSubjects.get(0))) {
             Log.error("Specialized requirement does not have the same subject type as inherited ones!");
           }
           break;
@@ -193,7 +199,7 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
       reqUsageSubject = node.getSpannedScope().getRequirementSubjectSymbols().values().get(0);
       // If subject was redefined with an expression, resolve its type.
       if (reqUsageSubject.getAstNode().isPresentBinding()) {
-        if (getSubjectType(reqUsageSubject) == null) {
+        if (reqUsageSubject.getSubjectType() == null) {
           Log.error("Unable to resolve bound subject. Subject not found!");
         }
       }
@@ -203,9 +209,9 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
     Optional<RequirementSubjectSymbol> reqDefSubject = getRequirementDefinitionSubject(node);
     // Check subject type compatibility only if both subjects are present.
     if (reqDefSubject.isPresent() && reqUsageSubject != null) {
-      if (!isCompatible(reqDefSubject.get(), reqUsageSubject)) {
+      if (!reqUsageSubject.isCompatible(reqDefSubject.get())) {
         Log.error("Subject of requirement usage is not compatible with the subject of the corresponding" +
-                " requirement definition!");
+            " requirement definition!");
       }
     }
     // If subject was inherited and not redefined, then set it as req. usage subject.
@@ -221,15 +227,19 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
     Optional<RequirementSubjectSymbol> enclosingReqSubject = getEnclosingRequirementSubject(node);
     if (enclosingReqSubject.isPresent()) {
       if (reqUsageSubject != null && !reqUsageSubject.getAstNode().isPresentBinding()) {
-        if (!isCompatible(reqUsageSubject, enclosingReqSubject.get())) {
+        if (!enclosingReqSubject.get().isCompatible(reqUsageSubject)) {
           Log.error("Subject of requirement usage is not compatible with the subject of the " +
-                  "corresponding enclosing requirement!");
+              "corresponding enclosing requirement!");
         }
       }
       // If no subject is yet set, then set enclosing req. subject as current req. subject.
       else if (reqUsageSubject == null) {
         reqUsageSubject = enclosingReqSubject.get();
       }
+    }
+    else if (reqUsageSubject != null && isNestedRequirement(node)) {
+      Log.error("Subject of nested requirement is not compatible with the subject of the " +
+          "corresponding enclosing requirement!");
     }
 
     // If req. usage subject was found, then add it in the spanned scope.
