@@ -5,8 +5,10 @@ import de.monticore.lang.sysmlrequirementdiagrams._ast.ASTRequirementDef;
 import de.monticore.lang.sysmlrequirementdiagrams._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlrequirementdiagrams._symboltable.RequirementDefSymbol;
 import de.monticore.lang.sysmlrequirementdiagrams._symboltable.RequirementSubjectSymbol;
+import de.monticore.lang.sysmlrequirementdiagrams._symboltable.RequirementUsageSymbol;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2Scope;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.se_rwth.commons.logging.Log;
 
@@ -33,6 +35,12 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
     return subjects;
   }
 
+  /**
+   * Extracts all inherited subjects from the immediate super types.
+   *
+   * @param specialization ASTSysMLSpecialization
+   * @param subjects       ArrayList<RequirementSubjectSymbol> subjects
+   */
   protected void getInheritedSubjects(ASTSysMLSpecialization specialization,
                                       ArrayList<RequirementSubjectSymbol> subjects) {
     // We only look for subjects from the immediate super types, because the super types
@@ -41,27 +49,18 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
       Optional<RequirementDefSymbol> superDefSym = ((SysMLv2Scope) specialization.getEnclosingScope())
           .resolveRequirementDef(((ASTMCQualifiedType) superDef).getMCQualifiedName().toString());
 
-      if (!superDefSym.isPresent()) {
-        Log.error("Super requirement not found!");
-      }
-
       List<RequirementSubjectSymbol> requirementSubjects = superDefSym.get()
           .getAstNode()
           .getSpannedScope()
           .getRequirementSubjectSymbols()
           .values();
-
-      switch (requirementSubjects.size()) {
-        case 0:
-          // If no subject is present, then do nothing.
-          break;
-        case 1:
-          // If exactly one subject is present, then add it in the list.
-          subjects.add(requirementSubjects.get(0));
-          break;
-        default:
-          // Otherwise, log an error that multiple subjects were found.
-          Log.error("Multiple subjects found. A requirement can only have one subject.");
+      /*
+      If exactly one subject is present, then add it in the list.
+      If there are no subjects, then we don't care.
+      There can't be more than one subject.
+       */
+      if (requirementSubjects.size() == 1) {
+        subjects.add(requirementSubjects.get(0));
       }
     }
   }
@@ -90,10 +89,15 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
     return subject;
   }
 
+  /**
+   * Checks whether the given requirement usage is nested in another requirement definition or usage.
+   *
+   * @param node ASTRequirementUsage
+   * @return Boolean
+   */
   protected boolean isNestedRequirement(ASTRequirementUsage node) {
-    boolean isNested = node.getEnclosingScope().getAstNode() instanceof ASTRequirementDef
+    return node.getEnclosingScope().getAstNode() instanceof ASTRequirementDef
         || node.getEnclosingScope().getAstNode() instanceof ASTRequirementUsage;
-    return isNested;
   }
 
   /**
@@ -124,22 +128,6 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
   }
 
   /**
-   * Validates that types of the subjects are compatible with one another.
-   * NOTE: By compatibility, only equality of type is implemented as of now!
-   *
-   * @param subjects ArrayList<RequirementSubjectSymbol>
-   */
-  protected void validateSubjectsTypeCompatibility(ArrayList<RequirementSubjectSymbol> subjects) {
-    RequirementSubjectSymbol current = subjects.get(0);
-    for (RequirementSubjectSymbol subject : subjects) {
-      // What happens if an inherited subject has a bound value?
-      if (!current.isCompatible(subject)) {
-        Log.error("Inherited requirements do not have the same subject type!");
-      }
-    }
-  }
-
-  /**
    * Extracts inherited requirement subjects, then either:
    * 1. If current requirement def. defines a subject, then it is compatible to the inherited subject types.
    * 2. If it does not, then set the inherited subject as its subject.
@@ -148,33 +136,262 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
    * @param node ASTRequirementDef
    */
   protected void setSubjectInRequirementDefinition(ASTRequirementDef node) {
-    if (node.getSpannedScope().getRequirementSubjectSymbols().size() > 1) {
-      Log.error("Multiple subjects found. A requirement can only have one subject.");
-    }
-
     // We only need to set and check subject type for compatibility if there are inherited subjects.
     ArrayList<RequirementSubjectSymbol> inheritedSubjects = getInheritedSubjects(node);
     if (inheritedSubjects.size() > 0) {
-      validateSubjectsTypeCompatibility(inheritedSubjects);
+      // Validate all inherited subjects are compatible with each other.
+      RequirementSubjectSymbol compatibleSubject = getCompatibleSubject(inheritedSubjects);
       int subjectsSize = node.getSpannedScope().getRequirementSubjectSymbols().size();
-      switch (subjectsSize) {
-        case 0:
+      if (compatibleSubject != null) {
+        switch (subjectsSize) {
+          case 0:
             /*
              If subject is not in current req. definition, then add the subject to the spanned scope.
              The enclosing scope of this subject symbol is not changed and backward traversal from here
              will bring us to its actual enclosing scope.
              */
-          node.getSpannedScope().add(inheritedSubjects.get(0));
-          break;
-        case 1:
-          // Check if the current requirement subject is compatible with the inherited subjects.
-          if (!node.getSpannedScope().getRequirementSubjectSymbols().values().get(0).isCompatible(
-              inheritedSubjects.get(0))) {
-            Log.error("Specialized requirement does not have the same subject type as inherited ones!");
-          }
-          break;
+            node.getSpannedScope().add(compatibleSubject);
+            break;
+          case 1:
+            // Check if the current requirement subject is compatible with the inherited subjects.
+            RequirementSubjectSymbol currentSubject = node.getSpannedScope().getRequirementSubjectSymbols().values().get(
+                0);
+            if (!currentSubject.isCompatible(
+                compatibleSubject)) {
+              Log.error("Specialized requirement definition '" + node.getName() + "' with subject type '"
+                  + currentSubject.getSubjectType().getTypeInfo().getName() + "' is not compatible with "
+                  + "inherited subject type '" + compatibleSubject.getSubjectType().getTypeInfo().getName() + "'!");
+            }
+            break;
+        }
       }
     }
+  }
+
+  /**
+   * Extracts all subjects from a given requirement usage's feature typings.
+   *
+   * @param node ASTRequirementUsage
+   * @return List<RequirementSubjectSymbol>
+   */
+  protected List<RequirementSubjectSymbol> getSubjectsFromTypings(ASTRequirementUsage node) {
+    List<RequirementSubjectSymbol> subjects = new ArrayList<>();
+    if (node.isPresentMCType()) {
+      ASTMCQualifiedType usageType = (ASTMCQualifiedType) node.getMCType();
+      Optional<RequirementDefSymbol> symbol = node.getEnclosingScope()
+          .resolveRequirementDef(usageType.getMCQualifiedName().toString());
+
+      /*
+       * Since feature typing does exist, it's symbol must be resolvable. No need to check here.
+       * This is verified by CoCo 'FeatureTypingsInRequirementsMustExist'.
+       */
+
+      if (symbol.isPresent()) {
+        List<RequirementSubjectSymbol> subjectSymbols = symbol.get().getAstNode().getSpannedScope()
+            .getRequirementSubjectSymbols().values();
+        if (subjectSymbols.size() > 0) {
+          subjects.add(subjectSymbols.get(0));
+        }
+      }
+    }
+    return subjects;
+  }
+
+  /**
+   * Extracts all subjects from a given requirement usage's subsettings.
+   *
+   * @param node ASTRequirementUsage
+   * @return List<RequirementSubjectSymbol>
+   */
+  protected List<RequirementSubjectSymbol> getSubjectsFromSubsettings(ASTRequirementUsage node) {
+    List<RequirementSubjectSymbol> subjects = new ArrayList<>();
+    if (node.isPresentSysMLSubsetting()) {
+      // Extract subject from each subsetting
+      for (ASTMCQualifiedName field : node.getSysMLSubsetting().getFieldsList()) {
+        Optional<RequirementUsageSymbol> subsettingUsage = node.getEnclosingScope().resolveRequirementUsage(
+            field.getQName());
+
+        /*
+         * If subsetting usage exists, it's symbol must be resolvable. No need to check here.
+         * This is verified by CoCo 'SubsettedRequirementsMustExist'.
+         */
+
+        if (subsettingUsage.isPresent()
+            && subsettingUsage.get().getSpannedScope().getRequirementSubjectSymbols().size() > 0) {
+          subjects.add(subsettingUsage.get().getSpannedScope().getRequirementSubjectSymbols().values().get(0));
+        }
+      }
+    }
+    return subjects;
+  }
+
+  protected boolean isSuperType(RequirementSubjectSymbol subject, RequirementSubjectSymbol other) {
+    return other.isCompatible(subject);
+  }
+
+  protected boolean isSubType(RequirementSubjectSymbol subject, RequirementSubjectSymbol other) {
+    return subject.isCompatible(other);
+  }
+
+  /**
+   * Validates the the provided subjects are compatible as long as they fulfill any of the two criteria:
+   * 1. They are all of same types
+   * 2. All the subjects lie in the same inheritance chain, i.e. a subject is either a supertype
+   * of another subject or its subtype.
+   * Returns the most specialized subject as the compatible subject.
+   *
+   * @param subjects List<RequirementSubjectSymbol>
+   * @return RequirementSubjectSymbol
+   */
+  private RequirementSubjectSymbol getCompatibleSubject(List<RequirementSubjectSymbol> subjects) {
+    RequirementSubjectSymbol subject = null;
+    if (subjects.size() > 1) {
+      RequirementSubjectSymbol superType = subjects.get(0);
+      RequirementSubjectSymbol subType = subjects.get(0);
+
+      for (RequirementSubjectSymbol subj : subjects) {
+        if (superType.getSubjectType().getTypeInfo().getName().equals(subType.getSubjectType().getTypeInfo().getName())
+            &&
+            superType.getSubjectType().getTypeInfo().getName().equals(subj.getSubjectType().getTypeInfo().getName())) {
+          continue;
+        }
+
+        // First, we extract all relations of the current subject with the current super and sub types.
+        boolean isSuperTypeOfSuperType = isSuperType(subj, superType);
+        boolean isSubTypeOfSuperType = isSubType(subj, superType);
+        boolean isSuperTypeOfSubType = isSuperType(subj, subType);
+        boolean isSubTypeOfSubType = isSubType(subj, subType);
+
+        // If current subject is supertype of the current supertype, we assign
+        // current subject as the new supertype.
+        if (isSuperTypeOfSuperType) {
+          superType = subj;
+        }
+        // If current subject is subtype of the current subtype, we assign
+        // current subject as the new subtype.
+        else if (isSubTypeOfSubType) {
+          subType = subj;
+        }
+        /*
+        If current subject is the subtype of the current supertype, then it must
+        also be the supertype of the current subtype.
+        Conversely, if current subject is the supertype of the current subtype, then it must
+        also be the subtype of the current supertype.
+         */
+        else if (!(isSuperTypeOfSubType && isSubTypeOfSuperType)) {
+          Log.error("Subjects found to be incompatible with one another!");
+        }
+      }
+    }
+    else if (subjects.size() == 1) {
+      subject = subjects.get(0);
+    }
+    return subject;
+  }
+
+  /**
+   * Validates compatibility of current subject with the enclosing requirement subject.
+   * If current subject does not exist, then sets the enclosing requirement subject as its subject.
+   *
+   * @param node           ASTRequirementUsage
+   * @param currentSubject RequirementSubjectSymbol
+   * @return RequirementSubjectSymbol
+   */
+  private RequirementSubjectSymbol validateSubjectWithEnclosingRequirementSubject(
+      ASTRequirementUsage node,
+      RequirementSubjectSymbol currentSubject) {
+    Optional<RequirementSubjectSymbol> enclosingReqSubject = getEnclosingRequirementSubject(node);
+    if (enclosingReqSubject.isPresent()) {
+      // If current subject exists, it should be compatible with enclosing req. subject.
+      // Check for subject compatibility only if the current subject's value is not derived from an expression.
+      if (currentSubject != null && !currentSubject.getAstNode().isPresentBinding()) {
+        if(!enclosingReqSubject.get().getSubjectType().deepEquals(currentSubject.getSubjectType())) {
+          Log.error("Subject of requirement usage is not compatible with the subject of the " +
+              "corresponding enclosing requirement!");
+        }
+      }
+      // If no subject is yet set, then set enclosing req. subject as current req. subject.
+      else if (currentSubject == null) {
+        currentSubject = enclosingReqSubject.get();
+      }
+    }
+    // Otherwise, if the enclosing requirement does not define a subject, but the current one does,
+    // log compatibility error.
+    else if (currentSubject != null && isNestedRequirement(node)) {
+      Log.error("Subject of nested requirement '" + currentSubject.getSubjectTypeName()
+          + "' is not compatible with the subject of the " +
+          "corresponding enclosing requirement! Enclosing requirement doesn't define a subject.");
+    }
+    return currentSubject;
+  }
+
+  /**
+   * 1. Finds a compatible inherited requirement subject by processing all requirement subjects inherited
+   * from feature typings and subsettings of a requirement usage.
+   * 2. Validates the compatibility the 'currentSubject' subject, if it exists.
+   * 3. Sets the extracted compatible subject as the 'currentSubject' subject, if it does not exist.
+   *
+   * @param node           ASTRequirementUsage
+   * @param currentSubject RequirementSubjectSymbol
+   * @return RequirementSubjectSymbol
+   */
+  private RequirementSubjectSymbol validateSubjectWithInheritedSubjects(
+      ASTRequirementUsage node,
+      RequirementSubjectSymbol currentSubject) {
+    boolean subjectDefinedInUsage = node.getSpannedScope().getRequirementSubjectSymbols().size() > 0;
+    // 1. Get subject from feature typings.
+    RequirementSubjectSymbol subjectFromTypes = getCompatibleSubject(getSubjectsFromTypings(node));
+    // 2. Get subject from subsettings.
+    RequirementSubjectSymbol subjectFromSubsettings = getCompatibleSubject(getSubjectsFromSubsettings(node));
+    // 3. Get more specialized subject from the above two.
+    RequirementSubjectSymbol inheritedSubject = getInheritedSubject(subjectFromTypes, subjectFromSubsettings);
+    if (inheritedSubject != null) {
+      // If a compatible inherited subject was found, then check compatibility with subject in current usage.
+      if (subjectDefinedInUsage && !currentSubject.isCompatible(inheritedSubject)) {
+        Log.error("Subject type of of requirement usage '" + currentSubject.getSubjectTypeName()
+            + "' is not compatible with the inherited subject type '" + inheritedSubject.getSubjectTypeName()
+            + "' of typed/subsetted requirements!");
+      }
+      // If req. usage subject didn't already exist, then assign inherited subject to it.
+      else if (!subjectDefinedInUsage) {
+        currentSubject = inheritedSubject;
+      }
+    }
+    return currentSubject;
+  }
+
+  /**
+   * Validates compatibility between inherited subjects and returns the more specialized subject
+   * as the final 'inherited' subject.
+   *
+   * @param subjectFromTypes       RequirementSubjectSymbol
+   * @param subjectFromSubsettings RequirementSubjectSymbol
+   * @return RequirementSubjectSymbol
+   */
+  private RequirementSubjectSymbol getInheritedSubject(
+      RequirementSubjectSymbol subjectFromTypes, RequirementSubjectSymbol subjectFromSubsettings) {
+    RequirementSubjectSymbol inheritedSubject = null;
+
+    // If subject was found from both feature typings and subsettings, then find the more specialized one, if any.
+    if (subjectFromTypes != null && subjectFromSubsettings != null) {
+      if (subjectFromSubsettings.isCompatible(subjectFromTypes)) {
+        inheritedSubject = subjectFromSubsettings;
+      }
+      else if (subjectFromTypes.isCompatible(subjectFromSubsettings)) {
+        inheritedSubject = subjectFromTypes;
+      }
+      else {
+        Log.error("Typed/subsetted requirements do not have compatible subject type!");
+      }
+    }
+    // Otherwise, if subject from not both but either source was found, then that is the final inherited subject.
+    else if (subjectFromTypes != null) {
+      inheritedSubject = subjectFromTypes;
+    }
+    else if (subjectFromSubsettings != null) {
+      inheritedSubject = subjectFromSubsettings;
+    }
+    return inheritedSubject;
   }
 
   /**
@@ -195,54 +412,18 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
     boolean subjectDefinedInUsage = node.getSpannedScope().getRequirementSubjectSymbols().size() > 0;
     RequirementSubjectSymbol reqUsageSubject = null;
 
+    // If there exists a subject in current usage, then extract that.
     if (subjectDefinedInUsage) {
       reqUsageSubject = node.getSpannedScope().getRequirementSubjectSymbols().values().get(0);
-      // If subject was redefined with an expression, resolve its type.
-      if (reqUsageSubject.getAstNode().isPresentBinding()) {
-        if (reqUsageSubject.getSubjectType() == null) {
-          Log.error("Unable to resolve bound subject. Subject not found!");
-        }
-      }
     }
 
-    // *** Check compatibility with requirement definition ***
-    Optional<RequirementSubjectSymbol> reqDefSubject = getRequirementDefinitionSubject(node);
-    // Check subject type compatibility only if both subjects are present.
-    if (reqDefSubject.isPresent() && reqUsageSubject != null) {
-      if (!reqUsageSubject.isCompatible(reqDefSubject.get())) {
-        Log.error("Subject of requirement usage is not compatible with the subject of the corresponding" +
-            " requirement definition!");
-      }
-    }
-    // If subject was inherited and not redefined, then set it as req. usage subject.
-    else if (reqDefSubject.isPresent()) {
-      reqUsageSubject = reqDefSubject.get();
-    }
+    // *** 2. Check compatibility with typed and subsetted requirements ***
+    reqUsageSubject = validateSubjectWithInheritedSubjects(node, reqUsageSubject);
 
-    // *** Check compatibility with enclosing requirement ***
-    // If this is a nested requirement and enclosing req. def/usage defines a subject, then:
-    //    1. if req. usage now has a subject, then it should be compatible with enclosing req. subject
-    //       (only in case subject redefinition was not done via expression),
-    //    2. if req. usage does not have a subject, assign enclosing req. subject as its subject.
-    Optional<RequirementSubjectSymbol> enclosingReqSubject = getEnclosingRequirementSubject(node);
-    if (enclosingReqSubject.isPresent()) {
-      if (reqUsageSubject != null && !reqUsageSubject.getAstNode().isPresentBinding()) {
-        if (!enclosingReqSubject.get().isCompatible(reqUsageSubject)) {
-          Log.error("Subject of requirement usage is not compatible with the subject of the " +
-              "corresponding enclosing requirement!");
-        }
-      }
-      // If no subject is yet set, then set enclosing req. subject as current req. subject.
-      else if (reqUsageSubject == null) {
-        reqUsageSubject = enclosingReqSubject.get();
-      }
-    }
-    else if (reqUsageSubject != null && isNestedRequirement(node)) {
-      Log.error("Subject of nested requirement is not compatible with the subject of the " +
-          "corresponding enclosing requirement!");
-    }
+    // *** 3. Check compatibility with enclosing requirement ***
+    reqUsageSubject = validateSubjectWithEnclosingRequirementSubject(node, reqUsageSubject);
 
-    // If req. usage subject was found, then add it in the spanned scope.
+    // If req. usage subject was not already present, then add it in the spanned scope.
     if (!subjectDefinedInUsage && reqUsageSubject != null) {
       node.getSpannedScope().add(reqUsageSubject);
     }

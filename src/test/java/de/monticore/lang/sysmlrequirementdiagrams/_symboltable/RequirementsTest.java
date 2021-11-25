@@ -1,11 +1,11 @@
 package de.monticore.lang.sysmlrequirementdiagrams._symboltable;
 
 import de.monticore.lang.sysmlrequirementdiagrams._visitor.RequirementsPostProcessor;
+import de.monticore.lang.sysmlv2.SysMLv2Language;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
-import de.monticore.lang.sysmlv2._symboltable.SysMLv2Scope;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
@@ -77,19 +77,23 @@ public class RequirementsTest {
    * 1. parsing
    * 2. symbol table creation
    * 3. postprocessing
+   *
    * @param model String
    * @return ASTSysMLModel
    * @throws IOException
    */
   private ASTSysMLModel getModel(String model) throws IOException {
     ASTSysMLModel ast = SysMLv2Mill.parser().parse(model).get();
+    SysMLv2Language.getPreSymbolTableCoCoChecker().checkAll(ast);
     SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
+    SysMLv2Language.getPostSymbolTableCoCoChecker().checkAll(ast);
     ast.accept(traverser);
     return ast;
   }
 
   /**
    * Retrieves the RequirementSubjectSymbol from the given scope, if present.
+   *
    * @param scope ISysMLRequirementDiagramsScope
    * @return Optional<RequirementSubjectSymbol>
    */
@@ -104,7 +108,8 @@ public class RequirementsTest {
   /**
    * Given a name, resolves for RequirementDefSymbol in a given scope.
    * NOTE: Assumes that the symbol does exist.
-   * @param scope ISysMLRequirementDiagramsScope
+   *
+   * @param scope       ISysMLRequirementDiagramsScope
    * @param requirement String
    * @return RequirementDefSymbol
    */
@@ -115,7 +120,8 @@ public class RequirementsTest {
   /**
    * Given a name, resolves for RequirementUsageSymbol in a given scope.
    * NOTE: Assumes that the symbol does exist.
-   * @param scope ISysMLRequirementDiagramsScope
+   *
+   * @param scope       ISysMLRequirementDiagramsScope
    * @param requirement String
    * @return RequirementUsageSymbol
    */
@@ -125,7 +131,8 @@ public class RequirementsTest {
 
   /**
    * Given a RequirementSubjectSymbol and a subject type, validates the symbol does have the same subject type.
-   * @param subject RequirementSubjectSymbol
+   *
+   * @param subject     RequirementSubjectSymbol
    * @param subjectType String
    */
   private void validateSubjectType(RequirementSubjectSymbol subject, String subjectType) {
@@ -307,24 +314,28 @@ public class RequirementsTest {
 
   @Test
   public void testRequirement9() throws IOException {
-    Log.enableFailQuick(false);
-    ASTSysMLModel ast = getModel("src/test/resources/sysmlrequirementdiagrams/_symboltable/requirement_9.sysml");
-    String error1 = Log.getFindings().get(0).toString();
-    String error2 = Log.getFindings().get(1).toString();
-    String error3 = Log.getFindings().get(2).toString();
-    String error4 = Log.getFindings().get(3).toString();
-    String error5 = Log.getFindings().get(4).toString();
-    Log.clearFindings();
-    Log.enableFailQuick(true);
-    assertEquals("Subject of nested requirement is not compatible with the subject of the " +
-        "corresponding enclosing requirement!", error1);
-
-    assertEquals("Subject of requirement usage is not compatible with the subject of the " +
-        "corresponding enclosing requirement!", error2);
-
-    assertEquals("Inherited requirements do not have the same subject type!", error3);
-    assertEquals("Specialized requirement does not have the same subject type as inherited ones!", error4);
-    assertEquals("Multiple subjects found. A requirement can only have one subject.", error5);
+    try {
+      Log.enableFailQuick(false);
+      Log.clearFindings();
+      ASTSysMLModel ast = getModel("src/test/resources/sysmlrequirementdiagrams/_symboltable/requirement_9.sysml");
+      String error1 = Log.getFindings().get(0).toString();
+      String error2 = Log.getFindings().get(1).toString();
+      String error3 = Log.getFindings().get(2).toString();
+      String error4 = Log.getFindings().get(3).toString();
+      String error5 = Log.getFindings().get(4).toString();
+      assertEquals("Multiple requirement subjects found. At most one subject is allowed in requirement!", error1);
+      assertEquals("Subject of nested requirement 'Vehicle' is not compatible with the subject of the " +
+          "corresponding enclosing requirement! Enclosing requirement doesn't define a subject.", error2);
+      assertEquals("Subject of requirement usage is not compatible with the subject of the " +
+          "corresponding enclosing requirement!", error3);
+      assertEquals("Subjects found to be incompatible with one another!", error4);
+      assertEquals("Specialized requirement definition 'SpecializedRequirement' "
+          + "with subject type 'Engine' is not compatible with inherited subject type 'Vehicle'!", error5);
+    }
+    finally {
+      Log.clearFindings();
+      Log.enableFailQuick(true);
+    }
   }
 
   /**

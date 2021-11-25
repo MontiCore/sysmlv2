@@ -7,7 +7,7 @@ import de.se_rwth.commons.logging.Log;
 import java.util.List;
 
 /**
- * The following CoCo verifies that there is no assert constraint usage present in requirement.
+ * The following CoCo verifies that there is no assert constraint usage present in a requirement.
  */
 public class AssertConstraintNotAllowedInRequirement implements SysMLRequirementDiagramsASTRequirementBodyCoCo {
   @Override
@@ -15,7 +15,9 @@ public class AssertConstraintNotAllowedInRequirement implements SysMLRequirement
     List<ASTSysMLAssumption> constraints = node.getSysMLAssumptionList();
     for(ASTSysMLAssumption constraint: constraints) {
       if(constraint.getConstraintUsage().isAssert()) {
-        Log.error("Asserting constraints is not allowed in a requirement!");
+        Log.error("Asserting constraints is not allowed in a requirement!",
+            constraint.getConstraintUsage().get_SourcePositionStart(),
+            constraint.getConstraintUsage().get_SourcePositionEnd());
       }
     }
   }
