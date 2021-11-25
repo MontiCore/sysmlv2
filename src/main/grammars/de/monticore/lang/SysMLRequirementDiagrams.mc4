@@ -15,6 +15,7 @@ grammar SysMLRequirementDiagrams extends de.monticore.lang.SysMLParametrics {
   symbol scope (shadowing) RequirementUsage implements ParametricsElement, SysMLUsage =
     "requirement" ("id" id:Name)? Name (":" MCType)?
     ParameterList?
+    SysMLSubsetting?
     RequirementBody;
 
   RequirementBody =

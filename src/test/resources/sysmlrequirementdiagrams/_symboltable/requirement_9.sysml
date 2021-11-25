@@ -18,9 +18,11 @@ package Requirement_9 {
   requirement def RequirementDef1 {
     subject vehicle: Vehicle;
   }
+
   requirement def RequirementDef2 {
     subject engine: Engine;
   }
+
   requirement def MultipleInheritedRequirements :> RequirementDef1, RequirementDef2;
   requirement def SpecializedRequirement :> RequirementDef1 {
     subject engine: Engine;

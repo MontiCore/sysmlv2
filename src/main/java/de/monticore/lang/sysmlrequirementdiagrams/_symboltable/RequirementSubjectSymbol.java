@@ -7,12 +7,13 @@ import de.monticore.types.check.TypeCheck;
 import de.se_rwth.commons.logging.Log;
 
 /**
- * RequirementSubjectSymbol was added to introduce a few helper methods to be used
+ * RequirementSubjectSymbol was added to introduce few helper methods to be used
  * for subject type checking.
  */
-public class RequirementSubjectSymbol extends RequirementSubjectSymbolTOP{
+public class RequirementSubjectSymbol extends RequirementSubjectSymbolTOP {
 
   private TypeCheck typeCheck = new TypeCheck(new SysMLTypesSynthesizer(), new DeriveSysMLTypes());
+
   private SymTypeExpression type = null;
 
   public RequirementSubjectSymbol(String name) {
@@ -25,18 +26,29 @@ public class RequirementSubjectSymbol extends RequirementSubjectSymbolTOP{
    * @return SymTypeExpression type of the requirement subject symbol
    */
   public SymTypeExpression getSubjectType() {
-    if(type == null) {
+    if (type == null) {
       SymTypeExpression exp = null;
       if (this.getAstNode().isPresentMCType()) {
         exp = typeCheck.symTypeFromAST(this.getAstNode().getMCType());
-      } else if (this.getAstNode().isPresentBinding()) {
+      }
+      else if (this.getAstNode().isPresentBinding()) {
         exp = typeCheck.typeOf(this.getAstNode().getBinding());
-      } else {
+      }
+      else {
         Log.error("Subject type could not be determined.");
       }
       type = exp;
     }
     return type;
+  }
+
+  /**
+   * Gets the name of the subject type.
+   *
+   * @return String
+   */
+  public String getSubjectTypeName() {
+    return this.getSubjectType().getTypeInfo().getName();
   }
 
   /**
@@ -59,7 +71,8 @@ public class RequirementSubjectSymbol extends RequirementSubjectSymbolTOP{
         SymTypeExpression superType = currentSubjectType.getTypeInfo().getSuperTypesList().get(0);
         if (superType.deepEquals(inheritedSubjectType)) {
           compatible = true;
-        } else {
+        }
+        else {
           currentSubjectType = superType;
         }
       }

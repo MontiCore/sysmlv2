@@ -2,6 +2,10 @@ package de.monticore.lang.sysmlv2;
 
 import de.monticore.lang.sysmlrequirementdiagrams._cocos.AssertConstraintNotAllowedInRequirement;
 import de.monticore.lang.sysmlrequirementdiagrams._cocos.AtMostSingleSubjectInRequirement;
+import de.monticore.lang.sysmlrequirementdiagrams._cocos.RequirementDefinitionMustExist;
+import de.monticore.lang.sysmlrequirementdiagrams._cocos.RequirementSubjectMustExist;
+import de.monticore.lang.sysmlrequirementdiagrams._cocos.SubsettedRequirementsMustExist;
+import de.monticore.lang.sysmlrequirementdiagrams._cocos.SuperRequirementsMustExist;
 import de.monticore.lang.sysmlrequirementdiagrams._visitor.RequirementsPostProcessor;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
@@ -30,7 +34,6 @@ public class SysMLv2Language {
   public static ISysMLv2GlobalScope getGlobalScopeFor(Path modelLocation) throws IOException {
     return getGlobalScopeFor(modelLocation, false);
   }
-
 
   /**
    * Parses, checks depending on {@code unchecked} and creates symbol table for all models residing in the
@@ -90,7 +93,6 @@ public class SysMLv2Language {
     return globalScope;
   }
 
-
   /**
    * Creates SymbolTable for multiple ASTs and returns the resulting global scope.
    * Symbols will only be added to the existing global scope.
@@ -117,7 +119,6 @@ public class SysMLv2Language {
     return checker;
   }
 
-
   /**
    * Creates a SysMLv2CoCoChecker with added CoCos required to be checked
    * after symbol table creation.
@@ -127,6 +128,10 @@ public class SysMLv2Language {
   public static SysMLv2CoCoChecker getPostSymbolTableCoCoChecker() {
     SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
     checker.addCoCo(new AtMostSingleSubjectInRequirement());
+    checker.addCoCo(new RequirementSubjectMustExist());
+    checker.addCoCo(new SuperRequirementsMustExist());
+    checker.addCoCo(new RequirementDefinitionMustExist());
+    checker.addCoCo(new SubsettedRequirementsMustExist());
     return checker;
   }
 
