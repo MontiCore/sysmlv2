@@ -1,0 +1,52 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+grammar SysMLAdvRequirementDiagrams extends de.monticore.lang.SysMLRequirementDiagrams {
+
+  start SysMLElement;
+  AdvRequirementReference = "require" Name@AdvRequirementUsage ";";
+
+  symbol scope AdvRequirementDef implements SysMLType =
+    "adv" "requirement" "def" ("id" id:Name)? Name
+    ParameterList?
+    SysMLSpecialization?
+    AdvRequirementBody;
+
+  symbol scope AdvRequirementUsage implements ParametricsElement =
+    "adv" "requirement" ("id" id:Name)? Name (":" MCType)?
+    ParameterList?
+    SysMLSubsetting?
+    AdvRequirementBody;
+
+  SubjectParameter implements Field =
+      SysMLFeatureDirection?
+      ["stream"]?
+      Name (":" MCType)?
+      SysMLMultiplicity?
+      ("=" binding:Expression)?;
+
+  SubjectParameters = "subject parameters" ("(" (SubjectParameter || ",")* ")") ";";
+
+  AdvRequirementBody =
+    ("{"
+      (SubjectParameters
+      | SysMLAttribute
+      | SysMLAssumption
+      | AdvRequirementUsage
+      | AdvRequirementReference)*
+    "}" | ";") ;
+
+  SatisfactionSubjectParameter =
+      (
+        (Name (":" MCType)? SysMLMultiplicity? ("=" binding:Expression)?)
+      | BDUsageMember
+      );
+
+  SatisfactionSubjectParameters = ("(" (SatisfactionSubjectParameter || ",")* ")");
+
+  @Override
+  RequirementSatisfaction implements BDUsageMember, ADElement =
+    "satisfy" req:MCQualifiedName
+      (("by" subject:MCQualifiedName) | ("using" SatisfactionSubjectParameters))
+    ";";
+}

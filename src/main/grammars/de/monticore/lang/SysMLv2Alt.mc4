@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+grammar SysMLv2Alt extends de.monticore.lang.SysMLv2,
+                           de.monticore.lang.SysMLAdvRequirementDiagrams {
+
+  SysMLModel = SysMLElement*;
+}
