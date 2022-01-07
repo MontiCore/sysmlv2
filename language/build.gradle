@@ -1,0 +1,163 @@
+// (c) https://github.com/MontiCore/monticore
+
+/* ============================================================ */
+/* ========================= Plugins ========================== */
+/* ============================================================ */
+
+plugins {
+  id "monticore" version "$mc_version"
+  id "com.github.johnrengelman.shadow" version "4.0.4"
+  id "de.set.ecj" version "1.4.1"
+}
+
+/* ============================================================ */
+/* ========================= Project ========================== */
+/* ============================================================ */
+
+description = 'SysML_v2_official'
+sourceCompatibility = JavaVersion.VERSION_1_8
+buildDir = file("$projectDir/target")
+
+/* ============================================================ */
+/* ========================= Versions ========================= */
+/* ============================================================ */
+
+def grammarDir = "src/main/grammars"
+def grammar_classifier = "grammars"
+
+def junit_version = "4.13.1"
+def commons_cli_version = "1.4"
+def antlr_version = '4.7.1'
+def commons_lang_version = "3.11"
+def guava_version = "30.0-jre"
+
+/* ============================================================ */
+/* ======================= Configuration ====================== */
+/* ============================================================ */
+
+// configure non-standard source sets
+sourceSets {
+  main.java.srcDirs += ["$projectDir/target/generated-sources/monticore/sourcecode"]
+
+  grammars {
+    resources {
+      srcDirs(grammarDir)
+      include "**/*.mc4"
+    }
+  }
+}
+
+
+configurations { grammar }
+
+test {
+    useJUnit()
+}
+
+/* ============================================================ */
+/* ======================= Dependencies ======================= */
+/* ============================================================ */
+
+dependencies {
+  grammar "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
+  implementation "com.google.guava:guava:$guava_version"
+  implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
+  implementation "org.apache.commons:commons-lang3:$commons_lang_version"
+  implementation "org.antlr:antlr4-runtime:$antlr_version"
+  implementation "de.monticore:monticore-runtime:$mc_version"
+  implementation "de.monticore:monticore-grammar:$mc_version"
+  implementation "commons-cli:commons-cli:$commons_cli_version"
+  testImplementation "junit:junit:$junit_version"
+}
+
+repositories {
+  if(("true").equals(getProperty('useLocalRepo'))){
+    mavenLocal()
+  }
+  maven {
+    credentials.username mavenUser
+    credentials.password mavenPassword
+    url = repo
+  }
+}
+
+/* ============================================================ */
+/* ========================== Tasks =========================== */
+/* ============================================================ */
+
+task generate {}
+
+fileTree(grammarDir).matching { include '**/*.mc4' }.each { g ->
+    def taskname = "generateGrammar${g.getName().substring(0,g.getName().lastIndexOf('.'))}"
+
+  task "$taskname" (type: MCTask) {
+    grammar = g
+    outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
+    def grammarIncludingPackage = file(grammarDir).toURI().relativize(g.toURI()).toString()
+    outputs.upToDateWhen { incCheck(grammarIncludingPackage) }
+  }
+  generate.dependsOn ("$taskname")
+}
+
+compileJava.dependsOn generate
+
+// Fixes issue with java plugin in projects without resources
+compileTestJava.doFirst { mkdir sourceSets.main.output.resourcesDir }
+
+tasks.withType(Test) {
+    maxParallelForks = Runtime.runtime.availableProcessors() ?: 1
+}
+
+tasks.withType(JavaCompile) {
+  options.fork = true
+  options.encoding = "UTF-8"
+  options.deprecation false
+  options.warnings = false
+  options.headerOutputDirectory.convention(null)
+}
+
+// all in one cli-jar
+shadowJar {
+  manifest {
+    attributes "Main-Class": "de.monticore.SYSMLCLI"
+  }
+  archiveFileName = "SysML-cli.jar"
+  minimize()
+}
+
+java {
+//  withJavadocJar()
+  withSourcesJar()
+  registerFeature('grammars') {
+    usingSourceSet(sourceSets.grammars)
+  }
+}
+
+jar.dependsOn grammarsJar, shadowJar
+
+
+/* ============================================================ */
+/* ======================= Publishing ========================= */
+/* ============================================================ */
+
+publishing {
+    // configure what artifacts to publish
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories.maven {
+        credentials.username mavenUser
+        credentials.password mavenPassword
+        def releasesRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/"
+        def snapshotsRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/"
+        url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
+    }
+}
+
+task buildAll(type: GradleBuild) {
+  tasks = [ 'build' ]
+}
+
+defaultTasks('build')
