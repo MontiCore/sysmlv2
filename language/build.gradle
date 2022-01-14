@@ -144,6 +144,7 @@ publishing {
     // configure what artifacts to publish
     publications {
         mavenJava(MavenPublication) {
+            artifactId = "sysml_v2"
             from components.java
         }
     }
