@@ -19,7 +19,7 @@ cache:
 build:
   stage: build
   script:
-    - "./gradlew build $GRADLE_OPT $ARGS1 -PgithubUser=$githubUser -PgithubToken=$githubToken"
+    - "./gradlew build -PgithubUser=$githubUser -PgithubToken=$githubToken $GRADLE_OPT $ARGS1"
   artifacts:
     paths:
       - "language/target/"
@@ -31,7 +31,7 @@ deploy:
   dependencies:
     - build
   script:
-    - "./gradlew publish -PmavenPassword=$pass -PmavenUser=$user $GRADLE_OPT $ARGS2"
+    - "./gradlew publish -PmavenPassword=$pass -PmavenUser=$user -PgithubUser=$githubUser -PgithubToken=$githubToken $GRADLE_OPT $ARGS2"
   only:
     - master
 
