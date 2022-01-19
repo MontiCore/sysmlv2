@@ -16,4 +16,3 @@ pluginManagement {
 rootProject.name = 'sysml_v2'
 include 'language'
 include 'visualization'
-

@@ -11,15 +11,19 @@ before_script:
   - chmod +x gradlew
   - export GRADLE_USER_HOME=`pwd`/.gradle
 
+cache:
+  paths:
+    - ".gradle/wrapper"
+    - ".gradle/caches"
+
 build:
   stage: build
   script:
-    - "./gradlew build $GRADLE_OPT $ARGS1"
+    - "./gradlew build $GRADLE_OPT $ARGS1 -PgithubUser=$githubUser -PgithubToken=$githubToken"
   artifacts:
     paths:
       - "language/target/"
       - "visualization/target/"
-      - ".gradle/"
     expire_in: 1 week
 
 deploy:
