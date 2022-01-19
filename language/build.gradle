@@ -14,6 +14,7 @@ plugins {
 /* ========================= Project ========================== */
 /* ============================================================ */
 
+group = 'de.monticore.lang'
 description = 'SysML_v2_official'
 sourceCompatibility = JavaVersion.VERSION_1_8
 buildDir = file("$projectDir/target")
@@ -68,17 +69,6 @@ dependencies {
   implementation "de.monticore:monticore-grammar:$mc_version"
   implementation "commons-cli:commons-cli:$commons_cli_version"
   testImplementation "junit:junit:$junit_version"
-}
-
-repositories {
-  if(("true").equals(getProperty('useLocalRepo'))){
-    mavenLocal()
-  }
-  maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
-    url = repo
-  }
 }
 
 /* ============================================================ */

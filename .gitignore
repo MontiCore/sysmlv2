@@ -16,4 +16,4 @@ bin/
 
 # Ignore log file
 *.log
-/.gradle/
+.gradle

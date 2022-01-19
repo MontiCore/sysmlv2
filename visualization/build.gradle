@@ -1,0 +1,59 @@
+plugins {
+  id "com.github.johnrengelman.shadow" version "4.0.4"
+}
+
+group = 'de.monticore.lang.sysml_v2'
+sourceCompatibility = "11"
+
+tasks.build.dependsOn shadowJar
+
+def omg_version= '0.18.0'
+
+dependencies {
+  implementation group: 'org.omg.sysml', name: 'org.omg.sysml.interactive', version: omg_version, classifier: 'all'
+  implementation group: 'de.se_rwth.commons', name: 'se-commons-logging', version: se_commons_version
+
+  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.21.0'
+  testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.2'
+  testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.2'
+}
+
+repositories {
+  mavenCentral()
+  maven {
+    // required for sysml interactive published on GitHub
+    url "https://maven.pkg.github.com/Systems-Modeling/SysML-v2-Pilot-Implementation"
+    credentials {
+      username = githubUser
+      password = githubToken
+    }
+  }
+}
+
+shadowJar { // all in one jar
+  manifest {
+    attributes "Main-Class": "de.monticore.lang.sysmlv2.visualization.VisualizationCLI"
+  }
+  archiveClassifier = "jar-with-dependencies"
+}
+
+publishing {
+  // configure what artifacts to publish
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+      artifact shadowJar
+    }
+  }
+  repositories.maven {
+    credentials.username mavenUser
+    credentials.password mavenPassword
+    def releasesRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/"
+    def snapshotsRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/"
+    url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
+  }
+}
+
+test {
+  useJUnitPlatform()
+}
