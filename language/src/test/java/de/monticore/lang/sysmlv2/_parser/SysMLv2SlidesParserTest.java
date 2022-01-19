@@ -3,20 +3,24 @@ package de.monticore.lang.sysmlv2._parser;
 
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Tests examples from the slide set "Intro to the SysML v2 Language - Textual Notation", i.e., testS5 refers to slide 5
+ * See https://github.com/Systems-Modeling/SysML-v2-Release/tree/master/doc
+ */
 public class SysMLv2SlidesParserTest {
 
-  private static final String INTRO_PATH = "src/test/resources/parser/";
+  private static final String INTRO_PATH = "src/test/resources/sysmlv2/parser/intro_slides/";
 
   @Test
   public void testS5() throws IOException {
@@ -114,7 +118,7 @@ public class SysMLv2SlidesParserTest {
     assertTrue(ast.isPresent());
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void testS13() throws IOException {
     Path model = Paths.get(INTRO_PATH + "s13.sysml");
@@ -247,7 +251,7 @@ public class SysMLv2SlidesParserTest {
     assertTrue(ast.isPresent());
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void testS31() throws IOException {
     Path model = Paths.get(INTRO_PATH + "s31.sysml");
@@ -260,7 +264,7 @@ public class SysMLv2SlidesParserTest {
     assertTrue(ast.isPresent());
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void testS32() throws IOException {
     Path model = Paths.get(INTRO_PATH + "s32.sysml");
@@ -273,7 +277,7 @@ public class SysMLv2SlidesParserTest {
     assertTrue(ast.isPresent());
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void testS34() throws IOException {
     Path model = Paths.get(INTRO_PATH + "s34.sysml");
@@ -286,7 +290,7 @@ public class SysMLv2SlidesParserTest {
     assertTrue(ast.isPresent());
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void testS35() throws IOException {
     Path model = Paths.get(INTRO_PATH + "s35.sysml");

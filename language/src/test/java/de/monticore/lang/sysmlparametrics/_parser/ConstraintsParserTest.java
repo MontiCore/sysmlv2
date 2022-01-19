@@ -4,14 +4,14 @@ import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
 import de.monticore.lang.sysmlparametrics._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * ConstraintsParserTest contains tests regarding valid and invalid constraints and their
@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class ConstraintsParserTest {
 
-  @BeforeClass
+  @BeforeAll
   public static void initScope() {
     SysMLv2Mill.init();
   }
@@ -63,7 +63,7 @@ public class ConstraintsParserTest {
   /**
    * Tests unsuccessful parsing of invalid constraints
    */
-  @Ignore
+  @Disabled
   @Test
   public void testInvalidConstraintUsage() throws IOException {
     String model;

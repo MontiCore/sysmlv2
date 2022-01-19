@@ -7,12 +7,12 @@ import de.monticore.lang.sysmlv2alt._symboltable.ISysMLv2AltGlobalScope;
 import de.monticore.lang.sysmlv2alt._symboltable.SysMLv2AltScope;
 import de.monticore.lang.sysmlv2alt._visitor.SysMLv2AltTraverser;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Checks successful symbol table creation for adv requirements.
@@ -23,7 +23,7 @@ public class AdvRequirementSymbolTest {
 
   private static SysMLv2AltTraverser traverser;
 
-  @BeforeClass
+  @BeforeAll
   public static void initScope() {
     SysMLv2AltMill.init();
     traverser = SysMLv2AltMill.traverser();

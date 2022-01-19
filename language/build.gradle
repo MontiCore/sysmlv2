@@ -26,7 +26,7 @@ buildDir = file("$projectDir/target")
 def grammarDir = "src/main/grammars"
 def grammar_classifier = "grammars"
 
-def junit_version = "4.13.1"
+def junit_version = "5.8.1"
 def commons_cli_version = "1.4"
 def antlr_version = '4.7.1'
 def commons_lang_version = "3.11"
@@ -52,7 +52,7 @@ sourceSets {
 configurations { grammar }
 
 test {
-    useJUnit()
+  useJUnitPlatform()
 }
 
 /* ============================================================ */
@@ -68,7 +68,9 @@ dependencies {
   implementation "de.monticore:monticore-runtime:$mc_version"
   implementation "de.monticore:monticore-grammar:$mc_version"
   implementation "commons-cli:commons-cli:$commons_cli_version"
-  testImplementation "junit:junit:$junit_version"
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:$junit_version'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:$junit_version'
+  testCompile("org.junit.jupiter:junit-jupiter-params:$junit_version")
 }
 
 /* ============================================================ */

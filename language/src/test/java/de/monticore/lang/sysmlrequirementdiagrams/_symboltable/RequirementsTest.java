@@ -10,15 +10,15 @@ import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Optional;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Checks Requirements (Definitions, Usages, etc.)
@@ -35,7 +35,7 @@ public class RequirementsTest {
 
   private static SysMLv2Traverser traverser;
 
-  @BeforeClass
+  @BeforeAll
   public static void initScope() {
     SysMLv2Mill.init();
     traverser = SysMLv2Mill.traverser();

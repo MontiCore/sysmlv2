@@ -2,24 +2,25 @@ package de.monticore.lang.sysmlv2._parser;
 
 
 import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
-import de.monticore.lang.sysmlparametrics._symboltable.ConstraintDefSymbol;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
-import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
-import de.monticore.lang.sysmlv2._symboltable.SysMLv2ScopesGenitorDelegator;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Tests the parser with custom examples based on the slide set ({@link SysMLv2SlidesParserTest})
+ */
 public class SysMLv2CustomParserTest {
 
-  private static final String MODEL_PATH = "src/test/resources/parser/custom/";
+  private static final String MODEL_PATH = "src/test/resources/sysmlv2/parser/custom/";
 
   @Test
   public void testACDefInACDef() throws IOException {

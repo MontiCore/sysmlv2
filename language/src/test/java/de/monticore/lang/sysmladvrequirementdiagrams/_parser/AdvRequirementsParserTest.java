@@ -2,8 +2,8 @@ package de.monticore.lang.sysmladvrequirementdiagrams._parser;
 
 import de.monticore.lang.sysmlv2alt.SysMLv2AltMill;
 import de.monticore.lang.sysmlv2alt._ast.ASTSysMLModel;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -12,7 +12,7 @@ import java.io.IOException;
  */
 public class AdvRequirementsParserTest {
 
-  @BeforeClass
+  @BeforeAll
   public static void initScope() {
     SysMLv2AltMill.init();
   }

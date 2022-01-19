@@ -5,13 +5,13 @@ import de.monticore.lang.sysmlparametrics._symboltable.ConstraintUsageSymbol;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Optional;
 
-import static junit.framework.TestCase.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Checks PortUsageSymbols
@@ -22,7 +22,7 @@ public class PortUsageSymbolTest {
 
   private static ISysMLv2GlobalScope scope;
 
-  @BeforeClass
+  @BeforeAll
   public static void initScope() throws IOException {
     SysMLv2Mill.init();
     ASTSysMLModel ast = SysMLv2Mill.parser().parse(MODEL).get();
@@ -36,7 +36,7 @@ public class PortUsageSymbolTest {
   @Test
   public void testResolveDown() {
     Optional<SysMLPortUsageSymbol> portUsage = scope.resolveSysMLPortUsage("example.SignalConverter.o");
-    assertTrue("PortUsage could not be resolved from the global scope", portUsage.isPresent());
+    assertTrue(portUsage.isPresent(), "PortUsage could not be resolved from the global scope");
   }
 
   /**
@@ -46,7 +46,7 @@ public class PortUsageSymbolTest {
   public void testResolveFromReference() {
     ConstraintUsageSymbol constraint = scope.resolveConstraintUsage("example.SignalConverter.equality").get();
     Optional<SysMLPortUsageSymbol> portUsage = constraint.getSpannedScope().resolveSysMLPortUsage("o");
-    assertTrue("PortUsage could not be resolved from the body of the constraint", portUsage.isPresent());
+    assertTrue(portUsage.isPresent(), "PortUsage could not be resolved from the body of the constraint");
   }
 
 }
