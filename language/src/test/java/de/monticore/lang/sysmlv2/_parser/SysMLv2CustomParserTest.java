@@ -109,4 +109,16 @@ public class SysMLv2CustomParserTest {
     assertFalse(parser.hasErrors());
     assertTrue(ast.isPresent());
   }
+
+  @Test
+  public void testTransitionNoName() throws IOException {
+    Path model = Paths.get(MODEL_PATH + "transition_noname.sysml");
+
+    SysMLv2Mill.init();
+    SysMLv2Parser parser = SysMLv2Mill.parser();
+    Optional<ASTSysMLModel> ast = parser.parse(model.toString());
+
+    assertFalse(parser.hasErrors());
+    assertTrue(ast.isPresent());
+  }
 }

@@ -1,3 +1,0 @@
-package "Example1" {
-	block ((BlockA)); //Wrong syntax
-}
