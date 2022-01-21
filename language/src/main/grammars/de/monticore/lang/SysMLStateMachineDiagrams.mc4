@@ -25,7 +25,7 @@ grammar SysMLStateMachineDiagrams extends de.monticore.lang.SysMLActivityDiagram
     "}" | ";") ;
 
   symbol STMTransition implements STMUsageMember =
-    ("transition" Name)?
+    ("transition" Name?)?
     ("first" src:Name@StateUsage)?
     ("accept" MCType)?
     ("if" guard:Expression)?

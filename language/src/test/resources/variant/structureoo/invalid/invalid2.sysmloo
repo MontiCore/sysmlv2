@@ -1,3 +1,0 @@
-package Example1 {
-	import VehiclesDefinition::*; //only . allowed
-}
