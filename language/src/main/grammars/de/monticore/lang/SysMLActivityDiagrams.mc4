@@ -19,12 +19,21 @@ grammar SysMLActivityDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
       "language" lang:String
     "}";
 
+  ActionParameters = "(" (SysMLParameter || ",")* ")" ;
+
+  ActionUsageDeclaration = "action" (Name (":" MCType)?)? ActionParameters? ;
+
+  ActionUsageBody = "{" ADElement* "}" ;
 
   symbol scope ActionUsage implements ADElement =
-    suc:["then"]? "action" Name (":" MCType)? ("(" (SysMLParameter || ",")* ")")?
-    ("{"
-      ADElement*
-    "}" | ";") ;
+    suc:["then"]? declaration:ActionUsageDeclaration
+    (body:ActionUsageBody | ";")? ;
+
+  // send usages have an optional declaration, hence they have to be a separate production
+  SendActionUsage extends ActionUsage =
+    suc:["then"]? (declaration:ActionUsageDeclaration)?
+    "send" payload:Expression "to" target:MCQualifiedName
+    (body:ActionUsageBody | ";")? ;
 
   ItemFlow implements ADElement = "flow" src:MCQualifiedName "to" tgt:MCQualifiedName ";";
 
@@ -53,7 +62,5 @@ grammar SysMLActivityDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
   ADJoin implements ADElement = suc:["then"]? "join" Name ";";
 
   ADAcceptAction implements ADElement = "action" Name "accept" SysMLParameter ("for" MCType)? ";";
-
-  ADSendAction implements ADElement = suc:["then"]? "send" SysMLInstantiation "to" MCType ";";
 
 }
