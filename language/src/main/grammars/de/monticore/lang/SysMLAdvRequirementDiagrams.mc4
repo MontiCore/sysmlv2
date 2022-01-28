@@ -8,14 +8,14 @@ grammar SysMLAdvRequirementDiagrams extends de.monticore.lang.SysMLRequirementDi
 
   symbol scope AdvRequirementDef implements SysMLType =
     "adv" "requirement" "def" ("id" id:Name)? Name
-    ParameterList?
     SysMLSpecialization?
+    ParameterList?
     AdvRequirementBody;
 
   symbol scope AdvRequirementUsage implements ParametricsElement =
     "adv" "requirement" ("id" id:Name)? Name (":" MCType)?
-    ParameterList?
     SysMLSubsetting?
+    ParameterList?
     AdvRequirementBody;
 
   SubjectParameter implements Field =

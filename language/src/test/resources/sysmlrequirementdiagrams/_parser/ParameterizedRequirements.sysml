@@ -7,8 +7,8 @@ package ParameterizedRequirements {
     subject vehicle: Vehicle;
   }
 
-  requirement def id '3' NewPowerLimitationRequirement(actualPower = 200, minPower: Real = 100)
-    :> PowerLimitationRequirement {
+  requirement def id '3' NewPowerLimitationRequirement:> PowerLimitationRequirement
+  (actualPower = 200, minPower: Real = 100) {
     subject vehicle: Vehicle;
   }
 

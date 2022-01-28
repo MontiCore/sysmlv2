@@ -1,6 +1,7 @@
 package de.monticore.lang.sysmlrequirementdiagrams._visitor;
 
 import de.monticore.lang.sysmlcommons._ast.ASTSysMLSpecialization;
+import de.monticore.lang.sysmlcommons._ast.ASTSysMLSubsetting;
 import de.monticore.lang.sysmlrequirementdiagrams._ast.ASTRequirementDef;
 import de.monticore.lang.sysmlrequirementdiagrams._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlrequirementdiagrams._symboltable.RequirementDefSymbol;
@@ -17,7 +18,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * RequirementsPostProcessor finds and sets the correct subject in the requirements.
+ * RequirementsPostProcessor finds and sets:
+ * 1. the correct subject in the requirements,
+ * 2. the correct requirement parameters in the requirements.
  */
 public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisitor2 {
 
@@ -29,7 +32,7 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
    */
   protected ArrayList<RequirementSubjectSymbol> getInheritedSubjects(ASTRequirementDef node) {
     ArrayList<RequirementSubjectSymbol> subjects = new ArrayList<>();
-    if (node.isPresentSysMLSpecialization()) {
+    if(node.isPresentSysMLSpecialization()) {
       getInheritedSubjects(node.getSysMLSpecialization(), subjects);
     }
     return subjects;
@@ -59,7 +62,7 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
       If there are no subjects, then we don't care.
       There can't be more than one subject.
        */
-      if (requirementSubjects.size() == 1) {
+      if(requirementSubjects.size() == 1) {
         subjects.add(requirementSubjects.get(0));
       }
     }
@@ -74,15 +77,15 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
    */
   protected Optional<RequirementSubjectSymbol> getEnclosingRequirementSubject(ASTRequirementUsage node) {
     Optional<RequirementSubjectSymbol> subject = Optional.empty();
-    if (node.getEnclosingScope().getAstNode() instanceof ASTRequirementDef) {
+    if(node.getEnclosingScope().getAstNode() instanceof ASTRequirementDef) {
       ASTRequirementDef reqDef = ((ASTRequirementDef) node.getEnclosingScope().getAstNode());
-      if (reqDef.getSpannedScope().getRequirementSubjectSymbols().values().size() > 0) {
+      if(reqDef.getSpannedScope().getRequirementSubjectSymbols().values().size() > 0) {
         subject = Optional.ofNullable(reqDef.getSpannedScope().getRequirementSubjectSymbols().values().get(0));
       }
     }
-    else if (node.getEnclosingScope().getAstNode() instanceof ASTRequirementUsage) {
+    else if(node.getEnclosingScope().getAstNode() instanceof ASTRequirementUsage) {
       ASTRequirementUsage reqUsage = ((ASTRequirementUsage) node.getEnclosingScope().getAstNode());
-      if (reqUsage.getSpannedScope().getRequirementSubjectSymbols().values().size() > 0) {
+      if(reqUsage.getSpannedScope().getRequirementSubjectSymbols().values().size() > 0) {
         subject = Optional.ofNullable(reqUsage.getSpannedScope().getRequirementSubjectSymbols().values().get(0));
       }
     }
@@ -108,19 +111,19 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
    */
   protected Optional<RequirementSubjectSymbol> getRequirementDefinitionSubject(ASTRequirementUsage node) {
     Optional<RequirementSubjectSymbol> subject = Optional.empty();
-    if (node.isPresentMCType()) {
+    if(node.isPresentMCType()) {
       ASTMCQualifiedType usageType = (ASTMCQualifiedType) node.getMCType();
       Optional<RequirementDefSymbol> requirementDefSymbol = node.getEnclosingScope()
           .resolveRequirementDef(usageType.getMCQualifiedName().toString());
 
       // If requirement definition symbol is not found, raise an error.
-      if (!requirementDefSymbol.isPresent()) {
+      if(!requirementDefSymbol.isPresent()) {
         Log.error("MCType " + usageType.getMCQualifiedName().toString() + " could not be resolved.");
       }
       // Otherwise, get subject from requirement definition.
       List<RequirementSubjectSymbol> subjectSymbols = requirementDefSymbol.get().getAstNode().getSpannedScope()
           .getRequirementSubjectSymbols().values();
-      if (subjectSymbols.size() > 0) {
+      if(subjectSymbols.size() > 0) {
         subject = Optional.ofNullable(subjectSymbols.get(0));
       }
     }
@@ -138,11 +141,11 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
   protected void setSubjectInRequirementDefinition(ASTRequirementDef node) {
     // We only need to set and check subject type for compatibility if there are inherited subjects.
     ArrayList<RequirementSubjectSymbol> inheritedSubjects = getInheritedSubjects(node);
-    if (inheritedSubjects.size() > 0) {
+    if(inheritedSubjects.size() > 0) {
       // Validate all inherited subjects are compatible with each other.
       RequirementSubjectSymbol compatibleSubject = getCompatibleSubject(inheritedSubjects);
       int subjectsSize = node.getSpannedScope().getRequirementSubjectSymbols().size();
-      if (compatibleSubject != null) {
+      if(compatibleSubject != null) {
         switch (subjectsSize) {
           case 0:
             /*
@@ -156,7 +159,7 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
             // Check if the current requirement subject is compatible with the inherited subjects.
             RequirementSubjectSymbol currentSubject = node.getSpannedScope().getRequirementSubjectSymbols().values().get(
                 0);
-            if (!currentSubject.isCompatible(
+            if(!currentSubject.isCompatible(
                 compatibleSubject)) {
               Log.error("Specialized requirement definition '" + node.getName() + "' with subject type '"
                   + currentSubject.getSubjectType().getTypeInfo().getName() + "' is not compatible with "
@@ -176,7 +179,7 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
    */
   protected List<RequirementSubjectSymbol> getSubjectsFromTypings(ASTRequirementUsage node) {
     List<RequirementSubjectSymbol> subjects = new ArrayList<>();
-    if (node.isPresentMCType()) {
+    if(node.isPresentMCType()) {
       ASTMCQualifiedType usageType = (ASTMCQualifiedType) node.getMCType();
       Optional<RequirementDefSymbol> symbol = node.getEnclosingScope()
           .resolveRequirementDef(usageType.getMCQualifiedName().toString());
@@ -186,10 +189,10 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
        * This is verified by CoCo 'FeatureTypingsInRequirementsMustExist'.
        */
 
-      if (symbol.isPresent()) {
+      if(symbol.isPresent()) {
         List<RequirementSubjectSymbol> subjectSymbols = symbol.get().getAstNode().getSpannedScope()
             .getRequirementSubjectSymbols().values();
-        if (subjectSymbols.size() > 0) {
+        if(subjectSymbols.size() > 0) {
           subjects.add(subjectSymbols.get(0));
         }
       }
@@ -205,7 +208,7 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
    */
   protected List<RequirementSubjectSymbol> getSubjectsFromSubsettings(ASTRequirementUsage node) {
     List<RequirementSubjectSymbol> subjects = new ArrayList<>();
-    if (node.isPresentSysMLSubsetting()) {
+    if(node.isPresentSysMLSubsetting()) {
       // Extract subject from each subsetting
       for (ASTMCQualifiedName field : node.getSysMLSubsetting().getFieldsList()) {
         Optional<RequirementUsageSymbol> subsettingUsage = node.getEnclosingScope().resolveRequirementUsage(
@@ -216,7 +219,7 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
          * This is verified by CoCo 'SubsettedRequirementsMustExist'.
          */
 
-        if (subsettingUsage.isPresent()
+        if(subsettingUsage.isPresent()
             && subsettingUsage.get().getSpannedScope().getRequirementSubjectSymbols().size() > 0) {
           subjects.add(subsettingUsage.get().getSpannedScope().getRequirementSubjectSymbols().values().get(0));
         }
@@ -245,12 +248,12 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
    */
   private RequirementSubjectSymbol getCompatibleSubject(List<RequirementSubjectSymbol> subjects) {
     RequirementSubjectSymbol subject = null;
-    if (subjects.size() > 1) {
+    if(subjects.size() > 1) {
       RequirementSubjectSymbol superType = subjects.get(0);
       RequirementSubjectSymbol subType = subjects.get(0);
 
       for (RequirementSubjectSymbol subj : subjects) {
-        if (superType.getSubjectType().getTypeInfo().getName().equals(subType.getSubjectType().getTypeInfo().getName())
+        if(superType.getSubjectType().getTypeInfo().getName().equals(subType.getSubjectType().getTypeInfo().getName())
             &&
             superType.getSubjectType().getTypeInfo().getName().equals(subj.getSubjectType().getTypeInfo().getName())) {
           continue;
@@ -264,12 +267,12 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
 
         // If current subject is supertype of the current supertype, we assign
         // current subject as the new supertype.
-        if (isSuperTypeOfSuperType) {
+        if(isSuperTypeOfSuperType) {
           superType = subj;
         }
         // If current subject is subtype of the current subtype, we assign
         // current subject as the new subtype.
-        else if (isSubTypeOfSubType) {
+        else if(isSubTypeOfSubType) {
           subType = subj;
         }
         /*
@@ -278,12 +281,12 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
         Conversely, if current subject is the supertype of the current subtype, then it must
         also be the subtype of the current supertype.
          */
-        else if (!(isSuperTypeOfSubType && isSubTypeOfSuperType)) {
+        else if(!(isSuperTypeOfSubType && isSubTypeOfSuperType)) {
           Log.error("Subjects found to be incompatible with one another!");
         }
       }
     }
-    else if (subjects.size() == 1) {
+    else if(subjects.size() == 1) {
       subject = subjects.get(0);
     }
     return subject;
@@ -301,23 +304,23 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
       ASTRequirementUsage node,
       RequirementSubjectSymbol currentSubject) {
     Optional<RequirementSubjectSymbol> enclosingReqSubject = getEnclosingRequirementSubject(node);
-    if (enclosingReqSubject.isPresent()) {
+    if(enclosingReqSubject.isPresent()) {
       // If current subject exists, it should be compatible with enclosing req. subject.
       // Check for subject compatibility only if the current subject's value is not derived from an expression.
-      if (currentSubject != null && !currentSubject.getAstNode().isPresentBinding()) {
+      if(currentSubject != null && !currentSubject.getAstNode().isPresentBinding()) {
         if(!enclosingReqSubject.get().getSubjectType().deepEquals(currentSubject.getSubjectType())) {
           Log.error("Subject of requirement usage is not compatible with the subject of the " +
               "corresponding enclosing requirement!");
         }
       }
       // If no subject is yet set, then set enclosing req. subject as current req. subject.
-      else if (currentSubject == null) {
+      else if(currentSubject == null) {
         currentSubject = enclosingReqSubject.get();
       }
     }
     // Otherwise, if the enclosing requirement does not define a subject, but the current one does,
     // log compatibility error.
-    else if (currentSubject != null && isNestedRequirement(node)) {
+    else if(currentSubject != null && isNestedRequirement(node)) {
       Log.error("Subject of nested requirement '" + currentSubject.getSubjectTypeName()
           + "' is not compatible with the subject of the " +
           "corresponding enclosing requirement! Enclosing requirement doesn't define a subject.");
@@ -345,15 +348,15 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
     RequirementSubjectSymbol subjectFromSubsettings = getCompatibleSubject(getSubjectsFromSubsettings(node));
     // 3. Get more specialized subject from the above two.
     RequirementSubjectSymbol inheritedSubject = getInheritedSubject(subjectFromTypes, subjectFromSubsettings);
-    if (inheritedSubject != null) {
+    if(inheritedSubject != null) {
       // If a compatible inherited subject was found, then check compatibility with subject in current usage.
-      if (subjectDefinedInUsage && !currentSubject.isCompatible(inheritedSubject)) {
+      if(subjectDefinedInUsage && !currentSubject.isCompatible(inheritedSubject)) {
         Log.error("Subject type of of requirement usage '" + currentSubject.getSubjectTypeName()
             + "' is not compatible with the inherited subject type '" + inheritedSubject.getSubjectTypeName()
             + "' of typed/subsetted requirements!");
       }
       // If req. usage subject didn't already exist, then assign inherited subject to it.
-      else if (!subjectDefinedInUsage) {
+      else if(!subjectDefinedInUsage) {
         currentSubject = inheritedSubject;
       }
     }
@@ -373,11 +376,11 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
     RequirementSubjectSymbol inheritedSubject = null;
 
     // If subject was found from both feature typings and subsettings, then find the more specialized one, if any.
-    if (subjectFromTypes != null && subjectFromSubsettings != null) {
-      if (subjectFromSubsettings.isCompatible(subjectFromTypes)) {
+    if(subjectFromTypes != null && subjectFromSubsettings != null) {
+      if(subjectFromSubsettings.isCompatible(subjectFromTypes)) {
         inheritedSubject = subjectFromSubsettings;
       }
-      else if (subjectFromTypes.isCompatible(subjectFromSubsettings)) {
+      else if(subjectFromTypes.isCompatible(subjectFromSubsettings)) {
         inheritedSubject = subjectFromTypes;
       }
       else {
@@ -385,10 +388,10 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
       }
     }
     // Otherwise, if subject from not both but either source was found, then that is the final inherited subject.
-    else if (subjectFromTypes != null) {
+    else if(subjectFromTypes != null) {
       inheritedSubject = subjectFromTypes;
     }
-    else if (subjectFromSubsettings != null) {
+    else if(subjectFromSubsettings != null) {
       inheritedSubject = subjectFromSubsettings;
     }
     return inheritedSubject;
@@ -413,7 +416,7 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
     RequirementSubjectSymbol reqUsageSubject = null;
 
     // If there exists a subject in current usage, then extract that.
-    if (subjectDefinedInUsage) {
+    if(subjectDefinedInUsage) {
       reqUsageSubject = node.getSpannedScope().getRequirementSubjectSymbols().values().get(0);
     }
 
@@ -424,18 +427,87 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
     reqUsageSubject = validateSubjectWithEnclosingRequirementSubject(node, reqUsageSubject);
 
     // If req. usage subject was not already present, then add it in the spanned scope.
-    if (!subjectDefinedInUsage && reqUsageSubject != null) {
+    if(!subjectDefinedInUsage && reqUsageSubject != null) {
       node.getSpannedScope().add(reqUsageSubject);
     }
+  }
+
+  /**
+   * Set requirement parameters for a requirement definition.
+   * All inherited requirements are also added and adapted accordingly, if redefined
+   * in the current requirement.
+   *
+   * @param node ASTRequirementDef
+   */
+  protected void setRequirementParameters(ASTRequirementDef node) {
+    // 1. Set inherited requirement parameters.
+    if(node.isPresentSysMLSpecialization()) {
+      ASTSysMLSpecialization specialization = node.getSysMLSpecialization();
+      for (ASTMCObjectType superDef : specialization.getSuperDefList()) {
+        /*
+        For each general requirement, add its parameters in the specialized requirement.
+        If there are duplicate parameters between inherited requirements, then they must have the same type.
+         */
+        RequirementDefSymbol reqDefSym = node.getEnclosingScope().
+            resolveRequirementDef(((ASTMCQualifiedType) superDef).getMCQualifiedName().getQName()).get();
+        node.addInheritedParameters(reqDefSym.getAstNode().getParameters());
+      }
+    }
+    /*
+    2. Set parameters of the current requirement. We set these params. after the inherited ones because
+    we only check for duplicates in the current parameter list itself, not in the already added params.
+    Reason being that the current requirement assigns values to the inherited params; hence, they will
+    likely be present in the current parameter list itself.
+     */
+    node.transferParameters();
+  }
+
+  /**
+   * Set requirement parameters for a requirement usage.
+   * All inherited requirements are also added and adapted accordingly, if redefined
+   * in the current requirement.
+   *
+   * @param node ASTRequirementUsage
+   */
+  protected void setRequirementParameters(ASTRequirementUsage node) {
+    // 1. Set inherited parameters from type binding.
+    if(node.isPresentMCType()) {
+      RequirementDefSymbol sym = node.getEnclosingScope().
+          resolveRequirementDef(((ASTMCQualifiedType) node.getMCType()).getMCQualifiedName().getQName()).get();
+      node.addInheritedParameters(sym.getAstNode().getParameters());
+    }
+
+    /*
+    2. If subsetting requirements are present, then add their params as well.
+    If there are duplicate parameters between multiple subsetted requirements, then they must have the same type.
+     */
+    if(node.isPresentSysMLSubsetting()) {
+      ASTSysMLSubsetting subsetting = node.getSysMLSubsetting();
+      for (ASTMCQualifiedName subsettedUsage : subsetting.getFieldsList()) {
+        RequirementUsageSymbol symbol = node.getEnclosingScope().
+            resolveRequirementUsage(subsettedUsage.getQName()).get();
+        node.addInheritedParameters(symbol.getAstNode().getParameters());
+      }
+    }
+    /*
+    3. Set parameters of the current requirement usage. We set these params after the parameters from
+    type binding and subsettings are already set. This is done because we only check for duplicates
+    in the current parameter list itself, not in the already added params.
+    Reason being that the current requirement assigns values to the other params; hence, they will
+    likely be present in the current parameter list itself.
+     */
+    node.transferParameters();
   }
 
   @Override
   public void visit(ASTRequirementDef node) {
     this.setSubjectInRequirementDefinition(node);
+    this.setRequirementParameters(node);
   }
 
   @Override
   public void visit(ASTRequirementUsage node) {
     this.setSubjectInRequirementUsage(node);
+    this.setRequirementParameters(node);
   }
 }

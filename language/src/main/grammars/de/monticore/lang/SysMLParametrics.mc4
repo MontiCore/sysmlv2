@@ -12,8 +12,10 @@ grammar SysMLParametrics extends de.monticore.lang.SysMLBlockDiagrams,
     "constraint" "def" Name ("(" (SysMLParameter || ",")* ")")?
     ConstraintBody;
 
+  ParameterList = "(" (SysMLParameter || ",")* ")";
+
   symbol scope (shadowing) ConstraintUsage implements ParametricsElement, SysMLUsage =
-    (["assert"] "constraint"? | "constraint") Name? (":" MCType)? ("(" (SysMLParameter || ",")* ")")?
+    (["assert"] "constraint"? | "constraint") Name? (":" MCType)? ParameterList?
     ConstraintBody;
 
   ConstraintBody =

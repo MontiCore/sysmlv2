@@ -1,7 +1,5 @@
 package de.monticore.lang.sysmlrequirementdiagrams._symboltable;
 
-import de.monticore.lang.sysmlrequirementdiagrams._visitor.RequirementsPostProcessor;
-import de.monticore.lang.sysmlv2.SysMLv2Language;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
@@ -14,8 +12,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Optional;
 
+import static de.monticore.lang.sysmlv2.SysMLv2Language.createAndValidateSymbolTableAndCoCos;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,8 +38,6 @@ public class RequirementsTest {
   @BeforeAll
   public static void initScope() {
     SysMLv2Mill.init();
-    traverser = SysMLv2Mill.traverser();
-    traverser.add4SysMLRequirementDiagrams(new RequirementsPostProcessor());
     scope = SysMLv2Mill.globalScope();
     BasicSymbolsMill.init();
     BasicSymbolsMill.initializePrimitives();
@@ -84,10 +82,7 @@ public class RequirementsTest {
    */
   private ASTSysMLModel getModel(String model) throws IOException {
     ASTSysMLModel ast = SysMLv2Mill.parser().parse(model).get();
-    SysMLv2Language.getPreSymbolTableCoCoChecker().checkAll(ast);
-    SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
-    SysMLv2Language.getPostSymbolTableCoCoChecker().checkAll(ast);
-    ast.accept(traverser);
+    createAndValidateSymbolTableAndCoCos(false, Arrays.asList(ast));
     return ast;
   }
 
@@ -365,16 +360,14 @@ public class RequirementsTest {
   }
 
   /**
-   * Following test verifies that type check computer the correct type for the requirement subjects.
+   * Following test verifies that type check computes the correct type for the requirement subjects.
    *
    * @throws IOException
    */
   @Test
   public void testRequirementSubjectType() throws IOException {
-    String model = "src/test/resources/sysmlrequirementdiagrams/_symboltable/RequirementsTypeCheck.sysml";
-    ASTSysMLModel ast = SysMLv2Mill.parser().parse(model).get();
-    SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
-    ast.accept(traverser);
+    ASTSysMLModel ast = getModel(
+        "src/test/resources/sysmlrequirementdiagrams/_symboltable/RequirementsTypeCheck.sysml");
     ISysMLv2Scope packageScope = ast.getEnclosingScope().getSubScopes().get(0);
 
     RequirementDefSymbol reqDef = packageScope.resolveRequirementDef("VehicleRequirement").get();

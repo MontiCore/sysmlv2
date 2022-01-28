@@ -1,6 +1,5 @@
 package de.monticore.lang.sysmlrequirementdiagrams._symboltable;
 
-import de.monticore.lang.sysmlblockdiagrams._symboltable.PartPropertySymbol;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
