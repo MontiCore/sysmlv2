@@ -49,45 +49,57 @@ public class SysMLv2Language {
     // 01. Parse Models
     SysMLv2Parser parser = SysMLv2Mill.parser();
     List<ASTSysMLModel> models = Files.walk(modelLocation).parallel()
-            .filter(path -> !path.toFile().isDirectory())
-            .filter(path -> FilenameUtils.getExtension(path.toFile().getName()).equals(FILE_ENDING))
-            .map(path ->
-            {
-              try {
-                Optional<ASTSysMLModel> optAst = parser.parse(path.toAbsolutePath().toString());
-                if (!optAst.isPresent()) {
-                  Log.warn("Empty AST for " + path);
-                }
-                return optAst;
-              } catch (IOException ex) {
-                Log.error("Could not find file at " + path, ex);
-                return Optional.<ASTSysMLModel>empty();
-              }
-            })
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .collect(Collectors.toList());
+        .filter(path -> !path.toFile().isDirectory())
+        .filter(path -> FilenameUtils.getExtension(path.toFile().getName()).equals(FILE_ENDING))
+        .map(path ->
+        {
+          try {
+            Optional<ASTSysMLModel> optAst = parser.parse(path.toAbsolutePath().toString());
+            if (!optAst.isPresent()) {
+              Log.warn("Empty AST for " + path);
+            }
+            return optAst;
+          } catch (IOException ex) {
+            Log.error("Could not find file at " + path, ex);
+            return Optional.<ASTSysMLModel>empty();
+          }
+        })
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .collect(Collectors.toList());
 
+    ISysMLv2GlobalScope globalScope = createAndValidateSymbolTableAndCoCos(unchecked, models);
+
+    return globalScope;
+  }
+
+  public static ISysMLv2GlobalScope createAndValidateSymbolTableAndCoCos(boolean unchecked, List<ASTSysMLModel> models) {
     // 02. Check initial CoCos
     if (!unchecked) {
-      SysMLv2CoCoChecker checker1 = getPreSymbolTableCoCoChecker();
-      models.forEach(checker1::checkAll);
+      SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
+      checker.addCoCo(new AssertConstraintNotAllowedInRequirement());
+      models.forEach(checker::checkAll);
     }
 
     // 03. Build Symbol Table
     ISysMLv2GlobalScope globalScope = createSymbolTable(models);
+
+    // 05. Check further CoCos
+    if (!unchecked) {
+      SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
+      checker.addCoCo(new AtMostSingleSubjectInRequirement());
+      checker.addCoCo(new RequirementSubjectMustExist());
+      checker.addCoCo(new SuperRequirementsMustExist());
+      checker.addCoCo(new RequirementDefinitionMustExist());
+      checker.addCoCo(new SubsettedRequirementsMustExist());
+      models.forEach(checker::checkAll);
+    }
 
     // 04. Perform any postprocessing
     SysMLv2Traverser traverser = SysMLv2Mill.traverser();
     traverser.add4SysMLRequirementDiagrams(new RequirementsPostProcessor());
     for (ASTSysMLModel model : models) {
       model.accept(traverser);
-    }
-
-    // 05. Check further CoCos
-    if (!unchecked) {
-      SysMLv2CoCoChecker checker2 = getPostSymbolTableCoCoChecker();
-      models.forEach(checker2::checkAll);
     }
 
     return globalScope;
@@ -106,33 +118,4 @@ public class SysMLv2Language {
     }
     return globalScope;
   }
-
-  /**
-   * Creates a SysMLv2CoCoChecker with added CoCos required to be checked
-   * before symbol table creation.
-   *
-   * @return SysMLv2CoCoChecker
-   */
-  public static SysMLv2CoCoChecker getPreSymbolTableCoCoChecker() {
-    SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
-    checker.addCoCo(new AssertConstraintNotAllowedInRequirement());
-    return checker;
-  }
-
-  /**
-   * Creates a SysMLv2CoCoChecker with added CoCos required to be checked
-   * after symbol table creation.
-   *
-   * @return SysMLv2CoCoChecker
-   */
-  public static SysMLv2CoCoChecker getPostSymbolTableCoCoChecker() {
-    SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
-    checker.addCoCo(new AtMostSingleSubjectInRequirement());
-    checker.addCoCo(new RequirementSubjectMustExist());
-    checker.addCoCo(new SuperRequirementsMustExist());
-    checker.addCoCo(new RequirementDefinitionMustExist());
-    checker.addCoCo(new SubsettedRequirementsMustExist());
-    return checker;
-  }
-
 }

@@ -4,18 +4,21 @@ package de.monticore.lang;
 grammar SysMLRequirementDiagrams extends de.monticore.lang.SysMLParametrics {
 
   start SysMLElement;
-  ParameterList = ("(" (SysMLParameter || ",")* ")");
 
-  symbol scope (shadowing) RequirementDef implements SysMLType =
+  // BaseRequirement is abstract and is extended by all RequirementDefinition & RequirementUsage.
+  // Common logic for both def. and usage can be extracted to it.
+  abstract BaseRequirement = ParameterList?;
+
+  symbol scope (shadowing) RequirementDef implements SysMLType extends BaseRequirement =
     "requirement" "def" ("id" id:Name)? Name
-    ParameterList?
     SysMLSpecialization?
+    ParameterList?
     RequirementBody;
 
-  symbol scope (shadowing) RequirementUsage implements ParametricsElement, SysMLUsage =
+  symbol scope (shadowing) RequirementUsage implements ParametricsElement, SysMLUsage extends BaseRequirement =
     "requirement" ("id" id:Name)? Name (":" MCType)?
-    ParameterList?
     SysMLSubsetting?
+    ParameterList?
     RequirementBody;
 
   RequirementBody =
