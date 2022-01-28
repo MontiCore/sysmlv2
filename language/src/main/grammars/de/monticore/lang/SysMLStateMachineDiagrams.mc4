@@ -16,7 +16,7 @@ grammar SysMLStateMachineDiagrams extends de.monticore.lang.SysMLActivityDiagram
     "}" | ";") ;
 
   symbol scope (shadowing) StateUsage implements STMUsageMember, SysMLUsage =
-    "state" Name (":" MCType)? ("(" (SysMLParameter || ",")* ")")?
+    "state" Name? (":" MCType)? ("(" (SysMLParameter || ",")* ")")?
     ("{"
       STMEntryAction?
       STMDoAction?
