@@ -8,7 +8,10 @@ component grammar SysMLCommons extends de.monticore.lang.SysMLExpressions, de.mo
   BindingConnectionUsage =
     "bind" fields:MCQualifiedName "=" fields:MCQualifiedName ";";
 
-  SysMLParameter implements Field = SysMLFeatureDirection? Name (":" MCType)? SysMLMultiplicity? ("=" binding:Expression)?;
+  /* Parameters */
+  SysMLParameter implements Field = SysMLFeatureDirection?
+    Name (":" MCType)? SysMLMultiplicity? ("=" binding:Expression)?;
+  ParameterList = "(" (SysMLParameter || ",")* ")";
 
   /* Inheritance */
   SysMLSpecialization = (":>" | "specializes") superDef:(MCObjectType || ",")+;

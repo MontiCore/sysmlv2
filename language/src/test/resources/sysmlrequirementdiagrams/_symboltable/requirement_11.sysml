@@ -1,97 +1,83 @@
 package Requirement_11 {
   part def Vehicle;
-  part def Car:> Vehicle;
+  part def Car:>Vehicle;
 
-  part def Engine;
-  part def TurboEngine :> Engine;
+  part vehicle: Vehicle;
+  part car: Car;
 
-  part vehicle1: Vehicle; part car1: Car;
-  part engine1: Engine; part turboEngine1: TurboEngine;
+  requirement def ReqDefWithNoParams;
+  requirement def ReqDefWithParams(a1: Vehicle, a2);
 
-  // simple parameterized requirement
-  requirement def ReqDef1(vehicle: Vehicle);
-  requirement def ReqDef2(engine: Engine);
-  requirement def ReqDef3(vehicle: Vehicle, engine: Engine);
+  // requirement usage with no parameters
+  requirement reqUsage1;
 
-  // req. usage with no type binding and params
-  requirement reqUsage1(vehicle: Vehicle);
+  // requirement usage with its own parameters
+  requirement reqUsage2(a1: Vehicle, a2: Vehicle = vehicle, a3: Vehicle = car);
 
-  // req. usage with type binding and no new params
-  requirement reqUsage2: ReqDef1;
+  // requirement usage with type binding and no parameters
+  requirement reqUsage3: ReqDefWithNoParams;
 
-  // req. usage with type binding and constrained params
-  requirement reqUsage3: ReqDef3(vehicle: Car, engine=turboEngine1);
+  // requirement usage with type binding and its own parameters
+  requirement reqUsage4: ReqDefWithNoParams(a1: Car = car);
 
-  // req. usage with type binding and new params
-  requirement reqUsage4: ReqDef1(engine: TurboEngine = turboEngine1);
+  // requirement usage with type binding with partially redefined parameters
+  requirement reqUsage5: ReqDefWithParams(a1: Vehicle);
 
-  // req. usage with type binding and constrained params + new params
-  requirement reqUsage5: ReqDef1(vehicle: Car, engine: TurboEngine = turboEngine1);
+  // requirement usage with type binding and fully redefined parameters
+  requirement reqUsage6: ReqDefWithParams(a1: Vehicle, a2: Vehicle = vehicle);
 
-  // req. usage with single subsetting and no new params
-  requirement reqUsage6 :> reqUsage1;
+  // requirement usage with type binding, fully redefined parameters, and its own parameters
+  requirement reqUsage7: ReqDefWithParams(a1: Vehicle, a2: Vehicle = vehicle, a3: Car);
 
-  // req. usage with single subsetting and constrained params
-  requirement reqUsage7 :> reqUsage1(vehicle: Car);
+  // requirement usage with param that has value but no type
+  requirement reqUsage8(a1 = vehicle);
+  requirement reqUsage9 :> reqUsage8(a1: Car = car);
 
-  // req. usage with single subsetting and new params
-  requirement reqUsage8 :> reqUsage1(engine: Engine);
+  // requirement usage with subsetting that has no parameters
+  requirement reqUsage10 :> reqUsage1;
 
-  // req. usage with single subsetting and constrained params + new params
-  requirement reqUsage9 :> reqUsage1(vehicle: Car = car1, engine=turboEngine1, mass: double);
+  // requirement usage with subsetting that has no parameters with its own new parameters
+  requirement reqUsage11 :> reqUsage1(a1: Vehicle, a2);
 
-  // req. usage with multiple subsetting, no overlap, and no new params
-  requirement reqUsage10: ReqDef2;
-  requirement reqUsage11:> reqUsage1, reqUsage10;
+  // requirement usage with subsetting that has parameters
+  // params inherited
+  requirement reqUsage12 :> reqUsage2;
+  // partial redefinition
+  requirement reqUsage13 :> reqUsage2(a1: Car = car, a2: Vehicle = vehicle);
+  // complete redefinition
+  requirement reqUsage14 :> reqUsage2(a1: Car = car, a2: Vehicle = vehicle, a3: Vehicle);
+  // complete redefinition and new paras
+  requirement reqUsage15 :> reqUsage2(a1: Car = car, a2: Vehicle = vehicle, a3: Vehicle, a4: Car);
 
-  // req. usage with multiple subsetting, no overlap, and constrained params
-  requirement reqUsage12:> reqUsage1, reqUsage10(vehicle: Car);
+  // requirement usage with type binding and subsetting
+  // with no. params
+  requirement reqUsage16
+    : ReqDefWithNoParams
+    :> reqUsage1;
 
-  // req. usage with multiple subsetting, no overlap, and new params
-  requirement reqUsage13:> reqUsage1, reqUsage10(mass: double = 100.0);
+  // with its own params
+  requirement reqUsage17
+    : ReqDefWithNoParams
+    :> reqUsage1(a1 = vehicle, a2: Car);
 
-  // req. usage with multiple subsetting, no overlap, and constrained params + new params
-  requirement reqUsage14:> reqUsage1, reqUsage10(vehicle=car1, engine: TurboEngine, mass=100.0);
+  // with equal no. of params, no new params
+  requirement reqUsage18(a1, a2: Car);
+  requirement reqUsage19
+    : ReqDefWithParams
+    :> reqUsage18(a1: Vehicle = vehicle, a2: Car = car);
 
-  // req. usage with multiple subsetting, with overlap, and no new params
-  requirement reqUsage15: ReqDef3;
-  requirement reqUsage16:> reqUsage1, reqUsage15;
+  // with equal no. of params and new params
+  requirement reqUsage20
+    : ReqDefWithParams
+    :> reqUsage18(a1: Vehicle = vehicle, a2: Car = car, a3: Car, a4 = vehicle);
 
-  // req. usage with multiple subsetting, with overlap, and constrained params
-  requirement reqUsage17:> reqUsage1, reqUsage15(vehicle: Car);
+  // with different no. of params, no new params
+  requirement reqUsage21
+    : ReqDefWithParams
+    :> reqUsage2(a1: Vehicle = vehicle, a2: Car = car, a3: Car);
 
-  // req. usage with multiple subsetting, with overlap, and new params
-  requirement reqUsage18:> reqUsage1, reqUsage15(mass: double = 100.0);
-
-  // req. usage with multiple subsetting, with overlap, and constrained params + new params
-  requirement reqUsage19:> reqUsage1, reqUsage15(vehicle=car1, engine: TurboEngine, mass=100.0);
-
-  // req. usage with subsetting & type binding, no overlap, and no new params
-  requirement reqUsage20: ReqDef1 :> reqUsage10;
-
-  // req. usage with subsetting & type binding, no overlap, and constrained params
-  requirement reqUsage21: ReqDef1 :> reqUsage10(vehicle: Car, engine: TurboEngine);
-
-  // req. usage with subsetting & type binding, no overlap, and new params
-  requirement reqUsage22: ReqDef1 :> reqUsage10(mass: double);
-
-  // req. usage with subsetting & type binding, no overlap, and constrained params + new params
-  requirement reqUsage23: ReqDef1 :> reqUsage10(vehicle: Car, engine: TurboEngine, mass=100.0);
-
-  // req. usage with subsetting & type binding, with overlap, and no new params
-  requirement reqUsage24: ReqDef1 :> reqUsage15;
-
-  // req. usage with subsetting & type binding, with overlap, and constrained params
-  requirement reqUsage25: ReqDef1 :> reqUsage15(vehicle: Car);
-
-  // req. usage with subsetting & type binding, with overlap, and new params
-  requirement reqUsage26: ReqDef1 :> reqUsage15(mass: double = 100.0);
-
-  // req. usage with subsetting & type binding, with overlap, and constrained params + new params
-  requirement reqUsage27: ReqDef1 :> reqUsage15(vehicle=car1, engine: TurboEngine, mass=100.0);
-
-  // reset inherited assigned value
-  requirement reqUsage28: ReqDef1(vehicle = vehicle1);
-  requirement reqUsage29 :> reqUsage28(vehicle: Car);
-
+  // with different no. of params and new params
+  requirement reqUsage22
+    : ReqDefWithParams
+    :> reqUsage2(a1: Vehicle = vehicle, a2: Car = car, a3: Car, a4 = vehicle);
 }

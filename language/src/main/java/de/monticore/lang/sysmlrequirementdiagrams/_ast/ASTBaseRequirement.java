@@ -1,16 +1,15 @@
 package de.monticore.lang.sysmlrequirementdiagrams._ast;
 
-import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.lang.sysmlcommons._ast.ASTParameterList;
 import de.monticore.lang.sysmlcommons._ast.ASTSysMLParameter;
-import de.monticore.lang.sysmlparametrics._ast.ASTParameterList;
 import de.monticore.lang.sysmlv2.typecheck.DeriveSysMLTypes;
 import de.monticore.lang.sysmlv2.typecheck.SysMLTypesSynthesizer;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.TypeCheck;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ASTBaseRequirement is an abstract class that encapsulates the common logic for requirements.
@@ -19,113 +18,13 @@ import java.util.Map;
 public abstract class ASTBaseRequirement extends ASTBaseRequirementTOP {
 
   /**
-   * A map with parameter name as 'key' and 'ASTSysMLParameter' as value.
-   * This is a cumulative parameters map (i.e. includes also all the inherited parameters).
+   * List of inherited parameters. In cases where partial redefinition of requirement
+   * parameters is allowed, the rest of the parameters are then inherited and stored in
+   * this list, as well as added to the spanned scope of the requirement.
    */
-  protected HashMap<String, ASTSysMLParameter> parameters =
-      new HashMap<>();
+  protected ArrayList<ASTSysMLParameter> inheritedParameters = null;
 
   protected TypeCheck typeCheck = new TypeCheck(new SysMLTypesSynthesizer(), new DeriveSysMLTypes());
-
-  public HashMap<String, ASTSysMLParameter> getParameters() {
-    return parameters;
-  }
-
-  /**
-   * Transfers the parameters from the ASTParameterList to internally maintained parameters map.
-   */
-  public void transferParameters() {
-    if(this.isPresentParameterList()) {
-      HashMap<String, ASTSysMLParameter> parameters = new HashMap<>();
-      ASTParameterList params = this.getParameterList();
-
-      /*
-      First, add all the parameters in a temporary map.
-      This addition ensures that,
-       1. there are no duplicates in the parameter list of the current requirement, and
-       2. if a value is assigned to a param., then it is compatible with its type.
-       */
-      for (ASTSysMLParameter param : params.getSysMLParameterList()) {
-        if(parameters.containsKey(param.getName())) {
-          Log.error("Requirement parameter '" + param.getName()
-              + "' cannot be added as it is already present in the parameter list."
-              + " It is possible that duplicate parameters were added in the requirement"
-              + " parameter list.");
-        }
-
-        SymTypeExpression type = null;
-        ASTExpression exp = null;
-        boolean typeInferred = false;
-
-        // Extract explicitly defined parameter type.
-        if(param.isPresentMCType()) {
-          type = typeCheck.symTypeFromAST(param.getMCType());
-        }
-
-        // If a value was assigned to the parameter, then validate its type is correct.
-        if(param.isPresentBinding()) {
-          // Extract the type of the assigned value.
-          exp = param.getBinding();
-          SymTypeExpression expType = typeCheck.typeOf(param.getBinding());
-          if(type != null) {
-            // Validate that the explicitly defined type and inferred type are compatible.
-            if(!isCompatible(type, expType)) {
-              Log.error("Requirement parameter '" + param.getName() + "' has a type '" + type.getTypeInfo().getName()
-                  + "', but it is assigned a value of type '" + expType.getTypeInfo().getName() + "', which"
-                  + " is not compatible!");
-            }
-          }
-          // If there was no explicitly defined type, then assign exp. type to it.
-          // Because we have inferred the type from the assigned value, we also set the flag 'typeInferred' to true.
-          else {
-            type = expType;
-            typeInferred = true;
-          }
-        }
-
-        // Update the original ASTSysMLParameter accordingly & add in the parameters map.
-        param.setType(type);
-        param.setExpression(exp);
-        param.setTypeInferred(typeInferred);
-        parameters.put(param.getName(), param);
-      }
-
-      /*
-      Now, we traverse the temporary map and add these parameters in the (possibly) pre-populated
-      parameter map of the requirement.
-      Map will be pre-populated at this point if the current requirement specializes/subsets other requirements.
-       */
-      for (Map.Entry<String, ASTSysMLParameter> entry : parameters.entrySet()) {
-        if(this.parameters.containsKey(entry.getKey())) {
-          /*
-           This parameter was already added as it was inherited in some way.
-           Now we check for type compatibility between the old and new types
-           and update the parameter accordingly.
-           */
-          ASTSysMLParameter oldParameter = this.parameters.get(entry.getKey());
-          ASTSysMLParameter newParameter = entry.getValue();
-
-          // In case the stored param. already has a type and the new param. also defines a type,
-          // then these must be compatible. Constraining the type is allowed.
-          if(oldParameter.getType() != null && newParameter.getType() != null
-              && !isCompatible(oldParameter.getType(), newParameter.getType())) {
-            Log.error("Requirement parameter '" + entry.getKey() + "' has a type '"
-                + oldParameter.getType().getTypeInfo().getName()
-                + "', but it is defined with a new type or assigned a value of type '"
-                + newParameter.getType().getTypeInfo().getName() + "', which is not compatible!");
-          }
-
-          // Set type as old type if new type is not present or was inferred.
-          if(oldParameter.getType() != null && (newParameter.getType() == null || newParameter.isTypeInferred())) {
-            entry.getValue().setType(oldParameter.getType());
-            entry.getValue().setTypeInferred(false);
-          }
-        }
-        // We always update the map to point to the new parameter, since it was defined in the requirement's scope.
-        this.parameters.put(entry.getKey(), entry.getValue());
-      }
-    }
-  }
 
   /**
    * Checks for type compatibility between the given two types.
@@ -136,6 +35,11 @@ public abstract class ASTBaseRequirement extends ASTBaseRequirementTOP {
    */
   private boolean isCompatible(SymTypeExpression type, SymTypeExpression subType) {
     boolean compatible = true;
+    // if the type to compare against is 'Anything', represented by 'null',
+    // then everything is compatible to it.
+    if(type == null)
+      return true;
+    // Otherwise, we check for compatibility.
     if(!type.deepEquals(subType)) {
       compatible = false;
       while (!subType.getTypeInfo().isEmptySuperTypes() && !compatible) {
@@ -152,39 +56,116 @@ public abstract class ASTBaseRequirement extends ASTBaseRequirementTOP {
   }
 
   /**
-   * Adds inherited parameters to the parameter map.
-   * By inherited parameters here is meant any parameters passed onto the requirement
-   * due to type binding or specialization/subsetting of other requirements.
+   * Validates the type compatibility between redefining and redefined parameters.
    *
-   * @param parameters Map<String, ASTBaseRequirement.Parameter>
+   * @param parameters ASTParameterList
    */
-  public void addInheritedParameters(Map<String, ASTSysMLParameter> parameters) {
-    for (Map.Entry<String, ASTSysMLParameter> entry : parameters.entrySet()) {
-      if(this.parameters.containsKey(entry.getKey())) {
-        // If a parameter was inherited from multiple sources, then this parameter must be exactly the same,
-        // i.e. its type & expression value. We don't do a comparison on the AST level.
-        if(!this.parameters.get(entry.getKey()).isEqual(entry.getValue())) {
-          Log.error("Requirement parameter '" + entry.getKey() + "' was inherited multiple times, "
-              + "but the the parameters are not equal. Only the same parameters can be inherited more than once.");
-        }
-
-        // Check and/or set the correct parameter type.
-        SymTypeExpression type = this.parameters.get(entry.getKey()).getType();
-        SymTypeExpression newType = entry.getValue().getType();
-
-        // We set the parameter type to the previously known type if there is a new type present, but
-        // the type was inferred, not defined. Consequently, the map is also updated with this modified parameter.
-        if(entry.getValue().isTypeInferred()) {
-          entry.getValue().setType(type);
-          entry.getValue().setTypeInferred(false);
-          this.parameters.put(entry.getKey(), entry.getValue());
-        }
-      }
-      // Simply add the parameter if it was not present.
-      else {
-        this.parameters.put(entry.getKey(), entry.getValue());
+  public void validateRedefiningDefinitionParameters(ASTParameterList parameters) {
+    List<ASTSysMLParameter> paramList = parameters.getSysMLParameterList();
+    for (int i = 0; i < this.getParameterList().sizeSysMLParameters() && i < paramList.size(); ++i) {
+      // If the types aren't compatible, raise an error.
+      if(!isCompatible(
+          paramList.get(i).getSymbol().getType(),
+          this.getParameterList().getSysMLParameter(i).getSymbol().getType())) {
+        Log.error("RequirementParameter '" + paramList.get(i).getName() + "' has type '"
+                + paramList.get(i).getSymbol().getType().getTypeInfo().getName() + "', but was redefined with type '"
+                + this.getParameterList().getSysMLParameter(i).getSymbol().getType().getTypeInfo().getName() + "', "
+                + "which is not compatible.",
+            this.getParameterList().getSysMLParameter(i).get_SourcePositionStart(),
+            this.getParameterList().getSysMLParameter(i).get_SourcePositionEnd());
       }
     }
   }
 
+  /**
+   * Validates the type compatibility between redefining and redefined parameters.
+   * Also validates type compatibility with any feature values, if present.
+   *
+   * @param parameters ASTParameterList
+   */
+  public void validateRedefiningUsageParameters(ASTParameterList parameters) {
+    List<ASTSysMLParameter> paramList = parameters.getSysMLParameterList();
+    for (int i = 0; i < this.getParameterList().sizeSysMLParameters() && i < paramList.size(); ++i) {
+      // If the types aren't compatible, raise an error.
+      if(!isCompatible(
+          paramList.get(i).getSymbol().getType(),
+          this.getParameterList().getSysMLParameter(i).getSymbol().getType())) {
+        Log.error("RequirementParameter '" + paramList.get(i).getName() + "' has type '"
+                + paramList.get(i).getSymbol().getType().getTypeInfo().getName() + "', but was redefined with type '"
+                + this.getParameterList().getSysMLParameter(i).getSymbol().getType().getTypeInfo().getName() + "', "
+                + "which is not compatible.",
+            this.getParameterList().getSysMLParameter(i).get_SourcePositionStart(),
+            this.getParameterList().getSysMLParameter(i).get_SourcePositionEnd());
+      }
+      // If the assigned feature value isn't compatible, raise an error.
+      if(this.getParameterList().getSysMLParameter(i).isPresentBinding()) {
+        SymTypeExpression expType = typeCheck.typeOf(this.getParameterList().getSysMLParameter(i).getBinding());
+        if(!isCompatible(
+            this.getParameterList().getSysMLParameter(i).getSymbol().getType(), expType)) {
+          Log.error("RequirementParameter '" + paramList.get(i).getName() + "' has type '"
+                  + this.getParameterList().getSysMLParameter(i).getSymbol().getType().getTypeInfo().getName()
+                  + "', but was assigned a value of"
+                  + " type '" + expType.getTypeInfo().getName() + "', which is not compatible.",
+              this.getParameterList().getSysMLParameter(i).get_SourcePositionStart(),
+              this.getParameterList().getSysMLParameter(i).get_SourcePositionEnd());
+        }
+      }
+    }
+  }
+
+  /**
+   * In case where partial redefinition of parameters is allowed, the rest of the
+   * parameters are then inherited.
+   * 1. We make a clone of the parameters to be inherited,
+   * 2. store them in inheritedParameters list,
+   * 3. and add them in the requirement's spanned scope.
+   *
+   * @param parameterList ASTParameterList
+   */
+  public void addInheritedParameters(ASTParameterList parameterList) {
+    if(parameterList.sizeSysMLParameters() > 0) {
+      inheritedParameters = new ArrayList<>();
+      // If the current requirement does not redefine any parameters, then we add all of them.
+      int startIndex = 0;
+      // Otherwise, we compute the starting position of params. to add and start from there.
+      if(this.isPresentParameterList()) {
+        startIndex = this.getParameterList().sizeSysMLParameters();
+      }
+      for (int i = startIndex; i < parameterList.sizeSysMLParameters(); ++i) {
+        ASTSysMLParameter clone = parameterList.getSysMLParameter(i).deepClone();
+        clone.setEnclosingScope(this.getSpannedScope());
+        inheritedParameters.add(clone);
+        this.getSpannedScope().add(clone.getSymbol());
+      }
+    }
+  }
+
+  /**
+   * Checks if inherited parameters are present.
+   *
+   * @return boolean
+   */
+  public boolean isPresentInheritedParameters() {
+    return this.inheritedParameters != null;
+  }
+
+  /**
+   * Returns size of inherited parameters.
+   *
+   * @return int
+   */
+  public int sizeInheritedParameters() {
+    int size = 0;
+    if(this.inheritedParameters != null)
+      size = this.inheritedParameters.size();
+    return size;
+  }
+
+  public ArrayList<ASTSysMLParameter> getInheritedParameters() {
+    return this.inheritedParameters;
+  }
+
+  public ASTSysMLParameter getInheritedParameter(int i) {
+    return this.inheritedParameters.get(i);
+  }
 }

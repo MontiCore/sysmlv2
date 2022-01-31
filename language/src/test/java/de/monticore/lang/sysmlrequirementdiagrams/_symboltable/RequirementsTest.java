@@ -4,7 +4,6 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
-import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
@@ -16,9 +15,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import static de.monticore.lang.sysmlv2.SysMLv2Language.createAndValidateSymbolTableAndCoCos;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Checks Requirements (Definitions, Usages, etc.)
@@ -32,8 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RequirementsTest {
 
   private static ISysMLv2GlobalScope scope;
-
-  private static SysMLv2Traverser traverser;
 
   @BeforeAll
   public static void initScope() {
@@ -94,7 +89,7 @@ public class RequirementsTest {
    */
   private Optional<RequirementSubjectSymbol> getSubject(ISysMLRequirementDiagramsScope scope) {
     Optional<RequirementSubjectSymbol> subject = Optional.empty();
-    if (scope.getRequirementSubjectSymbols().size() > 0) {
+    if(scope.getRequirementSubjectSymbols().size() > 0) {
       subject = Optional.ofNullable(scope.getRequirementSubjectSymbols().values().get(0));
     }
     return subject;
