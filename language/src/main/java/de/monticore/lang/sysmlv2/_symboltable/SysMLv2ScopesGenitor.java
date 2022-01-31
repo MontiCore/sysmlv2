@@ -38,6 +38,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * SysMLv2ScopesGenitor was extended to add postprocessing visitors primarily
@@ -177,7 +178,9 @@ public class SysMLv2ScopesGenitor extends SysMLv2ScopesGenitorTOP
         && !(node.getEnclosingScope().getAstNode() instanceof ASTSysMLPackage)) {
       // Create TypeSymbol of the same name and add in the enclosing scope.
       SysMLTypeSymbol typeSymbol = new SysMLTypeSymbolBuilder()
-          .setName(node.getName())
+          // Append a randomly generated string to create anonymous type,
+          // this type will only exist in the current scope.
+          .setName(node.getName() + "_" + UUID.randomUUID().toString().replaceAll("-", "").substring(0, 10))
           .setAstNodeAbsent()
           .setSpannedScope(node.getSpannedScope())
           .setEnclosingScope(node.getEnclosingScope()).build();

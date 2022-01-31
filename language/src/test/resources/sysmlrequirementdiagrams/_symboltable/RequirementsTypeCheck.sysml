@@ -1,6 +1,8 @@
 package Requirements {
 
-  part def Bolt;
+  part def Bolt {
+    attribute diameter: double;
+  }
 
   part def Engine {
     part bolt: Bolt;
@@ -18,9 +20,8 @@ package Requirements {
   part def Brand {
     attribute ll: Real;
   }
-  part def Vintage :> Car, Brand {
 
-  }
+  part def Vintage :> Car, Brand;
 
   part car: Vintage;
 
@@ -35,7 +36,7 @@ package Requirements {
       subject bolt = vehicle.engine.bolt;
 
       require constraint c1 {
-        bolt == "copper"
+        bolt.diameter < 5
       }
     }
 

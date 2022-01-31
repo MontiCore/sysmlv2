@@ -47,8 +47,8 @@ public class DeriveSymTypeOfSysMLExpression extends DeriveSymTypeOfExpression
    * @return Optional<SymTypeExpression>
    */
   public Optional<SymTypeExpression> calculateNameExpression(ASTNameExpression node) {
-    super.calculateNameExpression(node);
-    if (!typeCheckResult.isPresentCurrentResult()) {
+    Optional<SymTypeExpression> result = super.calculateNameExpression(node);
+    if(!result.isPresent()){
       ASTMCQualifiedType mcType = null;
       ASTExpression exp = null;
 
@@ -120,6 +120,6 @@ public class DeriveSymTypeOfSysMLExpression extends DeriveSymTypeOfExpression
         }
       }
     }
-    return Optional.empty();
+    return result;
   }
 }
