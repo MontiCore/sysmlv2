@@ -1,15 +1,12 @@
 package de.monticore.lang.sysmlrequirementdiagrams._symboltable;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpressionBuilder;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpressionBuilder;
 import de.monticore.lang.sysmlcommons._ast.ASTSysMLParameter;
-import de.monticore.lang.sysmlrequirementdiagrams._ast.ASTBaseRequirement;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
-import de.monticore.literals.mccommonliterals._ast.ASTBasicDoubleLiteralBuilder;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,14 +14,13 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 import static de.monticore.lang.sysmlv2.SysMLv2Language.createAndValidateSymbolTableAndCoCos;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ParameterizedRequirementsTest {
 
@@ -42,7 +38,8 @@ public class ParameterizedRequirementsTest {
    * Creates a SysMLModel by performing the following steps:
    * 1. parsing
    * 2. symbol table creation
-   * 3. postprocessing
+   * 3. CoCo checking
+   * 4. postprocessing
    *
    * @param model String
    * @return ASTSysMLModel
@@ -50,37 +47,107 @@ public class ParameterizedRequirementsTest {
    */
   private ASTSysMLModel getModel(String model) throws IOException {
     ASTSysMLModel ast = SysMLv2Mill.parser().parse(model).get();
-    createAndValidateSymbolTableAndCoCos(false, Arrays.asList(ast));
+    createAndValidateSymbolTableAndCoCos(false, Collections.singletonList(ast));
     return ast;
   }
 
-  private void validateParameters(
-      HashMap<String, ASTSysMLParameter> parameters,
-      Map<String, Map.Entry<String, ASTExpression>> types) {
-    for (Map.Entry<String, Map.Entry<String, ASTExpression>> entry : types.entrySet()) {
-      String key = entry.getKey();
-      String type = entry.getValue().getKey();
-      ASTExpression expression = entry.getValue().getValue();
-      ASTSysMLParameter parameter = parameters.get(key);
+  private void validateReqDefInheritedParameters(ISysMLv2Scope scope, String requirementName,
+                                                 ArrayList<Map.Entry<String, String>> values) {
+    RequirementDefSymbol reqDef = scope.resolveRequirementDef(requirementName).get();
+    for (int i = 0; i < reqDef.getAstNode().sizeInheritedParameters(); ++i) {
+      ASTSysMLParameter inheritedParameter = reqDef.getAstNode().getInheritedParameter(i);
+      assertEquals(inheritedParameter.getName(), values.get(i).getKey());
+      if(values.get(i).getValue() == null) {
+        assertNull(inheritedParameter.getSymbol().getType());
+      }
+      else {
+        assertEquals(
+            inheritedParameter.getSymbol().getType().getTypeInfo().getName(),
+            values.get(i).getValue());
+      }
+      assertTrue(reqDef.getSpannedScope().resolveField(values.get(i).getKey()).isPresent());
+    }
+  }
 
-      if(type != null) {
-        assertEquals(parameter.getType().getTypeInfo().getName(), type);
+  private void validateReqUsageInheritedParameters(ISysMLv2Scope scope, String requirementName,
+                                                   ArrayList<Map.Entry<String, Map.Entry<String, ASTExpression>>> values) {
+    RequirementUsageSymbol reqUsage = scope.resolveRequirementUsage(requirementName).get();
+    for (int i = 0; i < reqUsage.getAstNode().sizeInheritedParameters(); ++i) {
+      ASTSysMLParameter inheritedParameter = reqUsage.getAstNode().getInheritedParameter(i);
+      assertEquals(inheritedParameter.getName(), values.get(i).getKey());
+      if(values.get(i).getValue() == null) {
+        assertNull(inheritedParameter.getSymbol().getType());
+      }
+      else if(values.get(i).getValue().getKey() == null) {
+        assertNull(inheritedParameter.getSymbol().getType());
       }
       else {
-        assertNull(parameter.getType());
+        assertEquals(
+            inheritedParameter.getSymbol().getType().getTypeInfo().getName(),
+            values.get(i).getValue().getKey());
+        if(values.get(i).getValue().getValue() == null) {
+          assertFalse(inheritedParameter.isPresentBinding());
+        }
+        else {
+          assertTrue(inheritedParameter.getBinding().deepEquals(values.get(i).getValue().getValue()));
+        }
       }
-      if(expression != null) {
-        assertTrue(parameter.getExpression().deepEquals(expression));
+      assertTrue(reqUsage.getSpannedScope().resolveField(values.get(i).getKey()).isPresent());
+    }
+  }
+
+  private void validateReqDefParameters(ISysMLv2Scope scope, String requirementName,
+                                        boolean paramPresent, boolean inheritedParamsPresent,
+                                        ArrayList<Map.Entry<String, String>> values) {
+    RequirementDefSymbol reqDef = scope.resolveRequirementDef(requirementName).get();
+    assertEquals(reqDef.getAstNode().isPresentParameterList(), paramPresent);
+    assertEquals(reqDef.getAstNode().isPresentInheritedParameters(), inheritedParamsPresent);
+    for (int i = 0; i < values.size(); ++i) {
+      assertEquals(reqDef.getAstNode().getParameterList().getSysMLParameter(i).getName(), values.get(i).getKey());
+      if(values.get(i).getValue() == null) {
+        assertNull(reqDef.getAstNode().getParameterList().getSysMLParameter(i).getSymbol().getType());
       }
       else {
-        assertNull(parameter.getExpression());
+        assertEquals(
+            reqDef.getAstNode().getParameterList().getSysMLParameter(i).getSymbol().getType().getTypeInfo().getName(),
+            values.get(i).getValue());
+      }
+    }
+  }
+
+  private void validateReqUsageParameters(ISysMLv2Scope scope, String requirementName,
+                                          boolean paramPresent, boolean inheritedParamsPresent,
+                                          ArrayList<Map.Entry<String, Map.Entry<String, ASTExpression>>> values) {
+    RequirementUsageSymbol reqUsage = scope.resolveRequirementUsage(requirementName).get();
+    assertEquals(reqUsage.getAstNode().isPresentParameterList(), paramPresent);
+    assertEquals(reqUsage.getAstNode().isPresentInheritedParameters(), inheritedParamsPresent);
+    for (int i = 0; i < values.size(); ++i) {
+      assertEquals(reqUsage.getAstNode().getParameterList().getSysMLParameter(i).getName(), values.get(i).getKey());
+      if(values.get(i).getValue() == null) {
+        assertNull(reqUsage.getAstNode().getParameterList().getSysMLParameter(i).getSymbol().getType());
+        assertFalse(reqUsage.getAstNode().getParameterList().getSysMLParameter(i).isPresentBinding());
+      }
+      else if(values.get(i).getValue().getKey() == null) {
+        assertNull(reqUsage.getAstNode().getParameterList().getSysMLParameter(i).getSymbol().getType());
+      }
+      else {
+        assertEquals(
+            reqUsage.getAstNode().getParameterList().getSysMLParameter(i).getSymbol().getType().getTypeInfo().getName(),
+            values.get(i).getValue().getKey());
+        if(values.get(i).getValue().getValue() == null) {
+          assertFalse(reqUsage.getAstNode().getParameterList().getSysMLParameter(i).isPresentBinding());
+        }
+        else {
+          assertTrue(reqUsage.getAstNode().getParameterList().getSysMLParameter(i).getBinding().deepEquals(
+              values.get(i).getValue().getValue()));
+        }
       }
     }
   }
 
   /**
    * Tests requirement parameters for requirement definitions.
-   * Validates duplicates and type compatibility.
+   * Validates type compatibility and inheritance behavior.
    *
    * @throws IOException
    */
@@ -89,137 +156,97 @@ public class ParameterizedRequirementsTest {
     String model = "src/test/resources/sysmlrequirementdiagrams/_symboltable/requirement_10.sysml";
     ASTSysMLModel ast = getModel(model);
     ISysMLv2Scope packageScope = ast.getEnclosingScope().getSubScopes().get(0);
-    HashMap<String, Map.Entry<String, ASTExpression>> types = new HashMap<>();
+    ArrayList<Map.Entry<String, String>> values = new ArrayList<>();
 
-    // data
-    AbstractMap.SimpleEntry<String, ASTExpression> noType = new AbstractMap.SimpleEntry<>(null, null);
-    AbstractMap.SimpleEntry<String, ASTExpression> nullVehicle = new AbstractMap.SimpleEntry<>("Vehicle", null);
-    AbstractMap.SimpleEntry<String, ASTExpression> nullCar = new AbstractMap.SimpleEntry<>("Car", null);
-    AbstractMap.SimpleEntry<String, ASTExpression> nullEngine = new AbstractMap.SimpleEntry<>("Engine", null);
-    AbstractMap.SimpleEntry<String, ASTExpression> nullTurboEngine = new AbstractMap.SimpleEntry<>("TurboEngine", null);
-    AbstractMap.SimpleEntry<String, ASTExpression> vehicle_car1 = new AbstractMap.SimpleEntry<>(
-        "Vehicle",
-        new ASTNameExpressionBuilder().setName("car1").build());
-    AbstractMap.SimpleEntry<String, ASTExpression> vehicle_vehicle1 = new AbstractMap.SimpleEntry<>(
-        "Vehicle",
-        new ASTNameExpressionBuilder().setName("vehicle1").build());
-    AbstractMap.SimpleEntry<String, ASTExpression> engine_turboEngine1 = new AbstractMap.SimpleEntry<>(
-        "Engine",
-        new ASTNameExpressionBuilder().setName("turboEngine1").build());
-    AbstractMap.SimpleEntry<String, ASTExpression> mass = new AbstractMap.SimpleEntry<>(
-        "double",
-        new ASTLiteralExpressionBuilder().setLiteral(
-            new ASTBasicDoubleLiteralBuilder().setPre("100").setPost("0").build()).build());
-    AbstractMap.SimpleEntry<String, ASTExpression> car_car1 = new AbstractMap.SimpleEntry<>("Car",
-        new ASTNameExpressionBuilder().setName("car1").build());
-    // end
+    validateReqDefParameters(packageScope, "ReqDef1", false, false, values);
+    validateReqDefParameters(packageScope, "ReqDef2", false, false, values);
 
-    types.put("vehicle", nullVehicle);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef1", types);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef2", types);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef3", types);
+    values.add(new AbstractMap.SimpleEntry<>("a1", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("a2", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("a3", "Vehicle"));
+    validateReqDefParameters(packageScope, "ReqDef3", true, false, values);
 
-    types.put("vehicle", nullCar);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef4", types);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef5", types);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("b1", "Car"));
+    values.add(new AbstractMap.SimpleEntry<>("b2", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("b3", "Car"));
+    validateReqDefParameters(packageScope, "ReqDef4", true, false, values);
 
-    types.put("vehicle", nullVehicle);
-    types.put("engine", nullEngine);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef6", types);
-    types.remove("engine");
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("c1", "Vehicle"));
+    validateReqDefParameters(packageScope, "ReqDef5", true, true, values);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a2", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("a3", "Vehicle"));
+    validateReqDefInheritedParameters(packageScope, "ReqDef5", values);
 
-    types.put("vehicle", vehicle_vehicle1);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef7", types);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("c1", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("c2", "Car"));
+    validateReqDefParameters(packageScope, "ReqDef6", true, true, values);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a3", "Vehicle"));
+    validateReqDefInheritedParameters(packageScope, "ReqDef6", values);
 
-    types.put("vehicle", vehicle_car1);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef8", types);
+    values.clear();
+    validateReqDefParameters(packageScope, "ReqDef7", false, true, values);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a1", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("a2", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("a3", "Vehicle"));
+    validateReqDefInheritedParameters(packageScope, "ReqDef7", values);
 
-    types.put("vehicle", car_car1);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef9", types);
+    values.clear();
+    validateReqDefParameters(packageScope, "ReqDef9", false, false, values);
 
-    types.put("vehicle", vehicle_car1);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef10", types);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a1", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("a2", null));
+    validateReqDefParameters(packageScope, "ReqDef16", true, false, values);
 
-    types.put("vehicle", car_car1);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef11", types);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("b1", "Car"));
+    values.add(new AbstractMap.SimpleEntry<>("b2", "Car"));
+    values.add(new AbstractMap.SimpleEntry<>("b3", "Car"));
+    validateReqDefParameters(packageScope, "ReqDef10", true, false, values);
 
-    types.put("vehicle", vehicle_vehicle1);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef12", types);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a1", null));
+    values.add(new AbstractMap.SimpleEntry<>("a2", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("a3", null));
+    validateReqDefParameters(packageScope, "ReqDef11", true, false, values);
 
-    types.put("vehicle", nullVehicle);
-    types.put("engine", nullEngine);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef14", types);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("b1", "Car"));
+    values.add(new AbstractMap.SimpleEntry<>("b2", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("b3", "Vehicle"));
+    validateReqDefParameters(packageScope, "ReqDef12", true, false, values);
 
-    types.put("vehicle", nullCar);
-    types.put("engine", engine_turboEngine1);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef15", types);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("b1", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("b2", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("b3", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("b4", null));
+    validateReqDefParameters(packageScope, "ReqDef13", true, false, values);
 
-    types.put("vehicle", nullVehicle);
-    types.put("engine", nullEngine);
-    types.put("mass", mass);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef16", types);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("b1", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("b2", "Car"));
+    values.add(new AbstractMap.SimpleEntry<>("b3", "Vehicle"));
+    validateReqDefParameters(packageScope, "ReqDef14", true, false, values);
 
-    types.put("vehicle", vehicle_car1);
-    types.put("engine", nullTurboEngine);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef17", types);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("b1", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("b2", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("b3", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("b4", "Vehicle"));
+    validateReqDefParameters(packageScope, "ReqDef15", true, false, values);
 
-    types.put("vehicle", nullVehicle);
-    types.put("engine", nullEngine);
-    types.remove("mass");
-    validateRequirementDefinitionParameters(packageScope, "ReqDef19", types);
-
-    types.put("engine", engine_turboEngine1);
-    types.put("vehicle", nullCar);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef20", types);
-
-    types.put("vehicle", nullVehicle);
-    types.put("engine", nullEngine);
-    types.put("mass", mass);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef21", types);
-
-    types.put("vehicle", vehicle_car1);
-    types.put("engine", nullTurboEngine);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef22", types);
-
-    types.put("vehicle", nullCar);
-    types.remove("engine");
-    types.remove("mass");
-    validateRequirementDefinitionParameters(packageScope, "ReqDef24", types);
-
-    types.put("vehicle", car_car1);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef25", types);
-
-    types.put("vehicle", nullVehicle);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef26", types);
-
-    types.put("vehicle", vehicle_vehicle1);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef27", types);
-
-    types.put("vehicle", vehicle_car1);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef28", types);
-
-    types.put("vehicle", nullVehicle);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef29", types);
-
-    types.put("vehicle", noType);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef30", types);
-
-    types.put("vehicle", nullVehicle);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef31", types);
-
-    types.put("vehicle", car_car1);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef32", types);
-
-    types.put("vehicle", nullVehicle);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef33", types);
-
-    types.put("vehicle", nullCar);
-    validateRequirementDefinitionParameters(packageScope, "ReqDef34", types);
   }
 
   /**
    * Tests requirement parameters for requirement usages.
-   * Validates duplicates and type compatibility.
+   * Validates type compatibility and inheritance behavior.
    *
    * @throws IOException
    */
@@ -228,154 +255,123 @@ public class ParameterizedRequirementsTest {
     String model = "src/test/resources/sysmlrequirementdiagrams/_symboltable/requirement_11.sysml";
     ASTSysMLModel ast = getModel(model);
     ISysMLv2Scope packageScope = ast.getEnclosingScope().getSubScopes().get(0);
-    HashMap<String, Map.Entry<String, ASTExpression>> types = new HashMap<>();
 
-    // data
-    AbstractMap.SimpleEntry<String, ASTExpression> nullVehicle = new AbstractMap.SimpleEntry<>("Vehicle", null);
-    AbstractMap.SimpleEntry<String, ASTExpression> nullCar = new AbstractMap.SimpleEntry<>("Car", null);
-    AbstractMap.SimpleEntry<String, ASTExpression> nullEngine = new AbstractMap.SimpleEntry<>("Engine", null);
-    AbstractMap.SimpleEntry<String, ASTExpression> nullTurboEngine = new AbstractMap.SimpleEntry<>("TurboEngine", null);
-    AbstractMap.SimpleEntry<String, ASTExpression> vehicle_car1 = new AbstractMap.SimpleEntry<>(
+    // data - start
+    ArrayList<Map.Entry<String, Map.Entry<String, ASTExpression>>> values = new ArrayList<>();
+    AbstractMap.SimpleEntry<String, ASTExpression> null_null = new AbstractMap.SimpleEntry<>(null, null);
+    AbstractMap.SimpleEntry<String, ASTExpression> vehicle_null = new AbstractMap.SimpleEntry<>(
+        "Vehicle", null);
+    AbstractMap.SimpleEntry<String, ASTExpression> null_vehicle = new AbstractMap.SimpleEntry<>(
+        null,
+        new ASTNameExpressionBuilder().setName("vehicle").build());
+    AbstractMap.SimpleEntry<String, ASTExpression> car_null = new AbstractMap.SimpleEntry<>(
+        "Car", null);
+    AbstractMap.SimpleEntry<String, ASTExpression> vehicle_vehicle = new AbstractMap.SimpleEntry<>(
         "Vehicle",
-        new ASTNameExpressionBuilder().setName("car1").build());
-    AbstractMap.SimpleEntry<String, ASTExpression> engine_turboEngine1 = new AbstractMap.SimpleEntry<>(
-        "Engine",
-        new ASTNameExpressionBuilder().setName("turboEngine1").build());
-    AbstractMap.SimpleEntry<String, ASTExpression> mass = new AbstractMap.SimpleEntry<>(
-        "double",
-        new ASTLiteralExpressionBuilder().setLiteral(
-            new ASTBasicDoubleLiteralBuilder().setPre("100").setPost("0").build()).build());
-    AbstractMap.SimpleEntry<String, ASTExpression> nullMass = new AbstractMap.SimpleEntry<>(
-        "double", null);
-    AbstractMap.SimpleEntry<String, ASTExpression> car_car1 = new AbstractMap.SimpleEntry<>("Car",
-        new ASTNameExpressionBuilder().setName("car1").build());
-    AbstractMap.SimpleEntry<String, ASTExpression> turboEngine_turboEngine1 = new AbstractMap.SimpleEntry<>(
-        "TurboEngine",
-        new ASTNameExpressionBuilder().setName("turboEngine1").build());
-    AbstractMap.SimpleEntry<String, ASTExpression> vehicle_vehicle1 = new AbstractMap.SimpleEntry<>(
+        new ASTNameExpressionBuilder().setName("vehicle").build());
+    AbstractMap.SimpleEntry<String, ASTExpression> vehicle_car = new AbstractMap.SimpleEntry<>(
         "Vehicle",
-        new ASTNameExpressionBuilder().setName("vehicle1").build());
-    // end
+        new ASTNameExpressionBuilder().setName("car").build());
+    AbstractMap.SimpleEntry<String, ASTExpression> car_car = new AbstractMap.SimpleEntry<>(
+        "Car",
+        new ASTNameExpressionBuilder().setName("car").build());
+    // data - end
 
-    types.put("vehicle", nullVehicle);
-    validateRequirementUsageParameters(packageScope, "reqUsage1", types);
+    validateReqUsageParameters(packageScope, "reqUsage1", false, false, values);
 
-    validateRequirementUsageParameters(packageScope, "reqUsage2", types);
+    values.add(new AbstractMap.SimpleEntry<>("a1", vehicle_null));
+    values.add(new AbstractMap.SimpleEntry<>("a2", vehicle_vehicle));
+    values.add(new AbstractMap.SimpleEntry<>("a3", vehicle_car));
+    validateReqUsageParameters(packageScope, "reqUsage2", true, false, values);
 
-    types.put("engine", engine_turboEngine1);
-    types.put("vehicle", nullCar);
-    validateRequirementUsageParameters(packageScope, "reqUsage3", types);
+    values.clear();
+    validateReqUsageParameters(packageScope, "reqUsage3", false, false, values);
 
-    types.put("engine", turboEngine_turboEngine1);
-    types.put("vehicle", nullVehicle);
-    validateRequirementUsageParameters(packageScope, "reqUsage4", types);
+    values.add(new AbstractMap.SimpleEntry<>("a1", car_car));
+    validateReqUsageParameters(packageScope, "reqUsage4", true, false, values);
 
-    types.put("vehicle", nullCar);
-    validateRequirementUsageParameters(packageScope, "reqUsage5", types);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a1", vehicle_null));
+    validateReqUsageParameters(packageScope, "reqUsage5", true, true, values);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a2", null_null));
+    validateReqUsageInheritedParameters(packageScope, "reqUsage5", values);
 
-    types.remove("engine");
-    types.put("vehicle", nullVehicle);
-    validateRequirementUsageParameters(packageScope, "reqUsage6", types);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a1", vehicle_null));
+    values.add(new AbstractMap.SimpleEntry<>("a2", vehicle_vehicle));
+    validateReqUsageParameters(packageScope, "reqUsage6", true, false, values);
 
-    types.put("vehicle", nullCar);
-    validateRequirementUsageParameters(packageScope, "reqUsage7", types);
+    values.add(new AbstractMap.SimpleEntry<>("a3", car_null));
+    validateReqUsageParameters(packageScope, "reqUsage7", true, false, values);
 
-    types.put("vehicle", nullVehicle);
-    types.put("engine", nullEngine);
-    validateRequirementUsageParameters(packageScope, "reqUsage8", types);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a1", null_vehicle));
+    validateReqUsageParameters(packageScope, "reqUsage8", true, false, values);
 
-    types.put("vehicle", car_car1);
-    types.put("engine", turboEngine_turboEngine1);
-    types.put("mass", nullMass);
-    validateRequirementUsageParameters(packageScope, "reqUsage9", types);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a1", car_car));
+    validateReqUsageParameters(packageScope, "reqUsage9", true, false, values);
 
-    types.remove("mass");
-    types.put("vehicle", nullVehicle);
-    types.put("engine", nullEngine);
-    validateRequirementUsageParameters(packageScope, "reqUsage11", types);
+    values.clear();
+    validateReqUsageParameters(packageScope, "reqUsage10", false, false, values);
 
-    types.put("vehicle", nullCar);
-    validateRequirementUsageParameters(packageScope, "reqUsage12", types);
+    values.add(new AbstractMap.SimpleEntry<>("a1", vehicle_null));
+    values.add(new AbstractMap.SimpleEntry<>("a2", null_null));
+    validateReqUsageParameters(packageScope, "reqUsage11", true, false, values);
 
-    types.put("mass", mass);
-    types.put("vehicle", nullVehicle);
-    validateRequirementUsageParameters(packageScope, "reqUsage13", types);
+    values.clear();
+    validateReqUsageParameters(packageScope, "reqUsage12", false, true, values);
+    values.add(new AbstractMap.SimpleEntry<>("a1", vehicle_null));
+    values.add(new AbstractMap.SimpleEntry<>("a2", vehicle_vehicle));
+    values.add(new AbstractMap.SimpleEntry<>("a3", vehicle_car));
+    validateReqUsageInheritedParameters(packageScope, "reqUsage12", values);
 
-    types.put("mass", mass);
-    types.put("vehicle", vehicle_car1);
-    types.put("engine", nullTurboEngine);
-    validateRequirementUsageParameters(packageScope, "reqUsage14", types);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a1", car_car));
+    values.add(new AbstractMap.SimpleEntry<>("a2", vehicle_vehicle));
+    validateReqUsageParameters(packageScope, "reqUsage13", true, true, values);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a3", vehicle_car));
+    validateReqUsageInheritedParameters(packageScope, "reqUsage13", values);
 
-    types.remove("mass");
-    types.put("vehicle", nullVehicle);
-    types.put("engine", nullEngine);
-    validateRequirementUsageParameters(packageScope, "reqUsage16", types);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a1", car_car));
+    values.add(new AbstractMap.SimpleEntry<>("a2", vehicle_vehicle));
+    values.add(new AbstractMap.SimpleEntry<>("a3", vehicle_null));
+    validateReqUsageParameters(packageScope, "reqUsage14", true, false, values);
 
-    types.put("vehicle", nullCar);
-    validateRequirementUsageParameters(packageScope, "reqUsage17", types);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a1", car_car));
+    values.add(new AbstractMap.SimpleEntry<>("a2", vehicle_vehicle));
+    values.add(new AbstractMap.SimpleEntry<>("a3", vehicle_null));
+    values.add(new AbstractMap.SimpleEntry<>("a4", car_null));
+    validateReqUsageParameters(packageScope, "reqUsage15", true, false, values);
 
-    types.put("mass", mass);
-    types.put("vehicle", nullVehicle);
-    validateRequirementUsageParameters(packageScope, "reqUsage18", types);
+    values.clear();
+    validateReqUsageParameters(packageScope, "reqUsage16", false, false, values);
 
-    types.put("mass", mass);
-    types.put("vehicle", vehicle_car1);
-    types.put("engine", nullTurboEngine);
-    validateRequirementUsageParameters(packageScope, "reqUsage19", types);
+    values.add(new AbstractMap.SimpleEntry<>("a1", null_vehicle));
+    values.add(new AbstractMap.SimpleEntry<>("a2", car_null));
+    validateReqUsageParameters(packageScope, "reqUsage17", true, false, values);
 
-    types.put("mass", nullMass);
-    types.put("vehicle", nullVehicle);
-    types.put("engine", nullEngine);
-    validateRequirementUsageParameters(packageScope, "reqUsage22", types);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a1", vehicle_vehicle));
+    values.add(new AbstractMap.SimpleEntry<>("a2", car_car));
+    validateReqUsageParameters(packageScope, "reqUsage19", true, false, values);
 
-    types.remove("mass");
-    validateRequirementUsageParameters(packageScope, "reqUsage20", types);
+    values.add(new AbstractMap.SimpleEntry<>("a3", car_null));
+    values.add(new AbstractMap.SimpleEntry<>("a4", null_vehicle));
+    validateReqUsageParameters(packageScope, "reqUsage20", true, false, values);
 
-    types.put("vehicle", nullCar);
-    types.put("engine", nullTurboEngine);
-    validateRequirementUsageParameters(packageScope, "reqUsage21", types);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a1", vehicle_vehicle));
+    values.add(new AbstractMap.SimpleEntry<>("a2", car_car));
+    values.add(new AbstractMap.SimpleEntry<>("a3", car_null));
+    validateReqUsageParameters(packageScope, "reqUsage21", true, false, values);
 
-    types.put("mass", mass);
-    validateRequirementUsageParameters(packageScope, "reqUsage23", types);
-
-    types.remove("mass");
-    types.put("vehicle", nullVehicle);
-    types.put("engine", nullEngine);
-    validateRequirementUsageParameters(packageScope, "reqUsage24", types);
-
-    types.put("vehicle", nullCar);
-    validateRequirementUsageParameters(packageScope, "reqUsage25", types);
-
-    types.put("vehicle", nullVehicle);
-    types.put("mass", mass);
-    validateRequirementUsageParameters(packageScope, "reqUsage26", types);
-
-    types.put("engine", nullTurboEngine);
-    types.put("vehicle", vehicle_car1);
-    validateRequirementUsageParameters(packageScope, "reqUsage27", types);
-
-    types.remove("engine");
-    types.remove("mass");
-    types.put("vehicle", vehicle_vehicle1);
-    validateRequirementUsageParameters(packageScope, "reqUsage28", types);
-
-    types.put("vehicle", nullCar);
-    validateRequirementUsageParameters(packageScope, "reqUsage29", types);
-
-  }
-
-  private void validateRequirementUsageParameters(ISysMLv2Scope scope, String reqUsage,
-                                                  HashMap<String, Map.Entry<String, ASTExpression>> types
-  ) {
-    ASTBaseRequirement requirement = scope.resolveRequirementUsage(reqUsage).get().getAstNode();
-    validateParameters(requirement.getParameters(), types);
-  }
-
-  private void validateRequirementDefinitionParameters(ISysMLv2Scope scope, String reqDef,
-                                                       HashMap<String, Map.Entry<String, ASTExpression>> types
-  ) {
-    ASTBaseRequirement requirement = scope.resolveRequirementDef(reqDef).get().getAstNode();
-    validateParameters(requirement.getParameters(), types);
+    values.add(new AbstractMap.SimpleEntry<>("a4", null_vehicle));
+    validateReqUsageParameters(packageScope, "reqUsage22", true, false, values);
   }
 
   /**
@@ -390,46 +386,37 @@ public class ParameterizedRequirementsTest {
       Log.clearFindings();
       String model = "src/test/resources/sysmlrequirementdiagrams/_symboltable/requirement_12.sysml";
       ASTSysMLModel ast = getModel(model);
-      String error1 = Log.getFindings().get(0).toString();
-      String error2 = Log.getFindings().get(1).toString();
-      String error3 = Log.getFindings().get(2).toString();
-      String error4 = Log.getFindings().get(3).toString();
-      String error5 = Log.getFindings().get(4).toString();
-      String error6 = Log.getFindings().get(5).toString();
-      String error7 = Log.getFindings().get(6).toString();
-      String error8 = Log.getFindings().get(7).toString();
-      String error9 = Log.getFindings().get(8).toString();
-      String error10 = Log.getFindings().get(9).toString();
-      assertEquals(error1,
-          "Requirement parameter 'vehicle' cannot be added as it is already present in the parameter list. "
-              + "It is possible that duplicate parameters were added in the requirement parameter list.");
-      assertEquals(error2,
-          "Requirement parameter 'vehicle' has a type 'Car', but it is defined with a new type or assigned "
-              + "a value of type 'Vehicle', which is not compatible!");
-      assertEquals(error3,
-          "Requirement parameter 'vehicle' was inherited multiple times, but the the parameters are not equal. "
-              + "Only the same parameters can be inherited more than once.");
-      assertEquals(error4,
-          "Requirement parameter 'mass' has a type 'double', but it is assigned a value of type 'int', "
-              + "which is not compatible!");
-      assertEquals(error5,
-          "Requirement parameter 'vehicle' cannot be added as it is already present in the parameter list. "
-              + "It is possible that duplicate parameters were added in the requirement parameter list.");
-      assertEquals(error6,
-          "Requirement parameter 'vehicle' has a type 'Car', but it is assigned a value of type 'double', "
-              + "which is not compatible!");
-      assertEquals(error7,
-          "Requirement parameter 'vehicle' has a type 'Car', but it is defined with a new type or assigned "
-              + "a value of type 'Vehicle', which is not compatible!");
-      assertEquals(error8,
-          "Requirement parameter 'vehicle' was inherited multiple times, but the the parameters are not equal. "
-              + "Only the same parameters can be inherited more than once.");
-      assertEquals(error9,
-          "Requirement parameter 'vehicle' has a type 'Car', but it is defined with a new type or assigned "
-              + "a value of type 'Vehicle', which is not compatible!");
-      assertEquals(error10,
-          "Requirement parameter 'vehicle' has a type 'Car', but it is assigned a value of type 'Vehicle', "
-              + "which is not compatible!");
+      String error1 = Log.getFindings().get(0).getMsg();
+      String error2 = Log.getFindings().get(1).getMsg();
+      String error3 = Log.getFindings().get(2).getMsg();
+      String error4 = Log.getFindings().get(3).getMsg();
+      String error5 = Log.getFindings().get(4).getMsg();
+      String error6 = Log.getFindings().get(5).getMsg();
+      String error7 = Log.getFindings().get(6).getMsg();
+      String error8 = Log.getFindings().get(7).getMsg();
+      String error9 = Log.getFindings().get(8).getMsg();
+      String error10 = Log.getFindings().get(9).getMsg();
+
+      assertEquals(error1, "RequirementDefinition 'ReqDefWithFeatureValue' has a "
+          + "parameter 'a' with a FeatureValue. FeatureValues are not allowed in definitions.");
+      assertEquals(error2, "RequirementDefinition 'ReqDefWithNoMandatoryRedefinition'"
+          + " specializes multiple parameterized requirements, but does not redefine all of the inherited parameters.");
+      assertEquals(error3, "RequirementUsage 'reqUsageWithNoMandatoryRedefinition1' featuretypes/subsets multiple"
+          + " parameterized requirements, but does not redefine all of the inherited parameters.");
+      assertEquals(error4, "RequirementUsage 'reqUsageWithNoMandatoryRedefinition2' featuretypes/subsets multiple"
+          + " parameterized requirements, but does not redefine all of the inherited parameters.");
+      assertEquals(error5, "RequirementUsage 'reqUsageWithMissingMandatoryRedefinition' featuretypes/subsets "
+          + "multiple parameterized requirements, but does not redefine all of the inherited parameters.");
+      assertEquals(error6, "RequirementParameter 'a' has type 'Vehicle', but was redefined with type 'double', "
+          + "which is not compatible.");
+      assertEquals(error7, "RequirementParameter 'a' has type 'Vehicle', but was redefined with type 'double', "
+          + "which is not compatible.");
+      assertEquals(error8, "RequirementParameter 'a' has type 'Vehicle', but was redefined with type 'double', "
+          + "which is not compatible.");
+      assertEquals(error9, "RequirementParameter 'a' has type 'Vehicle', but was assigned a value of type 'double', "
+          + "which is not compatible.");
+      assertEquals(error10, "RequirementParameter 'a' has type 'Car', but was assigned a value of type 'Vehicle', "
+          + "which is not compatible.");
     }
     finally {
       Log.clearFindings();

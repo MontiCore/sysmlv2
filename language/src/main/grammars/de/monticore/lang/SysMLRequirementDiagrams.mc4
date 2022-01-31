@@ -7,7 +7,7 @@ grammar SysMLRequirementDiagrams extends de.monticore.lang.SysMLParametrics {
 
   // BaseRequirement is abstract and is extended by all RequirementDefinition & RequirementUsage.
   // Common logic for both def. and usage can be extracted to it.
-  abstract BaseRequirement = ParameterList?;
+  abstract scope (shadowing) BaseRequirement = ParameterList?;
 
   symbol scope (shadowing) RequirementDef implements SysMLType extends BaseRequirement =
     "requirement" "def" ("id" id:Name)? Name

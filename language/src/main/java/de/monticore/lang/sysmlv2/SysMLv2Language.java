@@ -1,11 +1,6 @@
 package de.monticore.lang.sysmlv2;
 
-import de.monticore.lang.sysmlrequirementdiagrams._cocos.AssertConstraintNotAllowedInRequirement;
-import de.monticore.lang.sysmlrequirementdiagrams._cocos.AtMostSingleSubjectInRequirement;
-import de.monticore.lang.sysmlrequirementdiagrams._cocos.RequirementDefinitionMustExist;
-import de.monticore.lang.sysmlrequirementdiagrams._cocos.RequirementSubjectMustExist;
-import de.monticore.lang.sysmlrequirementdiagrams._cocos.SubsettedRequirementsMustExist;
-import de.monticore.lang.sysmlrequirementdiagrams._cocos.SuperRequirementsMustExist;
+import de.monticore.lang.sysmlrequirementdiagrams._cocos.*;
 import de.monticore.lang.sysmlrequirementdiagrams._visitor.RequirementsPostProcessor;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
@@ -55,11 +50,12 @@ public class SysMLv2Language {
         {
           try {
             Optional<ASTSysMLModel> optAst = parser.parse(path.toAbsolutePath().toString());
-            if (!optAst.isPresent()) {
+            if(!optAst.isPresent()) {
               Log.warn("Empty AST for " + path);
             }
             return optAst;
-          } catch (IOException ex) {
+          }
+          catch (IOException ex) {
             Log.error("Could not find file at " + path, ex);
             return Optional.<ASTSysMLModel>empty();
           }
@@ -68,14 +64,13 @@ public class SysMLv2Language {
         .map(Optional::get)
         .collect(Collectors.toList());
 
-    ISysMLv2GlobalScope globalScope = createAndValidateSymbolTableAndCoCos(unchecked, models);
-
-    return globalScope;
+    return createAndValidateSymbolTableAndCoCos(unchecked, models);
   }
 
-  public static ISysMLv2GlobalScope createAndValidateSymbolTableAndCoCos(boolean unchecked, List<ASTSysMLModel> models) {
+  public static ISysMLv2GlobalScope createAndValidateSymbolTableAndCoCos(boolean unchecked,
+                                                                         List<ASTSysMLModel> models) {
     // 02. Check initial CoCos
-    if (!unchecked) {
+    if(!unchecked) {
       SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
       checker.addCoCo(new AssertConstraintNotAllowedInRequirement());
       models.forEach(checker::checkAll);
@@ -85,13 +80,15 @@ public class SysMLv2Language {
     ISysMLv2GlobalScope globalScope = createSymbolTable(models);
 
     // 05. Check further CoCos
-    if (!unchecked) {
+    if(!unchecked) {
       SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
-      checker.addCoCo(new AtMostSingleSubjectInRequirement());
-      checker.addCoCo(new RequirementSubjectMustExist());
       checker.addCoCo(new SuperRequirementsMustExist());
       checker.addCoCo(new RequirementDefinitionMustExist());
       checker.addCoCo(new SubsettedRequirementsMustExist());
+      checker.addCoCo(new SpecializedReqDefRedefinesInheritedParams());
+      checker.addCoCo(new SpecializedReqUsageRedefinesInheritedParams());
+      checker.addCoCo(new AtMostSingleSubjectInRequirement());
+      checker.addCoCo(new RequirementSubjectMustExist());
       models.forEach(checker::checkAll);
     }
 
