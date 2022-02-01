@@ -1,7 +1,7 @@
-package de.monticore.lang.sysmlv2.visualization;
+package de.monticore.lang.sysmlv2.visualization.util;
 
-public class VisualizationUtils {
-  final static String STYLE_HELP = "Pick one or multiple <STYLE>s. <STYLE> is case insensitive. Multiple --style options are allowed.\n"
+public class VisualizationUtil {
+  public final static String STYLE_HELP = "Pick one or multiple <STYLE>s. <STYLE> is case insensitive. Multiple --style options are allowed.\n"
       + "   The possible style names are:\n"
       + "   DEFAULT\t\tStandard B&W format\n"
       + "   STDCOLOR\t\tStandard format with colors\n"
@@ -16,7 +16,7 @@ public class VisualizationUtils {
       + "   COMPMOST\t\tShow as many memberships in a compartment as possible\n"
       + "   COMPTREE\t\tShow tree structures in compartments\n\n";
 
-  final static String VIEW_HELP = "Pick a <VIEW>. <VIEW> is case insensitive and possible candidates are:\n"
+  public final static String VIEW_HELP = "Pick a <VIEW>. <VIEW> is case insensitive and possible candidates are:\n"
       + "   DEFAULT\t\tAutomatically choose an appropriate view from the given model element names\n"
       + "   TREE\t\t\tShow a tree-structural view, like a Block Definition Diagram (BDD)\n"
       + "   INTERCONNECTION\tShow an interconnection view, like an Internal Block Diagram (IBD)\n"
