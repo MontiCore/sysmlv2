@@ -1,5 +1,6 @@
 package de.monticore.lang.sysmlv2.visualization;
 
+import de.monticore.lang.sysmlv2.visualization.util.ExtractionUtil;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
 import org.omg.sysml.interactive.SysMLInteractive;
@@ -9,6 +10,8 @@ import org.omg.sysml.lang.sysml.Element;
 import org.omg.sysml.lang.sysml.util.SysMLLibraryUtil;
 
 import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,13 +21,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static de.monticore.lang.sysmlv2.visualization.VisualizationUtils.STYLE_HELP;
-import static de.monticore.lang.sysmlv2.visualization.VisualizationUtils.VIEW_HELP;
+import static de.monticore.lang.sysmlv2.visualization.util.VisualizationUtil.STYLE_HELP;
+import static de.monticore.lang.sysmlv2.visualization.util.VisualizationUtil.VIEW_HELP;
 
 public class VisualizationCLI {
   public static void main(String[] args) throws IOException {
     Options options = new Options()
-        .addOption("l", "library", true, "Path to default SysMLv2 library")
+        .addOption("e", "extractlib", true, "Extract packaged default SyMLv2 library to specified path")
+        .addOption("l", "library", true, "Path to default SysMLv2 library. "
+            + "This can match the extraction path and be used simultaneously")
         .addOption("g", "graphviz", true, "Path to graphviz executable")
         .addOption("v", "view", true, VIEW_HELP)
         .addOption("s", "style", true, STYLE_HELP)
@@ -50,7 +55,10 @@ public class VisualizationCLI {
     // allows using stdout to print
     instance.setVerbose(false);
 
-
+    if (cmd.hasOption("e")) {
+      Path destination = Paths.get(cmd.getOptionValue("e"));
+      new ExtractionUtil().extractSelf(destination);
+    }
 
     if (cmd.hasOption("l")) {
       // required so that spaces don't get double %-escaped by omg resource finder
@@ -76,6 +84,11 @@ public class VisualizationCLI {
 
     if (cmd.hasOption("s")) {
       styles.addAll(List.of(cmd.getOptionValues("s")));
+    }
+
+    // if it has no args it is used only for extraction
+    if (cmd.getArgs().length == 0) {
+      return;
     }
 
     Path modelPath = Paths.get(cmd.getArgs()[0]);
@@ -116,7 +129,8 @@ public class VisualizationCLI {
           default:
             break;
         }
-        System.out.print(resultingString);
+        PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        out.println(resultingString);
       }
     }
   }
