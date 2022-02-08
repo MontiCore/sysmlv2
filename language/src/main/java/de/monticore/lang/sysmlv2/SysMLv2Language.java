@@ -89,6 +89,7 @@ public class SysMLv2Language {
       checker.addCoCo(new SpecializedReqUsageRedefinesInheritedParams());
       checker.addCoCo(new AtMostSingleSubjectInRequirement());
       checker.addCoCo(new RequirementSubjectMustExist());
+      checker.addCoCo(new ConstraintExpressionMustEvaluateToBoolean());
       models.forEach(checker::checkAll);
     }
 

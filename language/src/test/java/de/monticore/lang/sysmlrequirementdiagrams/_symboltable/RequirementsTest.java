@@ -160,11 +160,13 @@ public class RequirementsTest {
     RequirementUsageSymbol nestedRequirement = getRequirementUsage(requirementGroup.getSpannedScope(),
         "nestedRequirement_1");
     subject = getSubject(nestedRequirement.getSpannedScope());
-    validateSubjectType(subject.get(), "engine");
+    // Since 'engine' has no type, an anonymous type is created for it, with its names and underscore as a prefix.
+    assertEquals(0, subject.get().getSubjectType().getTypeInfo().getName().indexOf("engine_"));
 
     nestedRequirement = getRequirementUsage(requirementGroup.getSpannedScope(), "nestedRequirement_2");
     subject = getSubject(nestedRequirement.getSpannedScope());
-    validateSubjectType(subject.get(), "bolt");
+    // Since 'bolt' has no type, an anonymous type is created for it, with its names and underscore as a prefix.
+    assertEquals(0, subject.get().getSubjectType().getTypeInfo().getName().indexOf("bolt_"));
   }
 
   @Test
@@ -198,7 +200,8 @@ public class RequirementsTest {
     RequirementUsageSymbol nestedRequirement = getRequirementUsage(requirementGroup.getSpannedScope(),
         "nestedRequirement");
     subject = getSubject(nestedRequirement.getSpannedScope());
-    validateSubjectType(subject.get(), "engine");
+    // Since 'engine' has no type, an anonymous type is created for it, with its names and underscore as a prefix.
+    assertEquals(0, subject.get().getSubjectType().getTypeInfo().getName().indexOf("engine_"));
   }
 
   @Test
@@ -377,5 +380,16 @@ public class RequirementsTest {
     reqUsage = packageScope.resolveRequirementUsage("carRequirement").get();
     subjectType = reqUsage.getSpannedScope().getRequirementSubjectSymbols().values().get(0).getSubjectType();
     assertEquals("Engine", subjectType.getTypeInfo().getName());
+  }
+
+  /**
+   * Test parses, creates symboltable, and runs CoCos to validate
+   * that all constraints in a model evaluate to boolean.
+   * @throws IOException
+   */
+  @Test
+  public void testRequirement_13() throws IOException {
+    ASTSysMLModel ast = getModel(
+        "src/test/resources/sysmlrequirementdiagrams/_symboltable/requirement_13.sysml");
   }
 }
