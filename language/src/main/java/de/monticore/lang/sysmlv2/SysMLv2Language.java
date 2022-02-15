@@ -1,12 +1,14 @@
 package de.monticore.lang.sysmlv2;
 
 import de.monticore.lang.sysmlrequirementdiagrams._cocos.*;
+import de.monticore.lang.sysmlrequirementdiagrams._visitor.InheritNonRedefinedParametersVisitor;
 import de.monticore.lang.sysmlrequirementdiagrams._visitor.RequirementsPostProcessor;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
+import de.monticore.lang.sysmlv2._visitor.SysMLv2TraverserImplementation;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FilenameUtils;
 
@@ -69,32 +71,48 @@ public class SysMLv2Language {
 
   public static ISysMLv2GlobalScope createAndValidateSymbolTableAndCoCos(boolean unchecked,
                                                                          List<ASTSysMLModel> models) {
-    // 02. Check initial CoCos
+    // Pre symbol table CoCo checks.
     if(!unchecked) {
       SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
       checker.addCoCo(new AssertConstraintNotAllowedInRequirement());
       models.forEach(checker::checkAll);
     }
 
-    // 03. Build Symbol Table
+    // Create symbol table.
     ISysMLv2GlobalScope globalScope = createSymbolTable(models);
 
-    // 05. Check further CoCos
+    // Post symbol table CoCo checks (that do not require any postprocessing).
     if(!unchecked) {
       SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
       checker.addCoCo(new SuperRequirementsMustExist());
       checker.addCoCo(new RequirementDefinitionMustExist());
       checker.addCoCo(new SubsettedRequirementsMustExist());
-      checker.addCoCo(new SpecializedReqDefRedefinesInheritedParams());
-      checker.addCoCo(new SpecializedReqUsageRedefinesInheritedParams());
+      checker.addCoCo(new ValuesNotAllowedForRequirementDefParameters());
       checker.addCoCo(new AtMostSingleSubjectInRequirement());
       checker.addCoCo(new RequirementSubjectMustExist());
       checker.addCoCo(new ConstraintExpressionMustEvaluateToBoolean());
       models.forEach(checker::checkAll);
     }
 
-    // 04. Perform any postprocessing
-    SysMLv2Traverser traverser = SysMLv2Mill.traverser();
+    // Set inherited parameters for parameterized requirements.
+    SysMLv2Traverser traverser = new SysMLv2TraverserImplementation();
+    traverser.add4SysMLRequirementDiagrams(new InheritNonRedefinedParametersVisitor());
+    for (ASTSysMLModel model : models) {
+      model.accept(traverser);
+    }
+
+    // Check redefinition constraints on parameters of requirements.
+    if(!unchecked) {
+      SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
+      checker.addCoCo(new SpecializedReqDefRedefinesInheritedParams());
+      checker.addCoCo(new SpecializedReqUsageRedefinesInheritedParams());
+      models.forEach(checker::checkAll);
+    }
+
+    // Perform requirements postprocessing, including:
+    // 1. finding and setting of requirement subject,
+    // 2. and validating the parameter types of parameterized requirements.
+    traverser = new SysMLv2TraverserImplementation();
     traverser.add4SysMLRequirementDiagrams(new RequirementsPostProcessor());
     for (ASTSysMLModel model : models) {
       model.accept(traverser);

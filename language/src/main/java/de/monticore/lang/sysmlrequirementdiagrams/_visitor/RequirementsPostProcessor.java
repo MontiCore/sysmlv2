@@ -1,7 +1,9 @@
 package de.monticore.lang.sysmlrequirementdiagrams._visitor;
 
+import de.monticore.lang.sysmlcommons._ast.ASTSysMLParameter;
 import de.monticore.lang.sysmlcommons._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlcommons._ast.ASTSysMLSubsetting;
+import de.monticore.lang.sysmlrequirementdiagrams._ast.ASTBaseRequirement;
 import de.monticore.lang.sysmlrequirementdiagrams._ast.ASTRequirementDef;
 import de.monticore.lang.sysmlrequirementdiagrams._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlrequirementdiagrams._symboltable.RequirementDefSymbol;
@@ -245,8 +247,8 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
   }
 
   /**
-   * Validates the the provided subjects are compatible as long as they fulfill any of the two criteria:
-   * 1. They are all of same types
+   * Validates the provided subjects are compatible as long as they fulfill any of the two criteria:
+   * 1. They are all of the same types
    * 2. All the subjects lie in the same inheritance chain, i.e. a subject is either a supertype
    * of another subject or its subtype.
    * Returns the most specialized subject as the compatible subject.
@@ -448,48 +450,25 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
    * of the generalization are redefined. If not all parameters are redefined, then the rest
    * of the parameters are inherited. (NOTE: redefined parameters are not inherited!)
    * If requirement wants to declare new parameters, it must first redefine all parameters
-   * of the generalization, in order.
+   * of the generalization (including the inherited parameters), in order (inherited parameters
+   * will come last in the order).
    * <p>
    * 3. If there are multiple generalizations, then it is necessary that all the parameters
-   * of all the generalizations are redefined, in order. Then, the requirement can optionally
-   * declare new parameters.
+   * of all the generalizations are redefined (including the inherited parameters), in order (inherited parameters
+   * will come last in the order). Then, the requirement can optionally declare new parameters.
    * <p>
    * 4. Whenever redefinitons are done, type compatibility must hold.
    *
    * @param node ASTRequirementDef
    */
   protected void validateRequirementParameters(ASTRequirementDef node) {
-    /*
-     If there are redefinitions, then validate type constraints.
-     At this point, the correct number of parameters has already been validated
-     via CoCo 'SpecializedReqDefRedefinesInheritedParams'.
-     */
     if(node.isPresentSysMLSpecialization()) {
-      ASTSysMLSpecialization specialization = node.getSysMLSpecialization();
-      for (ASTMCObjectType superDef : specialization.getSuperDefList()) {
-        Optional<RequirementDefSymbol> reqDefSymOpt = node.getEnclosingScope().
-            resolveRequirementDef(((ASTMCQualifiedType) superDef).getMCQualifiedName().getQName());
-        if(reqDefSymOpt.isPresent()) {
-          RequirementDefSymbol reqDefSym = reqDefSymOpt.get();
-          if(reqDefSym.getAstNode().isPresentParameterList()) {
-            if(node.isPresentParameterList()) {
-              node.validateRedefiningDefinitionParameters(reqDefSym.getAstNode().getParameterList());
-            }
-          /*
-          If there is only a single owned generalization, then we need to add the (possibly) left out inherited
-          parameters that weren't redefined by the specialized requirement.
-           */
-            if(specialization.sizeSuperDef() == 1) {
-              if(!node.isPresentParameterList() || (node.isPresentParameterList()
-                  && node.getParameterList().sizeSysMLParameters()
-                  < reqDefSym.getAstNode().getParameterList().sizeSysMLParameters()))
-                node.addInheritedParameters(reqDefSym.getAstNode().getParameterList());
-            }
-          }
-        }
-        else {
-          Log.error("Super RequirementDefinition '" + ((ASTMCQualifiedType) superDef).getMCQualifiedName().getQName()
-              + "' could not be resolved.");
+      // Validate that redefining parameters are compatible with the redefined parameters.
+      for (ASTMCObjectType superDef : node.getSysMLSpecialization().getSuperDefList()) {
+        RequirementDefSymbol reqDefSym = node.getEnclosingScope().
+            resolveRequirementDef(((ASTMCQualifiedType) superDef).getMCQualifiedName().getQName()).get();
+        if(node.isPresentParameterList()) {
+          this.validateParameterTypes(node, reqDefSym.getAstNode());
         }
       }
     }
@@ -503,73 +482,59 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
    * of the generalization are redefined. If not all parameters are redefined, then the rest
    * of the parameters are inherited. (NOTE: redefined parameters are not inherited!)
    * If requirement wants to declare new parameters, it must first redefine all parameters
-   * of the generalization, in order.
+   * of the generalization (including the inherited parameters), in order (inherited parameters
+   * will come last in the order).
    * <p>
    * 3. If there are multiple generalizations, then it is necessary that all the parameters
-   * of all the generalizations are redefined, in order. Then, the requirement can optionally
-   * declare new parameters.
+   * of all the generalizations are redefined (including the inherited parameters), in order (inherited parameters
+   * will come last in the order).
+   * Then, the requirement can optionally declare new parameters.
    * <p>
    * 4. Whenever redefinitons are done, type compatibility must hold.
    *
    * @param node ASTRequirementUsage
    */
   protected void validateRequirementParameters(ASTRequirementUsage node) {
+    // Validate that redefining parameters are compatible with the redefined parameters.
     if(node.isPresentMCType()) {
-      Optional<RequirementDefSymbol> reqDefSymOpt = node.getEnclosingScope().
-          resolveRequirementDef(((ASTMCQualifiedType) node.getMCType()).getMCQualifiedName().getQName());
-      if(reqDefSymOpt.isPresent()) {
-        RequirementDefSymbol reqDefSym = reqDefSymOpt.get();
-        if(reqDefSym.getAstNode().isPresentParameterList()) {
-          if(node.isPresentParameterList()) {
-            node.validateRedefiningUsageParameters(reqDefSym.getAstNode().getParameterList());
-          }
-        /*
-        If there is only a single owned generalization, then we need to add the (possibly) left out inherited
-        parameters that weren't redefined by the specialized requirement.
-         */
-          if(!node.isPresentSysMLSubsetting()) {
-            if(!node.isPresentParameterList() || (node.isPresentParameterList()
-                && node.getParameterList().sizeSysMLParameters()
-                < reqDefSym.getAstNode().getParameterList().sizeSysMLParameters()))
-              node.addInheritedParameters(reqDefSym.getAstNode().getParameterList());
-          }
-        }
-      }
-      else {
-        Log.error("RequirementUsage '" + node.getName() + "' is typed by RequirementDefinition '"
-            + ((ASTMCQualifiedType) node.getMCType()).getMCQualifiedName().getQName()
-            + "', but the latter could not be resolved.");
-      }
+      RequirementDefSymbol reqDefSym = node.getEnclosingScope().
+          resolveRequirementDef(((ASTMCQualifiedType) node.getMCType()).getMCQualifiedName().getQName()).get();
+      validateParameterTypes(node, reqDefSym.getAstNode());
     }
 
     if(node.isPresentSysMLSubsetting()) {
       ASTSysMLSubsetting subsetting = node.getSysMLSubsetting();
       for (ASTMCQualifiedName subsetted : subsetting.getFieldsList()) {
-        Optional<RequirementUsageSymbol> reqUsageSymOpt = node.getEnclosingScope().
-            resolveRequirementUsage(subsetted.getQName());
-        if(reqUsageSymOpt.isPresent()) {
-          RequirementUsageSymbol reqUsageSym = reqUsageSymOpt.get();
-          if(reqUsageSym.getAstNode().isPresentParameterList()) {
-            if(node.isPresentParameterList()) {
-              node.validateRedefiningUsageParameters(reqUsageSym.getAstNode().getParameterList());
-            }
-          /*
-          If there is only a single owned generalization, then we need to add the (possibly) left out inherited
-          parameters that weren't redefined by the specialized requirement.
-           */
-            if(!node.isPresentMCType() && subsetting.sizeFields() == 1) {
-              if(!node.isPresentParameterList() || (node.isPresentParameterList()
-                  && node.getParameterList().sizeSysMLParameters()
-                  < reqUsageSym.getAstNode().getParameterList().sizeSysMLParameters()))
-                node.addInheritedParameters(reqUsageSym.getAstNode().getParameterList());
-            }
-          }
-        }
-        else {
-          Log.error("RequirementUsage '" + node.getName() + "' subsets RequirementUsage '"
-              + subsetted.getQName()
-              + "', but the latter could not be resolved.");
-        }
+        RequirementUsageSymbol reqUsageSym = node.getEnclosingScope().
+            resolveRequirementUsage(subsetted.getQName()).get();
+        validateParameterTypes(node, reqUsageSym.getAstNode());
+      }
+    }
+  }
+
+  /**
+   * Validate the types of the redefining parameters against the redefined parameters.
+   *
+   * @param node             ASTBaseRequirement
+   * @param superRequirement ASTBaseRequirement
+   */
+  protected void validateParameterTypes(ASTBaseRequirement node, ASTBaseRequirement superRequirement) {
+    if(node.isPresentParameterList()) {
+      // Create a complete parameter list of the potentially redefined parameters.
+      ArrayList<ASTSysMLParameter> parameters = new ArrayList<>();
+      if(superRequirement.isPresentParameterList()) {
+        parameters.addAll(superRequirement.getParameterList().getSysMLParameterList());
+      }
+      if(superRequirement.isPresentInheritedParameters()) {
+        parameters.addAll(superRequirement.getInheritedParameters());
+      }
+
+      // Validate redefining parameters against redefined parameters for type compatibility.
+      if(node instanceof ASTRequirementDef) {
+        node.validateRedefiningDefinitionParameters(parameters);
+      }
+      else if(node instanceof ASTRequirementUsage) {
+        node.validateRedefiningUsageParameters(parameters);
       }
     }
   }
@@ -585,4 +550,5 @@ public class RequirementsPostProcessor implements SysMLRequirementDiagramsVisito
     this.setSubjectInRequirementUsage(node);
     this.validateRequirementParameters(node);
   }
+
 }
