@@ -17,19 +17,20 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static de.monticore.lang.sysmlv2.SysMLv2Language.createAndValidateSymbolTableAndCoCos;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ParameterizedRequirementsTest {
-
-  private static ISysMLv2GlobalScope scope;
 
   @BeforeAll
   public static void initScope() {
     SysMLv2Mill.init();
-    scope = SysMLv2Mill.globalScope();
     BasicSymbolsMill.init();
     BasicSymbolsMill.initializePrimitives();
   }
@@ -100,7 +101,8 @@ public class ParameterizedRequirementsTest {
                                         boolean paramPresent, boolean inheritedParamsPresent,
                                         ArrayList<Map.Entry<String, String>> values) {
     RequirementDefSymbol reqDef = scope.resolveRequirementDef(requirementName).get();
-    assertEquals(reqDef.getAstNode().isPresentParameterList(), paramPresent);
+    assertEquals(reqDef.getAstNode().isPresentParameterList()
+        && reqDef.getAstNode().getParameterList().sizeSysMLParameters() > 0, paramPresent);
     assertEquals(reqDef.getAstNode().isPresentInheritedParameters(), inheritedParamsPresent);
     for (int i = 0; i < values.size(); ++i) {
       assertEquals(reqDef.getAstNode().getParameterList().getSysMLParameter(i).getName(), values.get(i).getKey());
@@ -242,6 +244,57 @@ public class ParameterizedRequirementsTest {
     values.add(new AbstractMap.SimpleEntry<>("b4", "Vehicle"));
     validateReqDefParameters(packageScope, "ReqDef15", true, false, values);
 
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("b", "Vehicle"));
+    values.add(new AbstractMap.SimpleEntry<>("c", "Vehicle"));
+    validateReqDefParameters(packageScope, "ReqDef17", true, false, values);
+
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a", "Car"));
+    values.add(new AbstractMap.SimpleEntry<>("b", "Car"));
+    validateReqDefParameters(packageScope, "ReqDef18", true, true, values);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("c", "Vehicle"));
+    validateReqDefInheritedParameters(packageScope, "ReqDef18", values);
+
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a", "Car"));
+    validateReqDefParameters(packageScope, "ReqDef19", true, true, values);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("b", "Car"));
+    values.add(new AbstractMap.SimpleEntry<>("c", "Vehicle"));
+    validateReqDefInheritedParameters(packageScope, "ReqDef19", values);
+
+    values.clear();
+    validateReqDefParameters(packageScope, "ReqDef20", false, true, values);
+    values.add(new AbstractMap.SimpleEntry<>("a", "Car"));
+    values.add(new AbstractMap.SimpleEntry<>("b", "Car"));
+    values.add(new AbstractMap.SimpleEntry<>("c", "Vehicle"));
+    validateReqDefInheritedParameters(packageScope, "ReqDef20", values);
+
+    validateReqDefInheritedParameters(packageScope, "ReqDef21", values);
+    values.clear();
+    validateReqDefParameters(packageScope, "ReqDef21", false, true, values);
+
+    values.add(new AbstractMap.SimpleEntry<>("a", "Car"));
+    validateReqDefParameters(packageScope, "ReqDef22", true, false, values);
+
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a", "Car"));
+    values.add(new AbstractMap.SimpleEntry<>("b", "Car"));
+    values.add(new AbstractMap.SimpleEntry<>("c", "Car"));
+    values.add(new AbstractMap.SimpleEntry<>("d", "double"));
+    validateReqDefParameters(packageScope, "ReqDef23", true, false, values);
+
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a", "Car"));
+    validateReqDefParameters(packageScope, "ReqDef24", true, true, values);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("b", "Car"));
+    values.add(new AbstractMap.SimpleEntry<>("c", "Car"));
+    values.add(new AbstractMap.SimpleEntry<>("d", "double"));
+    validateReqDefInheritedParameters(packageScope, "ReqDef24", values);
   }
 
   /**
@@ -372,6 +425,30 @@ public class ParameterizedRequirementsTest {
 
     values.add(new AbstractMap.SimpleEntry<>("a4", null_vehicle));
     validateReqUsageParameters(packageScope, "reqUsage22", true, false, values);
+
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a1", vehicle_null));
+    values.add(new AbstractMap.SimpleEntry<>("a2", vehicle_vehicle));
+    values.add(new AbstractMap.SimpleEntry<>("a3", vehicle_car));
+    values.add(new AbstractMap.SimpleEntry<>("a4", car_null));
+    validateReqUsageParameters(packageScope, "reqUsage23", true, false, values);
+
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("b1", car_null));
+    validateReqUsageParameters(packageScope, "reqUsage24", true, true, values);
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("a2", vehicle_vehicle));
+    values.add(new AbstractMap.SimpleEntry<>("a3", vehicle_car));
+    values.add(new AbstractMap.SimpleEntry<>("a4", car_null));
+    validateReqUsageInheritedParameters(packageScope, "reqUsage24", values);
+
+    values.clear();
+    values.add(new AbstractMap.SimpleEntry<>("c1", car_null));
+    values.add(new AbstractMap.SimpleEntry<>("c2", car_null));
+    values.add(new AbstractMap.SimpleEntry<>("c3", vehicle_null));
+    values.add(new AbstractMap.SimpleEntry<>("c4", car_car));
+    validateReqUsageParameters(packageScope, "reqUsage25", true, false, values);
+    validateReqUsageParameters(packageScope, "reqUsage27", true, false, values);
   }
 
   /**
@@ -386,37 +463,57 @@ public class ParameterizedRequirementsTest {
       Log.clearFindings();
       String model = "src/test/resources/sysmlrequirementdiagrams/_symboltable/requirement_12.sysml";
       ASTSysMLModel ast = getModel(model);
-      String error1 = Log.getFindings().get(0).getMsg();
-      String error2 = Log.getFindings().get(1).getMsg();
-      String error3 = Log.getFindings().get(2).getMsg();
-      String error4 = Log.getFindings().get(3).getMsg();
-      String error5 = Log.getFindings().get(4).getMsg();
-      String error6 = Log.getFindings().get(5).getMsg();
-      String error7 = Log.getFindings().get(6).getMsg();
-      String error8 = Log.getFindings().get(7).getMsg();
-      String error9 = Log.getFindings().get(8).getMsg();
-      String error10 = Log.getFindings().get(9).getMsg();
 
-      assertEquals(error1, "RequirementDefinition 'ReqDefWithFeatureValue' has a "
-          + "parameter 'a' with a FeatureValue. FeatureValues are not allowed in definitions.");
-      assertEquals(error2, "RequirementDefinition 'ReqDefWithNoMandatoryRedefinition'"
-          + " specializes multiple parameterized requirements, but does not redefine all of the inherited parameters.");
-      assertEquals(error3, "RequirementUsage 'reqUsageWithNoMandatoryRedefinition1' featuretypes/subsets multiple"
-          + " parameterized requirements, but does not redefine all of the inherited parameters.");
-      assertEquals(error4, "RequirementUsage 'reqUsageWithNoMandatoryRedefinition2' featuretypes/subsets multiple"
-          + " parameterized requirements, but does not redefine all of the inherited parameters.");
-      assertEquals(error5, "RequirementUsage 'reqUsageWithMissingMandatoryRedefinition' featuretypes/subsets "
-          + "multiple parameterized requirements, but does not redefine all of the inherited parameters.");
-      assertEquals(error6, "RequirementParameter 'a' has type 'Vehicle', but was redefined with type 'double', "
-          + "which is not compatible.");
-      assertEquals(error7, "RequirementParameter 'a' has type 'Vehicle', but was redefined with type 'double', "
-          + "which is not compatible.");
-      assertEquals(error8, "RequirementParameter 'a' has type 'Vehicle', but was redefined with type 'double', "
-          + "which is not compatible.");
-      assertEquals(error9, "RequirementParameter 'a' has type 'Vehicle', but was assigned a value of type 'double', "
-          + "which is not compatible.");
-      assertEquals(error10, "RequirementParameter 'a' has type 'Car', but was assigned a value of type 'Vehicle', "
-          + "which is not compatible.");
+      List<String> errors = Arrays.asList(
+          "RequirementDefinition 'ReqDefWithFeatureValue' has a "
+              + "parameter 'a' with a FeatureValue. FeatureValues are not allowed in definitions.",
+          "RequirementDefinition 'ReqDefWithNoMandatoryRedefinition'"
+              + " specializes multiple parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+          "RequirementDefinition 'ReqDefWithNoMandatoryRedefinition'"
+              + " specializes multiple parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+          "RequirementDefinition 'ReqDefWithNonRedefinedInheritedParams' specializes multiple "
+              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+          "RequirementUsage 'reqUsageWithNoMandatoryRedefinition1' has multiple generalized "
+              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+          "RequirementUsage 'reqUsageWithNoMandatoryRedefinition1' has multiple generalized "
+              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+          "RequirementUsage 'reqUsageWithNoMandatoryRedefinition2' has multiple generalized "
+              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+          "RequirementUsage 'reqUsageWithNoMandatoryRedefinition2' has multiple generalized "
+              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+          "RequirementUsage 'reqUsageWithMissingMandatoryRedefinition' has multiple generalized "
+              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+          "RequirementUsage 'reqUsageWithNonRedefinedInheritedParams1' has multiple generalized "
+              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+          "RequirementUsage 'reqUsageWithNonRedefinedInheritedParams1' has multiple generalized "
+              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+          "RequirementUsage 'reqUsageWithNonRedefinedInheritedParams2' has multiple generalized "
+              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+          "RequirementUsage 'reqUsageWithNonRedefinedInheritedParams2' has multiple generalized "
+              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+          "RequirementParameter 'a' has type 'Vehicle', but was redefined with type 'double', "
+              + "which is not compatible.",
+          "RequirementParameter 'a' has type 'Vehicle', but was redefined with type 'double', "
+              + "which is not compatible.",
+          "RequirementParameter 'a' has type 'Vehicle', but was redefined with type 'double', "
+              + "which is not compatible.",
+          "RequirementParameter 'a' has type 'Vehicle', but was assigned a value of type 'double', "
+              + "which is not compatible.",
+          "RequirementParameter 'a' has type 'Car', but was assigned a value of type 'Vehicle', "
+              + "which is not compatible.",
+          "RequirementParameter 'a' has type 'Car', but was assigned a value of type 'Vehicle', "
+              + "which is not compatible.",
+          "RequirementParameter 'a' has type 'Car', but was assigned a value of type 'Vehicle', "
+              + "which is not compatible.",
+          "RequirementParameter 'a' has type 'Car', but was assigned a value of type 'Vehicle', "
+              + "which is not compatible.",
+          "RequirementParameter 'a' has type 'Car', but was assigned a value of type 'Vehicle', "
+              + "which is not compatible."
+      );
+
+      for(int i = 0; i < 22; ++i) {
+        assertEquals(Log.getFindings().get(i).getMsg(), errors.get(i));
+      }
     }
     finally {
       Log.clearFindings();

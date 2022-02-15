@@ -1,6 +1,5 @@
 package de.monticore.lang.sysmlrequirementdiagrams._ast;
 
-import de.monticore.lang.sysmlcommons._ast.ASTParameterList;
 import de.monticore.lang.sysmlcommons._ast.ASTSysMLParameter;
 import de.monticore.lang.sysmlv2.typecheck.DeriveSysMLTypes;
 import de.monticore.lang.sysmlv2.typecheck.SysMLTypesSynthesizer;
@@ -56,19 +55,41 @@ public abstract class ASTBaseRequirement extends ASTBaseRequirementTOP {
   }
 
   /**
+   * Compute total (potential) parameters to be redefined as a sum of size of parameter list
+   * and inherited parameters list.
+   *
+   * @param totalParamsToRedefine int
+   * @return int
+   */
+  public int getTotalParamsToRedefine(int totalParamsToRedefine
+  ) {
+    int currentTotal = 0;
+
+    if(this.isPresentParameterList()) {
+      currentTotal += this.getParameterList().sizeSysMLParameters();
+    }
+
+    if(this.isPresentInheritedParameters()) {
+      currentTotal += this.sizeInheritedParameters();
+    }
+    totalParamsToRedefine = Math.max(totalParamsToRedefine, currentTotal);
+
+    return totalParamsToRedefine;
+  }
+
+  /**
    * Validates the type compatibility between redefining and redefined parameters.
    *
    * @param parameters ASTParameterList
    */
-  public void validateRedefiningDefinitionParameters(ASTParameterList parameters) {
-    List<ASTSysMLParameter> paramList = parameters.getSysMLParameterList();
-    for (int i = 0; i < this.getParameterList().sizeSysMLParameters() && i < paramList.size(); ++i) {
+  public void validateRedefiningDefinitionParameters(List<ASTSysMLParameter> parameters) {
+    for (int i = 0; i < this.getParameterList().sizeSysMLParameters() && i < parameters.size(); ++i) {
       // If the types aren't compatible, raise an error.
       if(!isCompatible(
-          paramList.get(i).getSymbol().getType(),
+          parameters.get(i).getSymbol().getType(),
           this.getParameterList().getSysMLParameter(i).getSymbol().getType())) {
-        Log.error("RequirementParameter '" + paramList.get(i).getName() + "' has type '"
-                + paramList.get(i).getSymbol().getType().getTypeInfo().getName() + "', but was redefined with type '"
+        Log.error("RequirementParameter '" + parameters.get(i).getName() + "' has type '"
+                + parameters.get(i).getSymbol().getType().getTypeInfo().getName() + "', but was redefined with type '"
                 + this.getParameterList().getSysMLParameter(i).getSymbol().getType().getTypeInfo().getName() + "', "
                 + "which is not compatible.",
             this.getParameterList().getSysMLParameter(i).get_SourcePositionStart(),
@@ -83,15 +104,14 @@ public abstract class ASTBaseRequirement extends ASTBaseRequirementTOP {
    *
    * @param parameters ASTParameterList
    */
-  public void validateRedefiningUsageParameters(ASTParameterList parameters) {
-    List<ASTSysMLParameter> paramList = parameters.getSysMLParameterList();
-    for (int i = 0; i < this.getParameterList().sizeSysMLParameters() && i < paramList.size(); ++i) {
+  public void validateRedefiningUsageParameters(List<ASTSysMLParameter> parameters) {
+    for (int i = 0; i < this.getParameterList().sizeSysMLParameters() && i < parameters.size(); ++i) {
       // If the types aren't compatible, raise an error.
       if(!isCompatible(
-          paramList.get(i).getSymbol().getType(),
+          parameters.get(i).getSymbol().getType(),
           this.getParameterList().getSysMLParameter(i).getSymbol().getType())) {
-        Log.error("RequirementParameter '" + paramList.get(i).getName() + "' has type '"
-                + paramList.get(i).getSymbol().getType().getTypeInfo().getName() + "', but was redefined with type '"
+        Log.error("RequirementParameter '" + parameters.get(i).getName() + "' has type '"
+                + parameters.get(i).getSymbol().getType().getTypeInfo().getName() + "', but was redefined with type '"
                 + this.getParameterList().getSysMLParameter(i).getSymbol().getType().getTypeInfo().getName() + "', "
                 + "which is not compatible.",
             this.getParameterList().getSysMLParameter(i).get_SourcePositionStart(),
@@ -102,7 +122,7 @@ public abstract class ASTBaseRequirement extends ASTBaseRequirementTOP {
         SymTypeExpression expType = typeCheck.typeOf(this.getParameterList().getSysMLParameter(i).getBinding());
         if(!isCompatible(
             this.getParameterList().getSysMLParameter(i).getSymbol().getType(), expType)) {
-          Log.error("RequirementParameter '" + paramList.get(i).getName() + "' has type '"
+          Log.error("RequirementParameter '" + parameters.get(i).getName() + "' has type '"
                   + this.getParameterList().getSysMLParameter(i).getSymbol().getType().getTypeInfo().getName()
                   + "', but was assigned a value of"
                   + " type '" + expType.getTypeInfo().getName() + "', which is not compatible.",
@@ -120,51 +140,80 @@ public abstract class ASTBaseRequirement extends ASTBaseRequirementTOP {
    * 2. store them in inheritedParameters list,
    * 3. and add them in the requirement's spanned scope.
    *
-   * @param parameterList ASTParameterList
+   * @param generalization ASTBaseRequirement
    */
-  public void addInheritedParameters(ASTParameterList parameterList) {
-    if(parameterList.sizeSysMLParameters() > 0) {
-      inheritedParameters = new ArrayList<>();
-      // If the current requirement does not redefine any parameters, then we add all of them.
-      int startIndex = 0;
-      // Otherwise, we compute the starting position of params. to add and start from there.
-      if(this.isPresentParameterList()) {
-        startIndex = this.getParameterList().sizeSysMLParameters();
+  public void inheritNonRedefinedParameters(ASTBaseRequirement generalization) {
+    inheritedParameters = new ArrayList<>();
+
+    // Total parameters defined by the generalized requirement.
+    int parameterCount = 0;
+    if(generalization.isPresentParameterList()) {
+      parameterCount += generalization.getParameterList().sizeSysMLParameters();
+    }
+    if(generalization.isPresentInheritedParameters()) {
+      parameterCount += generalization.sizeInheritedParameters();
+    }
+
+    int redefinedParameterCount = 0;
+    if(this.isPresentParameterList()) {
+      // Find out how many parameters were redefined and how many need to be inherited.
+      redefinedParameterCount = this.getParameterList().sizeSysMLParameters();
+    }
+
+    // Parameters will only be inherited if they weren't redefined.
+    if(redefinedParameterCount < parameterCount) {
+      ArrayList<ASTSysMLParameter> parameters = new ArrayList<>();
+      if(generalization.isPresentParameterList()) {
+        parameters.addAll(generalization.getParameterList().getSysMLParameterList());
       }
-      for (int i = startIndex; i < parameterList.sizeSysMLParameters(); ++i) {
-        ASTSysMLParameter clone = parameterList.getSysMLParameter(i).deepClone();
-        clone.setEnclosingScope(this.getSpannedScope());
-        inheritedParameters.add(clone);
-        this.getSpannedScope().add(clone.getSymbol());
+      if(generalization.isPresentInheritedParameters()) {
+        parameters.addAll(generalization.getInheritedParameters());
+      }
+
+      if(parameters.size() > 0) {
+        //        inheritedParameters = new ArrayList<>();
+        // If the current requirement does not redefine any parameters, then we add all of them.
+        int startIndex = 0;
+        // Otherwise, we compute the starting position of params. to add and start from there.
+        if(this.isPresentParameterList()) {
+          startIndex = this.getParameterList().sizeSysMLParameters();
+        }
+        for (int i = startIndex; i < parameters.size(); ++i) {
+          ASTSysMLParameter clone = parameters.get(i).deepClone();
+          clone.setEnclosingScope(this.getSpannedScope());
+          inheritedParameters.add(clone);
+          this.getSpannedScope().add(clone.getSymbol());
+        }
       }
     }
   }
 
   /**
-   * Checks if inherited parameters are present.
+   * Check if inherited parameters are present.
    *
    * @return boolean
    */
   public boolean isPresentInheritedParameters() {
-    return this.inheritedParameters != null;
+    return this.sizeInheritedParameters() > 0;
   }
 
   /**
-   * Returns size of inherited parameters.
+   * Return size of inherited parameters.
    *
    * @return int
    */
   public int sizeInheritedParameters() {
-    int size = 0;
-    if(this.inheritedParameters != null)
-      size = this.inheritedParameters.size();
-    return size;
+    return this.getInheritedParameters().size();
   }
 
-  public ArrayList<ASTSysMLParameter> getInheritedParameters() {
-    return this.inheritedParameters;
-  }
+  public abstract ArrayList<ASTSysMLParameter> getInheritedParameters();
 
+  /**
+   * Return inherited parameter present at the provided index.
+   *
+   * @param i int
+   * @return ASTSysMLParameter
+   */
   public ASTSysMLParameter getInheritedParameter(int i) {
     return this.inheritedParameters.get(i);
   }

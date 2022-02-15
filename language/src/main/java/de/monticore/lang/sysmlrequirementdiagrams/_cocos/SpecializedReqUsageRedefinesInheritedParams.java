@@ -7,73 +7,61 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.Optional;
-
+/**
+ * Validate requirement parameters for a requirement usage using the following rules:
+ * 1. If there are no generalizations, then do nothing.
+ * <p>
+ * 2. If there is a single generalization, then it is not necessary that all parameters
+ * of the generalization are redefined. If not all parameters are redefined, then the rest
+ * of the parameters are inherited. (NOTE: redefined parameters are not inherited!)
+ * If requirement wants to declare new parameters, it must first redefine all parameters
+ * of the generalization (including the inherited parameters), in order (inherited parameters
+ * will come last in the order).
+ * <p>
+ * 3. If there are multiple generalizations, then it is necessary that all the parameters
+ * of all the generalizations are redefined (including the inherited parameters), in order (inherited parameters
+ * will come last in the order).
+ * Then, the requirement can optionally declare new parameters.
+ */
 public class SpecializedReqUsageRedefinesInheritedParams
     implements SysMLRequirementDiagramsASTRequirementUsageCoCo {
 
   @Override
   public void check(ASTRequirementUsage node) {
-      /*
-      If there is only one owned generalization, then it is allowed for the specialized
-      requirement to not redefine inherited parameters. If it does redefine parameters,
-      then it is allowed for it to redefine fewer parameters than the inherited ones.
-      If it wants to declare new parameters, then it must first redefine all inherited parameters.
-
-      If there are multiple owned generalizations, then it is required for the specialized
-      requirement to redefine all inherited parameters. It can then declare new parameters of its own.
-       */
-
-    // Perform check only if there are multiple owned generalizations.
-    if((node.isPresentMCType() && node.isPresentSysMLSubsetting())
-        || (node.isPresentSysMLSubsetting() && node.getSysMLSubsetting().sizeFields() > 1)) {
-      int maxParamLength = 0;
+    // Validate that in case of multiple owned generalizations, all parameters are redefined.
+    if((node.isPresentMCType() && node.isPresentSysMLSubsetting()) || (!node.isPresentMCType()
+        && node.isPresentSysMLSubsetting() && node.getSysMLSubsetting().sizeFields() > 1)) {
+      int totalParamsToRedefine = 0;
       if(node.isPresentMCType()) {
-        String reqName = ((ASTMCQualifiedType) node.getMCType()).getMCQualifiedName().getQName();
-        Optional<RequirementDefSymbol> symOpt = node.getEnclosingScope().resolveRequirementDef(
-            reqName);
-        if(symOpt.isPresent()) {
-          RequirementDefSymbol sym = symOpt.get();
-          if(sym.getAstNode().isPresentParameterList()) {
-            int paramLength = sym.getAstNode().getParameterList().sizeSysMLParameters();
-            maxParamLength = Math.max(maxParamLength, paramLength);
+        RequirementDefSymbol reqDefSym = node.getEnclosingScope().
+            resolveRequirementDef(((ASTMCQualifiedType) node.getMCType()).getMCQualifiedName().getQName()).get();
+
+        totalParamsToRedefine = reqDefSym.getAstNode().getTotalParamsToRedefine(totalParamsToRedefine);
+        if(totalParamsToRedefine > 0 && (!node.isPresentParameterList()
+            || node.getParameterList().sizeSysMLParameters() < totalParamsToRedefine)) {
+          Log.error("RequirementUsage '" + node.getName() + "' has multiple "
+                  + "generalized parameterized requirements, but does not redefine all of the parameters of the general "
+                  + "requirements.",
+              node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+        }
+      }
+
+      if(node.isPresentSysMLSubsetting()) {
+        for (ASTMCQualifiedName subsetted : node.getSysMLSubsetting().getFieldsList()) {
+          RequirementUsageSymbol reqUsageSym = node.getEnclosingScope().
+              resolveRequirementUsage(subsetted.getQName()).get();
+
+          totalParamsToRedefine = reqUsageSym.getAstNode().getTotalParamsToRedefine(totalParamsToRedefine);
+
+          if(totalParamsToRedefine > 0 && (!node.isPresentParameterList()
+              || node.getParameterList().sizeSysMLParameters() < totalParamsToRedefine)) {
+            Log.error("RequirementUsage '" + node.getName() + "' has multiple "
+                    + "generalized parameterized requirements, but does not redefine all of the parameters of the general "
+                    + "requirements.",
+                node.get_SourcePositionStart(), node.get_SourcePositionEnd());
           }
         }
-        else {
-          Log.error("RequirementDefinition '" + reqName + "' could not be resolved.",
-              node.getMCType().get_SourcePositionStart(),
-              node.getMCType().get_SourcePositionEnd());
-        }
-      }
-      for (ASTMCQualifiedName subsettedUsage : node.getSysMLSubsetting().getFieldsList()) {
-        maxParamLength = getMaxParamLength(node, subsettedUsage, maxParamLength);
-      }
-      if(maxParamLength > 0 && (!node.isPresentParameterList()
-          || node.getParameterList().sizeSysMLParameters() < maxParamLength)) {
-        Log.error("RequirementUsage '" + node.getName() + "' featuretypes/subsets multiple "
-                + "parameterized requirements, but does not redefine all of the inherited parameters.",
-            node.get_SourcePositionStart(), node.get_SourcePositionEnd());
       }
     }
   }
-
-  private int getMaxParamLength(ASTRequirementUsage node, ASTMCQualifiedName mCQualifiedName,
-                                int maxParamLength) {
-    Optional<RequirementUsageSymbol> symOpt = node.getEnclosingScope().resolveRequirementUsage(
-        mCQualifiedName.getQName());
-    if(symOpt.isPresent()) {
-      RequirementUsageSymbol sym = symOpt.get();
-      if(sym.getAstNode().isPresentParameterList()) {
-        int paramLength = sym.getAstNode().getParameterList().sizeSysMLParameters();
-        maxParamLength = Math.max(maxParamLength, paramLength);
-      }
-    }
-    else {
-      Log.error("RequirementUsage '" + mCQualifiedName.getQName() + "' could not be resolved.",
-          node.getMCType().get_SourcePositionStart(),
-          node.getMCType().get_SourcePositionEnd());
-    }
-    return maxParamLength;
-  }
-
 }

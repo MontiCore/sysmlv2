@@ -1,66 +1,47 @@
 package de.monticore.lang.sysmlrequirementdiagrams._cocos;
 
-import de.monticore.lang.sysmlcommons._ast.ASTSysMLParameter;
 import de.monticore.lang.sysmlrequirementdiagrams._ast.ASTRequirementDef;
 import de.monticore.lang.sysmlrequirementdiagrams._symboltable.RequirementDefSymbol;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.List;
-import java.util.Optional;
-
+/**
+ * Validate requirement parameters for a requirement definition using the following rules:
+ * 1. If there are no generalizations, then do nothing.
+ * <p>
+ * 2. If there is a single generalization, then it is not necessary that all parameters
+ * of the generalization are redefined. If not all parameters are redefined, then the rest
+ * of the parameters are inherited. (NOTE: redefined parameters are not inherited!)
+ * If requirement wants to declare new parameters, it must first redefine all parameters
+ * of the generalization (including the inherited parameters), in order (inherited parameters
+ * will come last in the order).
+ * <p>
+ * 3. If there are multiple generalizations, then it is necessary that all the parameters
+ * of all the generalizations are redefined (including the inherited parameters), in order (inherited parameters
+ * will come last in the order). Then, the requirement can optionally declare new parameters.
+ */
 public class SpecializedReqDefRedefinesInheritedParams
     implements SysMLRequirementDiagramsASTRequirementDefCoCo {
 
   @Override
   public void check(ASTRequirementDef node) {
     if(node.isPresentSysMLSpecialization()) {
-      List<ASTMCObjectType> superDefList = node.getSysMLSpecialization().getSuperDefList();
-      /*
-      If there is only one owned generalization, then it is allowed for the specialized
-      requirement to not redefine inherited parameters. If it does redefine parameters,
-      then it is allowed for it to redefine fewer parameters than the inherited ones.
-      If it wants to declare new parameters, then it must first redefine all inherited parameters.
+      // Validate that in case of multiple owned generalizations, all parameters are redefined.
+      if(node.getSysMLSpecialization().sizeSuperDef() > 1) {
+        int totalParamsToRedefine = 0;
+        for (ASTMCObjectType superDef : node.getSysMLSpecialization().getSuperDefList()) {
+          RequirementDefSymbol reqDefSym = node.getEnclosingScope().
+              resolveRequirementDef(((ASTMCQualifiedType) superDef).getMCQualifiedName().getQName()).get();
+          totalParamsToRedefine = reqDefSym.getAstNode().getTotalParamsToRedefine(totalParamsToRedefine);
 
-      If there are multiple owned generalizations, then it is required for the specialized
-      requirement to redefine all inherited parameters. It can then declare new parameters of its own.
-       */
-      // Perform check only if there are multiple owned generalizations.
-      if(superDefList.size() > 1) {
-        int maxParamLength = 0;
-        for (ASTMCObjectType superDef : superDefList) {
-          String reqName = ((ASTMCQualifiedType) superDef).getMCQualifiedName().getQName();
-          Optional<RequirementDefSymbol> symOpt = node.getEnclosingScope().resolveRequirementDef(
-              reqName);
-          if(symOpt.isPresent()) {
-            RequirementDefSymbol sym = symOpt.get();
-            if(sym.getAstNode().isPresentParameterList()) {
-              int paramLength = sym.getAstNode().getParameterList().sizeSysMLParameters();
-              maxParamLength = Math.max(maxParamLength, paramLength);
-            }
+          if(totalParamsToRedefine > 0 && (!node.isPresentParameterList()
+              || node.getParameterList().sizeSysMLParameters() < totalParamsToRedefine)) {
+            Log.error("RequirementDefinition '" + node.getName() + "' specializes multiple "
+                    + "parameterized requirements, but does not redefine all of the parameters of the general "
+                    + "requirements.",
+                node.get_SourcePositionStart(), node.get_SourcePositionEnd());
           }
-          else {
-            Log.error("RequirementDefinition '" + reqName + "' could not be resolved.",
-                superDef.get_SourcePositionStart(),
-                superDef.get_SourcePositionEnd());
-          }
-        }
-        if(maxParamLength > 0 && (!node.isPresentParameterList()
-            || node.getParameterList().sizeSysMLParameters() < maxParamLength)) {
-          Log.error("RequirementDefinition '" + node.getName() + "' specializes multiple "
-                  + "parameterized requirements, but does not redefine all of the inherited parameters.",
-              node.get_SourcePositionStart(), node.get_SourcePositionEnd());
-        }
-      }
-    }
-    // Check if there are bindings present. No binding are allowed for parameters in definitions.
-    if(node.isPresentParameterList()) {
-      for (ASTSysMLParameter param : node.getParameterList().getSysMLParameterList()) {
-        if(param.isPresentBinding()) {
-          Log.error("RequirementDefinition '" + node.getName() + "' has a parameter "
-                  + "'" + param.getName() + "' with a FeatureValue. FeatureValues are not allowed in definitions.",
-              node.get_SourcePositionStart(), node.get_SourcePositionEnd());
         }
       }
     }
