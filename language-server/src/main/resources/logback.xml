@@ -1,0 +1,36 @@
+<!-- (c) https://github.com/MontiCore/monticore -->
+<configuration>
+  <!-- Print status to stderr, stdout can be used by lsp connection -->
+  <statusListener class="ch.qos.logback.core.status.OnErrorConsoleStatusListener"/>
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <target>System.err</target>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>WARN</level>
+    </filter>
+    <encoder>
+      <pattern>
+        %d{HH:mm:ss.SSS} [%thread] %-7([%level]) %logger{26} %message%n
+      </pattern>
+    </encoder>
+  </appender>
+
+  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <file>sysml-language-server.log</file>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>TRACE</level>
+    </filter>
+    <encoder>
+      <pattern>
+        %d{HH:mm:ss.SSS} [%thread] %-7([%level]) %logger{26} %message%n
+      </pattern>
+    </encoder>
+  </appender>
+
+  <variable name="LSPLOG_LEVEL" value="${LSPLOG_LEVEL:-INFO}"/>
+
+  <root level="${LSPLOG_LEVEL}">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </root>
+
+</configuration>

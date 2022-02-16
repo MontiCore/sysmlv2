@@ -1,0 +1,23 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+/**
+ * Adaptation to PartDefinitions
+ */
+grammar SysML4VerificationBlockDiagrams extends SysMLBlockDiagrams {
+
+  // Causality indication: "instant" = weak causal, "delayed" = strong causal. Defaults to "instant".
+  SysMLCausality = "timing" (["instant"] | ["delayed"]) ";";
+
+  // Refinement relations. Adaptation of "SysMLSpecialization"
+  SysMLRefinement = "refines" roughDef:(MCObjectType || ",")+;
+
+  // Adds "SysMLRefinement?" to the header and "SysMLCausality" to body. CoCo enforces limit of one causality.
+  @Override
+  PartDef =
+    SysMLModifier? ("part" "def" | "block") Name SysMLSpecialization? SysMLRefinement?
+    ("{"
+      (BDUsageMember | SysMLElement | SysMLImportStatement | SysMLCausality)*
+    "}" | ";") ;
+
+}

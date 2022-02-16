@@ -1,0 +1,87 @@
+plugins {
+  id "base"
+  id 'de.monticore.language-server' version "$mclsg_version"
+  id "com.github.node-gradle.node" version "3.0.1"
+}
+
+import groovy.json.JsonBuilder
+import groovy.json.JsonSlurper
+
+def genPostfix = "generated-source/mclsg/vscode-plugin"
+def relGenDir = "target/$genPostfix" // Used since GeneratorSetup can not handle absolute paths
+def genDir = "$buildDir/$genPostfix"
+
+dependencies {
+  lspserver project(path: ":language-server", configuration: 'shadow')
+}
+import de.mclsg.task.*
+task generateVscodePlugin(type: VscodePluginTask){
+  mclsg {
+    languageName "SysML4Verification"
+    outputDir relGenDir
+    fileExtension "sysml"
+  }
+}
+
+task copyLspserver(type: Copy) {
+  from configurations.lspserver
+  into "$genDir/bin"
+}
+
+// Edit package.json of the generated project
+task editPackageJson() {
+  doLast {
+    def file = new File("$genDir/package.json")
+    def json = new JsonBuilder(new JsonSlurper().parse(file))
+    json.content.version = "$version"
+    json.content.publisher = "MontiBelle"
+    json.content.name = "SysML4Verification"
+    json.content.icon = "icons/logo.png"
+    //json.content.newField = "This is a test to add a new field to the json"
+
+    def iconThemesMap = [
+        "id": "theme",
+        "label": "default",
+        "path": "./icons/themes.json"
+    ]
+    json.content.contributes.iconThemes = [iconThemesMap]
+
+    file.write(json.toPrettyString())
+  }
+
+  task buildPlugin(type: NpmTask) {
+    args = ['run', 'package']
+  }
+
+  task copyIcon(type: Copy) {
+    from "$projectDir"
+    include "logo.png"
+    into("$genDir")
+  }
+
+  task copyFileIcons(type: Copy) {
+    from "$projectDir"
+    include "icons/**"
+    into layout.buildDirectory.dir("$genDir")
+  }
+
+  task runVscodePlugin(type: Exec) {
+    workingDir "$projectDir"
+    commandLine "code", "--extensionDevelopmentPath=$genDir", "$projectDir/examples/"
+  }
+
+  // Build vscode plugin
+  node {
+    download = true
+    nodeProjectDir = file("$genDir")
+  }
+  tasks.build.dependsOn 'buildPlugin'
+  tasks.buildPlugin.dependsOn 'copyLspserver'
+  tasks.buildPlugin.dependsOn 'npm_install'
+  tasks.buildPlugin.dependsOn 'generateVscodePlugin'
+  tasks.buildPlugin.dependsOn 'editPackageJson'
+  tasks.editPackageJson.dependsOn 'generateVscodePlugin'
+  tasks.editPackageJson.dependsOn 'copyIcon'
+  tasks.editPackageJson.dependsOn 'copyFileIcons'
+  tasks.runVscodePlugin.dependsOn 'build'
+}

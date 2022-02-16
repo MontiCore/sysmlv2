@@ -9,10 +9,10 @@ Furthermore, for the visualization of non-trivial SysML components GraphViz Dot 
 
 ### Setup for developers
 
-Project uses dependencies published to GitHub thus requiring a GitHub personal access token.
-Please create a personal `gradle.properties` file in your local `GRADLE_USER_HOME` (usually situated at `<<User>>/.gradle`)
-and add the following:
+This project uses the SysML v2's official implementation on GitHub. It thus needs a GitHub personal access token
+(PAT). Create this PAT on GitHub by navigating to Settings > Developer Settings. The token needs `read_registry`
+rights. Then add it and your GitHub user name to `$GRADLE_USER_HOME/gradle.properties` as follows:
 ```
 githubUser = GITHUB_USERNAME
-githubToken = YOUR_PAN
+githubToken = GITHUB_PAT
 ```

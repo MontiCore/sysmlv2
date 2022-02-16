@@ -16,8 +16,6 @@ plugins {
 
 group = 'de.monticore.lang'
 description = 'SysML_v2_official'
-sourceCompatibility = JavaVersion.VERSION_1_8
-buildDir = file("$projectDir/target")
 
 /* ============================================================ */
 /* ========================= Versions ========================= */
@@ -26,7 +24,6 @@ buildDir = file("$projectDir/target")
 def grammarDir = "src/main/grammars"
 def grammar_classifier = "grammars"
 
-def junit_version = "5.8.1"
 def commons_cli_version = "1.4"
 def antlr_version = '4.7.1'
 def commons_lang_version = "3.11"
@@ -113,7 +110,7 @@ shadowJar {
   manifest {
     attributes "Main-Class": "de.monticore.SYSMLCLI"
   }
-  archiveFileName = "SysML-cli.jar"
+  archiveClassifier = 'cli'
   minimize()
 }
 
@@ -133,20 +130,19 @@ jar.dependsOn grammarsJar, shadowJar
 /* ============================================================ */
 
 publishing {
-    // configure what artifacts to publish
-    publications {
-        mavenJava(MavenPublication) {
-            artifactId = "sysml_v2"
-            from components.java
-        }
+  // configure what artifacts to publish
+  publications {
+    mavenJava(MavenPublication) {
+      artifactId = "sysml_v2"
+      from components.java
     }
-    repositories.maven {
-        credentials.username mavenUser
-        credentials.password mavenPassword
-        def releasesRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/"
-        def snapshotsRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/"
-        url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
-    }
+  }
+  // and where to upload them
+  repositories.maven {
+    credentials.username nexusUser
+    credentials.password nexusPassword
+    url = version.endsWith("SNAPSHOT") ? monticoreSnapshots : monticoreReleases
+  }
 }
 
 task buildAll(type: GradleBuild) {

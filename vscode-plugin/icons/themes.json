@@ -1,0 +1,10 @@
+{
+  "iconDefinitions": {
+    "_sysml_file": {
+      "iconPath": "./logo.png"
+    }
+  },
+  "fileExtensions": {
+    "sysml": "_sysml_file"
+  }
+}

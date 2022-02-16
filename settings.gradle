@@ -1,18 +1,22 @@
 /* (c) https://github.com/MontiCore/monticore */
 pluginManagement {
   repositories {
-    if(("true").equals(getProperty('useLocalRepo'))){
-      mavenLocal()
-    }
     maven {
-      credentials.username mavenUser
-      credentials.password mavenPassword
-      url repo
+      credentials.username nexusUser
+      credentials.password nexusPassword
+      url publicNexus
     }
     gradlePluginPortal()
   }
 }
 
 rootProject.name = 'sysml_v2'
+
+// Official
 include 'language'
 include 'visualization'
+
+// For Verification
+include 'language4verification'
+include 'language-server'
+include 'vscode-plugin'

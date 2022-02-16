@@ -1,0 +1,26 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+/**
+ * Based on SysMLv2
+ * Extended with SimpleGenericTypes
+ * Adapted BlockDiagrams, Added Literals, Adapted StateMachineDiagrams
+ *
+ * Können SysMLv2 nicht direkt erweitern, da sonst die PartDef doppelt (oder falsch) vorhanden ist.
+ */
+grammar SysML4Verification extends de.monticore.lang.SysMLActivityDiagrams,
+                                   de.monticore.lang.SysMLParametrics,
+                                   de.monticore.types.MCSimpleGenericTypes,
+                                   de.monticore.ocl.OCLExpressions,
+                                   SysML4VerificationBlockDiagrams,
+                                   SysML4VerificationLiterals,
+                                   SysML4VerificationRequirementDiagrams,
+                                   SysML4VerificationStateMachineDiagrams {
+
+  // Ohne gibts in der Mill keine ScopeGenitors
+  start SysMLModel;
+
+  // Wird in SysMLv2.mc4 definiert, muss hier also neu
+  SysMLModel = SysMLElement*;
+
+}
