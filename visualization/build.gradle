@@ -3,7 +3,6 @@ plugins {
 }
 
 group = 'de.monticore.lang.sysml_v2'
-sourceCompatibility = "11"
 
 tasks.build.dependsOn shadowJar
 
@@ -13,17 +12,14 @@ dependencies {
   implementation group: 'org.omg.sysml', name: 'org.omg.sysml.interactive', version: omg_version, classifier: 'all'
   implementation group: 'de.se_rwth.commons', name: 'se-commons-logging', version: se_commons_version
   implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
-
-  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.21.0'
-  testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.2'
-  testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.2'
 }
 
 repositories {
   mavenCentral()
+  // required for sysml interactive published on GitHub
   maven {
-    // required for sysml interactive published on GitHub
-    url "https://maven.pkg.github.com/Systems-Modeling/SysML-v2-Pilot-Implementation"
+    name "Official SysMLv2 Github Package Registry"
+    url sysmlGithub
     credentials {
       username = githubUser
       password = githubToken
@@ -47,11 +43,9 @@ publishing {
     }
   }
   repositories.maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
-    def releasesRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/"
-    def snapshotsRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/"
-    url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
+    credentials.username nexusUser
+    credentials.password nexusPassword
+    url = version.endsWith("SNAPSHOT") ? monticoreSnapshots : monticoreReleases
   }
 }
 

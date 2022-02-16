@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+grammar SysML4VerificationLiterals extends de.monticore.literals.MCCommonLiterals {
+
+  // Infinity literal can be negative, but there cannot be any space between "-" and "INF"
+  Infinity implements Literal, SignedLiteral = {noSpace(2)}? (negative:["-"]) "INF" | "INF";
+
+}

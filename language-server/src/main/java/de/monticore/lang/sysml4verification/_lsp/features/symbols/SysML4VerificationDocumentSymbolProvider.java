@@ -1,0 +1,120 @@
+package de.monticore.lang.sysml4verification._lsp.features.symbols;
+
+import com.google.common.collect.ImmutableMap;
+import de.mclsg.lsp.document_management.DocumentInformation;
+import de.mclsg.lsp.document_management.DocumentManager;
+import de.mclsg.lsp.features.DocumentSymbolProvider;
+import de.monticore.lang.sysml4verification._symboltable.*;
+import de.monticore.lang.sysml4verificationblockdiagrams._ast.ASTPartDef;
+import de.monticore.lang.sysml4verificationstatemachinediagrams._ast.ASTStateDef;
+import de.monticore.lang.sysmlblockdiagrams._ast.ASTSysMLPortDef;
+import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
+import de.monticore.lang.sysmlparametrics._ast.ASTConstraintDef;
+import de.monticore.symboltable.ISymbol;
+import org.eclipse.lsp4j.*;
+import org.eclipse.lsp4j.jsonrpc.messages.Either;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.function.BooleanSupplier;
+import java.util.stream.Collectors;
+
+/**
+ * Creates a tree of DocumentSymbols recalled for a Document. Assumes that all symbols are packaged.
+ */
+public class SysML4VerificationDocumentSymbolProvider extends SysML4VerificationDocumentSymbolProviderTOP
+    implements DocumentSymbolProvider {
+
+  private static final Logger logger = LoggerFactory.getLogger(SysML4VerificationDocumentSymbolProvider.class);
+
+  // default mapping from mc symbols to SymbolKind
+  private final Map<Class<?>, SymbolKind> SYMBOLKIND_MAPPER =
+      ImmutableMap.of(
+          ASTPartDef.class, SymbolKind.Class,
+          ASTStateDef.class, SymbolKind.Function,
+          ASTSysMLPortDef.class, SymbolKind.Field,
+          ASTConstraintDef.class, SymbolKind.Property,
+          ASTSysMLPackage.class, SymbolKind.Namespace
+      );
+
+  public SysML4VerificationDocumentSymbolProvider(DocumentManager documentManager) {
+    super(documentManager);
+  }
+
+  /**
+   * Returns hierarchic DocumentSymbol tree from a flat list of mc Symbols provided by the document's DocumentInformation.
+   */
+  @Override
+  public List<Either<SymbolInformation, DocumentSymbol>> getDocumentSymbols(TextDocumentItem document) {
+    Optional<DocumentInformation> documentInformation = documentManager.getDocumentInformation(document);
+
+    if (!documentInformation.isPresent()) {
+      logger.error("No document information available for the given URI: " + document.getUri());
+      return Collections.emptyList();
+    }
+
+    // set reference to original flat list as source while building symbol tree
+    final List<ISymbol> flatSymbolList = documentInformation.get().symbols;
+
+    return loadSymbolsToTree(
+        flatSymbolList,
+        flatSymbolList
+            .stream()
+            // start recursion with top-level symbols
+            .filter(symbol -> symbol.getEnclosingScope() instanceof ISysML4VerificationArtifactScope)
+            .collect(Collectors.toList())
+    )
+        .stream()
+        .map(Either::<SymbolInformation, DocumentSymbol>forRight)
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Helper method that creates all subtrees for provided mc symbols recursively and transforms these into {@link org.eclipse.lsp4j.DocumentSymbol}s.
+   *
+   * @param allSymbols    - the complete symbol list which serves as the data source for building the DocumentSymbol tree
+   * @param activeSymbols - {@link de.monticore.symboltable.ISymbol}s passed are the root nodes for which the method creates the subtrees by extracting
+   *                      data from the allSymbols list
+   * @return returns a hierarchical List of DocumentSymbols containing trees
+   */
+  private List<DocumentSymbol> loadSymbolsToTree(final List<ISymbol> allSymbols, List<ISymbol> activeSymbols) {
+    return activeSymbols.stream().map(symbol ->
+        new DocumentSymbol(
+            symbol.getName(),
+            SYMBOLKIND_MAPPER.getOrDefault(symbol.getAstNode().getClass(), SymbolKind.Object),
+            new Range(new Position(symbol.getAstNode().get_SourcePositionStart().getLine(),
+                symbol.getAstNode().get_SourcePositionEnd().getColumn()),
+                new Position(symbol.getAstNode().get_SourcePositionEnd().getLine(),
+                    symbol.getAstNode().get_SourcePositionEnd().getColumn())
+            ),
+            new Range(new Position(symbol.getSourcePosition().getLine(), symbol.getSourcePosition().getColumn()),
+                new Position(symbol.getSourcePosition().getLine(), symbol.getSourcePosition().getColumn())
+            ),
+            null,
+            getChildren(symbol, allSymbols)
+        )
+    ).collect(Collectors.toList());
+  }
+
+  /** load children recursively iff enclosing scope name and symbol name are equal */
+  private List<DocumentSymbol> getChildren(ISymbol parent, List<ISymbol> allSymbols) {
+    return loadSymbolsToTree(
+        allSymbols,
+        allSymbols
+            .stream()
+            .filter(symbol -> {
+                  // BooleanSupplier makes sure, that predicates are not executed when not needed
+                  BooleanSupplier parentNameIsEqual = () -> symbol.getEnclosingScope().isPresentName() &&
+                      symbol.getEnclosingScope().getName().equals(parent.getName());
+                  BooleanSupplier parentIsPackage = () -> parent.getAstNode() instanceof ASTSysMLPackage;
+                  // Name could still be ambiguous (TODO would need to check FQN)
+                  BooleanSupplier parentAstIsEqual = () -> symbol.getEnclosingScope().getAstNode()
+                      .deepEquals((ASTSysMLPackage) parent.getAstNode());
+                  return parentNameIsEqual.getAsBoolean() && parentIsPackage.getAsBoolean() && parentAstIsEqual.getAsBoolean();
+                }
+            )
+            .collect(Collectors.toList())
+    );
+  }
+}

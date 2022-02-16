@@ -1,0 +1,148 @@
+/* (c) https://github.com/MontiCore/monticore */
+plugins {
+  id "monticore" version "$mc_version" // MontiCore Plugin
+  id "de.set.ecj" version "1.4.1" // Eclipse compiler as it"s much faster than javac
+}
+
+group = 'de.monticore.lang'
+description = "SysMLv2 for Verification"
+
+def grammarDir = "src/main/grammars"
+def grammarOutDir = "$buildDir/generated-sources/mc"
+def testGrammarOutDir = "$buildDir/generated-test-sources/mc"
+
+dependencies {
+  // MPf: Kopiert von MontiArc wegen Dopplung der Grammatik in "normaler" JAR und "-grammars" JAR
+  grammar ("de.monticore:monticore-grammar:$mc_version") {
+    capabilities {
+      requireCapability("de.monticore:monticore-grammar-grammars")
+    }
+  }
+  grammar (project(":language")) {
+    capabilities {
+      requireCapability("de.monticore.lang:language-grammars")
+    }
+  }
+  grammar "de.monticore.lang:ocl:$mc_version:grammars"
+
+  implementation "de.monticore:monticore-grammar:$mc_version"
+  implementation project(":language")
+  implementation "de.monticore.lang:ocl:$mc_version"
+
+  implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
+  implementation "de.monticore:monticore-runtime:$mc_version"
+  implementation "org.antlr:antlr4-runtime:4.7.1"
+
+  testImplementation "de.monticore:monticore-runtime:$mc_version"
+}
+
+// Replaces the wrong transitive dependency
+dependencies {
+  modules {
+    module("de.monticore.bs:monticore-grammar") {
+      replacedBy("de.monticore:monticore-grammar")
+    }
+  }
+}
+
+// configure non-standard source sets
+sourceSets {
+  main {
+    java.srcDirs += ["$grammarOutDir"]
+  }
+  test {
+    java.srcDirs += ["$testGrammarOutDir"]
+  }
+  grammars {
+    resources {
+      srcDirs(grammarDir)
+      include "**/*.mc4"
+    }
+  }
+}
+
+configurations { grammar }
+
+
+/* ============================================================ */
+/* ========================== Tasks =========================== */
+/* ============================================================ */
+
+task generate {}
+
+fileTree(grammarDir).matching { include '**/*.mc4' }.each { g ->
+  def taskname = "generateGrammar${g.getName().substring(0,g.getName().lastIndexOf('.'))}"
+
+  task "$taskname" (type: MCTask) {
+    grammar = g
+    outputDir = file "$grammarOutDir"
+    def grammarIncludingPackage = file(grammarDir).toURI().relativize(g.toURI()).toString()
+    outputs.upToDateWhen { incCheck(grammarIncludingPackage) }
+  }
+  generate.dependsOn ("$taskname")
+}
+
+compileJava.dependsOn generate
+
+// Fixes issue with java plugin in projects without resources
+compileTestJava.doFirst { mkdir sourceSets.main.output.resourcesDir }
+
+tasks.withType(Test) {
+  useJUnitPlatform()
+  maxParallelForks = Runtime.runtime.availableProcessors() ?: 1
+}
+
+tasks.withType(JavaCompile) {
+  options.fork = true
+  options.encoding = "UTF-8"
+  options.deprecation false
+  options.warnings = false
+  options.headerOutputDirectory.convention(null)
+}
+
+task testReport(type: TestReport) {
+  destinationDir = file("$buildDir/reports/allTests")
+  // Include the results from the "test" task
+  reportOn tasks.withType(Test)
+}
+java {
+//  withJavadocJar()
+  withSourcesJar()
+  registerFeature("grammars") {
+    usingSourceSet(sourceSets.grammars)
+  }
+}
+
+jar.dependsOn grammarsJar
+
+// configure deployment
+publishing {
+  publications {
+    library(MavenPublication) {
+      artifactId = "sysml4verification"
+      from components.java
+    }
+  }
+  repositories.maven {
+    url = uri("https://gitlab.com/api/v4/projects/37093/packages/maven")
+    name = "Gitlab"
+    credentials(HttpHeaderCredentials) {
+      name = "Job-Token"
+      value = System.getenv("CI_JOB_TOKEN")
+    }
+    authentication {
+      header(HttpHeaderAuthentication)
+    }
+  }
+}
+
+List<URI> getSuperGrammars(String grammarDir, List<String> grammarNames) {
+  return grammarNames.collect {
+    def grammar = file createGrammarName(grammarDir, it)
+    return grammar.toURI()
+  }
+}
+
+String getGrammarInclPackage(String grammarDir, File grammarFile ){
+  return file(grammarDir).toURI().relativize(grammarFile.toURI()).toString()
+}

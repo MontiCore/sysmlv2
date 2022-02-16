@@ -1,0 +1,27 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+/**
+ * State Definition Extensions
+ */
+grammar SysML4VerificationStateMachineDiagrams extends SysMLStateMachineDiagrams,
+                                                       SysML4VerificationBlockDiagrams {
+
+  // Adds "STMUsageMember" to implemented interfaces. Allows declaring variables in state definitions.
+  //@Override
+  //SysMLAttribute implements STMUsageMember, BDUsageMember, Field =
+  //    SysMLModifier? SysMLFeatureDirection? ("attribute" | "value")? Name SysMLPropertyModifier
+  //      ("{"
+  //        SysMLAttribute*
+  //      "}" | ";") ;
+
+  @Override
+  StateDef = "state" "def" Name ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      STMEntryAction?
+      STMDoAction?
+      STMExitAction?
+      (STMUsageMember | SysMLAttribute)*
+    "}" | ";") ;
+
+}

@@ -1,17 +1,33 @@
+/* (c) https://github.com/MontiCore/monticore */
 subprojects {
   apply plugin: 'java'
   apply plugin: 'maven-publish'
 
+  // Needs to be after java plugin
+  sourceCompatibility = "11"
+
   project.buildDir = "target"
 
   repositories {
-    if(("true").equals(getProperty('useLocalRepo'))){
-      mavenLocal()
-    }
+    // "nexus" also caches maven central
     maven {
-      credentials.username mavenUser
-      credentials.password mavenPassword
-      url = repo
+      name "nexus"
+      url = publicNexus
     }
   }
+
+  // Use the same testing framework for all modules
+  dependencies {
+    // Test annotations, api
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+    // Parametrized tests
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
+    // Runtime
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+    // AssertJ fluent assertions "assertThat(subject).has(...).is(...).throws(...)
+    testImplementation "org.assertj:assertj-core:$assertj_version"
+  }
 }
+
+evaluationDependsOnChildren()
+project(":language-server").tasks.generateLanguageServer.dependsOn project(":language4verification").tasks.grammarsJar
