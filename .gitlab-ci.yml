@@ -31,7 +31,7 @@ deploy:
   dependencies:
     - build
   script:
-    - "./gradlew publish -PmavenPassword=$pass -PmavenUser=$user -PgithubUser=$githubUser -PgithubToken=$githubToken $GRADLE_OPT $ARGS2"
+    - "./gradlew publish -PnexusPassword=$pass -PnexusUser=$user -PgithubUser=$githubUser -PgithubToken=$githubToken $GRADLE_OPT $ARGS2"
   only:
     - master
 
