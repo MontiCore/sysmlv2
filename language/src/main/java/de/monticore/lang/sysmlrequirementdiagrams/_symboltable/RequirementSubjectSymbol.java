@@ -21,17 +21,17 @@ public class RequirementSubjectSymbol extends RequirementSubjectSymbolTOP {
   }
 
   /**
-   * Method computes the type of requirement subject.
+   * Compute the type of the requirement subject.
    *
    * @return SymTypeExpression type of the requirement subject symbol
    */
   public SymTypeExpression getSubjectType() {
-    if (type == null) {
+    if(type == null) {
       SymTypeExpression exp = null;
-      if (this.getAstNode().isPresentMCType()) {
+      if(this.getAstNode().isPresentMCType()) {
         exp = typeCheck.symTypeFromAST(this.getAstNode().getMCType());
       }
-      else if (this.getAstNode().isPresentBinding()) {
+      else if(this.getAstNode().isPresentBinding()) {
         exp = typeCheck.typeOf(this.getAstNode().getBinding());
       }
       else {
@@ -43,7 +43,7 @@ public class RequirementSubjectSymbol extends RequirementSubjectSymbolTOP {
   }
 
   /**
-   * Gets the name of the subject type.
+   * Get the name of the subject type.
    *
    * @return String
    */
@@ -52,7 +52,7 @@ public class RequirementSubjectSymbol extends RequirementSubjectSymbolTOP {
   }
 
   /**
-   * Checks for compatibility with the requirement subject symbol. Compatibility is computed based on
+   * Check for compatibility with the requirement subject symbol. Compatibility is computed based on
    * any of the following:
    * 1. Same types
    * 2. Ancestor - descendent relationship
@@ -64,12 +64,12 @@ public class RequirementSubjectSymbol extends RequirementSubjectSymbolTOP {
     boolean compatible = true;
     SymTypeExpression inheritedSubjectType = otherSubject.getSubjectType();
     SymTypeExpression currentSubjectType = this.getSubjectType();
-    if (!inheritedSubjectType.deepEquals(currentSubjectType)) {
+    if(!inheritedSubjectType.deepEquals(currentSubjectType)) {
       compatible = false;
       while (!currentSubjectType.getTypeInfo().isEmptySuperTypes() && !compatible) {
         // TODO: check for multiple super types
         SymTypeExpression superType = currentSubjectType.getTypeInfo().getSuperTypesList().get(0);
-        if (superType.deepEquals(inheritedSubjectType)) {
+        if(superType.deepEquals(inheritedSubjectType)) {
           compatible = true;
         }
         else {
@@ -79,4 +79,25 @@ public class RequirementSubjectSymbol extends RequirementSubjectSymbolTOP {
     }
     return compatible;
   }
+
+  /**
+   * Check if the given 'subject' has a type that is a supertype of 'this' subject's type.
+   *
+   * @param subject RequirementSubjectSymbol
+   * @return boolean
+   */
+  public boolean isSuperType(RequirementSubjectSymbol subject) {
+    return this.isCompatible(subject);
+  }
+
+  /**
+   * Check if the given 'subject' has a type that is a subtype of 'this' subject's type.
+   *
+   * @param subject RequirementSubjectSymbol
+   * @return boolean
+   */
+  public boolean isSubType(RequirementSubjectSymbol subject) {
+    return subject.isCompatible(this);
+  }
+
 }

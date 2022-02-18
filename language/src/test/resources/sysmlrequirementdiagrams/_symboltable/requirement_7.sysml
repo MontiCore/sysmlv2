@@ -1,5 +1,10 @@
 package Requirement_7 {
 
+  /*
+    Requirements have been reordered to ensure order of elements does not
+    have an effect on the implementation.
+  */
+
   part def Vehicle {
     attribute mass: float;
   }
@@ -7,22 +12,19 @@ package Requirement_7 {
   part def Car :> Vehicle;
   part def FlyingCar :> Car;
 
-  // Requirement definition with specific subject
-  requirement def RequirementWithSubject {
-    subject vehicle: Vehicle;
-    attribute maxMass: float;
-  }
-
-  // Specialized requirement definition with inherited subject
-  requirement def SpecializedRequirementWithSubject :> RequirementWithSubject;
-
   // Specialized requirement definition that redefines inherited subject
   requirement def SpecializedRequirementWithRedefinedSubject :> RequirementWithSubject {
     subject vehicle: Car;
   }
 
-  // Requirement usage with predefined subject given by definition
-  requirement requirementWithSubject1: RequirementWithSubject;
+  // Specialized requirement definition with inherited subject
+  requirement def SpecializedRequirementWithSubject :> RequirementWithSubject;
+
+  // Requirement definition with specific subject
+  requirement def RequirementWithSubject {
+    subject vehicle: Vehicle;
+    attribute maxMass: float;
+  }
 
   // Requirement usage with predefined subject (redefined in definition)
   requirement requirementWithSubject2: SpecializedRequirementWithRedefinedSubject;
@@ -31,4 +33,8 @@ package Requirement_7 {
   requirement requirementWithSpecializedSubject: SpecializedRequirementWithRedefinedSubject {
     subject vehicle: FlyingCar;
   }
+
+  // Requirement usage with predefined subject given by definition
+  requirement requirementWithSubject1: RequirementWithSubject;
+
 }
