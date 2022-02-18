@@ -1,6 +1,7 @@
 package de.monticore.lang.sysmlrequirementdiagrams._ast;
 
 import de.monticore.lang.sysmlcommons._ast.ASTSysMLParameter;
+import de.monticore.lang.sysmlrequirementdiagrams._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlv2.typecheck.DeriveSysMLTypes;
 import de.monticore.lang.sysmlv2.typecheck.SysMLTypesSynthesizer;
 import de.monticore.types.check.SymTypeExpression;
@@ -9,6 +10,7 @@ import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * ASTBaseRequirement is an abstract class that encapsulates the common logic for requirements.
@@ -25,8 +27,11 @@ public abstract class ASTBaseRequirement extends ASTBaseRequirementTOP {
 
   protected TypeCheck typeCheck = new TypeCheck(new SysMLTypesSynthesizer(), new DeriveSysMLTypes());
 
+  // 'subjectFetched' keeps track if the subject has already been computed for the current requirement.
+  protected boolean subjectFetched = false;
+
   /**
-   * Checks for type compatibility between the given two types.
+   * Check for type compatibility between the given two types.
    *
    * @param type    Possible super type to be checked.
    * @param subType Possible subtype to be checked.
@@ -78,7 +83,7 @@ public abstract class ASTBaseRequirement extends ASTBaseRequirementTOP {
   }
 
   /**
-   * Validates the type compatibility between redefining and redefined parameters.
+   * Validate the type compatibility between redefining and redefined parameters.
    *
    * @param parameters ASTParameterList
    */
@@ -99,8 +104,8 @@ public abstract class ASTBaseRequirement extends ASTBaseRequirementTOP {
   }
 
   /**
-   * Validates the type compatibility between redefining and redefined parameters.
-   * Also validates type compatibility with any feature values, if present.
+   * Validate the type compatibility between redefining and redefined parameters.
+   * Also validate type compatibility with any feature values, if present.
    *
    * @param parameters ASTParameterList
    */
@@ -189,6 +194,33 @@ public abstract class ASTBaseRequirement extends ASTBaseRequirementTOP {
   }
 
   /**
+   * Validate the types of the redefining parameters against the redefined parameters.
+   *
+   * @param superRequirement ASTBaseRequirement
+   */
+  protected void validateParameterTypes(ASTBaseRequirement superRequirement) {
+    if(this.isPresentParameterList()) {
+      // Create a complete parameter list of the potentially redefined parameters.
+      ArrayList<ASTSysMLParameter> parameters = new ArrayList<>();
+      if(superRequirement.isPresentParameterList()) {
+        parameters.addAll(superRequirement.getParameterList().getSysMLParameterList());
+      }
+
+      if(superRequirement.isPresentInheritedParameters()) {
+        parameters.addAll(superRequirement.getInheritedParameters());
+      }
+
+      // Validate redefining parameters against redefined parameters for type compatibility.
+      if(this instanceof ASTRequirementDef) {
+        this.validateRedefiningDefinitionParameters(parameters);
+      }
+      else if(this instanceof ASTRequirementUsage) {
+        this.validateRedefiningUsageParameters(parameters);
+      }
+    }
+  }
+
+  /**
    * Check if inherited parameters are present.
    *
    * @return boolean
@@ -206,6 +238,12 @@ public abstract class ASTBaseRequirement extends ASTBaseRequirementTOP {
     return this.getInheritedParameters().size();
   }
 
+  /**
+   * Method must implement that logic to (optionally compute) return a
+   * list of inherited parameters.
+   *
+   * @return ArrayList<ASTSysMLParameter>
+   */
   public abstract ArrayList<ASTSysMLParameter> getInheritedParameters();
 
   /**
@@ -217,4 +255,84 @@ public abstract class ASTBaseRequirement extends ASTBaseRequirementTOP {
   public ASTSysMLParameter getInheritedParameter(int i) {
     return this.inheritedParameters.get(i);
   }
+
+  /**
+   * Validate that the provided subjects are compatible as long as they fulfill any of the two criteria:
+   * 1. They are all of same types
+   * 2. All the subjects lie in the same inheritance chain, i.e. a subject is either a supertype
+   * of another subject or its subtype.
+   * Return the most specialized subject as the compatible subject.
+   *
+   * @param subjects List<RequirementSubjectSymbol>
+   * @return RequirementSubjectSymbol
+   */
+  protected Optional<RequirementSubjectSymbol> getCompatibleSubject(List<RequirementSubjectSymbol> subjects) {
+    Optional<RequirementSubjectSymbol> subject = Optional.empty();
+    if(subjects.size() > 1) {
+      RequirementSubjectSymbol superType = subjects.get(0);
+      RequirementSubjectSymbol subType = subjects.get(0);
+
+      for (RequirementSubjectSymbol subj : subjects) {
+        if(superType.getSubjectType().getTypeInfo().getName().equals(subType.getSubjectType().getTypeInfo().getName())
+            &&
+            superType.getSubjectType().getTypeInfo().getName().equals(subj.getSubjectType().getTypeInfo().getName())) {
+          continue;
+        }
+
+        // First, we extract all relations of the current subject with the current super and sub types.
+        boolean isSuperTypeOfSuperType = superType.isSuperType(subj);
+        boolean isSubTypeOfSuperType = subj.isSubType(superType);
+        boolean isSuperTypeOfSubType = subType.isSuperType(subj);
+        boolean isSubTypeOfSubType = subType.isSubType(subj);
+
+        // If current subject is supertype of the current supertype, we assign
+        // current subject as the new supertype.
+        if(isSuperTypeOfSuperType) {
+          superType = subj;
+        }
+        // If current subject is subtype of the current subtype, we assign
+        // current subject as the new subtype.
+        else if(isSubTypeOfSubType) {
+          subType = subj;
+        }
+        /*
+        If current subject is the subtype of the current supertype, then it must
+        also be the supertype of the current subtype.
+        Conversely, if current subject is the supertype of the current subtype, then it must
+        also be the subtype of the current supertype.
+         */
+        else if(!(isSuperTypeOfSubType && isSubTypeOfSuperType)) {
+          Log.error("Subjects found to be incompatible with one another!");
+        }
+
+        subject = Optional.of(subType);
+      }
+    }
+    else if(subjects.size() == 1) {
+      subject = Optional.ofNullable(subjects.get(0));
+    }
+    return subject;
+  }
+
+  /**
+   * Return the requirement subject (which may have been inherited, if not redefined here).
+   *
+   * @return Optional<RequirementSubjectSymbol>
+   */
+  public Optional<RequirementSubjectSymbol> getSubject() {
+    Optional<RequirementSubjectSymbol> subject = Optional.empty();
+    if(!subjectFetched) {
+      setSubject();
+    }
+    if(this.getSpannedScope().getRequirementSubjectSymbols().size() > 0)
+      subject = Optional.ofNullable(this.getSpannedScope().getRequirementSubjectSymbols().values().get(0));
+    return subject;
+  }
+
+  /**
+   * Method must implement the logic to set the correct requirement subject
+   * in a requirement definition/usage.
+   */
+  public abstract void setSubject();
+
 }

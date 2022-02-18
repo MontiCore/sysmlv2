@@ -303,6 +303,11 @@ public class RequirementsTest {
     requirementDef = getRequirementDef(packageScope, "RequirementWithSubjectWithNestedRequirements");
     subject = getSubject(requirementDef.getSpannedScope());
     validateSubjectType(subject.get(), "Car");
+
+    requirementDef = getRequirementDef(packageScope, "ReqDef3");
+    subject = getSubject(requirementDef.getSpannedScope());
+    validateSubjectType(subject.get(), "FlyingCar");
+
   }
 
   @Test
@@ -385,6 +390,7 @@ public class RequirementsTest {
   /**
    * Test parses, creates symboltable, and runs CoCos to validate
    * that all constraints in a model evaluate to boolean.
+   *
    * @throws IOException
    */
   @Test

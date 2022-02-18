@@ -23,4 +23,11 @@ package Requirement_1 {
       subject bolt = vehicle.engine.bolt;
     }
   }
+
+  part vehicle: Vehicle;
+  part engine: Engine;
+  part def Car:>Vehicle;
+  part car: Car;
+  satisfy requirementGroup by car;
+
 }
