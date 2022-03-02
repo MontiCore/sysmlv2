@@ -35,6 +35,26 @@ grammar SysMLActivityDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
     "send" payload:Expression "to" target:MCQualifiedName
     (body:ActionUsageBody | ";")? ;
 
+  // TODO Nach SysML API müsste es getrennte "referent" und "targetExpression" geben:
+  // sim.vehicle.seat --> referent: sim, targetExpression: vehicle.seat (*Kopfschüttel*)
+  AssignmentActionUsage extends ActionUsage =
+    "assign" target:MCQualifiedName ":=" valueExpression:Expression ;
+
+  // TODO Change trigger, Absolute time trigger, Relative time trigger (p.201 in 2-OMG_Systems_Modeling_Language.pdf)
+  AcceptActionUsage extends ActionUsage =
+    suc:["then"]? (declaration:ActionUsageDeclaration)?
+    "accept" AcceptParameterPart
+    (body:ActionUsageBody | ";")? ;
+
+  interface AcceptParameterPart;
+
+  /* Actual acceptance of a payload (optionally via a receiver). Re-used in state def transitions */
+  PayloadAcceptParameterPart implements AcceptParameterPart =
+    (payloadHandle:Name ":")? payloadType:MCType ("via" receiver:MCQualifiedName)? ;
+
+  WhenAcceptParameterPart implements AcceptParameterPart =
+    "when" booleanEvent:Expression;
+
   ItemFlow implements ADElement = "flow" src:MCQualifiedName "to" tgt:MCQualifiedName ";";
 
   // TODO exchange when possible
@@ -60,7 +80,5 @@ grammar SysMLActivityDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
   ADFork implements ADElement = suc:["then"]? "fork" Name? ";" ADSuccession*;
 
   ADJoin implements ADElement = suc:["then"]? "join" Name ";";
-
-  ADAcceptAction implements ADElement = "action" Name "accept" SysMLParameter ("for" MCType)? ";";
 
 }

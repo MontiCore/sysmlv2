@@ -3,10 +3,13 @@ package de.monticore.lang.sysmlv2._parser;
 import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
+import de.se_rwth.commons.logging.Log;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -27,20 +30,6 @@ public class SysMLv2CustomParserTest {
 
   private static final String MODEL_PATH = "src/test/resources/sysmlv2/parser/custom/";
 
-  private static Stream<Arguments> createInputs() {
-    return Stream.of(
-        Arguments.of("Aut_Initial_Output.sysml"),
-        Arguments.of("Exhibit_States.sysml"),
-        Arguments.of("qualified_send.sysml"),
-        Arguments.of("opaque_acdef_in_element.sysml"),
-        Arguments.of("acdef_in_element.sysml"),
-        Arguments.of("opaque_acdef_in_def.sysml"),
-        Arguments.of("acdef_in_def.sysml"),
-        Arguments.of("transition_noname.sysml"),
-        Arguments.of("transition_sendaction.sysml")
-    );
-  }
-
   @Test
   public void testEmptyPackage() throws IOException {
     Path model = Paths.get(MODEL_PATH + "EmptyPackage.sysml");
@@ -57,16 +46,30 @@ public class SysMLv2CustomParserTest {
     System.out.println(ast.get());
   }
 
-  @ParameterizedTest
-  @MethodSource("createInputs")
+  @ParameterizedTest(name = "{index} - {0} does parse w/o errors")
+  @ValueSource(strings = {
+      "Aut_Initial_Output.sysml",
+      "Exhibit_States.sysml",
+      "qualified_send.sysml",
+      "opaque_acdef_in_element.sysml",
+      "acdef_in_element.sysml",
+      "opaque_acdef_in_def.sysml",
+      "acdef_in_def.sysml",
+      "transition_noname.sysml",
+      "transition_sendaction.sysml",
+      "DLUF.sysml",
+      "DLUFv2.sysml",
+      "DLUFv3.sysml",
+      "DLUFv4.sysml"
+  })
   public void testParsingModels(String path) throws IOException {
     Path model = Paths.get(MODEL_PATH + path);
 
     SysMLv2Mill.init();
     SysMLv2Parser parser = SysMLv2Mill.parser();
     Optional<ASTSysMLModel> ast = parser.parse(model.toString());
-
     assertFalse(parser.hasErrors());
     assertTrue(ast.isPresent());
   }
+
 }

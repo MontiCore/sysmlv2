@@ -4,7 +4,7 @@ part def Vehicle {
   attribute fuelFullMass: MassValue;
 }
 
-requirement def id '1' VehicleMassLimitationRequirement :> MassLimitationRequirement {
+requirement def <"1"> VehicleMassLimitationRequirement :> MassLimitationRequirement {
   doc /* The total mass of a vehicle shall be less than or equal to the required mass. */
 
   subject vehicle : Vehicle;

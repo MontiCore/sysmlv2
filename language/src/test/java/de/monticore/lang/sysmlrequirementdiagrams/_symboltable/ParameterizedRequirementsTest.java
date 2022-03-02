@@ -9,7 +9,9 @@ import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -30,9 +32,17 @@ public class ParameterizedRequirementsTest {
 
   @BeforeAll
   public static void initScope() {
+    // Dont spam the output
+    LogStub.init();
+    Log.enableFailQuick(false);
     SysMLv2Mill.init();
     BasicSymbolsMill.init();
     BasicSymbolsMill.initializePrimitives();
+  }
+
+  @BeforeEach
+  public void clearLogFindings() {
+    Log.clearFindings();
   }
 
   /**
@@ -458,67 +468,58 @@ public class ParameterizedRequirementsTest {
    */
   @Test
   public void testRequirement_12() throws IOException {
-    try {
-      Log.enableFailQuick(false);
-      Log.clearFindings();
-      String model = "src/test/resources/sysmlrequirementdiagrams/_symboltable/requirement_12.sysml";
-      ASTSysMLModel ast = getModel(model);
+    String model = "src/test/resources/sysmlrequirementdiagrams/_symboltable/requirement_12.sysml";
+    ASTSysMLModel ast = getModel(model);
 
-      List<String> errors = Arrays.asList(
-          "RequirementDefinition 'ReqDefWithFeatureValue' has a "
-              + "parameter 'a' with a FeatureValue. FeatureValues are not allowed in definitions.",
-          "RequirementDefinition 'ReqDefWithNoMandatoryRedefinition'"
-              + " specializes multiple parameterized requirements, but does not redefine all of the parameters of the general requirements.",
-          "RequirementDefinition 'ReqDefWithNoMandatoryRedefinition'"
-              + " specializes multiple parameterized requirements, but does not redefine all of the parameters of the general requirements.",
-          "RequirementDefinition 'ReqDefWithNonRedefinedInheritedParams' specializes multiple "
-              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
-          "RequirementUsage 'reqUsageWithNoMandatoryRedefinition1' has multiple generalized "
-              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
-          "RequirementUsage 'reqUsageWithNoMandatoryRedefinition1' has multiple generalized "
-              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
-          "RequirementUsage 'reqUsageWithNoMandatoryRedefinition2' has multiple generalized "
-              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
-          "RequirementUsage 'reqUsageWithNoMandatoryRedefinition2' has multiple generalized "
-              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
-          "RequirementUsage 'reqUsageWithMissingMandatoryRedefinition' has multiple generalized "
-              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
-          "RequirementUsage 'reqUsageWithNonRedefinedInheritedParams1' has multiple generalized "
-              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
-          "RequirementUsage 'reqUsageWithNonRedefinedInheritedParams1' has multiple generalized "
-              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
-          "RequirementUsage 'reqUsageWithNonRedefinedInheritedParams2' has multiple generalized "
-              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
-          "RequirementUsage 'reqUsageWithNonRedefinedInheritedParams2' has multiple generalized "
-              + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
-          "RequirementParameter 'a' has type 'Vehicle', but was redefined with type 'double', "
-              + "which is not compatible.",
-          "RequirementParameter 'a' has type 'Vehicle', but was redefined with type 'double', "
-              + "which is not compatible.",
-          "RequirementParameter 'a' has type 'Vehicle', but was redefined with type 'double', "
-              + "which is not compatible.",
-          "RequirementParameter 'a' has type 'Vehicle', but was assigned a value of type 'double', "
-              + "which is not compatible.",
-          "RequirementParameter 'a' has type 'Car', but was assigned a value of type 'Vehicle', "
-              + "which is not compatible.",
-          "RequirementParameter 'a' has type 'Car', but was assigned a value of type 'Vehicle', "
-              + "which is not compatible.",
-          "RequirementParameter 'a' has type 'Car', but was assigned a value of type 'Vehicle', "
-              + "which is not compatible.",
-          "RequirementParameter 'a' has type 'Car', but was assigned a value of type 'Vehicle', "
-              + "which is not compatible.",
-          "RequirementParameter 'a' has type 'Car', but was assigned a value of type 'Vehicle', "
-              + "which is not compatible."
-      );
+    List<String> errors = Arrays.asList(
+        "RequirementDefinition 'ReqDefWithFeatureValue' has a "
+            + "parameter 'a' with a FeatureValue. FeatureValues are not allowed in definitions.",
+        "RequirementDefinition 'ReqDefWithNoMandatoryRedefinition'"
+            + " specializes multiple parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+        "RequirementDefinition 'ReqDefWithNoMandatoryRedefinition'"
+            + " specializes multiple parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+        "RequirementDefinition 'ReqDefWithNonRedefinedInheritedParams' specializes multiple "
+            + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+        "RequirementUsage 'reqUsageWithNoMandatoryRedefinition1' has multiple generalized "
+            + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+        "RequirementUsage 'reqUsageWithNoMandatoryRedefinition1' has multiple generalized "
+            + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+        "RequirementUsage 'reqUsageWithNoMandatoryRedefinition2' has multiple generalized "
+            + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+        "RequirementUsage 'reqUsageWithNoMandatoryRedefinition2' has multiple generalized "
+            + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+        "RequirementUsage 'reqUsageWithMissingMandatoryRedefinition' has multiple generalized "
+            + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+        "RequirementUsage 'reqUsageWithNonRedefinedInheritedParams1' has multiple generalized "
+            + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+        "RequirementUsage 'reqUsageWithNonRedefinedInheritedParams1' has multiple generalized "
+            + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+        "RequirementUsage 'reqUsageWithNonRedefinedInheritedParams2' has multiple generalized "
+            + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+        "RequirementUsage 'reqUsageWithNonRedefinedInheritedParams2' has multiple generalized "
+            + "parameterized requirements, but does not redefine all of the parameters of the general requirements.",
+        "RequirementParameter 'a' has type 'Vehicle', but was redefined with type 'double', "
+            + "which is not compatible.",
+        "RequirementParameter 'a' has type 'Vehicle', but was redefined with type 'double', "
+            + "which is not compatible.",
+        "RequirementParameter 'a' has type 'Vehicle', but was redefined with type 'double', "
+            + "which is not compatible.",
+        "RequirementParameter 'a' has type 'Vehicle', but was assigned a value of type 'double', "
+            + "which is not compatible.",
+        "RequirementParameter 'a' has type 'Car', but was assigned a value of type 'Vehicle', "
+            + "which is not compatible.",
+        "RequirementParameter 'a' has type 'Car', but was assigned a value of type 'Vehicle', "
+            + "which is not compatible.",
+        "RequirementParameter 'a' has type 'Car', but was assigned a value of type 'Vehicle', "
+            + "which is not compatible.",
+        "RequirementParameter 'a' has type 'Car', but was assigned a value of type 'Vehicle', "
+            + "which is not compatible.",
+        "RequirementParameter 'a' has type 'Car', but was assigned a value of type 'Vehicle', "
+            + "which is not compatible."
+    );
 
-      for(int i = 0; i < 22; ++i) {
-        assertEquals(Log.getFindings().get(i).getMsg(), errors.get(i));
-      }
-    }
-    finally {
-      Log.clearFindings();
-      Log.enableFailQuick(true);
+    for(int i = 0; i < 22; ++i) {
+      assertEquals(Log.getFindings().get(i).getMsg(), errors.get(i));
     }
   }
-
 }
