@@ -7,6 +7,38 @@ grammar SysMLStateMachineDiagrams extends de.monticore.lang.SysMLActivityDiagram
 
   interface STMUsageMember extends SysMLElement;
 
+  NonBehaviorBodyItem (t : Type) =
+      t.ownedRelationship += OwnedDocumentation
+    | t.ownedRelationship += Import
+    | t.ownedRelationship += AliasMember
+    | t.ownedRelationship += DefinitionMember(t)
+    | t.ownedRelationship += VariantUsageMember
+    | t.ownedRelationship += NonOccurrenceUsageMember
+    | t.ownedRelationship += StructureUsageMember
+    | t.ownedRelationship += StructureSuccessionMember(t)
+
+  StructureUsageMember : FeatureMembership =
+    MemberPrefix(this)
+    ownedMemberFeature = StructureUsageElement(this)
+
+  StructureUsageElement (m : Membership) : Feature =
+      OccurrenceUsage(m)
+    | IndividualUsage(m)
+    | PortionUsage(m)
+    | EventOccurrenceUsage(m)
+    | ItemUsage(m)
+    | PartUsage(m)
+    | ViewUsage(m)
+    | RenderingUsage(m)
+    | PortUsage(m)
+    | ConnectionUsage(m)
+    | InterfaceUsage(m)
+    | AllocationUsage(m)
+    | Message(m)
+    | FlowConnectionUsage(m)
+    | SuccessionFlowConnectionUsage(m)
+
+
   symbol scope (shadowing) StateDef implements SysMLType = "state" "def" Name ("(" (SysMLParameter || ",")* ")")?
     ("{"
       STMEntryAction?
@@ -27,13 +59,19 @@ grammar SysMLStateMachineDiagrams extends de.monticore.lang.SysMLActivityDiagram
   symbol STMTransition implements STMUsageMember =
     ("transition" Name?)?
     ("first" src:Name@StateUsage)?
-    ("accept" MCType)?
+    ("accept" AcceptParameterPart)?
     ("if" guard:Expression)?
-    ("do" ActionUsage)?
+    (STMDoAction)?
     "then" tgt:Name@StateUsage ";" ;
 
-  STMEntryAction = "entry" ("send" actionSignal:Expression "to" actionTgt:MCQualifiedName ";" | ActionUsage | ";")
-    ("then" initial:Name@StateUsage ";")?;
+  /*
+   * TODO unklar, aber mir scheint folgendes erlaubt:
+   * > entry action { send a to b; send x to y; }
+   * >  if b1 then S1;
+   * >  if b2 then S2;
+   * >  then S3;
+   */
+  STMEntryAction = "entry" ActionUsage? ";" (("if" guard:Expression)? "then" target:Name@StateUsage ";")*;
 
   STMDoAction = "do" ActionUsage;
 

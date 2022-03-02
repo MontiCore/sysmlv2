@@ -2,8 +2,8 @@
 package de.monticore.lang;
 
 grammar SysMLBlockDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
-                                             de.monticore.lang.SysMLCommons,
-                                             de.monticore.lang.SysMLStateMachineDiagrams {
+                                   de.monticore.lang.SysMLCommons,
+                                   de.monticore.lang.SysMLStateMachineDiagrams {
 
   start SysMLElement;
 

@@ -1,4 +1,4 @@
-requirement id '1.1' fullVehicleMassLimit : VehicleMassLimitationRequirement {
+requirement <"1.1"> fullVehicleMassLimit : VehicleMassLimitationRequirement {
   subject vehicle : Vehicle;
   attribute myMassReqd :>> massReqd = 2000;
 
@@ -8,7 +8,7 @@ requirement id '1.1' fullVehicleMassLimit : VehicleMassLimitationRequirement {
   }
 }
 
-requirement id '1.2' emptyVehicleMassLimit : VehicleMassLimitationRequirement {
+requirement <"1.2"> emptyVehicleMassLimit : VehicleMassLimitationRequirement {
   subject vehicle : Vehicle;
   attribute myMassReqd :>> massReqd = 1500;
 

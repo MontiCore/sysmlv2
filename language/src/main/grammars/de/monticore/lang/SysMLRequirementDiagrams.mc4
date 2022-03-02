@@ -10,13 +10,13 @@ grammar SysMLRequirementDiagrams extends de.monticore.lang.SysMLParametrics {
   abstract scope (shadowing) BaseRequirement = ParameterList?;
 
   symbol scope (shadowing) RequirementDef implements SysMLType extends BaseRequirement =
-    "requirement" "def" ("id" id:Name)? Name
+    "requirement" "def" ("<" humanId:String ">")? Name
     SysMLSpecialization?
     ParameterList?
     RequirementBody;
 
   symbol scope (shadowing) RequirementUsage implements ParametricsElement, SysMLUsage extends BaseRequirement =
-    "requirement" ("id" id:Name)? Name (":" MCType)?
+    "requirement" ("<" humanId:String ">")? Name (":" MCType)?
     SysMLSubsetting?
     ParameterList?
     RequirementBody;
