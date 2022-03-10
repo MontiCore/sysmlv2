@@ -445,6 +445,7 @@ package 'Data Link Upload Feed - A Case Study' {
             send False to repeat2;
             assign remainingCapacity := remainingCapacity - priority2.length();
           }
+          then Working;
 
         transition fill_based_on_prio_alone_3
           accept priority2
@@ -454,6 +455,7 @@ package 'Data Link Upload Feed - A Case Study' {
             send False to repeat3;
             assign remainingCapacity := remainingCapacity - priority3.length();
           }
+          then Working;
 
         transition fill_based_on_prio_alone_4
           accept priority4
@@ -464,6 +466,7 @@ package 'Data Link Upload Feed - A Case Study' {
             send False to repeat4;
             assign remainingCapacity := remainingCapacity - priority4.length();
           }
+          then Working;
 
         /*
          * Warten auf das Ende des Intervalls, niemand passt mehr rein. Sage allen, dass sie bis auf weiteres wieder-
@@ -477,6 +480,7 @@ package 'Data Link Upload Feed - A Case Study' {
           do action {
             send True to repeat1;
           }
+          then Working;
 
         // (...3 more)
 
@@ -492,6 +496,7 @@ package 'Data Link Upload Feed - A Case Study' {
             send True to repeat1; // Oder garnicht behandeln (bzw. repeaten lassen), der Buffer könnte sich beim nächsten Tick wieder melden
             assign exceeded1 := True;
           }
+          then Working;
 
         // (... 2 more)
 
@@ -502,6 +507,7 @@ package 'Data Link Upload Feed - A Case Study' {
             send True to repeat4;
             assign exceeded4 := True;
           }
+          then Working;
 
         /*
          * Melden von empty
