@@ -24,6 +24,7 @@ build:
     paths:
       - "language/target/"
       - "visualization/target/"
+      - "vscode-plugin/target/generated-source/mclsg/vscode-plugin/"
     expire_in: 1 week
 
 deploy:
