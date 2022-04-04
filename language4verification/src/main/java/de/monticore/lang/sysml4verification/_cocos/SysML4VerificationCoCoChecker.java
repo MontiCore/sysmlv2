@@ -6,6 +6,8 @@ public class SysML4VerificationCoCoChecker extends SysML4VerificationCoCoChecker
   public static SysML4VerificationCoCoChecker beforeSymbolTableCreation() {
     SysML4VerificationCoCoChecker checker = new SysML4VerificationCoCoChecker();
     // TODO checker.addCoCo(new SysML4VerificationUpperCaseBlockNameCoCo());
+    checker.addCoCo(new TrustLevelRelationOnlyUsesPartProperties());
+    checker.addCoCo(new UniqueTrustLevelStatement());
     return checker;
   }
 

@@ -9,6 +9,12 @@ grammar SysML4VerificationBlockDiagrams extends SysMLBlockDiagrams {
   // Causality indication: "instant" = weak causal, "delayed" = strong causal. Defaults to "instant".
   SysMLCausality = "timing" (["instant"] | ["delayed"]) ";";
 
+  // Trustlevel indication of a part which is given relative to its environment / enclosing part def
+  TrustLevel = "trustLevel" (["+"] | ["-"]) NatLiteral reason:StringLiteral? ";";
+
+  // TrustLevelRelation between part properties of a part def
+  TrustLevelRelation = "trustLevelRelation" left:Name (["<"] | [">"] | ["=="]) right:Name ";";
+
   // Refinement relations. Adaptation of "SysMLSpecialization"
   SysMLRefinement = "refines" roughDef:(MCObjectType || ",")+;
 
@@ -17,7 +23,7 @@ grammar SysML4VerificationBlockDiagrams extends SysMLBlockDiagrams {
   PartDef =
     SysMLModifier? ("part" "def" | "block") Name SysMLSpecialization? SysMLRefinement?
     ("{"
-      (BDUsageMember | SysMLElement | SysMLImportStatement | SysMLCausality)*
+      (BDUsageMember | SysMLElement | SysMLImportStatement | SysMLCausality | TrustLevel | TrustLevelRelation)*
     "}" | ";") ;
 
 }
