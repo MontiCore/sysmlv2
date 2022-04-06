@@ -21,13 +21,4 @@ public class SysML4VerificationScopeManager extends SysML4VerificationScopeManag
     return true;
   }
 
-  @Override
-  public SysML4VerificationArtifactScopeWithFindings createSymbolTable(ASTSysMLModel ast) {
-    return new SysML4VerificationArtifactScopeWithFindings(
-        ast,
-        SysML4VerificationMill.scopesGenitorDelegator().createFromAST(ast),
-        null
-    );
-  }
-
 }

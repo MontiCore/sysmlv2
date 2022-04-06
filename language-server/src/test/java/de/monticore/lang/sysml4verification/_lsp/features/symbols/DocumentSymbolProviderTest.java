@@ -123,7 +123,7 @@ public class DocumentSymbolProviderTest extends TestWithDocumentManager {
 
     // use the DocumentSymbolProvider synchronously
     // From this line onwards run all asynchronous tasks of the server consecutively on the main thread
-    server.getTextDocumentService().setAsyncExecutor(r -> { r.run(); return null; });
+    server.getTextDocumentService().setRunSequentially(true);
 
     List<List<Either<SymbolInformation, DocumentSymbol>>> resultSynchronousSymbols = pathsList
         .stream()
