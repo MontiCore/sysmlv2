@@ -30,4 +30,4 @@ subprojects {
 }
 
 evaluationDependsOnChildren()
-project(":language-server").tasks.generateLanguageServer.dependsOn project(":language4verification").tasks.grammarsJar
+project(":language-server").tasks.generateSysML4VerificationLanguageServer.dependsOn project(":language4verification").tasks.grammarsJar

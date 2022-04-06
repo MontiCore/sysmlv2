@@ -1,7 +1,6 @@
 package de.monticore.lang.sysml4verification._lsp.features.symbols;
 
 import de.mclsg.SeCommonsLogParser;
-import de.mclsg.lsp.DocumentChangeType;
 import de.mclsg.lsp.document_management.DocumentInformation;
 import de.mclsg.lsp.document_management.DocumentManager;
 import de.monticore.io.paths.ModelPath;
@@ -49,7 +48,7 @@ public abstract class TestWithDocumentManager {
     var docInfoProv = server.getTextDocumentService().getDocumentInformationProvider();
     // TODO nur wegen: SysML4VerificationMill.init();
 
-    docInfoProv.updateAllDocumentInformation(document, DocumentChangeType.CHANGED);
+    docInfoProv.updateAllDocumentInformation(document);
     Optional<DocumentInformation> documentInformation = documentManager.getDocumentInformation(document);
     if(documentInformation.isPresent()) {
       documentManager.updateDocumentInformation(documentInformation.get());

@@ -19,4 +19,3 @@ include 'visualization'
 // For Verification
 include 'language4verification'
 include 'language-server'
-include 'vscode-plugin'

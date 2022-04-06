@@ -1,6 +1,6 @@
 # (c) https://github.com/MontiCore/monticore
 
-image: maven:3.5.4-jdk-11
+image: openjdk:11-jdk
 
 stages:
   - build
@@ -10,6 +10,9 @@ stages:
 before_script:
   - chmod +x gradlew
   - export GRADLE_USER_HOME=`pwd`/.gradle
+  # TODO: use image with jdk 11 and node 16
+  - curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+  - apt-get install -y nodejs
 
 cache:
   paths:
@@ -24,7 +27,7 @@ build:
     paths:
       - "language/target/"
       - "visualization/target/"
-      - "vscode-plugin/target/generated-source/mclsg/vscode-plugin/"
+      - "language-server/target/generated-sources/SysML4Verification/plugins/sysml4verification-vscode-plugin"
     expire_in: 1 week
 
 deploy:

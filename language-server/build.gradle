@@ -1,18 +1,9 @@
 plugins {
   id "application"
   id 'de.monticore.language-server' version "$mclsg_version"
-  id "com.github.johnrengelman.shadow" version "4.0.4"
 }
-
-def logback_version = '1.1.2'
 
 mainClassName = "de.monticore.lang.sysml4verification._lsp.LanguageServerCLI"
-
-tasks.build.dependsOn shadowJar
-
-configurations {
-  grammar // Dependencies in this scope are consumed by mclsg to generate lsp
-}
 
 dependencies {
   // Language and parent language
@@ -48,7 +39,7 @@ dependencies {
   implementation "de.monticore.lang:ocl:7.0.0" // MPf: Ganz komische Fehler wegen "*OCL*", diese Zeile hatte Alex drin
 
   // MCLSG
-  implementation "de.monticore.language-server:monticore-language-server-runtime:$mclsg_version"
+  implementation "de.monticore.language-server:monticore-language-server-runtime-before72:$mclsg_version"
 
   modules {
     // somewhere in monticore some bootstrap (bs) versions were erroneously passed on
@@ -62,40 +53,56 @@ test {
   useJUnitPlatform()
 }
 
+// Remove once MontiCore 7.2 or higher is used
+System.setProperty("mcLt72workaround", "true");
+
+import de.mclsg.TaskTypes
 import de.mclsg.task.*
-task generateLanguageServer(type: MCLSGTask) {
+import groovy.json.JsonBuilder
+import groovy.json.JsonSlurper
+
+task autoconfigure(type: AutoconfigureTask) {
   mclsg {
     languageName = "de.monticore.lang.SysML4Verification"
     fileExtension = "sysml"
-    outputDir = "$buildDir/generated-sources/mclsg/sourcecode"
-    handCodedDir = "$projectDir/src/main/java"
-    // Symbols that are added to the Language via Java, not the grammar
-    /*additionalSymbolNames = [
-      "de.monticore.lang.sysmlparametrics._symboltable.ConstraintUsage", // Fix - manuell hinzu generiert import in CompletionProvider
-      "de.monticore.lang.sysmlrequirementdiagrams._symboltable.RequirementUsage",
-      "de.monticore.lang.sysmlstatemachinediagrams._symboltable.StateUsage"
-  ]*/
+  }
+  including(TaskTypes.VSCODE_PLUGIN)
+}
+tasks.build.dependsOn autoconfigure
+
+// Edit package.json of the generated project
+task editPackageJson() {
+  doLast {
+    def file = new File("${autoconfigure.mclsg.getFullVscodePluginDir()}/package.json")
+    def json = new JsonBuilder(new JsonSlurper().parse(file))
+    json.content.version = "$version"
+    json.content.publisher = "MontiBelle"
+    json.content.name = "SysML4Verification"
+    json.content.icon = "icons/logo.png"
+
+    def iconThemesMap = [
+        "id"   : "theme",
+        "label": "default",
+        "path" : "./icons/themes.json"
+    ]
+    json.content.contributes.iconThemes = [iconThemesMap]
+
+    file.write(json.toPrettyString())
   }
 }
 
-// configure non-standard source sets
-sourceSets {
-  main.java.srcDirs += [
-      "$buildDir/generated-sources/mclsg/sourcecode"
-  ]
+task copyIcon(type: Copy) {
+  from "$projectDir"
+  include "logo.png"
+  into(autoconfigure.mclsg.getFullVscodePluginDir())
 }
 
-compileJava {
-  dependsOn generateLanguageServer
+task copyFileIcons(type: Copy) {
+  from "$projectDir"
+  include "icons/**"
+  into autoconfigure.mclsg.getFullVscodePluginDir()
 }
 
-shadowJar { // all in one jar
-  manifest {
-    attributes "Main-Class": mainClassName
-  }
-  archiveClassifier = "jar-with-dependencies"
-}
-
-runShadow {
-
-}
+tasks.generateSysML4VerificationVscodePlugin.finalizedBy editPackageJson
+tasks.generateSysML4VerificationVscodePlugin.finalizedBy copyIcon
+tasks.generateSysML4VerificationVscodePlugin.finalizedBy copyFileIcons
