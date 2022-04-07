@@ -61,7 +61,8 @@ public class SysMLv2CustomParserTest {
       "DLUFv2.sysml",
       "DLUFv3.sysml",
       "DLUFv4.sysml",
-      "DLUFv5.sysml"
+      "DLUFv5.sysml",
+      "DLUFv6.sysml"
   })
   public void testParsingModels(String path) throws IOException {
     Path model = Paths.get(MODEL_PATH + path);
