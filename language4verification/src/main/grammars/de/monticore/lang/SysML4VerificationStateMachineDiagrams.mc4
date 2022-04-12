@@ -16,7 +16,7 @@ grammar SysML4VerificationStateMachineDiagrams extends SysMLStateMachineDiagrams
   //      "}" | ";") ;
 
   @Override
-  StateDef = "state" "def" Name ("(" (SysMLParameter || ",")* ")")?
+  StateDef = "state" "def" Name ParameterList?
     ("{"
       STMEntryAction?
       STMDoAction?
