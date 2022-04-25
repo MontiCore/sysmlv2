@@ -15,6 +15,7 @@ public class SysML4VerificationCoCoChecker extends SysML4VerificationCoCoChecker
   public static SysML4VerificationCoCoChecker afterSymbolTableCreation() {
     SysML4VerificationCoCoChecker checker = new SysML4VerificationCoCoChecker();
     // TODO checker.addCoCo(new SysML4VerificationRefinementsExistCoCo());
+    checker.addCoCo(new FinalDirection());
     return checker;
   }
 
