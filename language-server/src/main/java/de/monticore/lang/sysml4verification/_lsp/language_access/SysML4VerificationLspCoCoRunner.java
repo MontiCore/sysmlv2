@@ -16,6 +16,7 @@ public class SysML4VerificationLspCoCoRunner extends SysML4VerificationLspCoCoRu
     runner.addCoCo(new ConstraintParameterTypeIsValidCoCo());
     runner.addCoCo((SysMLConstraintsASTConstraintUsageCoCo) new ParameterUsageIsValidCoCo());
     runner.addCoCo((SysMLConstraintsASTConstraintUsageCoCo) new ConstraintDefinitionIsPresentCoCo());*/
+    runner.addCoCo(new FinalDirection());
   }
 
   @Override

@@ -23,4 +23,9 @@ grammar SysML4Verification extends de.monticore.lang.SysMLActivityDiagrams,
   // Wird in SysMLv2.mc4 definiert, muss hier also neu
   SysMLModel = SysMLElement*;
 
+  // Fügt "final"-Keyword hinzu um bei Attributen und Parametern zu signalisieren, dass es sich um Parameter im
+  // mathematischen Sinne handelt (im Gegensatz zu SysML's Flow-Properties)
+  @Override
+  SysMLFeatureDirection =  ["in"] | ["out"] | ["inout"] | ["final"];
+
 }
