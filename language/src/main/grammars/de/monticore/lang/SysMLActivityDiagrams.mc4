@@ -75,7 +75,7 @@ grammar SysMLActivityDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
 
   ADDecision implements ADElement = suc:["then"]? Name? ";" ADSuccession*;
 
-  ADMerge implements ADElement = suc:["then"]? "merge" Name ";";
+  ADMerge implements ADElement = suc:["then"]? key("merge") Name ";";
 
   ADFork implements ADElement = suc:["then"]? "fork" Name? ";" ADSuccession*;
 
