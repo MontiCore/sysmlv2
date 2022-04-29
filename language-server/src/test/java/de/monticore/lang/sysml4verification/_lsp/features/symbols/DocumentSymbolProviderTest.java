@@ -40,7 +40,7 @@ public class DocumentSymbolProviderTest extends TestWithDocumentManager {
   }
 
   /** Testet verschachtelte Pakete und mehrere Top-Level Pakete */
-  @Disabled("MPf: Verstehe nicht, wie wo wann was hier kaputt gegangen ist")
+  @Disabled("Blocked: https://git.rwth-aachen.de/monticore/tools/lsp-generator/-/issues/22")
   @Test
   public void testNestedComponent() throws IOException {
     // Setup
