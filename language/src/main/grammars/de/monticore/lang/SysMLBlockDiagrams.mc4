@@ -102,8 +102,8 @@ grammar SysMLBlockDiagrams extends de.monticore.lang.SysMLImportsAndPackages,
   BDActivityUsage implements BDUsageMember =
     "perform" "action"? (Name ":")? MCType SysMLMultiplicity? ["ordered"]? SysMLSubsetting? ";";
 
-  StateExhibition implements BDUsageMember =
+  symbol scope StateExhibition implements BDUsageMember =
     "exhibit" (
-      StateUsage | (Name "{" (SysMLParameter ";")* "}") | (Name ";")
+      StateUsage | (Name@StateUsage "{" (SysMLParameter ";")* "}") | (Name@StateUsage ";")
     );
 }
