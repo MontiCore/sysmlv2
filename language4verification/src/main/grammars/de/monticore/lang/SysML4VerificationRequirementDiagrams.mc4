@@ -5,7 +5,7 @@ grammar SysML4VerificationRequirementDiagrams extends SysMLRequirementDiagrams,
                                                       SysML4VerificationBlockDiagrams {
     @Override
     RequirementDef implements ParametricsElement =
-        "requirement" "def" ("<" humanId:String ">")? Name ("(" (SysMLParameter || ",")* ")")?
+        "requirement" "def" ("<" humanId:String ">")? Name ParameterList?
         SysMLSpecialization?
         SysMLRefinement?
         RequirementBody;

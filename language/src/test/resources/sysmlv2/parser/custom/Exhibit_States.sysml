@@ -16,7 +16,7 @@ part def Component {
     out o = o::val;
   }
 
-  //Alternative: State Usage direkt and dieser Stelle mit deklarieren
+  //Alternative: State Usage direkt an dieser Stelle mit deklarieren
   exhibit state behavior2: AutomatonDef(i = i::val, o = o::val);
 
   //Alternative2: Referenziert stateUsage (behavior3), welche schon irgendwo (siehe unten) definiert sein muss.
@@ -27,10 +27,10 @@ part def Component {
   exhibit state {
     state Zustand;
   }
+
+  state behavior3: AutomatonDef(i = i::val, o = o::val);
 }
 
 state def AutomatonDef(in i: Boolean, out o: Boolean);
 
 state behavior: AutomatonDef;
-
-state behavior3: AutomatonDef(i = i::val, o = o::val);
