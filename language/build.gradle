@@ -141,9 +141,15 @@ publishing {
   }
   // and where to upload them
   repositories.maven {
-    credentials.username nexusUser
-    credentials.password nexusPassword
-    url = version.endsWith("SNAPSHOT") ? monticoreSnapshots : monticoreReleases
+    name = "Gitlab"
+    url = sysmlGitlab
+    credentials(HttpHeaderCredentials) {
+      name = "Job-Token"
+      value = System.getenv("CI_JOB_TOKEN")
+    }
+    authentication {
+      header(HttpHeaderAuthentication)
+    }
   }
 }
 
