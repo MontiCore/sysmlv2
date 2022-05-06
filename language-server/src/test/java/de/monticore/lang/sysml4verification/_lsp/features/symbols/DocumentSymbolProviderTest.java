@@ -29,33 +29,25 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Adrian Costin Marin
  * @author Mathias Pfeiffer (mpfeiffer@se-rwth.de)
  */
-public class DocumentSymbolProviderTest extends TestWithDocumentManager {
-
-  private SysML4VerificationDocumentSymbolProvider sut;
-
-  @BeforeEach
-  public void setUpSut() {
-    setUpDocumentManager();
-    sut = new SysML4VerificationDocumentSymbolProvider(documentManager);
-  }
+public class DocumentSymbolProviderTest {
 
   /** Testet verschachtelte Pakete und mehrere Top-Level Pakete */
-  @Disabled("Blocked: https://git.rwth-aachen.de/monticore/tools/lsp-generator/-/issues/22")
   @Test
-  public void testNestedComponent() throws IOException {
-    // Setup
-    final Path nestedPackages = Paths.get("src/test/resources/documentSymbols/NestedPackages.sysml");
-    final String nestedPackagesContent = Files.lines(nestedPackages, StandardCharsets.UTF_8).collect(
-        Collectors.joining("\n"));
-
-    TextDocumentItem nestedPackagesItem = addDocumentToDocumentManager(
-        nestedPackages.toUri().toString(),
-        nestedPackagesContent
+  public void testNestedComponent() throws ExecutionException, InterruptedException {
+    Path base = Paths.get("src/test/resources/documentSymbols");
+    Path model = base.resolve("NestedPackages.sysml");
+    SysML4VerificationLanguageServer languageServer = new SysML4VerificationLanguageServer(
+        new ModelPath(base)
     );
-    prepareDocumentInformation(nestedPackagesItem);
+    languageServer.getIndexingManager().indexAllFilesInPath();
+
 
     // Make sure that symbol information was put into the provider and can be retrieved
-    List<Either<SymbolInformation, DocumentSymbol>> symbolInfo = sut.getDocumentSymbols(nestedPackagesItem);
+    List<Either<SymbolInformation, DocumentSymbol>> symbolInfo = languageServer.getTextDocumentService().documentSymbol(
+        new DocumentSymbolParams(new TextDocumentIdentifier(
+            model.toUri().toString()
+        ))
+    ).get();
     assertThat(symbolInfo).isNotEmpty();
 
     // "package TopLevel"
