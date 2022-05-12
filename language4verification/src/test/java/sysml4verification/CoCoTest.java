@@ -36,7 +36,7 @@ public class CoCoTest {
 
     @BeforeEach
     public void clear() throws IOException {
-      this.globalScope = SysML4VerificationLanguage.getGlobalScopeFor(Paths.get(MODEL), true);
+      this.globalScope = SysML4VerificationLanguage.getGlobalScopeFor(Paths.get(MODEL), Paths.get(MODEL), true);
       Log.enableFailQuick(false);
       Log.clearFindings();
     }

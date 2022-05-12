@@ -5,8 +5,11 @@ import de.monticore.lang.sysmlblockdiagrams._ast.ASTSysMLAttribute;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolBuilder;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 
@@ -25,33 +28,30 @@ public class SysMLBlockDiagramsScopesGenitor extends SysMLBlockDiagramsScopesGen
    */
   @Override
   public void visit(ASTSysMLAttribute node) {
-    FieldSymbol symbol = SysMLBlockDiagramsMill.fieldSymbolBuilder()
-            .setName(node.getName())
-            .build();
+    super.visit(node);
+    if(node.isPresentSymbol()) {
+      // Extract type info. from the node and resolve for type symbol.
+      Optional<TypeSymbol> typeSymbol = Optional.empty();
+      if(node.getSysMLPropertyModifier().sizeTypes() > 0) {
+        ASTMCType type = node.getSysMLPropertyModifier().getTypes(0);
 
-    // Extract type info. from the node and resolve for type symbol.
-    Optional<TypeSymbol> typeSymbol = Optional.empty();
-    if (node.getSysMLPropertyModifier().sizeTypes() > 0) {
-      String typeName = node.getSysMLPropertyModifier().getTypes(0)
+        String typeName;
+
+        if(node.getSysMLPropertyModifier().getTypes(0) instanceof ASTMCQualifiedType) {
+          // Type is an Object, could also be a default SysML type
+          typeName = ((ASTMCQualifiedType) type).getMCQualifiedName().getQName();
+          typeSymbol = node.getEnclosingScope().resolveType(typeName);
+        }
+        else {
+          // Otherwise, it's basic mcType, then look for it in the global scope.
+          typeName = node.getSysMLPropertyModifier().getTypes(0)
               .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()));
-      typeSymbol = SysMLv2Mill.globalScope().resolveType(typeName);
+          typeSymbol = SysMLv2Mill.globalScope().resolveType(typeName);
+        }
+      }
+
+      typeSymbol.ifPresent(value -> node.getSymbol().setType(SymTypeExpressionFactory.createTypeExpression(value)));
     }
-
-    typeSymbol.ifPresent(value -> symbol.setType(SymTypeExpressionFactory.createTypeExpression(value)));
-
-    if (getCurrentScope().isPresent()) {
-      getCurrentScope().get().add(symbol);
-    } else {
-      Log.warn("0xA5021x25703 Symbol cannot be added to current scope, since no scope exists.");
-    }
-    // symbol -> ast
-    symbol.setAstNode(node);
-
-    // ast -> symbol
-    node.setSymbol(symbol);
-    node.setEnclosingScope(symbol.getEnclosingScope());
-
-    initFieldHP1(node.getSymbol());
   }
 
   @Override

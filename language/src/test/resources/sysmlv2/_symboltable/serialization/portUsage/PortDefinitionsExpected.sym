@@ -1,0 +1,47 @@
+{
+  "generated-using": "www.MontiCore.de technology"  ,
+    "symbols": [
+    {
+      "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
+      "name": "specification"      ,
+      "spannedScope": {
+          "symbols": [
+          {
+            "kind": "de.monticore.lang.sysmlblockdiagrams._symboltable.SysMLPortDefSymbol",
+            "name": "BooleanInput"            ,
+            "spannedScope": {
+              "isShadowingScope": true              ,
+                "symbols": [
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "val",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "Boolean"
+                  }
+                }
+              ]
+            }
+          }          ,
+          {
+            "kind": "de.monticore.lang.sysmlblockdiagrams._symboltable.SysMLPortDefSymbol",
+            "name": "BooleanOutput"            ,
+            "spannedScope": {
+              "isShadowingScope": true              ,
+                "symbols": [
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "val",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "Boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

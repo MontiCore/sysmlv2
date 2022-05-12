@@ -1,0 +1,146 @@
+{
+  "generated-using": "www.MontiCore.de technology"  ,
+    "symbols": [
+    {
+      "kind": "de.monticore.lang.sysmlstatemachinediagrams._symboltable.StateDefSymbol",
+      "name": "UnfairMediumAutomaton"      ,
+      "spannedScope": {
+        "isShadowingScope": true        ,
+          "symbols": [
+          {
+            "kind": "de.monticore.lang.sysmlstatemachinediagrams._symboltable.StateUsageSymbol",
+            "name": "State"
+          }          ,
+          {
+            "kind": "de.monticore.lang.sysmlactivitydiagrams._symboltable.ActionUsageSymbol",
+            "name": "Unnamed ActionUsage1"            ,
+            "spannedScope": {
+                "symbols": [
+                {
+                  "kind": "de.monticore.lang.sysmlactivitydiagrams._symboltable.ActionUsageSymbol",
+                  "name": "Unnamed ActionUsage2"
+                }
+              ]
+            }
+          }          ,
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "i",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Boolean"
+            }
+          }          ,
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "o",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Boolean"
+            }
+          }
+        ]
+      }
+    }    ,
+    {
+      "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
+      "name": "avionic"      ,
+      "spannedScope": {
+          "symbols": [
+          {
+            "kind": "de.monticore.lang.sysmlblockdiagrams._symboltable.SysMLPortDefSymbol",
+            "name": "Input"            ,
+            "spannedScope": {
+              "isShadowingScope": true              ,
+                "symbols": [
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "val",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "Boolean"
+                  }
+                }
+              ]
+            }
+          }          ,
+          {
+            "kind": "de.monticore.lang.sysmlblockdiagrams._symboltable.SysMLPortDefSymbol",
+            "name": "Output"            ,
+            "spannedScope": {
+              "isShadowingScope": true              ,
+                "symbols": [
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "val",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "Boolean"
+                  }
+                }
+              ]
+            }
+          }          ,
+          {
+            "kind": "de.monticore.lang.sysmlblockdiagrams._symboltable.PartDefSymbol",
+            "name": "UnfairMedium"            ,
+            "spannedScope": {
+              "isShadowingScope": true              ,
+                "symbols": [
+                {
+                  "kind": "de.monticore.lang.sysmlstatemachinediagrams._symboltable.StateUsageSymbol",
+                  "name": "behavior"                  ,
+                  "spannedScope": {
+                    "isShadowingScope": true                    ,
+                      "symbols": [
+                      {
+                        "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                        "name": "i",
+                        "type": {
+                          "kind": "de.monticore.types.check.SymTypeOfObject",
+                          "objName": "Boolean"
+                        }
+                      }                      ,
+                      {
+                        "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                        "name": "o",
+                        "type": {
+                          "kind": "de.monticore.types.check.SymTypeOfObject",
+                          "objName": "Boolean"
+                        }
+                      }
+                    ]
+                  }
+                }                ,
+                {
+                  "kind": "de.monticore.lang.sysmlblockdiagrams._symboltable.SysMLPortUsageSymbol",
+                  "name": "i1"
+                }                ,
+                {
+                  "kind": "de.monticore.lang.sysmlblockdiagrams._symboltable.SysMLPortUsageSymbol",
+                  "name": "o1"
+                }                ,
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "i1",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "avionic.Input"
+                  }
+                }                ,
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "o1",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "avionic.Output"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

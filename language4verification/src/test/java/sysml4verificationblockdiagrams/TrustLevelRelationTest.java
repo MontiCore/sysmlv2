@@ -48,7 +48,7 @@ public class TrustLevelRelationTest {
   public void testTrustLevelRelationCoCo() throws IOException {
     Log.enableFailQuick(false);
     ISysML4VerificationGlobalScope globalScope =
-        SysML4VerificationLanguage.getGlobalScopeFor(Paths.get(RES), true);
+        SysML4VerificationLanguage.getGlobalScopeFor(Paths.get(RES), Paths.get(RES), true);
 
     PartDefSymbol valid = globalScope.resolvePartDef("easyVerification.SecurePart").get();
     SysML4VerificationCoCoChecker.beforeSymbolTableCreation().checkAll(

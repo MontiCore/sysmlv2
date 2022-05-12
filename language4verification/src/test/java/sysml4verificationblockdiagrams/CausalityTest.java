@@ -40,7 +40,7 @@ public class CausalityTest {
   @Test
   public void testRetrieval() throws IOException {
    ISysML4VerificationGlobalScope globalScope =
-        SysML4VerificationLanguage.getGlobalScopeFor(Paths.get(RES), true);
+        SysML4VerificationLanguage.getGlobalScopeFor(Paths.get(RES), Paths.get(RES), true);
 
     PartDefSymbol delayed = globalScope.resolvePartDef("valid.DelayedPart").get();
     assertThat(((ASTPartDef)delayed.getAstNode()).isDelayed());
@@ -52,7 +52,7 @@ public class CausalityTest {
   /** Testet den Default ("INSTANT") */
   public void testDefault() throws IOException {
     ISysML4VerificationGlobalScope globalScope =
-        SysML4VerificationLanguage.getGlobalScopeFor(Paths.get(RES), true);
+        SysML4VerificationLanguage.getGlobalScopeFor(Paths.get(RES), Paths.get(RES), true);
 
     PartDefSymbol noTiming = globalScope.resolvePartDef("valid.NoTiming").get();
     assertThat(((ASTPartDef) noTiming.getAstNode()).isInstant());

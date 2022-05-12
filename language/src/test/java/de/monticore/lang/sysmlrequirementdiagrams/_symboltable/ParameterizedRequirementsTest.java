@@ -2,6 +2,7 @@ package de.monticore.lang.sysmlrequirementdiagrams._symboltable;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpressionBuilder;
+import de.monticore.io.paths.MCPath;
 import de.monticore.lang.sysmlcommons._ast.ASTSysMLParameter;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
@@ -58,7 +59,7 @@ public class ParameterizedRequirementsTest {
    */
   private ASTSysMLModel getModel(String model) throws IOException {
     ASTSysMLModel ast = SysMLv2Mill.parser().parse(model).get();
-    createAndValidateSymbolTableAndCoCos(false, Collections.singletonList(ast));
+    createAndValidateSymbolTableAndCoCos(false, new MCPath(), Collections.singletonList(ast));
     return ast;
   }
 

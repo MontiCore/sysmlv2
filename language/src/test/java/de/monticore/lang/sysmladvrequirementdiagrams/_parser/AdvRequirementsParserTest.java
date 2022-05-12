@@ -2,6 +2,7 @@ package de.monticore.lang.sysmladvrequirementdiagrams._parser;
 
 import de.monticore.lang.sysmlv2alt.SysMLv2AltMill;
 import de.monticore.lang.sysmlv2alt._ast.ASTSysMLModel;
+import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +16,8 @@ public class AdvRequirementsParserTest {
   @BeforeAll
   public static void initScope() {
     SysMLv2AltMill.init();
+    BasicSymbolsMill.init();
+    BasicSymbolsMill.initializePrimitives();
   }
 
   /**

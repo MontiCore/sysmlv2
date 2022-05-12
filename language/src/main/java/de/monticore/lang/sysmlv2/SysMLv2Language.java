@@ -1,5 +1,6 @@
 package de.monticore.lang.sysmlv2;
 
+import de.monticore.io.paths.MCPath;
 import de.monticore.lang.sysmlrequirementdiagrams._cocos.*;
 import de.monticore.lang.sysmlrequirementdiagrams._visitor.InheritNonRedefinedParametersVisitor;
 import de.monticore.lang.sysmlrequirementdiagrams._visitor.RequirementsPostProcessor;
@@ -9,6 +10,7 @@ import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2TraverserImplementation;
+import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FilenameUtils;
 
@@ -23,13 +25,25 @@ public class SysMLv2Language {
 
   public static final String FILE_ENDING = "sysml";
 
+  public static final String SYMBOLTABLE_ENDING = ".*sym";
+
   /**
    * Parses, checks and creates symbol table for all models residing in the {@code modelLocation}.
    *
    * @param modelLocation Location of root directory of models
    */
   public static ISysMLv2GlobalScope getGlobalScopeFor(Path modelLocation) throws IOException {
-    return getGlobalScopeFor(modelLocation, false);
+    return getGlobalScopeFor(modelLocation, modelLocation);
+  }
+
+  /**
+   * Parses, checks and creates symbol table for all models residing in the {@code modelLocation} and
+   * sets the {@code symboltableLocation} of stored symboltables.
+   * @param modelLocation Location of root directory of models
+   * @param symboltableLocation Location of root directory of stored symboltables
+   */
+  public static ISysMLv2GlobalScope getGlobalScopeFor(Path modelLocation, Path symboltableLocation) throws IOException {
+    return getGlobalScopeFor(modelLocation, symboltableLocation, false);
   }
 
   /**
@@ -39,9 +53,14 @@ public class SysMLv2Language {
    * @param modelLocation Location of root directory of models
    * @param unchecked     Whether to run unchecked (i.e., no CoCos) or not
    */
-  public static ISysMLv2GlobalScope getGlobalScopeFor(Path modelLocation, boolean unchecked) throws IOException {
+  public static ISysMLv2GlobalScope getGlobalScopeFor(Path modelLocation, Path symboltableLocation, boolean unchecked) throws IOException {
     SysMLv2Mill.init();
     SysMLv2Mill.globalScope().clear();
+    BasicSymbolsMill.init();
+    BasicSymbolsMill.initializePrimitives(); // Dieses fügt zB. "boolean" ein -> darf nicht vorher gemacht werden
+
+    // 00. Initialize ModelPath for GlobalScope such that symbol resolution loads all stored symbol tables if symbol is not found
+    MCPath symboltablePath = new MCPath(Files.walk(symboltableLocation).collect(Collectors.toList()));
 
     // 01. Parse Models
     SysMLv2Parser parser = SysMLv2Mill.parser();
@@ -66,10 +85,10 @@ public class SysMLv2Language {
         .map(Optional::get)
         .collect(Collectors.toList());
 
-    return createAndValidateSymbolTableAndCoCos(unchecked, models);
+    return createAndValidateSymbolTableAndCoCos(unchecked, symboltablePath, models);
   }
 
-  public static ISysMLv2GlobalScope createAndValidateSymbolTableAndCoCos(boolean unchecked,
+  public static ISysMLv2GlobalScope createAndValidateSymbolTableAndCoCos(boolean unchecked, MCPath symboltablePath,
                                                                          List<ASTSysMLModel> models) {
     // Pre symbol table CoCo checks.
     if(!unchecked) {
@@ -79,7 +98,7 @@ public class SysMLv2Language {
     }
 
     // Create symbol table.
-    ISysMLv2GlobalScope globalScope = createSymbolTable(models);
+    ISysMLv2GlobalScope globalScope = createSymbolTable(models, symboltablePath);
 
     // Post symbol table CoCo checks (that do not require any postprocessing).
     if(!unchecked) {
@@ -90,7 +109,7 @@ public class SysMLv2Language {
       checker.addCoCo(new ValuesNotAllowedForRequirementDefParameters());
       checker.addCoCo(new AtMostSingleSubjectInRequirement());
       checker.addCoCo(new RequirementSubjectMustExist());
-      checker.addCoCo(new ConstraintExpressionMustEvaluateToBoolean());
+      //checker.addCoCo(new ConstraintExpressionMustEvaluateToBoolean());
       models.forEach(checker::checkAll);
     }
 
@@ -127,8 +146,10 @@ public class SysMLv2Language {
    *
    * @param modelASTs List of AST for which the SymbolTable should be built
    */
-  public static ISysMLv2GlobalScope createSymbolTable(List<ASTSysMLModel> modelASTs) {
+  public static ISysMLv2GlobalScope createSymbolTable(List<ASTSysMLModel> modelASTs, MCPath symboltablePath) {
     ISysMLv2GlobalScope globalScope = SysMLv2Mill.globalScope();
+    globalScope.setSymbolPath(symboltablePath);
+    globalScope.setFileExt(SYMBOLTABLE_ENDING);
     for (ASTSysMLModel astUnit : modelASTs) {
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(astUnit);
     }
