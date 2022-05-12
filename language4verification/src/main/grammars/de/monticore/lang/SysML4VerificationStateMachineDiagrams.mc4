@@ -24,4 +24,13 @@ grammar SysML4VerificationStateMachineDiagrams extends SysMLStateMachineDiagrams
       (STMUsageMember | SysMLAttribute)*
     "}" | ";") ;
 
+  @Override
+  StateUsage = "state" Name? (":" MCType)? ParameterList?
+    ("{"
+      STMEntryAction?
+      STMDoAction?
+      STMExitAction?
+      (STMUsageMember | SysMLAttribute)*
+    "}" | ";") ;
+
 }
