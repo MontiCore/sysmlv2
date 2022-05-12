@@ -39,7 +39,7 @@ public class TrustLevelTest {
   @Test
   public void testRetrieval() throws IOException {
     ISysML4VerificationGlobalScope globalScope =
-        SysML4VerificationLanguage.getGlobalScopeFor(Paths.get(RES), true);
+        SysML4VerificationLanguage.getGlobalScopeFor(Paths.get(RES), Paths.get(RES),true);
 
     PartDefSymbol secure = globalScope.resolvePartDef("valid.SecurePart").get();
     assertThat(((ASTPartDef)secure.getAstNode()).getRelativeTrustLevel()).isEqualTo(1);
@@ -53,7 +53,7 @@ public class TrustLevelTest {
   public void testUniqueTrustLevelCoCo() throws IOException {
     Log.enableFailQuick(false);
     ISysML4VerificationGlobalScope globalScope =
-        SysML4VerificationLanguage.getGlobalScopeFor(Paths.get(RES), true);
+        SysML4VerificationLanguage.getGlobalScopeFor(Paths.get(RES), Paths.get(RES),true);
 
     PartDefSymbol invalid = globalScope.resolvePartDef("invalidTL.InvalidPart").get();
     SysML4VerificationCoCoChecker.beforeSymbolTableCreation().checkAll(

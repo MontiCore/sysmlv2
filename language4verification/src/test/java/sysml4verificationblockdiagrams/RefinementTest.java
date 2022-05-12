@@ -40,7 +40,7 @@ public class RefinementTest {
   @Test
   public void testRetrieval() throws IOException {
    ISysML4VerificationGlobalScope globalScope =
-        SysML4VerificationLanguage.getGlobalScopeFor(Paths.get(RES), true);
+        SysML4VerificationLanguage.getGlobalScopeFor(Paths.get(RES), Paths.get(RES),true);
 
     PartDefSymbol A = globalScope.resolvePartDef("valid.A").get();
     assertThat(((ASTPartDef)A.getAstNode()).getRefinements()).isEmpty();

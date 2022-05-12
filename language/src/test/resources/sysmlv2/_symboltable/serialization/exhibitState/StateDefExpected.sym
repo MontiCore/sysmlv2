@@ -1,0 +1,50 @@
+{
+  "generated-using": "www.MontiCore.de technology"  ,
+    "symbols": [
+    {
+      "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
+      "name": "automata"      ,
+      "spannedScope": {
+          "symbols": [
+          {
+            "kind": "de.monticore.lang.sysmlstatemachinediagrams._symboltable.StateDefSymbol",
+            "name": "AutomatonInverter"            ,
+            "spannedScope": {
+              "isShadowingScope": true              ,
+                "symbols": [
+                {
+                  "kind": "de.monticore.lang.sysmlstatemachinediagrams._symboltable.StateUsageSymbol",
+                  "name": "S"
+                }                ,
+                {
+                  "kind": "de.monticore.lang.sysmlactivitydiagrams._symboltable.ActionUsageSymbol",
+                  "name": "Unnamed ActionUsage1"
+                }                ,
+                {
+                  "kind": "de.monticore.lang.sysmlstatemachinediagrams._symboltable.STMTransitionSymbol",
+                  "name": "invert"
+                }                ,
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "i",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "Boolean"
+                  }
+                }                ,
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "o",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "Boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
