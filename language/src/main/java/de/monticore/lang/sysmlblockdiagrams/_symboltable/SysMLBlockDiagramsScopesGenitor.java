@@ -1,6 +1,7 @@
 package de.monticore.lang.sysmlblockdiagrams._symboltable;
 
 import de.monticore.lang.sysmlblockdiagrams.SysMLBlockDiagramsMill;
+import de.monticore.lang.sysmlblockdiagrams._ast.ASTStateExhibition;
 import de.monticore.lang.sysmlblockdiagrams._ast.ASTSysMLAttribute;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.prettyprint.IndentPrinter;
@@ -22,6 +23,8 @@ public class SysMLBlockDiagramsScopesGenitor extends SysMLBlockDiagramsScopesGen
   private int counterPartProperty = 1;
 
   private int counterConnectionDefEnd = 1;
+
+  private int counterStateExhibition = 1;
 
   /**
    * Method overridden to set type in field symbol (original method only creates field symbol with name).
@@ -60,6 +63,18 @@ public class SysMLBlockDiagramsScopesGenitor extends SysMLBlockDiagramsScopesGen
     if (!node.isPresentName()) {
       node.setName("Unnamed ConncectionUsage" + counterConnectionUsage);
       counterConnectionUsage += 1;
+    }
+
+    // Call super method to continue execution of previous logic.
+    super.visit(node);
+  }
+
+  @Override
+  public void visit(ASTStateExhibition node) {
+    // Name Symbol if it is unnamed. Otherwise scopes will be set incorrect. See issue #23
+    if (!node.isPresentName()) {
+      node.setName("Unnamed StateExhibition" + counterStateExhibition);
+      counterStateExhibition += 1;
     }
 
     // Call super method to continue execution of previous logic.

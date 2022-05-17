@@ -1,6 +1,8 @@
 package de.monticore.lang.sysmlactivitydiagrams._symboltable;
 
+import de.monticore.lang.sysmlactivitydiagrams._ast.ASTAcceptActionUsage;
 import de.monticore.lang.sysmlactivitydiagrams._ast.ASTActionUsage;
+import de.monticore.lang.sysmlactivitydiagrams._ast.ASTAssignmentActionUsage;
 import de.monticore.lang.sysmlactivitydiagrams._ast.ASTSendActionUsage;
 
 public class SysMLActivityDiagramsScopesGenitor extends SysMLActivityDiagramsScopesGenitorTOP {
@@ -23,6 +25,12 @@ public class SysMLActivityDiagramsScopesGenitor extends SysMLActivityDiagramsSco
     // Call super method to continue execution of previous logic.
     super.visit(node);
   }
+
+  @Override
+  public void visit (ASTAssignmentActionUsage node) { visit((ASTActionUsage) node); }
+
+  @Override
+  public void visit (ASTAcceptActionUsage node) { visit((ASTActionUsage) node); }
 
   @Override
   public  void visit (ASTSendActionUsage node)  {
