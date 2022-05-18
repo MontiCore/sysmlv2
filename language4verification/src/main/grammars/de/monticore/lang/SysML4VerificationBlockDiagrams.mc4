@@ -18,12 +18,15 @@ grammar SysML4VerificationBlockDiagrams extends SysMLBlockDiagrams {
   // Refinement relations. Adaptation of "SysMLSpecialization"
   SysMLRefinement = "refines" roughDef:(MCObjectType || ",")+;
 
-  // Adds "SysMLRefinement?" to the header and "SysMLCausality" to body. CoCo enforces limit of one causality.
+  /**
+   * Adds "SysMLRefinement?" to the header and "SysMLCausality | RequirementUsage" to body.
+   * CoCo enforces limit of one causality.
+   */
   @Override
   PartDef =
     SysMLModifier? ("part" "def" | "block") Name SysMLSpecialization? SysMLRefinement?
     ("{"
-      (BDUsageMember | SysMLElement | SysMLImportStatement | SysMLCausality | TrustLevel | TrustLevelRelation)*
+      (BDUsageMember | SysMLElement | SysMLUsage | SysMLImportStatement | SysMLCausality | TrustLevel | TrustLevelRelation)*
     "}" | ";") ;
 
 }

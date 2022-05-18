@@ -16,7 +16,7 @@ grammar SysMLRequirementDiagrams extends de.monticore.lang.SysMLParametrics {
     RequirementBody;
 
   symbol scope (shadowing) RequirementUsage implements ParametricsElement, SysMLUsage extends BaseRequirement =
-    "requirement" ("<" humanId:String ">")? Name (":" MCType)?
+    ["satisfy"]? "requirement" ("<" humanId:String ">")? Name (":" MCType)?
     SysMLSubsetting?
     ParameterList?
     RequirementBody;
@@ -33,4 +33,5 @@ grammar SysMLRequirementDiagrams extends de.monticore.lang.SysMLParametrics {
 
   RequirementSatisfaction implements BDUsageMember, ADElement =
     "satisfy" req:MCQualifiedName "by" subject:MCQualifiedName ";";
+
 }
