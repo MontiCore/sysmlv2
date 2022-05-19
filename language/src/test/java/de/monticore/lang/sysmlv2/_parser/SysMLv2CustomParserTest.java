@@ -50,11 +50,6 @@ public class SysMLv2CustomParserTest {
       "acdef_in_def.sysml",
       "transition_noname.sysml",
       "transition_sendaction.sysml",
-      "DLUF.sysml",
-      "DLUFv2.sysml",
-      "DLUFv3.sysml",
-      "DLUFv4.sysml",
-      "DLUFv5.sysml",
       "DLUFv6.sysml"
   })
   public void testParsingModels(String path) throws IOException {

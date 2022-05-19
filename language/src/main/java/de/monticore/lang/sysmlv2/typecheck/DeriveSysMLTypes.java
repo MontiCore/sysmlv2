@@ -37,7 +37,6 @@ public class DeriveSysMLTypes implements IDerive {
 
   @Override
   public void init() {
-    SysMLv2Mill.init();
     this.traverser = SysMLv2Mill.traverser();
     this.typeCheckResult = new TypeCheckResult();
 

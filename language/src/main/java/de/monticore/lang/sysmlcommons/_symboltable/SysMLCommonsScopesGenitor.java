@@ -47,7 +47,7 @@ public class SysMLCommonsScopesGenitor extends SysMLCommonsScopesGenitorTOP {
       else if(node.isPresentBinding()) {
         // type is inferred from binding
         if(node.getBinding() instanceof ASTFieldAccessExpression) {
-          ASTFieldAccessExpression binding = (ASTSysMLFieldAccessExpression) node.getBinding();
+          ASTFieldAccessExpression binding = (ASTFieldAccessExpression) node.getBinding();
           String portUsageName = ((ASTNameExpression)binding.getExpression()).getName();
           String portField = binding.getName();
 

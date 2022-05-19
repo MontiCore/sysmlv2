@@ -27,7 +27,6 @@ def grammar_classifier = "grammars"
 def commons_cli_version = "1.4"
 def antlr_version = '4.7.1'
 def commons_lang_version = "3.11"
-def guava_version = "30.0-jre"
 
 /* ============================================================ */
 /* ======================= Configuration ====================== */
@@ -59,7 +58,6 @@ test {
 dependencies {
   grammar "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
   grammar "de.monticore.lang:ocl:$mc_version:grammars"
-  implementation "com.google.guava:guava:$guava_version"
   implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
   implementation "org.apache.commons:commons-lang3:$commons_lang_version"
   implementation "org.antlr:antlr4-runtime:$antlr_version"
@@ -67,9 +65,6 @@ dependencies {
   implementation "de.monticore:monticore-grammar:$mc_version"
   implementation "de.monticore.lang:ocl:$mc_version"
   implementation "commons-cli:commons-cli:$commons_cli_version"
-  testImplementation 'org.junit.jupiter:junit-jupiter-api:$junit_version'
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:$junit_version'
-  testCompile("org.junit.jupiter:junit-jupiter-params:$junit_version")
 }
 
 /* ============================================================ */

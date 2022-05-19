@@ -1,6 +1,5 @@
 package schrott.types.check;
 
-import com.google.common.collect.Lists;
 import de.monticore.lang.sysml.sysml4verification.SysML4VerificationMill;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;

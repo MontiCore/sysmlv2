@@ -10,6 +10,8 @@ import de.monticore.lang.sysml4verification._visitor.SysML4VerificationTraverser
 import de.monticore.lang.sysml4verification.symboltable.ConstraintDefinitionSymbolTableCompleter;
 import de.monticore.lang.sysmlblockdiagrams._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
+import de.monticore.lang.sysmlv2.typecheck.DeriveSymTypeOfSysMLExpression;
+import de.monticore.lang.sysmlv2.typecheck.DeriveSysMLTypes;
 import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCompleter;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
@@ -107,15 +109,6 @@ public class SysML4VerificationLanguage {
 
     // 03. Build Symbol Table
     ISysML4VerificationGlobalScope globalScope = createSymboltable(models, symboltablePath);
-
-    // 04. Populate types in symbol table
-    // TODO TypeCheckHelper.init();
-    models.forEach(model -> {
-      SysML4VerificationTraverser traverser = SysML4VerificationMill.traverser();
-      traverser.add4SysMLParametrics(new ConstraintDefinitionSymbolTableCompleter());
-      traverser.add4OCLExpressions(new OCLExpressionsSymbolTableCompleter(null, null));
-      model.accept(traverser);
-    });
 
     // 05. Check further CoCos
     if(!unchecked) {

@@ -75,7 +75,6 @@ public class DeriveSymTypeOfSysMLExpressionDelegator implements IDerive {
 
   @Override
   public void init() {
-    SysML4VerificationMill.init();
     this.traverser = SysML4VerificationMill.traverser();
     this.typeCheckResult = new TypeCheckResult();
 
