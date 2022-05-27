@@ -21,7 +21,8 @@ public class ParserTest {
   @ParameterizedTest(name = "{index} - {0} does parse w/o errors")
   @ValueSource(strings = {
       "DLUFv7.sysml",
-      "DLUFv8.sysml"
+      "DLUFv8.sysml",
+      "requirement_state_invariant.sysml"
   })
   public void testParsingModels(String path) throws IOException {
     Path model = Paths.get(MODEL_PATH + path);

@@ -6,13 +6,8 @@ import de.monticore.lang.sysml4verification._cocos.SysML4VerificationCoCoChecker
 import de.monticore.lang.sysml4verification._parser.SysML4VerificationParser;
 import de.monticore.lang.sysml4verification._symboltable.ISysML4VerificationGlobalScope;
 import de.monticore.lang.sysml4verification._symboltable.ISysML4VerificationScope;
-import de.monticore.lang.sysml4verification._visitor.SysML4VerificationTraverser;
-import de.monticore.lang.sysml4verification.symboltable.ConstraintDefinitionSymbolTableCompleter;
 import de.monticore.lang.sysmlblockdiagrams._symboltable.PartDefSymbol;
-import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
-import de.monticore.lang.sysmlv2.typecheck.DeriveSymTypeOfSysMLExpression;
-import de.monticore.lang.sysmlv2.typecheck.DeriveSysMLTypes;
-import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCompleter;
+import de.monticore.lang.sysmlrequirementdiagrams._symboltable.RequirementDefSymbol;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FilenameUtils;
@@ -38,6 +33,17 @@ public class SysML4VerificationLanguage {
     List<PartDefSymbol> components = new ArrayList<>(globalScope.getLocalPartDefSymbols());
     for (ISysML4VerificationScope s : globalScope.getSubScopes()) {
       components.addAll(findPartDefinitionsIn(s));
+    }
+    return components;
+  }
+
+  /**
+   * Recursively finds all requirement definitions in the provided global scope.
+   */
+  public static List<RequirementDefSymbol> findRequirementDefinitionsIn(ISysML4VerificationScope globalScope) {
+    List<RequirementDefSymbol> components = new ArrayList<>(globalScope.getLocalRequirementDefSymbols());
+    for (ISysML4VerificationScope s : globalScope.getSubScopes()) {
+      components.addAll(findRequirementDefinitionsIn(s));
     }
     return components;
   }
