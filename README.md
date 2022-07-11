@@ -10,9 +10,9 @@ With additional material for quick reference and examples:
 * [Intro to the SysML v2 Language-Graphical Notation](https://github.com/Systems-Modeling/SysML-v2-Release/blob/master/doc/Intro%20to%20the%20SysML%20v2%20Language-Graphical%20Notation.pdf)
 * [Intro to the SysML v2 Language-Textual Notation](https://github.com/Systems-Modeling/SysML-v2-Release/blob/master/doc/Intro%20to%20the%20SysML%20v2%20Language-Textual%20Notation.pdf)
 
-## Vizualization - [`vizualization`](vizualization)
+## Visualization - [`visualization`](visualization)
 
-The official pilot implementation for vizualization wrapped as a gradle project:
+The official pilot implementation for visualization wrapped as a gradle project (requires GitHub [setup](visualization/README.md)):
 * [SysML-v2-Pilot-Implementation/Interactive](https://github.com/Systems-Modeling/SysML-v2-Pilot-Implementation/tree/master/org.omg.sysml.interactive)
 
 ## Profile for Verification - [`language4verification`](language4verification)
