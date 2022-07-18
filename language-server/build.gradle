@@ -3,6 +3,8 @@ plugins {
   id 'de.monticore.language-server' version "$mclsg_version"
 }
 
+group = 'de.monticore.lang.sysml4verification'
+
 mainClassName = "de.monticore.lang.sysml4verification._lsp.LanguageServerCLI"
 
 dependencies {
@@ -101,6 +103,26 @@ task copyFileIcons(type: Copy) {
   from "$projectDir"
   include "icons/**"
   into autoconfigure.mclsg.getFullVscodePluginDir()
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      artifactId = "language-server"
+      from components.java
+    }
+  }
+  repositories.maven {
+    name = "Gitlab"
+    url = sysmlGitlab
+    credentials(HttpHeaderCredentials) {
+      name = "Job-Token"
+      value = System.getenv("CI_JOB_TOKEN")
+    }
+    authentication {
+      header(HttpHeaderAuthentication)
+    }
+  }
 }
 
 tasks.generateSysML4VerificationVscodePlugin.finalizedBy editPackageJson
