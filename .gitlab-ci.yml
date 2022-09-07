@@ -19,6 +19,7 @@ cache:
     - ".gradle/wrapper"
     - ".gradle/caches"
 
+# Gradle build with artifacts for convenient download and debugging purposed
 build:
   stage: build
   script:
@@ -31,6 +32,8 @@ build:
       - "language-server/target/generated-sources/SysML4Verification/plugins/sysml4verification-vscode-plugin"
     expire_in: 1 week
 
+# Gradle publish and additional raw binary upload of the built language server plugin for VSCode. Only on master and
+# release branches. TODO Das "latest" ist sowieso etwas unglücklich und sollte irgendwann verschwinden.
 deploy:
   stage: deploy
   dependencies:
@@ -42,6 +45,7 @@ deploy:
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file language-server/target/generated-sources/SysML4Verification/plugins/sysml4verification-vscode-plugin/SysML4Verification-${VERSION}.vsix "https://git.rwth-aachen.de/api/v4/projects/37093/packages/generic/sysml4verification-vscode-plugin/latest/sysml4verification-vscode-plugin-latest.vsix"'
   only:
     - master
+    - /^release/.*$/
 
 # Uses the artifacts from the build jobs
 deploy docker:
@@ -60,6 +64,7 @@ deploy docker:
     - shell
   only:
     - master
+    - /^release/.*$/
 
 # TODO Kaputt: Vermutlich ist das "secibuildtoken" nicht konfiguriert
 .checkMDLinks:
