@@ -1,11 +1,7 @@
 # (c) https://github.com/MontiCore/monticore
-
-image: openjdk:11-jdk
-
 stages:
-  - build
-  - deploy
-  - check
+  - gradle
+  - docker
 
 before_script:
   - chmod +x gradlew
@@ -20,32 +16,45 @@ cache:
     - ".gradle/caches"
 
 build:
-  stage: build
+  stage: gradle
+  image: openjdk:11-jdk
   script:
     - "./gradlew build -PgithubUser=$githubUser -PgithubToken=$githubToken $GRADLE_OPT $ARGS1"
   artifacts:
     paths:
       - "language/target/"
-      - "language4verification/target/libs"
       - "visualization/target/"
-      - "language-server/target/generated-sources/SysML4Verification/plugins/sysml4verification-vscode-plugin"
+      - "language-server/target/generated-sources/SysMLv2/plugins/sysmlv2-vscode-plugin"
     expire_in: 1 week
+  except:
+    - master
+    - /^release/.*$/
 
+# Gradle publish and additional raw binary upload of the built language server plugin for VSCode. Only on master and
+# release branches.
+# TODO Das "latest" ist sowieso etwas unglücklich und sollte irgendwann verschwinden.
+# TODO publish scheint nicht das gleiche wie build zu tun
 deploy:
-  stage: deploy
-  dependencies:
-    - build
+  stage: gradle
+  image: openjdk:11-jdk
   script:
-    - "./gradlew publish -PnexusPassword=$pass -PnexusUser=$user -PgithubUser=$githubUser -PgithubToken=$githubToken $GRADLE_OPT $ARGS2"
+    - "./gradlew build publish -PnexusPassword=$pass -PnexusUser=$user -PgithubUser=$githubUser -PgithubToken=$githubToken $GRADLE_OPT $ARGS2"
     - export VERSION=$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file language-server/target/generated-sources/SysML4Verification/plugins/sysml4verification-vscode-plugin/SysML4Verification-${VERSION}.vsix "https://git.rwth-aachen.de/api/v4/projects/37093/packages/generic/sysml4verification-vscode-plugin/${VERSION}/sysml4verification-vscode-plugin-${VERSION}.vsix"'
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file language-server/target/generated-sources/SysML4Verification/plugins/sysml4verification-vscode-plugin/SysML4Verification-${VERSION}.vsix "https://git.rwth-aachen.de/api/v4/projects/37093/packages/generic/sysml4verification-vscode-plugin/latest/sysml4verification-vscode-plugin-latest.vsix"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file language-server/target/generated-sources/SysMLv2/plugins/sysmlv2-vscode-plugin/SysMLv2-${VERSION}.vsix "https://git.rwth-aachen.de/api/v4/projects/37093/packages/generic/sysmlv2-vscode-plugin/${VERSION}/sysmlv2-vscode-plugin-${VERSION}.vsix"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file language-server/target/generated-sources/SysMLv4/plugins/sysmlv2-vscode-plugin/SysMLv2-${VERSION}.vsix "https://git.rwth-aachen.de/api/v4/projects/37093/packages/generic/sysmlv2-vscode-plugin/latest/sysmlv2-vscode-plugin-latest.vsix"'
+  artifacts:
+    paths:
+      - "language/target/"
+      - "visualization/target/"
+      - "language-server/target/generated-sources/SysMLv2/plugins/sysmlv2-vscode-plugin"
+    expire_in: 1 week
   only:
     - master
+    - /^release/.*$/
 
 # Uses the artifacts from the build jobs
 deploy docker:
-  stage: deploy
+  stage: docker
   image: docker:19.03.8
   services:
     - docker:18-dind
@@ -54,23 +63,10 @@ deploy docker:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - export VERSION=$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')
-    - docker build -t $CI_REGISTRY_IMAGE/language4verification-cli:$VERSION ./language4verification
+    - docker build -t $CI_REGISTRY_IMAGE/language4verification-cli:$VERSION ./language
     - docker push $CI_REGISTRY_IMAGE/language4verification-cli:$VERSION
   tags:
     - shell
   only:
     - master
-
-# TODO Kaputt: Vermutlich ist das "secibuildtoken" nicht konfiguriert
-.checkMDLinks:
-  stage: check
-  dependencies:
-    - build
-  script:
-    - "curl --location --header \"PRIVATE-TOKEN: $secibuildtoken\" \"https://git.rwth-aachen.de/api/v4/projects/monticore%2Fmdlinkchecker/jobs/artifacts/master/raw/target/libs/MDLinkCheckerCLI.jar?job=build\" --output MDLinkCheckerCLI.jar"
-    - "url=https://git.rwth-aachen.de/monticore/languages/xml/-/tree/develop"
-    - "linkCheckRes=$(java -jar MDLinkCheckerCLI.jar -url $url -t $secibuildtoken -p)"
-    - "echo \"$linkCheckRes\""
-    - "if [[ $linkCheckRes == *\"ERROR\"* ]]; then exit 1; fi"
-  only:
-    - master
+    - /^release/.*$/
