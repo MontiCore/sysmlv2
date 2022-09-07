@@ -1,0 +1,104 @@
+{
+  "generated-using": "www.MontiCore.de technology",
+  "name": "avionic",
+  "symbols": [
+    {
+      "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
+      "name": "avionic",
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol",
+            "name": "UnfairMedium",
+            "spannedScope": {
+              "isShadowingScope": true,
+              "symbols": [
+                {
+                  "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
+                  "name": "i1",
+                  "types": [
+                    {
+                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                      "objName": "Input"
+                    }
+                  ]
+                },
+                {
+                  "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
+                  "name": "o1",
+                  "types": [
+                    {
+                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                      "objName": "Output"
+                    }
+                  ]
+                },
+                {
+                  "kind": "de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol",
+                  "name": "behavior",
+                  "spannedScope": {
+                    "isShadowingScope": true,
+                    "symbols": [
+                      {
+                        "kind": "de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol",
+                        "name": "State"
+                      },
+                      {
+                        "kind": "de.monticore.lang.sysmlstates._symboltable.SysMLTransitionSymbol",
+                        "name": "Name1"
+                      },
+                      {
+                        "kind": "de.monticore.lang.sysmlstates._symboltable.SysMLTransitionSymbol",
+                        "name": "Name2"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
+            "name": "Input",
+            "spannedScope": {
+              "isShadowingScope": true,
+              "symbols": [
+                {
+                  "kind": "de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol",
+                  "name": "val",
+                  "types": [
+                    {
+                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                      "objName": "Boolean"
+                    }
+                  ],
+                  "direction": "IN"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
+            "name": "Output",
+            "spannedScope": {
+              "isShadowingScope": true,
+              "symbols": [
+                {
+                  "kind": "de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol",
+                  "name": "val",
+                  "types": [
+                    {
+                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                      "objName": "Boolean"
+                    }
+                  ],
+                  "direction": "OUT"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

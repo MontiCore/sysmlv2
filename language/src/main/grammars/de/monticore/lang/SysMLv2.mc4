@@ -1,12 +1,19 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
-grammar SysMLv2 extends de.monticore.lang.SysMLBlockDiagrams,
-                        de.monticore.lang.SysMLActivityDiagrams,
-                        de.monticore.lang.SysMLStateMachineDiagrams,
-                        de.monticore.lang.SysMLParametrics,
-                        de.monticore.lang.SysMLRequirementDiagrams {
+grammar SysMLv2 extends SysMLExpressions,
+                        SysMLImportsAndPackages,
+                        SysMLActions,
+                        SysMLParts,
+                        SysMLStates,
+                        SysMLConstraints,
+                        SysMLRequirements,
+                        SysMLAdvRequirements,
+                        de.monticore.types.MCSimpleGenericTypes
+{
 
-  SysMLModel = SysMLElement*;
+  start SysMLModel ;
+
+  SysMLModel = SysMLElement* ;
 
 }

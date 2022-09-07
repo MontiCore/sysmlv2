@@ -1,0 +1,34 @@
+part Driver;
+
+part def Vehicle {
+  part driver: Driver;
+}
+
+attribute def Volume;
+
+part def Engine {
+  timing delayed;
+
+  attribute v: Volume;
+}
+
+enum def MODE {
+  enum WORKING;
+  enum BROKEN;
+}
+
+attribute def Status {
+  attribute m: MODE;
+}
+
+port def Fluid {
+  attribute flow: Integer;
+}
+
+part tank {
+  port fluidIn: Fluid;
+  port fluidOut: ~Fluid;
+
+  connect fluidIn to fluidOut;
+  connect fluidIn.flow to fluidOut.flow;
+}

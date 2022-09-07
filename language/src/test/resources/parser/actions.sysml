@@ -1,0 +1,19 @@
+send reference.to.something to somewhere.elsewhere;
+
+assign reference.to.someting := some + complex * expression;
+
+accept handle:Type via some.reference;
+
+accept handle;
+
+action def Jump;
+
+action def Around {
+  action jump: Jump;
+  action jumpjumpjump;
+}
+
+action {
+  send a to b;
+  assign x := y;
+}

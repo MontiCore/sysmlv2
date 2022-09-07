@@ -1,0 +1,26 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+component grammar SysMLRequirements extends SysMLBasis {
+
+  symbol scope (shadowing) RequirementDef implements SysMLType  =
+    "requirement" "def" ("<" humanId:String ">")? Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      RequirementSubject?
+      SysMLElement*
+    "}" | ";") ;
+
+  symbol scope (shadowing) RequirementUsage implements SysMLElement =
+    ["satisfy"]? "requirement" ("<" humanId:String ">")? Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      RequirementSubject?
+      SysMLElement*
+    "}" | ";") ;
+
+  symbol RequirementSubject =
+      "subject" Name Specialization* ";" ;
+
+  RequirementSatisfaction implements SysMLElement =
+      "satisfy" req:MCQualifiedName "by" subject:MCQualifiedName ";" ;
+
+}

@@ -1,0 +1,46 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+component grammar SysMLStates extends SysMLActions {
+
+  symbol scope (shadowing) StateDef implements SysMLType =
+    "state" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      EntryAction?
+      DoAction?
+      ExitAction?
+      SysMLElement*
+    "}" | ";") ;
+
+  symbol scope (shadowing) StateUsage implements SysMLElement =
+    exhibited:["exhibit"]? "state" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      EntryAction?
+      DoAction?
+      ExitAction?
+      SysMLElement*
+    "}" | ";") ;
+
+  // TODO Überlegen, ob nicht doch durch Grammatik enforcen, dass Transitionen nur in States vorkommen
+  symbol SysMLTransition implements SysMLElement =
+    ("transition" Name?)?
+    ("first" src:Name@StateUsage)?
+    (InlineAcceptActionUsage)?
+    ("if" guard:Expression)?
+    (DoAction)?
+    "then" tgt:Name@StateUsage ";" ;
+
+  /**
+   * Offizielle Dokumentation ist unklar, aber wir erlauben folgendes:
+   * > entry action { send a to b; send x to y; }
+   * >  if b1 then S1;
+   * >  if b2 then S2;
+   * >  then S3;
+   */
+  EntryAction = "entry" (ActionUsage | ";") (("if" guard:Expression)? "then" target:Name@StateUsage ";")*;
+
+  DoAction = "do" ActionUsage;
+
+  ExitAction = "exit" ActionUsage;
+
+}

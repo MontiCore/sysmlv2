@@ -1,0 +1,47 @@
+{
+  "generated-using": "www.MontiCore.de technology",
+  "name": "automata",
+  "symbols": [
+    {
+      "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
+      "name": "automata",
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.lang.sysmlstates._symboltable.StateDefSymbol",
+            "name": "AutomatonInverter",
+            "spannedScope": {
+              "isShadowingScope": true,
+              "symbols": [
+                {
+                  "kind": "de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol",
+                  "name": "S"
+                },
+                {
+                  "kind": "de.monticore.lang.sysmlstates._symboltable.SysMLTransitionSymbol",
+                  "name": "invert"
+                },
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "i",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "Boolean"
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "o",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "Boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
