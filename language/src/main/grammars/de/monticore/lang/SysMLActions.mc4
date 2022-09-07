@@ -1,0 +1,32 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+component grammar SysMLActions
+    extends de.monticore.lang.SysMLBasis {
+
+  symbol scope ActionDef implements SysMLType =
+    "action" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  symbol scope ActionUsage implements SysMLElement =
+    "action" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      SysMLElement*
+     "}" | ";")? ;
+
+  SendActionUsage implements SysMLElement =
+    "send" payload:Expression key("to") target:MCQualifiedName ";" ;
+
+  AssignmentActionUsage implements SysMLElement =
+    "assign" target:MCQualifiedName ":=" valueExpression:Expression ";" ;
+
+  // TODO Name nicht optimal, dass AcceptActionUsage die Inline-Variante erweitert passt nicht so richtig
+  InlineAcceptActionUsage =
+    "accept" (payloadHandle:Name ":")? payloadType:MCType ("via" receiver:MCQualifiedName)? ;
+
+  AcceptActionUsage extends InlineAcceptActionUsage implements SysMLElement =
+    "accept" (payloadHandle:Name ":")? payloadType:MCType ("via" receiver:MCQualifiedName)? ";" ;
+
+}

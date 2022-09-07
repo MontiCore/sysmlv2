@@ -105,7 +105,7 @@ tasks.withType(JavaCompile) {
 // all in one cli-jar
 shadowJar {
   manifest {
-    attributes "Main-Class": "de.monticore.SYSMLCLI"
+    attributes "Main-Class": " de.monticore.lang.sysmlv2.SysMLv2Tool"
   }
   archiveClassifier = 'cli'
   minimize()

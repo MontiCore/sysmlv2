@@ -18,6 +18,7 @@ subprojects {
 
   // Use the same testing framework for all modules
   dependencies {
+    implementation "org.slf4j:slf4j-simple:2.0.0-beta1"
     // Test annotations, api
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
     // Parametrized tests
@@ -30,4 +31,4 @@ subprojects {
 }
 
 evaluationDependsOnChildren()
-project(":language-server").tasks.generateSysML4VerificationLanguageServer.dependsOn project(":language4verification").tasks.grammarsJar
+project(":language-server").tasks.generateSysMLv2LanguageServer.dependsOn project(":language").tasks.grammarsJar

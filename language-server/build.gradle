@@ -3,7 +3,7 @@ plugins {
   id 'de.monticore.language-server' version "$mclsg_version"
 }
 
-group = 'de.monticore.lang.sysml4verification'
+group = 'de.monticore.lang.sysml'
 
 mainClassName = "de.monticore.lang.sysml4verification._lsp.LanguageServerCLI"
 
@@ -15,12 +15,6 @@ dependencies {
       requireCapability("de.monticore.lang:language-grammars")
     }
   }
-  grammar(project(":language4verification")) {
-    exclude group: 'de.monticore', module: 'monticore-grammar'
-    capabilities {
-      requireCapability("de.monticore.lang:language4verification-grammars")
-    }
-  }
   // MPf: Kopiert von MontiArc wegen Dopplung der Grammatik in "normaler" JAR und "-grammars" JAR
   grammar ("de.monticore:monticore-grammar:$mc_version") {
     capabilities {
@@ -29,9 +23,8 @@ dependencies {
   }
 
   implementation(project(":language"))
-  implementation(project(":language4verification"))
-  // Dependencies of sysml4verification, all marked as runtime in pom => we need to specify them here
-  //implementation "de.monticore.lang:ocl:7.0.0"
+
+  // Dependencies marked as "runtime" in the language's build script. Need to re-specify them here!
   implementation "de.monticore:monticore-grammar:$mc_version"
   implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
   implementation "de.monticore:monticore-runtime:$mc_version"
@@ -41,7 +34,7 @@ dependencies {
   implementation "de.monticore.lang:ocl:7.0.0" // MPf: Ganz komische Fehler wegen "*OCL*", diese Zeile hatte Alex drin
 
   // MCLSG
-  implementation "de.monticore.language-server:monticore-language-server-runtime-before72:$mclsg_version"
+  implementation "de.monticore.language-server:monticore-language-server-runtime:$mclsg_version"
 
   modules {
     // somewhere in monticore some bootstrap (bs) versions were erroneously passed on
@@ -56,7 +49,7 @@ test {
 }
 
 // Remove once MontiCore 7.2 or higher is used
-System.setProperty("mcLt72workaround", "true");
+//System.setProperty("mcLt72workaround", "true");
 
 import de.mclsg.TaskTypes
 import de.mclsg.task.*
@@ -65,7 +58,7 @@ import groovy.json.JsonSlurper
 
 task autoconfigure(type: AutoconfigureTask) {
   mclsg {
-    languageName = "de.monticore.lang.SysML4Verification"
+    languageName = "de.monticore.lang.SysMLv2"
     fileExtension = "sysml"
   }
   including(TaskTypes.VSCODE_PLUGIN)
@@ -79,7 +72,7 @@ task editPackageJson() {
     def json = new JsonBuilder(new JsonSlurper().parse(file))
     json.content.version = "$version"
     json.content.publisher = "MontiBelle"
-    json.content.name = "SysML4Verification"
+    json.content.name = "sysmlv2" // No spaces, no capitals
     json.content.icon = "icons/logo.png"
 
     def iconThemesMap = [
@@ -125,6 +118,6 @@ publishing {
   }
 }
 
-tasks.generateSysML4VerificationVscodePlugin.finalizedBy editPackageJson
-tasks.generateSysML4VerificationVscodePlugin.finalizedBy copyIcon
-tasks.generateSysML4VerificationVscodePlugin.finalizedBy copyFileIcons
+tasks.generateSysMLv2VscodePlugin.finalizedBy editPackageJson
+tasks.generateSysMLv2VscodePlugin.finalizedBy copyIcon
+tasks.generateSysMLv2VscodePlugin.finalizedBy copyFileIcons

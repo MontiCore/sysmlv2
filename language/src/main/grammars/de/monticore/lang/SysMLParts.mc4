@@ -1,0 +1,117 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+component grammar SysMLParts extends SysMLBasis {
+
+  /**
+   * Causality indication: "instant" = weak causal, "delayed" = strong causal. Defaults to "instant".
+   * TODO Überdenken, wie man das nicht überall erlaubt (Grammar vs. CoCo)
+   */
+  SysMLCausality implements SysMLElement = "timing" (["instant"] | ["delayed"]) ";" ;
+
+  /*
+   * ##################################################################
+   * Definitions
+   * ##################################################################
+   */
+
+  symbol scope (shadowing) PartDef implements SysMLType =
+    "part" "def" Name Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  astrule PartDef =
+    method public List<de.monticore.lang.sysmlparts._symboltable.PartDefSymbol> getRefinements() {
+      List<de.monticore.lang.sysmlparts._symboltable.PartDefSymbol> refinements = new ArrayList<>();
+      for(de.monticore.lang.sysmlbasis._ast.ASTSpecialization spec: this.getSpecializationList()) {
+        if(spec instanceof de.monticore.lang.sysmlbasis._ast.ASTSysMLRefinement) {
+          for(de.monticore.types.mcbasictypes._ast.ASTMCType superType: spec.getSuperTypesList()) {
+            String superTypeName = superType.printType(
+                new de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter(
+                    new de.monticore.prettyprint.IndentPrinter()));
+            Optional<de.monticore.lang.sysmlparts._symboltable.PartDefSymbol> refinementDef =
+                this.getEnclosingScope().resolvePartDef(superTypeName);
+            if(refinementDef.isPresent()) {
+              refinements.add(refinementDef.get());
+            }
+            else {
+              Log.warn("Refinement " + superTypeName + " of " + this.getName() + " could not be resolved.",
+                  this.get_SourcePositionStart(),
+                  this.get_SourcePositionEnd());
+            }
+          }
+        }
+      }
+      return refinements;
+    } ;
+
+  symbol scope AttributeDef implements SysMLType =
+    "attribute" "def" Name Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  symbol scope EnumDef implements SysMLType =
+    "enum" "def" Name Specialization*
+    ("{"
+      SysMLEnumConstant*
+    "}" | ";") ;
+
+  SysMLEnumConstant implements Field = "enum"? Name ";" ;
+
+  symbol scope (shadowing) PortDef implements SysMLType =
+    "port" "def" Name Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  /*
+   * ##################################################################
+   * Usages
+   * ##################################################################
+   */
+
+  symbol scope (shadowing) PartUsage implements SysMLElement =
+    "part" Name Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  /**
+   * Definitions define a type, usages instantiate it. The SysML is not very clear in this regard and mixes types,
+   * definitions, usages, instances, etc. For our purposes (SpesML, MontiBelle), we need typing.
+   * The "types" are extracted from the Specializations, specifically the SysMLTypings. Extraction is done during symbol
+   * table completion. The SymTypeExpressions only store type expressions, not the actual types or any symbols.
+   */
+  symbolrule PartUsage =
+      types:de.monticore.types.check.SymTypeExpression* ;
+
+  symbol AttributeUsage implements SysMLElement =
+      SysMLFeatureDirection? "attribute" Name Specialization* ("=" Expression)? ";"  ;
+
+  symbolrule AttributeUsage =
+      types:de.monticore.types.check.SymTypeExpression*
+      direction:de.monticore.lang.SysMLBasis.SysMLFeatureDirection ;
+
+  /**
+   * PortUsage has a shadowing scope to allow instantiating attributes from its definition. This is done to store
+   * additional information resulting from tools processing models. This is a work-in-progress concept as part of
+   * @adrian.costin.marin's master thesis.
+   * Example:
+   * The MontiBelle toolchain will, during its runtime, store generated channel names in modified AttributeUsageSymbols
+   * and add these symbols to the PortUsage's scope. Folling invocations of the toolchain are then able to seamlessly
+   * integrate with the existing artifacts (i.e., theories containing specific channel names) only by referencing the
+   * symboltable (and not needing to re-processes the original models).
+   */
+  symbol scope (shadowing) PortUsage implements SysMLElement =
+      "port" Name Specialization* ";" ;
+
+  symbolrule PortUsage =
+      types:de.monticore.types.check.SymTypeExpression*
+      conjugatedTypes:de.monticore.types.check.SymTypeExpression*;
+
+  ConnectionUsage implements SysMLElement =
+      "connect" src:MCQualifiedName "to" tgt:MCQualifiedName ";";
+
+}

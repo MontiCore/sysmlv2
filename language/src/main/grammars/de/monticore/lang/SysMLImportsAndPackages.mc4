@@ -1,13 +1,13 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
+component grammar SysMLImportsAndPackages extends SysMLBasis {
 
-component grammar SysMLImportsAndPackages extends de.monticore.lang.SysMLBasis {
-
-  SysMLImportStatement extends MCImportStatement = SysMLModifier
-    ("import" | ["alias"]) MCQualifiedName (("::" | ".") Star:["*"])? ("as"  Name)? ";" ;
+  SysMLImportStatement extends MCImportStatement implements SysMLElement =
+      ("import" | ["alias"]) MCQualifiedName (("::" | ".") Star:["*"])? ("as"  Name)? ";" ;
 
   symbol scope SysMLPackage implements SysMLElement = "package" Name? ("{"
-    (SysMLElement | SysMLImportStatement)*
+    SysMLElement*
   "}" | ";");
+
 }

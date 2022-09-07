@@ -1,0 +1,23 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+component grammar SysMLConstraints
+    extends SysMLBasis,
+            SysMLActions {
+
+  symbol scope (shadowing) ConstraintDef implements SysMLType =
+    "constraint" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      SysMLElement* // TODO Auf AttributeUsages beschränken in finale (nicht component) SysMLv2-Sprache
+      Expression
+    "}" | ";") ;
+
+  symbol scope (shadowing) ConstraintUsage implements SysMLElement =
+    ((["require"] | ["assume"] | ["assert"]) "constraint"? | "constraint")
+    Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      SysMLElement*
+      Expression
+    "}" | ";") ;
+
+}

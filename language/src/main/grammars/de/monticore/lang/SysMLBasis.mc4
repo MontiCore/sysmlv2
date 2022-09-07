@@ -1,38 +1,77 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
-component grammar SysMLBasis extends de.monticore.literals.MCCommonLiterals,
-                                     de.monticore.types.MCBasicTypes,
-                                     de.monticore.types.MCSimpleGenericTypes,
-                                     de.monticore.symbols.OOSymbols,
-                                     de.monticore.Cardinality {
+// TODO
 
+component grammar SysMLBasis
+    extends de.monticore.literals.MCCommonLiterals,     // SingleCharacter
+            de.monticore.expressions.ExpressionsBasis,  // Expression
+            de.monticore.types.MCBasicTypes,            // MCQualifiedName, MCType
+            de.monticore.symbols.OOSymbols              // OOTypes
+{
+
+  /*
+   * ##################################################################
+   * SysML Basis Symbole
+   * ##################################################################
+   */
+
+  /** Elemente der Bodies/Pakete */
   interface SysMLElement;
 
-  interface symbol SysMLType extends SysMLElement, OOType;
+  /** Element mit eigenem Symbol für resolve (zB. für ReqDef) */
+  interface symbol SysMLType extends SysMLElement;
+
+  /** Specialization includes subsetting, typing, etc. */
+  interface Specialization = superTypes:MCType+;
+
+  SysMLSpecialization implements Specialization =
+      (":>" | "specializes") superTypes:(MCType || ",")+;
+
+  SysMLSubsetting implements Specialization =
+      (":>" | "subsets") superTypes:(MCType || ",")+;
+
+  SysMLRedefinition implements Specialization =
+      (":>>" | "redefines") superTypes:(MCType || ",")+;
+
+  /**
+   * TODO Conjugated nur bei Port Usages!
+   * Needs MCType instead of MCQualifiedName, because attribute usages (any maybe others) can be typed by MontiCore
+   * types.
+   */
+  SysMLTyping implements Specialization =
+       ":" conjugated:["~"]? superTypes:(MCType || ",")+;
+
+  /** Refinement relates two behaviors and enforces a subset wrt. to FOCUS SPSes */
+  SysMLRefinement implements Specialization =
+       "refines" superTypes:(MCType || ",")+;
 
   /*
-   * Interface symbol 'SysMLUsage' provides a common interface for usage symbols,
-   * allowing symbol resolution based on interface type.
+   * ##################################################################
+   * Häufig vorkommende Konstrukte mit konkr. Syntax
+   * ##################################################################
    */
-  interface symbol scope SysMLUsage;
+
+  /**
+   * Default: TODO Doc lesen
+   * TODO final dokumentieren + CoCo für offiziellen Einsatz verbieten
+   */
+  enum SysMLFeatureDirection = "in" | "out" | "inout" | "final" ;
+
+  /**
+   * Parameters
+   * TODO "stream" überall ausser AdvRequirements verbieten? Gibts eine bessere Lösung?
+   */
+  SysMLParameter implements Field =
+    ["stream"]? SysMLFeatureDirection? Name Specialization* ("=" binding:Expression)?;
+
+  /*
+   * ##################################################################
+   * SysML-Spezifischen Syntax-Erweiterungen
+   * ##################################################################
+   */
 
   SysMLQualifiedName extends MCQualifiedName = parts:(Name || "::")+;
-
-  /*
-   * Use custom SysMLModifier as UMLModifier is not applicable and would
-   * lead to a complete override or a non-conservative extension.
-   */
-  SysMLModifier = (["public"] | ["private"] | ["protected"] | ["abstract"])*;
-
-  SysMLMultiplicity = Cardinality ["ordered"]? ["nonunique"]? ;
-
-  SysMLFeatureDirection =  ["in"] | ["out"] | ["inout"];
-
-  DoubleLiteral implements NumericLiteral<1> =
-  { noSpace(2,3) }? pre:Digits "." post:Digits Exponent | pre:Digits Exponent;
-
-  token Exponent = ('e' | 'E') ('+' | '-')? Digits;
 
   token SysMLComment =
     'c''o''m''m''e''n''t' (WS* Name)? (WS* 'a''b''o''u''t' WS* Name)? WS* ML_COMMENT : -> skip
@@ -42,16 +81,4 @@ component grammar SysMLBasis extends de.monticore.literals.MCCommonLiterals,
     'd''o''c' WS* ML_COMMENT : -> skip
     {storeComment();} ;
 
-  @Override
-  token Name = CharSequence | ( 'a'..'z' | 'A'..'Z' | '_' | '$' )
-                              ( 'a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '$' )*;
-
-  /**
-    A sequence of characters in single quotation marks. Covers a similar
-    purpose as the String token provided by MontiCore.
-  */
-  token CharSequence
-    = '\'' (SingleCharacter|EscapeSequence)+ '\''
-    : {setText(getText().substring(1, getText() .length() - 1));}
-  ;
 }
