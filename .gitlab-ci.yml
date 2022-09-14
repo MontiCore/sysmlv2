@@ -40,8 +40,9 @@ deploy:
   script:
     - "./gradlew build publish -PnexusPassword=$pass -PnexusUser=$user -PgithubUser=$githubUser -PgithubToken=$githubToken $GRADLE_OPT $ARGS2"
     - export VERSION=$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file language-server/target/generated-sources/SysMLv2/plugins/sysmlv2-vscode-plugin/SysMLv2-${VERSION}.vsix "https://git.rwth-aachen.de/api/v4/projects/37093/packages/generic/sysmlv2-vscode-plugin/${VERSION}/sysmlv2-vscode-plugin-${VERSION}.vsix"'
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file language-server/target/generated-sources/SysMLv4/plugins/sysmlv2-vscode-plugin/SysMLv2-${VERSION}.vsix "https://git.rwth-aachen.de/api/v4/projects/37093/packages/generic/sysmlv2-vscode-plugin/latest/sysmlv2-vscode-plugin-latest.vsix"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file language-server/target/generated-sources/SysMLv2/plugins/sysmlv2-vscode-plugin/sysmlv2-${VERSION}.vsix "https://git.rwth-aachen.de/api/v4/projects/37093/packages/generic/sysmlv2-vscode-plugin/${VERSION}/sysmlv2-vscode-plugin-${VERSION}.vsix"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file language-server/target/generated-sources/SysMLv2/plugins/sysmlv2-vscode-plugin/sysmlv2-${VERSION}.vsix "https://git.rwth-aachen.de/api/v4/projects/37093/packages/generic/sysmlv2-vscode-plugin/latest/sysmlv2-vscode-plugin-latest.vsix"'
+    - echo $VERSION > language/target/version
   artifacts:
     paths:
       - "language/target/"
@@ -52,17 +53,17 @@ deploy:
     - master
     - /^release/.*$/
 
-# Uses the artifacts from the build jobs
+# Uses the artifacts from the build jobs, see https://docs.gitlab.com/ee/ci/yaml/#dependencies:
+# > "If you do not use dependencies, all artifacts from previous stages are passed to each job."
 deploy docker:
   stage: docker
   image: docker:19.03.8
   services:
     - docker:18-dind
   before_script:
-    - chmod +x gradlew
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
-    - export VERSION=$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')
+    - VERSION=`cat language/target/version`
     - docker build -t $CI_REGISTRY_IMAGE/language4verification-cli:$VERSION ./language
     - docker push $CI_REGISTRY_IMAGE/language4verification-cli:$VERSION
   tags:
