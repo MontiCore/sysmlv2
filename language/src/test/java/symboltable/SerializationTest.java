@@ -90,12 +90,18 @@ public class SerializationTest {
 
   @ParameterizedTest(name = "Serializing {0}")
   @MethodSource("createInputs")
-  public void serialize(String name, String modelPath, String modelReferencePath, String expectedSymboltablePath,
-                        String symboltablePath, String fqnSymbol, String relativeSymbol, String usageSymbol) throws IOException {
+  public void serialize(
+      String name,
+      String modelPath,
+      String modelReferencePath,
+      String expectedSymboltablePath,
+      String symboltablePath,
+      String fqnSymbol,
+      String relativeSymbol,
+      String usageSymbol) throws IOException
+  {
     ASTSysMLModel ast = sysmlLang.parse(modelPath);
-
     ISysMLv2ArtifactScope firstArtifactScope = sysmlLang.createSymbolTable(ast);
-
     sysmlLang.completeSymbolTable(ast);
 
     try {
@@ -112,27 +118,30 @@ public class SerializationTest {
 
   @ParameterizedTest(name = "Deserializing {0}")
   @MethodSource("createInputs")
-  public void loadSymbolTableAndResolve(String name, String modelPath, String modelReferencePath, String expectedSymboltablePath,
-                                        String symboltablePath, String fqnSymbol, String relativeSymbol, String usageSymbol) throws IOException {
+  public void loadSymbolTableAndResolve(
+      String name,
+      String modelPath,
+      String modelReferencePath,
+      String expectedSymboltablePath,
+      String symboltablePath,
+      String fqnSymbol,
+      String relativeSymbol,
+      String usageSymbol)
+  {
     ASTSysMLModel ast = sysmlLang.parse(modelReferencePath);
-
-    // create initial artifact scope
     sysmlLang.createSymbolTable(ast);
-
     sysmlLang.completeSymbolTable(ast);
 
-    SysMLv2GlobalScope initialSymbolTable = (SysMLv2GlobalScope) sysmlLang.getGlobalScope();
+    SysMLv2GlobalScope gs = (SysMLv2GlobalScope) sysmlLang.getGlobalScope();
 
-    SysMLv2Symbols2Json s2j = initialSymbolTable.getSymbols2Json();
-
-    initialSymbolTable.addSubScope(s2j.load(expectedSymboltablePath));
+    gs.addSubScope(gs.getSymbols2Json().load(expectedSymboltablePath));
 
     // check if an additional ArtifactScope was found
-    Assertions.assertThat(initialSymbolTable.getSubScopes()).size().isGreaterThan(1);
+    Assertions.assertThat(gs.getSubScopes()).size().isGreaterThan(1);
 
     // check inter-model resolution of fqn from usage package scope.
-    ISysMLv2Scope packageScope = initialSymbolTable.getSubScopes().get(0).getSubScopes().get(0);
-    Optional<SysMLTypeSymbol> resolved =  packageScope.resolveSysMLType(fqnSymbol);
+    ISysMLv2Scope packageScope = gs.getSubScopes().get(0).getSubScopes().get(0);
+    Optional<SysMLTypeSymbol> resolved = packageScope.resolveSysMLType(fqnSymbol);
     assertThat(resolved).isPresent();
 
     if(resolved.get() instanceof PortDefSymbol) {

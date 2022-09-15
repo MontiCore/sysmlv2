@@ -1,6 +1,7 @@
 package cocos;
 
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
+import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
@@ -48,7 +49,7 @@ public class ConstraintCoCoTest {
         //"8_valid.sysml",
         "9_valid.sysml",
         //"10_valid.sysml",
-        //#"11_valid.sysml",
+        //"11_valid.sysml",
         "12_valid.sysml",
         "13_valid.sysml",
         "14_valid.sysml",
@@ -58,10 +59,9 @@ public class ConstraintCoCoTest {
 
       if(optAst.isPresent()) {
         ASTSysMLModel ast = optAst.get();
-        SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
 
-        // TODO this is a dirty fix
-        ast.getEnclosingScope().setName("");
+        SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
+        new SysMLv2Tool().completeSymbolTable(ast);
 
         var checker = new SysMLv2CoCoChecker();
         checker.addCoCo(new ConstraintIsBoolean());
@@ -92,19 +92,25 @@ public class ConstraintCoCoTest {
         "14_invalid.sysml",
     })
     public void testInvalid(String modelName) throws IOException {
-      ASTSysMLModel ast = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName).get();
-      SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
+      var optAst = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName);
 
-      // TODO this is a dirty fix
-      ast.getEnclosingScope().setName("");
+      if(optAst.isPresent()) {
+        ASTSysMLModel ast = optAst.get();
 
-      var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo(new ConstraintIsBoolean());
-      Log.enableFailQuick(false);
-      checker.checkAll(ast);
-      Log.enableFailQuick(true);
+        SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
+        new SysMLv2Tool().completeSymbolTable(ast);
 
-      assertFalse(Log.getFindings().isEmpty());
+        var checker = new SysMLv2CoCoChecker();
+        checker.addCoCo(new ConstraintIsBoolean());
+        Log.enableFailQuick(false);
+        checker.checkAll(ast);
+        Log.enableFailQuick(true);
+
+        assertFalse(Log.getFindings().isEmpty());
+      }
+      else {
+        Assertions.fail("not parsable");
+      }
     }
   }
 

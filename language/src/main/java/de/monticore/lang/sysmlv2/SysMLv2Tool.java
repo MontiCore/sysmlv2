@@ -62,7 +62,20 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     SysMLv2SymboltableCompleter completer = new SysMLv2SymboltableCompleter();
     traverser.add4SysMLBasis(completer);
     traverser.add4SysMLParts(completer);
+    traverser.add4SysMLv2(completer);
 
+    // Aus mir unerklärlichen Gründen ist die Traversierung so implementiert, dass nur das SpannedScope des jeweiligen
+    // AST-Knoten visitiert wird. Wenn wir hier also das ASTSysMLModel reinstecken (was kein Scope spannt (wieso eigtl.
+    // nicht?)), dann werden die Elements visitiert/traversiert. Beim traverisieren wird dann auch das gespannte Scope
+    // (zB. das Scope einer PortDef) visitiert. Das ArtifactScope steht in dieser Hierarchie aber über dem ASTSysMLModel
+    // und man muss hier allen Ernstes einmal RAUF navigieren und dann den Traverser loslassen.
+    if(node.getEnclosingScope() != null) {
+      node.getEnclosingScope().accept(traverser);
+    }
+
+    // Und dann wird nicht das Scope traversiert um die darin gefindlichen Symbole und daranhängende AST-Knoten zu
+    // besuchen, sondern es wird nichts getan. Der Default-Traverser geht nämlich davon aus, dass man sich am AST
+    // entlang hangelt.
     node.accept(traverser);
   }
 }
