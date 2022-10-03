@@ -9,6 +9,7 @@ import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2SymboltableCompleter;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
+import de.monticore.lang.sysmlv2.cocos.StateExistsCoCo;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 
 public class SysMLv2Tool extends SysMLv2ToolTOP {
@@ -29,6 +30,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
     checker.addCoCo(new ConstraintIsBoolean());
+    checker.addCoCo(new StateExistsCoCo());
     checker.checkAll(ast);
   }
 
