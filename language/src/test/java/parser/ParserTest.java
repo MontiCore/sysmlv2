@@ -47,7 +47,8 @@ public class ParserTest {
       "constraints.sysml",
       "requirements.sysml",
       "streams.sysml",
-      "refinement.sysml"
+      "refinement.sysml",
+      "cardinalities.sysml"
   })
   public void testParsingModels(String modelName) throws IOException {
     Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse(MODEL_PATH  + "/" + modelName);
