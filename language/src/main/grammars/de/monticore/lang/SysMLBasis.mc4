@@ -7,7 +7,8 @@ component grammar SysMLBasis
     extends de.monticore.literals.MCCommonLiterals,     // SingleCharacter
             de.monticore.expressions.ExpressionsBasis,  // Expression
             de.monticore.types.MCBasicTypes,            // MCQualifiedName, MCType
-            de.monticore.symbols.OOSymbols              // OOTypes
+            de.monticore.symbols.OOSymbols,             // OOTypes
+            de.monticore.Cardinality                    // Cardinality
 {
 
   /*
@@ -22,7 +23,11 @@ component grammar SysMLBasis
   /** Element mit eigenem Symbol für resolve (zB. für ReqDef) */
   interface symbol SysMLType extends SysMLElement;
 
-  /** Specialization includes subsetting, typing, etc. */
+  /**
+   * Common interface for any specialization. According to the official spes, this would include subsetting, typing,
+   * etc. Needs MCType instead of MCQualifiedName, because attribute usages (any maybe others) can be typed by MontiCore
+   * types.
+   */
   interface Specialization = superTypes:MCType+;
 
   SysMLSpecialization implements Specialization =
@@ -36,11 +41,11 @@ component grammar SysMLBasis
 
   /**
    * TODO Conjugated nur bei Port Usages!
-   * Needs MCType instead of MCQualifiedName, because attribute usages (any maybe others) can be typed by MontiCore
-   * types.
+   * Cardinality bei mehreren Typen macht wenig Sinn, aber die Grammatik und damit der AST werden sehr kompliziert, wenn
+   * man versucht alle Eventualitäten durch die Grammatik abzudecken.
    */
   SysMLTyping implements Specialization =
-       ":" conjugated:["~"]? superTypes:(MCType || ",")+;
+       ":" conjugated:["~"]? superTypes:(MCType || ",")+ Cardinality?;
 
   /** Refinement relates two behaviors and enforces a subset wrt. to FOCUS SPSes */
   SysMLRefinement implements Specialization =
