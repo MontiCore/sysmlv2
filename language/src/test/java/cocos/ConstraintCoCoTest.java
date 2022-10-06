@@ -49,10 +49,9 @@ public class ConstraintCoCoTest {
         //"8_valid.sysml",
         "9_valid.sysml",
         //"10_valid.sysml",
-        //"11_valid.sysml",
+        "11_valid.sysml",
         "12_valid.sysml",
         "13_valid.sysml",
-        "14_valid.sysml",
     })
     public void testValid(String modelName) throws IOException {
       var optAst = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName);
@@ -85,11 +84,10 @@ public class ConstraintCoCoTest {
         "7_invalid.sysml",
         //"8_invalid.sysml",
         "9_invalid.sysml",
-        "10_invalid.sysml",
-        //"11_invalid.sysml",
-        "12_invalid.sysml",
-        //"13_invalid.sysml",
-        "14_invalid.sysml",
+        //"10_invalid.sysml",
+        "11_invalid.sysml",
+        //"12_invalid.sysml",
+        "13_invalid.sysml"
     })
     public void testInvalid(String modelName) throws IOException {
       var optAst = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName);

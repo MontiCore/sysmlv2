@@ -1,11 +1,10 @@
-port def Integers {
-  out attribute channel: Integer;
-}
+attribute someAttribute: Integer;
 
 part def LogicBasedConstraints {
-  port input: ~Integers;
+  // tests resolving of shadowed attributes
+  attribute def someAttribute: Boolean;
 
   constraint streams {
-    input[0] == 0
+    someAttribute == true
   }
 }

@@ -1,10 +1,11 @@
-attribute someAttribute: Integer;
+port def Double {
+  out attribute channel: Double;
+}
 
 part def LogicBasedConstraints {
-  // tests resolving of shadowed attributes
-  attribute def someAttribute: Boolean;
+  port input: ~Double;
 
   constraint streams {
-    someAttribute == true
+    input.channel.get(5) > 1
   }
 }
