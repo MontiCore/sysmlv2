@@ -6,6 +6,6 @@ part def LogicBasedConstraints {
   port input: ~Integers;
 
   constraint streams {
-    input.channel.get(5) > true
+    input.channel.snth(5) > true
   }
 }

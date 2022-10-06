@@ -1,5 +1,5 @@
 port def Integers {
-  out attribute channel: Integer;
+  out attribute channel: int;
 }
 
 part def LogicBasedConstraints {
@@ -7,6 +7,6 @@ part def LogicBasedConstraints {
   port output: Integers;
 
   constraint streams {
-    input.channel == output.channel
+    input.channel == input.channel
   }
 }
