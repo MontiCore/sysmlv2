@@ -1,6 +1,13 @@
 package de.monticore.lang.sysmlv2;
 
 import de.monticore.lang.sysml4verification.cocos.WarnNonExhibited;
+import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
+import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintDefCoCo;
+import de.monticore.lang.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTSysMLPackageCoCo;
+import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeDefCoCo;
+import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
+import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
+import de.monticore.lang.sysmlrequirements._cocos.SysMLRequirementsASTRequirementDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateUsageCoCo;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
@@ -9,6 +16,7 @@ import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2SymboltableCompleter;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
+import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.StateExistsCoCo;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 
@@ -31,6 +39,14 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
     checker.addCoCo(new ConstraintIsBoolean());
     checker.addCoCo(new StateExistsCoCo());
+    checker.addCoCo((SysMLStatesASTStateDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLPartsASTPartDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLPartsASTPortDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLConstraintsASTConstraintDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLActionsASTActionDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLRequirementsASTRequirementDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLImportsAndPackagesASTSysMLPackageCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new NameCompatible4Isabelle());
     checker.checkAll(ast);
   }
 
