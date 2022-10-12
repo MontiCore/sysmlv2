@@ -111,6 +111,18 @@ component grammar SysMLParts extends SysMLBasis {
       types:de.monticore.types.check.SymTypeExpression*
       conjugatedTypes:de.monticore.types.check.SymTypeExpression*;
 
+  astrule PortUsage =
+    method public Optional<de.monticore.cardinality._ast.ASTCardinality> getCardinality() {
+      for (de.monticore.lang.sysmlbasis._ast.ASTSpecialization s: this.getSpecializationList()) {
+        if(s instanceof de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) {
+          if(((de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) s).isPresentCardinality()) {
+            return Optional.of(((de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) s).getCardinality());
+          }
+        }
+      }
+      return Optional.empty();
+    } ;
+
   ConnectionUsage implements SysMLElement =
       "connect" src:MCQualifiedName "to" tgt:MCQualifiedName ";";
 
