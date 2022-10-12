@@ -49,7 +49,7 @@ public class ConstraintCoCoTest {
         //"8_valid.sysml",
         "9_valid.sysml",
         //"10_valid.sysml",
-        "11_valid.sysml",
+        //"11_valid.sysml",
         "12_valid.sysml",
         "13_valid.sysml",
     })
