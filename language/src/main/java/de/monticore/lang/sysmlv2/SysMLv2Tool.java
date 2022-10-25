@@ -17,7 +17,7 @@ import de.monticore.lang.sysmlv2._symboltable.SysMLv2SymboltableCompleter;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
-import de.monticore.lang.sysmlv2.cocos.StateExistsCoCo;
+import de.monticore.lang.sysmlv2.cocos.SpecializationExists;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 
 public class SysMLv2Tool extends SysMLv2ToolTOP {
@@ -38,7 +38,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
     checker.addCoCo(new ConstraintIsBoolean());
-    checker.addCoCo(new StateExistsCoCo());
+    checker.addCoCo(new SpecializationExists());
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTPartDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTPortDefCoCo) new NameCompatible4Isabelle());
@@ -75,7 +75,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
 
   @Override
   public void completeSymbolTable(ASTSysMLModel node) {
-    SysMLv2Traverser traverser = SysMLv2Mill.traverser();
+    SysMLv2Traverser traverser = SysMLv2Mill.inheritanceTraverser();
 
     SysMLv2SymboltableCompleter completer = new SysMLv2SymboltableCompleter();
     traverser.add4SysMLBasis(completer);
