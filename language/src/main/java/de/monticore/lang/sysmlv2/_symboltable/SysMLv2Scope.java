@@ -2,26 +2,26 @@ package de.monticore.lang.sysmlv2._symboltable;
 
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
+import de.monticore.lang.sysmlrequirements._ast.ASTRequirementDef;
+import de.monticore.lang.sysmlrequirements._ast.ASTRequirementUsage;
+import de.monticore.lang.sysmlrequirements._symboltable.ISysMLRequirementsScope;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolBuilder;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolSurrogate;
-import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symboltable.IScopeSpanningSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfObject;
 import de.monticore.types.check.SymTypePrimitive;
-import de.monticore.types.check.SymTypeVariable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class SysMLv2Scope extends SysMLv2ScopeTOP {
 
@@ -110,6 +110,27 @@ public class SysMLv2Scope extends SysMLv2ScopeTOP {
       }
     }
 
+    // Falls Requirement, dann subject befragen
+    if(this.astNode.isPresent() && this.astNode.get() instanceof ASTRequirementUsage) {
+      var ast = (ASTRequirementUsage) this.astNode.get();
+      if(ast.isPresentRequirementSubject()) {
+        // Alle Typen kommen in Frage
+        ast.getRequirementSubject().getSpecializationList().stream().flatMap(s -> s.streamSuperTypes()).forEach(t -> {
+          var type = t.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+          var typeSymbol = t.getDefiningSymbol();
+          if(typeSymbol.isPresent() && typeSymbol.get() instanceof IScopeSpanningSymbol) {
+            var scope = ((IScopeSpanningSymbol)typeSymbol.get()).getSpannedScope();
+            if(scope instanceof IBasicSymbolsScope) {
+              var variable = ((IBasicSymbolsScope) scope).resolveVariableDown(name, modifier, predicate);
+              if(variable.isPresent()) {
+                res.add(variable.get());
+              }
+            }
+          }
+        });
+      }
+    }
+
     return res;
   }
 
@@ -143,6 +164,38 @@ public class SysMLv2Scope extends SysMLv2ScopeTOP {
               .setAccessModifier(portDef.get().getAccessModifier())
               .setFullName(portDef.get().getFullName())
               .setPackageName(portDef.get().getPackageName())
+              .build()
+      );
+    }
+
+    // PartDefs zu Types
+    var partDef = resolvePartDef(name);
+    if(partDef.isPresent()) {
+      // baue neues TypeSymbol
+      res.add(
+          SysMLv2Mill.typeSymbolBuilder()
+              .setName(partDef.get().getName())
+              .setSpannedScope(partDef.get().getSpannedScope())
+              .setEnclosingScope(partDef.get().getEnclosingScope())
+              .setAccessModifier(partDef.get().getAccessModifier())
+              .setFullName(partDef.get().getFullName())
+              .setPackageName(partDef.get().getPackageName())
+              .build()
+      );
+    }
+
+    // StateDef zu Types
+    var stateDef = resolveStateDef(name);
+    if(stateDef.isPresent()) {
+      // baue neues TypeSymbol
+      res.add(
+          SysMLv2Mill.typeSymbolBuilder()
+              .setName(stateDef.get().getName())
+              .setSpannedScope(stateDef.get().getSpannedScope())
+              .setEnclosingScope(stateDef.get().getEnclosingScope())
+              .setAccessModifier(stateDef.get().getAccessModifier())
+              .setFullName(stateDef.get().getFullName())
+              .setPackageName(stateDef.get().getPackageName())
               .build()
       );
     }

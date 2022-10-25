@@ -13,6 +13,8 @@ import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
+import de.monticore.lang.sysmlrequirements._ast.ASTRequirementSubject;
+import de.monticore.lang.sysmlrequirements._visitor.SysMLRequirementsVisitor2;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Visitor2;
@@ -31,7 +33,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class SysMLv2SymboltableCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2, SysMLv2Visitor2 {
+public class SysMLv2SymboltableCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2, SysMLv2Visitor2
+{
 
   /**
    * Returns type completion for Usages. The type is not resolved, and we only store the qualified name as
@@ -76,6 +79,21 @@ public class SysMLv2SymboltableCompleter implements SysMLBasisVisitor2, SysMLPar
       symbol.setTypesList(types);
       symbol.setConjugatedTypesList(conjugatedTypes);
     }
+  }
+
+  @Override
+  public void visit(ASTSpecialization node) {
+    // Setzt das defining Symbol aller MCTypes der jeweiligen Specialization
+    node.streamSuperTypes().forEach(s -> {
+      var typeName = s.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+      var typeSymbol = node.getEnclosingScope().resolveType(typeName);
+      if(typeSymbol.isPresent()) {
+        s.setDefiningSymbol(typeSymbol.get());
+      }
+      else {
+        Log.debug("Can't resolve defining symbol for " + typeName, getClass().getName());
+      }
+    });
   }
 
   // TODO Die fliegt ganz weg, stattdessenn ein "Stream" ins GlobalScope mit der entsprechenden Methode (Doku von

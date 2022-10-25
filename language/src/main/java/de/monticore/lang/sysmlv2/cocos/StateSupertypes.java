@@ -11,6 +11,8 @@ import de.se_rwth.commons.logging.Log;
 
 import java.util.stream.Collectors;
 
+// TODO Muss mit SpecialiationExists zusammenspielen, also darf der nicht anschlagen, wenn garkein Type existiert,
+// sondern nur, wenn zwar einer existiert, es aber keine StateDef/StateUsage ist
 public class StateSupertypes implements SysMLStatesASTStateDefCoCo, SysMLStatesASTStateUsageCoCo {
 
   private String printName(ASTMCType type) {
