@@ -2,6 +2,10 @@
 
 A language server generated with the MCLSG (MontiCore Language Server Generator).
 
+## Prerequisites
+
+Install [NPM](https://www.npmjs.com/) and add it to `$PATH`
+
 ## Run/Debug
 
 Start the [`LanguageServerCLI`](src/main/java/de/monticore/lang/sysml4verification/_lsp/LanguageServerCLI.java) with
