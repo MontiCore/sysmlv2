@@ -1,0 +1,17 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+component grammar SysMLInterface
+    extends de.monticore.lang.SysMLBasis {
+
+  symbol scope InterfaceDef implements SysMLType =
+    "interface" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      SysMLElement*
+    "}" | ";") ;//TODO end definieren für interface
+
+  symbol scope InterfaceUsage implements SysMLElement =
+    "interface" (Name Specialization* "connect" )? source:MCQualifiedName key("to") target:MCQualifiedName ";" ;
+
+
+}

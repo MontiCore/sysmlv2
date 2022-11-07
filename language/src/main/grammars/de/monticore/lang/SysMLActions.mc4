@@ -5,7 +5,7 @@ component grammar SysMLActions
     extends de.monticore.lang.SysMLBasis {
 
   symbol scope ActionDef implements SysMLType =
-    "action" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    "action" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")? //TODO checken ob korrekt und nicht stattdessen "{"
     ("{"
       SysMLElement*
     "}" | ";") ;
@@ -28,5 +28,14 @@ component grammar SysMLActions
 
   AcceptActionUsage extends InlineAcceptActionUsage implements SysMLElement =
     "accept" (payloadHandle:Name ":")? payloadType:MCType ("via" receiver:MCQualifiedName)? ";" ;
+
+
+      // TODO Überlegen, ob nicht doch durch Grammatik enforcen, dass Transitionen nur in States vorkommen
+      symbol SysMLSuccession implements SysMLElement =
+        ("first" src:Name@ActionUsage)?
+        (InlineAcceptActionUsage)?
+        ("if" guard:Expression)?
+        (DoAction)?
+        "then" tgt:Name@ActionUsage ";" ;
 
 }
