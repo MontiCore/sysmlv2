@@ -21,6 +21,12 @@ component grammar SysMLStates extends SysMLActions {
       SysMLElement*
     "}" | ";") ;
 
+  symbol scope (shadowing) ParallelStateUsage implements SysMLElement =
+    exhibited:["exhibit"]? "state" Name Specialization* ("(" (SysMLParameter || ",")* ")")? "parallel"
+    "{"
+      (SysMLElement | StateUsage)*
+    "}"  ;
+
   // TODO Überlegen, ob nicht doch durch Grammatik enforcen, dass Transitionen nur in States vorkommen
   symbol SysMLTransition implements SysMLElement =
     ("transition" Name?)?
