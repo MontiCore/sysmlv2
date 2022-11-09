@@ -2,9 +2,9 @@ package de.monticore.lang.sysmlv2.types;
 
 import de.monticore.lang.sysmlexpressions.SysMLExpressionsMill;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsTraverser;
-import de.monticore.ocl.types.check.DeriveSymTypeOfCommonExpressions;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLExpressions;
 import de.monticore.types.check.AbstractDerive;
+import de.monticore.types.check.DeriveSymTypeOfCommonExpressions;
 import de.monticore.types.check.DeriveSymTypeOfExpression;
 import de.monticore.types.check.DeriveSymTypeOfLiterals;
 import de.monticore.types.check.DeriveSymTypeOfMCCommonLiterals;
