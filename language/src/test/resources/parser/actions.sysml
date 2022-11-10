@@ -16,4 +16,16 @@ action def Around {
 action {
   send a to b;
   assign x := y;
+  fork a;
+    then c;
+    then d;
+
+  decide a;
+    if true then c;
+    if false then d;
+
+  join joinNode;
+
+  action c;
+  merge e;
 }

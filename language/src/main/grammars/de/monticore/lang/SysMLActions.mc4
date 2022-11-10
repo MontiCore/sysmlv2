@@ -15,6 +15,21 @@ component grammar SysMLActions
     ("{"
       SysMLElement*
      "}" | ";")? ;
+  symbol scope ForkAction extends ActionUsage = "fork" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")? ";"
+   ("then" tgt:ActionUsage ";")*;
+
+  symbol scope DecideAction extends ActionUsage = "decide" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")? ";"
+   ("if" guard:Expression "then" tgt:ActionUsage ";")*;
+
+   symbol scope JoinAction extends ActionUsage = "join"  (Name Specialization*)?  ("(" (SysMLParameter || ",")* ")")? ";";
+
+   symbol scope MergeAction extends ActionUsage = "merge"  (Name Specialization*)?  ("(" (SysMLParameter || ",")* ")")? ";";
+
+   symbol scope LoopAction extends ActionUsage = ("loop" | "while" while:Expression) "action"
+     (Name Specialization*)?  ("(" (SysMLParameter || ",")* ")")?
+       "{"
+         SysMLElement*
+        "}" "until" until:Expression ";";
 
   SendActionUsage implements SysMLElement =
     "send" payload:Expression key("to") target:MCQualifiedName ";" ;
@@ -30,12 +45,10 @@ component grammar SysMLActions
     "accept" (payloadHandle:Name ":")? payloadType:MCType ("via" receiver:MCQualifiedName)? ";" ;
 
 
-      // TODO Überlegen, ob nicht doch durch Grammatik enforcen, dass Transitionen nur in States vorkommen
-      symbol SysMLSuccession implements SysMLElement =
-        ("first" src:Name@ActionUsage)?
-        (InlineAcceptActionUsage)?
-        ("if" guard:Expression)?
-        (DoAction)?
+  SysMLSuccession implements SysMLElement =
+    ("first" src:Name@ActionUsage)?
+    (InlineAcceptActionUsage)?
+    ("if" guard:Expression)?
         "then" tgt:Name@ActionUsage ";" ;
 
 }
