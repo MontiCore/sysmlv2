@@ -28,4 +28,6 @@ action {
 
   action c;
   merge e;
+
+  perform a;
 }
