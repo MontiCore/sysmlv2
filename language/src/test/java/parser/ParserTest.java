@@ -43,6 +43,7 @@ public class ParserTest {
       "parts.sysml",
       "states.sysml",
       "actions.sysml",
+      "items.sysml",
       "assert.sysml",
       "constraints.sysml",
       "requirements.sysml",
