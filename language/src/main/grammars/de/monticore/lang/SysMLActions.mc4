@@ -44,6 +44,7 @@ component grammar SysMLActions
   AcceptActionUsage extends InlineAcceptActionUsage implements SysMLElement =
     "accept" (payloadHandle:Name ":")? payloadType:MCType ("via" receiver:MCQualifiedName)? ";" ;
 
+  PerformAction implements SysMLElement = "perform" action:Name@ActionUsage ";" ;
 
   SysMLSuccession implements SysMLElement =
     ("first" src:Name@ActionUsage)?
