@@ -1,9 +1,10 @@
 package de.monticore.lang.sysmlv2.cocos;
 
-import de.monticore.lang.sysmlinterface._ast.ASTInterfaceDef;
-import de.monticore.lang.sysmlinterface._ast.ASTInterfaceUsage;
-import de.monticore.lang.sysmlinterface._cocos.SysMLInterfaceASTInterfaceDefCoCo;
-import de.monticore.lang.sysmlinterface._cocos.SysMLInterfaceASTInterfaceUsageCoCo;
+import de.monticore.lang.sysmlinterfaces._ast.ASTInterfaceDef;
+import de.monticore.lang.sysmlinterfaces._ast.ASTInterfaceUsage;
+import de.monticore.lang.sysmlinterfaces._cocos.SysMLInterfacesASTInterfaceDefCoCo;
+import de.monticore.lang.sysmlinterfaces._cocos.SysMLInterfacesASTInterfaceUsageCoCo;
+import de.monticore.lang.sysmlinterfaces._cocos.SysMLInterfacesASTInterfaceDefCoCo;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 
 // TODO Muss mit SpecialiationExists zusammenspielen, also darf der nicht anschlagen, wenn garkein Type existiert,
 // sondern nur, wenn zwar einer existiert, es aber keine InterfaceDef/InterfaceUsage ist
-public class InterfaceSupertypes implements SysMLInterfaceASTInterfaceDefCoCo, SysMLInterfaceASTInterfaceUsageCoCo {
+public class InterfaceSupertypes implements SysMLInterfacesASTInterfaceDefCoCo, SysMLInterfacesASTInterfaceUsageCoCo {
 
   private String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));

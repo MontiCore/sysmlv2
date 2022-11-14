@@ -10,7 +10,7 @@ grammar SysMLv2 extends SysMLExpressions,
                         SysMLRequirements,
                         SysMLAdvRequirements,
                         SysMLConnections,
-                        SysMLInterface,
+                        SysMLInterfaces,
                         SysMLItems,
                         de.monticore.types.MCSimpleGenericTypes
 {

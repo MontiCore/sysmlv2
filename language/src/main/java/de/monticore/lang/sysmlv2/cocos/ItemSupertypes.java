@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 // TODO Muss mit SpecialiationExists zusammenspielen, also darf der nicht anschlagen, wenn garkein Type existiert,
 // sondern nur, wenn zwar einer existiert, es aber keine ItemsDef/ItemsUsage ist
-public class ItemsSupertypes implements SysMLItemsASTItemDefCoCo, SysMLItemsASTItemUsageCoCo {
+public class ItemSupertypes implements SysMLItemsASTItemDefCoCo, SysMLItemsASTItemUsageCoCo {
 
   private String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));

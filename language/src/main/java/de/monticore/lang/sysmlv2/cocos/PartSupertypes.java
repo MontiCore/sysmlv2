@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 // TODO Muss mit SpecialiationExists zusammenspielen, also darf der nicht anschlagen, wenn garkein Type existiert,
 // sondern nur, wenn zwar einer existiert, es aber keine PartsDef/PartsUsage ist
-public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTPartUsageCoCo {
+public class PartSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTPartUsageCoCo {
 
   private String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
