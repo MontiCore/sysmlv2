@@ -5,7 +5,7 @@ component grammar SysMLConnections
     extends de.monticore.lang.SysMLBasis {
 
   Flow implements SysMLElement =
-    "flow" ;//("of" flowtype:MCQualifiedName "from")? source:MCQualifiedName "to" target:MCQualifiedName ";" ;
+    "flow" ("of" flowtype:MCQualifiedName "from")? source:MCQualifiedName "to" target:MCQualifiedName ";" ;
 
 
 
