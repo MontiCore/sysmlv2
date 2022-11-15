@@ -1,11 +1,11 @@
-port def Double {
-  out attribute channel: Double;
+port def Integers {
+  out attribute channel: Integer;
 }
 
 part def LogicBasedConstraints {
-  port input: ~Double;
+  port input: ~Integers;
 
   constraint streams {
-    input.channel.get(5) > true
+    input.channel.length() > true
   }
 }
