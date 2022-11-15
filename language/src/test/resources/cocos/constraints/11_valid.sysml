@@ -1,11 +1,11 @@
-port def Double {
-  out attribute channel: Double;
+port def Booleans {
+  out attribute boolAttr: boolean;
 }
 
 part def LogicBasedConstraints {
-  port input: ~Double;
+  port myPortDef: Booleans;
 
-  constraint streams {
-    input.channel.get(5) > 1
+  constraint constraintName {
+    myPortDef.boolAttr.length() > 1
   }
 }

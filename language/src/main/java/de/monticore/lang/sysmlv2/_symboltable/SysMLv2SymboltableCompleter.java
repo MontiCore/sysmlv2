@@ -45,7 +45,7 @@ public class SysMLv2SymboltableCompleter implements SysMLBasisVisitor2, SysMLPar
         && ((ASTSysMLTyping) astSpecialization).isConjugated() == conjugated).flatMap(
         astTyping -> astTyping.getSuperTypesList().stream().map(astmcQualifiedName ->
             // set enclosing scope to globalscope to force the fully qualified name to the provided value
-            (SymTypeExpression) SymTypeExpressionFactory.createTypeObject(
+            SymTypeExpressionFactory.createTypeExpression(
                 astmcQualifiedName.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())),
                 SysMLv2Mill.globalScope()))).collect(Collectors.toList());
   }
@@ -96,8 +96,6 @@ public class SysMLv2SymboltableCompleter implements SysMLBasisVisitor2, SysMLPar
     });
   }
 
-  // TODO Die fliegt ganz weg, stattdessenn ein "Stream" ins GlobalScope mit der entsprechenden Methode (Doku von
-  // Mathias folgt am Issue)
   @Override
   public void visit(ASTAttributeUsage node) {
     if(node.isPresentSymbol()) {
@@ -106,17 +104,6 @@ public class SysMLv2SymboltableCompleter implements SysMLBasisVisitor2, SysMLPar
       List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
 
       symbol.setTypesList(types);
-
-      // we generate get-functions for each specialized return type
-      // TODO it could be useful to generate a get-function only for the most specialized
-      //  type and implement a type checker that handles specializations.
-      for (SymTypeExpression type : types) {
-        var functionSymbol = symbolOfSnthFunction(type);
-        if(type.getTypeInfo().getSpannedScope() == null) {
-          type.getTypeInfo().setSpannedScope(new BasicSymbolsScope());
-        }
-        type.getTypeInfo().getSpannedScope().add(functionSymbol);
-      }
 
       // feature direction
       if(node.isPresentSysMLFeatureDirection()) {
@@ -151,20 +138,5 @@ public class SysMLv2SymboltableCompleter implements SysMLBasisVisitor2, SysMLPar
     }
     // Make it unique but unguessable
     scope.setName("AnonymousArtifact_" + UUID.randomUUID());
-  }
-
-  private FunctionSymbol symbolOfSnthFunction(SymTypeExpression returnType) {
-    var symbol = new FunctionSymbol("snth");
-    symbol.setType(returnType);
-    symbol.setSpannedScope(spannedScopedOfGet());
-    return symbol;
-  }
-
-  private BasicSymbolsScope spannedScopedOfGet() {
-    var scope = new BasicSymbolsScope();
-    var parameter = new VariableSymbol("int");
-    parameter.setType(new SymTypePrimitive(new TypeSymbol("int")));
-    scope.add(parameter);
-    return scope;
   }
 }

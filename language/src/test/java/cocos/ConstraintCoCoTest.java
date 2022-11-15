@@ -32,26 +32,27 @@ public class ConstraintCoCoTest {
   @BeforeEach public void reset() {
     SysMLv2Mill.globalScope().clear();
     BasicSymbolsMill.initializePrimitives();
+    SysMLv2Mill.addStreamType();
     Log.getFindings().clear();
   }
 
+  // TODO @Marc, question: Warum ist der Test-Code in eine Nested-Klasse mit dem Namen gewandert?
   @Nested public class StateDef {
 
     @ParameterizedTest(name = "{index} - {0} does pass all checks w/o errors")
     @ValueSource(strings = {
-        "1_valid.sysml",
-        "2_valid.sysml",
-        "3_valid.sysml",
-        "4_valid.sysml",
-        "5_valid.sysml",
-        //"6_valid.sysml",
-        //"7_valid.sysml",
-        //"8_valid.sysml",
-        "9_valid.sysml",
-        //"10_valid.sysml",
-        //"11_valid.sysml",
-        "12_valid.sysml",
-        "13_valid.sysml",
+        "1_valid.sysml", // boolean operator with literals
+        "2_valid.sysml", // resolve & compare ports
+        "3_valid.sysml", // resolve & compare channels
+        "4_valid.sysml", // stream snth
+        "5_valid.sysml", // port::channel-syntax with comparison
+        //"6_valid.sysml", // port::channel-syntax with literal
+        //"7_valid.sysml", // INF literal
+        //"8_valid.sysml", // forall construct
+        "9_valid.sysml", // constraint with literal
+        //"10_valid.sysml", // attribute definition without port
+        "11_valid.sysml", // stream length
+        "12_valid.sysml", // constraint with parameter
     })
     public void testValid(String modelName) throws IOException {
       var optAst = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName);
@@ -75,19 +76,18 @@ public class ConstraintCoCoTest {
 
     @ParameterizedTest(name = "{index} - {0} does pass all checks w/o errors")
     @ValueSource(strings = {
-        "1_invalid.sysml",
-        "2_invalid.sysml",
-        "3_invalid.sysml",
-        "4_invalid.sysml",
-        "5_invalid.sysml",
-        "6_invalid.sysml",
-        "7_invalid.sysml",
-        //"8_invalid.sysml",
-        "9_invalid.sysml",
-        //"10_invalid.sysml",
-        "11_invalid.sysml",
-        //"12_invalid.sysml",
-        "13_invalid.sysml"
+        "1_invalid.sysml", // boolean operator with literals
+        "2_invalid.sysml", // resolve & compare ports
+        "3_invalid.sysml", // resolve & compare channels
+        "4_invalid.sysml", // stream snth
+        "5_invalid.sysml", // port::channel-syntax with comparison
+        "6_invalid.sysml", // port::channel-syntax with literal
+        "7_invalid.sysml", // INF literal
+        //"8_invalid.sysml", // forall construct
+        "9_invalid.sysml", // constraint with literal
+        //"10_invalid.sysml", // attribute definition without port
+        "11_invalid.sysml", // stream length
+        //"12_invalid.sysml", // constraint with parameter
     })
     public void testInvalid(String modelName) throws IOException {
       var optAst = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName);

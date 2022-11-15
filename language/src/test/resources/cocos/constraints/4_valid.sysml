@@ -1,11 +1,11 @@
 port def Integers {
-  out attribute channel: Integer;
+  out attribute natAttr: int;
 }
 
 part def LogicBasedConstraints {
-  port input: ~Integers;
+  port myPortDef: Integers;
 
-  constraint streams {
-    input.channel.snth(5) > 1
+  constraint constraintName {
+    myPortDef.natAttr.snth(5) > 1
   }
 }

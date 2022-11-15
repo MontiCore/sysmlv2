@@ -4,8 +4,9 @@ port def Integers {
 
 part def LogicBasedConstraints {
   port input: ~Integers;
+  port output: Integers;
 
   constraint streams {
-    #input.channel == 1
+    input::channel == output::channel
   }
 }
