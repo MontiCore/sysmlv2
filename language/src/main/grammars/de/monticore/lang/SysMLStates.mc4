@@ -13,7 +13,7 @@ component grammar SysMLStates extends SysMLActions {
     "}" | ";") ;
 
   symbol scope (shadowing) StateUsage implements SysMLElement =
-    Modifier exhibited:["exhibit"]? "state" Name Specialization* ("(" (SysMLParameter || ",")* ")")? paralled:["parallel"]?
+    Modifier exhibited:["exhibit"]? "state" Name Specialization* ("(" (SysMLParameter || ",")* ")")? paralled:["parallel"]? DefaultValue
     ("{"
       EntryAction?
       DoAction?

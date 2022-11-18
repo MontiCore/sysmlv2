@@ -69,8 +69,9 @@ component grammar SysMLBasis
    * TODO "stream" überall ausser AdvRequirements verbieten? Gibts eine bessere Lösung?
    */
   SysMLParameter implements Field =
-    ["stream"]? SysMLFeatureDirection? Name Specialization* ("=" binding:Expression)?;
+    ["stream"]? SysMLFeatureDirection? Name Specialization* ("=" binding:Expression)? DefaultValue;
 
+  DefaultValue = ("default" default:Expression)?;
   /*
    * ##################################################################
    * SysML-Spezifischen Syntax-Erweiterungen

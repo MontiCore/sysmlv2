@@ -11,19 +11,19 @@ component grammar SysMLActions
     "}" | ";") ;
 
   symbol scope ActionUsage implements SysMLElement =
-    Modifier "action" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")?
+    Modifier "action" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")? DefaultValue
     ("{"
       SysMLElement*
      "}" | ";")? ;
-  symbol scope ForkAction extends ActionUsage = Modifier "fork" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")? ";"
+  symbol scope ForkAction extends ActionUsage = Modifier "fork" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")? DefaultValue ";"
    ("then" tgt:ActionUsage ";")*;
 
-  symbol scope DecideAction extends ActionUsage = Modifier "decide" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")? ";"
+  symbol scope DecideAction extends ActionUsage = Modifier "decide" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")? DefaultValue ";"
    ("if" guard:Expression "then" tgt:ActionUsage ";")*;
 
-   symbol scope JoinAction extends ActionUsage = Modifier "join"  (Name Specialization*)?  ("(" (SysMLParameter || ",")* ")")? ";";
+   symbol scope JoinAction extends ActionUsage = Modifier "join"  (Name Specialization*)?  ("(" (SysMLParameter || ",")* ")")? DefaultValue ";";
 
-   symbol scope MergeAction extends ActionUsage = Modifier "merge"  (Name Specialization*)?  ("(" (SysMLParameter || ",")* ")")? ";";
+   symbol scope MergeAction extends ActionUsage = Modifier "merge"  (Name Specialization*)?  ("(" (SysMLParameter || ",")* ")")? DefaultValue ";";
 
    symbol scope LoopAction extends ActionUsage = ("loop" | "while" while:Expression) "action"
      (Name Specialization*)?  ("(" (SysMLParameter || ",")* ")")?
