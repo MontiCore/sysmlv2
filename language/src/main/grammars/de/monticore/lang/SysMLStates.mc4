@@ -4,7 +4,7 @@ package de.monticore.lang;
 component grammar SysMLStates extends SysMLActions {
 
   symbol scope (shadowing) StateDef implements SysMLType =
-    "state" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    Modifier "state" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
       EntryAction?
       DoAction?
@@ -13,7 +13,7 @@ component grammar SysMLStates extends SysMLActions {
     "}" | ";") ;
 
   symbol scope (shadowing) StateUsage implements SysMLElement =
-    exhibited:["exhibit"]? "state" Name Specialization* ("(" (SysMLParameter || ",")* ")")? paralled:["parallel"]?
+    Modifier exhibited:["exhibit"]? "state" Name Specialization* ("(" (SysMLParameter || ",")* ")")? paralled:["parallel"]?
     ("{"
       EntryAction?
       DoAction?

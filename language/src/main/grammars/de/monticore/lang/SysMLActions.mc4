@@ -5,25 +5,25 @@ component grammar SysMLActions
     extends de.monticore.lang.SysMLBasis {
 
   symbol scope ActionDef implements SysMLType =
-    "action" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")? //TODO checken ob korrekt und nicht stattdessen "{"
+    Modifier "action" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")? //TODO checken ob korrekt und nicht stattdessen "{"
     ("{"
       SysMLElement*
     "}" | ";") ;
 
   symbol scope ActionUsage implements SysMLElement =
-    "action" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")?
+    Modifier "action" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")?
     ("{"
       SysMLElement*
      "}" | ";")? ;
-  symbol scope ForkAction extends ActionUsage = "fork" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")? ";"
+  symbol scope ForkAction extends ActionUsage = Modifier "fork" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")? ";"
    ("then" tgt:ActionUsage ";")*;
 
-  symbol scope DecideAction extends ActionUsage = "decide" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")? ";"
+  symbol scope DecideAction extends ActionUsage = Modifier "decide" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")? ";"
    ("if" guard:Expression "then" tgt:ActionUsage ";")*;
 
-   symbol scope JoinAction extends ActionUsage = "join"  (Name Specialization*)?  ("(" (SysMLParameter || ",")* ")")? ";";
+   symbol scope JoinAction extends ActionUsage = Modifier "join"  (Name Specialization*)?  ("(" (SysMLParameter || ",")* ")")? ";";
 
-   symbol scope MergeAction extends ActionUsage = "merge"  (Name Specialization*)?  ("(" (SysMLParameter || ",")* ")")? ";";
+   symbol scope MergeAction extends ActionUsage = Modifier "merge"  (Name Specialization*)?  ("(" (SysMLParameter || ",")* ")")? ";";
 
    symbol scope LoopAction extends ActionUsage = ("loop" | "while" while:Expression) "action"
      (Name Specialization*)?  ("(" (SysMLParameter || ",")* ")")?

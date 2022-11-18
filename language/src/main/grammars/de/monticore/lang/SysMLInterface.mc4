@@ -5,13 +5,13 @@ component grammar SysMLInterface
     extends de.monticore.lang.SysMLBasis {
 
   symbol scope InterfaceDef implements SysMLType =
-    "interface" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    Modifier "interface" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
       ("end" src:MCQualifiedName ";"| SysMLElement)*
     "}" | ";") ;//TODO end definieren für interface
 
   symbol scope InterfaceUsage implements SysMLElement =
-    "interface" (Name Specialization* "connect" )? source:MCQualifiedName "to" target:MCQualifiedName ";" ;
+    Modifier "interface" (Name Specialization* "connect" )? source:MCQualifiedName "to" target:MCQualifiedName ";" ;
 
 
 }

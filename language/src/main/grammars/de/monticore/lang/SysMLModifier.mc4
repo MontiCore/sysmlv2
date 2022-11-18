@@ -1,0 +1,42 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+/* This is a MontiCore stable grammar.
+ * Adaptations -- if any -- are conservative. */
+
+import de.monticore.*;
+
+/**
+ * Grammar for common elements of the SysML Language
+
+ * The grammar contains the modifiers that SysML provides.
+ * This includes "public" "private", "protected" "abstract",
+ * "derived", "readonly", and  but also the
+*/
+
+component grammar SysMLModifier {
+
+    /** ASTModifier represents a Modifier for Classes, Interfaces, Methods,
+        Constructors and Attributes in the SysML
+        @attribute public     true if Modifier is public
+                              (i.e. Modifier written as "public" or "+")
+        @attribute private    true if Modifier is private
+                              (i.e. Modifier written as "private" or "-")
+        @attribute protected  true if Modifier is protected
+                              (i.e. Modifier written as "protected" or "#")
+        @attribute abstract   true if Modifier is abstract
+                              (i.e. Modifier written as "abstract")
+        @attribute derived    true if Modifier is derived
+                              (i.e. Modifier written as "derived" or "/")
+        @attribute readonly   true if Modifier is readonly
+                              (i.e. Modifier written as "readonly" or "?")
+    */
+    Modifier =
+        (   ["public"]
+          | ["private"]
+          | ["protected"]
+          | ["abstract"]
+          | ["derived"]
+          | ["readonly"]
+        )*;
+}
