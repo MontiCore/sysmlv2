@@ -7,11 +7,11 @@ component grammar SysMLInterfaces
   symbol scope InterfaceDef implements SysMLType =
     "interface" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
-      ("end" src:MCQualifiedName ";"| SysMLElement)*
+      ("end" src:MCQualifiedName Specialization* ";"| SysMLElement)*
     "}" | ";") ;//TODO end definieren für interface
 
   symbol scope InterfaceUsage implements SysMLElement =
-    "interface" (Name Specialization* "connect" )? source:MCQualifiedName "to" target:MCQualifiedName ";" ;
+    "interface" (Name? Specialization* "connect" )? source:MCQualifiedName "to" target:MCQualifiedName ";" ;
 
 
 }
