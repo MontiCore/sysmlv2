@@ -31,16 +31,12 @@ component grammar SysMLStates extends SysMLActions {
     "then" tgt:Name@StateUsage ";" ;
 
   /**
-   * Offizielle Dokumentation ist unklar, aber wir erlauben folgendes:
-   * > entry action { send a to b; send x to y; }
-   * >  if b1 then S1;
-   * >  if b2 then S2;
-   * >  then S3;
+   * Offizielle Dokumentation erlaubt ActionUsage, referenz auf ActionUsage oder leeres Argument
    */
-  EntryAction = "entry" (ActionUsage | ";") (("if" guard:Expression)? "then" target:Name@StateUsage ";")*;
+  EntryAction = "entry" (ActionUsage | action:Name@ActionUsage ";" | ";");
 
-  DoAction = "do" ActionUsage;
+  DoAction = "do" (ActionUsage | action:Name@ActionUsage ";" | ";");
 
-  ExitAction = "exit" ActionUsage;
+  ExitAction = "exit" (ActionUsage | action:Name@ActionUsage ";" | ";");
 
 }

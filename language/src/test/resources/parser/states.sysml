@@ -19,7 +19,12 @@ exhibit state Behavior {
   entry;
   then S;
 }
-
+		state operationalStates {
+			entry;
+			do action {send a to b;}
+      exit actionXY;
+      then off;
+			}
 
 	state vehicleStates : VehicleStates parallel {
 
