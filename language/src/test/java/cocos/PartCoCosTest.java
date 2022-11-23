@@ -48,6 +48,7 @@ public class PartCoCosTest {
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
       checker.addCoCo((SysMLPartsASTPartDefCoCo) new PartSupertypes());
+      checker.addCoCo((SysMLPartsASTPortDefCoCo) new PartSupertypes());
       checker.checkAll(ast);
       assertTrue(Log.getFindings().isEmpty());
     }
@@ -63,5 +64,6 @@ public class PartCoCosTest {
       assertFalse(Log.getFindings().isEmpty());
     }
   }
+
 
 }
