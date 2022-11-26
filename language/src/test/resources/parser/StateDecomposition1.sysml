@@ -6,27 +6,19 @@ package StateDecomposition1 {
 
 	state def VehicleStates;
 
-	state vehicleStates : VehicleStates parallel {
+	state vehicleStates : VehicleStates {
+		entry; then off;
 
-		state operationalStates {
-			entry; then off;
+		state off;
+		accept VehicleStartSignal
+			then starting;
 
-			state off;
-			accept VehicleStartSignal
-				then starting;
+		state starting;
+		accept VehicleOnSignal
+			then on;
 
-			state starting;
-			accept VehicleOnSignal
-				then on;
-
-			state on;
-			accept VehicleOffSignal
-				then off;
-		}
-
-		state healthStates {
-			/* ... */
-		}
+		state on;
+		accept VehicleOffSignal
+			then off;
 	}
-
 }
