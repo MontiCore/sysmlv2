@@ -1,14 +1,12 @@
 package cocos;
 
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
-import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartUsageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
-import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortUsageCoCo;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
-import de.monticore.lang.sysmlv2.cocos.PartSupertypes;
+import de.monticore.lang.sysmlv2.cocos.PartsSupertypes;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,8 +45,8 @@ public class PartCoCosTest {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String("part def A; part def B: A;").get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLPartsASTPartDefCoCo) new PartSupertypes());
-      checker.addCoCo((SysMLPartsASTPortDefCoCo) new PartSupertypes());
+      checker.addCoCo((SysMLPartsASTPartDefCoCo) new PartsSupertypes());
+      checker.addCoCo((SysMLPartsASTPortDefCoCo) new PartsSupertypes());
       checker.checkAll(ast);
       assertTrue(Log.getFindings().isEmpty());
     }
@@ -58,7 +56,7 @@ public class PartCoCosTest {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String("part def B: A;").get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLPartsASTPartDefCoCo) new PartSupertypes());
+      checker.addCoCo((SysMLPartsASTPartDefCoCo) new PartsSupertypes());
       Log.enableFailQuick(false);
       checker.checkAll(ast);
       assertFalse(Log.getFindings().isEmpty());

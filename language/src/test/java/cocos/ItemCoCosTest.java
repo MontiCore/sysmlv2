@@ -5,7 +5,7 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
-import de.monticore.lang.sysmlv2.cocos.ItemSupertypes;
+import de.monticore.lang.sysmlv2.cocos.ItemsSupertypes;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +44,7 @@ public class ItemCoCosTest {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String("item def A; item def B: A;").get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLItemsASTItemDefCoCo) new ItemSupertypes());
+      checker.addCoCo((SysMLItemsASTItemDefCoCo) new ItemsSupertypes());
       checker.checkAll(ast);
       assertTrue(Log.getFindings().isEmpty());
     }
@@ -54,7 +54,7 @@ public class ItemCoCosTest {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String("item def B: A;").get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLItemsASTItemDefCoCo) new ItemSupertypes());
+      checker.addCoCo((SysMLItemsASTItemDefCoCo) new ItemsSupertypes());
       Log.enableFailQuick(false);
       checker.checkAll(ast);
       assertFalse(Log.getFindings().isEmpty());
