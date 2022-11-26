@@ -73,7 +73,7 @@ component grammar SysMLParts extends SysMLBasis {
    */
 
   symbol scope (shadowing) PartUsage implements SysMLElement =
-    Modifier "part" Name Specialization*
+    Modifier SysMLFeatureDirection? "part" Name Specialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
@@ -105,7 +105,7 @@ component grammar SysMLParts extends SysMLBasis {
    * symboltable (and not needing to re-processes the original models).
    */
   symbol scope (shadowing) PortUsage implements SysMLElement =
-      Modifier "port" Name Specialization* DefaultValue";" ;
+      Modifier SysMLFeatureDirection? "port" Name Specialization* DefaultValue";" ;
 
   symbolrule PortUsage =
       types:de.monticore.types.check.SymTypeExpression*

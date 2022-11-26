@@ -15,15 +15,15 @@ component grammar SysMLActions
     ("{"
       SysMLElement*
      "}" | ";")? ;
-  symbol scope ForkAction extends ActionUsage = Modifier "fork" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")? DefaultValue ";"
+  symbol scope ForkAction extends ActionUsage = Modifier "fork" (Name Specialization*)? DefaultValue ";"
    ("then" tgt:ActionUsage ";")*;
 
-  symbol scope DecideAction extends ActionUsage = Modifier "decide" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")? DefaultValue ";"
+  symbol scope DecideAction extends ActionUsage = Modifier "decide" (Name Specialization*)? DefaultValue ";"
    ("if" guard:Expression "then" tgt:ActionUsage ";")*;
 
-   symbol scope JoinAction extends ActionUsage = Modifier "join"  (Name Specialization*)?  ("(" (SysMLParameter || ",")* ")")? DefaultValue ";";
+   symbol scope JoinAction extends ActionUsage = Modifier "join"  (Name Specialization*)? DefaultValue ";";
 
-   symbol scope MergeAction extends ActionUsage = Modifier "merge"  (Name Specialization*)?  ("(" (SysMLParameter || ",")* ")")? DefaultValue ";";
+   symbol scope MergeAction extends ActionUsage = Modifier "merge"  (Name Specialization*)? DefaultValue ";";
 
    symbol scope LoopAction extends ActionUsage = ("loop" | "while" while:Expression) "action"
      (Name Specialization*)?  ("(" (SysMLParameter || ",")* ")")?
