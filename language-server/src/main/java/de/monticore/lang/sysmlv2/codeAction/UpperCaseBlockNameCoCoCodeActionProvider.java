@@ -14,6 +14,13 @@ import org.eclipse.lsp4j.*;
 import java.util.*;
 import java.util.function.Consumer;
 
+/**
+ * Beispiel für einen CodeActionProvider: Diagnostics mit Code 0xSML01 (lower case PartDef-Name) werden anhand der
+ * "providesActionFor"-Methode erkannt. Die "createFixesFor" traversiert das Dokument und fügt den Fix als
+ * Transformation überall hinzu. Der Nutzer kann dans "Capitalize first letter..." klicken und die Trafo wird ausgeführt
+ *
+ * Diese CodeAction wird im SysML4VerificationCodeActionProvider registriert
+ */
 public class UpperCaseBlockNameCoCoCodeActionProvider extends CoCoCodeActionProvider {
   private DocumentManager documentManager;
 
