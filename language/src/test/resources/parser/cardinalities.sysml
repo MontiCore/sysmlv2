@@ -1,5 +1,5 @@
 port def Fluid {
-  attribute flow: Integer[*];
+  attribute fluidFlow: Integer[*];
 }
 
 part tank {

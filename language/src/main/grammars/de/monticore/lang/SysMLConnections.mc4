@@ -1,0 +1,22 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+component grammar SysMLConnections
+    extends de.monticore.lang.SysMLBasis {
+
+  Flow implements SysMLElement =
+    "flow" ("of" flowtype:MCQualifiedName)? "from"? source:MCQualifiedName "to" target:MCQualifiedName ";" ;
+
+
+
+  Bind implements SysMLElement =
+    "bind" source:MCQualifiedName "=" target:MCQualifiedName ";" ;
+    // explizites bind durch keyword
+
+  Message implements SysMLElement =
+    "message" ("of" flowtype:MCQualifiedName)? "from"? source:MCQualifiedName "to" target:MCQualifiedName ";" ;
+
+
+
+
+}

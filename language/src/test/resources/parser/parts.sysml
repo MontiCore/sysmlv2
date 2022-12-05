@@ -22,7 +22,7 @@ attribute def Status {
 }
 
 port def Fluid {
-  attribute flow: Integer;
+  attribute fluidFlow: Integer;
 }
 
 part tank {
@@ -30,5 +30,5 @@ part tank {
   port fluidOut: ~Fluid;
 
   connect fluidIn to fluidOut;
-  connect fluidIn.flow to fluidOut.flow;
+  connect fluidIn.fluidFlow to fluidOut.fluidFlow;
 }
