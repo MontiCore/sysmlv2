@@ -9,7 +9,7 @@ component grammar SysMLBasis
             de.monticore.types.MCBasicTypes,            // MCQualifiedName, MCType
             de.monticore.symbols.OOSymbols,             // OOTypes
             de.monticore.Cardinality,                   // Cardinality
-            de.monticore.lang.SysMLModifier              // Modifier
+            de.monticore.UMLModifier              // Modifier
 {
 
   /*
