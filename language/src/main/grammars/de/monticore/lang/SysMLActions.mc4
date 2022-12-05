@@ -15,8 +15,7 @@ component grammar SysMLActions
     ("{"
       SysMLElement*
      "}" | ";")? ;
-  symbol scope ForkAction extends ActionUsage = Modifier "fork" (Name Specialization*)? DefaultValue ";"
-   ("then" tgt:ActionUsage ";")*;
+  symbol scope ForkAction extends ActionUsage = Modifier "fork" (Name Specialization*)? DefaultValue ";";
 
   symbol scope DecideAction extends ActionUsage = Modifier "decide" (Name Specialization*)? DefaultValue ";"
    ("if" guard:Expression "then" tgt:ActionUsage ";")*;
