@@ -12,7 +12,8 @@ package ConditionalSuccessionExample1 {
 	action takePicture : TakePicture {
 		in item scene;
 		out item picture;
-
+    first start;
+    then focus;
 		action focus : Focus {
 			in item scene;
 			out item image;
@@ -27,6 +28,7 @@ package ConditionalSuccessionExample1 {
 			in item;
 			out item picture;
 		}
+		then done;
 	}
 
 }

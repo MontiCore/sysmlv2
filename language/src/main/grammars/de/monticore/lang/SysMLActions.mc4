@@ -52,4 +52,7 @@ component grammar SysMLActions
     ("if" guard:Expression)?
         "then" tgt:Name@ActionUsage ";" ;
 
+  SysMLFirst implements SysMLElement =
+    "first" src:Name ";" ;
+
 }
