@@ -5,16 +5,30 @@ component grammar SysMLActions
     extends de.monticore.lang.SysMLBasis {
 
   symbol scope ActionDef implements SysMLType =
-    "action" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    Modifier "action" "def" Name Specialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
 
   symbol scope ActionUsage implements SysMLElement =
-    "action" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")?
+    Modifier "action" (Name Specialization*)? DefaultValue
     ("{"
       SysMLElement*
      "}" | ";")? ;
+  symbol scope ForkAction extends ActionUsage = Modifier "fork" (Name Specialization*)? DefaultValue ";";
+
+  symbol scope DecideAction extends ActionUsage = Modifier "decide" (Name Specialization*)? DefaultValue ";"
+   ("if" guard:Expression "then" tgt:ActionUsage ";")*;
+
+   symbol scope JoinAction extends ActionUsage = Modifier "join"  (Name Specialization*)? DefaultValue ";";
+
+   symbol scope MergeAction extends ActionUsage = Modifier "merge"  (Name Specialization*)? DefaultValue ";";
+
+   symbol scope LoopAction extends ActionUsage = ("loop" | "while" while:Expression) "action"
+     (Name Specialization*)?  ("(" (SysMLParameter || ",")* ")")?
+       "{"
+         SysMLElement*
+        "}" "until" until:Expression ";";
 
   SendActionUsage implements SysMLElement =
     "send" payload:Expression key("to") target:MCQualifiedName ";" ;
@@ -28,5 +42,16 @@ component grammar SysMLActions
 
   AcceptActionUsage extends InlineAcceptActionUsage implements SysMLElement =
     "accept" (payloadHandle:Name ":")? payloadType:MCType ("via" receiver:MCQualifiedName)? ";" ;
+
+  PerformAction implements SysMLElement = "perform" action:Name@ActionUsage ";" ;
+
+  SysMLSuccession implements SysMLElement =
+    ("first" src:Name@ActionUsage)?
+    (InlineAcceptActionUsage)?
+    ("if" guard:Expression)?
+        "then" tgt:Name@ActionUsage ";" ;
+
+  SysMLFirst implements SysMLElement =
+    "first" src:Name ";" ;
 
 }

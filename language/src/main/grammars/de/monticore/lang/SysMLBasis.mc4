@@ -8,7 +8,8 @@ component grammar SysMLBasis
             de.monticore.expressions.ExpressionsBasis,  // Expression
             de.monticore.types.MCBasicTypes,            // MCQualifiedName, MCType
             de.monticore.symbols.OOSymbols,             // OOTypes
-            de.monticore.Cardinality                    // Cardinality
+            de.monticore.Cardinality,                   // Cardinality
+            de.monticore.UMLModifier              // Modifier
 {
 
   /*
@@ -68,8 +69,9 @@ component grammar SysMLBasis
    * TODO "stream" überall ausser AdvRequirements verbieten? Gibts eine bessere Lösung?
    */
   SysMLParameter implements Field =
-    ["stream"]? SysMLFeatureDirection? Name Specialization* ("=" binding:Expression)?;
+    ["stream"]? SysMLFeatureDirection? Name Specialization* ("=" binding:Expression)? DefaultValue;
 
+  DefaultValue = ("default" default:Expression)?;
   /*
    * ##################################################################
    * SysML-Spezifischen Syntax-Erweiterungen
