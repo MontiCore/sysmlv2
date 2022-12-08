@@ -25,7 +25,7 @@ component grammar SysMLActions
    symbol scope MergeAction extends ActionUsage = Modifier "merge"  (Name Specialization*)? DefaultValue ";";
 
    symbol scope LoopAction extends ActionUsage = ("loop" | "while" while:Expression) "action"
-     (Name Specialization*)?  ("(" (SysMLParameter || ",")* ")")?
+     (Name Specialization*)?
        "{"
          SysMLElement*
         "}" "until" until:Expression ";";
