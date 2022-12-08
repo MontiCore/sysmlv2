@@ -88,7 +88,7 @@ component grammar SysMLParts extends SysMLBasis {
       types:de.monticore.types.check.SymTypeExpression* ;
 
   symbol AttributeUsage implements SysMLElement =
-      SysMLFeatureDirection? "attribute" Name Specialization* ("=" Expression)? ";"  ;
+      SysMLFeatureDirection? ("attribute")? Name Specialization* ("=" Expression)? ";"  ;
 
   symbolrule AttributeUsage =
       types:de.monticore.types.check.SymTypeExpression*
