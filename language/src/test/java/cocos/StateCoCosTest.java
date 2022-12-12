@@ -1,10 +1,12 @@
 package cocos;
 
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateDefCoCo;
+import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateUsageCoCo;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
+import de.monticore.lang.sysmlv2.cocos.StateGeneratorCoCo;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
@@ -46,6 +48,8 @@ public class StateCoCosTest {
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
       checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
+      checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
+      checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateGeneratorCoCo());
       checker.checkAll(ast);
       assertTrue(Log.getFindings().isEmpty());
     }
