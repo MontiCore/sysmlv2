@@ -52,6 +52,6 @@ component grammar SysMLActions
         "then" tgt:Name@ActionUsage ";" ;
 
   SysMLFirst implements SysMLElement =
-    "first" src:Name ";" ;
+    "first" name:Name ";" ;
 
 }

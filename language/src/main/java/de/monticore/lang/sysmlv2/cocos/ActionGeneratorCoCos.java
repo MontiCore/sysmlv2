@@ -35,6 +35,9 @@ public class ActionGeneratorCoCos implements SysMLActionsASTActionDefCoCo, SysML
       for (ASTSysMLElement x : node.getSysMLElementList()) {
         if(x instanceof ASTSysMLFirst) {
           firstCount++;
+          if (!((ASTSysMLFirst) x).getName().equals("start")) {
+            Log.error("Action first usage has to use the name \" start\".");
+          }
         }
       }
       if(firstCount != 1) {

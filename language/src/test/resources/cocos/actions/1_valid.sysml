@@ -9,8 +9,8 @@ package ForkJoinExample {
 	action def Braking { in attribute brakePressure : BrakePressure; in attribute modulationFrequency : Real; }
 
 	action def Brake {
-	  first startBrake;
-		action TurnOn {first firstTurnOn; then done;}
+	  first start;
+		action TurnOn {first start; then done;}
 		then forkNode;
 		fork forkNode;
 			then monitorBrakePedal;

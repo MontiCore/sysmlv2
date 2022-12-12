@@ -18,6 +18,9 @@ public class ActionNameCoCos implements SysMLActionsASTActionDefCoCo, SysMLActio
     if (node.getName().equals("done")) {
       Log.error("Action definition can not have the name \" done\".");
     }
+    if (node.getName().equals("start")) {
+      Log.error("Action definition can not have the name \" first\".");
+    }
   }
 
   /**
@@ -27,6 +30,9 @@ public class ActionNameCoCos implements SysMLActionsASTActionDefCoCo, SysMLActio
   public void check(ASTActionUsage node) {
     if (node.getName().equals("done")) {
       Log.error("Action definition can not have the name \" done\".");
+    }
+    if (node.getName().equals("start")) {
+      Log.error("Action definition can not have the name \" first\".");
     }
   }
 }
