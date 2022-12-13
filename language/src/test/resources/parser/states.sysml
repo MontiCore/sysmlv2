@@ -19,31 +19,31 @@ exhibit state Behavior {
   entry;
   then S;
 }
-		state operationalStates {
-			entry;
-			do action {send a to b;}
+    state operationalStates {
+      entry;
+      do action {send a to b;}
       exit actionXY;
       then off;
-			}
+      }
 
-	state vehicleStates : VehicleStates parallel {
+  state vehicleStates : VehicleStates parallel {
 
-		state operationalStates {
-			entry; then off;
+    state operationalStates {
+      entry; then off;
 
-			state off;
-			accept VehicleStartSignal
-				then starting;
+      state off;
+      accept VehicleStartSignal
+        then starting;
 
-			state starting;
-			accept VehicleOnSignal
-				then on;
+      state starting;
+      accept VehicleOnSignal
+        then on;
 
-			state on;
-			accept VehicleOffSignal
-				then off;
-		}
+      state on;
+      accept VehicleOffSignal
+        then off;
+    }
 
-		state healthStates;
-	}
+    state healthStates;
+  }
 

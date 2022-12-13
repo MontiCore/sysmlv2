@@ -1,34 +1,34 @@
 package StateActions {
 
-	attribute def VehicleStartSignal;
-	attribute def VehicleOnSignal;
-	attribute def VehicleOffSignal;
+  attribute def VehicleStartSignal;
+  attribute def VehicleOnSignal;
+  attribute def VehicleOffSignal;
 
-	part def Vehicle;
+  part def Vehicle;
 
-	action performSelfTest {  }
+  action performSelfTest {  }
 
-	state def VehicleStates {  }
+  state def VehicleStates {  }
 
-	state vehicleStates : VehicleStates {
+  state vehicleStates : VehicleStates {
 
-		entry; then off;
+    entry; then off;
 
-		state off;
-		accept VehicleStartSignal
-			then starting;
+    state off;
+    accept VehicleStartSignal
+      then starting;
 
-		state starting;
-		accept VehicleOnSignal
-			then on;
+    state starting;
+    accept VehicleOnSignal
+      then on;
 
-		state on {
-			entry performSelfTe;
-			do action providePower { /* ... */ }
-			exit action applyParkingBrake { /* ... */ }
-		}
-		accept VehicleOffSignal
-			then off;
-	}
+    state on {
+      entry performSelfTe;
+      do action providePower { /* ... */ }
+      exit action applyParkingBrake { /* ... */ }
+    }
+    accept VehicleOffSignal
+      then off;
+  }
 
 }
