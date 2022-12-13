@@ -17,6 +17,7 @@ import de.monticore.lang.sysmlv2._symboltable.SysMLv2SymboltableCompleter;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
+import de.monticore.lang.sysmlv2.cocos.OneCardinality;
 import de.monticore.lang.sysmlv2.cocos.SpecializationExists;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 
@@ -58,6 +59,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
   {
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo(new WarnNonExhibited());
+    checker.addCoCo(new OneCardinality());
     checker.checkAll(ast);
   }
 
