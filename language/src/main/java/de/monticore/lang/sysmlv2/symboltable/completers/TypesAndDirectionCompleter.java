@@ -38,22 +38,22 @@ public class TypesAndDirectionCompleter implements SysMLBasisVisitor2, SysMLPart
       if(specialization instanceof ASTSysMLTyping && ((ASTSysMLTyping) specialization).isConjugated() == conjugated) {
         var astTyping = (ASTSysMLTyping) specialization;
 
-        for(var mcQualifiedName: astTyping.getSuperTypesList()) {
-          if(mcQualifiedName.getDefiningSymbol().isEmpty()) {
-            Log.error("Defining symbol for " + mcQualifiedName.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())) + " was not set.");
+        for(var mcType: astTyping.getSuperTypesList()) {
+          if(mcType.getDefiningSymbol().isEmpty()) {
+            Log.error("Defining symbol for " + mcType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())) + " was not set.");
           }
-          else if(!(mcQualifiedName.getDefiningSymbol().get() instanceof TypeSymbol)) {
-            Log.error("Defining symbol for " + mcQualifiedName.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())) + " is not a TypeSymbol");
+          else if(!(mcType.getDefiningSymbol().get() instanceof TypeSymbol)) {
+            Log.error("Defining symbol for " + mcType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())) + " is not a TypeSymbol");
           }
 
-          if(mcQualifiedName instanceof ASTMCGenericType) {
+          if(mcType instanceof ASTMCGenericType) {
             // We still have to print when the type is generic because the defining symbol does not give info about the instantiation with type arguments
             typeExpressions.add(SymTypeExpressionFactory.createTypeExpression(
-                mcQualifiedName.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())),
-                (IBasicSymbolsScope) mcQualifiedName.getEnclosingScope()));
+                mcType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())),
+                (IBasicSymbolsScope) mcType.getEnclosingScope()));
           }
           else {
-            typeExpressions.add(SymTypeExpressionFactory.createTypeExpression((TypeSymbol) mcQualifiedName.getDefiningSymbol().get()));
+            typeExpressions.add(SymTypeExpressionFactory.createTypeExpression((TypeSymbol) mcType.getDefiningSymbol().get()));
           }
         }
       }

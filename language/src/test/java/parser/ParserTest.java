@@ -42,6 +42,7 @@ public class ParserTest {
       "ports.sysml",
       "parts.sysml",
       "states.sysml",
+      "parallel_states.sysml",
       "actions.sysml",
       "items.sysml",
       "assert.sysml",
