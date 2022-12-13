@@ -1,5 +1,5 @@
 port def IntPort {
-  attribute flow: Integer;
+  attribute flow: int;
 }
 
 part tank {

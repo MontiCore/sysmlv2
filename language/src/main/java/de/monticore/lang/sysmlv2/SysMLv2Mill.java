@@ -3,6 +3,7 @@ package de.monticore.lang.sysmlv2;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.BasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
@@ -12,7 +13,53 @@ import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.SymTypeVariable;
 
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 public class SysMLv2Mill extends SysMLv2MillTOP {
+
+  /**
+   * Wraps the {@link BasicSymbolsMill#initializePrimitives()} and adds the "nat" primitive.
+   */
+  public static void initializePrimitives() {
+    var primitives = BasicSymbolsMill.PRIMITIVE_LIST;
+    var boxMap = SymTypePrimitive.boxMap;
+    var unboxMap = SymTypePrimitive.unboxMap;
+
+    if(!primitives.contains("nat")) {
+      primitives.add("nat");
+    }
+
+    if(!boxMap.containsKey("nat")) {
+      boxMap.put("nat", "Natural");
+    }
+
+    if(!unboxMap.containsKey("Natural")) {
+      unboxMap.put("Natural", "nat");
+    }
+
+    BasicSymbolsMill.initializePrimitives();
+  }
+
+  public static void addStringType() {
+    getMill()._addStringType();
+  }
+
+  protected void _addStringType() {
+    // ensures adding the type symbol only once
+    if(SysMLv2Mill.globalScope().resolveType("String").isPresent()) {
+      return;
+    }
+
+    var type =  OOSymbolsMill.oOTypeSymbolBuilder()
+        .setName("String")
+        .setSpannedScope(new OOSymbolsScope())
+        .build();
+
+    SysMLv2Mill.globalScope().add(type);
+  }
+
 
   /**
    * @see SysMLv2Mill#addStreamType()
@@ -48,6 +95,44 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
 
     return OOSymbolsMill.oOTypeSymbolBuilder()
         .setName("Stream")
+        .setSpannedScope(spannedScope)
+        .build();
+  }
+
+  public static void addCollectionTypes() {
+    getMill()._addCollectionTypes();
+  }
+
+  protected void _addCollectionTypes() {
+    // ensures adding the type symbol only once
+    if(SysMLv2Mill.globalScope().resolveType("List").isEmpty()) {
+      // TODO add collection function such as size
+      SysMLv2Mill.globalScope().add(buildCollectionType("List", "A"));
+    }
+
+    if(SysMLv2Mill.globalScope().resolveType("Optional").isEmpty()) {
+      SysMLv2Mill.globalScope().add(buildCollectionType("Optional", "A"));
+    }
+
+    if(SysMLv2Mill.globalScope().resolveType("Set").isEmpty()) {
+      SysMLv2Mill.globalScope().add(buildCollectionType("Set", "A"));
+    }
+
+    if(SysMLv2Mill.globalScope().resolveType("Map").isEmpty()) {
+      SysMLv2Mill.globalScope().add(buildCollectionType("Map", "A", "B"));
+    }
+  }
+
+  protected OOTypeSymbol buildCollectionType(String name, String ... typeVars) {
+    var spannedScope = new OOSymbolsScope();
+
+    Arrays
+        .stream(typeVars)
+        .map(typeVarName -> BasicSymbolsMill.typeVarSymbolBuilder().setName(typeVarName).build())
+        .forEach(spannedScope::add);
+
+    return OOSymbolsMill.oOTypeSymbolBuilder()
+        .setName(name)
         .setSpannedScope(spannedScope)
         .build();
   }

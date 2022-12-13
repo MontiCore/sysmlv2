@@ -12,8 +12,12 @@ import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateUsageCoCo;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
+import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
-import de.monticore.lang.sysmlv2._symboltable.SysMLv2SymboltableCompleter;
+import de.monticore.lang.sysmlv2.symboltable.completers.ScopeNamingCompleter;
+import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
+import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
+import de.monticore.lang.sysmlv2.symboltable.completers.TypesAndDirectionCompleter;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
@@ -26,6 +30,10 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
   public void init() {
     super.init();
     SysMLv2Mill.globalScope().clear();
+    SysMLv2Mill.initializePrimitives();
+    SysMLv2Mill.addStringType();
+    SysMLv2Mill.addStreamType();
+    SysMLv2Mill.addCollectionTypes();
   }
 
   /**
@@ -73,14 +81,20 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     return SysMLv2Mill.inheritanceTraverser();
   }
 
+  public ISysMLv2ArtifactScope loadSymbols(String symbolPath) {
+    SysMLv2Symbols2Json symbols2Json = new de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json();
+    var artifactScope = symbols2Json.load(symbolPath);
+
+    getGlobalScope().addSubScope(artifactScope);
+
+    return artifactScope;
+  }
+
   @Override
   public void completeSymbolTable(ASTSysMLModel node) {
-    SysMLv2Traverser traverser = SysMLv2Mill.inheritanceTraverser();
+    SysMLv2Traverser traverser = SysMLv2Mill.traverser();
 
-    SysMLv2SymboltableCompleter completer = new SysMLv2SymboltableCompleter();
-    traverser.add4SysMLBasis(completer);
-    traverser.add4SysMLParts(completer);
-    traverser.add4SysMLv2(completer);
+    traverser.add4SysMLv2(new ScopeNamingCompleter());
 
     // Aus mir unerklärlichen Gründen ist die Traversierung so implementiert, dass nur das SpannedScope des jeweiligen
     // AST-Knoten visitiert wird. Wenn wir hier also das ASTSysMLModel reinstecken (was kein Scope spannt (wieso eigtl.
@@ -94,6 +108,31 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     // Und dann wird nicht das Scope traversiert um die darin gefindlichen Symbole und daranhängende AST-Knoten zu
     // besuchen, sondern es wird nichts getan. Der Default-Traverser geht nämlich davon aus, dass man sich am AST
     // entlang hangelt.
+    node.accept(traverser);
+
+    // Phase 2: Requires that all scopes have a name (done in phase 1).
+    // reset traverser
+    traverser = SysMLv2Mill.inheritanceTraverser();
+
+    traverser.add4SysMLBasis(new SpecializationCompleter());
+
+    if(node.getEnclosingScope() != null) {
+      node.getEnclosingScope().accept(traverser);
+    }
+
+    node.accept(traverser);
+
+    // Phase 3: Sets types for usages. Bases on types of specializations completed in phase 1.
+    traverser = SysMLv2Mill.traverser();
+
+    TypesAndDirectionCompleter completer = new TypesAndDirectionCompleter();
+    traverser.add4SysMLBasis(completer);
+    traverser.add4SysMLParts(completer);
+
+    if(node.getEnclosingScope() != null) {
+      node.getEnclosingScope().accept(traverser);
+    }
+
     node.accept(traverser);
   }
 }

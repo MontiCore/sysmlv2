@@ -1,8 +1,8 @@
-package refinement {
-  // B comes from the same package, in the future we should allow B to be imported
-  part def A refines refinement.B {
-    port input: BooleanInput;
-    port output: BooleanOutput;
+package RoughPartDefReference {
+  // B comes qualified, in the future we should allow B to be imported
+  part def A refines RoughPartDef.B {
+    port input: RoughPartDef.BooleanInput;
+    port output: RoughPartDef.BooleanOutput;
 
     assert constraint SomeName1 {
       input == output

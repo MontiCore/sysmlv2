@@ -1,8 +1,8 @@
-attribute someAttribute: Boolean;
+attribute someAttribute: boolean;
 
 part def LogicBasedConstraints {
   // tests resolving of shadowed attributes
-  attribute def someAttribute: Integer;
+  attribute def someAttribute: int;
 
   constraint streams {
     someAttribute == true

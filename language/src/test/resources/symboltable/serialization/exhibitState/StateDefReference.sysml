@@ -1,16 +1,16 @@
-package automata {
+package StateDefReference {
   port def BooleanInput {
-    in attribute val: Boolean;
+    in attribute val: boolean;
   }
 
   port def BooleanOutput {
-    out attribute val: Boolean;
+    out attribute val: boolean;
   }
 
   part def Inverter {
     port i: BooleanInput;
     port o: BooleanOutput;
 
-    exhibit state behavior: automata.AutomatonInverter(i = i::val, o = o::val);
+    exhibit state behavior: StateDef.AutomatonInverter(i = i::val, o = o::val);
   }
 }

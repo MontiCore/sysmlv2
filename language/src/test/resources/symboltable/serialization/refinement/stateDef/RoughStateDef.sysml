@@ -1,11 +1,11 @@
-package avionic {
+package RoughStateDef {
 
   port def Input {
-    in attribute val: Boolean;
+    in attribute val: boolean;
   }
 
   port def Output {
-    out attribute val: Boolean;
+    out attribute val: boolean;
   }
 
   /**

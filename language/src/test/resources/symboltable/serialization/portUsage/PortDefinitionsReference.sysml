@@ -1,7 +1,7 @@
-package specification {
+package PortDefinitionsReference {
   part def Inverter {
-    port i : specification.BooleanInput;
-    port o : specification.BooleanOutput;
+    port i : PortDefinitions.BooleanInput;
+    port o : PortDefinitions.BooleanOutput;
 
     assert constraint NamedConstraint {
       o == !i

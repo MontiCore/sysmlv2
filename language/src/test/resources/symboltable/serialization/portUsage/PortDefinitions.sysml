@@ -1,9 +1,9 @@
-package specification {
+package PortDefinitions {
   port def BooleanInput {
-    in attribute val : Boolean;
+    in attribute val : boolean;
   }
 
   port def BooleanOutput {
-    out attribute val : Boolean;
+    out attribute val : boolean;
   }
 }
