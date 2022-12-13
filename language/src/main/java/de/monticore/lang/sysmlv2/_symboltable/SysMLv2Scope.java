@@ -1,26 +1,28 @@
 package de.monticore.lang.sysmlv2._symboltable;
 
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
-import de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol;
+import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeDef2TypeSymbolAdapter;
+import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
+import de.monticore.lang.sysmlparts.symboltable.adapters.EnumDef2TypeSymbolAdapter;
+import de.monticore.lang.sysmlparts.symboltable.adapters.PartDef2TypeSymbolAdapter;
+import de.monticore.lang.sysmlparts.symboltable.adapters.PortDef2TypeSymbolAdapter;
+import de.monticore.lang.sysmlparts.symboltable.adapters.PortUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
+import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlrequirements._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
-import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolBuilder;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.IScopeSpanningSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
-import de.monticore.types.check.SymTypeOfObject;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 @SuppressWarnings("OptionalIsPresent") public class SysMLv2Scope extends SysMLv2ScopeTOP {
@@ -62,14 +64,8 @@ import java.util.function.Predicate;
         var resolved = types.get(0).getTypeInfo();
 
         // we omit to set the ASTNode
-        var variable = BasicSymbolsMill.variableSymbolBuilder()
-            .setName(portUsage.getName())
-            .setEnclosingScope(portUsage.getEnclosingScope())
-            .setFullName(portUsage.getFullName())
-            .setPackageName(portUsage.getPackageName())
-            .setAccessModifier(portUsage.getAccessModifier())
-            .setType(new SymTypeOfObject(resolved))
-            .build();
+        var variable = new PortUsage2VariableSymbolAdapter(portUsage);
+        variable.setType(SymTypeExpressionFactory.createTypeObject(resolved));
 
         adapted.add(variable);
       }
@@ -92,14 +88,8 @@ import java.util.function.Predicate;
         var streamOfAttrType = SymTypeExpressionFactory.createGenerics(streamType.get(), attributeType);
 
         // we omit to set the ASTNode
-        var variable = BasicSymbolsMill.variableSymbolBuilder()
-            .setName(attrUsage.getName())
-            .setEnclosingScope(attrUsage.getEnclosingScope())
-            .setFullName(attrUsage.getFullName())
-            .setPackageName(attrUsage.getPackageName())
-            .setAccessModifier(attrUsage.getAccessModifier())
-            .setType(streamOfAttrType)
-            .build();
+        var variable = new AttributeUsage2VariableSymbolAdapter(attrUsage);
+        variable.setType(streamOfAttrType);
 
         adapted.add(variable);
       }
@@ -146,49 +136,35 @@ import java.util.function.Predicate;
 
     // Adaptiert PortDefs zu Types, dh. wenn wir für "port myPort: MyPortDef;" nach "MyPortDef" suchen, dann können wir
     // das mit "scope.resolveType('MyPortDef')" tun!
-    var portDef = resolvePortDef(name);
+    var portDef = resolvePortDefLocally(name);
     if(portDef.isPresent()) {
-      // baue neues TypeSymbol
-      adapted.add(
-          typeSymbolBuilder(portDef.get(), portDef.get().getSpannedScope())
-              .build()
-      );
+      adapted.add(new PortDef2TypeSymbolAdapter(portDef.get()));
     }
 
     // PartDefs zu Types
-    var partDef = resolvePartDef(name);
+    var partDef = resolvePartDefLocally(name);
     if(partDef.isPresent()) {
-      // baue neues TypeSymbol
-      adapted.add(
-          typeSymbolBuilder(partDef.get(), partDef.get().getSpannedScope())
-              .build()
-      );
+      adapted.add(new PartDef2TypeSymbolAdapter(partDef.get()));
     }
 
     // StateDef zu Types
-    var stateDef = resolveStateDef(name);
+    var stateDef = resolveStateDefLocally(name);
     if(stateDef.isPresent()) {
-      // baue neues TypeSymbol
-      adapted.add(
-          typeSymbolBuilder(stateDef.get(), stateDef.get().getSpannedScope())
-              .build()
-      );
+      adapted.add(new StateDef2TypeSymbolAdapter(stateDef.get()));
+    }
+
+    // AttributeDef zu Types
+    var attributeDef = resolveAttributeDefLocally(name);
+    if(attributeDef.isPresent()) {
+      adapted.add(new AttributeDef2TypeSymbolAdapter(attributeDef.get()));
+    }
+
+    // EnumDef zu Types
+    var enumDef = resolveEnumDefLocally(name);
+    if(enumDef.isPresent()) {
+      adapted.add(new EnumDef2TypeSymbolAdapter(enumDef.get()));
     }
 
     return adapted;
   }
-
-  private TypeSymbolBuilder typeSymbolBuilder(SysMLTypeSymbol symbol, IBasicSymbolsScope spannedScope) {
-    // verhindert NullPointers im Typechecker
-    Objects.requireNonNull(spannedScope);
-
-    return BasicSymbolsMill.typeSymbolBuilder()
-        .setName(symbol.getName())
-        .setPackageName(symbol.getPackageName())
-        .setFullName(symbol.getFullName())
-        .setAccessModifier(symbol.getAccessModifier())
-        .setEnclosingScope(symbol.getEnclosingScope())
-        .setSpannedScope(spannedScope);
-  }
-
 }

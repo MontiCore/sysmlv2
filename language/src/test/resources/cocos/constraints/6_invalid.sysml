@@ -1,9 +1,9 @@
 port def Integers {
-  out attribute data: Integer;
+  out attribute data: int;
 }
 
 part def LogicBasedConstraints {
-  port input: Integer;
+  port input: int;
 
   constraint streams {
     input::data == true

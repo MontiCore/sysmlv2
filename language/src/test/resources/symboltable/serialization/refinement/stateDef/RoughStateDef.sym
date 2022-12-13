@@ -1,10 +1,10 @@
 {
   "generated-using": "www.MontiCore.de technology",
-  "name": "avionic",
+  "name": "RoughStateDef",
   "symbols": [
     {
       "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
-      "name": "avionic",
+      "name": "RoughStateDef",
       "spannedScope": {
         "symbols": [
           {
@@ -19,7 +19,7 @@
                   "types": [
                     {
                       "kind": "de.monticore.types.check.SymTypeOfObject",
-                      "objName": "Input"
+                      "objName": "RoughStateDef.Input"
                     }
                   ]
                 },
@@ -29,7 +29,7 @@
                   "types": [
                     {
                       "kind": "de.monticore.types.check.SymTypeOfObject",
-                      "objName": "Output"
+                      "objName": "RoughStateDef.Output"
                     }
                   ]
                 },
@@ -68,8 +68,8 @@
                   "name": "val",
                   "types": [
                     {
-                      "kind": "de.monticore.types.check.SymTypeOfObject",
-                      "objName": "Boolean"
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
                     }
                   ],
                   "direction": "IN"
@@ -88,8 +88,8 @@
                   "name": "val",
                   "types": [
                     {
-                      "kind": "de.monticore.types.check.SymTypeOfObject",
-                      "objName": "Boolean"
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
                     }
                   ],
                   "direction": "OUT"

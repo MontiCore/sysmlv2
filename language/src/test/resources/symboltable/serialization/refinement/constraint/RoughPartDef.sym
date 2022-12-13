@@ -1,10 +1,10 @@
 {
   "generated-using": "www.MontiCore.de technology",
-  "name": "refinement",
+  "name": "RoughPartDef",
   "symbols": [
     {
       "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
-      "name": "refinement",
+      "name": "RoughPartDef",
       "spannedScope": {
         "symbols": [
           {
@@ -19,7 +19,7 @@
                   "types": [
                     {
                       "kind": "de.monticore.types.check.SymTypeOfObject",
-                      "objName": "BooleanInput"
+                      "objName": "RoughPartDef.BooleanInput"
                     }
                   ]
                 },
@@ -29,7 +29,7 @@
                   "types": [
                     {
                       "kind": "de.monticore.types.check.SymTypeOfObject",
-                      "objName": "BooleanOutput"
+                      "objName": "RoughPartDef.BooleanOutput"
                     }
                   ]
                 },
@@ -51,8 +51,8 @@
                   "name": "val",
                   "types": [
                     {
-                      "kind": "de.monticore.types.check.SymTypeOfObject",
-                      "objName": "Boolean"
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
                     }
                   ],
                   "direction": "IN"
@@ -71,8 +71,8 @@
                   "name": "val",
                   "types": [
                     {
-                      "kind": "de.monticore.types.check.SymTypeOfObject",
-                      "objName": "Boolean"
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
                     }
                   ],
                   "direction": "OUT"

@@ -1,9 +1,9 @@
 port def Integers {
-  out attribute channel: Integer;
+  out attribute channel: int;
 }
 
 port def Booleans {
-  out attribute channel: Boolean;
+  out attribute channel: boolean;
 }
 
 part def LogicBasedConstraints {
