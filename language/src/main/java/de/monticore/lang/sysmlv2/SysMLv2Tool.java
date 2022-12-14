@@ -52,7 +52,8 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
-    checker.addCoCo(new ConstraintIsBoolean());
+    // TODO Not ready for prime time
+    //  checker.addCoCo(new ConstraintIsBoolean());
     checker.addCoCo(new SpecializationExists());
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTPartDefCoCo) new NameCompatible4Isabelle());
@@ -75,7 +76,8 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo(new WarnNonExhibited());
     checker.addCoCo(new OneCardinality());
     checker.addCoCo(new NoExitActions());
-    checker.addCoCo(new NoDoActions());
+    checker.addCoCo((SysMLStatesASTStateDefCoCo) new NoDoActions());
+    checker.addCoCo((SysMLStatesASTStateUsageCoCo) new NoDoActions());
     checker.addCoCo(new PortDefHasOneType());
     checker.addCoCo(new PortDefNeedsDirection());
     checker.checkAll(ast);
