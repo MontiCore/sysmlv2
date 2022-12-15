@@ -1,5 +1,5 @@
 constraint def LogicBasedConstraints(
-  p : Integer
+  p : int
 ) {
   p == true
 }

@@ -1,0 +1,54 @@
+{
+  "generated-using": "www.MontiCore.de technology",
+  "name": "PortDefinitions",
+  "symbols": [
+    {
+      "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
+      "name": "PortDefinitions",
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
+            "name": "BooleanInput",
+            "spannedScope": {
+              "isShadowingScope": true,
+              "symbols": [
+                {
+                  "kind": "de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol",
+                  "name": "val",
+                  "types": [
+                    {
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
+                    }
+                  ],
+                  "direction": "IN"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
+            "name": "BooleanOutput",
+            "spannedScope": {
+              "isShadowingScope": true,
+              "symbols": [
+                {
+                  "kind": "de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol",
+                  "name": "val",
+                  "types": [
+                    {
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
+                    }
+                  ],
+                  "direction": "OUT"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "generated-using": "www.MontiCore.de technology",
+  "name": "RoughPartDef",
+  "symbols": [
+    {
+      "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
+      "name": "RoughPartDef",
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol",
+            "name": "B",
+            "spannedScope": {
+              "isShadowingScope": true,
+              "symbols": [
+                {
+                  "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
+                  "name": "input",
+                  "types": [
+                    {
+                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                      "objName": "RoughPartDef.BooleanInput"
+                    }
+                  ]
+                },
+                {
+                  "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
+                  "name": "output",
+                  "types": [
+                    {
+                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                      "objName": "RoughPartDef.BooleanOutput"
+                    }
+                  ]
+                },
+                {
+                  "kind": "de.monticore.lang.sysmlconstraints._symboltable.ConstraintUsageSymbol",
+                  "name": "SomeName"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
+            "name": "BooleanInput",
+            "spannedScope": {
+              "isShadowingScope": true,
+              "symbols": [
+                {
+                  "kind": "de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol",
+                  "name": "val",
+                  "types": [
+                    {
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
+                    }
+                  ],
+                  "direction": "IN"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
+            "name": "BooleanOutput",
+            "spannedScope": {
+              "isShadowingScope": true,
+              "symbols": [
+                {
+                  "kind": "de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol",
+                  "name": "val",
+                  "types": [
+                    {
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
+                    }
+                  ],
+                  "direction": "OUT"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

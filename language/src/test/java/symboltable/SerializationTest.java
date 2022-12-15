@@ -1,5 +1,6 @@
 package symboltable;
 
+import de.monticore.io.paths.MCPath;
 import de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortDefSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
@@ -8,7 +9,6 @@ import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2GlobalScope;
-import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
 import de.monticore.symboltable.serialization.JsonPrinter;
 import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.Assertions;
@@ -37,29 +37,29 @@ public class SerializationTest {
             "Port Usages",
             BASE + "/portUsage/PortDefinitions.sysml",
             BASE + "/portUsage/PortDefinitionsReference.sysml",
-            BASE + "/portUsage/PortDefinitionsExpected.sym",
             BASE + "/portUsage/PortDefinitions.sym",
-            "specification.BooleanInput",
+            BASE + "/portUsage/PortDefinitionsActual.sym",
+            "PortDefinitions.BooleanInput",
             "BooleanInput",
-            "specification.Inverter.i"
+            "PortDefinitionsReference.Inverter.i"
         ),
         Arguments.of(
             "State Exhibition",
             BASE + "/exhibitState/StateDef.sysml",
             BASE + "/exhibitState/StateDefReference.sysml",
-            BASE + "/exhibitState/StateDefExpected.sym",
             BASE + "/exhibitState/StateDef.sym",
-            "automata.AutomatonInverter",
+            BASE + "/exhibitState/StateDefActual.sym",
+            "StateDef.AutomatonInverter",
             "AutomatonInverter",
-            "automata.Inverter.i"
+            "StateDefReference.Inverter.i"
         ),
         Arguments.of(
             "Constraint Refinement",
             BASE + "/refinement/constraint/RoughPartDef.sysml",
             BASE + "/refinement/constraint/RoughPartDefReference.sysml",
-            BASE + "/refinement/constraint/RoughPartDefExpected.sym",
             BASE + "/refinement/constraint/RoughPartDef.sym",
-            "refinement.B",
+            BASE + "/refinement/constraint/RoughPartDefActual.sym",
+            "RoughPartDef.B",
             "B",
             "A"
         ),
@@ -67,16 +67,16 @@ public class SerializationTest {
             "StateDef Refinement",
             BASE + "/refinement/stateDef/RoughStateDef.sysml",
             BASE + "/refinement/stateDef/RoughStateDefReference.sysml",
-            BASE + "/refinement/stateDef/RoughStateDefExpected.sym",
             BASE + "/refinement/stateDef/RoughStateDef.sym",
-            "avionic.UnfairMedium",
+            BASE + "/refinement/stateDef/RoughStateDefActual.sym",
+            "RoughStateDef.UnfairMedium",
             "UnfairMedium",
             "PerfectMedium"
         )
     );
   }
 
-  private final static SysMLv2Tool sysmlLang = new SysMLv2Tool();
+  private final static SysMLv2Tool sysmlTool = new SysMLv2Tool();
 
   @BeforeAll
   public static void setPrinter() {
@@ -85,7 +85,7 @@ public class SerializationTest {
 
   @BeforeEach
   public void setUpSymboltable() {
-    sysmlLang.init();
+    sysmlTool.init();
   }
 
   @ParameterizedTest(name = "Serializing {0}")
@@ -94,25 +94,25 @@ public class SerializationTest {
       String name,
       String modelPath,
       String modelReferencePath,
-      String expectedSymboltablePath,
-      String symboltablePath,
+      String symboltablePathExpected,
+      String symboltablePathActual,
       String fqnSymbol,
       String relativeSymbol,
       String usageSymbol) throws IOException
   {
-    ASTSysMLModel ast = sysmlLang.parse(modelPath);
-    ISysMLv2ArtifactScope firstArtifactScope = sysmlLang.createSymbolTable(ast);
-    sysmlLang.completeSymbolTable(ast);
+    ASTSysMLModel ast = sysmlTool.parse(modelPath);
+    ISysMLv2ArtifactScope firstArtifactScope = sysmlTool.createSymbolTable(ast);
+    sysmlTool.completeSymbolTable(ast);
 
     try {
-      sysmlLang.storeSymbols(firstArtifactScope, symboltablePath);
+      sysmlTool.storeSymbols(firstArtifactScope, symboltablePathActual);
 
-      assertTrue(FileUtils.contentEqualsIgnoreEOL(Paths.get(symboltablePath).toFile(), Paths.get(
-          expectedSymboltablePath).toFile(), "UTF-8"));
+      assertTrue(FileUtils.contentEqualsIgnoreEOL(Paths.get(symboltablePathActual).toFile(), Paths.get(
+          symboltablePathExpected).toFile(), "UTF-8"));
     }
     finally {
       //cleanUp
-      Files.deleteIfExists(Paths.get(symboltablePath));
+      Files.deleteIfExists(Paths.get(symboltablePathActual));
     }
   }
 
@@ -122,21 +122,25 @@ public class SerializationTest {
       String name,
       String modelPath,
       String modelReferencePath,
-      String expectedSymboltablePath,
-      String symboltablePath,
+      String symboltablePathExpected,
+      String symboltablePathActual,
       String fqnSymbol,
       String relativeSymbol,
       String usageSymbol)
   {
-    ASTSysMLModel ast = sysmlLang.parse(modelReferencePath);
-    sysmlLang.createSymbolTable(ast);
-    sysmlLang.completeSymbolTable(ast);
+    ASTSysMLModel ast = sysmlTool.parse(modelReferencePath);
+    sysmlTool.createSymbolTable(ast);
 
-    SysMLv2GlobalScope gs = (SysMLv2GlobalScope) sysmlLang.getGlobalScope();
+    var symbolPath = new MCPath();
+    // MCPath entries correspond to the directories that contain symboltables
+    symbolPath.addEntry(Paths.get(symboltablePathExpected).getParent());
+    var gs = sysmlTool.getGlobalScope();
+    gs.setSymbolPath(symbolPath);
 
-    gs.addSubScope(gs.getSymbols2Json().load(expectedSymboltablePath));
+    // Completion requires the capability of loading symbols
+    sysmlTool.completeSymbolTable(ast);
 
-    // check if an additional ArtifactScope was found
+    // check if an additional ArtifactScope was found during completion (Specialization completion uses inter-model resolution)
     Assertions.assertThat(gs.getSubScopes()).size().isGreaterThan(1);
 
     // check inter-model resolution of fqn from usage package scope.

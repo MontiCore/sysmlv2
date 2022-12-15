@@ -1,22 +1,22 @@
 package FlowConnectionInterfaceExample {
-	import PortExample::*;
+  import PortExample::*;
 
-	part def Vehicle;
+  part def Vehicle;
 
-	interface def FuelInterface {
-		end supplierPort : FuelOutPort;
-		end consumerPort : FuelInPort;
+  interface def FuelInterface {
+    end supplierPort : FuelOutPort;
+    end consumerPort : FuelInPort;
 
-		flow supplierPort.fuelSupply to consumerPort.fuelSupply;
-		flow consumerPort.fuelReturn to supplierPort.fuelReturn;
-	}
+    flow supplierPort.fuelSupply to consumerPort.fuelSupply;
+    flow consumerPort.fuelReturn to supplierPort.fuelReturn;
+  }
 
-	part vehicle : Vehicle {
-		part tankAssy : FuelTankAssembly;
-		part eng : Engine;
+  part vehicle : Vehicle {
+    part tankAssy : FuelTankAssembly;
+    part eng : Engine;
 
-		interface : FuelInterface connect
-			tankAssy.fuelTankPort to
-			eng.engineFuelPort;
-	}
+    interface : FuelInterface connect
+      tankAssy.fuelTankPort to
+      eng.engineFuelPort;
+  }
 }

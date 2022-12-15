@@ -1,7 +1,7 @@
 port def Connector {
-  in attribute dataIn: Integer;
-  attribute control: Boolean;
-  out attribute daatOut: Integer;
+  in attribute dataIn: int;
+  attribute control: boolean;
+  out attribute daatOut: int;
   inout attribute checksum: String;
 }
 

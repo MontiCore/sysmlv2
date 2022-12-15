@@ -1,17 +1,17 @@
-package avionic {
+package RoughStateDefReference {
 
   port def Input {
-    in attribute val: Boolean;
+    in attribute val: boolean;
   }
 
   port def Output {
-    out attribute val: Boolean;
+    out attribute val: boolean;
   }
 
   /**
    * Transitions-Verfeinerung
    */
-  part def PerfectMedium :> avionic.UnfairMedium {
+  part def PerfectMedium :> RoughStateDef.UnfairMedium {
     port i: Input;
     port o: Output;
 

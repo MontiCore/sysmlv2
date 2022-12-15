@@ -1,6 +1,6 @@
-package automata {
+package StateDef {
 
-  state def AutomatonInverter(in i: Boolean, out o: Boolean){
+  state def AutomatonInverter(in i: boolean, out o: boolean){
     entry;
       then S;
 
