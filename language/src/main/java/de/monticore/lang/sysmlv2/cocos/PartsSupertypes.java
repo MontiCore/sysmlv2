@@ -46,12 +46,11 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
   public void check(ASTPartUsage node) {
     var nonExistent = node.streamSpecializations()
         .flatMap(s -> s.streamSuperTypes())
-        .filter(t -> node.getEnclosingScope().resolvePartDef(printName(t)).isEmpty()
-            && node.getEnclosingScope().resolvePartUsage(printName(t)).isEmpty())
+        .filter(t -> node.getEnclosingScope().resolvePartDef(printName(t)).isEmpty())
         .collect(Collectors.toList());
 
     for(var problem: nonExistent) {
-      Log.error("Could not find part definition or usage with the name \"" + printName(problem) + "\".");
+      Log.error("Could not find part definition with the name \"" + printName(problem) + "\".");
     }
   }
   @Override
@@ -73,12 +72,11 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
   public void check(ASTPortUsage node) {
     var nonExistent = node.streamSpecializations()
         .flatMap(s -> s.streamSuperTypes())
-        .filter(t -> node.getEnclosingScope().resolvePortDef(printName(t)).isEmpty()
-            && node.getEnclosingScope().resolvePortUsage(printName(t)).isEmpty())
+        .filter(t -> node.getEnclosingScope().resolvePortDef(printName(t)).isEmpty())
         .collect(Collectors.toList());
 
     for(var problem: nonExistent) {
-      Log.error("Could not find part definition or usage with the name \"" + printName(problem) + "\".");
+      Log.error("Could not find part definition with the name \"" + printName(problem) + "\".");
     }
   }
 }
