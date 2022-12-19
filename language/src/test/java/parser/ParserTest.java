@@ -1,11 +1,13 @@
 package parser;
 
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -63,4 +65,16 @@ public class ParserTest {
     assertTrue(ast.isPresent(), "The AST should have been created");
   }
 
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "a.b \\subseteq c",
+      "a.b \\subset c",
+      "a.b \\supseteq c",
+      "a.b \\supset c",
+  })
+  public void testSubsetEq(String model) throws IOException {
+    Optional<ASTExpression> ast = SysMLv2Mill.parser().parse_StringExpression(model);
+    assertFalse(parser.hasErrors(), "Parsing should not have failed");
+    assertTrue(ast.isPresent(), "The AST should have been created");
+  }
 }
