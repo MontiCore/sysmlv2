@@ -20,6 +20,9 @@ component grammar SysMLRequirements extends SysMLBasis {
   symbol RequirementSubject =
       "subject" Name Specialization* ";" ;
 
+  symbolrule RequirementSubject =
+      types:de.monticore.types.check.SymTypeExpression* ;
+
   RequirementSatisfaction implements SysMLElement =
       "satisfy" req:MCQualifiedName "by" subject:MCQualifiedName ";" ;
 

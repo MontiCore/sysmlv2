@@ -52,9 +52,10 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
-    // TODO Not ready for prime time
+    // TODO Not ready for prime time. see ConstraintCoCoTest input 8_valid.sysml
     //  checker.addCoCo(new ConstraintIsBoolean());
-    checker.addCoCo(new SpecializationExists());
+    // TODO Erroring when checking Generics. See disabled test in SpecializationExistsTest
+    //  checker.addCoCo(new SpecializationExists());
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTPartDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTPortDefCoCo) new NameCompatible4Isabelle());
@@ -142,6 +143,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     TypesAndDirectionCompleter completer = new TypesAndDirectionCompleter();
     traverser.add4SysMLBasis(completer);
     traverser.add4SysMLParts(completer);
+    traverser.add4SysMLRequirements(completer);
 
     if(node.getEnclosingScope() != null) {
       node.getEnclosingScope().accept(traverser);
