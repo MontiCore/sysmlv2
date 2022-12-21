@@ -29,4 +29,20 @@ component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiteral
   // Infinity literal can be negative, but there cannot be any space between "-" and "INF"
   Infinity implements Literal, SignedLiteral = {noSpace(2)}? (negative:["-"]) "INF" | "INF";
 
+  /**
+   * This part is a little experiment. Instead of wasting ASCII-characters for mathematical symbols, we use the latex
+   * commands and render them nicely using VSCode's "Prettify Symbols Model" extension.
+   * The priority is copied from the LessEqual-, GreaterEqual-, etc. -Expressions (CommonExpressions).
+   */
+  SubsetEquationExpression implements Expression <150>, InfixExpression =
+    left:Expression operator:"\\subseteq" right:Expression ;
+
+  SubsetExpression implements Expression <150>, InfixExpression =
+    left:Expression operator:"\\subset" right:Expression ;
+
+  SupersetEquationExpression implements Expression <150>, InfixExpression =
+    left:Expression operator:"\\supseteq" right:Expression ;
+
+  SupersetExpression implements Expression <150>, InfixExpression =
+    left:Expression operator:"\\supset" right:Expression ;
 }

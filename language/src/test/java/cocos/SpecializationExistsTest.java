@@ -11,6 +11,7 @@ import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -32,6 +33,8 @@ public class SpecializationExistsTest {
   @BeforeEach
   void clear() {
     SysMLv2Mill.globalScope().clear();
+    SysMLv2Mill.initializePrimitives();
+    SysMLv2Mill.addCollectionTypes();
   }
 
   @Test
@@ -57,6 +60,16 @@ public class SpecializationExistsTest {
   @Test
   public void testExistingStateDefinition() throws IOException {
     var model = "state def Existent; requirement Valid { subject s: Existent; }";
+    var ast = parse(model);
+    createSt(ast);
+    var errors = check(ast);
+    assertThat(errors).hasSize(0);
+  }
+
+  @Test
+  @Disabled
+  public void testExistingCollectionType() throws IOException {
+    var model = "attribute def Existent; part def Valid { attribute e: List<Existent>; }";
     var ast = parse(model);
     createSt(ast);
     var errors = check(ast);

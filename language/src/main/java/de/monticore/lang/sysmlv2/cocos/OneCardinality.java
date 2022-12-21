@@ -11,7 +11,7 @@ import java.util.Optional;
 public class OneCardinality implements SysMLBasisASTSpecializationCoCo {
   @Override
   public void check (ASTSpecialization node) {
-    if (((ASTSysMLTyping) node).isPresentCardinality()) {
+    if (node instanceof ASTSysMLTyping && ((ASTSysMLTyping) node).isPresentCardinality()) {
       ASTCardinality Cardinality =
           Optional.of(((ASTSysMLTyping) node).getCardinality()).get();
       boolean multipleCardinalities =

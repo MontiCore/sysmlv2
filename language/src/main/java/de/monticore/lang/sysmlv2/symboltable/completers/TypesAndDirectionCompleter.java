@@ -12,6 +12,9 @@ import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
+import de.monticore.lang.sysmlrequirements._ast.ASTRequirementSubject;
+import de.monticore.lang.sysmlrequirements._symboltable.RequirementSubjectSymbol;
+import de.monticore.lang.sysmlrequirements._visitor.SysMLRequirementsVisitor2;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
@@ -24,7 +27,7 @@ import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TypesAndDirectionCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2
+public class TypesAndDirectionCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2, SysMLRequirementsVisitor2
 {
 
   /**
@@ -39,21 +42,20 @@ public class TypesAndDirectionCompleter implements SysMLBasisVisitor2, SysMLPart
         var astTyping = (ASTSysMLTyping) specialization;
 
         for(var mcType: astTyping.getSuperTypesList()) {
-          if(mcType.getDefiningSymbol().isEmpty()) {
-            Log.error("Defining symbol for " + mcType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())) + " was not set.");
-          }
-          else if(!(mcType.getDefiningSymbol().get() instanceof TypeSymbol)) {
-            Log.error("Defining symbol for " + mcType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())) + " is not a TypeSymbol");
-          }
-
           if(mcType instanceof ASTMCGenericType) {
             // We still have to print when the type is generic because the defining symbol does not give info about the instantiation with type arguments
             typeExpressions.add(SymTypeExpressionFactory.createTypeExpression(
                 mcType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())),
                 (IBasicSymbolsScope) mcType.getEnclosingScope()));
           }
-          else {
+          else if(mcType.getDefiningSymbol().isPresent() && mcType.getDefiningSymbol().get() instanceof TypeSymbol) {
             typeExpressions.add(SymTypeExpressionFactory.createTypeExpression((TypeSymbol) mcType.getDefiningSymbol().get()));
+          }
+          else if(mcType.getDefiningSymbol().isEmpty()) {
+            Log.warn("Defining symbol for " + mcType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())) + " was not set.");
+          }
+          else if(!(mcType.getDefiningSymbol().get() instanceof TypeSymbol)) {
+            Log.warn("Defining symbol for " + mcType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())) + " is not a TypeSymbol");
           }
         }
       }
@@ -118,6 +120,17 @@ public class TypesAndDirectionCompleter implements SysMLBasisVisitor2, SysMLPart
       else {
         symbol.setDirection(ASTSysMLFeatureDirection.IN);
       }
+    }
+  }
+
+  @Override
+  public void visit(ASTRequirementSubject node) {
+    if(node.isPresentSymbol()) {
+      RequirementSubjectSymbol symbol = node.getSymbol();
+      // type
+      List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
+
+      symbol.setTypesList(types);
     }
   }
 
