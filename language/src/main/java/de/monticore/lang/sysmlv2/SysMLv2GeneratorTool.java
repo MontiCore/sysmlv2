@@ -1,0 +1,225 @@
+package de.monticore.lang.sysmlv2;
+
+import de.monticore.lang.sysml4verification.cocos.WarnNonExhibited;
+import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
+import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintDefCoCo;
+import de.monticore.lang.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTSysMLPackageCoCo;
+import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeDefCoCo;
+import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
+import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
+import de.monticore.lang.sysmlparts.coco.PortDefHasOneType;
+import de.monticore.lang.sysmlparts.coco.PortDefNeedsDirection;
+import de.monticore.lang.sysmlrequirements._cocos.SysMLRequirementsASTRequirementDefCoCo;
+import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateDefCoCo;
+import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateUsageCoCo;
+import de.monticore.lang.sysmlstates.cocos.NoDoActions;
+import de.monticore.lang.sysmlstates.cocos.NoExitActions;
+import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
+import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
+import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
+import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
+import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
+import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
+import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
+import de.monticore.lang.sysmlv2.cocos.OneCardinality;
+import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
+import de.monticore.lang.sysmlv2.symboltable.completers.ScopeNamingCompleter;
+import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
+import de.monticore.lang.sysmlv2.symboltable.completers.TypesAndDirectionCompleter;
+import de.monticore.lang.sysmlv2.visitor.PartsTransitiveVisitor;
+import de.se_rwth.commons.logging.Log;
+
+import java.io.IOException;
+import java.util.Optional;
+
+public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
+
+  @Override
+  public void init() {
+    super.init();
+    SysMLv2Mill.globalScope().clear();
+    SysMLv2Mill.initializePrimitives();
+    SysMLv2Mill.addStringType();
+    SysMLv2Mill.addStreamType();
+    SysMLv2Mill.addCollectionTypes();
+  }
+
+  /**
+   * Official Language Implementation CoCos
+   */
+  @Override
+  public void runDefaultCoCos(ASTSysMLModel ast) {
+    var checker = new SysMLv2CoCoChecker();
+    checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
+    checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
+    // TODO Not ready for prime time. see ConstraintCoCoTest input 8_valid.sysml
+    //  checker.addCoCo(new ConstraintIsBoolean());
+    // TODO Erroring when checking Generics. See disabled test in SpecializationExistsTest
+    //  checker.addCoCo(new SpecializationExists());
+    checker.addCoCo((SysMLStatesASTStateDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLPartsASTPartDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLPartsASTPortDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLConstraintsASTConstraintDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLActionsASTActionDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLRequirementsASTRequirementDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLImportsAndPackagesASTSysMLPackageCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new NameCompatible4Isabelle());
+    checker.checkAll(ast);
+  }
+
+  /**
+   * Formal Verification-Specific Language Implementation CoCos
+   */
+  @Override
+  public void runAdditionalCoCos(ASTSysMLModel ast) {
+    var checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new WarnNonExhibited());
+    checker.addCoCo(new OneCardinality());
+    checker.addCoCo(new NoExitActions());
+    checker.addCoCo((SysMLStatesASTStateDefCoCo) new NoDoActions());
+    checker.addCoCo((SysMLStatesASTStateUsageCoCo) new NoDoActions());
+    checker.addCoCo(new PortDefHasOneType());
+    checker.addCoCo(new PortDefNeedsDirection());
+    checker.checkAll(ast);
+  }
+
+  public ISysMLv2GlobalScope getGlobalScope() {
+    return SysMLv2Mill.globalScope();
+  }
+
+  public SysMLv2Traverser getTraverser() {
+    return SysMLv2Mill.traverser();
+  }
+
+  public SysMLv2Traverser getInheritanceTraverser() {
+    return SysMLv2Mill.inheritanceTraverser();
+  }
+
+  public ISysMLv2ArtifactScope loadSymbols(String symbolPath) {
+    SysMLv2Symbols2Json symbols2Json = new SysMLv2Symbols2Json();
+    var artifactScope = symbols2Json.load(symbolPath);
+
+    getGlobalScope().addSubScope(artifactScope);
+
+    return artifactScope;
+  }
+
+  @Override
+  public void completeSymbolTable(ASTSysMLModel node) {
+    SysMLv2Traverser traverser = SysMLv2Mill.traverser();
+
+    traverser.add4SysMLv2(new ScopeNamingCompleter());
+
+    // Aus mir unerklärlichen Gründen ist die Traversierung so implementiert, dass nur das SpannedScope des jeweiligen
+    // AST-Knoten visitiert wird. Wenn wir hier also das ASTSysMLModel reinstecken (was kein Scope spannt (wieso eigtl.
+    // nicht?)), dann werden die Elements visitiert/traversiert. Beim traverisieren wird dann auch das gespannte Scope
+    // (zB. das Scope einer PortDef) visitiert. Das ArtifactScope steht in dieser Hierarchie aber über dem ASTSysMLModel
+    // und man muss hier allen Ernstes einmal RAUF navigieren und dann den Traverser loslassen.
+    if(node.getEnclosingScope() != null) {
+      node.getEnclosingScope().accept(traverser);
+    }
+
+    // Und dann wird nicht das Scope traversiert um die darin gefindlichen Symbole und daranhängende AST-Knoten zu
+    // besuchen, sondern es wird nichts getan. Der Default-Traverser geht nämlich davon aus, dass man sich am AST
+    // entlang hangelt.
+    node.accept(traverser);
+
+    // Phase 2: Requires that all scopes have a name (done in phase 1).
+    // reset traverser
+    traverser = SysMLv2Mill.inheritanceTraverser();
+
+    traverser.add4SysMLBasis(new SpecializationCompleter());
+
+    if(node.getEnclosingScope() != null) {
+      node.getEnclosingScope().accept(traverser);
+    }
+
+    node.accept(traverser);
+
+    // Phase 3: Sets types for usages. Bases on types of specializations completed in phase 1.
+    traverser = SysMLv2Mill.traverser();
+
+    TypesAndDirectionCompleter completer = new TypesAndDirectionCompleter();
+    traverser.add4SysMLBasis(completer);
+    traverser.add4SysMLParts(completer);
+    traverser.add4SysMLRequirements(completer);
+
+    if(node.getEnclosingScope() != null) {
+      node.getEnclosingScope().accept(traverser);
+    }
+
+    node.accept(traverser);
+  }
+
+  @Override
+  public void run(String[] args) {
+
+    //transform(ast);
+
+    init();
+    org.apache.commons.cli.Options options = initOptions();
+    try {
+      //create CLI Parser and parse input options from commandline
+      org.apache.commons.cli.CommandLineParser cliparser = new org.apache.commons.cli.DefaultParser();
+      org.apache.commons.cli.CommandLine cmd = cliparser.parse(options, args);
+
+      //help: when --help
+      if(cmd.hasOption("h")) {
+        printHelp(options);
+        //do not continue, when help is printed.
+        return;
+      }
+      //version: when --version
+      else if(cmd.hasOption("v")) {
+        printVersion();
+        //do not continue when help is printed
+        return;
+      }
+
+      if(!cmd.hasOption("i")) {
+        Log.error("Please specify only one single path to the input model");
+      }
+      else {
+        String model = cmd.getOptionValue("i");
+        final Optional<ASTSysMLModel> ast;
+        try {
+
+
+          //1. Parse input
+          ast = SysMLv2Mill.parser().parse(cmd.getOptionValue("i"));
+        }
+        catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+        if(ast.isPresent()) {
+          //2. Build symboltable
+          Log.info(model + "parsed successfully!", SysMLv2GeneratorTool.class.getName());
+          ISysMLv2ArtifactScope modelTopScope = createSymbolTable(ast.get());
+          modelTopScope.setName(cmd.getOptionValue("i").substring(cmd.getOptionValue("i").lastIndexOf("/") + 1,
+              cmd.getOptionValue("i").lastIndexOf(".")));
+          //3. Run some cocos
+          runDefaultCoCos(ast.get());
+          //4. run Transformations
+          transform(ast.get());
+          //5. run additional CoCos
+        }
+      }
+
+    }
+    catch (org.apache.commons.cli.ParseException e) {
+      // e.getMessage displays the incorrect input-parameters
+      Log.error("0xA5C06x33289 Could not process SysMLv2Tool parameters: " + e.getMessage());
+    }
+  }
+
+  public void transform(ASTSysMLModel ast) {
+    transformTransitiveSupertypes(ast);
+  }
+
+  public void transformTransitiveSupertypes(ASTSysMLModel ast) {
+    PartsTransitiveVisitor partsTransitiveVisitor = new PartsTransitiveVisitor();
+    SysMLv2Traverser sysMLv2Traverser = getTraverser();
+    sysMLv2Traverser.add4SysMLParts(partsTransitiveVisitor);
+    sysMLv2Traverser.handle(ast);
+  }
+}

@@ -110,7 +110,13 @@ shadowJar {
   archiveClassifier = 'cli'
   minimize()
 }
-
+shadowJar {
+  manifest {
+    attributes "Main-Class": " de.monticore.lang.sysmlv2.SysMLv2GeneratorTool"
+  }
+  archiveClassifier = 'generator-cli'
+  minimize()
+}
 java {
 //  withJavadocJar()
   withSourcesJar()
