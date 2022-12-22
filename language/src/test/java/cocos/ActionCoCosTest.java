@@ -6,9 +6,11 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
+import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.cocos.ActionGeneratorCoCos;
 import de.monticore.lang.sysmlv2.cocos.ActionNameCoCos;
 import de.monticore.lang.sysmlv2.cocos.ActionSupertypes;
+import de.monticore.lang.sysmlv2.visitor.ActionSuccessionVisitor;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,7 +29,6 @@ public class ActionCoCosTest {
 
   private static final String MODEL_PATH = "src/test/resources/cocos/actions";
 
-  private SysMLv2Parser parser = SysMLv2Mill.parser();
 
   @BeforeAll
   public static void init() {
@@ -56,6 +57,11 @@ public class ActionCoCosTest {
         ASTSysMLModel ast = optAst.get();
 
         SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
+
+        SysMLv2Traverser sysMLv2Traverser = SysMLv2Mill.traverser();
+        sysMLv2Traverser.add4SysMLActions(new ActionSuccessionVisitor());
+        sysMLv2Traverser.handle(ast);
+
         var checker = new SysMLv2CoCoChecker();
         checker.addCoCo((SysMLActionsASTActionDefCoCo) new ActionSupertypes());
         checker.addCoCo((SysMLActionsASTActionDefCoCo) new ActionNameCoCos());
