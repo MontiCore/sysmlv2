@@ -1,3 +1,4 @@
+<!-- (c) https://github.com/MontiCore/monticore -->
 # Language Server
 
 A language server generated with the MCLSG (MontiCore Language Server Generator).

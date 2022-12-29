@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 port def Connector {
   in attribute dataIn: int;
   attribute control: boolean;

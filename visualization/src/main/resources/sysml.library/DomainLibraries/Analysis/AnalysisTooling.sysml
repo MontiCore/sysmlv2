@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * This package contains definitions for metadata annotations related
  * to analysis tool integration.

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 port def IntPort {
   attribute flow: int;
 }

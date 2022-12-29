@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysml4verification.cocos;
 
 import de.monticore.ast.ASTNode;

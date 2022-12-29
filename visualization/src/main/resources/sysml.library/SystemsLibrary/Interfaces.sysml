@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package Interfaces {
 	private import Connections::Connection;
 	private import Connections::connections;

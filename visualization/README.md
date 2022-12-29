@@ -1,3 +1,4 @@
+<!-- (c) https://github.com/MontiCore/monticore -->
 ## SysML v2 Visualization
 
 Project for the SysML v2. Requires models that are compatible with the general standard.

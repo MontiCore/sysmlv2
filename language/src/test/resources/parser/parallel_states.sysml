@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 state vehicleStates : VehicleStates parallel {
 
   state operationalStates {

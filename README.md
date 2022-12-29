@@ -1,3 +1,4 @@
+<!-- (c) https://github.com/MontiCore/monticore -->
 ## SysML v2 - [`language`](language)
 
 MontiCore Implementation of the official SysML v2 specification according to the [SysML Submission Team (SST)](https://github.com/Systems-Modeling),

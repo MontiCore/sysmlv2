@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * This package provides a model of the foundational state-space system representation, 
  * commonly used in control systems.

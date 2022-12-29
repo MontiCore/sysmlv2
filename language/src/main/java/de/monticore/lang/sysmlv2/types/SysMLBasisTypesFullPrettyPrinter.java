@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.types;
 
 import de.monticore.lang.sysmlv2.SysMLv2Mill;

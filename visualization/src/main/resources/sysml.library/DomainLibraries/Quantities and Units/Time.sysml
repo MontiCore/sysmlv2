@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * Specifications for time instant and various time scales
  */

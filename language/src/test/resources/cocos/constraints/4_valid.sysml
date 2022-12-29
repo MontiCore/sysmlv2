@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 port def Integers {
   out attribute natAttr: int;
 }

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * This package defines the base types for verification cases and related behavioral elements 
  * in the SysML language.

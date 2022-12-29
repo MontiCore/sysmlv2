@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2._lsp.features.diagnostics;
 
 import de.mclsg.SeCommonsLogParser;

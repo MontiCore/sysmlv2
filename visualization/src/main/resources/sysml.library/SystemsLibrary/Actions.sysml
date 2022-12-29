@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * This package defines the base types for actions and related behavioral elements in the
  * SysML language.

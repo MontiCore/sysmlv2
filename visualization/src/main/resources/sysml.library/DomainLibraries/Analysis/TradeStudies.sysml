@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * This package provides a simple framework for defining trade-off study analysis cases.
  */

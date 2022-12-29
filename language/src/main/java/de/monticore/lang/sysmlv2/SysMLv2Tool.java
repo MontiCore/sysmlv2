@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2;
 
 import de.monticore.lang.sysml4verification.cocos.WarnNonExhibited;

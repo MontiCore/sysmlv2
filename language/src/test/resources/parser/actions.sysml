@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 send reference.to.something to somewhere.elsewhere;
 
 assign reference.to.someting := some + complex * expression;

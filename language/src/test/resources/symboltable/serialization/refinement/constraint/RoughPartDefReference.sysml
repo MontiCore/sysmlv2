@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package RoughPartDefReference {
   // B comes qualified, in the future we should allow B to be imported
   part def A refines RoughPartDef.B {

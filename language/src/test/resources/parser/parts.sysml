@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 part Driver;
 
 part def Vehicle {
