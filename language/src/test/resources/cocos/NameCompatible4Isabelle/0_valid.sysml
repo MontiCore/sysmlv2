@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 state def a123{}
 
 part def a222{}

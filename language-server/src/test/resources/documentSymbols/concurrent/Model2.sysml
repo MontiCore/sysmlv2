@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package inverter_1 {
 
   // ---------------------------  BDD  ---------------------------

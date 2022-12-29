@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 plugins {
   id "application"
   id 'de.monticore.language-server' version "$mclsg_version"

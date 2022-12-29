@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.codeAction;
 
 import org.eclipse.lsp4j.CodeAction;

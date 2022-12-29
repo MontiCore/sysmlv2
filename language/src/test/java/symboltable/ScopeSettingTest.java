@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package symboltable;
 
 import de.monticore.lang.sysmlv2.SysMLv2Mill;

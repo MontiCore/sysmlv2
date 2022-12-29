@@ -1,3 +1,4 @@
+<!-- (c) https://github.com/MontiCore/monticore -->
 # Erfahrungen zum Typechecker
 
 In diesem Dokument sammeln wir Erfahrungen, die wir beim Programmieren des Typecheckers für SysMLv2 gemacht haben.

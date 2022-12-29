@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package symboltable;
 
 import de.monticore.io.paths.MCPath;

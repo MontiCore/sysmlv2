@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package TopLevel {
   import TopLevel3::D;
 

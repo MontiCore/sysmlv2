@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * This package defines the general representations used to construct measurement scale and unit types.
  * TODO: Propose to rename to MeasurementReferences

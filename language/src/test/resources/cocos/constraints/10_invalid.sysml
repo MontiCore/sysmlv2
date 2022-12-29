@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 attribute someAttribute: boolean;
 
 part def LogicBasedConstraints {

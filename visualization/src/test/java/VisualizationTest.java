@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
 import org.junit.jupiter.api.Test;

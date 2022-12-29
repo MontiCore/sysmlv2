@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlrequirements._symboltable;
 
 import de.monticore.symboltable.serialization.json.JsonObject;

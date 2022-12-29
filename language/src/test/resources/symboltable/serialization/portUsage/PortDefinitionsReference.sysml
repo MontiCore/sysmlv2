@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package PortDefinitionsReference {
   part def Inverter {
     port i : PortDefinitions.BooleanInput;

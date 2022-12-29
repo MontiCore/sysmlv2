@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * This package contains definitions of metadata generally useful for annotating models.
  */

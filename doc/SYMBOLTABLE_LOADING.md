@@ -1,3 +1,4 @@
+<!-- (c) https://github.com/MontiCore/monticore -->
 # (De)Serialization of Symboltables with Identical ArtifactScope Names
 
 ## Problem

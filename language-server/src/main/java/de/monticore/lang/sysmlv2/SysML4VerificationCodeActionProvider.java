@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2;
 
 import de.mclsg.lsp.document_management.DocumentManager;

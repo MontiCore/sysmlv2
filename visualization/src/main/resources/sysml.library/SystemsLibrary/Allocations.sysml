@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * This pacakge defines the base types for allocations and related structural elements
  * in the SysML language.

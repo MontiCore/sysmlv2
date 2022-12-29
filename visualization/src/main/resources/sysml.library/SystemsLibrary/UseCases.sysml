@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package UseCases {
 	private import Cases::Case;
 	private import Cases::cases;

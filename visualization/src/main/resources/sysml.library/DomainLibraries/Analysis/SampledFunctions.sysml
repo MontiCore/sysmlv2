@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * This package provides a libary model of discretely sampled mathematical functions.
  */
