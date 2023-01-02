@@ -1,3 +1,4 @@
+<!-- (c) https://github.com/MontiCore/monticore -->
 ### 7.4.0-SNAPSHOT
 
 Latest development version. Redesign No. 2 - MontiBelle Edition.

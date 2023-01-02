@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * International System of Quantities and Units
  * Generated on 2021-05-07T14:31:30Z from standard ISO-80000-7:2019 "Light"

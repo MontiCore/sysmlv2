@@ -1,3 +1,4 @@
+<!-- (c) https://github.com/MontiCore/monticore -->
 ## Not complete coverage of the entire language
 
 We temporarily gave up on covering the entire language.

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 state def Initial;
 
 state def Machine {

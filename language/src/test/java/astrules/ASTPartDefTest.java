@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package astrules;
 
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;

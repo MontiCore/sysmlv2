@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package cocos;
 
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;

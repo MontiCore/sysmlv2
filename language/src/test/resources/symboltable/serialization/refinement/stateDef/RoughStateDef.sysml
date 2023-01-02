@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package RoughStateDef {
 
   port def Input {

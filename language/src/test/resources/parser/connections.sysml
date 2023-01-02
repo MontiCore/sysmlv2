@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 
 flow of Fuel from port1 to port2;
 flow port1 to port2;

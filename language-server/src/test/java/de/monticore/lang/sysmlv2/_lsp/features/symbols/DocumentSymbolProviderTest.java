@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2._lsp.features.symbols;
 
 import de.monticore.io.paths.MCPath;

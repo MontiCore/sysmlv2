@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * International System of Quantities and Units
  * Generated on 2021-05-07T15:51:12Z from standard ISO-80000-9:2019 "Physical chemistry and molecular physics"

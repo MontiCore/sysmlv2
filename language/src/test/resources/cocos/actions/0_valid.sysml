@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package ConditionalSuccessionExample1 {
   part def Scene;
   part def Image {

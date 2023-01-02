@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * International System of Quantities and Units
  * Generated on 2021-05-07T15:44:27Z from standard IEC-80000-13:2008 "Information science and technology"

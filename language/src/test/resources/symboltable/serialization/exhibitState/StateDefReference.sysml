@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package StateDefReference {
   port def BooleanInput {
     in attribute val: boolean;

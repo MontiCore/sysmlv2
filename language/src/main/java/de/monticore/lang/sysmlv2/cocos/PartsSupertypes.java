@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.cocos;
 
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;

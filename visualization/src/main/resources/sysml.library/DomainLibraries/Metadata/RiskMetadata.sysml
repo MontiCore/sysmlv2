@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 /**
  * This package defines metadata for annotating model elements with assessments of risk.
  */
