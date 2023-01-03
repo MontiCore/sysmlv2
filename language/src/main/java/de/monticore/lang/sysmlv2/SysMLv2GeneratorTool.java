@@ -2,10 +2,16 @@ package de.monticore.lang.sysmlv2;
 
 import de.monticore.lang.sysml4verification.cocos.WarnNonExhibited;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
+import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionUsageCoCo;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintDefCoCo;
 import de.monticore.lang.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTSysMLPackageCoCo;
+import de.monticore.lang.sysmlinterfaces._cocos.SysMLInterfacesASTInterfaceDefCoCo;
+import de.monticore.lang.sysmlinterfaces._cocos.SysMLInterfacesASTInterfaceUsageCoCo;
+import de.monticore.lang.sysmlitems._cocos.SysMLItemsASTItemDefCoCo;
+import de.monticore.lang.sysmlitems._cocos.SysMLItemsASTItemUsageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
+import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartUsageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
 import de.monticore.lang.sysmlparts.coco.PortDefHasOneType;
 import de.monticore.lang.sysmlparts.coco.PortDefNeedsDirection;
@@ -20,9 +26,20 @@ import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
+import de.monticore.lang.sysmlv2.cocos.ActionControlGeneratorCoCos;
+import de.monticore.lang.sysmlv2.cocos.ActionGeneratorCoCos;
+import de.monticore.lang.sysmlv2.cocos.ActionNameCoCos;
+import de.monticore.lang.sysmlv2.cocos.ActionSupertypes;
+import de.monticore.lang.sysmlv2.cocos.AttributeGeneratorCoCos;
+import de.monticore.lang.sysmlv2.cocos.InterfaceSupertypes;
+import de.monticore.lang.sysmlv2.cocos.ItemsSupertypes;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
+import de.monticore.lang.sysmlv2.cocos.PartsGeneratorCoCos;
+import de.monticore.lang.sysmlv2.cocos.PartsSupertypes;
+import de.monticore.lang.sysmlv2.cocos.StateGeneratorCoCo;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
+import de.monticore.lang.sysmlv2.cocos.SuccessionCoCo;
 import de.monticore.lang.sysmlv2.symboltable.completers.ScopeNamingCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.TypesAndDirectionCompleter;
@@ -52,6 +69,16 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
+    checker.addCoCo((SysMLActionsASTActionUsageCoCo) new ActionGeneratorCoCos());
+    checker.addCoCo((SysMLActionsASTActionDefCoCo) new ActionGeneratorCoCos());
+    checker.addCoCo((SysMLActionsASTActionDefCoCo) new ActionSupertypes());
+    checker.addCoCo((SysMLActionsASTActionUsageCoCo) new ActionSupertypes());
+    checker.addCoCo((SysMLInterfacesASTInterfaceDefCoCo) new InterfaceSupertypes());
+    checker.addCoCo((SysMLInterfacesASTInterfaceUsageCoCo) new InterfaceSupertypes());
+    checker.addCoCo((SysMLItemsASTItemDefCoCo) new ItemsSupertypes());
+    checker.addCoCo((SysMLItemsASTItemUsageCoCo) new ItemsSupertypes());
+    checker.addCoCo((SysMLPartsASTPartDefCoCo) new PartsSupertypes());
+    checker.addCoCo((SysMLPartsASTPartUsageCoCo) new PartsSupertypes());
     // TODO Not ready for prime time. see ConstraintCoCoTest input 8_valid.sysml
     //  checker.addCoCo(new ConstraintIsBoolean());
     // TODO Erroring when checking Generics. See disabled test in SpecializationExistsTest
@@ -64,6 +91,8 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLRequirementsASTRequirementDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLImportsAndPackagesASTSysMLPackageCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLActionsASTActionDefCoCo) new ActionNameCoCos());
+    checker.addCoCo((SysMLActionsASTActionUsageCoCo) new ActionNameCoCos());
     checker.checkAll(ast);
   }
 
@@ -80,6 +109,11 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new NoDoActions());
     checker.addCoCo(new PortDefHasOneType());
     checker.addCoCo(new PortDefNeedsDirection());
+    checker.addCoCo(new ActionControlGeneratorCoCos());
+    checker.addCoCo(new AttributeGeneratorCoCos());
+    checker.addCoCo( new PartsGeneratorCoCos());
+    checker.addCoCo(new StateGeneratorCoCo());
+    checker.addCoCo(new SuccessionCoCo());
     checker.checkAll(ast);
   }
 
@@ -175,7 +209,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
         //do not continue when help is printed
         return;
       }
-
+      ISysMLv2ArtifactScope modelTopScope = null;
       if(!cmd.hasOption("i")) {
         Log.error("Please specify only one single path to the input model");
       }
@@ -194,7 +228,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
         if(ast.isPresent()) {
           //2. Build symboltable
           Log.info(model + "parsed successfully!", SysMLv2GeneratorTool.class.getName());
-          ISysMLv2ArtifactScope modelTopScope = createSymbolTable(ast.get());
+          modelTopScope = createSymbolTable(ast.get());
           modelTopScope.setName(cmd.getOptionValue("i").substring(cmd.getOptionValue("i").lastIndexOf("/") + 1,
               cmd.getOptionValue("i").lastIndexOf(".")));
           //3. Run some cocos
@@ -202,6 +236,12 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
           //4. run Transformations
           transform(ast.get());
           //5. run additional CoCos
+          runAdditionalCoCos(ast.get());
+        }
+      }
+      if(cmd.hasOption("s")) {
+        if(modelTopScope != null) {
+          storeSymbols(modelTopScope, cmd.getOptionValue("s"));
         }
       }
 
