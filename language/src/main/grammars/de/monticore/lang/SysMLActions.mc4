@@ -31,7 +31,7 @@ component grammar SysMLActions
       SysMLElement*
     "}" "until" until:Expression ";";
 
-  SendActionUsage implements SysMLElement =
+  SendActionUsage extends ActionUsage =
     "send" payload:Expression key("to") target:MCQualifiedName ";" ;
 
   AssignmentActionUsage implements SysMLElement =
