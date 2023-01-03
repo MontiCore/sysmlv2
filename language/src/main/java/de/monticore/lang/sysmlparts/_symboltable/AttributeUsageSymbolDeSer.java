@@ -16,12 +16,14 @@ public class AttributeUsageSymbolDeSer extends AttributeUsageSymbolDeSerTOP {
 
   @Override
   protected List<SymTypeExpression> deserializeTypes(JsonObject symbolJson) {
-    return SymTypeExpressionDeSer.deserializeListMember( "types", symbolJson);
+    return SymTypeExpressionDeSer.deserializeListMember("types", symbolJson);
   }
 
   @Override
   protected void serializeDirection(ASTSysMLFeatureDirection direction, SysMLPartsSymbols2Json s2j) {
-    s2j.getJsonPrinter().member("direction", direction.name());
+    if(direction != null) {
+      s2j.getJsonPrinter().member("direction", direction.name());
+    }
   }
 
   @Override
