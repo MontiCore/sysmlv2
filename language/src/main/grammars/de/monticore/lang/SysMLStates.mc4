@@ -20,6 +20,8 @@ component grammar SysMLStates extends SysMLActions {
       ExitAction?
       SysMLElement*
     "}" | ";") ;
+  ExhibitUsage implements SysMLElement = //TODO exhibit in der Spec ueberpruefen
+  "exhibit" ("state")? state:Name@StateUsage ";";
 
   // TODO Überlegen, ob nicht doch durch Grammatik enforcen, dass Transitionen nur in States vorkommen
   symbol SysMLTransition implements SysMLElement =

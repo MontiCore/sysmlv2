@@ -15,8 +15,8 @@ state def Machine {
     then O;
 
 }
-
-exhibit state Behavior {
+exhibit aCertainState;
+state Behavior {
   entry;
   then S;
 }
