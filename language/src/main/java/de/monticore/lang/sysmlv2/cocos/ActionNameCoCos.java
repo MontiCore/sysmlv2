@@ -29,11 +29,13 @@ public class ActionNameCoCos implements SysMLActionsASTActionDefCoCo, SysMLActio
    */
   @Override
   public void check(ASTActionUsage node) {
-    if (node.getName().equals("done")) {
-      Log.error("Action definition can not have the name \" done\".");
-    }
-    if (node.getName().equals("start")) {
-      Log.error("Action definition can not have the name \" first\".");
+    if(node.isPresentName()) {
+      if(node.getName().equals("done")) {
+        Log.error("Action definition can not have the name \" done\".");
+      }
+      if(node.getName().equals("start")) {
+        Log.error("Action definition can not have the name \" first\".");
+      }
     }
   }
 }
