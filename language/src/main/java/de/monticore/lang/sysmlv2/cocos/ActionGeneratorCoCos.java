@@ -8,6 +8,7 @@ import de.monticore.lang.sysmlactions._ast.ASTForkAction;
 import de.monticore.lang.sysmlactions._ast.ASTJoinAction;
 import de.monticore.lang.sysmlactions._ast.ASTLoopAction;
 import de.monticore.lang.sysmlactions._ast.ASTMergeAction;
+import de.monticore.lang.sysmlactions._ast.ASTSendActionUsage;
 import de.monticore.lang.sysmlactions._ast.ASTSysMLFirst;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionUsageCoCo;
@@ -32,7 +33,7 @@ public class ActionGeneratorCoCos implements SysMLActionsASTActionDefCoCo, SysML
   public void check(ASTActionUsage node) {
     int firstCount = 0;
     if(!(node instanceof ASTJoinAction || node instanceof ASTDecideAction || node instanceof ASTForkAction
-        || node instanceof ASTMergeAction || node instanceof ASTLoopAction)) {
+        || node instanceof ASTMergeAction || node instanceof ASTLoopAction || node instanceof ASTSendActionUsage)) {
       for (ASTSysMLElement x : node.getSysMLElementList()) {
         if(x instanceof ASTSysMLFirst) {
           firstCount++;
