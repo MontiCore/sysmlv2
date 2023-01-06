@@ -20,8 +20,9 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo {
         Collectors.toList());
     var relevantElements = node.getSysMLElementList().stream().filter(
         t -> t instanceof ASTActionDef | t instanceof ASTActionUsage | t instanceof ASTAttributeUsage
-            | t instanceof ASTPartUsage).collect(Collectors.toList()).size(); //partUsage with at least one of the types is seen as a adhoc class definition
+            | t instanceof ASTPartUsage).collect(
+        Collectors.toList()).size(); //partUsage with at least one of the types is seen as a adhoc class definition
     if(specialications.isEmpty() && relevantElements == 0)
-      Log.error("A Part Usage has to extend at least one part def");
+      Log.error("The Part Usage " + node.getName() + " has to extend at least one part def");
   }
 }
