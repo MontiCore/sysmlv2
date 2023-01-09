@@ -23,7 +23,7 @@ public class CLITest {
       //    "1_valid.sysml", // example with control action usages
   })
   public void testValid(String modelName) throws IOException {
-    var arg = new String[] { "-i " + MODEL_PATH + "/" + modelName, "-s " + "test.json" };
+    var arg = new String[] { "-i", MODEL_PATH + "/" + modelName, "-s", "test.json" };
     sysMLv2GeneratorTool.run(arg);
 
   }

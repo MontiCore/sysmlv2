@@ -47,6 +47,8 @@ import de.monticore.lang.sysmlv2.visitor.PartsTransitiveVisitor;
 import de.se_rwth.commons.logging.Log;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
@@ -214,20 +216,20 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
         Log.error("Please specify only one single path to the input model");
       }
       else {
-        String model = cmd.getOptionValue("i");
         final Optional<ASTSysMLModel> ast;
         try {
 
-
+        Log.info(System.getProperty("user.dir")+"\\"+cmd.getOptionValue("i").trim(), SysMLv2GeneratorTool.class.getName());
           //1. Parse input
-          ast = SysMLv2Mill.parser().parse(cmd.getOptionValue("i"));
+          Path model = Paths.get(cmd.getOptionValue("i"));
+          ast = SysMLv2Mill.parser().parse(model.toString());
         }
         catch (IOException e) {
           throw new RuntimeException(e);
         }
         if(ast.isPresent()) {
           //2. Build symboltable
-          Log.info(model + "parsed successfully!", SysMLv2GeneratorTool.class.getName());
+          Log.info(cmd.getOptionValue("i") + "parsed successfully!", SysMLv2GeneratorTool.class.getName());
           modelTopScope = createSymbolTable(ast.get());
           modelTopScope.setName(cmd.getOptionValue("i").substring(cmd.getOptionValue("i").lastIndexOf("/") + 1,
               cmd.getOptionValue("i").lastIndexOf(".")));
