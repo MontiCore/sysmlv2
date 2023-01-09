@@ -1,5 +1,11 @@
 package de.monticore.lang.sysmlv2;
 
+import de.monticore.cd.codegen.CDGenerator;
+import de.monticore.cd.codegen.CdUtilsPrinter;
+import de.monticore.generating.GeneratorSetup;
+import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.generating.templateengine.TemplateController;
+import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.lang.sysml4verification.cocos.WarnNonExhibited;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionUsageCoCo;
@@ -40,15 +46,19 @@ import de.monticore.lang.sysmlv2.cocos.PartsSupertypes;
 import de.monticore.lang.sysmlv2.cocos.StateGeneratorCoCo;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.SuccessionCoCo;
+import de.monticore.lang.sysmlv2.generator.SysML2CDConverter;
 import de.monticore.lang.sysmlv2.symboltable.completers.ScopeNamingCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.TypesAndDirectionCompleter;
 import de.monticore.lang.sysmlv2.visitor.PartsTransitiveVisitor;
 import de.se_rwth.commons.logging.Log;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
@@ -239,6 +249,12 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
           transform(ast.get());
           //5. run additional CoCos
           runAdditionalCoCos(ast.get());
+
+          String outputDir = cmd.hasOption("o")
+              ? cmd.getOptionValue("o")
+              : "target/gen-test/"+"TEST"; //TODO richtigen Namen suchen
+          generateCD(ast.get(),outputDir);
+
         }
       }
       if(cmd.hasOption("s")) {
@@ -263,5 +279,29 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     SysMLv2Traverser sysMLv2Traverser = getTraverser();
     sysMLv2Traverser.add4SysMLParts(partsTransitiveVisitor);
     sysMLv2Traverser.handle(ast);
+  }
+
+  public void generateCD(ASTSysMLModel ast, String outputDir) {
+
+    GeneratorSetup setup = new GeneratorSetup();
+    GlobalExtensionManagement glex = new GlobalExtensionManagement();
+    setup.setGlex(glex);
+    glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
+
+    if (!outputDir.isEmpty()){
+      File targetDir = new File(outputDir);
+      setup.setOutputDirectory(targetDir);
+    }
+
+    String configTemplate = "automaton2cd.Automaton2CD";
+    TemplateController tc = setup.getNewTemplateController(configTemplate);
+    CDGenerator generator = new CDGenerator(setup);
+    TemplateHookPoint hpp = new TemplateHookPoint(configTemplate);
+    List<Object> configTemplateArgs;
+    // select the conversion variant:
+    SysML2CDConverter converter = new SysML2CDConverter();
+    configTemplateArgs = Arrays.asList(glex, converter, setup.getHandcodedPath(), generator);
+
+    hpp.processValue(tc, ast, configTemplateArgs);
   }
 }
