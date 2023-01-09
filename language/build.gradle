@@ -65,6 +65,7 @@ dependencies {
   implementation "de.monticore:monticore-grammar:$mc_version"
   implementation "de.monticore.lang:ocl:$mc_version"
   implementation "commons-cli:commons-cli:$commons_cli_version"
+  implementation group: 'de.monticore.lang', name: 'cd4analysis', version: mc_version
 }
 
 /* ============================================================ */
