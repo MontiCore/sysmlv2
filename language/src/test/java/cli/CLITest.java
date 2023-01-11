@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class CLITest {
 
-  private static final String MODEL_PATH = "src/test/resources/cocos/actions";
+  private static final String MODEL_PATH = "src/test/resources/cocos/attribute";
 
   private SysMLv2Parser parser = SysMLv2Mill.parser();
 
@@ -20,10 +20,11 @@ public class CLITest {
   @ParameterizedTest(name = "{index} - {0} does pass all checks w/o errors")
   @ValueSource(strings = {
       "0_valid.sysml" // example with action usage
+      //"cli/avionics.sysml"
       //    "1_valid.sysml", // example with control action usages
   })
   public void testValid(String modelName) throws IOException {
-    var arg = new String[] { "-i", MODEL_PATH + "/" + modelName, "-s", "test.json" };
+    var arg = new String[] { "-i", MODEL_PATH + "/" + modelName};//, "-s", "test.json" };
     sysMLv2GeneratorTool.run(arg);
 
   }
