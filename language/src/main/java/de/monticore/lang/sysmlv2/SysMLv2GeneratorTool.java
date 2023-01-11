@@ -126,7 +126,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     checker.addCoCo(new AttributeGeneratorCoCos());
     checker.addCoCo( new PartsGeneratorCoCos());
     checker.addCoCo(new StateGeneratorCoCo());
-    checker.addCoCo(new SuccessionCoCo());
+    //checker.addCoCo(new SuccessionCoCo()); TODO has to be extended for states
     checker.checkAll(ast);
   }
 
@@ -241,7 +241,6 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
         }
         if(ast.isPresent()) {
           //2. Build symboltable
-          Log.info(cmd.getOptionValue("i") + "parsed successfully!", SysMLv2GeneratorTool.class.getName());
           modelTopScope = createSymbolTable(ast.get());
           modelTopScope.setName(cmd.getOptionValue("i").substring(cmd.getOptionValue("i").lastIndexOf("/") + 1,
               cmd.getOptionValue("i").lastIndexOf(".")));
@@ -253,9 +252,11 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
           runAdditionalCoCos(ast.get());
 
           String outputDir = cmd.hasOption("o")
-              ? cmd.getOptionValue("o")
-              : "target/gen-test/"+"TEST"; //TODO richtigen Namen suchen
-          generateCD(ast.get(),outputDir);
+              ?
+              cmd.getOptionValue("o")
+              :
+              "target/gen-test/" + "TEST"; //TODO richtigen Namen suchen
+             generateCD(ast.get(),outputDir);
 
         }
       }
@@ -298,12 +299,12 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     setup.setGlex(glex);
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
 
-    if (!outputDir.isEmpty()){
+    if(!outputDir.isEmpty()) {
       File targetDir = new File(outputDir);
       setup.setOutputDirectory(targetDir);
     }
 
-    String configTemplate = "automaton2cd.Automaton2CD";
+    String configTemplate = "sysml2cd.SysML2CD";
     TemplateController tc = setup.getNewTemplateController(configTemplate);
     CDGenerator generator = new CDGenerator(setup);
     TemplateHookPoint hpp = new TemplateHookPoint(configTemplate);

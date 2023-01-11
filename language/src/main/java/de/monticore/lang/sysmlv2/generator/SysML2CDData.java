@@ -10,14 +10,11 @@ public class SysML2CDData {
 
   protected final ASTCDCompilationUnit compilationUnit;
   protected final ASTCDClass automataClass;
-  protected final ASTCDClass stateSuperClass;
   protected final Collection<ASTCDClass> stateClasses;
 
-  public SysML2CDData(ASTCDCompilationUnit compilationUnit, ASTCDClass automataClass,
-                      ASTCDClass stateSuperClass, Collection<ASTCDClass> stateClasses) {
+  public SysML2CDData(ASTCDCompilationUnit compilationUnit, ASTCDClass automataClass, Collection<ASTCDClass> stateClasses) {
     this.compilationUnit = compilationUnit;
     this.automataClass = automataClass;
-    this.stateSuperClass = stateSuperClass;
     this.stateClasses = stateClasses;
   }
 
@@ -27,10 +24,6 @@ public class SysML2CDData {
 
   public ASTCDClass getAutomataClass() {
     return automataClass;
-  }
-
-  public ASTCDClass getStateSuperClass() {
-    return stateSuperClass;
   }
 
   public Collection<ASTCDClass> getStateClasses() {
