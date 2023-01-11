@@ -50,6 +50,7 @@ import de.monticore.lang.sysmlv2.generator.SysML2CDConverter;
 import de.monticore.lang.sysmlv2.symboltable.completers.ScopeNamingCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.TypesAndDirectionCompleter;
+import de.monticore.lang.sysmlv2.visitor.ActionSuccessionVisitor;
 import de.monticore.lang.sysmlv2.visitor.PartsTransitiveVisitor;
 import de.se_rwth.commons.logging.Log;
 
@@ -229,7 +230,8 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
         final Optional<ASTSysMLModel> ast;
         try {
 
-        Log.info(System.getProperty("user.dir")+"\\"+cmd.getOptionValue("i").trim(), SysMLv2GeneratorTool.class.getName());
+          Log.info(System.getProperty("user.dir") + "\\" + cmd.getOptionValue("i").trim(),
+              SysMLv2GeneratorTool.class.getName());
           //1. Parse input
           Path model = Paths.get(cmd.getOptionValue("i"));
           ast = SysMLv2Mill.parser().parse(model.toString());
@@ -272,12 +274,20 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
 
   public void transform(ASTSysMLModel ast) {
     transformTransitiveSupertypes(ast);
+    transformSuccession(ast);
   }
 
   public void transformTransitiveSupertypes(ASTSysMLModel ast) {
     PartsTransitiveVisitor partsTransitiveVisitor = new PartsTransitiveVisitor();
     SysMLv2Traverser sysMLv2Traverser = getTraverser();
     sysMLv2Traverser.add4SysMLParts(partsTransitiveVisitor);
+    sysMLv2Traverser.handle(ast);
+  }
+
+  public void transformSuccession(ASTSysMLModel ast) {
+    ActionSuccessionVisitor actionSuccessionVisitor = new ActionSuccessionVisitor();
+    SysMLv2Traverser sysMLv2Traverser = getTraverser();
+    sysMLv2Traverser.add4SysMLActions(actionSuccessionVisitor);
     sysMLv2Traverser.handle(ast);
   }
 
