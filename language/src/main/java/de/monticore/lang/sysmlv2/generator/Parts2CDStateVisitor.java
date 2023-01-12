@@ -5,23 +5,25 @@ import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.*;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
+import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
-import de.monticore.umlmodifier.UMLModifierMill;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.Splitters;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Parts2CDStateVisitor implements SysMLPartsVisitor2 {
 
   public final static String ERROR_CODE = "0xDC012";
-
-  protected ASTPartDef astAutomaton;
 
   protected ASTCDCompilationUnit cdCompilationUnit;
 
@@ -41,40 +43,59 @@ public class Parts2CDStateVisitor implements SysMLPartsVisitor2 {
 
   protected final GlobalExtensionManagement glex;
 
-  public Parts2CDStateVisitor(GlobalExtensionManagement glex) {
+  public Parts2CDStateVisitor(GlobalExtensionManagement glex, ASTCDCompilationUnit cdCompilationUnit,
+                              ASTCDPackage cdPackage) {
     this.cd4C = CD4C.getInstance();
     this.glex = glex;
+    this.cdCompilationUnit = cdCompilationUnit;
+    this.cdPackage = cdPackage;
   }
 
   @Override
   public void visit(ASTPartDef astPartDef) {
-    this.astAutomaton = astPartDef;
-
-    // Add a CDDefinition
-    ASTCDDefinition astcdDefinition = CDBasisMill.cDDefinitionBuilder().setName(astPartDef.getName())
-        .setModifier(UMLModifierMill.modifierBuilder().build()).build();
-    if(cdPackage == null) {
-      cdPackage = CDBasisMill.cDPackageBuilder()
-          .setMCQualifiedName(CDBasisMill.mCQualifiedNameBuilder()
-              .setPartsList(Arrays.asList(astPartDef.getName().toLowerCase()))
-              .build())
-          .build();
-    }
-    astcdDefinition.addCDElement(cdPackage);
-
-    if(cdCompilationUnit == null) {
-      ASTCDCompilationUnitBuilder cdCompilationUnitBuilder = CDBasisMill.cDCompilationUnitBuilder();
-      cdCompilationUnitBuilder.setCDDefinition(astcdDefinition);
-
-      cdCompilationUnit = cdCompilationUnitBuilder.build();
-    }
-
-    // Main class, names equally to the Automaton
-    partDefClass = CDBasisMill.cDClassBuilder().setName(astPartDef.getName())
+    // Step 1: Create Interface for the Part Def to support multiple inheritance
+    ASTCDInterfaceUsage interfaceUsage = createInterface(astPartDef);
+    //Step 2 Create class
+    partDefClass = CD4CodeMill.cDClassBuilder().setCDInterfaceUsage(interfaceUsage)
+        .setName(astPartDef.getName() + "Class")
         .setModifier(CDBasisMill.modifierBuilder().PUBLIC().build()).build();
     cdPackage.addCDElement(partDefClass);
 
     stateToClassMap.put(astPartDef.getName(), partDefClass);
+  }
+
+  ASTCDInterfaceUsage createInterface(ASTPartDef astPartDef) {
+    //Step 1 get a list of all specializations
+    ASTCDExtendUsage extendUsage = CD4CodeMill.cDExtendUsageBuilder().build();
+    List<ASTMCType> specializationList = astPartDef.streamSpecializations().filter(
+        t -> t instanceof ASTSysMLSpecialization).flatMap(s -> s.streamSuperTypes()).collect(
+        Collectors.toList());
+    //Step 2 add each specialization to the Extend Usage
+    for (ASTMCType element : specializationList) {
+      String elementName = element.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+
+      ASTMCQualifiedType mcQualifiedType = CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
+          CD4CodeMill.mCQualifiedNameBuilder().
+              addParts(elementName).build()).build();
+      extendUsage.addSuperclass(mcQualifiedType);
+    }
+    //Step 3 create the part interface
+
+    ASTCDInterface partInterface = CD4CodeMill.cDInterfaceBuilder().setName(astPartDef.getName()).setModifier(
+        CDBasisMill.modifierBuilder().PUBLIC().build()).build();
+    if(!extendUsage.isEmptySuperclass()) {
+      partInterface.setCDExtendUsage(extendUsage);
+    }
+    cdPackage.addCDElement(partInterface);
+
+    //Step 4 add the created interface to the InterfaceUsage
+    ASTMCQualifiedType mcQualifiedType = CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
+        CD4CodeMill.mCQualifiedNameBuilder().
+            addParts(astPartDef.getName()).build()).build();
+    ASTCDInterfaceUsage interfaceUsage = CD4CodeMill.cDInterfaceUsageBuilder().build();
+    interfaceUsage.addInterface(mcQualifiedType);
+
+    return interfaceUsage;
   }
 
   public ASTCDCompilationUnit getCdCompilationUnit() {
