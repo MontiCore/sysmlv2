@@ -1,6 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.cocos;
 
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortDef;
@@ -45,14 +48,21 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
    */
   @Override
   public void check(ASTPartUsage node) {
-    var nonExistent = node.streamSpecializations()
+    var nonExistent = node.streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization | t instanceof ASTSysMLRedefinition)
+        .flatMap(s -> s.streamSuperTypes())
+        .filter(t -> node.getEnclosingScope().resolvePartUsage(printName(t)).isEmpty())
+        .collect(Collectors.toList());
+    for(var problem: nonExistent) {
+      Log.error("Could not find part usage with the name \"" + printName(problem) + "\".");
+    }
+    var nonExistentType = node.streamSpecializations().filter(t -> t instanceof ASTSysMLTyping)
         .flatMap(s -> s.streamSuperTypes())
         .filter(t -> node.getEnclosingScope().resolvePartDef(printName(t)).isEmpty())
         .collect(Collectors.toList());
-
-    for(var problem: nonExistent) {
-      Log.error("Could not find part definition with the name \"" + printName(problem) + "\".");
+    for(var problem: nonExistentType) {
+      Log.error("Could not find part def with the name \"" + printName(problem) + "\".");
     }
+
   }
   @Override
   public void check(ASTPortDef node) {
