@@ -58,7 +58,7 @@ public class AttributeGeneratorCoCos implements SysMLPartsASTAttributeUsageCoCo 
     var parentNode = attributeUsage.getEnclosingScope().getAstNode();
 
     if(parentNode instanceof ASTPartDef) {
-      for (ASTPartDef transSuperType : ((ASTPartDef) parentNode).getTransitiveSupertypes()) {
+      for (ASTPartDef transSuperType : ((ASTPartDef) parentNode).getTransitiveDefSupertypes()) {
         var attribute = transSuperType.getSpannedScope().resolveAttributeUsage(redefinedAttributeName);
         if(attribute.isPresent()) {
           ASTAttributeUsage refinedAttr = attribute.get().getAstNode();

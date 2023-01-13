@@ -14,7 +14,7 @@ public class ASTPartUsage extends ASTPartUsageTOP {
 
   }
 
-  public void setTransitiveSupertypes(List<ASTPartDef> transitiveDefSupertypes) {
+  public void setTransitiveDefSupertypes(List<ASTPartDef> transitiveDefSupertypes) {
 
     this.transitiveDefSupertypes = transitiveDefSupertypes;
 

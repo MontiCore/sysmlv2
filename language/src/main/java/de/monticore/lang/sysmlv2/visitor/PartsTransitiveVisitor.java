@@ -1,8 +1,11 @@
 package de.monticore.lang.sysmlv2.visitor;
 
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
+import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
@@ -16,25 +19,26 @@ public class PartsTransitiveVisitor implements SysMLPartsVisitor2 {
 
   @Override
   public void visit(ASTPartDef node) {
-    if(node.getTransitiveSupertypes().size() == 0) {
-      node.setTransitiveSupertypes(getSuperTypesOfNode(getSpecializationList(node), node));
+    if(node.getTransitiveDefSupertypes().size() == 0) {
+      node.setTransitiveDefSupertypes(
+          getPartDefSuperTypesOfNode(getSpecializationList(node), node.getEnclosingScope()));
     }
   }
 
-  List<ASTPartDef> getSuperTypesOfNode(List<ASTMCType> superTypes, ASTPartDef node) {
+  List<ASTPartDef> getPartDefSuperTypesOfNode(List<ASTMCType> superTypes, ISysMLPartsScope partsScope) {
     List<ASTPartDef> superTypeList = new ArrayList<>();
     for (ASTMCType superType : superTypes) {
-      var partDefSymbol = node.getEnclosingScope().resolvePartDef(
+      var partDefSymbol = partsScope.resolvePartDef(
           superType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())));
       if(partDefSymbol.isPresent()) {
         var partDef = partDefSymbol.get().getAstNode();
         superTypeList.add(partDef);
-        if(partDef.getTransitiveSupertypes().size() == 0) {
+        if(partDef.getTransitiveDefSupertypes().size() == 0) {
 
-          superTypeList.addAll(getSuperTypesOfNode(getSpecializationList(partDef), partDef));
+          superTypeList.addAll(getPartDefSuperTypesOfNode(getSpecializationList(partDef), partDef.getEnclosingScope()));
         }
         else {
-          superTypeList.addAll(partDef.getTransitiveSupertypes());
+          superTypeList.addAll(partDef.getTransitiveDefSupertypes());
         }
       }
     }
@@ -50,25 +54,34 @@ public class PartsTransitiveVisitor implements SysMLPartsVisitor2 {
 
   @Override
   public void visit(ASTPartUsage node) {
-    if(node.getTransitiveDefSupertypes().size() == 0) {
-      node.setTransitiveSupertypes(getSuperTypesOfNode(getSpecializationList(node), node));
+    if(node.getTransitiveUsageSupertypes().isEmpty()) {
+      node.setTransitiveUsageSupertypes(getPartUsageSuperTypesOfNode(getPartUsageList(node), node.getEnclosingScope()));
+      node.getTransitiveUsageSupertypes().forEach(t -> visit(t));
+    }
+    if(node.getTransitiveDefSupertypes().isEmpty()) {
+      List<ASTPartDef> superDefList = new ArrayList<>();
+      superDefList.addAll(getPartDefSuperTypesOfNode(getPartDefList(node), node.getEnclosingScope()));
+      List<ASTPartDef> transitiveDefList = node.getTransitiveUsageSupertypes().stream().flatMap(
+          t -> t.getTransitiveDefSupertypes().stream()).collect(Collectors.toList());
+      superDefList.addAll(transitiveDefList);
+      node.setTransitiveDefSupertypes(superDefList);
     }
   }
 
-  List<ASTPartDef> getSuperTypesOfNode(List<ASTMCType> superTypes, ASTPartUsage node) {
-    List<ASTPartDef> superTypeList = new ArrayList<>();
+  List<ASTPartUsage> getPartUsageSuperTypesOfNode(List<ASTMCType> superTypes, ISysMLPartsScope partsScope) {
+    List<ASTPartUsage> superTypeList = new ArrayList<>();
     for (ASTMCType superType : superTypes) {
-      var partDefSymbol = node.getEnclosingScope().resolvePartDef(
+      var partUsageSymbol = partsScope.resolvePartUsage(
           superType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())));
-      if(partDefSymbol.isPresent()) {
-        var partDef = partDefSymbol.get().getAstNode();
-        superTypeList.add(partDef);
-        if(partDef.getTransitiveSupertypes().size() == 0) {
+      if(partUsageSymbol.isPresent()) {
+        var partUsage = partUsageSymbol.get().getAstNode();
+        superTypeList.add(partUsage);
+        if(partUsage.getTransitiveUsageSupertypes().size() == 0) {
 
-          superTypeList.addAll(getSuperTypesOfNode(getSpecializationList(partDef), partDef));
+          superTypeList.addAll(getPartUsageSuperTypesOfNode(getPartDefList(partUsage), partUsage.getEnclosingScope()));
         }
         else {
-          superTypeList.addAll(partDef.getTransitiveSupertypes());
+          superTypeList.addAll(partUsage.getTransitiveUsageSupertypes());
         }
       }
     }
@@ -76,8 +89,15 @@ public class PartsTransitiveVisitor implements SysMLPartsVisitor2 {
     return superTypeList;
   }
 
-  List<ASTMCType> getSpecializationList(ASTPartUsage node) {
-    return node.streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization)
+  List<ASTMCType> getPartDefList(ASTPartUsage node) {
+    return node.streamSpecializations().filter(t -> t instanceof ASTSysMLTyping)
+        .flatMap(s -> s.streamSuperTypes()).collect(Collectors.toList());
+
+  }
+
+  List<ASTMCType> getPartUsageList(ASTPartUsage node) {
+    return node.streamSpecializations().filter(
+            t -> t instanceof ASTSysMLSpecialization | t instanceof ASTSysMLRedefinition)
         .flatMap(s -> s.streamSuperTypes()).collect(Collectors.toList());
 
   }
