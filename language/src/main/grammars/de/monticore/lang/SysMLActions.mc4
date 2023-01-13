@@ -32,7 +32,7 @@ component grammar SysMLActions
     "}" "until" until:Expression ";";
 
   SendActionUsage extends ActionUsage =
-    "send" payload:Expression key("to") target:MCQualifiedName ";" ;
+    "send" payload:Expression key("to") target:MCQualifiedName (";")? ;
 
   AssignmentActionUsage implements SysMLElement =
     "assign" target:MCQualifiedName ":=" valueExpression:Expression ";" ;

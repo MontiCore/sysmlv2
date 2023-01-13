@@ -54,7 +54,7 @@ item def Voltage;
             in pressData : ~DataOutPort;
             in zAcc : ~DataOutPort;
             in zSpeed : ~DataOutPort;
-            exhibit state flightHandler;
+            exhibit flightHandler;
             out logData : DataOutPort;
 
             out main : ParachutePort;
@@ -138,11 +138,11 @@ bind imuSensor.zAcc = ESP32.zAcc;
 
         accept VehicleStartSignal
         if zSpeed <= 0
-            do send VehicleStartSignal() to drogue.signal;
+            do send VehicleStartSignal() to drogue.signal
             then Descend;
         state Descend;
         if height <= 400
-            do send MainSignal() to main.signal;
+            do send MainSignal() to main.signal
             then Landing;
         state Landing;
 
