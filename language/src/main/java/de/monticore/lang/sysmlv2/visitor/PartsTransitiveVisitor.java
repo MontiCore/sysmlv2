@@ -50,7 +50,7 @@ public class PartsTransitiveVisitor implements SysMLPartsVisitor2 {
 
   @Override
   public void visit(ASTPartUsage node) {
-    if(node.getTransitiveSupertypes().size() == 0) {
+    if(node.getTransitiveDefSupertypes().size() == 0) {
       node.setTransitiveSupertypes(getSuperTypesOfNode(getSpecializationList(node), node));
     }
   }

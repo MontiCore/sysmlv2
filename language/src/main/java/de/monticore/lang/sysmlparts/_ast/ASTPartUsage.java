@@ -5,23 +5,38 @@ import java.util.stream.Stream;
 
 public class ASTPartUsage extends ASTPartUsageTOP {
 
-  protected List<ASTPartDef> transitiveSupertypes
+  protected List<ASTPartDef> transitiveDefSupertypes
       = new java.util.ArrayList<>();
-
-  public Stream<ASTPartDef> streamTransitiveSupertypes() {
-    return this.getTransitiveSupertypes().stream();
-
-  }
-
-  public void setTransitiveSupertypes(List<ASTPartDef> transitiveSupertypes) {
-
-    this.transitiveSupertypes = transitiveSupertypes;
+  protected List<ASTPartUsage> transitiveUsageSupertypes
+      = new java.util.ArrayList<>();
+  public Stream<ASTPartDef> streamTransitiveDefSupertypes() {
+    return this.getTransitiveDefSupertypes().stream();
 
   }
 
-  public List<ASTPartDef> getTransitiveSupertypes() {
+  public void setTransitiveSupertypes(List<ASTPartDef> transitiveDefSupertypes) {
 
-    return this.transitiveSupertypes;
+    this.transitiveDefSupertypes = transitiveDefSupertypes;
+
   }
 
+  public List<ASTPartDef> getTransitiveDefSupertypes() {
+
+    return this.transitiveDefSupertypes;
+  }
+  public Stream<ASTPartUsage> streamTransitiveUsageSupertypes() {
+    return this.getTransitiveUsageSupertypes().stream();
+
+  }
+
+  public void setTransitiveUsageSupertypes(List<ASTPartUsage> transitiveUsageSupertypes) {
+
+    this.transitiveUsageSupertypes = transitiveUsageSupertypes;
+
+  }
+
+  public List<ASTPartUsage> getTransitiveUsageSupertypes() {
+
+    return this.transitiveUsageSupertypes;
+  }
 }
