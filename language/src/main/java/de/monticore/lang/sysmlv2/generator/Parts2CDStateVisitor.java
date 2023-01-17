@@ -3,11 +3,13 @@ package de.monticore.lang.sysmlv2.generator;
 
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
@@ -58,7 +60,7 @@ public class Parts2CDStateVisitor implements SysMLPartsVisitor2 {
     //Step 2 Create class
     partDefClass = CD4CodeMill.cDClassBuilder().setCDInterfaceUsage(interfaceUsage)
         .setName(astPartDef.getName() + "Class")
-        .setModifier(CDBasisMill.modifierBuilder().PUBLIC().build()).build();
+        .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
     cdPackage.addCDElement(partDefClass);
 
     stateToClassMap.put(astPartDef.getName(), partDefClass);
@@ -82,7 +84,7 @@ public class Parts2CDStateVisitor implements SysMLPartsVisitor2 {
     //Step 3 create the part interface
 
     ASTCDInterface partInterface = CD4CodeMill.cDInterfaceBuilder().setName(astPartDef.getName()).setModifier(
-        CDBasisMill.modifierBuilder().PUBLIC().build()).build();
+        CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
     if(!extendUsage.isEmptySuperclass()) {
       partInterface.setCDExtendUsage(extendUsage);
     }
