@@ -43,7 +43,7 @@ public class PartCoCosTest {
 
     @Test
     public void testValid() throws IOException {
-      ASTSysMLModel ast = SysMLv2Mill.parser().parse_String("part def A; part def B: A;").get();
+      ASTSysMLModel ast = SysMLv2Mill.parser().parse_String("part def A; part def B :> A;").get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
       checker.addCoCo((SysMLPartsASTPartDefCoCo) new PartsSupertypes());
@@ -54,7 +54,7 @@ public class PartCoCosTest {
 
     @Test
     public void testInvalid() throws IOException {
-      ASTSysMLModel ast = SysMLv2Mill.parser().parse_String("part def B: A;").get();
+      ASTSysMLModel ast = SysMLv2Mill.parser().parse_String("part def B:> A;").get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
       checker.addCoCo((SysMLPartsASTPartDefCoCo) new PartsSupertypes());

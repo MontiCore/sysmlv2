@@ -33,7 +33,7 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
    */
   @Override
   public void check(ASTPartDef node) {
-    var nonExistent = node.streamSpecializations()
+    var nonExistent = node.streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization)
         .flatMap(s -> s.streamSuperTypes())
         .filter(t -> node.getEnclosingScope().resolvePartDef(printName(t)).isEmpty())
         .collect(Collectors.toList());
@@ -41,6 +41,12 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
     for(var problem: nonExistent) {
       Log.error("Could not find part definition \"" + printName(problem) + "\".");
     }
+    var numberOfOtherSpecialications = node.streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization)
+        .flatMap(s -> s.streamSuperTypes())
+        .filter(t -> node.getEnclosingScope().resolvePartDef(printName(t)).isEmpty())
+        .count();
+    if(numberOfOtherSpecialications != 0)
+      Log.error("Part def is not allowed to use typing or redefinition specialization, in part def " + node.getName() + ".");
   }
 
   /**
