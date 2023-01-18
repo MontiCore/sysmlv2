@@ -17,13 +17,11 @@ import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.Splitters;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +59,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   }
 
   @Override
-  public void visit(ASTAttributeDef astPartDef){
+  public void visit(ASTAttributeDef astPartDef) {
     // Step 1: Create Interface for the Part Def to support multiple inheritance
     ASTCDInterfaceUsage interfaceUsage = createInterfaceUsage(astPartDef);
     //Step 2 Create class
@@ -93,13 +91,13 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   ASTCDInterfaceUsage createInterfaceUsage(ASTSysMLElement sysMLElement) {
     //Step 1 get a list of all specializations
     ASTCDExtendUsage extendUsage = CD4CodeMill.cDExtendUsageBuilder().build();
-    List<ASTSpecialization> specializationList= new ArrayList<>();
+    List<ASTSpecialization> specializationList = new ArrayList<>();
     String name = null;
-    if(sysMLElement instanceof ASTPartDef){
+    if(sysMLElement instanceof ASTPartDef) {
       specializationList = ((ASTPartDef) sysMLElement).getSpecializationList();
       name = ((ASTPartDef) sysMLElement).getName();
     }
-    if(sysMLElement instanceof ASTAttributeDef){
+    if(sysMLElement instanceof ASTAttributeDef) {
       specializationList = ((ASTAttributeDef) sysMLElement).getSpecializationList();
       name = ((ASTAttributeDef) sysMLElement).getName();
     }
@@ -112,12 +110,12 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
 
       ASTMCQualifiedType mcQualifiedType = CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
           CD4CodeMill.mCQualifiedNameBuilder().
-              addParts(elementName+"Interface").build()).build();
+              addParts(elementName + "Interface").build()).build();
       extendUsage.addSuperclass(mcQualifiedType);
     }
     //Step 3 create the interface
 
-    ASTCDInterface partInterface = CD4CodeMill.cDInterfaceBuilder().setName(name+"Interface").setModifier(
+    ASTCDInterface partInterface = CD4CodeMill.cDInterfaceBuilder().setName(name + "Interface").setModifier(
         CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
     if(!extendUsage.isEmptySuperclass()) {
       partInterface.setCDExtendUsage(extendUsage);
@@ -127,7 +125,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     //Step 4 add the created interface to the InterfaceUsage
     ASTMCQualifiedType mcQualifiedType = CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
         CD4CodeMill.mCQualifiedNameBuilder().
-            addParts(name+"Interface").build()).build();
+            addParts(name + "Interface").build()).build();
     ASTCDInterfaceUsage interfaceUsage = CD4CodeMill.cDInterfaceUsageBuilder().build();
     interfaceUsage.addInterface(mcQualifiedType);
 
@@ -148,6 +146,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     attributeList.addAll(supertypeAttributeList);
     return attributeList;
   }
+
   List<ASTCDAttribute> createAttributes(ASTAttributeDef astAttributeDef) {
     List<ASTAttributeUsage> attributeUsageList = createAttributeUsageList(astAttributeDef);
     List<String> generatedAttributeList = new ArrayList<>();
@@ -163,6 +162,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     attributeList.addAll(supertypeAttributeList);
     return attributeList;
   }
+
   private List<ASTAttributeUsage> createAttributeUsageList(ASTSysMLElement element) {
     List<ASTSysMLElement> elementList = new ArrayList<>();
     if(element instanceof ASTPartDef)
@@ -182,16 +182,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
       String attributeName = ((ASTAttributeUsage) element).getName();
       if(!stringList.contains(attributeName)) {
         stringList.add(attributeName);
-        var sysMLTypingList = ((ASTAttributeUsage) element).getSpecializationList().stream().filter(
-            t -> t instanceof ASTSysMLTyping).map(u -> ((ASTSysMLTyping) u)).collect(Collectors.toList());
-
-        String typString = sysMLTypingList.get(0).getSuperTypes(0).printType(
-            new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
-        List<String> partList = Arrays.asList(typString.split("\\."));
-
-        ASTMCQualifiedName qualifiedName = CD4CodeMill.mCQualifiedNameBuilder().setPartsList(partList).build();
-        ASTMCQualifiedType qualifiedType = CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
-            qualifiedName).build();
+        ASTMCQualifiedType qualifiedType = attributeType((ASTAttributeUsage) element);
         return CD4CodeMill.cDAttributeBuilder().setName(attributeName).setModifier(
             CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(qualifiedType).build();
       }
@@ -212,6 +203,20 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   }
 
   // Support methods
+  protected ASTMCQualifiedType attributeType(ASTAttributeUsage element) {
+    var sysMLTypingList = ((ASTAttributeUsage) element).getSpecializationList().stream().filter(
+        t -> t instanceof ASTSysMLTyping).map(u -> ((ASTSysMLTyping) u)).collect(Collectors.toList());
+    String typString = sysMLTypingList.get(0).getSuperTypes(0).printType(
+        new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+    List<String> partsList = Splitters.DOT.splitToList(typString);
+    String typeName = partsList.get(partsList.size() - 1);
+    if(typeName.equals("Boolean"))
+      partsList = List.of("boolean");
+    if(typeName.equals("Real"))
+      partsList = List.of("float");
+    return qualifiedType(partsList);
+  }
+
   protected ASTMCQualifiedType qualifiedType(String qname) {
     return qualifiedType(Splitters.DOT.splitToList(qname));
   }
