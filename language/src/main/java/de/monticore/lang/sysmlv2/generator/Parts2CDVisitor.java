@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class Parts2CDStateVisitor implements SysMLPartsVisitor2 {
+public class Parts2CDVisitor implements SysMLPartsVisitor2 {
 
   public final static String ERROR_CODE = "0xDC012";
 
@@ -50,8 +50,8 @@ public class Parts2CDStateVisitor implements SysMLPartsVisitor2 {
 
   protected final GlobalExtensionManagement glex;
 
-  public Parts2CDStateVisitor(GlobalExtensionManagement glex, ASTCDCompilationUnit cdCompilationUnit,
-                              ASTCDPackage cdPackage) {
+  public Parts2CDVisitor(GlobalExtensionManagement glex, ASTCDCompilationUnit cdCompilationUnit,
+                         ASTCDPackage cdPackage) {
     this.cd4C = CD4C.getInstance();
     this.glex = glex;
     this.cdCompilationUnit = cdCompilationUnit;

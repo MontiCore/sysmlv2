@@ -24,7 +24,7 @@ public class SysML2CDConverter {
     // Main class, names equally to the Automaton
 
     // Phase 1: Work on parts
-    Parts2CDStateVisitor phase1Visitor = new Parts2CDStateVisitor(glex, cdCompilationUnit, cdPackage);
+    Parts2CDVisitor phase1Visitor = new Parts2CDVisitor(glex, cdCompilationUnit, cdPackage);
     SysMLv2Traverser traverser = SysMLv2Mill.inheritanceTraverser();
     traverser.add4SysMLParts(phase1Visitor);
 
