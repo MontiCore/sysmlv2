@@ -258,7 +258,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
         initCdPackage(astSysMLElement, test);
       }
       else if(!(astSysMLElement instanceof SysMLv2ArtifactScope)) {
-        initCdPackage(element, partList);
+        initCdPackage(astSysMLElement, partList);
       }
       else {
         return test;

@@ -1,10 +1,10 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("glex", "converter", "hwPath", "generator")}
+${tc.signature("glex", "converter", "hwPath", "generator", "fileName")}
 
 <!-- ====================================================================
      build classdiagram
 -->
-<#assign cdata=converter.doConvert(ast, glex)>
+<#assign cdata=converter.doConvert(ast, glex, fileName)>
 
 <!-- ====================================================================
      call TopDecorator

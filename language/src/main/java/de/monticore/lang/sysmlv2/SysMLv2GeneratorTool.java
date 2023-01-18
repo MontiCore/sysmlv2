@@ -53,6 +53,7 @@ import de.monticore.lang.sysmlv2.symboltable.completers.TypesAndDirectionComplet
 import de.monticore.lang.sysmlv2.visitor.ActionSuccessionVisitor;
 import de.monticore.lang.sysmlv2.visitor.PartsTransitiveVisitor;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -124,7 +125,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     checker.addCoCo(new PortDefNeedsDirection());
     checker.addCoCo(new ActionControlGeneratorCoCos());
     checker.addCoCo(new AttributeGeneratorCoCos());
-    checker.addCoCo( new PartsGeneratorCoCos());
+    checker.addCoCo(new PartsGeneratorCoCos());
     checker.addCoCo(new StateGeneratorCoCo());
     //checker.addCoCo(new SuccessionCoCo()); TODO has to be extended for states
     checker.checkAll(ast);
@@ -255,8 +256,11 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
               ?
               cmd.getOptionValue("o")
               :
-              "target/gen-test/" + "TEST"; //TODO richtigen Namen suchen
-             generateCD(ast.get(),outputDir);
+              "target/gen-test/" + "SysMLGeneration"; //TODO richtigen Namen suchen
+          Path model = Paths.get(cmd.getOptionValue("i"));
+
+          String fileName = FilenameUtils.removeExtension(model.toFile().getName());
+          generateCD(ast.get(), outputDir, fileName);
 
         }
       }
@@ -292,7 +296,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     sysMLv2Traverser.handle(ast);
   }
 
-  public void generateCD(ASTSysMLModel ast, String outputDir) {
+  public void generateCD(ASTSysMLModel ast, String outputDir, String fileName) {
 
     GeneratorSetup setup = new GeneratorSetup();
     GlobalExtensionManagement glex = new GlobalExtensionManagement();
@@ -311,7 +315,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     List<Object> configTemplateArgs;
     // select the conversion variant:
     SysML2CDConverter converter = new SysML2CDConverter();
-    configTemplateArgs = Arrays.asList(glex, converter, setup.getHandcodedPath(), generator);
+    configTemplateArgs = Arrays.asList(glex, converter, setup.getHandcodedPath(), generator, fileName);
 
     hpp.processValue(tc, ast, configTemplateArgs);
   }
