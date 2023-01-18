@@ -11,6 +11,7 @@ import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
+import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
@@ -19,7 +20,9 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.Splitters;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,27 +108,50 @@ public class Parts2CDStateVisitor implements SysMLPartsVisitor2 {
   }
 
   List<ASTCDAttribute> createAttributes(ASTPartDef astPartDef) {
-    List<ASTSysMLElement> attributeUsageList = astPartDef.getSysMLElementList().stream().filter(
-        t -> t instanceof ASTAttributeUsage).collect(Collectors.toList());
-    List<ASTCDAttribute> attributeList = attributeUsageList.stream().map(t -> createAttribute(t)).collect(
+    List<ASTAttributeUsage> attributeUsageList = createAttributeUsageList(astPartDef);
+    List<String> generatedAttributeList = new ArrayList<>();
+    List<ASTCDAttribute> attributeList = attributeUsageList.stream().map(
+        t -> createAttribute(t, generatedAttributeList)).collect(
         Collectors.toList());
+    attributeList.removeAll(Collections.singleton(null));
+    List<ASTCDAttribute> supertypeAttributeList = astPartDef.streamTransitiveDefSupertypes().flatMap(
+        t -> createAttributeUsageList(t).stream()).map(f -> createAttribute(f, generatedAttributeList)).collect(
+        Collectors.toList());
+    supertypeAttributeList.removeAll(Collections.singleton(null));
+    attributeList.addAll(supertypeAttributeList);
     return attributeList;
   }
 
-  ASTCDAttribute createAttribute(ASTSysMLElement element) {
+  private List<ASTAttributeUsage> createAttributeUsageList(ASTSysMLElement element) {
+    List<ASTSysMLElement> elementList = new ArrayList<>();
+    if(element instanceof ASTPartDef)
+      elementList = ((ASTPartDef) element).getSysMLElementList();
+    if(element instanceof ASTPartUsage)
+      elementList = ((ASTPartUsage) element).getSysMLElementList();
+    List<ASTAttributeUsage> attributeUsageList;
+    attributeUsageList = elementList.stream().filter(
+        t -> t instanceof ASTAttributeUsage).map(t -> (ASTAttributeUsage) t).collect(Collectors.toList());
+    return attributeUsageList;
+  }
+
+  ASTCDAttribute createAttribute(ASTSysMLElement element, List<String> stringList) {
     if(element instanceof ASTAttributeUsage) {
       String attributeName = ((ASTAttributeUsage) element).getName();
-      var sysMLTypingList = ((ASTAttributeUsage) element).getSpecializationList().stream().filter(
-          t -> t instanceof ASTSysMLTyping).map(u -> ((ASTSysMLTyping) u)).collect(Collectors.toList());
+      if(!stringList.contains(attributeName)) {
+        stringList.add(attributeName);
+        var sysMLTypingList = ((ASTAttributeUsage) element).getSpecializationList().stream().filter(
+            t -> t instanceof ASTSysMLTyping).map(u -> ((ASTSysMLTyping) u)).collect(Collectors.toList());
 
-      String typString = sysMLTypingList.get(0).getSuperTypes(0).printType(
-          new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
-      List<String> partList = Arrays.asList(typString.split("\\."));
-      ASTMCQualifiedName qualifiedName = CD4CodeMill.mCQualifiedNameBuilder().setPartsList(partList).build();
-      ASTMCQualifiedType qualifiedType = CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(qualifiedName).build();
-      ASTCDAttribute attribute = CD4CodeMill.cDAttributeBuilder().setName(attributeName).setModifier(
-          CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(qualifiedType).build();
-      return attribute;
+        String typString = sysMLTypingList.get(0).getSuperTypes(0).printType(
+            new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+        List<String> partList = Arrays.asList(typString.split("\\."));
+
+        ASTMCQualifiedName qualifiedName = CD4CodeMill.mCQualifiedNameBuilder().setPartsList(partList).build();
+        ASTMCQualifiedType qualifiedType = CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
+            qualifiedName).build();
+        return CD4CodeMill.cDAttributeBuilder().setName(attributeName).setModifier(
+            CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(qualifiedType).build();
+      }
     }
     return null;
   }
