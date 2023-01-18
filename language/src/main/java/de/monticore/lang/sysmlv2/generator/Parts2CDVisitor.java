@@ -6,9 +6,11 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
@@ -59,9 +61,23 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   }
 
   @Override
+  public void visit(ASTAttributeDef astPartDef){
+    // Step 1: Create Interface for the Part Def to support multiple inheritance
+    ASTCDInterfaceUsage interfaceUsage = createInterfaceUsage(astPartDef);
+    //Step 2 Create class
+    partDefClass = CD4CodeMill.cDClassBuilder().setCDInterfaceUsage(interfaceUsage)
+        .setName(astPartDef.getName()+"Class")
+        .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
+    List<ASTCDAttribute> liste = createAttributes(astPartDef);
+
+    partDefClass.setCDAttributeList(liste);
+    cdPackage.addCDElement(partDefClass);
+  }
+
+  @Override
   public void visit(ASTPartDef astPartDef) {
     // Step 1: Create Interface for the Part Def to support multiple inheritance
-    ASTCDInterfaceUsage interfaceUsage = createInterface(astPartDef);
+    ASTCDInterfaceUsage interfaceUsage = createInterfaceUsage(astPartDef);
     //Step 2 Create class
     partDefClass = CD4CodeMill.cDClassBuilder().setCDInterfaceUsage(interfaceUsage)
         .setName(astPartDef.getName() + "Class")
@@ -73,14 +89,24 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     stateToClassMap.put(astPartDef.getName(), partDefClass);
   }
 
-  ASTCDInterfaceUsage createInterface(ASTPartDef astPartDef) {
+  ASTCDInterfaceUsage createInterfaceUsage(ASTSysMLElement astPartDef) {
     //Step 1 get a list of all specializations
     ASTCDExtendUsage extendUsage = CD4CodeMill.cDExtendUsageBuilder().build();
-    List<ASTMCType> specializationList = astPartDef.streamSpecializations().filter(
+    List<ASTSpecialization> specializationList= new ArrayList<>();
+    String name = null;
+    if(astPartDef instanceof ASTPartDef){
+      specializationList = ((ASTPartDef) astPartDef).getSpecializationList();
+      name = ((ASTPartDef) astPartDef).getName();
+    }
+    if(astPartDef instanceof ASTAttributeDef){
+      specializationList = ((ASTAttributeDef) astPartDef).getSpecializationList();
+      name = ((ASTAttributeDef) astPartDef).getName();
+    }
+    List<ASTMCType> supertypeList = specializationList.stream().filter(
         t -> t instanceof ASTSysMLSpecialization).flatMap(s -> s.streamSuperTypes()).collect(
         Collectors.toList());
     //Step 2 add each specialization to the Extend Usage
-    for (ASTMCType element : specializationList) {
+    for (ASTMCType element : supertypeList) {
       String elementName = element.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
 
       ASTMCQualifiedType mcQualifiedType = CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
@@ -88,9 +114,9 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
               addParts(elementName).build()).build();
       extendUsage.addSuperclass(mcQualifiedType);
     }
-    //Step 3 create the part interface
+    //Step 3 create the interface
 
-    ASTCDInterface partInterface = CD4CodeMill.cDInterfaceBuilder().setName(astPartDef.getName()).setModifier(
+    ASTCDInterface partInterface = CD4CodeMill.cDInterfaceBuilder().setName(name).setModifier(
         CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
     if(!extendUsage.isEmptySuperclass()) {
       partInterface.setCDExtendUsage(extendUsage);
@@ -100,7 +126,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     //Step 4 add the created interface to the InterfaceUsage
     ASTMCQualifiedType mcQualifiedType = CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
         CD4CodeMill.mCQualifiedNameBuilder().
-            addParts(astPartDef.getName()).build()).build();
+            addParts(name).build()).build();
     ASTCDInterfaceUsage interfaceUsage = CD4CodeMill.cDInterfaceUsageBuilder().build();
     interfaceUsage.addInterface(mcQualifiedType);
 
@@ -121,13 +147,29 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     attributeList.addAll(supertypeAttributeList);
     return attributeList;
   }
+  List<ASTCDAttribute> createAttributes(ASTAttributeDef astAttributeDef) {
+    List<ASTAttributeUsage> attributeUsageList = createAttributeUsageList(astAttributeDef);
+    List<String> generatedAttributeList = new ArrayList<>();
+    List<ASTCDAttribute> attributeList = attributeUsageList.stream().map(
+        t -> createAttribute(t, generatedAttributeList)).collect(
+        Collectors.toList());
+    attributeList.removeAll(Collections.singleton(null));
+    List<ASTCDAttribute> supertypeAttributeList = astAttributeDef.streamTransitiveDefSupertypes().flatMap(
+        t -> createAttributeUsageList(t).stream()).map(f -> createAttribute(f, generatedAttributeList)).collect(
+        Collectors.toList());
 
+    supertypeAttributeList.removeAll(Collections.singleton(null));
+    attributeList.addAll(supertypeAttributeList);
+    return attributeList;
+  }
   private List<ASTAttributeUsage> createAttributeUsageList(ASTSysMLElement element) {
     List<ASTSysMLElement> elementList = new ArrayList<>();
     if(element instanceof ASTPartDef)
       elementList = ((ASTPartDef) element).getSysMLElementList();
     if(element instanceof ASTPartUsage)
       elementList = ((ASTPartUsage) element).getSysMLElementList();
+    if(element instanceof ASTAttributeDef)
+      elementList = ((ASTAttributeDef) element).getSysMLElementList();
     List<ASTAttributeUsage> attributeUsageList;
     attributeUsageList = elementList.stream().filter(
         t -> t instanceof ASTAttributeUsage).map(t -> (ASTAttributeUsage) t).collect(Collectors.toList());
