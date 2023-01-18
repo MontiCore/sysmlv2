@@ -66,8 +66,8 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     ASTCDInterfaceUsage interfaceUsage = createInterfaceUsage(astPartDef);
     //Step 2 Create class
     partDefClass = CD4CodeMill.cDClassBuilder().setCDInterfaceUsage(interfaceUsage)
-        .setName(astPartDef.getName()+"Class")
-        .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
+        .setName(astPartDef.getName())
+        .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).setCDInterfaceUsage(interfaceUsage).build();
     List<ASTCDAttribute> liste = createAttributes(astPartDef);
 
     partDefClass.setCDAttributeList(liste);
@@ -77,11 +77,12 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   @Override
   public void visit(ASTPartDef astPartDef) {
     // Step 1: Create Interface for the Part Def to support multiple inheritance
+
     ASTCDInterfaceUsage interfaceUsage = createInterfaceUsage(astPartDef);
     //Step 2 Create class
-    partDefClass = CD4CodeMill.cDClassBuilder().setCDInterfaceUsage(interfaceUsage)
-        .setName(astPartDef.getName() + "Class")
-        .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
+    partDefClass = CD4CodeMill.cDClassBuilder()
+        .setName(astPartDef.getName())
+        .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).setCDInterfaceUsage(interfaceUsage).build();
     List<ASTCDAttribute> liste = createAttributes(astPartDef);
 
     partDefClass.setCDAttributeList(liste);
@@ -89,18 +90,18 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     stateToClassMap.put(astPartDef.getName(), partDefClass);
   }
 
-  ASTCDInterfaceUsage createInterfaceUsage(ASTSysMLElement astPartDef) {
+  ASTCDInterfaceUsage createInterfaceUsage(ASTSysMLElement sysMLElement) {
     //Step 1 get a list of all specializations
     ASTCDExtendUsage extendUsage = CD4CodeMill.cDExtendUsageBuilder().build();
     List<ASTSpecialization> specializationList= new ArrayList<>();
     String name = null;
-    if(astPartDef instanceof ASTPartDef){
-      specializationList = ((ASTPartDef) astPartDef).getSpecializationList();
-      name = ((ASTPartDef) astPartDef).getName();
+    if(sysMLElement instanceof ASTPartDef){
+      specializationList = ((ASTPartDef) sysMLElement).getSpecializationList();
+      name = ((ASTPartDef) sysMLElement).getName();
     }
-    if(astPartDef instanceof ASTAttributeDef){
-      specializationList = ((ASTAttributeDef) astPartDef).getSpecializationList();
-      name = ((ASTAttributeDef) astPartDef).getName();
+    if(sysMLElement instanceof ASTAttributeDef){
+      specializationList = ((ASTAttributeDef) sysMLElement).getSpecializationList();
+      name = ((ASTAttributeDef) sysMLElement).getName();
     }
     List<ASTMCType> supertypeList = specializationList.stream().filter(
         t -> t instanceof ASTSysMLSpecialization).flatMap(s -> s.streamSuperTypes()).collect(
@@ -111,12 +112,12 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
 
       ASTMCQualifiedType mcQualifiedType = CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
           CD4CodeMill.mCQualifiedNameBuilder().
-              addParts(elementName).build()).build();
+              addParts(elementName+"Interface").build()).build();
       extendUsage.addSuperclass(mcQualifiedType);
     }
     //Step 3 create the interface
 
-    ASTCDInterface partInterface = CD4CodeMill.cDInterfaceBuilder().setName(name).setModifier(
+    ASTCDInterface partInterface = CD4CodeMill.cDInterfaceBuilder().setName(name+"Interface").setModifier(
         CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
     if(!extendUsage.isEmptySuperclass()) {
       partInterface.setCDExtendUsage(extendUsage);
@@ -126,7 +127,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     //Step 4 add the created interface to the InterfaceUsage
     ASTMCQualifiedType mcQualifiedType = CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
         CD4CodeMill.mCQualifiedNameBuilder().
-            addParts(name).build()).build();
+            addParts(name+"Interface").build()).build();
     ASTCDInterfaceUsage interfaceUsage = CD4CodeMill.cDInterfaceUsageBuilder().build();
     interfaceUsage.addInterface(mcQualifiedType);
 
