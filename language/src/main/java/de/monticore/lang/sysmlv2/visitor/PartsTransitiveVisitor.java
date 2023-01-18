@@ -3,6 +3,7 @@ package de.monticore.lang.sysmlv2.visitor;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
@@ -51,7 +52,11 @@ public class PartsTransitiveVisitor implements SysMLPartsVisitor2 {
         .flatMap(s -> s.streamSuperTypes()).collect(Collectors.toList());
 
   }
+  List<ASTMCType> getSpecializationList(ASTAttributeDef node) {
+    return node.streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization)
+        .flatMap(s -> s.streamSuperTypes()).collect(Collectors.toList());
 
+  }
   @Override
   public void visit(ASTPartUsage node) {
     if(node.getTransitiveUsageSupertypes().isEmpty()) {
@@ -88,7 +93,33 @@ public class PartsTransitiveVisitor implements SysMLPartsVisitor2 {
 
     return superTypeList;
   }
+  public void visit(ASTAttributeDef node) {
+    if(node.getTransitiveDefSupertypes().size() == 0) {
+      node.setTransitiveDefSupertypes(
+          getAttributeDefSuperTypesOfNode(getSpecializationList(node), node.getEnclosingScope()));
+    }
+  }
 
+  List<ASTAttributeDef> getAttributeDefSuperTypesOfNode(List<ASTMCType> superTypes, ISysMLPartsScope partsScope) {
+    List<ASTAttributeDef> superTypeList = new ArrayList<>();
+    for (ASTMCType superType : superTypes) {
+      var attributeDefSymbol = partsScope.resolveAttributeDef(
+          superType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())));
+      if(attributeDefSymbol.isPresent()) {
+        var attributeDef = attributeDefSymbol.get().getAstNode();
+        superTypeList.add(attributeDef);
+        if(attributeDef.getTransitiveDefSupertypes().size() == 0) {
+
+          superTypeList.addAll(getAttributeDefSuperTypesOfNode(getSpecializationList(attributeDef), attributeDef.getEnclosingScope()));
+        }
+        else {
+          superTypeList.addAll(attributeDef.getTransitiveDefSupertypes());
+        }
+      }
+    }
+
+    return superTypeList;
+  }
   List<ASTMCType> getPartDefList(ASTPartUsage node) {
     return node.streamSpecializations().filter(t -> t instanceof ASTSysMLTyping)
         .flatMap(s -> s.streamSuperTypes()).collect(Collectors.toList());
