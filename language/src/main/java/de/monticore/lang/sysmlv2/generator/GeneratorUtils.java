@@ -2,8 +2,10 @@ package de.monticore.lang.sysmlv2.generator;
 
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDPackage;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
@@ -24,6 +26,14 @@ public class GeneratorUtils {
 
   public GeneratorUtils() {
     this.cd4C = CD4C.getInstance();
+  }
+
+  public void addMethods(ASTCDType astcdType, List<ASTCDAttribute> attributeList, boolean addGetter,
+                         boolean addSetter) {
+    for (ASTCDAttribute element : attributeList) {
+      cd4C.addMethods(astcdType, element, addGetter, addSetter);
+    }
+
   }
 
   protected ASTMCQualifiedType attributeType(ASTAttributeUsage element) {

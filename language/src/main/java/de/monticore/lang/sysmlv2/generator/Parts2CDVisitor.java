@@ -75,8 +75,8 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
         .setName(astAttributeDef.getName())
         .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).setCDInterfaceUsage(interfaceUsage).build();
     List<ASTCDAttribute> liste = createAttributes(astAttributeDef);
-
     partDefClass.setCDAttributeList(liste);
+    generatorUtils.addMethods(partDefClass, liste, true, true);
     cdPackage.addCDElement(partDefClass);
   }
 
@@ -92,6 +92,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     List<ASTCDAttribute> liste = createAttributes(astPartDef);
 
     partDefClass.setCDAttributeList(liste);
+    generatorUtils.addMethods(partDefClass, liste, true, true);
     cdPackage.addCDElement(partDefClass);
     stateToClassMap.put(astPartDef.getName(), partDefClass);
   }
