@@ -70,6 +70,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     cdPackage = generatorUtils.initCdPackage(astAttributeDef, astcdDefinition, basePackage.getName());
     // Step 1: Create Interface for the Part Def to support multiple inheritance
     ASTCDInterfaceUsage interfaceUsage = createInterfaceUsage(astAttributeDef);
+    createInterface(astAttributeDef);
     //Step 2 Create class
     partDefClass = CD4CodeMill.cDClassBuilder().setCDInterfaceUsage(interfaceUsage)
         .setName(astAttributeDef.getName())
@@ -85,6 +86,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     // Step 1: Create Interface for the Part Def to support multiple inheritance
     cdPackage = generatorUtils.initCdPackage(astPartDef, astcdDefinition, basePackage.getName());
     ASTCDInterfaceUsage interfaceUsage = createInterfaceUsage(astPartDef);
+    createInterface(astPartDef);
     //Step 2 Create class
     partDefClass = CD4CodeMill.cDClassBuilder()
         .setName(astPartDef.getName())
@@ -99,16 +101,32 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
 
   ASTCDInterfaceUsage createInterfaceUsage(ASTSysMLElement sysMLElement) {
     //Step 1 get a list of all specializations
+    String name = null;
+    if(sysMLElement instanceof ASTPartDef) {
+      name = ((ASTPartDef) sysMLElement).getName();
+    }
+    if(sysMLElement instanceof ASTAttributeDef) {
+      name = ((ASTAttributeDef) sysMLElement).getName();
+    }
+    //Step 2 add the created interface to the InterfaceUsage
+    ASTMCQualifiedType mcQualifiedType = CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
+        CD4CodeMill.mCQualifiedNameBuilder().
+            addParts(name + "Interface").build()).build();
+    ASTCDInterfaceUsage interfaceUsage = CD4CodeMill.cDInterfaceUsageBuilder().build();
+    interfaceUsage.addInterface(mcQualifiedType);
+
+    return interfaceUsage;
+  }
+
+  ASTCDExtendUsage createExtendUsage(ASTSysMLElement sysMLElement) {
     ASTCDExtendUsage extendUsage = CD4CodeMill.cDExtendUsageBuilder().build();
     List<ASTSpecialization> specializationList = new ArrayList<>();
     String name = null;
     if(sysMLElement instanceof ASTPartDef) {
       specializationList = ((ASTPartDef) sysMLElement).getSpecializationList();
-      name = ((ASTPartDef) sysMLElement).getName();
     }
     if(sysMLElement instanceof ASTAttributeDef) {
       specializationList = ((ASTAttributeDef) sysMLElement).getSpecializationList();
-      name = ((ASTAttributeDef) sysMLElement).getName();
     }
     List<ASTMCType> supertypeList = specializationList.stream().filter(
         t -> t instanceof ASTSysMLSpecialization).flatMap(s -> s.streamSuperTypes()).collect(
@@ -122,8 +140,18 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
               addParts(elementName + "Interface").build()).build();
       extendUsage.addSuperclass(mcQualifiedType);
     }
-    //Step 3 create the interface
+    return extendUsage;
+  }
 
+  void createInterface(ASTSysMLElement sysMLElement) {
+    String name = null;
+    if(sysMLElement instanceof ASTPartDef) {
+      name = ((ASTPartDef) sysMLElement).getName();
+    }
+    if(sysMLElement instanceof ASTAttributeDef) {
+      name = ((ASTAttributeDef) sysMLElement).getName();
+    }
+    ASTCDExtendUsage extendUsage = createExtendUsage(sysMLElement);
     ASTCDInterface partInterface = CD4CodeMill.cDInterfaceBuilder().setName(name + "Interface").setModifier(
         CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
     if(!extendUsage.isEmptySuperclass()) {
@@ -131,14 +159,6 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     }
     cdPackage.addCDElement(partInterface);
 
-    //Step 4 add the created interface to the InterfaceUsage
-    ASTMCQualifiedType mcQualifiedType = CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
-        CD4CodeMill.mCQualifiedNameBuilder().
-            addParts(name + "Interface").build()).build();
-    ASTCDInterfaceUsage interfaceUsage = CD4CodeMill.cDInterfaceUsageBuilder().build();
-    interfaceUsage.addInterface(mcQualifiedType);
-
-    return interfaceUsage;
   }
 
   List<ASTCDAttribute> createAttributes(ASTSysMLElement astSysMLElement) {
