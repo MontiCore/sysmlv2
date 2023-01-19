@@ -235,35 +235,35 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   }
 
   void initCdPackage(ASTSysMLElement element) {
-    List<String> partList = List.of(basePackage.getName());
-    List<String> testListe = initCdPackage(element, partList);
+    List<String> basePackageName = List.of(basePackage.getName());
+    List<String> partList = initCdPackage(element, basePackageName);
     cdPackage = CD4CodeMill.cDPackageBuilder()
         .setMCQualifiedName(CD4CodeMill.mCQualifiedNameBuilder()
-            .setPartsList(testListe)
+            .setPartsList(partList)
             .build())
         .build();
     astcdDefinition.addCDElement(cdPackage);
   }
 
   List<String> initCdPackage(ASTSysMLElement element, List<String> partList) {
-    List<String> test = new ArrayList<>(partList);
-    var hoi = element.getEnclosingScope().getAstNode();
-    if(hoi instanceof ASTSysMLElement) {
-      ASTSysMLElement astSysMLElement = (ASTSysMLElement) hoi;
+    List<String> packagePartList = new ArrayList<>(partList);
+    var astNode = element.getEnclosingScope().getAstNode();
+    if(astNode instanceof ASTSysMLElement) {
+      ASTSysMLElement astSysMLElement = (ASTSysMLElement) astNode;
       if(astSysMLElement instanceof ASTSysMLPackage) {
-        var halls = ((ASTSysMLPackage) astSysMLElement).getName().toLowerCase();
+        var packageName = ((ASTSysMLPackage) astSysMLElement).getName().toLowerCase();
 
-        test.add(halls);
+        packagePartList.add(packageName);
 
-        initCdPackage(astSysMLElement, test);
+        initCdPackage(astSysMLElement, packagePartList);
       }
       else if(!(astSysMLElement instanceof SysMLv2ArtifactScope)) {
         initCdPackage(astSysMLElement, partList);
       }
       else {
-        return test;
+        return packagePartList;
       }
     }
-    return test;
+    return packagePartList;
   }
 }

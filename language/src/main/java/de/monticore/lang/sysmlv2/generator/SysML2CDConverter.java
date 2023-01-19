@@ -2,6 +2,7 @@
 package de.monticore.lang.sysmlv2.generator;
 
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnitBuilder;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -11,12 +12,16 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.umlmodifier.UMLModifierMill;
+
 import java.util.List;
 
 public class SysML2CDConverter {
   ASTCDDefinition astcdDefinition;
+
   ASTCDPackage cdPackage;
+
   ASTCDCompilationUnit cdCompilationUnit;
+
   public SysML2CDData doConvert(ASTSysMLModel astSysMLModel, GlobalExtensionManagement glex, String packageName) {
     init(packageName);
     // Main class, names equally to the Automaton
@@ -36,9 +41,7 @@ public class SysML2CDConverter {
         phase1Visitor.getStateToClassMap().values());
   }
 
-
-  void init(String packageName){
-
+  void init(String packageName) {
 
     // Add a CDDefinition
     astcdDefinition = CD4CodeMill.cDDefinitionBuilder().setName(packageName)
@@ -54,6 +57,9 @@ public class SysML2CDConverter {
     cdCompilationUnitBuilder.setCDDefinition(astcdDefinition);
     cdCompilationUnit = cdCompilationUnitBuilder.build();
     CD4CodeMill.init();
+    ASTCDClass mainClass = CD4CodeMill.cDClassBuilder().setName("Main").setModifier(
+        CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
+    cdPackage.addCDElement(mainClass);
   }
 
 }
