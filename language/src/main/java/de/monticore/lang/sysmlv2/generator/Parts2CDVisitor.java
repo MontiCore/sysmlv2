@@ -9,19 +9,15 @@ import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
-import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
-import de.monticore.lang.sysmlv2._symboltable.SysMLv2ArtifactScope;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.se_rwth.commons.Splitters;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Parts2CDVisitor implements SysMLPartsVisitor2 {
 
@@ -54,6 +51,8 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
    */
   protected final CD4C cd4C;
 
+  protected GeneratorUtils generatorUtils;
+
   protected final GlobalExtensionManagement glex;
 
   public Parts2CDVisitor(GlobalExtensionManagement glex, ASTCDCompilationUnit cdCompilationUnit,
@@ -63,11 +62,12 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     this.cdCompilationUnit = cdCompilationUnit;
     this.basePackage = basePackage;
     this.astcdDefinition = astcdDefinition;
+    this.generatorUtils = new GeneratorUtils();
   }
 
   @Override
   public void visit(ASTAttributeDef astAttributeDef) {
-    initCdPackage(astAttributeDef);
+    cdPackage = generatorUtils.initCdPackage(astAttributeDef, astcdDefinition, basePackage.getName());
     // Step 1: Create Interface for the Part Def to support multiple inheritance
     ASTCDInterfaceUsage interfaceUsage = createInterfaceUsage(astAttributeDef);
     //Step 2 Create class
@@ -83,7 +83,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   @Override
   public void visit(ASTPartDef astPartDef) {
     // Step 1: Create Interface for the Part Def to support multiple inheritance
-    initCdPackage(astPartDef);
+    cdPackage = generatorUtils.initCdPackage(astPartDef, astcdDefinition, basePackage.getName());
     ASTCDInterfaceUsage interfaceUsage = createInterfaceUsage(astPartDef);
     //Step 2 Create class
     partDefClass = CD4CodeMill.cDClassBuilder()
@@ -140,30 +140,24 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     return interfaceUsage;
   }
 
-  List<ASTCDAttribute> createAttributes(ASTPartDef astPartDef) {
-    List<ASTAttributeUsage> attributeUsageList = createAttributeUsageList(astPartDef);
+  List<ASTCDAttribute> createAttributes(ASTSysMLElement astSysMLElement) {
+    List<ASTAttributeUsage> attributeUsageList = createAttributeUsageList(astSysMLElement);
     List<String> generatedAttributeList = new ArrayList<>();
     List<ASTCDAttribute> attributeList = attributeUsageList.stream().map(
         t -> createAttribute(t, generatedAttributeList)).collect(
         Collectors.toList());
     attributeList.removeAll(Collections.singleton(null));
-    List<ASTCDAttribute> supertypeAttributeList = astPartDef.streamTransitiveDefSupertypes().flatMap(
-        t -> createAttributeUsageList(t).stream()).map(f -> createAttribute(f, generatedAttributeList)).collect(
-        Collectors.toList());
-    supertypeAttributeList.removeAll(Collections.singleton(null));
-    attributeList.addAll(supertypeAttributeList);
-    return attributeList;
-  }
-
-  List<ASTCDAttribute> createAttributes(ASTAttributeDef astAttributeDef) {
-    List<ASTAttributeUsage> attributeUsageList = createAttributeUsageList(astAttributeDef);
-    List<String> generatedAttributeList = new ArrayList<>();
-    List<ASTCDAttribute> attributeList = attributeUsageList.stream().map(
-        t -> createAttribute(t, generatedAttributeList)).collect(
-        Collectors.toList());
-    attributeList.removeAll(Collections.singleton(null));
-    List<ASTCDAttribute> supertypeAttributeList = astAttributeDef.streamTransitiveDefSupertypes().flatMap(
-        t -> createAttributeUsageList(t).stream()).map(f -> createAttribute(f, generatedAttributeList)).collect(
+    Stream<ASTAttributeUsage> attributeUsageStream = null;
+    if(astSysMLElement instanceof ASTPartDef) {
+      attributeUsageStream = ((ASTPartDef) astSysMLElement).streamTransitiveDefSupertypes().flatMap(
+          t -> createAttributeUsageList(t).stream());
+    }
+    if(astSysMLElement instanceof ASTAttributeDef) {
+      attributeUsageStream = ((ASTAttributeDef) astSysMLElement).streamTransitiveDefSupertypes().flatMap(
+          t -> createAttributeUsageList(t).stream());
+    }
+    List<ASTCDAttribute> supertypeAttributeList = attributeUsageStream.map(
+        f -> createAttribute(f, generatedAttributeList)).collect(
         Collectors.toList());
 
     supertypeAttributeList.removeAll(Collections.singleton(null));
@@ -190,7 +184,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
       String attributeName = ((ASTAttributeUsage) element).getName();
       if(!stringList.contains(attributeName)) {
         stringList.add(attributeName);
-        ASTMCQualifiedType qualifiedType = attributeType((ASTAttributeUsage) element);
+        ASTMCQualifiedType qualifiedType = generatorUtils.attributeType((ASTAttributeUsage) element);
         return CD4CodeMill.cDAttributeBuilder().setName(attributeName).setModifier(
             CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(qualifiedType).build();
       }
@@ -211,59 +205,5 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   }
 
   // Support methods
-  protected ASTMCQualifiedType attributeType(ASTAttributeUsage element) {
-    var sysMLTypingList = element.getSpecializationList().stream().filter(
-        t -> t instanceof ASTSysMLTyping).map(u -> ((ASTSysMLTyping) u)).collect(Collectors.toList());
-    String typString = sysMLTypingList.get(0).getSuperTypes(0).printType(
-        new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
-    List<String> partsList = Splitters.DOT.splitToList(typString);
-    String typeName = partsList.get(partsList.size() - 1);
-    if(typeName.equals("Boolean"))
-      partsList = List.of("boolean");
-    if(typeName.equals("Real"))
-      partsList = List.of("float");
-    return qualifiedType(partsList);
-  }
 
-  protected ASTMCQualifiedType qualifiedType(String qname) {
-    return qualifiedType(Splitters.DOT.splitToList(qname));
-  }
-
-  protected ASTMCQualifiedType qualifiedType(List<String> partsList) {
-    return CD4CodeMill.mCQualifiedTypeBuilder()
-        .setMCQualifiedName(CD4CodeMill.mCQualifiedNameBuilder().setPartsList(partsList).build()).build();
-  }
-
-  void initCdPackage(ASTSysMLElement element) {
-    List<String> basePackageName = List.of(basePackage.getName());
-    List<String> partList = initCdPackage(element, basePackageName);
-    cdPackage = CD4CodeMill.cDPackageBuilder()
-        .setMCQualifiedName(CD4CodeMill.mCQualifiedNameBuilder()
-            .setPartsList(partList)
-            .build())
-        .build();
-    astcdDefinition.addCDElement(cdPackage);
-  }
-
-  List<String> initCdPackage(ASTSysMLElement element, List<String> partList) {
-    List<String> packagePartList = new ArrayList<>(partList);
-    var astNode = element.getEnclosingScope().getAstNode();
-    if(astNode instanceof ASTSysMLElement) {
-      ASTSysMLElement astSysMLElement = (ASTSysMLElement) astNode;
-      if(astSysMLElement instanceof ASTSysMLPackage) {
-        var packageName = ((ASTSysMLPackage) astSysMLElement).getName().toLowerCase();
-
-        packagePartList.add(packageName);
-
-        initCdPackage(astSysMLElement, packagePartList);
-      }
-      else if(!(astSysMLElement instanceof SysMLv2ArtifactScope)) {
-        initCdPackage(astSysMLElement, partList);
-      }
-      else {
-        return packagePartList;
-      }
-    }
-    return packagePartList;
-  }
 }
