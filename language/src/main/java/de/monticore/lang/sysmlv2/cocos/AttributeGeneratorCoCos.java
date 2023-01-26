@@ -36,7 +36,6 @@ public class AttributeGeneratorCoCos implements SysMLPartsASTAttributeUsageCoCo 
     List<ASTAttributeUsage> attributeUsageList = checkAttributeDefinedInParents(node);
     long redefinitionCount = attributeUsageList.stream().flatMap(t -> t.getSpecializationList().stream()).filter(
         f -> f instanceof ASTSysMLRedefinition).count(); //counts the number of redefinitions
-    //TODO CHECKPARENTS Optional<AttributeUsage raus> und dann check ich ob das mit redefinitions und type passt
     if(redefinitionList.isEmpty()) {
       if(attributeUsageList.size() != 0)
         Log.error("Attribute Usage " + node.getName()
@@ -106,32 +105,22 @@ public class AttributeGeneratorCoCos implements SysMLPartsASTAttributeUsageCoCo 
     var refinedUsageType = redefinedAttribute.getSpecializationList().stream().filter(
         t -> t instanceof ASTSysMLTyping).collect(
         Collectors.toList()).get(0).getSuperTypes(0);
-    var attributeType = attributeUsage.getEnclosingScope().resolveAttributeDef(
-        printName(attributeUsageType));
+    if(!printName(attributeUsageType).equals(printName(refinedUsageType))) {
+      var attributeType = attributeUsage.getEnclosingScope().resolveAttributeDef(
+          printName(attributeUsageType));
 
-    var refinedType = redefinedAttribute.getEnclosingScope().resolveAttributeDef(
-        printName(refinedUsageType));
+      var specializationStringList = attributeType.get().getAstNode()
+          .streamSpecializations()
+          .filter(t -> t instanceof ASTSysMLSpecialization)
+          .flatMap(s -> s.streamSuperTypes())
+          .map(s -> printName(s))
+          .collect(Collectors.toList());
+      if(!specializationStringList.contains(printName(refinedUsageType))) {
+        Log.error(
+            "The type " + printName(attributeUsageType) + " is not a a subtype of " + printName(refinedUsageType)
+                + " .");
 
-    if(attributeType.isEmpty()) {
-      Log.error(
-          "The type " + printName(attributeUsageType) + " of the Attribute usage " + attributeUsage.getName()
-              + " was not resolvable.");
-    }
-    if(refinedType.isEmpty()) {
-      Log.error(
-          "The type " + printName(refinedUsageType) + " of the Attribute usage " + redefinedAttribute.getName()
-              + " was not resolvable.");
-    }
-    var specializationStringList = attributeType.get().getAstNode()
-        .streamSpecializations()
-        .filter(t -> t instanceof ASTSysMLSpecialization)
-        .flatMap(s -> s.streamSuperTypes())
-        .map(s -> printName(s))
-        .collect(Collectors.toList());
-    if(!specializationStringList.contains(printName(refinedUsageType))) {
-      Log.error(
-          "The type " + printName(attributeUsageType) + " is not a a subtype of " + printName(refinedUsageType) + " .");
-
+      }
     }
   }
 
