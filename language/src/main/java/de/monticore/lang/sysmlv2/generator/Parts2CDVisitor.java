@@ -105,7 +105,8 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   public void visit(ASTPartUsage astPartUsage) {
     cdPackage = generatorUtils.initCdPackage(astPartUsage, astcdDefinition, basePackage.getName());
 
-    var specializationList = astPartUsage.streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization).flatMap(
+    var specializationList = astPartUsage.streamSpecializations().filter(
+        t -> t instanceof ASTSysMLSpecialization).flatMap(
         f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
 
     var typingList = astPartUsage.streamSpecializations().filter(c -> c instanceof ASTSysMLTyping).flatMap(
@@ -135,11 +136,37 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
       partDefClass.setCDInterfaceUsage(interfaceUsage);
       //create extends usage
       if(!specializationList.isEmpty()) {
-        ASTCDExtendUsage extendUsage = createExtendUsage(specializationList, false);
+        List<ASTMCType> extendList = new ArrayList<>();
+        extendList.add(getNameOfSpecialication(specializationList.get(0),astPartUsage));
+        ASTCDExtendUsage extendUsage = createExtendUsage(extendList , false);
         partDefClass.setCDExtendUsage(extendUsage);
       }
     }
 
+  }
+
+  ASTMCType getNameOfSpecialication(ASTMCType spec, ASTPartUsage astPartUsage){
+    ASTPartUsage specPartUsage = astPartUsage.getEnclosingScope().resolvePartUsage(printName(spec)).get().getAstNode();
+    var specializationList = specPartUsage.streamSpecializations().filter(
+        t -> t instanceof ASTSysMLSpecialization).flatMap(
+        f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
+
+    var typingList = specPartUsage.streamSpecializations().filter(c -> c instanceof ASTSysMLTyping).flatMap(
+        f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
+
+    var redefinitionList = specPartUsage.streamSpecializations().filter(e -> e instanceof ASTSysMLRedefinition).flatMap(
+        f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
+    if((!specializationList.isEmpty() && !typingList.isEmpty() && redefinitionList.isEmpty()) | (typingList.size() > 1
+        | (!specPartUsage.getSysMLElementList().isEmpty()))) {
+      return spec;
+    }
+    if(!specializationList.isEmpty()) {
+      return specializationList.get(0);
+    }
+    if(typingList.size()==1) {
+      return typingList.get(0);
+    }
+    return null;
   }
 
   ASTCDInterfaceUsage createInterfaceUsage(List<ASTSysMLElement> sysMLList) {
@@ -222,12 +249,8 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
           t -> createAttributeUsageList(t).stream());
     }
     if(astSysMLElement instanceof ASTPartUsage) {
-      Stream<ASTAttributeUsage> partDefStream = ((ASTPartUsage) astSysMLElement).streamTransitiveDefSupertypes().flatMap(
+      attributeUsageStream = ((ASTPartUsage) astSysMLElement).streamTransitiveDefSupertypes().flatMap(
           t -> createAttributeUsageList(t).stream());
-
-      Stream<ASTAttributeUsage> partUsageStream = ((ASTPartUsage) astSysMLElement).streamTransitiveUsageSupertypes().flatMap(
-          t -> createAttributeUsageList(t).stream());
-      attributeUsageStream = Stream.concat(partDefStream, partUsageStream);
     }
     List<ASTCDAttribute> supertypeAttributeList = attributeUsageStream.map(
         f -> createAttribute(f, generatedAttributeList)).collect(
@@ -264,7 +287,9 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     }
     return null;
   }
-
+  private String printName(ASTMCType type) {
+    return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+  }
   public ASTCDCompilationUnit getCdCompilationUnit() {
     return cdCompilationUnit;
   }
