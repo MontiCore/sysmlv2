@@ -81,10 +81,10 @@ public class GeneratorUtils {
 
         packagePartList.add(packageName);
 
-        initCdPackage(astSysMLElement, packagePartList);
+        packagePartList = initCdPackage(astSysMLElement, packagePartList);
       }
       else if(!(astSysMLElement instanceof SysMLv2ArtifactScope)) {
-        initCdPackage(astSysMLElement, partList);
+        packagePartList = initCdPackage(astSysMLElement, partList);
       }
       else {
         return packagePartList;
