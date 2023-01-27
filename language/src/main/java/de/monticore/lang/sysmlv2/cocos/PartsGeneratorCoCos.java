@@ -12,6 +12,7 @@ import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartUsageCoCo;
+import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -46,13 +47,20 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
           + " needs a type (at least one part def), redefine a part usage or specialize another part usage");
     }
     checkDisjunctAttributes(node);
+    var redeinitionSpec = node.streamSpecializations().filter(
+        t -> t instanceof ASTSysMLRedefinition).collect(Collectors.toList());
+    if(!redeinitionSpec.isEmpty())
+      checkRefinition(redeinitionSpec, node);
   }
+
   @Override public void check(ASTPartDef node) {
     checkDisjunctAttributes(node);
   }
+
   private String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
   }
+
   List<ASTAttributeUsage> getAttributeUsageOfNode(ASTSysMLElement node) {
     List<ASTAttributeUsage> attributeUsageList = new ArrayList<>();
     if(node instanceof ASTPartDef) {
@@ -82,9 +90,11 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
     }
     if(node instanceof ASTPartUsage) {
       name = ((ASTPartUsage) node).getName();
-      parentList = ((ASTPartUsage) node).streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization).flatMap(
+      parentList = ((ASTPartUsage) node).streamSpecializations().filter(
+          t -> t instanceof ASTSysMLSpecialization).flatMap(
           f -> f.getSuperTypesList().stream()).map(
-          t -> ((ASTPartUsage) node).getEnclosingScope().resolvePartUsage(printName(t))).filter(Optional::isPresent).map(
+          t -> ((ASTPartUsage) node).getEnclosingScope().resolvePartUsage(printName(t))).filter(
+          Optional::isPresent).map(
           t -> t.get().getAstNode()).collect(
           Collectors.toList());
       parentList.addAll(((ASTPartUsage) node).streamSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
@@ -120,7 +130,7 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
       List<ASTAttributeUsage> attributeUsages = getAttributeUsageOfNode(node);
       List<String> listOfRedefinedAttributes = attributeUsages.stream().flatMap(
           ASTAttributeUsage::streamSpecializations).filter(t -> t instanceof ASTSysMLRedefinition).flatMap(
-          t -> t.getSuperTypesList().stream()).map(t -> printName(t)).collect(
+          t -> t.getSuperTypesList().stream()).map(this::printName).collect(
           Collectors.toList());
       attributeUsages.addAll(attributeUsageListUnion(parentAttribute, listOfRedefinedAttributes));
       return attributeUsages;
@@ -143,10 +153,9 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
       for (int i = 1; i < stringListOfLists.size(); i++) {
         stringIntersection.retainAll(stringListOfLists.get(i));
       }
-      var intersectingAttributeList = notEmpty.stream().flatMap(t -> t.stream()).filter(
+      return notEmpty.stream().flatMap(Collection::stream).filter(
           t -> stringIntersection.contains((t.getName()))).collect(
           Collectors.toList());
-      return intersectingAttributeList;
     }
     else
       return new ArrayList<>();
@@ -157,4 +166,64 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
     return attributeLists.stream().flatMap(Collection::stream).filter(
         t -> !(undesiredAttributes.contains(t.getName()))).collect(Collectors.toList());
   }
+
+  //
+
+  void checkRefinition(List<ASTSpecialization> redefinitionList, ASTPartUsage node) {
+
+    if(redefinitionList.get(0).getSuperTypesList().size() != 1) {
+      Log.error("Part Usage " + node.getName() + " has "
+          + (redefinitionList.get(0).getSuperTypesList().size()
+          + " redefinitions, but may only redefine 1."));
+    }
+    String parentPartName = printName((redefinitionList.get(0).getSuperTypes(0)));
+
+    if(!node.getName().equals(parentPartName)) {
+      Log.error("Part Usage " + node.getName()
+          + " has to redefine a Part Usage with the same name, but redefines "
+          + parentPartName + ".");
+    }
+    checkPartDefined(node, printName(redefinitionList.get(0).getSuperTypesList().get(0)));
+
+  }
+
+  void checkPartDefined(ASTPartUsage partUsage, String redefinedPartName) {
+    int partFoundInParents = 0; // we count how often the redefinedPartName is defined within the transitiveSupertypes of the parent node
+    var parentNode = partUsage.getEnclosingScope().getAstNode();
+
+    if(parentNode instanceof ASTPartDef) { //TODO ASTPartUsage
+
+      for (ASTPartDef transSuperType : ((ASTPartDef) parentNode).getTransitiveDefSupertypes()) {
+        var partUsageSymbol = transSuperType.getSpannedScope().resolvePartUsage(redefinedPartName);
+        partFoundInParents = checkPartUsageSymbol(partFoundInParents, partUsageSymbol);
+      }
+    }
+    if(parentNode instanceof ASTPartUsage) {
+      for (ASTPartDef transSuperType : ((ASTPartUsage) parentNode).getTransitiveDefSupertypes()) {
+        var partUsageSymbol = transSuperType.getSpannedScope().resolvePartUsage(redefinedPartName);
+        partFoundInParents = checkPartUsageSymbol(partFoundInParents, partUsageSymbol);
+      }
+      for (ASTPartUsage transSuperType : ((ASTPartUsage) parentNode).getTransitiveUsageSupertypes()) {
+        var partUsageSymbol = transSuperType.getSpannedScope().resolvePartUsage(redefinedPartName);
+        partFoundInParents = checkPartUsageSymbol(partFoundInParents, partUsageSymbol);
+      }
+      if(partFoundInParents != 1)
+        Log.error("Part usage " + partUsage.getName() + " was found " + partFoundInParents
+            + " in the transitive super types of its parent, but only 1 is allowed.");
+    }
+  }
+
+  int checkPartUsageSymbol(int partFoundInParents, Optional<PartUsageSymbol> partUsageSymbol) {
+    if(partUsageSymbol.isPresent()) {
+      ASTPartUsage refinedAttr = partUsageSymbol.get().getAstNode();
+      if(refinedAttr.getSpecializationList().stream().noneMatch(
+          t -> t instanceof ASTSysMLRedefinition)) //we only count attributeUsages where no redefinition is used
+      {
+        partFoundInParents++;
+      }
+      //TODO check TypeCompatibility(partUsage, refinedAttr);
+    }
+    return partFoundInParents;
+  }
+
 }
