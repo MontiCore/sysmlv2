@@ -125,7 +125,8 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     checker.addCoCo(new PortDefNeedsDirection());
     checker.addCoCo(new ActionControlGeneratorCoCos());
     checker.addCoCo(new AttributeGeneratorCoCos());
-    checker.addCoCo(new PartsGeneratorCoCos());
+    checker.addCoCo((SysMLPartsASTPartDefCoCo) new PartsGeneratorCoCos());
+    checker.addCoCo((SysMLPartsASTPartUsageCoCo) new PartsGeneratorCoCos());
     checker.addCoCo(new StateGeneratorCoCo());
     //checker.addCoCo(new SuccessionCoCo()); TODO has to be extended for states
     checker.checkAll(ast);
