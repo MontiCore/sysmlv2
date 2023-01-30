@@ -128,7 +128,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLPartsASTPartDefCoCo) new PartsGeneratorCoCos());
     checker.addCoCo((SysMLPartsASTPartUsageCoCo) new PartsGeneratorCoCos());
     checker.addCoCo(new StateGeneratorCoCo());
-    //checker.addCoCo(new SuccessionCoCo()); TODO has to be extended for states
+    checker.addCoCo(new SuccessionCoCo());
     checker.checkAll(ast);
   }
 

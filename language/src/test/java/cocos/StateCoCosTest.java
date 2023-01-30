@@ -7,10 +7,12 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
+import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.cocos.StateGeneratorCoCo;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
+import de.monticore.lang.sysmlv2.cocos.SuccessionCoCo;
+import de.monticore.lang.sysmlv2.visitor.ActionSuccessionVisitor;
 import de.se_rwth.commons.logging.Log;
-import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -23,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StateCoCosTest {
 
-  private static final String MODEL_PATH = "src/test/resources/parser";
+  private static final String MODEL_PATH = "src/test/resources/cocos/states/0_valid.sysml";
 
   private SysMLv2Parser parser = SysMLv2Mill.parser();
 
@@ -45,14 +47,24 @@ public class StateCoCosTest {
 
     @Test
     public void testValid() throws IOException {
-      ASTSysMLModel ast = SysMLv2Mill.parser().parse_String("state def A; state def B: A;").get();
-      SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
-      var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
-      checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
-      checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateGeneratorCoCo());
-      checker.checkAll(ast);
-      assertTrue(Log.getFindings().isEmpty());
+      var optAst = SysMLv2Mill.parser().parse(MODEL_PATH);
+      if(optAst.isPresent()) {
+        ASTSysMLModel ast = optAst.get();
+        SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
+        ActionSuccessionVisitor actionSuccessionVisitor = new ActionSuccessionVisitor();
+        SysMLv2Traverser sysMLv2Traverser = SysMLv2Mill.traverser();
+        sysMLv2Traverser.add4SysMLActions(actionSuccessionVisitor);
+        sysMLv2Traverser.handle(ast);
+
+        var checker = new SysMLv2CoCoChecker();
+        checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
+        checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
+        checker.addCoCo(new StateGeneratorCoCo());
+
+        checker.addCoCo(new SuccessionCoCo());
+        checker.checkAll(ast);
+        assertTrue(Log.getFindings().isEmpty());
+      }
     }
 
     @Test
