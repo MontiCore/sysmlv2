@@ -77,32 +77,7 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
   }
 
   List<ASTAttributeUsage> checkDisjunctAttributes(ASTSysMLElement node) {
-    String name = null;
-    List<ASTSysMLElement> parentList = new ArrayList<>();
-    //Get direct supertypes
-    if(node instanceof ASTPartDef) {
-      name = ((ASTPartDef) node).getName();
-      parentList = ((ASTPartDef) node).streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization).flatMap(
-          f -> f.getSuperTypesList().stream()).map(
-          t -> ((ASTPartDef) node).getEnclosingScope().resolvePartDef(printName(t))).filter(Optional::isPresent).map(
-          t -> t.get().getAstNode()).collect(
-          Collectors.toList());
-    }
-    if(node instanceof ASTPartUsage) {
-      name = ((ASTPartUsage) node).getName();
-      parentList = ((ASTPartUsage) node).streamSpecializations().filter(
-          t -> t instanceof ASTSysMLSpecialization).flatMap(
-          f -> f.getSuperTypesList().stream()).map(
-          t -> ((ASTPartUsage) node).getEnclosingScope().resolvePartUsage(printName(t))).filter(
-          Optional::isPresent).map(
-          t -> t.get().getAstNode()).collect(
-          Collectors.toList());
-      parentList.addAll(((ASTPartUsage) node).streamSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
-          f -> f.getSuperTypesList().stream()).map(
-          t -> ((ASTPartUsage) node).getEnclosingScope().resolvePartDef(printName(t))).filter(Optional::isPresent).map(
-          t -> t.get().getAstNode()).collect(
-          Collectors.toList()));
-    }
+    List<ASTSysMLElement> parentList = getDirectSupertypes(node);
     List<List<ASTAttributeUsage>> parentAttribute = new ArrayList<>();
     List<ASTAttributeUsage> intersectList;
     //if no supertypes then the list of intersecting attributes is empty
@@ -110,19 +85,13 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
       intersectList = new ArrayList<>();
     }
     else {
-
       parentAttribute = parentList.stream().map(this::checkDisjunctAttributes).collect(Collectors.toList());
       List<ASTAttributeUsage> intersectionOfList = emptyIntersection(parentAttribute);
 
-      List<ASTAttributeUsage> attributeUsagesOfNode = getAttributeUsageOfNode(node);
-      List<String> namesOfAttributesWithRedefinitions = attributeUsagesOfNode.stream().flatMap(
-          ASTAttributeUsage::streamSpecializations).filter(t -> t instanceof ASTSysMLRedefinition).flatMap(
-          t -> t.getSuperTypesList().stream()).map(this::printName).collect(
-          Collectors.toList());
       var listOfLists = new ArrayList<List<ASTAttributeUsage>>();
       listOfLists.add(intersectionOfList);
-
-      intersectList = attributeUsageListUnion(listOfLists, namesOfAttributesWithRedefinitions);
+      //filter list
+      intersectList = filterAttributeList(node, listOfLists);
     }
 
     if(intersectList.isEmpty()) {
@@ -137,9 +106,56 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
     }
     else {
       Log.error(
-          "The supertypes of " + name + " contain a list of attribute usages that intersects, this is not allowed.");
+          "The supertypes of " + getNameOfNode(node)
+              + " contain a list of attribute usages that intersects, this is not allowed.");
     }
     return new ArrayList<>();
+  }
+
+  String getNameOfNode(ASTSysMLElement node) {
+    if(node instanceof ASTPartDef)
+      return ((ASTPartDef) node).getName();
+    if(node instanceof ASTPartUsage)
+      return ((ASTPartUsage) node).getName();
+
+    return "";
+  }
+
+  List<ASTSysMLElement> getDirectSupertypes(ASTSysMLElement node) {
+    List<ASTSysMLElement> parentList = new ArrayList<>();
+    //Get direct supertypes
+    if(node instanceof ASTPartDef) {
+      parentList = ((ASTPartDef) node).streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization).flatMap(
+          f -> f.getSuperTypesList().stream()).map(
+          t -> ((ASTPartDef) node).getEnclosingScope().resolvePartDef(printName(t))).filter(Optional::isPresent).map(
+          t -> t.get().getAstNode()).collect(
+          Collectors.toList());
+    }
+    if(node instanceof ASTPartUsage) {
+      parentList = ((ASTPartUsage) node).streamSpecializations().filter(
+          t -> t instanceof ASTSysMLSpecialization).flatMap(
+          f -> f.getSuperTypesList().stream()).map(
+          t -> ((ASTPartUsage) node).getEnclosingScope().resolvePartUsage(printName(t))).filter(
+          Optional::isPresent).map(
+          t -> t.get().getAstNode()).collect(
+          Collectors.toList());
+      parentList.addAll(((ASTPartUsage) node).streamSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
+          f -> f.getSuperTypesList().stream()).map(
+          t -> ((ASTPartUsage) node).getEnclosingScope().resolvePartDef(printName(t))).filter(Optional::isPresent).map(
+          t -> t.get().getAstNode()).collect(
+          Collectors.toList()));
+    }
+    return parentList;
+  }
+
+  List<ASTAttributeUsage> filterAttributeList(ASTSysMLElement node, ArrayList<List<ASTAttributeUsage>> listOfLists) {
+
+    List<ASTAttributeUsage> attributeUsagesOfNode = getAttributeUsageOfNode(node);
+    List<String> namesOfAttributesWithRedefinitions = attributeUsagesOfNode.stream().flatMap(
+        ASTAttributeUsage::streamSpecializations).filter(t -> t instanceof ASTSysMLRedefinition).flatMap(
+        t -> t.getSuperTypesList().stream()).map(this::printName).collect(
+        Collectors.toList());
+    return attributeUsageListUnion(listOfLists, namesOfAttributesWithRedefinitions);
   }
 
   List<ASTAttributeUsage> emptyIntersection(List<List<ASTAttributeUsage>> attributeLists) {
