@@ -15,6 +15,7 @@ import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
+import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
@@ -22,6 +23,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -94,7 +96,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
         .setName(astPartDef.getName())
         .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).setCDInterfaceUsage(interfaceUsage).build();
     List<ASTCDAttribute> liste = createAttributes(astPartDef);
-
+    liste.addAll(createPorts(astPartDef));
     partDefClass.setCDAttributeList(liste);
     generatorUtils.addMethods(partDefClass, liste, true, true);
     cdPackage.addCDElement(partDefClass);
@@ -137,15 +139,15 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
       //create extends usage
       if(!specializationList.isEmpty()) {
         List<ASTMCType> extendList = new ArrayList<>();
-        extendList.add(getNameOfSpecialication(specializationList.get(0),astPartUsage));
-        ASTCDExtendUsage extendUsage = createExtendUsage(extendList , false);
+        extendList.add(getNameOfSpecialication(specializationList.get(0), astPartUsage));
+        ASTCDExtendUsage extendUsage = createExtendUsage(extendList, false);
         partDefClass.setCDExtendUsage(extendUsage);
       }
     }
 
   }
 
-  ASTMCType getNameOfSpecialication(ASTMCType spec, ASTPartUsage astPartUsage){
+  ASTMCType getNameOfSpecialication(ASTMCType spec, ASTPartUsage astPartUsage) {
     ASTPartUsage specPartUsage = astPartUsage.getEnclosingScope().resolvePartUsage(printName(spec)).get().getAstNode();
     var specializationList = specPartUsage.streamSpecializations().filter(
         t -> t instanceof ASTSysMLSpecialization).flatMap(
@@ -163,7 +165,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     if(!specializationList.isEmpty()) {
       return specializationList.get(0);
     }
-    if(typingList.size()==1) {
+    if(typingList.size() == 1) {
       return typingList.get(0);
     }
     return null;
@@ -232,14 +234,26 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
 
   }
 
+  List<ASTCDAttribute> createPorts(ASTSysMLElement astSysMLElement) {
+    List<ASTPortUsage> portUsageList = createPortUsageList(astSysMLElement);
+    List<String> generatedAttributeList = new ArrayList<>();
+    List<ASTCDAttribute> attributeList = portUsageList.stream().map(
+        t -> createPort(t, generatedAttributeList)).collect(
+        Collectors.toList());
+    return attributeList;
+    //TODO transitive ports
+  }
+
   List<ASTCDAttribute> createAttributes(ASTSysMLElement astSysMLElement) {
     List<ASTAttributeUsage> attributeUsageList = createAttributeUsageList(astSysMLElement);
     List<String> generatedAttributeList = new ArrayList<>();
+    //create astcdattributes for the current element
     List<ASTCDAttribute> attributeList = attributeUsageList.stream().map(
         t -> createAttribute(t, generatedAttributeList)).collect(
         Collectors.toList());
     attributeList.removeAll(Collections.singleton(null));
     Stream<ASTAttributeUsage> attributeUsageStream = null;
+    //create astcdattributes for transitive attributes
     if(astSysMLElement instanceof ASTPartDef) {
       attributeUsageStream = ((ASTPartDef) astSysMLElement).streamTransitiveDefSupertypes().flatMap(
           t -> createAttributeUsageList(t).stream());
@@ -275,6 +289,20 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     return attributeUsageList;
   }
 
+  private List<ASTPortUsage> createPortUsageList(ASTSysMLElement element) {
+    List<ASTSysMLElement> elementList = new ArrayList<>();
+    if(element instanceof ASTPartDef)
+      elementList = ((ASTPartDef) element).getSysMLElementList();
+    if(element instanceof ASTPartUsage)
+      elementList = ((ASTPartUsage) element).getSysMLElementList();
+    if(element instanceof ASTAttributeDef)
+      elementList = ((ASTAttributeDef) element).getSysMLElementList();
+    List<ASTPortUsage> attributeUsageList;
+    attributeUsageList = elementList.stream().filter(
+        t -> t instanceof ASTPortUsage).map(t -> (ASTPortUsage) t).collect(Collectors.toList());
+    return attributeUsageList;
+  }
+
   ASTCDAttribute createAttribute(ASTSysMLElement element, List<String> stringList) {
     if(element instanceof ASTAttributeUsage) {
       String attributeName = ((ASTAttributeUsage) element).getName();
@@ -287,9 +315,26 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     }
     return null;
   }
+
+  ASTCDAttribute createPort(ASTSysMLElement element, List<String> stringList) {
+    if(element instanceof ASTPortUsage) {
+      String attributeName = ((ASTPortUsage) element).getName();
+      if(!stringList.contains(attributeName)) {
+        stringList.add(attributeName);
+        ASTMCQualifiedType qualifiedType = generatorUtils.qualifiedType(
+            Arrays.asList("de", "monticore", "lang", "sysmlv2", "generator", "timesync",
+                "InPort<Integer>")); //TODO korrekten typ erkennen
+        return CD4CodeMill.cDAttributeBuilder().setName(attributeName).setModifier(
+            CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(qualifiedType).build();
+      }
+    }
+    return null;
+  }
+
   private String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
   }
+
   public ASTCDCompilationUnit getCdCompilationUnit() {
     return cdCompilationUnit;
   }
