@@ -88,10 +88,7 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
       parentAttribute = parentList.stream().map(this::checkDisjunctAttributes).collect(Collectors.toList());
       List<ASTAttributeUsage> intersectionOfList = emptyIntersection(parentAttribute);
 
-      var listOfLists = new ArrayList<List<ASTAttributeUsage>>();
-      listOfLists.add(intersectionOfList);
-      //filter list
-      intersectList = filterAttributeList(node, listOfLists);
+      intersectList = filterAttributeList(node, intersectionOfList);
     }
 
     if(intersectList.isEmpty()) {
@@ -148,13 +145,26 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
     return parentList;
   }
 
-  List<ASTAttributeUsage> filterAttributeList(ASTSysMLElement node, ArrayList<List<ASTAttributeUsage>> listOfLists) {
+  List<ASTAttributeUsage> filterAttributeList(ASTSysMLElement node, List<ASTAttributeUsage> listOfAttributeUsages) {
 
     List<ASTAttributeUsage> attributeUsagesOfNode = getAttributeUsageOfNode(node);
     List<String> namesOfAttributesWithRedefinitions = attributeUsagesOfNode.stream().flatMap(
         ASTAttributeUsage::streamSpecializations).filter(t -> t instanceof ASTSysMLRedefinition).flatMap(
         t -> t.getSuperTypesList().stream()).map(this::printName).collect(
         Collectors.toList());
+
+    for (ASTAttributeUsage element : listOfAttributeUsages) {
+      var superTypesElement = getAttributeTypes(element).stream().map(this::printName).collect(Collectors.toList());
+      var listOfSupertypeLists = listOfAttributeUsages.stream().filter(t -> t.getName().equals(element.getName())).map(
+          this::getAttributeTypes).collect(Collectors.toList());
+      var filteredSupertypes = listOfSupertypeLists.stream().flatMap(
+          t -> t.stream().filter(item -> !superTypesElement.contains(printName(item)))).collect(
+          Collectors.toList());
+      if(filteredSupertypes.isEmpty() && listOfSupertypeLists.size() > 1)
+        listOfAttributeUsages.remove(element);
+    }
+    var listOfLists = new ArrayList<List<ASTAttributeUsage>>();
+    listOfLists.add(listOfAttributeUsages);
     return attributeUsageListUnion(listOfLists, namesOfAttributesWithRedefinitions);
   }
 
@@ -240,6 +250,12 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
       //TODO check TypeCompatibility(partUsage, refinedAttr);
     }
     return partFoundInParents;
+  }
+
+  List<ASTMCType> getAttributeTypes(ASTAttributeUsage astAttributeUsage) {
+    return astAttributeUsage.streamSpecializations().filter(f -> f instanceof ASTSysMLTyping).flatMap(
+        ASTSpecialization::streamSuperTypes).collect(
+        Collectors.toList());
   }
 
 }
