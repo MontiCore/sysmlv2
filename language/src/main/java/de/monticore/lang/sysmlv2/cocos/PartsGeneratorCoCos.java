@@ -52,6 +52,10 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
   }
 
   @Override public void check(ASTPartDef node) {
+    long numberIllegalSpecs = node.streamSpecializations().filter(t -> t instanceof ASTSysMLTyping | t instanceof ASTSysMLRedefinition).count();
+    if(numberIllegalSpecs!= 0)       Log.error("The Part Def " + node.getName()
+        + " uses redefinitions or typings, this is not allowed.");
+
     attributeUtils.checkDisjunctAttributes(node);
   }
 
