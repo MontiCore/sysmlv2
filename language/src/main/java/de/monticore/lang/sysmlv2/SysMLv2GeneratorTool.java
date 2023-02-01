@@ -16,6 +16,7 @@ import de.monticore.lang.sysmlinterfaces._cocos.SysMLInterfacesASTInterfaceUsage
 import de.monticore.lang.sysmlitems._cocos.SysMLItemsASTItemDefCoCo;
 import de.monticore.lang.sysmlitems._cocos.SysMLItemsASTItemUsageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeDefCoCo;
+import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeUsageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartUsageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
@@ -124,7 +125,8 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     checker.addCoCo(new PortDefHasOneType());
     checker.addCoCo(new PortDefNeedsDirection());
     checker.addCoCo(new ActionControlGeneratorCoCos());
-    checker.addCoCo(new AttributeGeneratorCoCos());
+    checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new AttributeGeneratorCoCos());
+    checker.addCoCo((SysMLPartsASTAttributeUsageCoCo) new AttributeGeneratorCoCos());
     checker.addCoCo((SysMLPartsASTPartDefCoCo) new PartsGeneratorCoCos());
     checker.addCoCo((SysMLPartsASTPartUsageCoCo) new PartsGeneratorCoCos());
     checker.addCoCo(new StateGeneratorCoCo());
