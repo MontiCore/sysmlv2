@@ -38,6 +38,7 @@ import de.monticore.lang.sysmlv2.cocos.ActionGeneratorCoCos;
 import de.monticore.lang.sysmlv2.cocos.ActionNameCoCos;
 import de.monticore.lang.sysmlv2.cocos.ActionSupertypes;
 import de.monticore.lang.sysmlv2.cocos.AttributeGeneratorCoCos;
+import de.monticore.lang.sysmlv2.cocos.ConnectionGeneratorCoCos;
 import de.monticore.lang.sysmlv2.cocos.InterfaceSupertypes;
 import de.monticore.lang.sysmlv2.cocos.ItemsSupertypes;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
@@ -109,6 +110,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLActionsASTActionDefCoCo) new ActionNameCoCos());
     checker.addCoCo((SysMLActionsASTActionUsageCoCo) new ActionNameCoCos());
+    checker.addCoCo(new ConnectionGeneratorCoCos());
     checker.checkAll(ast);
   }
 
