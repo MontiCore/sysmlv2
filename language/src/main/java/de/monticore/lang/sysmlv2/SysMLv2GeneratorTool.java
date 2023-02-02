@@ -44,6 +44,7 @@ import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
 import de.monticore.lang.sysmlv2.cocos.PartsGeneratorCoCos;
 import de.monticore.lang.sysmlv2.cocos.PartsSupertypes;
+import de.monticore.lang.sysmlv2.cocos.PortsGeneratorCoCos;
 import de.monticore.lang.sysmlv2.cocos.StateGeneratorCoCo;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.SuccessionCoCo;
@@ -125,6 +126,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     checker.addCoCo(new PortDefHasOneType());
     checker.addCoCo(new PortDefNeedsDirection());
     checker.addCoCo(new ActionControlGeneratorCoCos());
+    checker.addCoCo(new PortsGeneratorCoCos());
     checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new AttributeGeneratorCoCos());
     checker.addCoCo((SysMLPartsASTAttributeUsageCoCo) new AttributeGeneratorCoCos());
     checker.addCoCo((SysMLPartsASTPartDefCoCo) new PartsGeneratorCoCos());
