@@ -47,6 +47,7 @@ import de.monticore.lang.sysmlv2.cocos.PartsGeneratorCoCos;
 import de.monticore.lang.sysmlv2.cocos.PartsSupertypes;
 import de.monticore.lang.sysmlv2.cocos.PortsGeneratorCoCos;
 import de.monticore.lang.sysmlv2.cocos.StateGeneratorCoCo;
+import de.monticore.lang.sysmlv2.cocos.StateNameCoCos;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.SuccessionCoCo;
 import de.monticore.lang.sysmlv2.generator.SysML2CDConverter;
@@ -110,6 +111,8 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLActionsASTActionDefCoCo) new ActionNameCoCos());
     checker.addCoCo((SysMLActionsASTActionUsageCoCo) new ActionNameCoCos());
+    checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateNameCoCos());
+    checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateNameCoCos());
     checker.addCoCo(new ConnectionGeneratorCoCos());
     checker.checkAll(ast);
   }
