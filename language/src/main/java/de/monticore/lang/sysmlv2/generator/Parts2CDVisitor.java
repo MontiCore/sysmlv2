@@ -16,6 +16,7 @@ import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
+import de.monticore.lang.sysmlv2.generator.timesync.PartUtils;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
@@ -59,6 +60,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   protected final GlobalExtensionManagement glex;
 
   PortUtils portUtils;
+  PartUtils partUtils;
 
   public Parts2CDVisitor(GlobalExtensionManagement glex, ASTCDCompilationUnit cdCompilationUnit,
                          ASTCDPackage basePackage, ASTCDDefinition astcdDefinition) {
@@ -69,6 +71,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     this.astcdDefinition = astcdDefinition;
     this.generatorUtils = new GeneratorUtils();
     this.portUtils = new PortUtils();
+    this.partUtils = new PartUtils();
   }
 
   @Override
@@ -102,7 +105,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     liste.addAll(portUtils.createPorts(astPartDef));
     partDefClass.setCDAttributeList(liste);
     generatorUtils.addMethods(partDefClass, liste, true, true);
-    portUtils.createComponentMethods(astPartDef, cd4C, partDefClass);
+    portUtils.createComponentMethods(astPartDef, cd4C, partDefClass, partUtils.setPortLists(astPartDef));
     cdPackage.addCDElement(partDefClass);
     stateToClassMap.put(astPartDef.getName(), partDefClass);
   }
@@ -152,11 +155,10 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   }
 
   ASTMCObjectType createComponent() {
-    ASTMCQualifiedType mcQualifiedType = CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
+
+    return CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
         CD4CodeMill.mCQualifiedNameBuilder().
             addParts("de.monticore.lang.sysmlv2.generator.timesync.IComponent").build()).build();
-
-    return mcQualifiedType;
   }
 
   ASTMCType getNameOfSpecialication(ASTMCType spec, ASTPartUsage astPartUsage) {

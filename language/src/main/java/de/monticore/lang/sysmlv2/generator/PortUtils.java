@@ -9,42 +9,34 @@ import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
+import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class PortUtils {
 
   GeneratorUtils generatorUtils = new GeneratorUtils();
 
-  void createComponentMethods(ASTPartDef astPartDef, CD4C cd4C, ASTCDClass partDefClass) {
-    var portList = astPartDef.getSysMLElementList().stream().filter(t -> t instanceof ASTPortUsage).map(
-        t -> (ASTPortUsage) t).collect(
-        Collectors.toList()); //TODO unterscheidung nach port direction
-    var inPortList = portList.stream().filter(t -> t.getSysMLFeatureDirection().getIntValue() == 2).collect(
-        Collectors.toList());
-    var outPortList = portList.stream().filter(t -> t.getSysMLFeatureDirection().getIntValue() == 4).collect(
-        Collectors.toList());
-    var inOutPortList = portList.stream().filter(t -> t.getSysMLFeatureDirection().getIntValue() == 3).collect(
-        Collectors.toList());
-    var input = new ArrayList<>(inOutPortList);
-    //manually add inout ports to the inPortList ! This causes changes to the port usage in the ast!
-    input.forEach(t -> t.setName(t.getName() + "_in"));
-    inPortList.addAll(input);
-    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentIsSyncedMethod", inPortList);
-    var output = new ArrayList<>(inOutPortList);
-    output.forEach(t -> t.setName(t.getName().substring(0, t.getName().length() - ("_in").length()) + "_out"));
-    outPortList.addAll(output);
-    var partList = astPartDef.getSysMLElementList().stream().filter(t -> t instanceof ASTPartUsage).map(
-        t -> (ASTPartUsage) t).collect(
-        Collectors.toList());
+  List<ASTPortUsage> inputPortList;
 
-    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentTickMethod", outPortList, partList);
-    output.forEach(t -> t.setName(
-        t.getName().substring(0, t.getName().length() - ("_out").length()))); //Reset name to resolve sideeffects
+  List<ASTPortUsage> outputPortList;
+
+  void createComponentMethods(ASTSysMLElement astSysMLElement, CD4C cd4C, ASTCDClass partDefClass,
+                              List<ASTPartUsage> partUsageList) {
+    setPortLists(astSysMLElement);
+    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentIsSyncedMethod", inputPortList);
+    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentTickMethod", outputPortList, partUsageList);
+
     //TODO void setUp(); -> atomic oder composed
 
     //TODO void init(); -> automaton oder init
@@ -53,49 +45,18 @@ public class PortUtils {
 
   }
 
-  List<ASTCDAttribute> createPorts(ASTSysMLElement astSysMLElement) {
-
-    List<ASTPortUsage> portUsageList = createPortUsageList(astSysMLElement);
-    List<ASTPortUsage> supertypePortUsageList = new ArrayList<>();
-    //create astcdattributes for transitive attributes
-    if(astSysMLElement instanceof ASTPartDef) {
-      supertypePortUsageList = ((ASTPartDef) astSysMLElement).streamTransitiveDefSupertypes().flatMap(
-          t -> createPortUsageList(t).stream()).collect(Collectors.toList());
-    }
-    if(astSysMLElement instanceof ASTPartUsage) {
-      supertypePortUsageList = ((ASTPartUsage) astSysMLElement).streamTransitiveDefSupertypes().flatMap(
-          t -> createPortUsageList(t).stream()).collect(Collectors.toList());
-    }
-    portUsageList.addAll(supertypePortUsageList);
+  public List<ASTCDAttribute> createPorts(ASTSysMLElement astSysMLElement) {
+    setPortLists(astSysMLElement);
     //split into distinct lists
-    List<ASTPortUsage> inPortList = portUsageList.stream().filter(
-        t -> t.getSysMLFeatureDirection().getIntValue() == 2).collect(
-        Collectors.toList());
-    List<ASTPortUsage> outPortList = portUsageList.stream().filter(
-        t -> t.getSysMLFeatureDirection().getIntValue() == 4).collect(
-        Collectors.toList());
-    List<ASTPortUsage> inOutPortList = portUsageList.stream().filter(
-        t -> t.getSysMLFeatureDirection().getIntValue() == 3).collect(
-        Collectors.toList());
-    //transform inoutport list to a list of input ports AND a list of output ports
-    List<ASTPortUsage> input = new ArrayList<>(inOutPortList);
-    //manually add inout ports to the inPortList ! This causes changes to the port usage in the ast!
-    input.forEach(t -> t.setName(t.getName() + "_in"));
-    inPortList.addAll(input);
 
     List<String> generatedAttributeList = new ArrayList<>();
-    List<ASTCDAttribute> attributeList = inPortList.stream().map(
+    List<ASTCDAttribute> attributeList = this.inputPortList.stream().map(
         t -> createPort(t, generatedAttributeList, "InPort")).collect(
         Collectors.toList());
-    List<ASTPortUsage> output = new ArrayList<>(inOutPortList);
-    //remove the suffix _in and add suffix _out, manually add inout ports to the outPortList ! This causes changes to the port usage in the ast!
-    output.forEach(t -> t.setName(t.getName().substring(0, t.getName().length() - ("_in").length()) + "_out"));
-    outPortList.addAll(output);
-    attributeList.addAll(outPortList.stream().map(
+
+    attributeList.addAll(this.outputPortList.stream().map(
         t -> createPort(t, generatedAttributeList, "OutPort")).collect(
         Collectors.toList()));
-    output.forEach(t -> t.setName(
-        t.getName().substring(0, t.getName().length() - ("_out").length()))); //Reset name to resolve sideeffects
     return attributeList;
   }
 
@@ -129,6 +90,101 @@ public class PortUtils {
     return null;
   }
 
-  /////////////////////
+  public void setPortLists(ASTSysMLElement astSysMLElement) {
+    List<ASTPortUsage> portUsageList = getPortUsage(astSysMLElement);
+    //divide into the different directions
+    List<ASTPortUsage> inPortList = portUsageList.stream().filter(
+        t -> t.getSysMLFeatureDirection().getIntValue() == 2).collect(
+        Collectors.toList());
+    List<ASTPortUsage> outPortList = portUsageList.stream().filter(
+        t -> t.getSysMLFeatureDirection().getIntValue() == 4).collect(
+        Collectors.toList());
+    List<ASTPortUsage> inOutPortList = portUsageList.stream().filter(
+        t -> t.getSysMLFeatureDirection().getIntValue() == 3).collect(
+        Collectors.toList());
+    //transform inoutport list to a list of input ports AND a list of output ports
+    List<ASTPortUsage> input = new ArrayList<>();
+    for (ASTPortUsage p : inOutPortList)
+      input.add(p.deepClone());
+    input.forEach(t -> t.setName(t.getName() + "_in"));
+    inPortList.addAll(input);
+    List<ASTPortUsage> output = new ArrayList<>();
+    for (ASTPortUsage p : inOutPortList)
+      output.add(p.deepClone());
+    output.forEach(t -> t.setName(t.getName() + "_out"));
+    outPortList.addAll(output);
+
+    this.inputPortList = inPortList;
+    this.outputPortList = outPortList;
+  }
+
+  public List<ASTPortUsage> getPortUsage(ASTSysMLElement node) {
+    List<ASTSysMLElement> parentList = getDirectSupertypes(node);
+    List<List<ASTPortUsage>> parentAttribute = new ArrayList<>();
+    List<ASTPortUsage> attributeUsages = getPortUsageOfNode(node);
+
+    parentAttribute = parentList.stream().map(this::getPortUsage).collect(Collectors.toList());
+    attributeUsages.addAll(removeDuplicateAttributes(parentAttribute));
+    return attributeUsages;
+  }
+
+  List<ASTPortUsage> removeDuplicateAttributes(List<List<ASTPortUsage>> attributeLists) {
+    var stringList = attributeLists.stream().flatMap(Collection::stream).map(ASTPortUsage::getName).collect(
+        Collectors.toList());
+
+    Set<String> stringSet = new HashSet<>(stringList);
+
+    List<List<ASTPortUsage>> returnList = new ArrayList<>(attributeLists);
+
+    return returnList.stream().flatMap(Collection::stream).filter(
+        t -> stringSet.contains((t.getName()))).collect(
+        Collectors.toList());
+  }
+
+  List<ASTSysMLElement> getDirectSupertypes(ASTSysMLElement node) {
+    List<ASTSysMLElement> parentList = new ArrayList<>();
+    //Get direct supertypes
+    if(node instanceof ASTPartDef) {
+      parentList = ((ASTPartDef) node).streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization).flatMap(
+          f -> f.getSuperTypesList().stream()).map(
+          t -> ((ASTPartDef) node).getEnclosingScope().resolvePartDef(printName(t))).filter(Optional::isPresent).map(
+          t -> t.get().getAstNode()).collect(
+          Collectors.toList());
+    }
+    if(node instanceof ASTPartUsage) {
+      parentList = ((ASTPartUsage) node).streamSpecializations().filter(
+          t -> t instanceof ASTSysMLSpecialization).flatMap(
+          f -> f.getSuperTypesList().stream()).map(
+          t -> ((ASTPartUsage) node).getEnclosingScope().resolvePartUsage(printName(t))).filter(
+          Optional::isPresent).map(
+          t -> t.get().getAstNode()).collect(
+          Collectors.toList());
+      parentList.addAll(((ASTPartUsage) node).streamSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
+          f -> f.getSuperTypesList().stream()).map(
+          t -> ((ASTPartUsage) node).getEnclosingScope().resolvePartDef(printName(t))).filter(Optional::isPresent).map(
+          t -> t.get().getAstNode()).collect(
+          Collectors.toList()));
+    }
+    return parentList;
+  }
+
+  List<ASTPortUsage> getPortUsageOfNode(ASTSysMLElement node) {
+    List<ASTPortUsage> portUsageList = new ArrayList<>();
+    if(node instanceof ASTPartDef) {
+      portUsageList = ((ASTPartDef) node).getSysMLElementList().stream().filter(
+          t -> t instanceof ASTPortUsage).map(f -> (ASTPortUsage) f).collect(
+          Collectors.toList());
+    }
+    if(node instanceof ASTPartUsage) {
+      portUsageList = ((ASTPartUsage) node).getSysMLElementList().stream().filter(
+          t -> t instanceof ASTPortUsage).map(f -> (ASTPortUsage) f).collect(
+          Collectors.toList());
+    }
+    return portUsageList;
+  }
+
+  private String printName(ASTMCType type) {
+    return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+  }
 
 }
