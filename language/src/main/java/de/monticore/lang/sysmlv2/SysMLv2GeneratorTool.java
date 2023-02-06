@@ -25,8 +25,6 @@ import de.monticore.lang.sysmlparts.coco.PortDefNeedsDirection;
 import de.monticore.lang.sysmlrequirements._cocos.SysMLRequirementsASTRequirementDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateUsageCoCo;
-import de.monticore.lang.sysmlstates.cocos.NoDoActions;
-import de.monticore.lang.sysmlstates.cocos.NoExitActions;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
@@ -127,9 +125,6 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo(new WarnNonExhibited());
     checker.addCoCo(new OneCardinality());
-    checker.addCoCo(new NoExitActions());
-    checker.addCoCo((SysMLStatesASTStateDefCoCo) new NoDoActions());
-    checker.addCoCo((SysMLStatesASTStateUsageCoCo) new NoDoActions());
     checker.addCoCo(new PortDefHasOneType());
     checker.addCoCo(new PortDefNeedsDirection());
     checker.addCoCo(new ActionControlGeneratorCoCos());

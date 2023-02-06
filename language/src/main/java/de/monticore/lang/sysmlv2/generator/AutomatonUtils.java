@@ -66,4 +66,10 @@ public class AutomatonUtils {
   public boolean hasEntryAction(ASTStateUsage stateUsage) {
     return stateUsage.getEntryActionList().size() > 0;
   }
+  public boolean hasExitAction(ASTStateUsage stateUsage) {
+    return stateUsage.getExitActionList().size() > 0;
+  }
+  public boolean hasDoAction(ASTStateUsage stateUsage) {
+    return stateUsage.getDoActionList().size() > 0;
+  }
 }

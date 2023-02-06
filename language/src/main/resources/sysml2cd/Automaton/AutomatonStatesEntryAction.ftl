@@ -9,11 +9,11 @@ ${cd4c.method("protected void entry${state.getName()?cap_first}()")}
   // outputs
   //TODO print outputs
   // entry action
-      <#assign doActions = state.getEntryActionList()/>
+      <#assign entryActions = state.getEntryActionList()/>
 
-  <#list doActions>
-      <#items as doAction>
-    ${doAction.getAction()}
+  <#list entryActions>
+      <#items as entryAction>
+    ${entryAction.getAction()}
     </#items>
 </#list>
   // result
