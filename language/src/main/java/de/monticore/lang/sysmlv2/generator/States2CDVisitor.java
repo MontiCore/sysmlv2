@@ -7,7 +7,6 @@ import de.monticore.cdbasis._ast.*;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._visitor.SysMLStatesVisitor2;
-import de.monticore.lang.sysmlv2.generator.timesync.PartUtils;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 
 import java.util.*;
@@ -68,7 +67,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
       cdPackage.addCDElement(stateUsageClass);
 
       var enumConstantList = stateList.stream().map(
-          state -> CD4CodeMill.cDEnumConstantBuilder().setName(state.getName().toUpperCase()).build()).collect(
+          state -> CD4CodeMill.cDEnumConstantBuilder().setName(state.getName()).build()).collect(
           Collectors.toList());
 
       var anEnum = CD4CodeMill.cDEnumBuilder().setName(astStateUsage.getName() + "Enum").setCDEnumConstantsList(
@@ -77,6 +76,13 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
       cdPackage.addCDElement(anEnum);
 
       cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesCompute", stateList);
+      for (ASTStateUsage state:
+           stateList) {
+
+        cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesTransition",  state, astStateUsage);
+        cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesEntryAction",  state, astStateUsage);
+
+      }
     }
   }
 

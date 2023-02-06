@@ -10,7 +10,7 @@ montiarc.rte.log.Log.trace("State@pre = "+ this.getCurrentStateName()());
 switch (currentStateName}) {
 <#list stateList as state>
   case ${state.getName()}:
-  transitionFrom${state.getName()}();
+  transitionFrom${state.getName()?cap_first}();
   break;
 </#list>
 }

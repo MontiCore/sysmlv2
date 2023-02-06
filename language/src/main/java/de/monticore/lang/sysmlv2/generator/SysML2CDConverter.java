@@ -31,6 +31,9 @@ public class SysML2CDConverter {
     SysMLv2Traverser traverser = SysMLv2Mill.inheritanceTraverser();
     traverser.add4SysMLParts(phase1Visitor);
 
+    States2CDVisitor states1Visitor = new States2CDVisitor(glex, cdCompilationUnit, cdPackage, astcdDefinition);
+    traverser.add4SysMLStates(states1Visitor);
+
     // we use the CD4Code language for the CD (and now switch to it)
     CD4CodeMill.init();
 
