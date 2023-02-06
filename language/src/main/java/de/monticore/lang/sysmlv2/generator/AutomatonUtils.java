@@ -2,16 +2,16 @@ package de.monticore.lang.sysmlv2.generator;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
-import de.monticore.lang.sysmlactions._ast.ASTSysMLSuccession;
 import de.monticore.lang.sysmlstates._ast.ASTDoAction;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
+import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
 import de.monticore.prettyprint.IndentPrinter;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class AutomatonUtils {
-  public List<ASTSysMLSuccession> getAllTransitionsWithGuardFrom(ASTStateUsage automaton, ASTStateUsage state) {
+  public List<ASTSysMLTransition> getAllTransitionsWithGuardFrom(ASTStateUsage automaton, ASTStateUsage state) {
     return getAllTransitionsFrom(automaton, state).stream().filter(t -> t.isPresentGuard()).collect(
         Collectors.toList());
   }
@@ -20,17 +20,17 @@ public class AutomatonUtils {
     return getAllTransitionsFrom(automaton, state).stream().anyMatch(t -> !t.isPresentGuard());
   }
 
-  public List<ASTSysMLSuccession> getAllTransitionsFrom(ASTStateUsage automaton, ASTStateUsage state) {
-    return automaton.streamSysMLElements().filter(t -> t instanceof ASTSysMLSuccession).map(
-        t -> (ASTSysMLSuccession) t).filter(t -> t.getSrc().equals(state.getName())).collect(
+  public List<ASTSysMLTransition> getAllTransitionsFrom(ASTStateUsage automaton, ASTStateUsage state) {
+    return automaton.streamSysMLElements().filter(t -> t instanceof ASTSysMLTransition).map(
+        t -> (ASTSysMLTransition) t).filter(t -> t.getSrc().equals(state.getName())).collect(
         Collectors.toList());
   }
 
-  public ASTSysMLSuccession getFirstTransitionWithoutGuardFrom(ASTStateUsage automaton, ASTStateUsage state) {
-    List<ASTSysMLSuccession> successionList = getAllTransitionsFrom(automaton, state).stream().filter(
+  public ASTSysMLTransition getFirstTransitionWithoutGuardFrom(ASTStateUsage automaton, ASTStateUsage state) {
+    List<ASTSysMLTransition> transitionList = getAllTransitionsFrom(automaton, state).stream().filter(
         t -> !t.isPresentGuard()).collect(Collectors.toList());
-    if(!successionList.isEmpty()) {
-      return successionList.get(0);
+    if(!transitionList.isEmpty()) {
+      return transitionList.get(0);
     }
     return null;
   }
@@ -55,7 +55,7 @@ public class AutomatonUtils {
     return prettyPrinter.prettyprint(expr);
   }
 
-  public boolean isPresentGuard(ASTSysMLSuccession transition) {
+  public boolean isPresentGuard(ASTSysMLTransition transition) {
     return transition.isPresentGuard();
   }
 
