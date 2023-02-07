@@ -31,6 +31,7 @@ public class StateGeneratorCoCo implements SysMLStatesASTStateUsageCoCo {
   public void check(ASTStateUsage node) {
 
     if(node.isParalled()) {
+      Log.error("Parallel States are currently not supported, but " + node.getName() + " uses it.");
       int parallelStates = 0;
         for (ASTSysMLElement x : node.getSysMLElementList()) {
           if(x instanceof ASTStateUsage) {
