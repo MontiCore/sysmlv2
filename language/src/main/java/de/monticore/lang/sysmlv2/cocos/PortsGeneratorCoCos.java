@@ -54,29 +54,30 @@ public class PortsGeneratorCoCos implements SysMLPartsASTPortUsageCoCo, SysMLPar
 
   void checkAttributes(String nodeName, List<ASTAttributeUsage> attributesList) {
 
-    var attributes = attributesList;
-    if(attributes.stream().count() > 2 | attributes.stream().findAny().isEmpty()) {
+    if(attributesList.stream().count() > 2 | attributesList.stream().findAny().isEmpty()) {
       Log.error(
-          "The Port " + nodeName + " has " + attributes.stream().count()
+          "The Port " + nodeName + " has " + attributesList.stream().count()
               + " different attribute usages as sub elements. It has to use the attribute usage value and can use the attribute delayed.");
     }
-    var hsad = attributes.stream().filter(t -> t.getName().equals("value")).collect(Collectors.toList());
-    if(hsad.isEmpty() || hsad.size() == 2) {
+    var valueAttribute = attributesList.stream().filter(t -> t.getName().equals("value")).collect(Collectors.toList());
+    if(valueAttribute.isEmpty() || valueAttribute.size() == 2) {
       Log.error(
-          "The Port " + nodeName + " needs one sub element value but has " + hsad.size() + ".");
+          "The Port " + nodeName + " needs one sub element value but has " + valueAttribute.size() + ".");
     }
-    var ndjs = attributes.stream().filter(t -> t.getName().equals("delayed")).collect(Collectors.toList());
-    if(!ndjs.isEmpty()) {
-      var jdsj = ndjs.get(0).streamSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
+    var delayedAttribute = attributesList.stream().filter(t -> t.getName().equals("delayed")).collect(Collectors.toList());
+    if(!delayedAttribute.isEmpty()) {
+      var astmcTypes = delayedAttribute.get(0).streamSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
           t -> t.streamSuperTypes()).collect(
           Collectors.toList());
-      if(jdsj.size() != 1) {
+      if(astmcTypes.size() != 1) {
         Log.error(
-            "The Attribute usage " + ndjs.get(0).getName() + " from port "+ nodeName+" needs exactly one type, this type needs to be Boolean.");
+            "The Attribute usage " + delayedAttribute.get(0).getName() + " from port " + nodeName
+                + " needs exactly one type, this type needs to be Boolean.");
       }
-      if(!printName(jdsj.get(0)).equals("Boolean")) {
+      if(!printName(astmcTypes.get(0)).equals("Boolean")) {
         Log.error(
-            "The Attribute usage " + ndjs.get(0).getName() + " from port "+ nodeName+" needs exactly one type, this type needs to be Boolean.");
+            "The Attribute usage " + delayedAttribute.get(0).getName() + " from port " + nodeName
+                + " needs exactly one type, this type needs to be Boolean.");
       }
     }
   }
