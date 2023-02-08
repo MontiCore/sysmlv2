@@ -27,6 +27,8 @@ public class PortUtils {
 
   GeneratorUtils generatorUtils = new GeneratorUtils();
 
+  AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
+
   List<ASTPortUsage> inputPortList;
 
   List<ASTPortUsage> outputPortList;
@@ -54,7 +56,10 @@ public class PortUtils {
         t -> createPort(t, generatedAttributeList, "InPort")).collect(
         Collectors.toList());
 
-    attributeList.addAll(this.outputPortList.stream().map(
+    attributeList.addAll(this.outputPortList.stream().filter(this::isPortDelay).map(
+        t -> createPort(t, generatedAttributeList, "DelayPort")).collect(
+        Collectors.toList()));
+    attributeList.addAll(this.outputPortList.stream().filter(t -> !isPortDelay(t)).map(
         t -> createPort(t, generatedAttributeList, "OutPort")).collect(
         Collectors.toList()));
     return attributeList;
@@ -74,15 +79,16 @@ public class PortUtils {
     return attributeUsageList;
   }
 
-  ASTCDAttribute createPort(ASTSysMLElement element, List<String> stringList, String direction) {
-    String type = direction + "<Integer>";//TODO korrekten typ erkennen
+  ASTCDAttribute createPort(ASTSysMLElement element, List<String> stringList, String portType) {
+
     if(element instanceof ASTPortUsage) {
+      String typeWithGenerics = portType + "<" + getValueTypeOfPort((ASTPortUsage) element) + ">";
       String portName = ((ASTPortUsage) element).getName();
       if(!stringList.contains(portName)) {
         stringList.add(portName);
         ASTMCQualifiedType qualifiedType = generatorUtils.qualifiedType(
             Arrays.asList("de", "monticore", "lang", "sysmlv2", "generator", "timesync",
-                type));
+                typeWithGenerics));
         return CD4CodeMill.cDAttributeBuilder().setName(portName).setModifier(
             CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(qualifiedType).build();
       }
@@ -185,6 +191,23 @@ public class PortUtils {
 
   private String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+  }
+
+  String getValueTypeOfPort(ASTPortUsage portUsage) {
+    var attributeUsageList = attributeResolveUtils.getAttributesOfElement(portUsage).stream().filter(
+        t -> t.getName().equals("value")).flatMap(t -> t.streamSpecializations()).flatMap(
+        t -> t.streamSuperTypes()).collect(
+        Collectors.toList());
+    return printName(attributeUsageList.get(0));
+  }
+
+  boolean isPortDelay(ASTPortUsage portUsage) {
+
+    var expression = attributeResolveUtils.getAttributesOfElement(portUsage).stream().filter(
+        t -> t.getName().equals("delayed")).filter(t -> t.isPresentExpression()).map(t -> t.getExpression()).collect(
+        Collectors.toList());
+    //TODO resolve
+    return false;
   }
 
 }
