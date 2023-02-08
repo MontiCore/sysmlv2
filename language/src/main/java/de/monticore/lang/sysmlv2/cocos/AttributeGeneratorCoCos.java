@@ -7,7 +7,7 @@ import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeUsageCoCo;
-import de.monticore.lang.sysmlv2.generator.AttributeUtils;
+import de.monticore.lang.sysmlv2.generator.AttributeResolveUtils;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -16,7 +16,7 @@ import de.se_rwth.commons.logging.Log;
 import java.util.stream.Collectors;
 
 public class AttributeGeneratorCoCos implements SysMLPartsASTAttributeUsageCoCo, SysMLPartsASTAttributeDefCoCo {
- AttributeUtils attributeUtils = new AttributeUtils();
+ AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
   private String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
   }
@@ -48,7 +48,7 @@ public class AttributeGeneratorCoCos implements SysMLPartsASTAttributeUsageCoCo,
   }
 
 public void check(ASTAttributeDef node){
-    attributeUtils.checkDisjunctAttributes(node);
+    attributeResolveUtils.getAttributesOfElement(node);
 
 }
 

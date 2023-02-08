@@ -6,7 +6,7 @@ import de.monticore.lang.sysmlparts._ast.ASTPortDef;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortUsageCoCo;
-import de.monticore.lang.sysmlv2.generator.AttributeUtils;
+import de.monticore.lang.sysmlv2.generator.AttributeResolveUtils;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -36,8 +36,8 @@ public class PortsGeneratorCoCos implements SysMLPartsASTPortUsageCoCo, SysMLPar
       Log.error(
           "The Port usage " + node.getName() + " has sub elements that are not attribute usages this is not allowed.");
     }
-    AttributeUtils attributeUtils = new AttributeUtils();
-    var attributeUsageList = attributeUtils.checkDisjunctAttributes(node);
+    AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
+    var attributeUsageList = attributeResolveUtils.getAttributesOfElement(node);
     checkAttributes(node.getName(), attributeUsageList);
   }
 
@@ -47,8 +47,8 @@ public class PortsGeneratorCoCos implements SysMLPartsASTPortUsageCoCo, SysMLPar
       Log.error(
           "The Port usage " + node.getName() + " has sub elements that are not attribute usages this is not allowed.");
     }
-    AttributeUtils attributeUtils = new AttributeUtils();
-    var attributeUsageList = attributeUtils.checkDisjunctAttributes(node);
+    AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
+    var attributeUsageList = attributeResolveUtils.getAttributesOfElement(node);
     checkAttributes(node.getName(), attributeUsageList);
   }
 

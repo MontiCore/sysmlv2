@@ -12,7 +12,7 @@ import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartUsageCoCo;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
-import de.monticore.lang.sysmlv2.generator.AttributeUtils;
+import de.monticore.lang.sysmlv2.generator.AttributeResolveUtils;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPartsASTPartDefCoCo {
-  AttributeUtils attributeUtils = new AttributeUtils();
+  AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
   /**
    * Check that at least one part def is extended.
    */
@@ -44,7 +44,7 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
       Log.error("The Part Usage " + node.getName()
           + " needs a type (at least one part def), redefine a part usage or specialize another part usage");
     }
-    attributeUtils.checkDisjunctAttributes(node);
+    attributeResolveUtils.getAttributesOfElement(node);
     var redeinitionSpec = node.streamSpecializations().filter(
         t -> t instanceof ASTSysMLRedefinition).collect(Collectors.toList());
     if(!redeinitionSpec.isEmpty())
@@ -56,7 +56,7 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
     if(numberIllegalSpecs!= 0)       Log.error("The Part Def " + node.getName()
         + " uses redefinitions or typings, this is not allowed.");
 
-    attributeUtils.checkDisjunctAttributes(node);
+    attributeResolveUtils.getAttributesOfElement(node);
   }
 
   private String printName(ASTMCType type) {
