@@ -9,6 +9,7 @@ import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
+import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartUsageCoCo;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
@@ -39,7 +40,7 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
         Collectors.toList());
     var relevantElements = (int) node.getSysMLElementList().stream().filter(
         t -> t instanceof ASTActionDef | t instanceof ASTActionUsage | t instanceof ASTAttributeUsage
-            | t instanceof ASTPartUsage).count(); //partUsage with at least one of the types is seen as a adhoc class definition
+            | t instanceof ASTPartUsage |t instanceof ASTPortUsage).count(); //partUsage with at least one of the types is seen as a adhoc class definition
     if(specialications.isEmpty() && relevantElements == 0 && redefinitons.isEmpty() && typing.isEmpty()) {
       Log.error("The Part Usage " + node.getName()
           + " needs a type (at least one part def), redefine a part usage or specialize another part usage");
