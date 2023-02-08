@@ -9,6 +9,8 @@ import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
+import de.monticore.lang.sysmlparts._ast.ASTPortDef;
+import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
@@ -171,6 +173,8 @@ public class AttributeUtils {
       return ((ASTPartUsage) node).getName();
     if(node instanceof ASTAttributeDef)
       return ((ASTAttributeDef) node).getName();
+    if(node instanceof ASTPortDef)
+      return ((ASTPortDef) node).getName();
     return "";
   }
 
@@ -207,6 +211,24 @@ public class AttributeUtils {
           t -> t.get().getAstNode()).collect(
           Collectors.toList());
     }
+    if(node instanceof ASTPortUsage) {
+      parentList = ((ASTPortUsage) node).streamSpecializations().filter(
+          t -> t instanceof ASTSysMLTyping).flatMap(
+          f -> f.getSuperTypesList().stream()).map(
+          t -> ((ASTPortUsage) node).getEnclosingScope().resolvePortDef(printName(t))).filter(
+          Optional::isPresent).map(
+          t -> t.get().getAstNode()).collect(
+          Collectors.toList());
+    }
+    if(node instanceof ASTPortDef) {
+      parentList = ((ASTPortDef) node).streamSpecializations().filter(
+          t -> t instanceof ASTSysMLSpecialization).flatMap(
+          f -> f.getSuperTypesList().stream()).map(
+          t -> ((ASTPortDef) node).getEnclosingScope().resolvePortDef(printName(t))).filter(
+          Optional::isPresent).map(
+          t -> t.get().getAstNode()).collect(
+          Collectors.toList());
+    }
     return parentList;
   }
 
@@ -224,6 +246,16 @@ public class AttributeUtils {
     }
     if(node instanceof ASTAttributeDef) {
       attributeUsageList = ((ASTAttributeDef) node).getSysMLElementList().stream().filter(
+          t -> t instanceof ASTAttributeUsage).map(f -> (ASTAttributeUsage) f).collect(
+          Collectors.toList());
+    }
+    if(node instanceof ASTPortDef) {
+      attributeUsageList = ((ASTPortDef) node).getSysMLElementList().stream().filter(
+          t -> t instanceof ASTAttributeUsage).map(f -> (ASTAttributeUsage) f).collect(
+          Collectors.toList());
+    }
+    if(node instanceof ASTPortUsage) {
+      attributeUsageList = ((ASTPortUsage) node).getSysMLElementList().stream().filter(
           t -> t instanceof ASTAttributeUsage).map(f -> (ASTAttributeUsage) f).collect(
           Collectors.toList());
     }
