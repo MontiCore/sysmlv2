@@ -1,5 +1,6 @@
 package de.monticore.lang.sysmlv2.generator;
 
+import com.google.common.collect.ImmutableMap;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -17,15 +18,29 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.se_rwth.commons.Splitters;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class GeneratorUtils {
+  private HashMap<String, String> scalarValueMapping = new HashMap<String, String>();
 
   protected final CD4C cd4C;
 
   public GeneratorUtils() {
     this.cd4C = CD4C.getInstance();
+    //mapping of ScalarValues defined in the Kernel Modeling language
+    scalarValueMapping.put("Boolean", "boolean");
+    scalarValueMapping.put("Integer", "int");
+    scalarValueMapping.put("Natural", "int");
+    scalarValueMapping.put("Number", "int");
+    scalarValueMapping.put("NumericalValue", "int");
+    scalarValueMapping.put("Positive", "int");
+    scalarValueMapping.put("Rational", "double");
+    scalarValueMapping.put("Real", "float");
+    scalarValueMapping.put("ScalarValue", "float");
+    scalarValueMapping.put("String", "String");
+    //TODO maybe support Collections
   }
 
   public void addMethods(ASTCDType astcdType, List<ASTCDAttribute> attributeList, boolean addGetter,
@@ -43,10 +58,8 @@ public class GeneratorUtils {
         new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
     List<String> partsList = Splitters.DOT.splitToList(typString);
     String typeName = partsList.get(partsList.size() - 1);
-    if(typeName.equals("Boolean"))
-      partsList = List.of("boolean");
-    if(typeName.equals("Real"))
-      partsList = List.of("float");
+    if(scalarValueMapping.containsKey(typeName))
+      partsList = List.of(scalarValueMapping.get(typeName));
     return qualifiedType(partsList);
   }
 
@@ -93,4 +106,11 @@ public class GeneratorUtils {
     return packagePartList;
   }
 
+  boolean isBasicType(String typeName) {
+    return scalarValueMapping.containsKey(typeName);
+  }
+  ImmutableMap<String, String> getScalarValueMapping (){
+    ImmutableMap<String, String> immutableMap = ImmutableMap.copyOf(scalarValueMapping);
+    return immutableMap;
+  }
 }

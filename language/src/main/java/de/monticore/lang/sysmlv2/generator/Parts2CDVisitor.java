@@ -60,6 +60,8 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
 
   PartResolveUtils partResolveUtils;
 
+  AttributeResolveUtils attributeResolveUtils;
+
   public Parts2CDVisitor(GlobalExtensionManagement glex, ASTCDCompilationUnit cdCompilationUnit,
                          ASTCDPackage basePackage, ASTCDDefinition astcdDefinition) {
     this.cd4C = CD4C.getInstance();
@@ -73,6 +75,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     this.interfaceUtils = new InterfaceUtils();
     this.attributeUtils = new AttributeUtils();
     this.partResolveUtils = new PartResolveUtils();
+    this.attributeResolveUtils = new AttributeResolveUtils();
   }
 
   @Override
@@ -91,7 +94,8 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     attributeList.addAll(partUtils.createPartsAsAttributes(astPartDef));
     partDefClass.setCDAttributeList(attributeList);
     generatorUtils.addMethods(partDefClass, attributeList, true, true);
-    portUtils.createComponentMethods(astPartDef, cd4C, partDefClass, partResolveUtils.getPartUsageOfNode(astPartDef));
+    portUtils.createComponentMethods(astPartDef, cd4C, partDefClass, partResolveUtils.getPartUsageOfNode(astPartDef),
+        attributeResolveUtils.getAttributesOfElement(astPartDef));
     cdPackage.addCDElement(partDefClass);
     stateToClassMap.put(astPartDef.getName(), partDefClass);
   }
@@ -123,7 +127,8 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
       List<ASTCDAttribute> attributeList = attributeUtils.createAttributes(astPartUsage);
 
       portUtils.createComponentMethods(astPartUsage, cd4C, partDefClass,
-          partResolveUtils.getPartUsageOfNode(astPartUsage));
+          partResolveUtils.getPartUsageOfNode(astPartUsage),
+          attributeResolveUtils.getAttributesOfElement(astPartUsage));
 
       attributeList.addAll(partUtils.createPartsAsAttributes(astPartUsage));
       partDefClass.setCDAttributeList(attributeList);

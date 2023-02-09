@@ -11,8 +11,10 @@ import de.monticore.cdbasis._ast.ASTCDInterfaceUsage;
 import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
+import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Attributes2CDVisitor implements SysMLPartsVisitor2 {
@@ -39,7 +41,7 @@ public class Attributes2CDVisitor implements SysMLPartsVisitor2 {
   InterfaceUtils interfaceUtils;
 
   AttributeUtils attributeUtils;
-
+AttributeResolveUtils attributeResolveUtils;
   protected final GlobalExtensionManagement glex;
 
   public Attributes2CDVisitor(GlobalExtensionManagement glex, ASTCDCompilationUnit cdCompilationUnit,
@@ -52,6 +54,7 @@ public class Attributes2CDVisitor implements SysMLPartsVisitor2 {
     this.generatorUtils = new GeneratorUtils();
     this.interfaceUtils = new InterfaceUtils();
     this.attributeUtils = new AttributeUtils();
+    this.attributeResolveUtils = new AttributeResolveUtils();
   }
 
   @Override
@@ -64,9 +67,12 @@ public class Attributes2CDVisitor implements SysMLPartsVisitor2 {
     partDefClass = CD4CodeMill.cDClassBuilder().setCDInterfaceUsage(interfaceUsage)
         .setName(astAttributeDef.getName())
         .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).setCDInterfaceUsage(interfaceUsage).build();
-    List<ASTCDAttribute> liste = attributeUtils.createAttributes(astAttributeDef);
-    partDefClass.setCDAttributeList(liste);
-    generatorUtils.addMethods(partDefClass, liste, true, true);
+    List<ASTAttributeUsage> attributeUsageList = attributeResolveUtils.getAttributesOfElement(astAttributeDef);
+    List<ASTCDAttribute> attributeList = attributeUtils.createAttributes(astAttributeDef);
+    partDefClass.setCDAttributeList(attributeList);
+    generatorUtils.addMethods(partDefClass, attributeList, true, true);
+
+    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentSetUpMethod", new ArrayList<>(), new ArrayList<>(), attributeUsageList);
     cdPackage.addCDElement(partDefClass);
   }
 

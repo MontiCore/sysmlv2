@@ -32,7 +32,7 @@ GeneratorUtils generatorUtils = new GeneratorUtils();
     if(element instanceof ASTPartUsage) {
       String attributeName = ((ASTPartUsage) element).getName();
 
-      ASTMCQualifiedType qualifiedType = attributeType((ASTPartUsage) element);
+      ASTMCQualifiedType qualifiedType = partType((ASTPartUsage) element);
       return CD4CodeMill.cDAttributeBuilder().setName(attributeName).setModifier(
           CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(qualifiedType).build();
 
@@ -40,7 +40,7 @@ GeneratorUtils generatorUtils = new GeneratorUtils();
     return null;
   }
 
-  protected ASTMCQualifiedType attributeType(ASTPartUsage element) {
+  ASTMCQualifiedType partType(ASTPartUsage element) {
     var sysMLTypingList = element.getSpecializationList().stream().filter(
         t -> t instanceof ASTSysMLTyping).map(u -> ((ASTSysMLTyping) u)).collect(Collectors.toList());
     if(isAdHocClassDefinition(element)) return generatorUtils.qualifiedType(element.getName());
