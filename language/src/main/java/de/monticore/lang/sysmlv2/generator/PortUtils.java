@@ -6,6 +6,7 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.lang.sysmlbasis._ast.*;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
+import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
@@ -39,8 +40,7 @@ public class PortUtils {
     cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentIsSyncedMethod", inputPortList);
     cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentTickMethod", outputPortList, partUsageList);
 
-    //TODO void setUp(); -> atomic oder composed
-
+    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentSetUpMethod", partUsageList, outputPortList);
     //TODO void init(); -> automaton oder init
 
     //TODO void compute(); -> compute oder composed oder atomic
@@ -195,8 +195,8 @@ public class PortUtils {
 
   String getValueTypeOfPort(ASTPortUsage portUsage) {
     var attributeUsageList = attributeResolveUtils.getAttributesOfElement(portUsage).stream().filter(
-        t -> t.getName().equals("value")).flatMap(t -> t.streamSpecializations()).flatMap(
-        t -> t.streamSuperTypes()).collect(
+        t -> t.getName().equals("value")).flatMap(ASTAttributeUsage::streamSpecializations).flatMap(
+        ASTSpecialization::streamSuperTypes).collect(
         Collectors.toList());
     return printName(attributeUsageList.get(0));
   }
@@ -204,7 +204,8 @@ public class PortUtils {
   boolean isPortDelay(ASTPortUsage portUsage) {
 
     var expression = attributeResolveUtils.getAttributesOfElement(portUsage).stream().filter(
-        t -> t.getName().equals("delayed")).filter(t -> t.isPresentExpression()).map(t -> t.getExpression()).collect(
+        t -> t.getName().equals("delayed")).filter(ASTAttributeUsage::isPresentExpression).map(
+        ASTAttributeUsage::getExpression).collect(
         Collectors.toList());
     //TODO resolve
     return false;
