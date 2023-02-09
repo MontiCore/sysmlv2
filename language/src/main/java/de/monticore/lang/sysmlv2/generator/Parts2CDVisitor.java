@@ -55,6 +55,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   PartUtils partUtils;
 
   InterfaceUtils interfaceUtils;
+
   AttributeUtils attributeUtils;
 
   public Parts2CDVisitor(GlobalExtensionManagement glex, ASTCDCompilationUnit cdCompilationUnit,
@@ -106,29 +107,42 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
       partDefClass = CD4CodeMill.cDClassBuilder()
           .setName(astPartUsage.getName())
           .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
-      List<ASTCDAttribute> liste = attributeUtils.createAttributes(astPartUsage);
       cdPackage.addCDElement(partDefClass);
-      //create attributes
-      partDefClass.setCDAttributeList(liste);
-      generatorUtils.addMethods(partDefClass, liste, true, true);
+
       //create Interface usage
-      List<ASTSysMLElement> sysMLElementList = new ArrayList<>();
-      for (ASTMCType astmcType : typingList) {
-        String name = astmcType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
-        var partDef = astPartUsage.getEnclosingScope().resolvePartDef(name);
-        partDef.ifPresent(partDefSymbol -> sysMLElementList.add(partDefSymbol.getAstNode()));
-      }
-      ASTCDInterfaceUsage interfaceUsage = interfaceUtils.createInterfaceUsage(sysMLElementList);
+      ASTCDInterfaceUsage interfaceUsage = createTypingInterfaceUsage(astPartUsage, typingList);
+      interfaceUsage.addInterface(createComponent());
       partDefClass.setCDInterfaceUsage(interfaceUsage);
       //create extends usage
-      if(!specializationList.isEmpty()) {
-        List<ASTMCType> extendList = new ArrayList<>();
-        extendList.add(partUtils.getNameOfSpecialication(specializationList.get(0), astPartUsage));
-        ASTCDExtendUsage extendUsage = interfaceUtils.createExtendUsage(extendList, false);
-        partDefClass.setCDExtendUsage(extendUsage);
-      }
+      createExtendForPartUsage(astPartUsage, specializationList);
+      //create attributes
+      List<ASTCDAttribute> attributeList = attributeUtils.createAttributes(astPartUsage);
+      partDefClass.setCDAttributeList(attributeList);
+      generatorUtils.addMethods(partDefClass, attributeList, true, true);
     }
 
+  }
+
+  void createExtendForPartUsage(ASTPartUsage astPartUsage, List<ASTMCType> specializationList) {
+    if(!specializationList.isEmpty()) {
+      List<ASTMCType> extendList = new ArrayList<>();
+      extendList.add(partUtils.getNameOfSpecialication(specializationList.get(0), astPartUsage));
+      ASTCDExtendUsage extendUsage = interfaceUtils.createExtendUsage(extendList, false);
+      partDefClass.setCDExtendUsage(extendUsage);
+    }
+
+  }
+
+  private ASTCDInterfaceUsage createTypingInterfaceUsage(ASTPartUsage astPartUsage, List<ASTMCType> typingList) {
+    ASTCDInterfaceUsage interfaceUsage;
+    List<ASTSysMLElement> sysMLElementList = new ArrayList<>();
+    for (ASTMCType astmcType : typingList) {
+      String name = astmcType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+      var partDef = astPartUsage.getEnclosingScope().resolvePartDef(name);
+      partDef.ifPresent(partDefSymbol -> sysMLElementList.add(partDefSymbol.getAstNode()));
+    }
+    interfaceUsage = interfaceUtils.createInterfaceUsage(sysMLElementList);
+    return interfaceUsage;
   }
 
   ASTMCObjectType createComponent() {
@@ -137,10 +151,6 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
         CD4CodeMill.mCQualifiedNameBuilder().
             addParts("de.monticore.lang.sysmlv2.generator.timesync.IComponent").build()).build();
   }
-
-
-
-
 
   public ASTCDCompilationUnit getCdCompilationUnit() {
     return cdCompilationUnit;
