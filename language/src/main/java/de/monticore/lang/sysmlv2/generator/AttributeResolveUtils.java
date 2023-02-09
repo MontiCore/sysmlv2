@@ -20,19 +20,22 @@ import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class AttributeResolveUtils {
+
+  ResolveUtils resolveUtils = new ResolveUtils();
+
   public List<ASTAttributeUsage> getAttributesOfElement(ASTSysMLElement node) {
-    List<ASTSysMLElement> parentList = getDirectSupertypes(node);
+    List<ASTSysMLElement> parentList = resolveUtils.getDirectSupertypes(node);
     List<List<ASTAttributeUsage>> parentAttribute = new ArrayList<>();
     List<ASTAttributeUsage> intersectList;
     //if no supertypes then the list of intersecting attributes is empty
 
     List<ASTAttributeUsage> attributeUsages = getAttributeUsageOfNode(node);
     List<ASTAttributeUsage> listOfRedefinedAttributes = attributeUsages.stream().filter(
-        t -> t.streamSpecializations().filter(f -> f instanceof ASTSysMLRedefinition).count()>0).collect(Collectors.toList());
+        t -> t.streamSpecializations().anyMatch(f -> f instanceof ASTSysMLRedefinition)).collect(
+        Collectors.toList());
 
     if(parentList.isEmpty()) {
       intersectList = new ArrayList<>();
@@ -52,7 +55,17 @@ public class AttributeResolveUtils {
     intersectList = filterSameTypeInAttributeList(node, intersectList);
     if(intersectList.isEmpty()) {
 
-      attributeUsages.addAll(attributeUsageListUnion(parentAttribute, listOfRedefinedAttributes));
+      List<ASTAttributeUsage> parentWithoutRedefinedParts = attributeUsageListUnion(parentAttribute,
+          listOfRedefinedAttributes);
+      List<ASTAttributeUsage> partsWithoutRedefinition = new ArrayList<>(attributeUsages);
+      partsWithoutRedefinition.removeAll(listOfRedefinedAttributes);
+      List<String> stringList = partsWithoutRedefinition.stream().map(ASTAttributeUsage::getName).collect(Collectors.toList());
+      if(parentWithoutRedefinedParts.stream().anyMatch(t -> stringList.contains(t.getName()))) {
+        Log.error(
+            "An attribute usage of " + getNameOfNode(node)
+                + " has the same name of a transitive subpart without redefining it.");
+      }
+      attributeUsages.addAll(parentWithoutRedefinedParts);
       return attributeUsages;
     }
     else {
@@ -69,10 +82,10 @@ public class AttributeResolveUtils {
     for (ASTAttributeUsage attributeUsage : redefinedTypes) {
       String attributeName = attributeUsage.getName();
       List<ASTMCType> redefinedASTMCTypes = attributeUsage.streamSpecializations().filter(
-          t -> t instanceof ASTSysMLTyping).flatMap(t -> t.streamSuperTypes()).collect(
+          t -> t instanceof ASTSysMLTyping).flatMap(ASTSpecialization::streamSuperTypes).collect(
           Collectors.toList());
 
-      var astmcTypesFromParents = parentAttributeList.stream().flatMap(t -> t.stream()).filter(
+      var astmcTypesFromParents = parentAttributeList.stream().flatMap(Collection::stream).filter(
           t -> t.getName().equals(attributeName)).flatMap(f -> getAttributeTypes(f).stream()).collect(
           Collectors.toList());
 
@@ -98,7 +111,7 @@ public class AttributeResolveUtils {
     if(optionalAttributeDef.isPresent()) {
       var attributeDef = optionalAttributeDef.get().getAstNode();
       var superTypesAttributeDef = attributeDef.streamSpecializations().filter(
-          t -> t instanceof ASTSysMLSpecialization).flatMap(t -> t.streamSuperTypes()).collect(
+          t -> t instanceof ASTSysMLSpecialization).flatMap(ASTSpecialization::streamSuperTypes).collect(
           Collectors.toList());
       var dsad = superTypesAttributeDef.stream().map(
           t -> checkCompatibility(t, second, attributeDef.getEnclosingScope())).collect(Collectors.toList());
@@ -159,8 +172,9 @@ public class AttributeResolveUtils {
         t -> !(undesiredAttributes.stream().map(ASTAttributeUsage::getName).collect(Collectors.toList()).contains(
             t.getName()))).collect(Collectors.toList());
   }
+
   List<ASTAttributeUsage> astMcTypeListUnion(List<List<ASTAttributeUsage>> attributeLists,
-                                                  List<ASTMCType> undesiredAttributes) {
+                                             List<ASTMCType> undesiredAttributes) {
     return attributeLists.stream().flatMap(Collection::stream).filter(
         t -> !(undesiredAttributes.stream().map(this::printName).collect(Collectors.toList()).contains(
             t.getName()))).collect(Collectors.toList());
@@ -176,60 +190,6 @@ public class AttributeResolveUtils {
     if(node instanceof ASTPortDef)
       return ((ASTPortDef) node).getName();
     return "";
-  }
-
-  List<ASTSysMLElement> getDirectSupertypes(ASTSysMLElement node) {
-    List<ASTSysMLElement> parentList = new ArrayList<>();
-    //Get direct supertypes
-    if(node instanceof ASTPartDef) {
-      parentList = ((ASTPartDef) node).streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization).flatMap(
-          f -> f.getSuperTypesList().stream()).map(
-          t -> ((ASTPartDef) node).getEnclosingScope().resolvePartDef(printName(t))).filter(Optional::isPresent).map(
-          t -> t.get().getAstNode()).collect(
-          Collectors.toList());
-    }
-    if(node instanceof ASTPartUsage) {
-      parentList = ((ASTPartUsage) node).streamSpecializations().filter(
-          t -> t instanceof ASTSysMLSpecialization).flatMap(
-          f -> f.getSuperTypesList().stream()).map(
-          t -> ((ASTPartUsage) node).getEnclosingScope().resolvePartUsage(printName(t))).filter(
-          Optional::isPresent).map(
-          t -> t.get().getAstNode()).collect(
-          Collectors.toList());
-      parentList.addAll(((ASTPartUsage) node).streamSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
-          f -> f.getSuperTypesList().stream()).map(
-          t -> ((ASTPartUsage) node).getEnclosingScope().resolvePartDef(printName(t))).filter(Optional::isPresent).map(
-          t -> t.get().getAstNode()).collect(
-          Collectors.toList()));
-    }
-    if(node instanceof ASTAttributeDef) {
-      parentList = ((ASTAttributeDef) node).streamSpecializations().filter(
-          t -> t instanceof ASTSysMLSpecialization).flatMap(
-          f -> f.getSuperTypesList().stream()).map(
-          t -> ((ASTAttributeDef) node).getEnclosingScope().resolveAttributeDef(printName(t))).filter(
-          Optional::isPresent).map(
-          t -> t.get().getAstNode()).collect(
-          Collectors.toList());
-    }
-    if(node instanceof ASTPortUsage) {
-      parentList = ((ASTPortUsage) node).streamSpecializations().filter(
-          t -> t instanceof ASTSysMLTyping).flatMap(
-          f -> f.getSuperTypesList().stream()).map(
-          t -> ((ASTPortUsage) node).getEnclosingScope().resolvePortDef(printName(t))).filter(
-          Optional::isPresent).map(
-          t -> t.get().getAstNode()).collect(
-          Collectors.toList());
-    }
-    if(node instanceof ASTPortDef) {
-      parentList = ((ASTPortDef) node).streamSpecializations().filter(
-          t -> t instanceof ASTSysMLSpecialization).flatMap(
-          f -> f.getSuperTypesList().stream()).map(
-          t -> ((ASTPortDef) node).getEnclosingScope().resolvePortDef(printName(t))).filter(
-          Optional::isPresent).map(
-          t -> t.get().getAstNode()).collect(
-          Collectors.toList());
-    }
-    return parentList;
   }
 
   List<ASTAttributeUsage> getAttributeUsageOfNode(ASTSysMLElement node) {
@@ -268,7 +228,7 @@ public class AttributeResolveUtils {
         Collectors.toList());
   }
 
-  private String printName(ASTMCType type) {
+  String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
   }
 
