@@ -58,6 +58,8 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
 
   AttributeUtils attributeUtils;
 
+  PartResolveUtils partResolveUtils;
+
   public Parts2CDVisitor(GlobalExtensionManagement glex, ASTCDCompilationUnit cdCompilationUnit,
                          ASTCDPackage basePackage, ASTCDDefinition astcdDefinition) {
     this.cd4C = CD4C.getInstance();
@@ -70,6 +72,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     this.partUtils = new PartUtils();
     this.interfaceUtils = new InterfaceUtils();
     this.attributeUtils = new AttributeUtils();
+    this.partResolveUtils = new PartResolveUtils();
   }
 
   @Override
@@ -83,11 +86,12 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     partDefClass = CD4CodeMill.cDClassBuilder()
         .setName(astPartDef.getName())
         .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).setCDInterfaceUsage(interfaceUsage).build();
-    List<ASTCDAttribute> liste = attributeUtils.createAttributes(astPartDef);
-    liste.addAll(portUtils.createPorts(astPartDef));
-    partDefClass.setCDAttributeList(liste);
-    generatorUtils.addMethods(partDefClass, liste, true, true);
-    portUtils.createComponentMethods(astPartDef, cd4C, partDefClass, partUtils.setPortLists(astPartDef));
+    List<ASTCDAttribute> attributeList = attributeUtils.createAttributes(astPartDef);
+    attributeList.addAll(portUtils.createPorts(astPartDef));
+    attributeList.addAll(partUtils.createPartsAsAttributes(astPartDef));
+    partDefClass.setCDAttributeList(attributeList);
+    generatorUtils.addMethods(partDefClass, attributeList, true, true);
+    portUtils.createComponentMethods(astPartDef, cd4C, partDefClass, partResolveUtils.getPartUsageOfNode(astPartDef));
     cdPackage.addCDElement(partDefClass);
     stateToClassMap.put(astPartDef.getName(), partDefClass);
   }
@@ -117,6 +121,11 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
       createExtendForPartUsage(astPartUsage, specializationList);
       //create attributes
       List<ASTCDAttribute> attributeList = attributeUtils.createAttributes(astPartUsage);
+
+      portUtils.createComponentMethods(astPartUsage, cd4C, partDefClass,
+          partResolveUtils.getPartUsageOfNode(astPartUsage));
+
+      attributeList.addAll(partUtils.createPartsAsAttributes(astPartUsage));
       partDefClass.setCDAttributeList(attributeList);
       generatorUtils.addMethods(partDefClass, attributeList, true, true);
     }
