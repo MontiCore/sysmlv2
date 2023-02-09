@@ -1,9 +1,15 @@
-package de.monticore.lang.sysmlv2.generator.timesync;
+package de.monticore.lang.sysmlv2.generator;
 
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
+import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -41,4 +47,31 @@ public class PartUtils {
     return portUsageList;
   }
 
+  ASTMCType getNameOfSpecialication(ASTMCType spec, ASTPartUsage astPartUsage) {
+    ASTPartUsage specPartUsage = astPartUsage.getEnclosingScope().resolvePartUsage(printName(spec)).get().getAstNode();
+    var specializationList = specPartUsage.streamSpecializations().filter(
+        t -> t instanceof ASTSysMLSpecialization).flatMap(
+        f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
+
+    var typingList = specPartUsage.streamSpecializations().filter(c -> c instanceof ASTSysMLTyping).flatMap(
+        f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
+
+    var redefinitionList = specPartUsage.streamSpecializations().filter(e -> e instanceof ASTSysMLRedefinition).flatMap(
+        f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
+    if((!specializationList.isEmpty() && !typingList.isEmpty() && redefinitionList.isEmpty()) | (typingList.size() > 1
+        | (!specPartUsage.getSysMLElementList().isEmpty()))) {
+      return spec;
+    }
+    if(!specializationList.isEmpty()) {
+      return specializationList.get(0);
+    }
+    if(typingList.size() == 1) {
+      return typingList.get(0);
+    }
+    return null;
+  }
+
+  private String printName(ASTMCType type) {
+    return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+  }
 }
