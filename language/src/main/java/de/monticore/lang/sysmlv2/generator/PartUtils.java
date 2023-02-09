@@ -71,6 +71,21 @@ public class PartUtils {
     return null;
   }
 
+  boolean isAdHocClassDefinition(ASTPartUsage astPartUsage){
+
+    var specializationList = astPartUsage.streamSpecializations().filter(
+        t -> t instanceof ASTSysMLSpecialization).flatMap(
+        f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
+
+    var typingList = astPartUsage.streamSpecializations().filter(c -> c instanceof ASTSysMLTyping).flatMap(
+        f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
+
+    var redefinitionList = astPartUsage.streamSpecializations().filter(e -> e instanceof ASTSysMLRedefinition).flatMap(
+        f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
+    return (!specializationList.isEmpty() && !typingList.isEmpty() && redefinitionList.isEmpty()) | (typingList.size() > 1
+        | (!astPartUsage.getSysMLElementList().isEmpty()));
+  }
+
   private String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
   }
