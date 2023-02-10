@@ -50,7 +50,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
 
   protected final GlobalExtensionManagement glex;
 
-  PortUtils portUtils;
+  ComponentUtils componentUtils;
 
   PartUtils partUtils;
 
@@ -70,7 +70,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     this.basePackage = basePackage;
     this.astcdDefinition = astcdDefinition;
     this.generatorUtils = new GeneratorUtils();
-    this.portUtils = new PortUtils();
+    this.componentUtils = new ComponentUtils();
     this.partUtils = new PartUtils();
     this.interfaceUtils = new InterfaceUtils();
     this.attributeUtils = new AttributeUtils();
@@ -90,11 +90,11 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
         .setName(astPartDef.getName())
         .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).setCDInterfaceUsage(interfaceUsage).build();
     List<ASTCDAttribute> attributeList = attributeUtils.createAttributes(astPartDef);
-    attributeList.addAll(portUtils.createPorts(astPartDef));
+    attributeList.addAll(componentUtils.createPorts(astPartDef));
     attributeList.addAll(partUtils.createPartsAsAttributes(astPartDef));
     partDefClass.setCDAttributeList(attributeList);
     generatorUtils.addMethods(partDefClass, attributeList, true, true);
-    portUtils.createComponentMethods(astPartDef, cd4C, partDefClass, partResolveUtils.getPartUsageOfNode(astPartDef),
+    componentUtils.createComponentMethods(astPartDef, cd4C, partDefClass, partResolveUtils.getPartUsageOfNode(astPartDef),
         attributeResolveUtils.getAttributesOfElement(astPartDef));
     cdPackage.addCDElement(partDefClass);
     stateToClassMap.put(astPartDef.getName(), partDefClass);
@@ -126,7 +126,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
       //create attributes
       List<ASTCDAttribute> attributeList = attributeUtils.createAttributes(astPartUsage);
 
-      portUtils.createComponentMethods(astPartUsage, cd4C, partDefClass,
+      componentUtils.createComponentMethods(astPartUsage, cd4C, partDefClass,
           partResolveUtils.getPartUsageOfNode(astPartUsage),
           attributeResolveUtils.getAttributesOfElement(astPartUsage));
 
