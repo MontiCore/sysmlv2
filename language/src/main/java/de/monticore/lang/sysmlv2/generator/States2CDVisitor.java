@@ -66,6 +66,8 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
           "currentState").setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
 
       stateUsageClass.setCDAttributeList(List.of(attribute));
+
+      generatorUtils.addMethods(stateUsageClass, List.of(attribute), true, true);
       cdPackage.addCDElement(stateUsageClass);
 
       cdPackage.addCDElement(createEnum(astStateUsage, stateList));
@@ -76,7 +78,8 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
       for (ASTStateUsage state :
           stateList) {
 
-        cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesTransition", state, astStateUsage);
+        cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesTransition", state, astStateUsage,
+            astStateUsage.getName() + "Enum");
         cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesEntryAction", state, astStateUsage);
         cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesExitAction", state, astStateUsage);
 

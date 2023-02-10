@@ -1,5 +1,5 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("state", "automaton")}
+${tc.signature("state", "automaton", "enumName")}
 ${cd4c.method("protected void transitionFrom${state.getName()?cap_first}()")}
   // input
 
@@ -28,17 +28,17 @@ ${cd4c.method("protected void transitionFrom${state.getName()?cap_first}()")}
       if(${autHelper.printExpression(transition.getGuard())}) {
     </#if>
   // exit state(s)
-  this.exit(this.getCurrentState(), States.${state.getName()});
+  this.exit(this.getCurrentState(), ${enumName}.${state.getName()});
 
   // output
-    ${output}
+    //TODO output
   // reaction
       //TODO add do actions
   // result
     //TODO set outputs
   // entry state(s)
       //TODO sub states in automaton
-  this.currentState =  States.${state.getName()};
+  this.currentState =  ${enumName}.${state.getName()};
 
   this.entry${transition.getTgt()?cap_first}();
 
