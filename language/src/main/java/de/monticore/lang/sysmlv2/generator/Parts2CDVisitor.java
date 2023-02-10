@@ -115,6 +115,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
       initExtendForPartUsage(astPartUsage);
       //step 5 create attributes
       List<ASTCDAttribute> attributeList = attributeUtils.createAttributes(astPartUsage);
+      attributeList.addAll(componentUtils.createPorts(astPartUsage));
       attributeList.addAll(partUtils.createPartsAsAttributes(astPartUsage));
       attributeList.addAll(handleBehaviour(astPartUsage));
       partDefClass.setCDAttributeList(attributeList);

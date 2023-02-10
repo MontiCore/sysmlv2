@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ComponentHelper {
   PartUtils partUtils = new PartUtils();
-
+  ComponentUtils componentUtils = new ComponentUtils();
   GeneratorUtils generatorUtils = new GeneratorUtils();
 
   SysMLBasisTypesFullPrettyPrinter printer = new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter());
@@ -31,5 +31,11 @@ public class ComponentHelper {
 
   public boolean isObjectAttribute(ASTAttributeUsage astAttributeUsage) {
     return !generatorUtils.getScalarValueMapping().containsValue(printer.prettyprint(generatorUtils.attributeType(astAttributeUsage)));
+  }
+  public boolean isPortDelayed(ASTPortUsage portUsage){
+    return componentUtils.isPortDelayed(portUsage);
+  }
+  public String getValueTypeOfPort(ASTPortUsage portUsage){
+    return componentUtils.getValueTypeOfPort(portUsage);
   }
 }

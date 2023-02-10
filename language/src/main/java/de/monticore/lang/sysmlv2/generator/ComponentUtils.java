@@ -9,7 +9,6 @@ import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
-import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
@@ -65,10 +64,10 @@ public class ComponentUtils {
         t -> createPort(t, generatedAttributeList, "InPort")).collect(
         Collectors.toList());
 
-    attributeList.addAll(this.outputPortList.stream().filter(this::isPortDelay).map(
+    attributeList.addAll(this.outputPortList.stream().filter(this::isPortDelayed).map(
         t -> createPort(t, generatedAttributeList, "DelayPort")).collect(
         Collectors.toList()));
-    attributeList.addAll(this.outputPortList.stream().filter(t -> !isPortDelay(t)).map(
+    attributeList.addAll(this.outputPortList.stream().filter(t -> !isPortDelayed(t)).map(
         t -> createPort(t, generatedAttributeList, "OutPort")).collect(
         Collectors.toList()));
     return attributeList;
@@ -188,7 +187,7 @@ public class ComponentUtils {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
   }
 
-  String getValueTypeOfPort(ASTPortUsage portUsage) {
+  public String getValueTypeOfPort(ASTPortUsage portUsage) {
     var attributeUsageList = attributeResolveUtils.getAttributesOfElement(portUsage).stream().filter(
         t -> t.getName().equals("value")).flatMap(ASTAttributeUsage::streamSpecializations).flatMap(
         ASTSpecialization::streamSuperTypes).collect(
@@ -196,7 +195,7 @@ public class ComponentUtils {
     return printName(attributeUsageList.get(0));
   }
 
-  boolean isPortDelay(ASTPortUsage portUsage) {
+  boolean isPortDelayed(ASTPortUsage portUsage) {
 
     var expression = attributeResolveUtils.getAttributesOfElement(portUsage).stream().filter(
         t -> t.getName().equals("delayed")).filter(ASTAttributeUsage::isPresentExpression).map(

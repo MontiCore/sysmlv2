@@ -25,3 +25,13 @@ ${cd4c.method("public void setUp()")}
         <#assign automaton = part.getAutomaton()>
         this.${automaton.getName()} = new ${automaton.getName()}();
     </#if>
+
+
+    <#list portList as port>
+      <#if compHelper.isPortDelayed(port)>
+
+        this.${port.getName()} = new de.monticore.lang.sysmlv2.generator.timesync.DelayPort<${compHelper.getValueTypeOfPort(port)}>();
+          <#else>
+        this.${port.getName()} = new de.monticore.lang.sysmlv2.generator.timesync.OutPort<${compHelper.getValueTypeOfPort(port)}>();
+      </#if>
+    </#list>
