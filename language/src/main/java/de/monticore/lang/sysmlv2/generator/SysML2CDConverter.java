@@ -3,7 +3,6 @@ package de.monticore.lang.sysmlv2.generator;
 
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnitBuilder;
@@ -15,6 +14,7 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.umlmodifier.UMLModifierMill;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,7 +38,8 @@ public class SysML2CDConverter {
     States2CDVisitor states1Visitor = new States2CDVisitor(glex, cdCompilationUnit, cdPackage, astcdDefinition);
     traverser.add4SysMLStates(states1Visitor);
 
-    Attributes2CDVisitor attributeVisitor = new Attributes2CDVisitor(glex, cdCompilationUnit, cdPackage, astcdDefinition);
+    Attributes2CDVisitor attributeVisitor = new Attributes2CDVisitor(glex, cdCompilationUnit, cdPackage,
+        astcdDefinition);
     traverser.add4SysMLParts(attributeVisitor);
     createMainClass(astSysMLModel);
     // we use the CD4Code language for the CD (and now switch to it)
@@ -73,12 +74,12 @@ public class SysML2CDConverter {
         CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
     cdPackage.addCDElement(mainClass);
     PartResolveUtils partResolveUtils = new PartResolveUtils();
-    PartUtils partUtils = new PartUtils();
     var partUsages = astSysMLModel.streamSysMLElements().filter(t -> t instanceof ASTSysMLPackage).flatMap(
         t -> partResolveUtils.getSubPartsOfElement(t).stream()).collect(Collectors.toList());
-    List<ASTCDAttribute> attributeList = partUsages.stream().map(partUtils::createAttribute).collect(Collectors.toList());
-    mainClass.setCDAttributeList(attributeList);
-    //TODO check for empty part usage list
+    if(partUsages.isEmpty()) {
+      Log.error("The Part Usages found that could be used for the simulation.");
+
+    }
     CD4C.getInstance().addMethod(mainClass, "sysml2cd.MainMethod", partUsages);
   }
 

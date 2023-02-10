@@ -13,8 +13,8 @@ ${cd4c.method("public static void main(String[] args)")}
     de.monticore.lang.sysmlv2.generator.log.Log.setTraceEnabled(true);
 
     <#list listMainComponent as subcomponent>
-      this.${subcomponent.getName()} = new ${compHelper.getPartType(subcomponent)}();
-      this.${subcomponent.getName()}.setUp();
+        ${compHelper.getPartType(subcomponent)} ${subcomponent.getName()} = new ${compHelper.getPartType(subcomponent)}();
+        ${compHelper.getPartType(subcomponent)} ${subcomponent.getName()}.setUp();
     </#list>
     final List${"<IComponent>"} componentList =  java.util.Arrays.asList(new montiarc.rte.timesync.IComponent[] {
     <#list listMainComponent as subcomponent>
