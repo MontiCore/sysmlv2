@@ -38,7 +38,7 @@ ${cd4c.method("protected void transitionFrom${state.getName()?cap_first}()")}
     //TODO set outputs
   // entry state(s)
       //TODO sub states in automaton
-  this.currentState =  ${enumName}.${transition.getTgt};
+  this.currentState =  ${enumName}.${transition.getTgt()};
 
   this.entry${transition.getTgt()?cap_first}();
 
