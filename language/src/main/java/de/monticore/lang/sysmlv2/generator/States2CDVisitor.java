@@ -75,7 +75,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
       cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesExitMethod", stateList,
           astStateUsage.getName() + "Enum");
       cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesCompute", stateList);
-      cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesConstructor", astStateUsage,
+      cd4C.addConstructor(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesConstructor", astStateUsage,
           astStateUsage.getName() + "Enum");
       for (ASTStateUsage state :
           stateList) {
