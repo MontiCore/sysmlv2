@@ -72,7 +72,7 @@ AttributeResolveUtils attributeResolveUtils;
     partDefClass.setCDAttributeList(attributeList);
     generatorUtils.addMethods(partDefClass, attributeList, true, true);
 
-    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentSetUpMethod", new ArrayList<>(), new ArrayList<>(), attributeUsageList);
+    cd4C.addMethod(partDefClass, "sysml2cd.attribute.AttributeDefSetUpMethod", attributeUsageList);
     cdPackage.addCDElement(partDefClass);
   }
 
