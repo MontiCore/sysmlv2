@@ -5,7 +5,6 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.lang.sysmlbasis._ast.*;
-import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
@@ -35,18 +34,17 @@ public class ComponentUtils {
 
   List<ASTPortUsage> outputPortList;
 
-  void createComponentMethods(ASTSysMLElement astSysMLElement, CD4C cd4C, ASTCDClass partDefClass,
+  void createComponentMethods(ASTSysMLElement astSysMLElement, CD4C cd4C, ASTCDClass partClass,
                               List<ASTPartUsage> subComponents, List<ASTAttributeUsage> attributeUsageList) {
     setPortLists(astSysMLElement);
-    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentIsSyncedMethod", inputPortList);
-    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentTickMethod", outputPortList, subComponents);
+    cd4C.addMethod(partClass, "sysml2cd.component.ComponentIsSyncedMethod", inputPortList);
+    cd4C.addMethod(partClass, "sysml2cd.component.ComponentTickMethod", outputPortList, subComponents);
 
-    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentSetUpMethod", subComponents, outputPortList,
+    cd4C.addMethod(partClass, "sysml2cd.component.ComponentSetUpMethod", subComponents, outputPortList,
         attributeUsageList);
-    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentGetAllSubcomponentsMethod", subComponents);
+    cd4C.addMethod(partClass, "sysml2cd.component.ComponentGetAllSubcomponentsMethod", subComponents);
+    cd4C.addMethod(partClass, "sysml2cd.component.ComponentComputeMethod", astSysMLElement);
     //TODO void init(); -> automaton oder init
-
-    //TODO void compute(); -> compute oder composed oder atomic
 
   }
 

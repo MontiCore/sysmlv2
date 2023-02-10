@@ -13,6 +13,7 @@ import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.ArrayList;
@@ -85,6 +86,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     List<ASTCDAttribute> attributeList = attributeUtils.createAttributes(astPartDef);
     attributeList.addAll(componentUtils.createPorts(astPartDef));
     attributeList.addAll(partUtils.createPartsAsAttributes(astPartDef));
+    attributeList.addAll(handleBehaviour(astPartDef));
     partDefClass.setCDAttributeList(attributeList);
     //Step 4 create Methods
     generatorUtils.addMethods(partDefClass, attributeList, true, true);
@@ -114,6 +116,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
       //step 5 create attributes
       List<ASTCDAttribute> attributeList = attributeUtils.createAttributes(astPartUsage);
       attributeList.addAll(partUtils.createPartsAsAttributes(astPartUsage));
+      attributeList.addAll(handleBehaviour(astPartUsage));
       partDefClass.setCDAttributeList(attributeList);
       //step 6 create Methods
       componentUtils.createComponentMethods(astPartUsage, cd4C, partDefClass,
@@ -159,6 +162,29 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     return partDefClass;
   }
 
+  List<ASTCDAttribute> handleBehaviour(ASTPartUsage element) {
+    List<ASTCDAttribute> attributeList = new ArrayList<>();
+    if(element.hasAutomaton()) {
+      String attributeName = element.getAutomaton().getName();
+      ASTMCQualifiedType qualifiedType = generatorUtils.qualifiedType(attributeName);
+      var automaton = CD4CodeMill.cDAttributeBuilder().setName(attributeName).setModifier(
+          CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(qualifiedType).build();
+      attributeList.add(automaton);
+    }
+    return attributeList;
+  }
+
+  List<ASTCDAttribute> handleBehaviour(ASTPartDef element) {
+    List<ASTCDAttribute> attributeList = new ArrayList<>();
+    if(element.hasAutomaton()) {
+      String attributeName = element.getAutomaton().getName();
+      ASTMCQualifiedType qualifiedType = generatorUtils.qualifiedType(attributeName);
+      var automaton = CD4CodeMill.cDAttributeBuilder().setName(attributeName).setModifier(
+          CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(qualifiedType).build();
+      attributeList.add(automaton);
+    }
+    return attributeList;
+  }
   // Support methods
 
 }
