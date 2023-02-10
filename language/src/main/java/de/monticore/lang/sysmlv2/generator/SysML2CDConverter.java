@@ -43,8 +43,7 @@ public class SysML2CDConverter {
     traverser.handle(astSysMLModel);
 
     // voila
-    return new SysML2CDData(phase1Visitor.getCdCompilationUnit(), phase1Visitor.getScClass(),
-        phase1Visitor.getStateToClassMap().values());
+    return new SysML2CDData(phase1Visitor.getCdCompilationUnit(), phase1Visitor.getScClass());
   }
 
   void init(String packageName) {

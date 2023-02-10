@@ -3,6 +3,7 @@ package de.monticore.lang.sysmlv2.cocos;
 import de.monticore.lang.sysmlactions._ast.ASTActionDef;
 import de.monticore.lang.sysmlactions._ast.ASTActionUsage;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
@@ -13,18 +14,21 @@ import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartUsageCoCo;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
+import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlv2.generator.AttributeResolveUtils;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPartsASTPartDefCoCo {
   AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
+
   /**
    * Check that at least one part def is extended.
    */
@@ -40,7 +44,8 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
         Collectors.toList());
     var relevantElements = (int) node.getSysMLElementList().stream().filter(
         t -> t instanceof ASTActionDef | t instanceof ASTActionUsage | t instanceof ASTAttributeUsage
-            | t instanceof ASTPartUsage |t instanceof ASTPortUsage).count(); //partUsage with at least one of the types is seen as a adhoc class definition
+            | t instanceof ASTPartUsage
+            | t instanceof ASTPortUsage).count(); //partUsage with at least one of the types is seen as a adhoc class definition
     if(specialications.isEmpty() && relevantElements == 0 && redefinitons.isEmpty() && typing.isEmpty()) {
       Log.error("The Part Usage " + node.getName()
           + " needs a type (at least one part def), redefine a part usage or specialize another part usage");
@@ -50,22 +55,23 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
         t -> t instanceof ASTSysMLRedefinition).collect(Collectors.toList());
     if(!redeinitionSpec.isEmpty())
       checkRefinition(redeinitionSpec, node);
+    checkExhbitUsages(node);
   }
 
   @Override public void check(ASTPartDef node) {
-    long numberIllegalSpecs = node.streamSpecializations().filter(t -> t instanceof ASTSysMLTyping | t instanceof ASTSysMLRedefinition).count();
-    if(numberIllegalSpecs!= 0)       Log.error("The Part Def " + node.getName()
-        + " uses redefinitions or typings, this is not allowed.");
+    long numberIllegalSpecs = node.streamSpecializations().filter(
+        t -> t instanceof ASTSysMLTyping | t instanceof ASTSysMLRedefinition).count();
+    if(numberIllegalSpecs != 0)
+      Log.error("The Part Def " + node.getName()
+          + " uses redefinitions or typings, this is not allowed.");
 
     attributeResolveUtils.getAttributesOfElement(node);
+    checkExhbitUsages(node);
   }
 
   private String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
   }
-
-
-
 
   //
 
@@ -126,6 +132,33 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
     return partFoundInParents;
   }
 
+  void checkExhbitUsages(ASTSysMLElement element) {
+    String name = "";
 
+    List<ASTStateUsage> stateUsageList = new ArrayList<>();
+    if(element instanceof ASTPartUsage) {
+      stateUsageList = ((ASTPartUsage) element).streamSysMLElements().filter(
+          t -> t instanceof ASTStateUsage).map(t -> (ASTStateUsage) t).filter(
+          t -> t.isExhibited()).collect(
+          Collectors.toList());
+      name = ((ASTPartUsage) element).getName();
+    }
+    if(element instanceof ASTPartDef) {
+      stateUsageList = ((ASTPartDef) element).streamSysMLElements().filter(
+          t -> t instanceof ASTStateUsage).map(t -> (ASTStateUsage) t).filter(
+          t -> t.isExhibited()).collect(
+          Collectors.toList());
+
+      name = ((ASTPartDef) element).getName();
+    }
+    if(stateUsageList.size() > 1) {
+      Log.error("Part " + name
+          + " has needs maximal one state usage, which is exhibited. Found "
+          + stateUsageList.size() + " many such states.");
+    }
+    if(stateUsageList.stream().filter(ASTStateUsage::getIsAutomaton).count() != stateUsageList.size())        Log.error("Part " + name
+        + " has an exhibited state, this state needs to be an automaton.");
+
+  }
 
 }
