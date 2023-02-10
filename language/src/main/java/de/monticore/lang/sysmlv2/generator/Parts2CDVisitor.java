@@ -13,18 +13,13 @@ import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Parts2CDVisitor implements SysMLPartsVisitor2 {
-
-  public final static String ERROR_CODE = "0xDC012";
 
   protected ASTCDCompilationUnit cdCompilationUnit;
 
@@ -35,11 +30,6 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   protected ASTCDDefinition astcdDefinition;
 
   protected ASTCDClass partDefClass;
-
-  /**
-   * Mapping of the state implementation classes for every state
-   */
-  protected final Map<String, ASTCDClass> stateToClassMap = new HashMap<>();
 
   /**
    * Code template reference
@@ -80,64 +70,64 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
 
   @Override
   public void visit(ASTPartDef astPartDef) {
-    // Step 1: Create Interface for the Part Def to support multiple inheritance
+    // Step 0: Init Package
     cdPackage = generatorUtils.initCdPackage(astPartDef, astcdDefinition, basePackage.getName());
+    // Step 1: Create Interface for the Part Def to support multiple inheritance
     ASTCDInterfaceUsage interfaceUsage = interfaceUtils.createInterfaceUsage(List.of(astPartDef));
-    interfaceUsage.addInterface(createComponent());
+    interfaceUsage.addInterface(componentUtils.createComponent());
     cdPackage.addCDElement(interfaceUtils.createInterface(astPartDef));
     //Step 2 Create class
     partDefClass = CD4CodeMill.cDClassBuilder()
         .setName(astPartDef.getName())
         .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).setCDInterfaceUsage(interfaceUsage).build();
+    cdPackage.addCDElement(partDefClass);
+    //Step 3 create Attributes
     List<ASTCDAttribute> attributeList = attributeUtils.createAttributes(astPartDef);
     attributeList.addAll(componentUtils.createPorts(astPartDef));
     attributeList.addAll(partUtils.createPartsAsAttributes(astPartDef));
     partDefClass.setCDAttributeList(attributeList);
+    //Step 4 create Methods
     generatorUtils.addMethods(partDefClass, attributeList, true, true);
-    componentUtils.createComponentMethods(astPartDef, cd4C, partDefClass, partResolveUtils.getPartUsageOfNode(astPartDef),
+    componentUtils.createComponentMethods(astPartDef, cd4C, partDefClass,
+        partResolveUtils.getPartUsageOfNode(astPartDef),
         attributeResolveUtils.getAttributesOfElement(astPartDef));
-    cdPackage.addCDElement(partDefClass);
-    stateToClassMap.put(astPartDef.getName(), partDefClass);
   }
 
   @Override
   public void visit(ASTPartUsage astPartUsage) {
+    //step 0 init Package
     cdPackage = generatorUtils.initCdPackage(astPartUsage, astcdDefinition, basePackage.getName());
-
-    var specializationList = astPartUsage.streamSpecializations().filter(
-        t -> t instanceof ASTSysMLSpecialization).flatMap(
-        f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
-
-    var typingList = astPartUsage.streamSpecializations().filter(c -> c instanceof ASTSysMLTyping).flatMap(
-        f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
+    // step 1 check if adhoc class definiton, if not do nothing
     if(partUtils.isAdHocClassDefinition(astPartUsage)) {
-      //create class
+      //step 2 create class
       partDefClass = CD4CodeMill.cDClassBuilder()
           .setName(astPartUsage.getName())
           .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
       cdPackage.addCDElement(partDefClass);
 
-      //create Interface usage
-      ASTCDInterfaceUsage interfaceUsage = createTypingInterfaceUsage(astPartUsage, typingList);
-      interfaceUsage.addInterface(createComponent());
+      //Step 3 create Interface usage
+      ASTCDInterfaceUsage interfaceUsage = createTypingInterfaceUsage(astPartUsage);
+      interfaceUsage.addInterface(componentUtils.createComponent());
       partDefClass.setCDInterfaceUsage(interfaceUsage);
-      //create extends usage
-      createExtendForPartUsage(astPartUsage, specializationList);
-      //create attributes
+      //step 4 create extends usage
+      initExtendForPartUsage(astPartUsage);
+      //step 5 create attributes
       List<ASTCDAttribute> attributeList = attributeUtils.createAttributes(astPartUsage);
-
+      attributeList.addAll(partUtils.createPartsAsAttributes(astPartUsage));
+      partDefClass.setCDAttributeList(attributeList);
+      //step 6 create Methods
       componentUtils.createComponentMethods(astPartUsage, cd4C, partDefClass,
           partResolveUtils.getPartUsageOfNode(astPartUsage),
           attributeResolveUtils.getAttributesOfElement(astPartUsage));
-
-      attributeList.addAll(partUtils.createPartsAsAttributes(astPartUsage));
-      partDefClass.setCDAttributeList(attributeList);
       generatorUtils.addMethods(partDefClass, attributeList, true, true);
     }
 
   }
 
-  void createExtendForPartUsage(ASTPartUsage astPartUsage, List<ASTMCType> specializationList) {
+  void initExtendForPartUsage(ASTPartUsage astPartUsage) {
+    var specializationList = astPartUsage.streamSpecializations().filter(
+        t -> t instanceof ASTSysMLSpecialization).flatMap(
+        f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
     if(!specializationList.isEmpty()) {
       List<ASTMCType> extendList = new ArrayList<>();
       extendList.add(partUtils.getNameOfSpecialication(specializationList.get(0), astPartUsage));
@@ -147,7 +137,9 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
 
   }
 
-  private ASTCDInterfaceUsage createTypingInterfaceUsage(ASTPartUsage astPartUsage, List<ASTMCType> typingList) {
+  private ASTCDInterfaceUsage createTypingInterfaceUsage(ASTPartUsage astPartUsage) {
+    var typingList = astPartUsage.streamSpecializations().filter(c -> c instanceof ASTSysMLTyping).flatMap(
+        f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
     ASTCDInterfaceUsage interfaceUsage;
     List<ASTSysMLElement> sysMLElementList = new ArrayList<>();
     for (ASTMCType astmcType : typingList) {
@@ -159,23 +151,12 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     return interfaceUsage;
   }
 
-  ASTMCObjectType createComponent() {
-
-    return CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
-        CD4CodeMill.mCQualifiedNameBuilder().
-            addParts("de.monticore.lang.sysmlv2.generator.timesync.IComponent").build()).build();
-  }
-
   public ASTCDCompilationUnit getCdCompilationUnit() {
     return cdCompilationUnit;
   }
 
   public ASTCDClass getScClass() {
     return partDefClass;
-  }
-
-  public Map<String, ASTCDClass> getStateToClassMap() {
-    return stateToClassMap;
   }
 
   // Support methods

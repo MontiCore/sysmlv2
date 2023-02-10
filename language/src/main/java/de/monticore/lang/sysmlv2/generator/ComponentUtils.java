@@ -12,6 +12,7 @@ import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
@@ -40,12 +41,20 @@ public class ComponentUtils {
     cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentIsSyncedMethod", inputPortList);
     cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentTickMethod", outputPortList, subComponents);
 
-    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentSetUpMethod", subComponents, outputPortList, attributeUsageList);
+    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentSetUpMethod", subComponents, outputPortList,
+        attributeUsageList);
     cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentGetAllSubcomponentsMethod", subComponents);
     //TODO void init(); -> automaton oder init
 
     //TODO void compute(); -> compute oder composed oder atomic
 
+  }
+
+  public ASTMCObjectType createComponent() {
+
+    return CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
+        CD4CodeMill.mCQualifiedNameBuilder().
+            addParts("de.monticore.lang.sysmlv2.generator.timesync.IComponent").build()).build();
   }
 
   public List<ASTCDAttribute> createPorts(ASTSysMLElement astSysMLElement) {
@@ -64,20 +73,6 @@ public class ComponentUtils {
         t -> createPort(t, generatedAttributeList, "OutPort")).collect(
         Collectors.toList()));
     return attributeList;
-  }
-
-  private List<ASTPortUsage> createPortUsageList(ASTSysMLElement element) {
-    List<ASTSysMLElement> elementList = new ArrayList<>();
-    if(element instanceof ASTPartDef)
-      elementList = ((ASTPartDef) element).getSysMLElementList();
-    if(element instanceof ASTPartUsage)
-      elementList = ((ASTPartUsage) element).getSysMLElementList();
-    if(element instanceof ASTAttributeDef)
-      elementList = ((ASTAttributeDef) element).getSysMLElementList();
-    List<ASTPortUsage> attributeUsageList;
-    attributeUsageList = elementList.stream().filter(
-        t -> t instanceof ASTPortUsage).map(t -> (ASTPortUsage) t).collect(Collectors.toList());
-    return attributeUsageList;
   }
 
   ASTCDAttribute createPort(ASTSysMLElement element, List<String> stringList, String portType) {
@@ -127,7 +122,7 @@ public class ComponentUtils {
 
   public List<ASTPortUsage> getPortUsage(ASTSysMLElement node) {
     List<ASTSysMLElement> parentList = getDirectSupertypes(node);
-    List<List<ASTPortUsage>> parentAttribute = new ArrayList<>();
+    List<List<ASTPortUsage>> parentAttribute;
     List<ASTPortUsage> attributeUsages = getPortUsageOfNode(node);
 
     parentAttribute = parentList.stream().map(this::getPortUsage).collect(Collectors.toList());
