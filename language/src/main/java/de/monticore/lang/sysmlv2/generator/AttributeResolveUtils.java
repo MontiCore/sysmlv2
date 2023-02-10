@@ -189,6 +189,8 @@ public class AttributeResolveUtils {
       return ((ASTAttributeDef) node).getName();
     if(node instanceof ASTPortDef)
       return ((ASTPortDef) node).getName();
+    if(node instanceof ASTPortUsage)
+      return ((ASTPortUsage) node).getName();
     return "";
   }
 
