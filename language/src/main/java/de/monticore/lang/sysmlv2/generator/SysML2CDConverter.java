@@ -77,7 +77,7 @@ public class SysML2CDConverter {
     var partUsages = astSysMLModel.streamSysMLElements().filter(t -> t instanceof ASTSysMLPackage).flatMap(
         t -> partResolveUtils.getSubPartsOfElement(t).stream()).collect(Collectors.toList());
     if(partUsages.isEmpty()) {
-      Log.error("The Part Usages found that could be used for the simulation.");
+      Log.error("No Part Usages found that could be used for the simulation.");
 
     }
     CD4C.getInstance().addMethod(mainClass, "sysml2cd.MainMethod", partUsages);
