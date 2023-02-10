@@ -288,9 +288,9 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
   }
 
   public void transform(ASTSysMLModel ast) {
-    transformTransitiveSupertypes(ast);
     transformSuccession(ast);
     transformStates(ast);
+    transformTransitiveSupertypes(ast);
   }
 
   public void transformTransitiveSupertypes(ASTSysMLModel ast) {
