@@ -5,6 +5,7 @@ import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
@@ -270,6 +271,11 @@ public class PartResolveUtils {
     }
     if(node instanceof ASTPortUsage) {
       attributeUsageList = ((ASTPortUsage) node).getSysMLElementList().stream().filter(
+          t -> t instanceof ASTPartUsage).map(f -> (ASTPartUsage) f).collect(
+          Collectors.toList());
+    }
+    if(node instanceof ASTSysMLPackage) {
+      attributeUsageList = ((ASTSysMLPackage) node).getSysMLElementList().stream().filter(
           t -> t instanceof ASTPartUsage).map(f -> (ASTPartUsage) f).collect(
           Collectors.toList());
     }
