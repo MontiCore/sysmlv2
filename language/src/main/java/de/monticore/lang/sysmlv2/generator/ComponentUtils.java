@@ -9,6 +9,7 @@ import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
+import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
@@ -41,7 +42,7 @@ public class ComponentUtils {
     cd4C.addMethod(partClass, "sysml2cd.component.ComponentTickMethod", outputPortList, subComponents);
 
     cd4C.addMethod(partClass, "sysml2cd.component.ComponentSetUpMethod", subComponents, outputPortList,
-        attributeUsageList);
+        attributeUsageList, astSysMLElement);
     cd4C.addMethod(partClass, "sysml2cd.component.ComponentGetAllSubcomponentsMethod", subComponents);
     cd4C.addMethod(partClass, "sysml2cd.component.ComponentComputeMethod", astSysMLElement);
     //TODO void init(); -> automaton oder init
