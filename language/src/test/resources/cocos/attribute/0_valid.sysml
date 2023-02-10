@@ -8,17 +8,12 @@ package RedefinitionExample {
 	part def BigVehicle :> Vehicle {
 		attribute eng : BigEngine;
 	}
-		part def BigDVehicle :> BigVehicle,brumm {
-  		attribute test : Boolean;
-  		attribute brembrem : Boolean :>> brembrem;
+		part def MonsterTruck :> BigVehicle {
+  		attribute vielBrummBrumm : Boolean;
   	}
-  	part def brumm{
-  		attribute brembrem : Boolean;
-      	}
-
   part audi : BigVehicle;
   part vw : BigVehicle;
-  part bmw :> audi : brumm;
+  part bmw :> audi;
 	attribute def Engine {
 
         attribute horsePowers : Real;
@@ -29,28 +24,4 @@ package RedefinitionExample {
 	attribute def BigEngine :> Engine {
         attribute turbopump : Boolean;
 	}
-
-	part def A;
-
-  part def A2 :> A;
- part def Z{
-   attribute turbopump : X;
- }
-	part def B{
-   attribute turbopump : Y;
-
-	part a : A;
-	}
-
-	part def C :> B, Z{
-   attribute turbopump : Y :>> turbopump;
-	part a : F :>> a;
-	}
-
-		part def F;
- attribute def X{
-
- }
-
- attribute def Y :> X;
 }
