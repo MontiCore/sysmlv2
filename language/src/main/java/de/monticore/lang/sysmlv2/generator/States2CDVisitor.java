@@ -93,8 +93,6 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
     List<ASTCDEnumConstant> enumConstantList = stateList.stream().map(
         state -> CD4CodeMill.cDEnumConstantBuilder().setName(state.getName()).build()).collect(
         Collectors.toList());
-    enumConstantList.add(CD4CodeMill.cDEnumConstantBuilder().setName("first").build());
-    enumConstantList.add(CD4CodeMill.cDEnumConstantBuilder().setName("done").build());
 
     return CD4CodeMill.cDEnumBuilder().setName(astStateUsage.getName() + "Enum").setCDEnumConstantsList(
         enumConstantList).setModifier(
