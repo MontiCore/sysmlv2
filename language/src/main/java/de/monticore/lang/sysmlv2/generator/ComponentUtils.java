@@ -35,12 +35,13 @@ public class ComponentUtils {
   List<ASTPortUsage> outputPortList;
 
   void createComponentMethods(ASTSysMLElement astSysMLElement, CD4C cd4C, ASTCDClass partDefClass,
-                              List<ASTPartUsage> partUsageList, List<ASTAttributeUsage> attributeUsageList) {
+                              List<ASTPartUsage> subComponents, List<ASTAttributeUsage> attributeUsageList) {
     setPortLists(astSysMLElement);
     cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentIsSyncedMethod", inputPortList);
-    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentTickMethod", outputPortList, partUsageList);
+    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentTickMethod", outputPortList, subComponents);
 
-    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentSetUpMethod", partUsageList, outputPortList, attributeUsageList);
+    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentSetUpMethod", subComponents, outputPortList, attributeUsageList);
+    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentGetAllSubcomponentsMethod", subComponents);
     //TODO void init(); -> automaton oder init
 
     //TODO void compute(); -> compute oder composed oder atomic
