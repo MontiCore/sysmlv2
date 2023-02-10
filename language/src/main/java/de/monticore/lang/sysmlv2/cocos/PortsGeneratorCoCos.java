@@ -1,24 +1,85 @@
 package de.monticore.lang.sysmlv2.cocos;
 
-
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
+import de.monticore.lang.sysmlparts._ast.ASTPortDef;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
+import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortUsageCoCo;
+import de.monticore.lang.sysmlv2.generator.AttributeResolveUtils;
+import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class PortsGeneratorCoCos implements SysMLPartsASTPortUsageCoCo {
+public class PortsGeneratorCoCos implements SysMLPartsASTPortUsageCoCo, SysMLPartsASTPortDefCoCo {
+  private String printName(ASTMCType type) {
+    return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+  }
 
   /**
    * Check that at least one part def is extended.
    */
   @Override public void check(ASTPortUsage node) {
 
-    if(!node.isPresentSysMLFeatureDirection()){
-      Log.error("The Port usage "+ node.getName()+" has no direction but needs one.");
+    if(!node.isPresentSysMLFeatureDirection()) {
+      Log.error("The Port usage " + node.getName() + " has no direction but needs one.");
     }
+    if(node.streamSpecializations().anyMatch(t -> !(t instanceof ASTSysMLTyping))) {
+      Log.error("The Port usage " + node.getName() + " has specialications that are not typings, this is not allowed.");
 
+    }
+    if(node.streamSysMLElements().anyMatch(t -> !(t instanceof ASTAttributeUsage))) {
+      Log.error(
+          "The Port usage " + node.getName() + " has sub elements that are not attribute usages this is not allowed.");
+    }
+    AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
+    var attributeUsageList = attributeResolveUtils.getAttributesOfElement(node);
+    checkAttributes(node.getName(), attributeUsageList);
   }
 
+  @Override public void check(ASTPortDef node) {
 
+    if(node.streamSysMLElements().anyMatch(t -> !(t instanceof ASTAttributeUsage))) {
+      Log.error(
+          "The Port usage " + node.getName() + " has sub elements that are not attribute usages this is not allowed.");
+    }
+    AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
+    var attributeUsageList = attributeResolveUtils.getAttributesOfElement(node);
+    checkAttributes(node.getName(), attributeUsageList);
+  }
+
+  void checkAttributes(String nodeName, List<ASTAttributeUsage> attributesList) {
+
+    if(attributesList.stream().count() > 2 | attributesList.stream().findAny().isEmpty()) {
+      Log.error(
+          "The Port " + nodeName + " has " + attributesList.stream().count()
+              + " different attribute usages as sub elements. It has to use the attribute usage value and can use the attribute delayed.");
+    }
+    var valueAttribute = attributesList.stream().filter(t -> t.getName().equals("value")).collect(Collectors.toList());
+    if(valueAttribute.isEmpty() || valueAttribute.size() == 2) {
+      Log.error(
+          "The Port " + nodeName + " needs one sub element value but has " + valueAttribute.size() + ".");
+    }
+    var delayedAttribute = attributesList.stream().filter(t -> t.getName().equals("delayed")).collect(Collectors.toList());
+    if(!delayedAttribute.isEmpty()) {
+      var astmcTypes = delayedAttribute.get(0).streamSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
+          t -> t.streamSuperTypes()).collect(
+          Collectors.toList());
+      if(astmcTypes.size() != 1) {
+        Log.error(
+            "The Attribute usage " + delayedAttribute.get(0).getName() + " from port " + nodeName
+                + " needs exactly one type, this type needs to be Boolean.");
+      }
+      if(!printName(astmcTypes.get(0)).equals("Boolean")) {
+        Log.error(
+            "The Attribute usage " + delayedAttribute.get(0).getName() + " from port " + nodeName
+                + " needs exactly one type, this type needs to be Boolean.");
+      }
+    }
+  }
 
 }

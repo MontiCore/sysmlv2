@@ -1,7 +1,6 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
 ${tc.signature("outPortList","subComponentList")}
 
-@Override
 ${cd4c.method("public void tick()")}
 // update subcomponents
 <#list subComponentList as subcomponent>

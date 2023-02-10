@@ -4,18 +4,15 @@ package de.monticore.lang.sysmlv2.generator;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
-import java.util.Collection;
 
 public class SysML2CDData {
 
   protected final ASTCDCompilationUnit compilationUnit;
   protected final ASTCDClass automataClass;
-  protected final Collection<ASTCDClass> stateClasses;
 
-  public SysML2CDData(ASTCDCompilationUnit compilationUnit, ASTCDClass automataClass, Collection<ASTCDClass> stateClasses) {
+  public SysML2CDData(ASTCDCompilationUnit compilationUnit, ASTCDClass automataClass) {
     this.compilationUnit = compilationUnit;
     this.automataClass = automataClass;
-    this.stateClasses = stateClasses;
   }
 
   public ASTCDCompilationUnit getCompilationUnit() {
@@ -26,7 +23,4 @@ public class SysML2CDData {
     return automataClass;
   }
 
-  public Collection<ASTCDClass> getStateClasses() {
-    return stateClasses;
-  }
 }

@@ -4,6 +4,8 @@ package de.monticore.lang.sysmlv2.generator;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.*;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._visitor.SysMLStatesVisitor2;
@@ -64,28 +66,38 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
           "currentState").setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
 
       stateUsageClass.setCDAttributeList(List.of(attribute));
+
+      generatorUtils.addMethods(stateUsageClass, List.of(attribute), true, true);
       cdPackage.addCDElement(stateUsageClass);
 
-      var enumConstantList = stateList.stream().map(
-          state -> CD4CodeMill.cDEnumConstantBuilder().setName(state.getName()).build()).collect(
-          Collectors.toList());
+      cdPackage.addCDElement(createEnum(astStateUsage, stateList));
 
-      var anEnum = CD4CodeMill.cDEnumBuilder().setName(astStateUsage.getName() + "Enum").setCDEnumConstantsList(
-          enumConstantList).setModifier(
-          CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
-      cdPackage.addCDElement(anEnum);
-
-      cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesExitMethod",  stateList);
+      cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesExitMethod", stateList,
+          astStateUsage.getName() + "Enum");
       cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesCompute", stateList);
-      for (ASTStateUsage state:
-           stateList) {
+      cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesConstructor", astStateUsage,
+          astStateUsage.getName() + "Enum");
+      for (ASTStateUsage state :
+          stateList) {
 
-        cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesTransition",  state, astStateUsage);
-        cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesEntryAction",  state, astStateUsage);
-        cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesExitAction",  state, astStateUsage);
+        cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesTransition", state, astStateUsage,
+            astStateUsage.getName() + "Enum");
+        cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesEntryAction", state, astStateUsage);
+        cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesExitAction", state, astStateUsage);
 
       }
     }
   }
 
+  ASTCDEnum createEnum(ASTStateUsage astStateUsage, List<ASTStateUsage> stateList) {
+    List<ASTCDEnumConstant> enumConstantList = stateList.stream().map(
+        state -> CD4CodeMill.cDEnumConstantBuilder().setName(state.getName()).build()).collect(
+        Collectors.toList());
+    enumConstantList.add(CD4CodeMill.cDEnumConstantBuilder().setName("first").build());
+    enumConstantList.add(CD4CodeMill.cDEnumConstantBuilder().setName("done").build());
+
+    return CD4CodeMill.cDEnumBuilder().setName(astStateUsage.getName() + "Enum").setCDEnumConstantsList(
+        enumConstantList).setModifier(
+        CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
+  }
 }

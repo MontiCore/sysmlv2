@@ -20,6 +20,7 @@ import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeUsageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartUsageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
+import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortUsageCoCo;
 import de.monticore.lang.sysmlparts.coco.PortDefHasOneType;
 import de.monticore.lang.sysmlparts.coco.PortDefNeedsDirection;
 import de.monticore.lang.sysmlrequirements._cocos.SysMLRequirementsASTRequirementDefCoCo;
@@ -48,7 +49,8 @@ import de.monticore.lang.sysmlv2.cocos.StateGeneratorCoCo;
 import de.monticore.lang.sysmlv2.cocos.StateNameCoCos;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.SuccessionCoCo;
-import de.monticore.lang.sysmlv2.generator.AutomatonUtils;
+import de.monticore.lang.sysmlv2.generator.AutomatonHelper;
+import de.monticore.lang.sysmlv2.generator.ComponentHelper;
 import de.monticore.lang.sysmlv2.generator.SysML2CDConverter;
 import de.monticore.lang.sysmlv2.symboltable.completers.ScopeNamingCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
@@ -128,7 +130,8 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     checker.addCoCo(new PortDefHasOneType());
     checker.addCoCo(new PortDefNeedsDirection());
     checker.addCoCo(new ActionControlGeneratorCoCos());
-    checker.addCoCo(new PortsGeneratorCoCos());
+    checker.addCoCo((SysMLPartsASTPortUsageCoCo) new PortsGeneratorCoCos());
+    checker.addCoCo((SysMLPartsASTPortDefCoCo)new PortsGeneratorCoCos());
     checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new AttributeGeneratorCoCos());
     checker.addCoCo((SysMLPartsASTAttributeUsageCoCo) new AttributeGeneratorCoCos());
     checker.addCoCo((SysMLPartsASTPartDefCoCo) new PartsGeneratorCoCos());
@@ -285,9 +288,9 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
   }
 
   public void transform(ASTSysMLModel ast) {
-    transformTransitiveSupertypes(ast);
     transformSuccession(ast);
     transformStates(ast);
+    transformTransitiveSupertypes(ast);
   }
 
   public void transformTransitiveSupertypes(ASTSysMLModel ast) {
@@ -313,7 +316,8 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
 
     GeneratorSetup setup = new GeneratorSetup();
     GlobalExtensionManagement glex = new GlobalExtensionManagement();
-    glex.setGlobalValue("autHelper", new AutomatonUtils());
+    glex.setGlobalValue("autHelper", new AutomatonHelper());
+    glex.setGlobalValue("compHelper", new ComponentHelper());
     setup.setGlex(glex);
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
 

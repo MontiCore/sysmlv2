@@ -1,15 +1,10 @@
 package StatesActions {
 
-	attribute def VehicleStartSignal;
-	attribute def VehicleOnSignal;
-	attribute def VehicleOffSignal;
-
 	part def Vehicle{
 
 
-	state def VehicleStates;
 
-	state vehicleStates : VehicleStates {
+	exhibit state vehicleStates {
 		entry; then off;
 
 		state off;
@@ -22,5 +17,7 @@ package StatesActions {
 		then off;
 	}
 	}
+
+	part bmw : Vehicle;
 
 }

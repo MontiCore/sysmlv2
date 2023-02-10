@@ -5,12 +5,14 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.lang.sysmlbasis._ast.*;
-import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
+import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
+import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
@@ -23,26 +25,35 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class PortUtils {
+public class ComponentUtils {
 
   GeneratorUtils generatorUtils = new GeneratorUtils();
+
+  AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
 
   List<ASTPortUsage> inputPortList;
 
   List<ASTPortUsage> outputPortList;
 
-  void createComponentMethods(ASTSysMLElement astSysMLElement, CD4C cd4C, ASTCDClass partDefClass,
-                              List<ASTPartUsage> partUsageList) {
+  void createComponentMethods(ASTSysMLElement astSysMLElement, CD4C cd4C, ASTCDClass partClass,
+                              List<ASTPartUsage> subComponents, List<ASTAttributeUsage> attributeUsageList) {
     setPortLists(astSysMLElement);
-    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentIsSyncedMethod", inputPortList);
-    cd4C.addMethod(partDefClass, "sysml2cd.component.ComponentTickMethod", outputPortList, partUsageList);
+    cd4C.addMethod(partClass, "sysml2cd.component.ComponentIsSyncedMethod", inputPortList);
+    cd4C.addMethod(partClass, "sysml2cd.component.ComponentTickMethod", outputPortList, subComponents);
 
-    //TODO void setUp(); -> atomic oder composed
-
+    cd4C.addMethod(partClass, "sysml2cd.component.ComponentSetUpMethod", subComponents, outputPortList,
+        attributeUsageList, astSysMLElement);
+    cd4C.addMethod(partClass, "sysml2cd.component.ComponentGetAllSubcomponentsMethod", subComponents);
+    cd4C.addMethod(partClass, "sysml2cd.component.ComponentComputeMethod", astSysMLElement);
     //TODO void init(); -> automaton oder init
 
-    //TODO void compute(); -> compute oder composed oder atomic
+  }
 
+  public ASTMCObjectType createComponent() {
+
+    return CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
+        CD4CodeMill.mCQualifiedNameBuilder().
+            addParts("de.monticore.lang.sysmlv2.generator.timesync.IComponent").build()).build();
   }
 
   public List<ASTCDAttribute> createPorts(ASTSysMLElement astSysMLElement) {
@@ -54,35 +65,25 @@ public class PortUtils {
         t -> createPort(t, generatedAttributeList, "InPort")).collect(
         Collectors.toList());
 
-    attributeList.addAll(this.outputPortList.stream().map(
+    attributeList.addAll(this.outputPortList.stream().filter(this::isPortDelay).map(
+        t -> createPort(t, generatedAttributeList, "DelayPort")).collect(
+        Collectors.toList()));
+    attributeList.addAll(this.outputPortList.stream().filter(t -> !isPortDelay(t)).map(
         t -> createPort(t, generatedAttributeList, "OutPort")).collect(
         Collectors.toList()));
     return attributeList;
   }
 
-  private List<ASTPortUsage> createPortUsageList(ASTSysMLElement element) {
-    List<ASTSysMLElement> elementList = new ArrayList<>();
-    if(element instanceof ASTPartDef)
-      elementList = ((ASTPartDef) element).getSysMLElementList();
-    if(element instanceof ASTPartUsage)
-      elementList = ((ASTPartUsage) element).getSysMLElementList();
-    if(element instanceof ASTAttributeDef)
-      elementList = ((ASTAttributeDef) element).getSysMLElementList();
-    List<ASTPortUsage> attributeUsageList;
-    attributeUsageList = elementList.stream().filter(
-        t -> t instanceof ASTPortUsage).map(t -> (ASTPortUsage) t).collect(Collectors.toList());
-    return attributeUsageList;
-  }
+  ASTCDAttribute createPort(ASTSysMLElement element, List<String> stringList, String portType) {
 
-  ASTCDAttribute createPort(ASTSysMLElement element, List<String> stringList, String direction) {
-    String type = direction + "<Integer>";//TODO korrekten typ erkennen
     if(element instanceof ASTPortUsage) {
+      String typeWithGenerics = portType + "<" + getValueTypeOfPort((ASTPortUsage) element) + ">";
       String portName = ((ASTPortUsage) element).getName();
       if(!stringList.contains(portName)) {
         stringList.add(portName);
         ASTMCQualifiedType qualifiedType = generatorUtils.qualifiedType(
             Arrays.asList("de", "monticore", "lang", "sysmlv2", "generator", "timesync",
-                type));
+                typeWithGenerics));
         return CD4CodeMill.cDAttributeBuilder().setName(portName).setModifier(
             CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(qualifiedType).build();
       }
@@ -120,7 +121,7 @@ public class PortUtils {
 
   public List<ASTPortUsage> getPortUsage(ASTSysMLElement node) {
     List<ASTSysMLElement> parentList = getDirectSupertypes(node);
-    List<List<ASTPortUsage>> parentAttribute = new ArrayList<>();
+    List<List<ASTPortUsage>> parentAttribute;
     List<ASTPortUsage> attributeUsages = getPortUsageOfNode(node);
 
     parentAttribute = parentList.stream().map(this::getPortUsage).collect(Collectors.toList());
@@ -185,6 +186,24 @@ public class PortUtils {
 
   private String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+  }
+
+  String getValueTypeOfPort(ASTPortUsage portUsage) {
+    var attributeUsageList = attributeResolveUtils.getAttributesOfElement(portUsage).stream().filter(
+        t -> t.getName().equals("value")).flatMap(ASTAttributeUsage::streamSpecializations).flatMap(
+        ASTSpecialization::streamSuperTypes).collect(
+        Collectors.toList());
+    return printName(attributeUsageList.get(0));
+  }
+
+  boolean isPortDelay(ASTPortUsage portUsage) {
+
+    var expression = attributeResolveUtils.getAttributesOfElement(portUsage).stream().filter(
+        t -> t.getName().equals("delayed")).filter(ASTAttributeUsage::isPresentExpression).map(
+        ASTAttributeUsage::getExpression).collect(
+        Collectors.toList());
+    //TODO resolve
+    return false;
   }
 
 }

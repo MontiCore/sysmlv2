@@ -1,5 +1,6 @@
 package de.monticore.lang.sysmlv2.visitor;
 
+import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
@@ -8,6 +9,7 @@ import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
+import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -24,6 +26,7 @@ public class PartsTransitiveVisitor implements SysMLPartsVisitor2 {
       node.setTransitiveDefSupertypes(
           getPartDefSuperTypesOfNode(getSpecializationList(node), node.getEnclosingScope()));
     }
+    setAutomaton(node);
   }
 
   List<ASTPartDef> getPartDefSuperTypesOfNode(List<ASTMCType> superTypes, ISysMLPartsScope partsScope) {
@@ -49,19 +52,21 @@ public class PartsTransitiveVisitor implements SysMLPartsVisitor2 {
 
   List<ASTMCType> getSpecializationList(ASTPartDef node) {
     return node.streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization)
-        .flatMap(s -> s.streamSuperTypes()).collect(Collectors.toList());
+        .flatMap(ASTSpecialization::streamSuperTypes).collect(Collectors.toList());
 
   }
+
   List<ASTMCType> getSpecializationList(ASTAttributeDef node) {
     return node.streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization)
-        .flatMap(s -> s.streamSuperTypes()).collect(Collectors.toList());
+        .flatMap(ASTSpecialization::streamSuperTypes).collect(Collectors.toList());
 
   }
+
   @Override
   public void visit(ASTPartUsage node) {
     if(node.getTransitiveUsageSupertypes().isEmpty()) {
       node.setTransitiveUsageSupertypes(getPartUsageSuperTypesOfNode(getPartUsageList(node), node.getEnclosingScope()));
-      node.getTransitiveUsageSupertypes().forEach(t -> visit(t));
+      node.getTransitiveUsageSupertypes().forEach(this::visit);
     }
     if(node.getTransitiveDefSupertypes().isEmpty()) {
       List<ASTPartDef> superDefList = new ArrayList<>();
@@ -71,6 +76,7 @@ public class PartsTransitiveVisitor implements SysMLPartsVisitor2 {
       superDefList.addAll(transitiveDefList);
       node.setTransitiveDefSupertypes(superDefList);
     }
+    setAutomaton(node);
   }
 
   List<ASTPartUsage> getPartUsageSuperTypesOfNode(List<ASTMCType> superTypes, ISysMLPartsScope partsScope) {
@@ -93,6 +99,7 @@ public class PartsTransitiveVisitor implements SysMLPartsVisitor2 {
 
     return superTypeList;
   }
+
   public void visit(ASTAttributeDef node) {
     if(node.getTransitiveDefSupertypes().size() == 0) {
       node.setTransitiveDefSupertypes(
@@ -110,7 +117,8 @@ public class PartsTransitiveVisitor implements SysMLPartsVisitor2 {
         superTypeList.add(attributeDef);
         if(attributeDef.getTransitiveDefSupertypes().size() == 0) {
 
-          superTypeList.addAll(getAttributeDefSuperTypesOfNode(getSpecializationList(attributeDef), attributeDef.getEnclosingScope()));
+          superTypeList.addAll(
+              getAttributeDefSuperTypesOfNode(getSpecializationList(attributeDef), attributeDef.getEnclosingScope()));
         }
         else {
           superTypeList.addAll(attributeDef.getTransitiveDefSupertypes());
@@ -120,16 +128,34 @@ public class PartsTransitiveVisitor implements SysMLPartsVisitor2 {
 
     return superTypeList;
   }
+
   List<ASTMCType> getPartDefList(ASTPartUsage node) {
     return node.streamSpecializations().filter(t -> t instanceof ASTSysMLTyping)
-        .flatMap(s -> s.streamSuperTypes()).collect(Collectors.toList());
+        .flatMap(ASTSpecialization::streamSuperTypes).collect(Collectors.toList());
 
   }
 
   List<ASTMCType> getPartUsageList(ASTPartUsage node) {
     return node.streamSpecializations().filter(
             t -> t instanceof ASTSysMLSpecialization | t instanceof ASTSysMLRedefinition)
-        .flatMap(s -> s.streamSuperTypes()).collect(Collectors.toList());
+        .flatMap(ASTSpecialization::streamSuperTypes).collect(Collectors.toList());
 
+  }
+
+  void setAutomaton(ASTPartUsage element) {
+    List<ASTStateUsage> stateUsageList =  element.streamSysMLElements().filter(
+        t -> t instanceof ASTStateUsage).map(t -> (ASTStateUsage) t).filter(t -> t.isExhibited()).collect(
+        Collectors.toList());
+
+    if(!stateUsageList.isEmpty())
+      element.setAutomaton(stateUsageList.get(0));
+  }
+  void setAutomaton(ASTPartDef element) {
+    List<ASTStateUsage> stateUsageList = element.streamSysMLElements().filter(
+        t -> t instanceof ASTStateUsage).map(t -> (ASTStateUsage) t).filter(t -> t.isExhibited()).collect(
+        Collectors.toList());
+
+    if(!stateUsageList.isEmpty())
+      element.setAutomaton(stateUsageList.get(0));
   }
 }

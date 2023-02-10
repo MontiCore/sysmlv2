@@ -11,7 +11,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AutomatonUtils {
+public class AutomatonHelper {
   public List<ASTSysMLTransition> getAllTransitionsWithGuardFrom(ASTStateUsage automaton, ASTStateUsage state) {
     return getAllTransitionsFrom(automaton, state).stream().filter(t -> t.isPresentGuard()).collect(
         Collectors.toList());
