@@ -1,8 +1,8 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("subPartList", "portList", "attributeList", "part")}
+${tc.signature("subPartList", "outPortList","inPortList", "attributeList", "part")}
 ${cd4c.method("public void setUp()")}
     <#if subPartList?has_content>
-    //initialize sub components
+      //initialize sub components
     </#if>
     <#list subPartList as subcomponent>
       this.${subcomponent.getName()} = new ${compHelper.getPartType(subcomponent)}();
@@ -13,25 +13,29 @@ ${cd4c.method("public void setUp()")}
       //initialize other attributes
     </#if>
     <#list attributeList as attribute>
-      <#if compHelper.isObjectAttribute(attribute)>
-      this.${attribute.getName()} = new ${compHelper.getAttributeType(attribute)}();
-      this.${attribute.getName()}.setUp();
-      <#else>
-      </#if>
+        <#if compHelper.isObjectAttribute(attribute)>
+          this.${attribute.getName()} = new ${compHelper.getAttributeType(attribute)}();
+          this.${attribute.getName()}.setUp();
+        <#else>
+        </#if>
     </#list>
 
 
     <#if part.hasAutomaton()>
         <#assign automaton = part.getAutomaton()>
-        this.${automaton.getName()} = new ${automaton.getName()}();
+      this.${automaton.getName()} = new ${automaton.getName()}();
     </#if>
 
 
-    <#list portList as port>
-      <#if compHelper.isPortDelayed(port)>
+    <#list outPortList as port>
+        <#if compHelper.isPortDelayed(port)>
 
-        this.${port.getName()} = new de.monticore.lang.sysmlv2.generator.timesync.DelayPort<${compHelper.getValueTypeOfPort(port)}>();
-          <#else>
-        this.${port.getName()} = new de.monticore.lang.sysmlv2.generator.timesync.OutPort<${compHelper.getValueTypeOfPort(port)}>();
-      </#if>
+          this.${port.getName()} = new de.monticore.lang.sysmlv2.generator.timesync.DelayPort<${compHelper.getValueTypeOfPort(port)}>();
+        <#else>
+          this.${port.getName()} = new de.monticore.lang.sysmlv2.generator.timesync.OutPort<${compHelper.getValueTypeOfPort(port)}>();
+        </#if>
+    </#list>
+
+    <#list inPortList as port>
+          this.${port.getName()} = new de.monticore.lang.sysmlv2.generator.timesync.InPort<${compHelper.getValueTypeOfPort(port)}>();
     </#list>
