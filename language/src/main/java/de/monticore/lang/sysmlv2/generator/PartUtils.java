@@ -44,17 +44,29 @@ GeneratorUtils generatorUtils = new GeneratorUtils();
     var sysMLTypingList = element.getSpecializationList().stream().filter(
         t -> t instanceof ASTSysMLTyping).map(u -> ((ASTSysMLTyping) u)).collect(Collectors.toList());
     if(isAdHocClassDefinition(element)) return generatorUtils.qualifiedType(element.getName());
-
+    if(!sysMLTypingList.isEmpty()){
     if(sysMLTypingList.get(0).getSuperTypesList().size()==1){
       String typString = sysMLTypingList.get(0).getSuperTypes(0).printType(
           new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
       List<String> partsList = Splitters.DOT.splitToList(typString);
       String typeName = partsList.get(partsList.size() - 1);
       return generatorUtils.qualifiedType(typeName);
+    }}else {
+      var sysmlSpec = element.getSpecializationList().stream().filter(
+          t -> t instanceof ASTSysMLSpecialization).map(u -> ((ASTSysMLSpecialization) u)).collect(Collectors.toList());
+      if(!sysmlSpec.isEmpty()) {
+        if(sysmlSpec.get(0).getSuperTypesList().size() == 1){
+          String typString = sysmlSpec.get(0).getSuperTypes(0).printType(
+              new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+          List<String> partsList = Splitters.DOT.splitToList(typString);
+          String typeName = partsList.get(partsList.size() - 1);
+          return generatorUtils.qualifiedType(typeName);
+        }
+      }
     }
 
     Log.error(
-        "The type of partUsage" + element.getName()
+        "The type of partUsage " + element.getName()
             + " could not be resolved.");
   return generatorUtils.qualifiedType("");
   }
