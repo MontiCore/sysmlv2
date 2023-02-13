@@ -4,5 +4,5 @@ ${cd4c.constructor("public ${automaton.getName()}(${parentType} parentPart)")}
     // set currentState to initial state
 
     this.parentPart = parentPart;
-    this.currentState = ${enumName}.first;
+    this.currentState = ${enumName}.start;
 
