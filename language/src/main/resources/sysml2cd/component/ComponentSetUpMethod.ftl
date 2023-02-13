@@ -29,7 +29,6 @@ ${cd4c.method("public void setUp()")}
 
     <#list outPortList as port>
         <#if compHelper.isPortDelayed(port)>
-
           this.${port.getName()} = new de.monticore.lang.sysmlv2.generator.timesync.DelayPort<${compHelper.getValueTypeOfPort(port)}>();
         <#else>
           this.${port.getName()} = new de.monticore.lang.sysmlv2.generator.timesync.OutPort<${compHelper.getValueTypeOfPort(port)}>();
@@ -38,4 +37,7 @@ ${cd4c.method("public void setUp()")}
 
     <#list inPortList as port>
           this.${port.getName()} = new de.monticore.lang.sysmlv2.generator.timesync.InPort<${compHelper.getValueTypeOfPort(port)}>();
+    </#list>
+    <#list compHelper.getFlowOfPart(part) as connection>
+      this.${connection.getSource()}.connect(${connection.getTarget()});
     </#list>
