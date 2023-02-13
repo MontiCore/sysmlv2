@@ -2,7 +2,7 @@ package de.monticore.lang.sysmlv2.generator;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.prettyprint.CommonExpressionsFullPrettyPrinter;
-import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
+import de.monticore.lang.sysmlactions._ast.ASTSendActionUsage;
 import de.monticore.lang.sysmlstates._ast.ASTDoAction;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
@@ -56,8 +56,24 @@ public class AutomatonHelper {
     return prettyPrinter.prettyprint(expr);
   }
 
-  public boolean isPresentGuard(ASTSysMLTransition transition) {
-    return transition.isPresentGuard();
+  public boolean isSendAction(ASTDoAction doAction) {
+    if(doAction.isPresentActionUsage()) {
+      return doAction.getActionUsage() instanceof ASTSendActionUsage;
+    }
+    else {
+      //TODO resolve name of action and check if its a send action
+    }
+    return false;
+  }
+
+  public ASTSendActionUsage castToSend(ASTDoAction doAction) {
+    if(doAction.isPresentActionUsage()) {
+      return (ASTSendActionUsage) doAction.getActionUsage();
+    }
+    else {
+      //TODO
+      return null;
+    }
   }
 
   public String getNameOfDoAction(ASTDoAction doAction) {
@@ -67,9 +83,11 @@ public class AutomatonHelper {
   public boolean hasEntryAction(ASTStateUsage stateUsage) {
     return stateUsage.getEntryActionList().size() > 0;
   }
+
   public boolean hasExitAction(ASTStateUsage stateUsage) {
     return stateUsage.getExitActionList().size() > 0;
   }
+
   public boolean hasDoAction(ASTStateUsage stateUsage) {
     return stateUsage.getDoActionList().size() > 0;
   }

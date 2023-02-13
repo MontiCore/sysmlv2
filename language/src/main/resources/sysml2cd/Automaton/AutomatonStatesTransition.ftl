@@ -24,7 +24,7 @@ ${cd4c.method("protected void transitionFrom${state.getName()?cap_first}()")}
 
 <#macro printTransition transition state automaton output result>
 
-    <#if autHelper.isPresentGuard(transition)>
+    <#if transition.isPresentGuard()>
       if(${autHelper.printExpression(transition.getGuard())}) {
     </#if>
   // exit state(s)
@@ -34,6 +34,15 @@ ${cd4c.method("protected void transitionFrom${state.getName()?cap_first}()")}
     //TODO output
   // reaction
       //TODO add do actions
+    <#if transition.isPresentDoAction()>
+        <#if autHelper.isSendAction(transition.getDoAction())>
+          <#assign sendAction = autHelper.castToSend(transition.getDoAction())>
+
+          this.parentPart.get${sendAction.getTarget()?cap_first}().setValue(${autHelper.printExpression(sendAction.getPayload())});
+
+        <#else>
+        </#if>
+    </#if>
   // result
     //TODO set outputs
   // entry state(s)
@@ -41,5 +50,7 @@ ${cd4c.method("protected void transitionFrom${state.getName()?cap_first}()")}
   this.currentState =  ${enumName}.${transition.getTgt()};
 
   this.entry${transition.getTgt()?cap_first}();
-
+    <#if transition.isPresentGuard()>
+      }
+    </#if>
 </#macro>
