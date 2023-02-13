@@ -58,6 +58,7 @@ import de.monticore.lang.sysmlv2.symboltable.completers.TypesAndDirectionComplet
 import de.monticore.lang.sysmlv2.visitor.ActionSuccessionVisitor;
 import de.monticore.lang.sysmlv2.visitor.PartsTransitiveVisitor;
 import de.monticore.lang.sysmlv2.visitor.StateVisitor;
+import de.monticore.lang.sysmlv2.visitor.TransitionVisitor;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FilenameUtils;
 
@@ -289,6 +290,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
 
   public void transform(ASTSysMLModel ast) {
     transformSuccession(ast);
+    transformTransitions(ast);
     transformStates(ast);
     transformTransitiveSupertypes(ast);
   }
@@ -310,6 +312,12 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     StateVisitor stateVisitorveVisitor = new StateVisitor();
     SysMLv2Traverser sysMLv2Traverser = getTraverser();
     sysMLv2Traverser.add4SysMLStates(stateVisitorveVisitor);
+    sysMLv2Traverser.handle(ast);
+  }
+  public void transformTransitions(ASTSysMLModel ast) {
+    TransitionVisitor transitionVisitor = new TransitionVisitor();
+    SysMLv2Traverser sysMLv2Traverser = getTraverser();
+    sysMLv2Traverser.add4SysMLStates(transitionVisitor);
     sysMLv2Traverser.handle(ast);
   }
   public void generateCD(ASTSysMLModel ast, String outputDir, String fileName) {
