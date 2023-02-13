@@ -23,7 +23,7 @@ ${cd4c.method("public void setUp()")}
 
     <#if part.hasAutomaton()>
         <#assign automaton = part.getAutomaton()>
-      this.${automaton.getName()} = new ${automaton.getName()}();
+      this.${automaton.getName()} = new ${automaton.getName()}(this);
     </#if>
 
 
