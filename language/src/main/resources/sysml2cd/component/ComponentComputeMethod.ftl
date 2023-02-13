@@ -1,8 +1,16 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("part")}
+${tc.signature("part", "input", "output")}
 
 ${cd4c.method("public void compute()")}
-
+// log input values
+<#list input as port>
+  montiarc.rte.log.Log.trace("Value of input port ${port.getName()} = "  + this.get${port.getName()?cap_first}().getValue());
+</#list>
+// log output values
+<#list output as port>
+  montiarc.rte.log.Log.trace("Value of output port ${port.getName()} = "+ this.get${port.getName()?cap_first}().getValue());
+</#list>
+de.monticore.lang.sysmlv2.generator.log.Log.comment("Computing component " + this.getClass().getName() + "");
 <#if part.hasAutomaton()>
     <#assign automaton = part.getAutomaton()>
     //run automaton behaviour of part

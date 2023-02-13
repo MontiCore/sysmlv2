@@ -43,7 +43,7 @@ public class ComponentUtils {
     cd4C.addMethod(partClass, "sysml2cd.component.ComponentSetUpMethod", subComponents, outputPortList, inputPortList,
         attributeUsageList, astSysMLElement);
     cd4C.addMethod(partClass, "sysml2cd.component.ComponentGetAllSubcomponentsMethod", subComponents);
-    cd4C.addMethod(partClass, "sysml2cd.component.ComponentComputeMethod", astSysMLElement);
+    cd4C.addMethod(partClass, "sysml2cd.component.ComponentComputeMethod", astSysMLElement, inputPortList,outputPortList);
     //TODO void init(); -> automaton oder init
 
   }
