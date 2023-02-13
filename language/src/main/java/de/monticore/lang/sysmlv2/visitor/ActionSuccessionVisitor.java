@@ -79,7 +79,9 @@ public class ActionSuccessionVisitor implements SysMLActionsVisitor2 {
     if(node.isPresentInlineAcceptActionUsage()) {
       transitionBuilder.setInlineAcceptActionUsage(node.getInlineAcceptActionUsage());
     }
-    return transitionBuilder.build();
+    ASTSysMLTransition transition = transitionBuilder.build();
+    transition.setEnclosingScope(node.getEnclosingScope());
+    return transition;
   }
 
   List<ASTSysMLElement> getElementsofParent(ASTNode astNode) {

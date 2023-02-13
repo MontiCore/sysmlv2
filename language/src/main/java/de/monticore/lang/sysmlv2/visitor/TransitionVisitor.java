@@ -4,6 +4,7 @@ import de.monticore.ast.ASTNode;
 import de.monticore.lang.sysmlactions._ast.ASTActionDef;
 import de.monticore.lang.sysmlactions._ast.ASTActionUsage;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
+import de.monticore.lang.sysmlstates._ast.ASTDoAction;
 import de.monticore.lang.sysmlstates._ast.ASTStateDef;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
@@ -19,13 +20,15 @@ public class TransitionVisitor implements SysMLStatesVisitor2 {
     if(!node.isPresentSrc()) {
       List<ASTSysMLElement> elementList = getElementsofParent(node.getEnclosingScope().getAstNode());
       int index = elementList.indexOf(node);
-      for (int i = index - 1; i >= 0; i--) {
-        ASTSysMLElement element = elementList.get(i);
-        if(element instanceof ASTStateUsage) {
-          //Der Typ muss manuell von succession zu transition geändert werden
-          // , da die erkannten wörter von succession und transition nicht diskunkt sind
-          node.setSrc(((ASTStateUsage) element).getName());
-          break;
+      if(index != 0) {
+        for (int i = index - 1; i >= 0; i--) {
+          ASTSysMLElement element = elementList.get(i);
+          if(element instanceof ASTStateUsage) {
+            //Der Typ muss manuell von succession zu transition geändert werden
+            // , da die erkannten wörter von succession und transition nicht diskunkt sind
+            node.setSrc(((ASTStateUsage) element).getName());
+            break;
+          }
         }
       }
       if(!node.isPresentSrc()) { //TODO soll eventuell geandert werden, ob das durch CoCos gesetzt werden soll
