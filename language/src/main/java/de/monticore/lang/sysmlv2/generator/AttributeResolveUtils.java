@@ -12,6 +12,8 @@ import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortDef;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
+import de.monticore.lang.sysmlstates._ast.ASTStateDef;
+import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -191,6 +193,10 @@ public class AttributeResolveUtils {
       return ((ASTPortDef) node).getName();
     if(node instanceof ASTPortUsage)
       return ((ASTPortUsage) node).getName();
+    if(node instanceof ASTStateUsage)
+      return ((ASTStateUsage) node).getName();
+    if(node instanceof ASTStateDef)
+      return ((ASTStateDef) node).getName();
     return "";
   }
 
@@ -218,6 +224,16 @@ public class AttributeResolveUtils {
     }
     if(node instanceof ASTPortUsage) {
       attributeUsageList = ((ASTPortUsage) node).getSysMLElementList().stream().filter(
+          t -> t instanceof ASTAttributeUsage).map(f -> (ASTAttributeUsage) f).collect(
+          Collectors.toList());
+    }
+    if(node instanceof ASTStateUsage) {
+      attributeUsageList = ((ASTStateUsage) node).getSysMLElementList().stream().filter(
+          t -> t instanceof ASTAttributeUsage).map(f -> (ASTAttributeUsage) f).collect(
+          Collectors.toList());
+    }
+    if(node instanceof ASTStateDef) {
+      attributeUsageList = ((ASTStateDef) node).getSysMLElementList().stream().filter(
           t -> t instanceof ASTAttributeUsage).map(f -> (ASTAttributeUsage) f).collect(
           Collectors.toList());
     }

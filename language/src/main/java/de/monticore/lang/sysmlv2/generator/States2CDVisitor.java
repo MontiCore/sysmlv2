@@ -37,10 +37,14 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
   protected final CD4C cd4C;
 
   protected GeneratorUtils generatorUtils;
+
   ComponentUtils componentUtils;
+
   protected final GlobalExtensionManagement glex;
 
   PartUtils partUtils;
+
+  AttributeUtils attributeUtils;
 
   public States2CDVisitor(GlobalExtensionManagement glex, ASTCDCompilationUnit cdCompilationUnit,
                           ASTCDPackage basePackage, ASTCDDefinition astcdDefinition) {
@@ -52,6 +56,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
     this.generatorUtils = new GeneratorUtils();
     this.partUtils = new PartUtils();
     this.componentUtils = new ComponentUtils();
+    this.attributeUtils = new AttributeUtils();
   }
 
   @Override
@@ -62,7 +67,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
       stateUsageClass = CD4CodeMill.cDClassBuilder()
           .setName(astStateUsage.getName())
           .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
-
+      //attributes
       ASTMCQualifiedType qualifiedType = CD4CodeMill.mCQualifiedTypeBuilder()
           .setMCQualifiedName(CD4CodeMill.mCQualifiedNameBuilder().setPartsList(
               List.of(astStateUsage.getName() + "Enum")).build()).build();
@@ -71,6 +76,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
           "currentState").setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).build());
       ASTCDAttribute parentAttribute = createParentAttribute(astStateUsage);
       attributeList.add(parentAttribute);
+      attributeList.addAll(attributeUtils.createAttributes(astStateUsage));
       stateUsageClass.setCDAttributeList(attributeList);
 
       cdPackage.addCDElement(stateUsageClass);
