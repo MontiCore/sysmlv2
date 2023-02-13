@@ -1,8 +1,10 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("state", "automaton", "enumName")}
+${tc.signature("state", "automaton", "enumName", "inputPorts")}
 ${cd4c.method("protected void transitionFrom${state.getName()?cap_first}()")}
   // input
-
+    <#list inputPorts as port>
+      ${compHelper.getValueTypeOfPort(port)} = this.parentPart.get${port.getName()?cap_first}().getValue();
+    </#list>
   <#assign transitions = autHelper.getAllTransitionsWithGuardFrom(automaton, state)/>
 
   <#list transitions>

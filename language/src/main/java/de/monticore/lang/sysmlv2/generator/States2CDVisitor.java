@@ -7,6 +7,7 @@ import de.monticore.cdbasis._ast.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
@@ -36,7 +37,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
   protected final CD4C cd4C;
 
   protected GeneratorUtils generatorUtils;
-
+  ComponentUtils componentUtils;
   protected final GlobalExtensionManagement glex;
 
   PartUtils partUtils;
@@ -50,6 +51,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
     this.astcdDefinition = astcdDefinition;
     this.generatorUtils = new GeneratorUtils();
     this.partUtils = new PartUtils();
+    this.componentUtils = new ComponentUtils();
   }
 
   @Override
@@ -78,6 +80,8 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
           Collectors.toList());
       cdPackage.addCDElement(createEnum(astStateUsage, stateList));
       //add methods
+      componentUtils.setPortLists((ASTSysMLElement) astStateUsage.getEnclosingScope().getAstNode());
+      var inputPortsParent = componentUtils.inputPortList;
       generatorUtils.addMethods(stateUsageClass, attributeList, true, true);
       cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesExitMethod", stateList,
           astStateUsage.getName() + "Enum");
@@ -88,7 +92,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
           stateList) {
 
         cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesTransition", state, astStateUsage,
-            astStateUsage.getName() + "Enum");
+            astStateUsage.getName() + "Enum", inputPortsParent);
         cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesEntryAction", state, astStateUsage);
         cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesExitAction", state, astStateUsage);
 
