@@ -15,63 +15,97 @@ package Items {
 
 
 package AvionicsParts {
-item def Voltage;
     import Items::*;
     import ScalarValues::*;
     port def VoltagePort{
-        inout voltage : Voltage;
+        value : Real;
     }
     port def DataOutPort{
-        out value : Real;
+        value : Real;
     }
 
     port def ParachutePort{
-        out signal : Signal;
+        value : Boolean;
     }
 
     part def RecoveryBoard{
-        port drogue : ParachutePort;
-        port main : ParachutePort;
+        in port drogue : ParachutePort;
+        in port main : ParachutePort;
 
-        port voltageIn : VoltagePort;
+        in port voltageIn : VoltagePort;
     }
 
     part def COTSRecovery specializes RecoveryBoard;
     part def SRADRecovery specializes RecoveryBoard{
 
         part def Sensor{
-         port dataOut : DataOutPort;
+         in port dataOut : DataOutPort;
         }
         part def IMU specializes Sensor {
-            port zAcc : DataOutPort;
-            port zSpeed : DataOutPort;
+            in port zAcc : DataOutPort;
+            in port zSpeed : DataOutPort;
         }
         part def Memory{//braucht man das??
-         port logData : ~DataOutPort;
+         in port logData : DataOutPort;
         }
-        part def Microcontroller{
-            port voltageIn : VoltagePort;
-            in pressData : ~DataOutPort;
-            in zAcc : ~DataOutPort;
-            in zSpeed : ~DataOutPort;
-            exhibit flightHandler;
-            out logData : DataOutPort;
+        part Microcontroller{
+            in port voltageIn : VoltagePort;
+            in port pressData : DataOutPort;
+            in port zAcc : DataOutPort;
+            in port zSpeed : DataOutPort;
+            exhibit state flightHandler {
+                            in height : Real;
+                            in zSpeed : Real;
+                            in zAcceleraction : Real;
+                            out drogue : ParachutePort;
+                            out main : ParachutePort;
+                            entry;
+                            then Idle;
+                            state Idle;
+                            transition Idle
+                            if zAcceleraction >= 10
+                            then Ascend;
 
-            out main : ParachutePort;
-            out drogue : ParachutePort;
+                            state Ascend;
+                            transition Ascend
+                            if zAcceleraction <= 0
+                                then Coasting;
+                            state Coasting;
+
+                            transition Coasting
+                            if zSpeed <= 0
+                                do send true to drogue
+                                then Descend;
+                            state Descend;
+                            transition Descend
+                            if height <= 400
+                                do send true to main
+                                then Landing;
+                            state Landing;
+
+                            transition Landing
+                            if zSpeed == 0 //Landung
+                                then PostFlight;
+                            state PostFlight;
+
+                        }
+            out port logData : DataOutPort;
+
+            out port main : ParachutePort;
+            out port drogue : ParachutePort;
             bind pressData.value = flightHandler.height;
             bind zAcc.value = flightHandler.zAcceleraction;
             bind zSpeed.value = flightHandler.zSpeed;
         }
 
-        part ESP32 : Microcontroller;
+        part ESP32 :> Microcontroller;
         part pressureSensor : Sensor; //vereinfachung: gibt höhe in metern an, ein wert
         part imuSensor : IMU; //vereinfachung: gibt beschleunigung auf der z achse an, und geschwindigkeit auf z achse an jeweils ein wert
         part sdCard : Memory;
 
 
         bind pressureSensor.dataOut = ESP32.pressData;
-bind imuSensor.zAcc = ESP32.zAcc;
+        bind imuSensor.zAcc = ESP32.zAcc;
         bind imuSensor.zSpeed = ESP32.zSpeed;
         bind ESP32.logData = sdCard.logData;
         bind voltageIn = ESP32.voltageIn;
@@ -82,14 +116,14 @@ bind imuSensor.zAcc = ESP32.zAcc;
     part def PowerSystem{
 
         part def Battery{
-            out batteryVoltage : Voltage; //voltage und energie
+            out port batteryVoltage : VoltagePort; //voltage und energie
         }
         part battery : Battery [2];
 
     }
     part def PyroSystem{
-        port drogueSignal : ~ParachutePort;
-        port mainSignal : ~ParachutePort;
+        in port drogueSignal : ParachutePort;
+        in port mainSignal : ParachutePort;
 
 
         part def Parachute;
@@ -98,67 +132,20 @@ bind imuSensor.zAcc = ESP32.zAcc;
     }
 
     part def RecoverySystem {
-        private port externalCharging;
         part cotsRec : COTSRecovery;
         part sradRec : SRADRecovery;
         part powerSys : PowerSystem;
         part pyroSys : PyroSystem;
 
-        flow of Voltage from powerSys.battery.batteryVoltage to sradRec.voltageIn;
-        flow powerSys.battery.batteryVoltage to cotsRec.voltageIn;
+        flow from powerSys.battery.batteryVoltage to sradRec.voltageIn;
+        flow from powerSys.battery.batteryVoltage to cotsRec.voltageIn;
 
-        flow cotsRec.main to pyroSys.mainSignal;
-        flow cotsRec.drogue to pyroSys.drogueSignal;
+        flow from cotsRec.main to pyroSys.mainSignal;
+        flow from cotsRec.drogue to pyroSys.drogueSignal;
 
-        flow sradRec.main to pyroSys.mainSignal;
-        flow sradRec.drogue to pyroSys.drogueSignal;
+        flow from sradRec.main to pyroSys.mainSignal;
+        flow from sradRec.drogue to pyroSys.drogueSignal;
     }
     part system : RecoverySystem;
-
-    state def FlightHandler;
-	action def VehicleStartSignal;
-
-    state flightHandler : FlightHandler {
-        in height : Real;
-        in zSpeed : Real;
-        in zAcceleraction : Real;
-        out drogue : ~ParachutePort;
-        out main : ~ParachutePort;
-        entry;
-        then Idle;
-        state Idle;
-            if zAcceleraction >= 10
-            then Ascend;
-
-        state Ascend;
-
-        if zAcceleraction <= 0
-            then Coasting;
-        state Coasting;
-
-        accept VehicleStartSignal
-        if zSpeed <= 0
-            do send VehicleStartSignal() to drogue.signal
-            then Descend;
-        state Descend;
-        if height <= 400
-            do send MainSignal() to main.signal
-            then Landing;
-        state Landing;
-
-        if zSpeed == 0 //Landung
-            then PostFlight;
-        state PostFlight;
-
-    }
-
-    port p1 : VoltagePort;
-
-    port p2 : VoltagePort;
-
-    port p3 : VoltagePort;
-
-    port p4 : VoltagePort;
-    interface a connect p1 to p2;
 
 }
