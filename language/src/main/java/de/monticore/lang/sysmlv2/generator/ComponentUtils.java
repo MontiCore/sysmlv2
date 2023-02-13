@@ -30,9 +30,9 @@ public class ComponentUtils {
 
   AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
 
-  List<ASTPortUsage> inputPortList;
+  public List<ASTPortUsage> inputPortList;
 
-  List<ASTPortUsage> outputPortList;
+  public List<ASTPortUsage> outputPortList;
 
   void createComponentMethods(ASTSysMLElement astSysMLElement, CD4C cd4C, ASTCDClass partClass,
                               List<ASTPartUsage> subComponents, List<ASTAttributeUsage> attributeUsageList) {
@@ -104,13 +104,19 @@ public class ComponentUtils {
         Collectors.toList());
     //transform inoutport list to a list of input ports AND a list of output ports
     List<ASTPortUsage> input = new ArrayList<>();
-    for (ASTPortUsage p : inOutPortList)
-      input.add(p.deepClone());
+    for (ASTPortUsage p : inOutPortList) {
+      var element = p.deepClone();
+      element.setEnclosingScope(p.getEnclosingScope());
+      input.add(element);
+    }
     input.forEach(t -> t.setName(t.getName() + "_in"));
     inPortList.addAll(input);
     List<ASTPortUsage> output = new ArrayList<>();
-    for (ASTPortUsage p : inOutPortList)
-      output.add(p.deepClone());
+    for (ASTPortUsage p : inOutPortList){
+      var element = p.deepClone();
+      element.setEnclosingScope(p.getEnclosingScope());
+      output.add(element);
+    }
     output.forEach(t -> t.setName(t.getName() + "_out"));
     outPortList.addAll(output);
 
