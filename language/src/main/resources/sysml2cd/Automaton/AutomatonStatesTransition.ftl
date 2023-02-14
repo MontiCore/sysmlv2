@@ -1,9 +1,9 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("state", "automaton", "enumName", "inputPorts")}
+${tc.signature("state", "automaton", "enumName", "inputPorts", "outputPorts")}
 ${cd4c.method("protected void transitionFrom${state.getName()?cap_first}()")}
   // input
     <#list inputPorts as port>
-      ${compHelper.getValueTypeOfPort(port)} = this.parentPart.get${port.getName()?cap_first}().getValue();
+      ${compHelper.getValueTypeOfPort(port)} ${port.getName()}_value = this.parentPart.get${port.getName()?cap_first}().getValue();
     </#list>
   <#assign transitions = autHelper.getAllTransitionsWithGuardFrom(automaton, state)/>
 
@@ -22,6 +22,9 @@ ${cd4c.method("protected void transitionFrom${state.getName()?cap_first}()")}
     transitionFrom${autHelper.getSuperState(automaton, state).getName()}();
   </#if>
   <#if transitions?size != 0>}</#if>
+    <#list outputPorts as port>
+      this.getParentPart().get${port.getName()?cap_first}().sync();
+    </#list>
 
 
 <#macro printTransition transition state automaton output result>

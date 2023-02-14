@@ -88,6 +88,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
       //add methods
       componentUtils.setPortLists((ASTSysMLElement) astStateUsage.getEnclosingScope().getAstNode());
       var inputPortsParent = componentUtils.inputPortList;
+      var outputPortsParents = componentUtils.outputPortList;
       generatorUtils.addMethods(stateUsageClass, attributeList, true, true);
       cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesExitMethod", stateList,
           astStateUsage.getName() + "Enum");
@@ -98,7 +99,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
           stateList) {
 
         cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesTransition", state, astStateUsage,
-            astStateUsage.getName() + "Enum", inputPortsParent);
+            astStateUsage.getName() + "Enum", inputPortsParent, outputPortsParents);
         cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesEntryAction", state, astStateUsage);
         cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesExitAction", state, astStateUsage);
 
