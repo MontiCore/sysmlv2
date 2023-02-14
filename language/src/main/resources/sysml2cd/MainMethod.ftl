@@ -1,6 +1,6 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
 <#-- Generates the deployment class for a component. -->
-${tc.signature("listMainComponent")}
+${tc.signature("listMainComponent", "listFlows")}
 ${cd4c.method("public static void main(String[] args)")}
 
     de.monticore.lang.sysmlv2.generator.DeployUtils deployUtils = new de.monticore.lang.sysmlv2.generator.DeployUtils();
@@ -14,8 +14,12 @@ ${cd4c.method("public static void main(String[] args)")}
 
     <#list listMainComponent as subcomponent>
         ${compHelper.getPartType(subcomponent)} ${subcomponent.getName()} = new ${compHelper.getPartType(subcomponent)}();
-        ${compHelper.getPartType(subcomponent)} ${subcomponent.getName()}.setUp();
+        ${subcomponent.getName()}.setUp();
     </#list>
+    <#list listFlows as connection>
+      ${connection.getSource()}.connect(${connection.getTarget()});
+    </#list>
+
     final List${"<IComponent>"} componentList =  java.util.Arrays.asList(new montiarc.rte.timesync.IComponent[] {
     <#list listMainComponent as subcomponent>
         ${subcomponent.getName()}<#sep>, </#sep>

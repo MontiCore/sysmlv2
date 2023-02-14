@@ -9,6 +9,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnitBuilder;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.lang.sysmlconnections._ast.ASTFlow;
 import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
@@ -76,11 +77,13 @@ public class SysML2CDConverter {
     PartResolveUtils partResolveUtils = new PartResolveUtils();
     var partUsages = astSysMLModel.streamSysMLElements().filter(t -> t instanceof ASTSysMLPackage).flatMap(
         t -> partResolveUtils.getSubPartsOfElement(t).stream()).collect(Collectors.toList());
+    var flows = astSysMLModel.streamSysMLElements().filter(t -> t instanceof ASTSysMLPackage).flatMap(
+        t -> ((ASTSysMLPackage) t).streamSysMLElements()).filter(t-> t instanceof ASTFlow).map(t -> (ASTFlow)t).collect(Collectors.toList());
     if(partUsages.isEmpty()) {
       Log.error("No Part Usages found that could be used for the simulation.");
 
     }
-    CD4C.getInstance().addMethod(mainClass, "sysml2cd.MainMethod", partUsages);
+    CD4C.getInstance().addMethod(mainClass, "sysml2cd.MainMethod", partUsages, flows);
   }
 
 }
