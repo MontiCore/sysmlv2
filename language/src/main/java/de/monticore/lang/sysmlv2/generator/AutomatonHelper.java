@@ -1,11 +1,11 @@
 package de.monticore.lang.sysmlv2.generator;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.expressions.prettyprint.CommonExpressionsFullPrettyPrinter;
 import de.monticore.lang.sysmlactions._ast.ASTSendActionUsage;
 import de.monticore.lang.sysmlstates._ast.ASTDoAction;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
+import de.monticore.lang.sysmlv2.types.CommonExpressionsJavaPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 
 import java.util.List;
@@ -51,8 +51,7 @@ public class AutomatonHelper {
   }
 
   public String printExpression(ASTExpression expr) {
-
-    CommonExpressionsFullPrettyPrinter prettyPrinter = new CommonExpressionsFullPrettyPrinter(new IndentPrinter());
+    CommonExpressionsJavaPrinter prettyPrinter = new CommonExpressionsJavaPrinter(new IndentPrinter());
     return prettyPrinter.prettyprint(expr);
   }
 
