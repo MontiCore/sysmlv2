@@ -1,4 +1,4 @@
-package de.monticore.lang.sysmlv2.generator;
+package de.monticore.lang.sysmlv2.generator.utils.resolve;
 
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
@@ -76,5 +76,5 @@ public class ResolveUtils {
   String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
   }
-  
+
 }

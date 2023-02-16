@@ -9,6 +9,7 @@ import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
+import de.monticore.lang.sysmlv2.generator.utils.resolve.AttributeResolveUtils;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
@@ -18,7 +19,6 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -135,10 +135,9 @@ public class ComponentUtils {
   }
 
   List<ASTPortUsage> removeDuplicateAttributes(List<List<ASTPortUsage>> attributeLists) {
-    var stringList = attributeLists.stream().flatMap(Collection::stream).map(ASTPortUsage::getName).collect(
-        Collectors.toList());
 
-    Set<String> stringSet = new HashSet<>(stringList);
+    Set<String> stringSet = attributeLists.stream().flatMap(Collection::stream).map(ASTPortUsage::getName).collect(
+        Collectors.toSet());
 
     List<List<ASTPortUsage>> returnList = new ArrayList<>(attributeLists);
 

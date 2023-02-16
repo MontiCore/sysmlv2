@@ -13,8 +13,8 @@ import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
+import de.monticore.lang.sysmlv2.generator.utils.resolve.AttributeResolveUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Attributes2CDVisitor implements SysMLPartsVisitor2 {

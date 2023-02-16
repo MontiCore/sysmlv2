@@ -7,6 +7,7 @@ import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
+import de.monticore.lang.sysmlv2.generator.utils.resolve.PartResolveUtils;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
@@ -24,7 +25,7 @@ GeneratorUtils generatorUtils = new GeneratorUtils();
     List<ASTPartUsage> attributeUsageList = partResolveUtils.getSubPartsOfElement(astPartUsage);
     //create astcdattributes for the current element
     return attributeUsageList.stream().map(
-        t -> createAttribute(t)).collect(
+        this::createAttribute).collect(
         Collectors.toList());
   }
 

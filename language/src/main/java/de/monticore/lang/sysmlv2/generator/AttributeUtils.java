@@ -4,6 +4,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
+import de.monticore.lang.sysmlv2.generator.utils.resolve.AttributeResolveUtils;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public class AttributeUtils {
     List<ASTAttributeUsage> attributeUsageList = attributeResolveUtils.getAttributesOfElement(astSysMLElement);
     //create astcdattributes for the current element
     return attributeUsageList.stream().map(
-        t -> createAttribute(t)).collect(
+        this::createAttribute).collect(
         Collectors.toList());
   }
 
