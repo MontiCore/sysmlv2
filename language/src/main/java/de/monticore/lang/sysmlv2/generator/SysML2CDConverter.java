@@ -15,6 +15,9 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.PartResolveUtils;
+import de.monticore.lang.sysmlv2.generator.visitor.Attributes2CDVisitor;
+import de.monticore.lang.sysmlv2.generator.visitor.Parts2CDVisitor;
+import de.monticore.lang.sysmlv2.generator.visitor.States2CDVisitor;
 import de.monticore.umlmodifier.UMLModifierMill;
 import de.se_rwth.commons.logging.Log;
 
