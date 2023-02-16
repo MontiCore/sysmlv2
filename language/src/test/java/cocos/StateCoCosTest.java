@@ -13,6 +13,7 @@ import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.SuccessionCoCo;
 import de.monticore.lang.sysmlv2.cocos.TransitionResolvableCoCo;
 import de.monticore.lang.sysmlv2.visitor.ActionSuccessionVisitor;
+import de.monticore.lang.sysmlv2.visitor.StateVisitor;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,8 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class StateCoCosTest {
 
   private static final String MODEL_PATH = "src/test/resources/cocos/states/0_valid.sysml";
-
-  private SysMLv2Parser parser = SysMLv2Mill.parser();
 
   @BeforeAll
   public static void init() {
@@ -53,8 +52,11 @@ public class StateCoCosTest {
         ASTSysMLModel ast = optAst.get();
         SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
         ActionSuccessionVisitor actionSuccessionVisitor = new ActionSuccessionVisitor();
+
+        StateVisitor stateVisitor = new StateVisitor();
         SysMLv2Traverser sysMLv2Traverser = SysMLv2Mill.traverser();
         sysMLv2Traverser.add4SysMLActions(actionSuccessionVisitor);
+        sysMLv2Traverser.add4SysMLStates(stateVisitor);
         sysMLv2Traverser.handle(ast);
 
         var checker = new SysMLv2CoCoChecker();

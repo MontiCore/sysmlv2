@@ -10,7 +10,9 @@ package StateActions {
 
 	state def VehicleStates { in operatingVehicle : Vehicle; }
 
-	state vehicleStates : VehicleStates {
+	state usage : VehicleStates;
+
+	state vehicleStates {
 		in operatingVehicle : Vehicle;
 
 		entry; then off;

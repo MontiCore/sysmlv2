@@ -43,7 +43,7 @@ public class StateSupertypes implements SysMLStatesASTStateDefCoCo, SysMLStatesA
   @Override
   public void check(ASTStateUsage node) {
     var nonExistent = node.streamSpecializations()
-        .flatMap(ASTSpecialization::streamSuperTypes).filter(t-> !(t instanceof ASTSysMLTyping))
+        .filter(t-> !(t instanceof ASTSysMLTyping)).flatMap(ASTSpecialization::streamSuperTypes)
         .filter(t -> node.getEnclosingScope().resolveStateUsage(printName(t)).isEmpty())
         .collect(Collectors.toList());
 
@@ -52,7 +52,7 @@ public class StateSupertypes implements SysMLStatesASTStateDefCoCo, SysMLStatesA
     }
 
     var nonExistentType = node.streamSpecializations()
-        .flatMap(ASTSpecialization::streamSuperTypes).filter(t -> t instanceof ASTSysMLTyping)
+        .filter(t -> t instanceof ASTSysMLTyping).flatMap(ASTSpecialization::streamSuperTypes)
         .filter(t -> node.getEnclosingScope().resolveStateDef(printName(t)).isEmpty())
         .collect(Collectors.toList());
 
