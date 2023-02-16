@@ -1,4 +1,4 @@
-package de.monticore.lang.sysmlv2.generator;
+package de.monticore.lang.sysmlv2.generator.utils;
 
 import com.google.common.collect.ImmutableMap;
 import de.monticore.cd.methodtemplates.CD4C;
@@ -63,7 +63,7 @@ public class GeneratorUtils {
     return qualifiedType(partsList);
   }
 
-  protected ASTMCQualifiedType qualifiedType(String qname) {
+  public ASTMCQualifiedType qualifiedType(String qname) {
     return qualifiedType(Splitters.DOT.splitToList(qname));
   }
 
@@ -72,7 +72,7 @@ public class GeneratorUtils {
         .setMCQualifiedName(CD4CodeMill.mCQualifiedNameBuilder().setPartsList(partsList).build()).build();
   }
 
-  ASTCDPackage initCdPackage(ASTSysMLElement element, ASTCDDefinition astcdDefinition, String baseName) {
+  public ASTCDPackage initCdPackage(ASTSysMLElement element, ASTCDDefinition astcdDefinition, String baseName) {
     List<String> basePackageName = List.of(baseName);
     List<String> partList = initCdPackage(element, basePackageName);
     ASTCDPackage cdPackage = CD4CodeMill.cDPackageBuilder()

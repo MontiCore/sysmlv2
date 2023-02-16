@@ -1,4 +1,4 @@
-package de.monticore.lang.sysmlv2.generator;
+package de.monticore.lang.sysmlv2.generator.utils;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDExtendUsage;
@@ -70,7 +70,7 @@ public class InterfaceUtils {
       specializationList = ((ASTAttributeDef) sysMLElement).getSpecializationList();
     }
     List<ASTMCType> supertypeList = specializationList.stream().filter(
-        t -> t instanceof ASTSysMLSpecialization).flatMap(s -> s.streamSuperTypes()).collect(
+        t -> t instanceof ASTSysMLSpecialization).flatMap(ASTSpecialization::streamSuperTypes).collect(
         Collectors.toList());
     ASTCDExtendUsage extendUsage = createExtendUsage(supertypeList, true);
     ASTCDInterface partInterface = CD4CodeMill.cDInterfaceBuilder().setName(name + "Interface").setModifier(

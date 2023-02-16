@@ -15,7 +15,8 @@ import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartUsageCoCo;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
-import de.monticore.lang.sysmlv2.generator.AttributeResolveUtils;
+import de.monticore.lang.sysmlstates._ast.ASTStateUsageTOP;
+import de.monticore.lang.sysmlv2.generator.utils.resolve.AttributeResolveUtils;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -139,14 +140,14 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
     if(element instanceof ASTPartUsage) {
       stateUsageList = ((ASTPartUsage) element).streamSysMLElements().filter(
           t -> t instanceof ASTStateUsage).map(t -> (ASTStateUsage) t).filter(
-          t -> t.isExhibited()).collect(
+          ASTStateUsageTOP::isExhibited).collect(
           Collectors.toList());
       name = ((ASTPartUsage) element).getName();
     }
     if(element instanceof ASTPartDef) {
       stateUsageList = ((ASTPartDef) element).streamSysMLElements().filter(
           t -> t instanceof ASTStateUsage).map(t -> (ASTStateUsage) t).filter(
-          t -> t.isExhibited()).collect(
+          ASTStateUsageTOP::isExhibited).collect(
           Collectors.toList());
 
       name = ((ASTPartDef) element).getName();

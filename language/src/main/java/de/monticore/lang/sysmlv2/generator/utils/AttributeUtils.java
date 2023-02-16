@@ -1,4 +1,4 @@
-package de.monticore.lang.sysmlv2.generator;
+package de.monticore.lang.sysmlv2.generator.utils;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -21,7 +21,7 @@ public class AttributeUtils {
     this.attributeResolveUtils = new AttributeResolveUtils();
   }
 
-  List<ASTCDAttribute> createAttributes(ASTSysMLElement astSysMLElement) {
+  public List<ASTCDAttribute> createAttributes(ASTSysMLElement astSysMLElement) {
     List<ASTAttributeUsage> attributeUsageList = attributeResolveUtils.getAttributesOfElement(astSysMLElement);
     //create astcdattributes for the current element
     return attributeUsageList.stream().map(

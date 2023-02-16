@@ -6,9 +6,9 @@ import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
-import de.monticore.lang.sysmlv2.generator.ComponentUtils;
-import de.monticore.lang.sysmlv2.generator.GeneratorUtils;
-import de.monticore.lang.sysmlv2.generator.PartUtils;
+import de.monticore.lang.sysmlv2.generator.utils.ComponentUtils;
+import de.monticore.lang.sysmlv2.generator.utils.GeneratorUtils;
+import de.monticore.lang.sysmlv2.generator.utils.PartUtils;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 

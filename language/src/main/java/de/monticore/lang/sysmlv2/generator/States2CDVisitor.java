@@ -12,6 +12,10 @@ import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._visitor.SysMLStatesVisitor2;
+import de.monticore.lang.sysmlv2.generator.utils.AttributeUtils;
+import de.monticore.lang.sysmlv2.generator.utils.ComponentUtils;
+import de.monticore.lang.sysmlv2.generator.utils.GeneratorUtils;
+import de.monticore.lang.sysmlv2.generator.utils.PartUtils;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 
 import java.util.*;

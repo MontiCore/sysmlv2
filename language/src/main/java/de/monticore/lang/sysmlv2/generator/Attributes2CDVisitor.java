@@ -13,6 +13,9 @@ import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
+import de.monticore.lang.sysmlv2.generator.utils.AttributeUtils;
+import de.monticore.lang.sysmlv2.generator.utils.GeneratorUtils;
+import de.monticore.lang.sysmlv2.generator.utils.InterfaceUtils;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.AttributeResolveUtils;
 
 import java.util.List;

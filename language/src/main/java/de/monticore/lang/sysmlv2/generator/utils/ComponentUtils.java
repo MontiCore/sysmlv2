@@ -1,4 +1,4 @@
-package de.monticore.lang.sysmlv2.generator;
+package de.monticore.lang.sysmlv2.generator.utils;
 
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
@@ -34,8 +34,8 @@ public class ComponentUtils {
 
   public List<ASTPortUsage> outputPortList;
 
-  void createComponentMethods(ASTSysMLElement astSysMLElement, CD4C cd4C, ASTCDClass partClass,
-                              List<ASTPartUsage> subComponents, List<ASTAttributeUsage> attributeUsageList) {
+  public void createComponentMethods(ASTSysMLElement astSysMLElement, CD4C cd4C, ASTCDClass partClass,
+                                     List<ASTPartUsage> subComponents, List<ASTAttributeUsage> attributeUsageList) {
     setPortLists(astSysMLElement);
     cd4C.addMethod(partClass, "sysml2cd.component.ComponentIsSyncedMethod", inputPortList);
     cd4C.addMethod(partClass, "sysml2cd.component.ComponentTickMethod", outputPortList, subComponents);

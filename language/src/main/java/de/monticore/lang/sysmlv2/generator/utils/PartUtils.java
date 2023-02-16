@@ -1,4 +1,4 @@
-package de.monticore.lang.sysmlv2.generator;
+package de.monticore.lang.sysmlv2.generator.utils;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class PartUtils {
 PartResolveUtils partResolveUtils = new PartResolveUtils();
 GeneratorUtils generatorUtils = new GeneratorUtils();
-  List<ASTCDAttribute> createPartsAsAttributes(ASTSysMLElement astPartUsage){
+  public List<ASTCDAttribute> createPartsAsAttributes(ASTSysMLElement astPartUsage){
     List<ASTPartUsage> attributeUsageList = partResolveUtils.getSubPartsOfElement(astPartUsage);
     //create astcdattributes for the current element
     return attributeUsageList.stream().map(
@@ -71,7 +71,7 @@ GeneratorUtils generatorUtils = new GeneratorUtils();
             + " could not be resolved.");
   return generatorUtils.qualifiedType("");
   }
-  ASTMCType getNameOfSpecialication(ASTMCType spec, ASTPartUsage astPartUsage) {
+  public ASTMCType getNameOfSpecialication(ASTMCType spec, ASTPartUsage astPartUsage) {
     ASTPartUsage specPartUsage = astPartUsage.getEnclosingScope().resolvePartUsage(printName(spec)).get().getAstNode();
     var specializationList = specPartUsage.streamSpecializations().filter(
         t -> t instanceof ASTSysMLSpecialization).flatMap(
@@ -95,7 +95,7 @@ GeneratorUtils generatorUtils = new GeneratorUtils();
     return null;
   }
 
-  boolean isAdHocClassDefinition(ASTPartUsage astPartUsage) {
+  public boolean isAdHocClassDefinition(ASTPartUsage astPartUsage) {
 
     var specializationList = astPartUsage.streamSpecializations().filter(
         t -> t instanceof ASTSysMLSpecialization).flatMap(
