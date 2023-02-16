@@ -1,5 +1,6 @@
 package de.monticore.lang.sysmlv2.cocos;
 
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlconnections._ast.ASTFlow;
 import de.monticore.lang.sysmlconnections._cocos.SysMLConnectionsASTFlowCoCo;
 import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
@@ -74,8 +75,14 @@ public class ConnectionGeneratorCoCos implements SysMLConnectionsASTFlowCoCo {
   }
 
   Optional<PortUsageSymbol> resolvePort(String QName, String BaseName, ISysMLPartsScope scope) {
+    String parentPart;
+    if(QName.equals(BaseName)) {
+      parentPart = QName;
+    }
+    else {
+      parentPart = QName.substring(0, QName.length() - BaseName.length() - 1);
+    }
 
-    var parentPart = QName.substring(0, QName.length() - BaseName.length() - 1);
     var parentPartDef = scope.resolvePartDefDown(parentPart);
     var parentPartUsage = scope.resolvePartUsageDown(parentPart);
     //check first if its present in transitive supertypes of parts
@@ -95,9 +102,55 @@ public class ConnectionGeneratorCoCos implements SysMLConnectionsASTFlowCoCo {
   }
 
   void checkPortDirections(ASTPortUsage source, ASTPortUsage target) {
-    if(source.getSysMLFeatureDirection().getIntValue() == target.getSysMLFeatureDirection().getIntValue()) {
-      source.getEnclosingScope().getAstNode();
+    if(source.getSysMLFeatureDirection().getIntValue() == in && (target.getSysMLFeatureDirection().getIntValue() == in
+        || target.getSysMLFeatureDirection().getIntValue() == inout)) {
+      //target parent needs to be a sub element of source parent
+      if(!areParentsSubParts(source, target))
+        Log.error("Flow from port " + source.getName() + " to " + target.getName()
+            + " is from \"in\" to \"in\"/\"inout\", but they are not sub-elements.");
     }
+    if(source.getSysMLFeatureDirection().getIntValue() == out
+        && target.getSysMLFeatureDirection().getIntValue() == in) {
+      //target kein sub element of source bzw source kein sub element von target
+      if(areParentsSubParts(source, target) || areParentsSubParts(target, source))
+        Log.error("Flow from port " + source.getName() + " to " + target.getName()
+            + " is from \"out\" to \"in\", but cannot be sub-elements.");
+    }
+    if(source.getSysMLFeatureDirection().getIntValue() == out
+        && target.getSysMLFeatureDirection().getIntValue() == out) {
+      //target sub element of source
+      if(!areParentsSubParts(target, source))
+        Log.error("Flow from port " + source.getName() + " to " + target.getName()
+            + " is from \"out\" to \"out\", but they are not sub-elements.");
+    }
+    if(source.getSysMLFeatureDirection().getIntValue() == inout
+        && target.getSysMLFeatureDirection().getIntValue() == out) {
+      //target sub element of source
+      if(!areParentsSubParts(source, target))
+        Log.error("Flow from port " + source.getName() + " to " + target.getName()
+            + " is from \"inout\" to \"out\", but they are not sub-elements.");
+    }
+
+    if(source.getSysMLFeatureDirection().getIntValue() == in
+        && target.getSysMLFeatureDirection().getIntValue() == out) {
+      Log.error("Flow from port " + source.getName() + " to " + target.getName()
+          + " is from \"in\" to \"out\" this is not allowed.");
+
+    }
+
+  }
+
+  boolean areParentsSubParts(ASTPortUsage parentPort, ASTPortUsage childPort) {
+    var parentPortPart = parentPort.getEnclosingScope().getAstNode();
+    var childPortPart = childPort.getEnclosingScope().getAstNode();
+    List<ASTSysMLElement> sysMLElementList = new ArrayList<>();
+    if(parentPortPart instanceof ASTPartDef)
+      sysMLElementList = ((ASTPartDef) parentPortPart).getSysMLElementList();
+    if(parentPortPart instanceof ASTPartUsage)
+      sysMLElementList = ((ASTPartUsage) parentPortPart).getSysMLElementList();
+
+    return sysMLElementList.contains((ASTSysMLElement) childPortPart);
+
   }
 
 }
