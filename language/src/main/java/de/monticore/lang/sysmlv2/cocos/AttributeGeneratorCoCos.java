@@ -7,7 +7,7 @@ import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeUsageCoCo;
-import de.monticore.lang.sysmlv2.generator.AttributeResolveUtils;
+import de.monticore.lang.sysmlv2.generator.utils.resolve.AttributeResolveUtils;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
