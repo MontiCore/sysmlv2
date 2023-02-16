@@ -11,6 +11,7 @@ import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.cocos.StateGeneratorCoCo;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.SuccessionCoCo;
+import de.monticore.lang.sysmlv2.cocos.TransitionResolvableCoCo;
 import de.monticore.lang.sysmlv2.visitor.ActionSuccessionVisitor;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
@@ -60,6 +61,7 @@ public class StateCoCosTest {
         checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
         checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
         checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateGeneratorCoCo());
+        checker.addCoCo(new TransitionResolvableCoCo());
         checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateGeneratorCoCo());
 
         checker.addCoCo(new SuccessionCoCo());

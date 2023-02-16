@@ -1,16 +1,12 @@
 package de.monticore.lang.sysmlv2.cocos;
 
-import de.monticore.lang.sysmlactions._ast.ASTActionDef;
-import de.monticore.lang.sysmlactions._ast.ASTActionUsage;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
-import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
-import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartUsageCoCo;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
@@ -43,11 +39,7 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
     var typing = node.streamSpecializations().filter(
         t -> t instanceof ASTSysMLTyping).map(ASTSpecialization::getSuperTypesList).collect(
         Collectors.toList());
-    var relevantElements = (int) node.getSysMLElementList().stream().filter(
-        t -> t instanceof ASTActionDef | t instanceof ASTActionUsage | t instanceof ASTAttributeUsage
-            | t instanceof ASTPartUsage
-            | t instanceof ASTPortUsage).count(); //partUsage with at least one of the types is seen as a adhoc class definition
-    if(specialications.isEmpty() && relevantElements == 0 && redefinitons.isEmpty() && typing.isEmpty()) {
+    if(specialications.isEmpty() && node.getSysMLElementList().size() == 0 && redefinitons.isEmpty() && typing.isEmpty()) {
       Log.error("The Part Usage " + node.getName()
           + " needs a type (at least one part def), redefine a part usage or specialize another part usage");
     }
