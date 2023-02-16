@@ -59,7 +59,8 @@ public class StateCoCosTest {
         var checker = new SysMLv2CoCoChecker();
         checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
         checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
-        checker.addCoCo(new StateGeneratorCoCo());
+        checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateGeneratorCoCo());
+        checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateGeneratorCoCo());
 
         checker.addCoCo(new SuccessionCoCo());
         checker.checkAll(ast);
