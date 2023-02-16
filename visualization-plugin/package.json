@@ -1,0 +1,81 @@
+{
+  "name": "sysmlvisualisation",
+  "displayName": "SysmlVisualisation",
+  "description": "Extends IVE with Model Visualisation",
+  "version": "0.0.1",
+  "publisher": "MontiBelle",
+  "license": "tbd",
+  "engines": {
+    "vscode": "^1.73.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "sysmlvisualisation.visualization.sysml",
+        "title": "Visualize",
+        "icon": {
+          "light": "res/icons/light/misc.svg",
+          "dark": "res/icons/dark/misc.svg"
+        }
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "sysmlvisualisation.visualization.sysml",
+          "when": "resourceLangId == SysMLv2",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "sysmlvisualisation.visualization.sysml",
+          "when": "resourceLangId == SysMLv2"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Visualisation",
+      "properties": {
+        "sysmlvisualisation.dependencies.version": {
+          "type": "string",
+          "default": "7.1.0-20220201.160529-8"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.73.0",
+    "@types/glob": "^8.0.0",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "16.x",
+    "@typescript-eslint/eslint-plugin": "^5.42.0",
+    "@typescript-eslint/parser": "^5.42.0",
+    "eslint": "^8.26.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.1.0",
+    "typescript": "^4.8.4",
+    "@vscode/test-electron": "^2.2.0"
+  },
+  "extensionPack": [
+    "jock.svg"
+  ],
+  "dependencies": {
+    "log4js": "~6.1.0"
+  }
+}
