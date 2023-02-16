@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.cocos;
 
+import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlstates._ast.ASTStateDef;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateDefCoCo;
@@ -26,11 +28,11 @@ public class StateSupertypes implements SysMLStatesASTStateDefCoCo, SysMLStatesA
   @Override
   public void check(ASTStateDef node) {
     var nonExistent = node.streamSpecializations()
-        .flatMap(s -> s.streamSuperTypes())
+        .flatMap(ASTSpecialization::streamSuperTypes)
         .filter(t -> node.getEnclosingScope().resolveStateDef(printName(t)).isEmpty())
         .collect(Collectors.toList());
 
-    for(var problem: nonExistent) {
+    for (var problem : nonExistent) {
       Log.error("Could not find state definition \"" + printName(problem) + "\".");
     }
   }
@@ -41,13 +43,21 @@ public class StateSupertypes implements SysMLStatesASTStateDefCoCo, SysMLStatesA
   @Override
   public void check(ASTStateUsage node) {
     var nonExistent = node.streamSpecializations()
-        .flatMap(s -> s.streamSuperTypes())
-        .filter(t -> node.getEnclosingScope().resolveStateDef(printName(t)).isEmpty()
-            && node.getEnclosingScope().resolveStateUsage(printName(t)).isEmpty())
+        .flatMap(ASTSpecialization::streamSuperTypes).filter(t-> !(t instanceof ASTSysMLTyping))
+        .filter(t -> node.getEnclosingScope().resolveStateUsage(printName(t)).isEmpty())
         .collect(Collectors.toList());
 
-    for(var problem: nonExistent) {
-      Log.error("Could not find state definition or usage with the name \"" + printName(problem) + "\".");
+    for (var problem : nonExistent) {
+      Log.error("State Usage "+node.getName()+ " has a redefinition/specialication \"" + printName(problem) + "\" ,could not find state definition with this name .");
+    }
+
+    var nonExistentType = node.streamSpecializations()
+        .flatMap(ASTSpecialization::streamSuperTypes).filter(t -> t instanceof ASTSysMLTyping)
+        .filter(t -> node.getEnclosingScope().resolveStateDef(printName(t)).isEmpty())
+        .collect(Collectors.toList());
+
+    for (var problem : nonExistentType) {
+      Log.error("State Usage "+node.getName()+ " has the type \"" + printName(problem) + "\" ,could not find state definition with this name .");
     }
   }
 }
