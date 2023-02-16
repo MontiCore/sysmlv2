@@ -2,10 +2,10 @@
 ${tc.signature("part", "input", "output")}
 
 ${cd4c.method("public void compute()")}
-    de.monticore.lang.sysmlv2.generator.log.Log.comment("Computing component " + this.getClass().getName() + "");
+      de.monticore.lang.sysmlv2.generator.log.Log.comment("Computing component " + this.getClass().getName() + "");
     // log input values
     <#list input as port>
-      montiarc.rte.log.Log.trace("Value of input port ${port.getName()} = "  + this.get${port.getName()?cap_first}().getValue());
+      de.monticore.lang.sysmlv2.generator.log.Log.trace("Value of input port ${port.getName()} = "  + this.get${port.getName()?cap_first}().getValue());
     </#list>
 
 
@@ -15,10 +15,10 @@ ${cd4c.method("public void compute()")}
     ${automaton.getName()}.compute();
 </#if>
 // run compute on subComponent
-    java.util.List${r"<montiarc.rte.timesync.IComponent>"} notYetComputed = new java.util.ArrayList<>(getAllSubcomponents());
+    java.util.List${r"<de.monticore.lang.sysmlv2.generator.timesync.IComponent>"} notYetComputed = new java.util.ArrayList<>(getAllSubcomponents());
     while(notYetComputed.size() > 0) {
-      java.util.Set${r"<montiarc.rte.timesync.IComponent>"} computedThisIteration = new java.util.HashSet<>();
-      for(montiarc.rte.timesync.IComponent subcomponent : notYetComputed) {
+      java.util.Set${r"<de.monticore.lang.sysmlv2.generator.timesync.IComponent>"} computedThisIteration = new java.util.HashSet<>();
+      for(de.monticore.lang.sysmlv2.generator.timesync.IComponent subcomponent : notYetComputed) {
         if(subcomponent.isSynced()) {
           subcomponent.compute();
           computedThisIteration.add(subcomponent);
@@ -32,5 +32,5 @@ ${cd4c.method("public void compute()")}
     }
     // log output values
     <#list output as port>
-      montiarc.rte.log.Log.trace("Value of output port ${port.getName()} = "+ this.get${port.getName()?cap_first}().getValue());
+      de.monticore.lang.sysmlv2.generator.log.Log.trace("Value of output port ${port.getName()} = "+ this.get${port.getName()?cap_first}().getValue());
     </#list>

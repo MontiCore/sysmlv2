@@ -20,7 +20,7 @@ ${cd4c.method("public static void main(String[] args)")}
       ${connection.getSource()}.connect(${connection.getTarget()});
     </#list>
 
-    final List${"<IComponent>"} componentList =  java.util.Arrays.asList(new montiarc.rte.timesync.IComponent[] {
+    final List${"<de.monticore.lang.sysmlv2.generator.timesync.IComponent>"} componentList =  java.util.Arrays.asList(new de.monticore.lang.sysmlv2.generator.timesync.IComponent[] {
     <#list listMainComponent as subcomponent>
         ${subcomponent.getName()}<#sep>, </#sep>
     </#list>
@@ -31,7 +31,7 @@ ${cd4c.method("public static void main(String[] args)")}
     for(int cycles = 0; cycles < deployUtils.getMaxCyclesCount(); cycles++) {
         de.monticore.lang.sysmlv2.generator.log.Log.trace("::: Time t = " + cycles + " :::");
         time = System.currentTimeMillis();
-        for(IComponent element : componentList){
+        for(de.monticore.lang.sysmlv2.generator.timesync.IComponent element : componentList){
             element.compute();
             element.tick();
         }
