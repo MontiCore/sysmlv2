@@ -1,4 +1,4 @@
-package de.monticore.lang.sysmlv2.generator;
+package de.monticore.lang.sysmlv2.generator.helper;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.lang.sysmlactions._ast.ASTSendActionUsage;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class AutomatonHelper {
   public List<ASTSysMLTransition> getAllTransitionsWithGuardFrom(ASTStateUsage automaton, ASTStateUsage state) {
-    return getAllTransitionsFrom(automaton, state).stream().filter(t -> t.isPresentGuard()).collect(
+    return getAllTransitionsFrom(automaton, state).stream().filter(ASTSysMLTransition::isPresentGuard).collect(
         Collectors.toList());
   }
 

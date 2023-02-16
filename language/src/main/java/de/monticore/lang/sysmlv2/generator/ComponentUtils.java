@@ -200,7 +200,7 @@ public class ComponentUtils {
     return printName(attributeUsageList.get(0));
   }
 
-  boolean isPortDelayed(ASTPortUsage portUsage) {
+  public boolean isPortDelayed(ASTPortUsage portUsage) {
 
     var expression = attributeResolveUtils.getAttributesOfElement(portUsage).stream().filter(
         t -> t.getName().equals("delayed")).filter(ASTAttributeUsage::isPresentExpression).map(

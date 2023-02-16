@@ -51,7 +51,7 @@ public class GeneratorUtils {
 
   }
 
-  protected ASTMCQualifiedType attributeType(ASTAttributeUsage element) {
+  public ASTMCQualifiedType attributeType(ASTAttributeUsage element) {
     var sysMLTypingList = element.getSpecializationList().stream().filter(
         t -> t instanceof ASTSysMLTyping).map(u -> ((ASTSysMLTyping) u)).collect(Collectors.toList());
     String typString = sysMLTypingList.get(0).getSuperTypes(0).printType(
@@ -109,8 +109,7 @@ public class GeneratorUtils {
   boolean isBasicType(String typeName) {
     return scalarValueMapping.containsKey(typeName);
   }
-  ImmutableMap<String, String> getScalarValueMapping (){
-    ImmutableMap<String, String> immutableMap = ImmutableMap.copyOf(scalarValueMapping);
-    return immutableMap;
+  public ImmutableMap<String, String> getScalarValueMapping(){
+    return ImmutableMap.copyOf(scalarValueMapping);
   }
 }

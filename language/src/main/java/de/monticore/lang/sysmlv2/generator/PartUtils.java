@@ -41,7 +41,7 @@ GeneratorUtils generatorUtils = new GeneratorUtils();
     return null;
   }
 
-  ASTMCQualifiedType partType(ASTPartUsage element) {
+  public ASTMCQualifiedType partType(ASTPartUsage element) {
     var sysMLTypingList = element.getSpecializationList().stream().filter(
         t -> t instanceof ASTSysMLTyping).map(u -> ((ASTSysMLTyping) u)).collect(Collectors.toList());
     if(isAdHocClassDefinition(element)) return generatorUtils.qualifiedType(element.getName());
