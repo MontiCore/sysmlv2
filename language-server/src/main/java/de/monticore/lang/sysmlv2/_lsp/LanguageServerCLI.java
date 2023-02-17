@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 
 public class LanguageServerCLI {
+
   public static final Logger logger = LoggerFactory.getLogger(SysMLv2LanguageServerCLI.class);
 
   public static void main(final String[] args) throws Exception {
