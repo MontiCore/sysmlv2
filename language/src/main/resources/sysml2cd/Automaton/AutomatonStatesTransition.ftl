@@ -40,13 +40,8 @@ ${cd4c.method("protected void transitionFrom${state.getName()?cap_first}()")}
   // reaction
       //TODO add do actions
     <#if transition.isPresentDoAction()>
-        <#if autHelper.isSendAction(transition.getDoAction())>
-          <#assign sendAction = autHelper.castToSend(transition.getDoAction())>
-
-          this.parentPart.get${sendAction.getTarget()?cap_first}().setValue(${autHelper.printExpression(sendAction.getPayload())});
-
-        <#else>
-        </#if>
+        ${tc.includeArgs("sysml2cd.actions.ActionUsage.ftl",transition.getDoAction())
+        }
     </#if>
   // result
     //TODO set outputs

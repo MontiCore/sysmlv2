@@ -59,8 +59,12 @@ public class AutomatonHelper {
     if(doAction.isPresentActionUsage()) {
       return doAction.getActionUsage() instanceof ASTSendActionUsage;
     }
-    else {
-      //TODO resolve name of action and check if its a send action
+    else if(doAction.isPresentAction()) {
+      var actionResolve = doAction.getEnclosingScope().resolveActionUsage(doAction.getAction());
+      if(actionResolve.isPresent()) {
+        if(actionResolve.get().getAstNode() instanceof ASTSendActionUsage)
+          return true;
+      }
     }
     return false;
   }
@@ -69,25 +73,28 @@ public class AutomatonHelper {
     if(doAction.isPresentActionUsage()) {
       return (ASTSendActionUsage) doAction.getActionUsage();
     }
-    else {
-      //TODO
-      return null;
+    else if(doAction.isPresentAction()) {
+      var actionResolve = doAction.getEnclosingScope().resolveActionUsage(doAction.getAction());
+      if(actionResolve.isPresent())
+        return (ASTSendActionUsage) actionResolve.get().getAstNode();
+
+    }
+    return null;
+  }
+
+    public String getNameOfDoAction (ASTDoAction doAction){
+      return doAction.getAction();
+    }
+
+    public boolean hasEntryAction (ASTStateUsage stateUsage){
+      return stateUsage.getEntryActionList().size() > 0;
+    }
+
+    public boolean hasExitAction (ASTStateUsage stateUsage){
+      return stateUsage.getExitActionList().size() > 0;
+    }
+
+    public boolean hasDoAction (ASTStateUsage stateUsage){
+      return stateUsage.getDoActionList().size() > 0;
     }
   }
-
-  public String getNameOfDoAction(ASTDoAction doAction) {
-    return doAction.getAction();
-  }
-
-  public boolean hasEntryAction(ASTStateUsage stateUsage) {
-    return stateUsage.getEntryActionList().size() > 0;
-  }
-
-  public boolean hasExitAction(ASTStateUsage stateUsage) {
-    return stateUsage.getExitActionList().size() > 0;
-  }
-
-  public boolean hasDoAction(ASTStateUsage stateUsage) {
-    return stateUsage.getDoActionList().size() > 0;
-  }
-}
