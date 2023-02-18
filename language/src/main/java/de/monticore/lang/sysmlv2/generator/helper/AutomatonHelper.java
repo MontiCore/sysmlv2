@@ -1,17 +1,25 @@
 package de.monticore.lang.sysmlv2.generator.helper;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.lang.sysmlactions._ast.ASTActionUsage;
 import de.monticore.lang.sysmlactions._ast.ASTSendActionUsage;
+import de.monticore.lang.sysmlactions._ast.ASTSysMLSuccession;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
+import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
+import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlstates._ast.ASTDoAction;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
 import de.monticore.lang.sysmlv2.types.CommonExpressionsJavaPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class AutomatonHelper {
+  ComponentHelper componentHelper = new ComponentHelper();
+
   public List<ASTSysMLTransition> getAllTransitionsWithGuardFrom(ASTStateUsage automaton, ASTStateUsage state) {
     return getAllTransitionsFrom(automaton, state).stream().filter(ASTSysMLTransition::isPresentGuard).collect(
         Collectors.toList());
@@ -82,19 +90,62 @@ public class AutomatonHelper {
     return null;
   }
 
-    public String getNameOfDoAction (ASTDoAction doAction){
-      return doAction.getAction();
-    }
-
-    public boolean hasEntryAction (ASTStateUsage stateUsage){
-      return stateUsage.getEntryActionList().size() > 0;
-    }
-
-    public boolean hasExitAction (ASTStateUsage stateUsage){
-      return stateUsage.getExitActionList().size() > 0;
-    }
-
-    public boolean hasDoAction (ASTStateUsage stateUsage){
-      return stateUsage.getDoActionList().size() > 0;
-    }
+  public String getNameOfDoAction(ASTDoAction doAction) {
+    return doAction.getAction();
   }
+
+  public boolean hasEntryAction(ASTStateUsage stateUsage) {
+    return stateUsage.getEntryActionList().size() > 0;
+  }
+
+  public boolean hasExitAction(ASTStateUsage stateUsage) {
+    return stateUsage.getExitActionList().size() > 0;
+  }
+
+  public boolean hasDoAction(ASTStateUsage stateUsage) {
+    return stateUsage.getDoActionList().size() > 0;
+  }
+
+  public String getParametersOfActionAsString(ASTActionUsage astActionUsage, List<ASTSysMLElement> attributeUsageList) {
+    return attributeUsageList.stream().map(t -> typeWithNameOfElement(t)).collect(
+        Collectors.joining(","));
+  }
+
+  String typeWithNameOfElement(ASTSysMLElement element){
+    if(element instanceof ASTAttributeUsage) {
+      return componentHelper.getAttributeType((ASTAttributeUsage) element) + " " + ((ASTAttributeUsage)element).getName();
+    }
+    if(element instanceof ASTPartUsage) {
+      return componentHelper.getPartType(((ASTPartUsage) element))  + " " + ((ASTPartUsage)element).getName();
+    }
+    return "";
+  }
+
+  public List<ASTSysMLSuccession> getSuccessions(ASTActionUsage actionUsage) {
+    var succList = actionUsage.streamSysMLElements().filter(t -> t instanceof ASTSysMLSuccession).map(
+        t -> (ASTSysMLSuccession) t).collect(
+        Collectors.toList());
+
+    List<ASTSysMLSuccession> orderedList = new ArrayList<>();
+    if(!succList.isEmpty()) {
+      var successionOptionalFirst = succList.stream().filter(t -> t.getSrc().equals("start")).findFirst();
+
+      if(successionOptionalFirst.isPresent()) {
+        ASTSysMLSuccession currentSuccession = successionOptionalFirst.get();
+        orderedList.add(currentSuccession);
+        for (int index = 1; index < succList.size(); index++) {
+
+          ASTSysMLSuccession finalCurrentSuccession = currentSuccession;
+          var successionOptional = succList.stream().filter(
+              t -> t.getSrc().equals(finalCurrentSuccession.getTgt())).findFirst();
+          if(successionOptional.isPresent()) {
+            currentSuccession = succList.stream().filter(
+                t -> t.getSrc().equals(finalCurrentSuccession.getTgt())).findFirst().get();
+            orderedList.add(currentSuccession);
+          }
+        }
+      }
+    }
+    return orderedList;
+  }
+}
