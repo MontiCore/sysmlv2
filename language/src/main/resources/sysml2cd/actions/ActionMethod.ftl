@@ -13,7 +13,7 @@ ${cd4c.method("public void ${action.getName()}(${autHelper.getParametersOfAction
 </#list>
 
 
-<#list autHelper.getSuccessions(action) as succession>
+<#list actionsHelper.getSuccessions(action) as succession>
   <#if succession.isPresentGuard()>
       if (${autHelper.printExpression(succession.getGuard())}){
           ${succession.getTgt()}();

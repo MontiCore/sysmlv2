@@ -51,6 +51,7 @@ import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.SuccessionCoCo;
 import de.monticore.lang.sysmlv2.cocos.SuccessionReachabilityGeneratorCoCos;
 import de.monticore.lang.sysmlv2.cocos.TransitionResolvableCoCo;
+import de.monticore.lang.sysmlv2.generator.helper.ActionsHelper;
 import de.monticore.lang.sysmlv2.generator.helper.AutomatonHelper;
 import de.monticore.lang.sysmlv2.generator.helper.ComponentHelper;
 import de.monticore.lang.sysmlv2.generator.SysML2CDConverter;
@@ -331,6 +332,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     GeneratorSetup setup = new GeneratorSetup();
     GlobalExtensionManagement glex = new GlobalExtensionManagement();
     glex.setGlobalValue("autHelper", new AutomatonHelper());
+    glex.setGlobalValue("actionsHelper", new ActionsHelper());
     glex.setGlobalValue("compHelper", new ComponentHelper());
     setup.setGlex(glex);
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
