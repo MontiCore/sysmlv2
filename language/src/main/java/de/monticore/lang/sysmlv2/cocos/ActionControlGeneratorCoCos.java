@@ -21,7 +21,7 @@ public class ActionControlGeneratorCoCos implements SysMLActionsASTActionUsageCo
       elementList = ((ASTActionUsage) parent).getSysMLElementList();
 
     if(parent instanceof ASTActionDef)
-      elementList = ((ASTActionUsage) parent).getSysMLElementList();
+      elementList = ((ASTActionDef) parent).getSysMLElementList();
 
     long thisElementAsSource = elementList.stream().filter(t -> t instanceof ASTSysMLSuccession).map(
         s -> ((ASTSysMLSuccession) s).getSrc()).filter(t -> t.equals(node.getName())).count();

@@ -13,6 +13,10 @@ import de.monticore.lang.sysmlactions._ast.ASTSysMLFirst;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionUsageCoCo;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
+import de.monticore.lang.sysmlparts._ast.ASTPartDef;
+import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
+import de.monticore.lang.sysmlparts._ast.ASTPortDef;
+import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.se_rwth.commons.logging.Log;
 
 public class ActionGeneratorCoCos implements SysMLActionsASTActionDefCoCo, SysMLActionsASTActionUsageCoCo {
@@ -37,7 +41,7 @@ public class ActionGeneratorCoCos implements SysMLActionsASTActionDefCoCo, SysML
       for (ASTSysMLElement x : node.getSysMLElementList()) {
         if(x instanceof ASTSysMLFirst) {
           firstCount++;
-          if (!((ASTSysMLFirst) x).getName().equals("start")) {
+          if(!((ASTSysMLFirst) x).getName().equals("start")) {
             Log.error("Action first usage has to use the name \" start\".");
           }
         }
@@ -46,5 +50,10 @@ public class ActionGeneratorCoCos implements SysMLActionsASTActionDefCoCo, SysML
         Log.error("ActionUsage " + node.getName() + " has " + firstCount + " \"first\" usage, but needs exactly 1.");
       }
     }
+
+    if(node.streamSysMLElements().anyMatch(
+        t -> t instanceof ASTPortUsage | t instanceof ASTPartUsage | t instanceof ASTPortDef
+            | t instanceof ASTPartDef))
+      Log.error("ActionUsage " + node.getName() + " has port/part usages/defs as sub elements, this is not allowed.");
   }
 }
