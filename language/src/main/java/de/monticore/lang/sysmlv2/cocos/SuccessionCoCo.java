@@ -33,10 +33,11 @@ public class SuccessionCoCo implements SysMLActionsASTSysMLSuccessionCoCo {
     }
     boolean actionTgtPresent;
     actionTgtPresent = node.getEnclosingScope().resolveActionUsage(node.getTgt()).isPresent();
-
-    if(!actionTgtPresent) {
-      Log.error("Could not find action usage with the name \"" + node.getTgt() + "\" for "
-          + srcName + ".");
+    if(!node.getTgt().equals("done")) {
+      if(!actionTgtPresent) {
+        Log.error("Could not find action usage with the name \"" + node.getTgt() + "\" for "
+            + srcName + ".");
+      }
     }
 
     if(srcName.equals(node.getTgt())) {

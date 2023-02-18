@@ -49,6 +49,7 @@ import de.monticore.lang.sysmlv2.cocos.StateGeneratorCoCo;
 import de.monticore.lang.sysmlv2.cocos.StateNameCoCos;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.SuccessionCoCo;
+import de.monticore.lang.sysmlv2.cocos.SuccessionReachabilityGeneratorCoCos;
 import de.monticore.lang.sysmlv2.cocos.TransitionResolvableCoCo;
 import de.monticore.lang.sysmlv2.generator.helper.AutomatonHelper;
 import de.monticore.lang.sysmlv2.generator.helper.ComponentHelper;
@@ -140,6 +141,8 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLPartsASTPartUsageCoCo) new PartsGeneratorCoCos());
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateGeneratorCoCo());
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateGeneratorCoCo());
+    checker.addCoCo((SysMLActionsASTActionUsageCoCo) new SuccessionReachabilityGeneratorCoCos());
+    checker.addCoCo((SysMLActionsASTActionDefCoCo) new SuccessionReachabilityGeneratorCoCos());
     checker.addCoCo(new TransitionResolvableCoCo());
     checker.addCoCo(new SuccessionCoCo());
     checker.checkAll(ast);

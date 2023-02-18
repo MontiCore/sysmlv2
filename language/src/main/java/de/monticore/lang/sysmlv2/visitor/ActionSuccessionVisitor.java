@@ -31,12 +31,14 @@ public class ActionSuccessionVisitor implements SysMLActionsVisitor2 {
       int index = elementList.indexOf(node);
       for (int i = index - 1; i >= 0; i--) {
         ASTSysMLElement element = elementList.get(i);
-        if(element instanceof ASTActionUsage && target instanceof ASTActionUsage) {
+        if(element instanceof ASTActionUsage && (target instanceof ASTActionUsage || (target == null
+            && node.getTgt().equals("done")))) {
           node.setSrc(((ASTActionUsage) element).getName());
           srcSet = true;
           break;
         }
-        if(element instanceof ASTSysMLFirst && target instanceof ASTActionUsage) {
+        if(element instanceof ASTSysMLFirst && (target instanceof ASTActionUsage || (target == null
+            && node.getTgt().equals("done")))) {
           node.setSrc(((ASTSysMLFirst) element).getName());
           srcSet = true;
           break;
@@ -51,11 +53,7 @@ public class ActionSuccessionVisitor implements SysMLActionsVisitor2 {
       }
       if(!node.isPresentSrc()
           && !srcSet) { //TODO soll eventuell geandert werden, ob das durch CoCos gesetzt werden soll
-        if(target instanceof ASTStateUsage) {
-
-          elementList.set(index, createTransition("start", node));
-        }
-        node.setSrc("start");
+        Log.error("Could not resolve source of the succession.");
       }
     }
     else {
