@@ -24,46 +24,70 @@ public class ActionSuccessionVisitor implements SysMLActionsVisitor2 {
 
   @Override
   public void visit(ASTSysMLSuccession node) {
-    ASTSysMLElement target = resolveTarget(node);
-    boolean srcSet = false;
-    if(!node.isPresentSrc()) {
-      List<ASTSysMLElement> elementList = getElementsofParent(node.getEnclosingScope().getAstNode());
-      int index = elementList.indexOf(node);
-      for (int i = index - 1; i >= 0; i--) {
-        ASTSysMLElement element = elementList.get(i);
-        if(element instanceof ASTActionUsage && (target instanceof ASTActionUsage || (target == null
-            && node.getTgt().equals("done")))) {
-          node.setSrc(((ASTActionUsage) element).getName());
-          srcSet = true;
-          break;
+    ASTNode parent = node.getEnclosingScope().getAstNode();
+
+    if(parent instanceof ASTActionUsage || parent instanceof ASTActionDef) {
+      ASTSysMLElement target = resolveTarget(node);
+      boolean srcSet = false;
+      if(!node.isPresentSrc()) {
+        List<ASTSysMLElement> elementList = getElementsofParent(node.getEnclosingScope().getAstNode());
+        int index = elementList.indexOf(node);
+        for (int i = index - 1; i >= 0; i--) {
+          ASTSysMLElement element = elementList.get(i);
+          if(element instanceof ASTActionUsage && (target instanceof ASTActionUsage || (target == null
+              && node.getTgt().equals("done")))) {
+            node.setSrc(((ASTActionUsage) element).getName());
+            srcSet = true;
+            break;
+          }
+          if(element instanceof ASTSysMLFirst && (target instanceof ASTActionUsage || (target == null
+              && node.getTgt().equals("done")))) {
+            node.setSrc(((ASTSysMLFirst) element).getName());
+            srcSet = true;
+            break;
+          }
         }
-        if(element instanceof ASTSysMLFirst && (target instanceof ASTActionUsage || (target == null
-            && node.getTgt().equals("done")))) {
-          node.setSrc(((ASTSysMLFirst) element).getName());
-          srcSet = true;
-          break;
+        if(!node.isPresentSrc()
+            && !srcSet) {
+          Log.error("Could not resolve source of the succession.");
         }
-        if(element instanceof ASTStateUsage && target instanceof ASTStateUsage) {
-          //Der Typ muss manuell von succession zu transition geändert werden
-          // , da die erkannten wörter von succession und transition nicht diskunkt sind
-          elementList.set(index, createTransition(((ASTStateUsage) element).getName(), node));
-          srcSet = true;
-          break;
-        }
-      }
-      if(!node.isPresentSrc()
-          && !srcSet) { //TODO soll eventuell geandert werden, ob das durch CoCos gesetzt werden soll
-        Log.error("Could not resolve source of the succession.");
       }
     }
-    else {
-      if(target instanceof ASTStateUsage) {
+    else if(parent instanceof ASTStateUsage || parent instanceof ASTStateDef) {
+      //succession is a transition
+      ASTSysMLElement target = resolveTarget(node);
+      boolean srcSet = false;
+      if(!node.isPresentSrc()) {
+        List<ASTSysMLElement> elementList = getElementsofParent(node.getEnclosingScope().getAstNode());
+        int index = elementList.indexOf(node);
+        for (int i = index - 1; i >= 0; i--) {
+          ASTSysMLElement element = elementList.get(i);
+          if(element instanceof ASTStateUsage && target instanceof ASTStateUsage) {
+            //Der Typ muss manuell von succession zu transition geändert werden
+            // , da die erkannten wörter von succession und transition nicht diskunkt sind
+            elementList.set(index, createTransition(((ASTStateUsage) element).getName(), node));
+            srcSet = true;
+            break;
+          }
+        }
+        if(!node.isPresentSrc()
+            && !srcSet) {
+          if(target instanceof ASTStateUsage) {
+            //Der Typ muss manuell von succession zu transition geändert werden
+            // , da die erkannten wörter von succession und transition nicht diskunkt sind
+            elementList.set(index, createTransition("start", node));
+          }
+          else {
+            Log.error("Could not resolve source of the succession.");
+          }
+        }
+      }
+      else {
         List<ASTSysMLElement> elementList = getElementsofParent(node.getEnclosingScope().getAstNode());
         int index = elementList.indexOf(node);
         elementList.set(index, createTransition(node.getSrc(), node));
       }
     }
-
   }
 
   private ASTSysMLTransition createTransition(String source, ASTSysMLSuccession node) {
