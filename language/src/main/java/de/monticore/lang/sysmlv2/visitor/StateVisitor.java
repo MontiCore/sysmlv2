@@ -1,7 +1,6 @@
 package de.monticore.lang.sysmlv2.visitor;
 
 import de.monticore.lang.sysmlbasis._ast.ASTDefaultValueBuilder;
-import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
@@ -17,7 +16,6 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifierBuilder;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -32,11 +30,7 @@ public class StateVisitor implements SysMLStatesVisitor2 {
       node.getSysMLElementList().add(createStateUsage("done", node.getSpannedScope()));
     }
     else {
-      var stateTypes = node.getSpecializationList().stream().filter(
-          t -> t instanceof ASTSysMLTyping).flatMap(t -> t.streamSuperTypes()).collect(Collectors.toList());
-      var stateSpecs = node.getSpecializationList().stream().filter(
-          t -> t instanceof ASTSysMLSpecialization).flatMap(t -> t.streamSuperTypes()).collect(Collectors.toList());
-      node.setIsAutomaton(isParentAutomaton(node, stateTypes, stateSpecs));
+      node.setIsAutomaton(isParentAutomaton(node));
     }
   }
 
@@ -45,16 +39,30 @@ public class StateVisitor implements SysMLStatesVisitor2 {
     if(node.getSysMLElementList().stream().anyMatch(
         t -> t instanceof ASTStateUsage | t instanceof ASTSysMLTransition)) {
       node.setIsAutomaton(true);
-      node.getSysMLElementList().add(createStateUsage("first", node.getSpannedScope()));
+      node.getSysMLElementList().add(createStateUsage("start", node.getSpannedScope()));
       node.getSysMLElementList().add(createStateUsage("done", node.getSpannedScope()));
     }
     else {
-      var stateTypes = node.getSpecializationList().stream().filter(
-          t -> t instanceof ASTSysMLTyping).flatMap(t -> t.streamSuperTypes()).collect(Collectors.toList());
-      var stateSpecs = node.getSpecializationList().stream().filter(
-          t -> t instanceof ASTSysMLSpecialization).flatMap(t -> t.streamSuperTypes()).collect(Collectors.toList());
-      node.setIsAutomaton(isParentAutomaton(node, stateTypes, stateSpecs));
+      node.setIsAutomaton(isParentAutomaton(node));
     }
+  }
+
+  boolean isNodeAutomaton(ASTSysMLElement node) {
+    if(node instanceof ASTStateUsage) {
+      if(((ASTStateUsage) node).getSysMLElementList().stream().anyMatch(
+          t -> t instanceof ASTStateUsage | t instanceof ASTSysMLTransition)) {
+        return true;
+      }
+      return false;
+    }
+    if(node instanceof ASTStateDef) {
+      if(((ASTStateDef) node).getSysMLElementList().stream().anyMatch(
+          t -> t instanceof ASTStateUsage | t instanceof ASTSysMLTransition)) {
+        return true;
+      }
+      return false;
+    }
+    return false;
   }
 
   ASTStateUsage createStateUsage(String name, ISysMLStatesScope enclosingScope) {
@@ -73,28 +81,37 @@ public class StateVisitor implements SysMLStatesVisitor2 {
     return stateUsage;
   }
 
-  boolean isParentAutomaton(ASTSysMLElement element, List<ASTMCType> typeList, List<ASTMCType> specList) {
+  boolean isParentAutomaton(ASTSysMLElement element) {
     if(element instanceof ASTStateUsage) {
-      var stateDefList = typeList.stream().map(
+      if(isNodeAutomaton(element) || ((ASTStateUsage) element).getIsAutomaton())
+        return true;
+      var stateDefList = ((ASTStateUsage) element).getSpecializationList().stream().filter(
+          t -> t instanceof ASTSysMLTyping).flatMap(t -> t.streamSuperTypes()).map(
           t -> ((ASTStateUsage) element).getEnclosingScope().resolveStateDef(printName(t))).filter(
           Optional::isPresent
       ).map(t -> t.get().getAstNode()).collect(Collectors.toList());
-      var stateUsageList = specList.stream().map(
+      var stateUsageList = ((ASTStateUsage) element).getSpecializationList().stream().filter(
+          t -> t instanceof ASTSysMLSpecialization).flatMap(t -> t.streamSuperTypes()).map(
           t -> ((ASTStateUsage) element).getEnclosingScope().resolveStateUsage(printName(t))).filter(
           Optional::isPresent
       ).map(t -> t.get().getAstNode()).collect(Collectors.toList());
-      stateDefList.forEach(this::visit);
-      stateUsageList.forEach(this::visit);
-      return stateDefList.stream().anyMatch(ASTStateDef::getIsAutomaton) | stateUsageList.stream().anyMatch(
-          ASTStateUsage::getIsAutomaton);
+      if(stateUsageList.isEmpty() && stateDefList.isEmpty())
+        return false;
+
+      var stateDefParent = stateDefList.stream().anyMatch(this::isParentAutomaton);
+      var stateUsageParent = stateUsageList.stream().anyMatch(this::isParentAutomaton);
+      return stateDefParent || stateUsageParent;
     }
     if(element instanceof ASTStateDef) {
-      var stateDefList = typeList.stream().map(
+      if(isNodeAutomaton(element) || ((ASTStateDef) element).getIsAutomaton())
+        return true;
+      var stateDefList = ((ASTStateDef) element).getSpecializationList().stream().filter(
+          t -> t instanceof ASTSysMLSpecialization).flatMap(t -> t.streamSuperTypes()).map(
           t -> ((ASTStateDef) element).getEnclosingScope().resolveStateDef(printName(t))).filter(
           Optional::isPresent
       ).map(t -> t.get().getAstNode()).collect(Collectors.toList());
-      stateDefList.forEach(this::visit);
-      return stateDefList.stream().anyMatch(ASTStateDef::getIsAutomaton);
+      var stateDefParent = stateDefList.stream().anyMatch(this::isParentAutomaton);
+      return stateDefParent;
     }
     return false;
   }

@@ -8,6 +8,7 @@ import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlstates._ast.ASTDoAction;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
+import de.monticore.lang.sysmlv2.generator.utils.resolve.StatesResolveUtils;
 import de.monticore.lang.sysmlv2.types.CommonExpressionsJavaPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 
 public class AutomatonHelper {
   ComponentHelper componentHelper = new ComponentHelper();
+  StatesResolveUtils statesResolveUtils = new StatesResolveUtils();
 
   public List<ASTSysMLTransition> getAllTransitionsWithGuardFrom(ASTStateUsage automaton, ASTStateUsage state) {
     return getAllTransitionsFrom(automaton, state).stream().filter(ASTSysMLTransition::isPresentGuard).collect(
@@ -27,8 +29,7 @@ public class AutomatonHelper {
   }
 
   public List<ASTSysMLTransition> getAllTransitionsFrom(ASTStateUsage automaton, ASTStateUsage state) {
-    return automaton.streamSysMLElements().filter(t -> t instanceof ASTSysMLTransition).map(
-        t -> (ASTSysMLTransition) t).filter(t -> t.getSrc().equals(state.getName())).collect(
+    return statesResolveUtils.getTransitionOfElement(automaton).stream().filter(t -> t.getSrc().equals(state.getName())).collect(
         Collectors.toList());
   }
 

@@ -16,6 +16,7 @@ import de.monticore.lang.sysmlv2.generator.utils.AttributeUtils;
 import de.monticore.lang.sysmlv2.generator.utils.ComponentUtils;
 import de.monticore.lang.sysmlv2.generator.utils.GeneratorUtils;
 import de.monticore.lang.sysmlv2.generator.utils.PartUtils;
+import de.monticore.lang.sysmlv2.generator.utils.resolve.StatesResolveUtils;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 
 import java.util.*;
@@ -50,6 +51,8 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
 
   AttributeUtils attributeUtils;
 
+  StatesResolveUtils statesResolveUtils;
+
   public States2CDVisitor(GlobalExtensionManagement glex, ASTCDCompilationUnit cdCompilationUnit,
                           ASTCDPackage basePackage, ASTCDDefinition astcdDefinition) {
     this.cd4C = CD4C.getInstance();
@@ -61,6 +64,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
     this.partUtils = new PartUtils();
     this.componentUtils = new ComponentUtils();
     this.attributeUtils = new AttributeUtils();
+    this.statesResolveUtils = new StatesResolveUtils();
   }
 
   @Override
@@ -85,9 +89,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
 
       cdPackage.addCDElement(stateUsageClass);
       //create state enum
-      var stateList = astStateUsage.streamSysMLElements().filter(t -> t instanceof ASTStateUsage).map(
-          t -> (ASTStateUsage) t).collect(
-          Collectors.toList());
+      var stateList = statesResolveUtils.getStatesOfElement(astStateUsage);
       cdPackage.addCDElement(createEnum(astStateUsage, stateList));
       //add methods
       componentUtils.setPortLists((ASTSysMLElement) astStateUsage.getEnclosingScope().getAstNode());

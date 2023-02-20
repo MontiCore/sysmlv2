@@ -8,6 +8,8 @@ import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortDef;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
+import de.monticore.lang.sysmlstates._ast.ASTStateDef;
+import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -69,6 +71,30 @@ public class ResolveUtils {
           Optional::isPresent).map(
           t -> t.get().getAstNode()).collect(
           Collectors.toList());
+    }
+    if(node instanceof ASTStateDef) {
+      parentList = ((ASTStateDef) node).streamSpecializations().filter(
+          t -> t instanceof ASTSysMLSpecialization).flatMap(
+          f -> f.getSuperTypesList().stream()).map(
+          t -> ((ASTStateDef) node).getEnclosingScope().resolveStateDef(printName(t))).filter(
+          Optional::isPresent).map(
+          t -> t.get().getAstNode()).collect(
+          Collectors.toList());
+    }
+    if(node instanceof ASTStateUsage) {
+      parentList = ((ASTStateUsage) node).streamSpecializations().filter(
+          t -> t instanceof ASTSysMLSpecialization).flatMap(
+          f -> f.getSuperTypesList().stream()).map(
+          t -> ((ASTStateUsage) node).getEnclosingScope().resolveStateUsage(printName(t))).filter(
+          Optional::isPresent).map(
+          t -> t.get().getAstNode()).collect(
+          Collectors.toList());
+      parentList.addAll(((ASTStateUsage) node).streamSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
+          f -> f.getSuperTypesList().stream()).map(
+          t -> ((ASTStateUsage) node).getEnclosingScope().resolveStateDef(printName(t))).filter(
+          Optional::isPresent).map(
+          t -> t.get().getAstNode()).collect(
+          Collectors.toList()));
     }
     return parentList;
   }
