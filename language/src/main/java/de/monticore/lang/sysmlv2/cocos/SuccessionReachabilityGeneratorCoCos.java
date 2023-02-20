@@ -6,7 +6,9 @@ import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionUsageCoCo;
 import de.se_rwth.commons.logging.Log;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SuccessionReachabilityGeneratorCoCos
@@ -36,13 +38,14 @@ public class SuccessionReachabilityGeneratorCoCos
     var successionList = node.streamSysMLElements().filter(t -> t instanceof ASTSysMLSuccession).map(
         t -> (ASTSysMLSuccession) t).collect(
         Collectors.toList());
-    if(!checkReachabilityOfNode("start", successionList)) {
-      Log.error("ActionUsage " + node.getName() + " has succession that do not reach \"done\".");
+    if(!checkReachabilityOfNode("start", successionList,new HashSet<>())) {
+      Log.error("ActionUsage " + node.getName() + " has a succession that does not reach \"done\".");
 
     }
   }
 
-  boolean checkReachabilityOfNode(String source, List<ASTSysMLSuccession> successionList) {
+  boolean checkReachabilityOfNode(String source, List<ASTSysMLSuccession> successionList, Set<String> visited) {
+    if(!visited.contains(source)){
     if(source.equals("done")) {
       return true;
     }
@@ -52,10 +55,14 @@ public class SuccessionReachabilityGeneratorCoCos
         return false;
       }
       else {
+        visited.add(source);
         return successors.stream()
             .allMatch(
-                t -> checkReachabilityOfNode(t.getTgt(), successionList));
+                t -> checkReachabilityOfNode(t.getTgt(), successionList, visited));
       }
     }
   }
+  return true;
+  }
+
 }
