@@ -1,5 +1,6 @@
 package de.monticore.lang.sysmlv2.cocos;
 
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortDef;
@@ -30,7 +31,9 @@ public class PortsGeneratorCoCos implements SysMLPartsASTPortUsageCoCo, SysMLPar
     }
     if(node.streamSpecializations().anyMatch(t -> !(t instanceof ASTSysMLTyping))) {
       Log.error("The Port usage " + node.getName() + " has specialications that are not typings, this is not allowed.");
-
+    }
+    if(node.streamSpecializations().filter(t -> (t instanceof ASTSysMLTyping)).count()>1) {
+      Log.error("The Port usage " + node.getName() + " has more than one type this is not allowed.");
     }
     if(node.streamSysMLElements().anyMatch(t -> !(t instanceof ASTAttributeUsage))) {
       Log.error(
@@ -45,7 +48,10 @@ public class PortsGeneratorCoCos implements SysMLPartsASTPortUsageCoCo, SysMLPar
 
     if(node.streamSysMLElements().anyMatch(t -> !(t instanceof ASTAttributeUsage))) {
       Log.error(
-          "The Port usage " + node.getName() + " has sub elements that are not attribute usages this is not allowed.");
+          "The Port def " + node.getName() + " has sub elements that are not attribute usages this is not allowed.");
+    }
+    if(node.streamSpecializations().anyMatch(t -> !(t instanceof ASTSysMLSpecialization))) {
+      Log.error("The Port def " + node.getName() + " has redefinitions or typings, this is not allowed.");
     }
     AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
     var attributeUsageList = attributeResolveUtils.getAttributesOfElement(node);
