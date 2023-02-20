@@ -32,7 +32,7 @@ public class PortsGeneratorCoCos implements SysMLPartsASTPortUsageCoCo, SysMLPar
     if(node.streamSpecializations().anyMatch(t -> !(t instanceof ASTSysMLTyping))) {
       Log.error("The Port usage " + node.getName() + " has specialications that are not typings, this is not allowed.");
     }
-    if(node.streamSpecializations().filter(t -> (t instanceof ASTSysMLTyping)).count()>1) {
+    if(node.streamSpecializations().filter(t -> (t instanceof ASTSysMLTyping)).count() > 1) {
       Log.error("The Port usage " + node.getName() + " has more than one type this is not allowed.");
     }
     if(node.streamSysMLElements().anyMatch(t -> !(t instanceof ASTAttributeUsage))) {
@@ -63,9 +63,17 @@ public class PortsGeneratorCoCos implements SysMLPartsASTPortUsageCoCo, SysMLPar
     if(attributesList.stream().count() > 2 | attributesList.stream().findAny().isEmpty()) {
       Log.error(
           "The Port " + nodeName + " has " + attributesList.stream().count()
-              + " different attribute usages as sub elements. It has to use the attribute usage value and can use the attribute delayed.");
+              + " different attribute usages as sub elements. It has to use the attribute usage \"value\" and can use the attribute \"delayedPort\".");
     }
     var valueAttribute = attributesList.stream().filter(t -> t.getName().equals("value")).collect(Collectors.toList());
+    var delayedAttribute = attributesList.stream().filter(t -> t.getName().equals("delayedPort")).collect(
+        Collectors.toList());
+    if(valueAttribute.size() + delayedAttribute.size() != attributesList.size()) {
+      Log.error(
+          "The Port " + nodeName + " has " + attributesList.stream().count()
+              + " different attribute usages as sub elements. It has to use the attribute usage \"value\" and can use the attribute \"delayedPort\".");
+
+    }
     if(valueAttribute.isEmpty() || valueAttribute.size() == 2) {
       Log.error(
           "The Port " + nodeName + " needs one sub element \"value\" but has " + valueAttribute.size() + ".");
@@ -74,8 +82,7 @@ public class PortsGeneratorCoCos implements SysMLPartsASTPortUsageCoCo, SysMLPar
       Log.error(
           "The attribute usage \"value\" of port usage " + nodeName + " needs a feature direction but has none.");
     }
-    var delayedAttribute = attributesList.stream().filter(t -> t.getName().equals("delayed")).collect(
-        Collectors.toList());
+
     if(!delayedAttribute.isEmpty()) {
       var astmcTypes = delayedAttribute.get(0).streamSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
           t -> t.streamSuperTypes()).collect(

@@ -24,7 +24,7 @@ public class PortsVisitor implements SysMLPartsVisitor2 {
   public void visit(ASTPortUsage node) {
     var attributes = attributeResolveUtils.getAttributesOfElement(node);
     var value = attributes.stream().filter(t -> t.getName().equals("value")).findFirst();
-    var delayed = attributes.stream().filter(t -> t.getName().equals("delayed")).findFirst();
+    var delayed = attributes.stream().filter(t -> t.getName().equals("delayedPort")).findFirst();
     if(value.isPresent() && countConjugations(node) >= 1) {
       node.setValueAttribute(switchDirection(value.get()));
     }
