@@ -4,6 +4,7 @@ import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.lang.sysmlbasis._ast.*;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
@@ -11,6 +12,9 @@ import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.AttributeResolveUtils;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.PortResolveUtils;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
+import de.monticore.lang.sysmlv2.types.SysMLExpressionsDeriver;
+import de.monticore.literals.mccommonliterals._ast.ASTBooleanLiteral;
+import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
@@ -136,11 +140,18 @@ public class ComponentUtils {
 
   public boolean isPortDelayed(ASTPortUsage portUsage) {
 
-    var expression = attributeResolveUtils.getAttributesOfElement(portUsage).stream().filter(
-        t -> t.getName().equals("delayed")).filter(ASTAttributeUsage::isPresentExpression).map(
-        ASTAttributeUsage::getExpression).collect(
-        Collectors.toList());
-    //TODO resolve
+    var expression = portUsage.getDelayedAttribute().getExpression();
+    SysMLExpressionsDeriver sysMLExpressionsDeriver = new SysMLExpressionsDeriver();
+    //var type =sysMLExpressionsDeriver.deriveType(expression);
+    //TODO remove, its just a proof of concept
+    if(expression instanceof ASTLiteralExpression) {
+      ASTLiteral literal = ((ASTLiteralExpression) expression).getLiteral();
+
+      if(literal instanceof ASTBooleanLiteral) {
+        if(((ASTBooleanLiteral) literal).getValue())
+          return true;
+      }
+    }
     return false;
   }
 

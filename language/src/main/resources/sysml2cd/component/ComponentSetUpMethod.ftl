@@ -33,10 +33,16 @@ ${cd4c.method("public void setUp()")}
         <#else>
           this.${port.getName()} = new de.monticore.lang.sysmlv2.generator.timesync.OutPort<${compHelper.getValueTypeOfPort(port)}>();
         </#if>
+        <#if port.getValueAttribute().isPresentExpression()>
+          this.${port.getName()}.setValue(${compHelper.getDefaultValue(port)});
+        </#if>
     </#list>
 
     <#list inPortList as port>
           this.${port.getName()} = new de.monticore.lang.sysmlv2.generator.timesync.InPort<${compHelper.getValueTypeOfPort(port)}>();
+          <#if port.getValueAttribute().isPresentExpression()>
+            this.${port.getName()}.update(${compHelper.getDefaultValue(port)});
+          </#if>
     </#list>
     <#list compHelper.getFlowOfPart(part) as connection>
       this.${connection.getSource()}.connect(${connection.getTarget()});

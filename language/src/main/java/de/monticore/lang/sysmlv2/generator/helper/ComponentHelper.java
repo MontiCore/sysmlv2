@@ -9,6 +9,7 @@ import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlv2.generator.utils.ComponentUtils;
 import de.monticore.lang.sysmlv2.generator.utils.GeneratorUtils;
 import de.monticore.lang.sysmlv2.generator.utils.PartUtils;
+import de.monticore.lang.sysmlv2.types.CommonExpressionsJavaPrinter;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 
@@ -45,6 +46,15 @@ public class ComponentHelper {
 
   public boolean isPortDelayed(ASTPortUsage portUsage) {
     return componentUtils.isPortDelayed(portUsage);
+  }
+
+  public String getDefaultValue(ASTPortUsage portUsage) {
+
+    if(portUsage.getValueAttribute().isPresentExpression()){
+      CommonExpressionsJavaPrinter prettyPrinter = new CommonExpressionsJavaPrinter(new IndentPrinter());
+      return prettyPrinter.prettyprint(portUsage.getValueAttribute().getExpression());
+    }
+    else return "";
   }
 
   public String getValueTypeOfPort(ASTPortUsage portUsage) {
