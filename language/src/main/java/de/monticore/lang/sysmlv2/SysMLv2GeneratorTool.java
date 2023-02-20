@@ -60,6 +60,7 @@ import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.TypesAndDirectionCompleter;
 import de.monticore.lang.sysmlv2.visitor.ActionSuccessionVisitor;
 import de.monticore.lang.sysmlv2.visitor.PartsTransitiveVisitor;
+import de.monticore.lang.sysmlv2.visitor.PortsVisitor;
 import de.monticore.lang.sysmlv2.visitor.StateVisitor;
 import de.monticore.lang.sysmlv2.visitor.TransitionVisitor;
 import de.se_rwth.commons.logging.Log;
@@ -119,7 +120,8 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLActionsASTActionUsageCoCo) new ActionNameCoCos());
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateNameCoCos());
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateNameCoCos());
-    checker.addCoCo(new ConnectionGeneratorCoCos());
+    checker.addCoCo((SysMLPartsASTPortUsageCoCo) new PortsGeneratorCoCos());
+    checker.addCoCo((SysMLPartsASTPortDefCoCo)new PortsGeneratorCoCos());
     checker.checkAll(ast);
   }
 
@@ -134,8 +136,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     checker.addCoCo(new PortDefHasOneType());
     checker.addCoCo(new PortDefNeedsDirection());
     checker.addCoCo(new ActionControlGeneratorCoCos());
-    checker.addCoCo((SysMLPartsASTPortUsageCoCo) new PortsGeneratorCoCos());
-    checker.addCoCo((SysMLPartsASTPortDefCoCo)new PortsGeneratorCoCos());
+    checker.addCoCo(new ConnectionGeneratorCoCos());
     checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new AttributeGeneratorCoCos());
     checker.addCoCo((SysMLPartsASTAttributeUsageCoCo) new AttributeGeneratorCoCos());
     checker.addCoCo((SysMLPartsASTPartDefCoCo) new PartsGeneratorCoCos());
@@ -300,6 +301,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     transformTransitions(ast);
     transformStates(ast);
     transformTransitiveSupertypes(ast);
+    transformPorts(ast);
   }
 
   public void transformTransitiveSupertypes(ASTSysMLModel ast) {
@@ -325,6 +327,12 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     TransitionVisitor transitionVisitor = new TransitionVisitor();
     SysMLv2Traverser sysMLv2Traverser = getTraverser();
     sysMLv2Traverser.add4SysMLStates(transitionVisitor);
+    sysMLv2Traverser.handle(ast);
+  }
+  public void transformPorts(ASTSysMLModel ast) {
+    PortsVisitor portsVisitor = new PortsVisitor();
+    SysMLv2Traverser sysMLv2Traverser = getTraverser();
+    sysMLv2Traverser.add4SysMLParts(portsVisitor);
     sysMLv2Traverser.handle(ast);
   }
   public void generateCD(ASTSysMLModel ast, String outputDir, String fileName) {

@@ -24,7 +24,9 @@ import java.util.stream.Collectors;
 public class ComponentUtils {
 
   GeneratorUtils generatorUtils = new GeneratorUtils();
+
   PortResolveUtils portResolveUtils = new PortResolveUtils();
+
   AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
 
   public List<ASTPortUsage> inputPortList;
@@ -92,13 +94,13 @@ public class ComponentUtils {
     List<ASTPortUsage> portUsageList = portResolveUtils.getPortsOfElement(astSysMLElement);
     //divide into the different directions
     List<ASTPortUsage> inPortList = portUsageList.stream().filter(
-        t -> t.getSysMLFeatureDirection().getIntValue() == 2).collect(
+        t -> t.getValueAttribute().getSysMLFeatureDirection().getIntValue() == 2).collect(
         Collectors.toList());
     List<ASTPortUsage> outPortList = portUsageList.stream().filter(
-        t -> t.getSysMLFeatureDirection().getIntValue() == 4).collect(
+        t -> t.getValueAttribute().getSysMLFeatureDirection().getIntValue() == 4).collect(
         Collectors.toList());
     List<ASTPortUsage> inOutPortList = portUsageList.stream().filter(
-        t -> t.getSysMLFeatureDirection().getIntValue() == 3).collect(
+        t -> t.getValueAttribute().getSysMLFeatureDirection().getIntValue() == 3).collect(
         Collectors.toList());
     //transform inoutport list to a list of input ports AND a list of output ports
     List<ASTPortUsage> input = new ArrayList<>();
@@ -127,11 +129,9 @@ public class ComponentUtils {
   }
 
   public String getValueTypeOfPort(ASTPortUsage portUsage) {
-    var attributeUsageList = attributeResolveUtils.getAttributesOfElement(portUsage).stream().filter(
-        t -> t.getName().equals("value")).flatMap(ASTAttributeUsage::streamSpecializations).flatMap(
-        ASTSpecialization::streamSuperTypes).collect(
-        Collectors.toList());
-    return printName(attributeUsageList.get(0));
+    var attributeUsage = portUsage.getValueAttribute().getSpecializationList().stream().filter(
+        t -> t instanceof ASTSysMLTyping).flatMap(ASTSpecialization::streamSuperTypes).findFirst();
+    return printName(attributeUsage.get());
   }
 
   public boolean isPortDelayed(ASTPortUsage portUsage) {

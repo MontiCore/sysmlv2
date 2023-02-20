@@ -25,8 +25,8 @@ public class PortsGeneratorCoCos implements SysMLPartsASTPortUsageCoCo, SysMLPar
    */
   @Override public void check(ASTPortUsage node) {
 
-    if(!node.isPresentSysMLFeatureDirection()) {
-      Log.error("The Port usage " + node.getName() + " has no direction but needs one.");
+    if(node.isPresentSysMLFeatureDirection()) {
+      Log.error("The Port usage " + node.getName() + " has a direction, but is not allowed to have one.");
     }
     if(node.streamSpecializations().anyMatch(t -> !(t instanceof ASTSysMLTyping))) {
       Log.error("The Port usage " + node.getName() + " has specialications that are not typings, this is not allowed.");
@@ -62,19 +62,19 @@ public class PortsGeneratorCoCos implements SysMLPartsASTPortUsageCoCo, SysMLPar
     var valueAttribute = attributesList.stream().filter(t -> t.getName().equals("value")).collect(Collectors.toList());
     if(valueAttribute.isEmpty() || valueAttribute.size() == 2) {
       Log.error(
-          "The Port " + nodeName + " needs one sub element value but has " + valueAttribute.size() + ".");
+          "The Port " + nodeName + " needs one sub element \"value\" but has " + valueAttribute.size() + ".");
     }
-    var delayedAttribute = attributesList.stream().filter(t -> t.getName().equals("delayed")).collect(Collectors.toList());
+    if(!valueAttribute.get(0).isPresentSysMLFeatureDirection()) {
+      Log.error(
+          "The attribute usage \"value\" of port usage " + nodeName + " needs a feature direction but has none.");
+    }
+    var delayedAttribute = attributesList.stream().filter(t -> t.getName().equals("delayed")).collect(
+        Collectors.toList());
     if(!delayedAttribute.isEmpty()) {
       var astmcTypes = delayedAttribute.get(0).streamSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
           t -> t.streamSuperTypes()).collect(
           Collectors.toList());
-      if(astmcTypes.size() != 1) {
-        Log.error(
-            "The Attribute usage " + delayedAttribute.get(0).getName() + " from port " + nodeName
-                + " needs exactly one type, this type needs to be Boolean.");
-      }
-      if(!printName(astmcTypes.get(0)).equals("Boolean")) {
+      if(!printName(astmcTypes.get(0)).equals("Boolean") || astmcTypes.size() != 1) {
         Log.error(
             "The Attribute usage " + delayedAttribute.get(0).getName() + " from port " + nodeName
                 + " needs exactly one type, this type needs to be Boolean.");
