@@ -18,6 +18,9 @@ ${cd4c.method("public void setUp()")}
           this.${attribute.getName()}.setUp();
         <#else>
         </#if>
+        <#if attribute.isPresentExpression()>
+          this.${attribute.getName()} = ${compHelper.getDefaultValue(attribute)};
+        </#if>
     </#list>
 
 
