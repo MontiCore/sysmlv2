@@ -6,6 +6,7 @@ import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlstates._ast.ASTDoAction;
+import de.monticore.lang.sysmlstates._ast.ASTStateDef;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.StatesResolveUtils;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 public class AutomatonHelper {
   ComponentHelper componentHelper = new ComponentHelper();
+
   StatesResolveUtils statesResolveUtils = new StatesResolveUtils();
 
   public List<ASTSysMLTransition> getAllTransitionsWithGuardFrom(ASTStateUsage automaton, ASTStateUsage state) {
@@ -29,7 +31,8 @@ public class AutomatonHelper {
   }
 
   public List<ASTSysMLTransition> getAllTransitionsFrom(ASTStateUsage automaton, ASTStateUsage state) {
-    return statesResolveUtils.getTransitionOfElement(automaton).stream().filter(t -> t.getSrc().equals(state.getName())).collect(
+    return statesResolveUtils.getTransitionOfElement(automaton).stream().filter(
+        t -> t.getSrc().equals(state.getName())).collect(
         Collectors.toList());
   }
 
@@ -93,4 +96,19 @@ public class AutomatonHelper {
     return "";
   }
 
+  String resolveStatePrefix(ASTStateUsage element, String prefix) {
+    var parent = element.getEnclosingScope().getAstNode();
+    var parentOfParent = parent.getEnclosingScope().getAstNode();
+
+    if(parent instanceof ASTStateUsage && (parentOfParent instanceof ASTStateUsage
+        || parentOfParent instanceof ASTStateDef)) {
+      return resolveStatePrefix((ASTStateUsage) parent, prefix + ((ASTStateUsage) parent).getName() + "_");
+    }
+    return prefix;
+  }
+
+  public String resolveStateName(ASTStateUsage element) {
+    return resolveStatePrefix(element, "") + element.getName();
+
+  }
 }

@@ -40,4 +40,15 @@ public class AttributeUtils {
     }
     return null;
   }
+
+  public ASTCDAttribute createAttributeWithPrefix(ASTSysMLElement element, String prefix) {
+    if(element instanceof ASTAttributeUsage) {
+      String attributeName = prefix + ((ASTAttributeUsage) element).getName();
+
+      ASTMCQualifiedType qualifiedType = generatorUtils.attributeType((ASTAttributeUsage) element);
+      return CD4CodeMill.cDAttributeBuilder().setName(attributeName).setModifier(
+          CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(qualifiedType).build();
+    }
+    return null;
+  }
 }
