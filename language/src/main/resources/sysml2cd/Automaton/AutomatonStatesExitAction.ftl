@@ -1,6 +1,6 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
 ${tc.signature("state", "automaton")}
-${cd4c.method("protected void exit${state.getName()?cap_first}()")}
+${cd4c.method("protected void exit${autHelper.resolveStateName(state)?cap_first}()")}
 
 <#if autHelper.hasExitAction(state)>
   // inputs

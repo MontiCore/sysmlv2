@@ -9,6 +9,7 @@ import de.monticore.lang.sysmlstates._ast.ASTDoAction;
 import de.monticore.lang.sysmlstates._ast.ASTStateDef;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
+import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.StatesResolveUtils;
 import de.monticore.lang.sysmlv2.types.CommonExpressionsJavaPrinter;
 import de.monticore.prettyprint.IndentPrinter;
@@ -22,22 +23,24 @@ public class AutomatonHelper {
   StatesResolveUtils statesResolveUtils = new StatesResolveUtils();
 
   public List<ASTSysMLTransition> getAllTransitionsWithGuardFrom(ASTStateUsage automaton, ASTStateUsage state) {
-    return getAllTransitionsFrom(automaton, state).stream().filter(ASTSysMLTransition::isPresentGuard).collect(
+    return getAllTransitionsFrom(state).stream().filter(ASTSysMLTransition::isPresentGuard).collect(
         Collectors.toList());
   }
 
   public boolean hasTransitionWithoutGuardFrom(ASTStateUsage automaton, ASTStateUsage state) {
-    return getAllTransitionsFrom(automaton, state).stream().anyMatch(t -> !t.isPresentGuard());
+    return getAllTransitionsFrom(state).stream().anyMatch(t -> !t.isPresentGuard());
   }
 
-  public List<ASTSysMLTransition> getAllTransitionsFrom(ASTStateUsage automaton, ASTStateUsage state) {
-    return statesResolveUtils.getTransitionOfElement(automaton).stream().filter(
+  public List<ASTSysMLTransition> getAllTransitionsFrom(ASTStateUsage state) {
+    var parent = state.getEnclosingScope().getAstNode();
+    return statesResolveUtils.getTransitionOfElement((ASTSysMLElement) parent).stream().filter(
         t -> t.getSrc().equals(state.getName())).collect(
         Collectors.toList());
+
   }
 
   public ASTSysMLTransition getFirstTransitionWithoutGuardFrom(ASTStateUsage automaton, ASTStateUsage state) {
-    List<ASTSysMLTransition> transitionList = getAllTransitionsFrom(automaton, state).stream().filter(
+    List<ASTSysMLTransition> transitionList = getAllTransitionsFrom(state).stream().filter(
         t -> !t.isPresentGuard()).collect(Collectors.toList());
     if(!transitionList.isEmpty()) {
       return transitionList.get(0);
@@ -45,18 +48,18 @@ public class AutomatonHelper {
     return null;
   }
 
-  public boolean hasSuperState(ASTStateUsage automaton, ASTStateUsage state) {
-    //TODO
+  public boolean hasSuperState(ASTStateUsage state) {
 
-    return false;
+    var parent = state.getEnclosingScope().getAstNode();
+    return parent instanceof ASTStateUsage || parent instanceof ASTStateDef;
   }
 
-  public boolean isFinalState(ASTStateUsage automaton, ASTStateUsage state) {
-    return false;
+  public boolean isFinalState(ASTStateUsage state) {
+    return state.getName().equals("done");
   }
 
-  public boolean isInitialState(ASTStateUsage automaton, ASTStateUsage state) {
-    return false;
+  public boolean isInitialState(ASTStateUsage state) {
+    return state.getName().equals("start");
   }
 
   public String printExpression(ASTExpression expr) {
@@ -110,5 +113,41 @@ public class AutomatonHelper {
   public String resolveStateName(ASTStateUsage element) {
     return resolveStatePrefix(element, "") + element.getName();
 
+  }
+
+  public String resolveTransitionName(ASTStateUsage state, String transitionEnd) {
+    var resolvedState = state.getSpannedScope().resolveStateUsage(transitionEnd);
+    if(resolvedState.isPresent()) {
+      return resolveStateName(resolvedState.get().getAstNode());
+    }
+    else
+      return transitionEnd;
+  }
+
+  public List<ASTStateUsage> getSubStates(ASTStateUsage stateUsage) {
+    return statesResolveUtils.getStatesOfElement(stateUsage);
+  }
+
+  public boolean isAutomaton(String stateName, ASTStateUsage stateUsage) {
+    var resolvedState = stateUsage.getSpannedScope().resolveStateUsage(stateName);
+    if(resolvedState.isPresent()) {
+      return resolvedState.get().getAstNode().getIsAutomaton();
+    }
+    return false;
+  }
+
+  public String resolveCurrentStateName(ASTStateUsage stateUsage) {
+    if(stateUsage.getIsAutomaton()) {
+      return "currentState_" + resolveStateName(stateUsage);
+    }
+    return "currentState";
+  }
+  public ASTStateUsage resolveStateUsage(String targetName, ASTStateUsage stateUsage) {
+    var resolvedState = stateUsage.getSpannedScope().resolveStateUsage(targetName);
+    return resolvedState.map(StateUsageSymbol::getAstNode).orElse(null);
+  }
+
+  public String resolveEnumName(ASTStateUsage automaton) {
+    return automaton.getName() + "Enum";
   }
 }

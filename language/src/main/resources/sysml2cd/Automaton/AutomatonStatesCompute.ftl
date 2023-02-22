@@ -9,8 +9,12 @@ ${cd4c.method("public void compute()")}
     // transition from the current state
     switch (currentState) {
     <#list stateList as state>
-      case ${autHelper.resolveStateName(state)}:
-      transitionFrom${autHelper.resolveStateName(state)?cap_first}();
+      case ${state.getName()}:
+     <#if state.getIsAutomaton()>
+      transitionTo${state.getName()?cap_first}();
+     <#else >
+      transitionFrom${state.getName()?cap_first}();
+     </#if>
       break;
     </#list>
     }

@@ -1,6 +1,7 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("state", "automaton", "enumName", "inputPorts", "outputPorts")}
-${cd4c.method("protected void transitionFrom${state.getName()?cap_first}()")}
+${tc.signature("state", "automaton", "inputPorts", "outputPorts")}
+${cd4c.method("protected void transitionFrom${autHelper.resolveStateName(state)?cap_first}()")}
+
   // input
     <#list inputPorts as port>
       ${compHelper.getValueTypeOfPort(port)} ${port.getName()}_value = this.parentPart.get${port.getName()?cap_first}().getValue();
@@ -17,15 +18,14 @@ ${cd4c.method("protected void transitionFrom${state.getName()?cap_first}()")}
   <#if autHelper.hasTransitionWithoutGuardFrom(automaton, state)>
       <#assign transition = autHelper.getFirstTransitionWithoutGuardFrom(automaton, state)>
       <@printTransition transition state automaton state state/>
-  <#elseif autHelper.hasSuperState(automaton, state) && autHelper.isFinalState(automaton, state)>
+  <#elseif autHelper.hasSuperState(automaton) && autHelper.isFinalState(state)>
     // transition from super state
-    transitionFrom${autHelper.getSuperState(automaton, state).getName()}();
+    transitionFrom${autHelper.resolveStateName(automaton)?cap_first}();
   </#if>
   <#if transitions?size != 0>}</#if>
     <#list outputPorts as port>
       this.getParentPart().get${port.getName()?cap_first}().sync();
     </#list>
-
 
 <#macro printTransition transition state automaton output result>
 
@@ -33,7 +33,7 @@ ${cd4c.method("protected void transitionFrom${state.getName()?cap_first}()")}
       if(${autHelper.printExpression(transition.getGuard())}) {
     </#if>
   // exit state(s)
-  this.exit(this.getCurrentState(), ${enumName}.${state.getName()});
+  this.exit(this.${autHelper.resolveCurrentStateName(state)}, ${autHelper.resolveEnumName(automaton)}.${autHelper.resolveStateName(state)});
 
   // output
     //TODO output
@@ -47,9 +47,13 @@ ${cd4c.method("protected void transitionFrom${state.getName()?cap_first}()")}
     //TODO set outputs
   // entry state(s)
       //TODO sub states in automaton
-  this.currentState =  ${enumName}.${transition.getTgt()};
 
-  this.entry${transition.getTgt()?cap_first}();
+  this.${autHelper.resolveCurrentStateName(automaton)} =  ${autHelper.resolveEnumName(automaton)}.${autHelper.resolveTransitionName(state,transition.getTgt())};
+  <#if autHelper.isAutomaton(transition.getTgt(),state)>
+    this.${autHelper.resolveCurrentStateName(autHelper.resolveStateUsage(transition.getTgt(),state))} =  ${autHelper.resolveEnumName(autHelper.resolveStateUsage(transition.getTgt(),state))}.start;
+  </#if>
+
+  this.entry${autHelper.resolveTransitionName(state,transition.getTgt()?cap_first)}();
     <#if transition.isPresentGuard()>
       }
     </#if>
