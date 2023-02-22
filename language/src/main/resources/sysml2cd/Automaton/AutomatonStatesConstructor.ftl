@@ -1,8 +1,8 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("automaton", "enumName", "parentType")}
+${tc.signature("automaton", "parentType")}
 ${cd4c.constructor("public ${automaton.getName()}(${parentType} parentPart)")}
     // set currentState to initial state
 
     this.parentPart = parentPart;
-    this.currentState = ${enumName}.start;
+    this.${autHelper.resolveCurrentStateName(automaton)} = ${autHelper.resolveEnumName(automaton)}.start;
 

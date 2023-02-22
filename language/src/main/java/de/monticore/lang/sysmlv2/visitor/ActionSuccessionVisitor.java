@@ -62,7 +62,8 @@ public class ActionSuccessionVisitor implements SysMLActionsVisitor2 {
         int index = elementList.indexOf(node);
         for (int i = index - 1; i >= 0; i--) {
           ASTSysMLElement element = elementList.get(i);
-          if(element instanceof ASTStateUsage && target instanceof ASTStateUsage) {
+          if(element instanceof ASTStateUsage  && (target instanceof ASTStateUsage || (target == null
+              && node.getTgt().equals("done")))) {
             //Der Typ muss manuell von succession zu transition geändert werden
             // , da die erkannten wörter von succession und transition nicht diskunkt sind
             elementList.set(index, createTransition(((ASTStateUsage) element).getName(), node));

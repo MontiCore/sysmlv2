@@ -32,9 +32,6 @@ ${cd4c.method("protected void transitionFrom${autHelper.resolveStateName(state)?
     <#if transition.isPresentGuard()>
       if(${autHelper.printExpression(transition.getGuard())}) {
     </#if>
-  // exit state(s)
-  this.exit(this.${autHelper.resolveCurrentStateName(state)}, ${autHelper.resolveEnumName(automaton)}.${autHelper.resolveStateName(state)});
-
   // output
     //TODO output
   // reaction
@@ -48,12 +45,11 @@ ${cd4c.method("protected void transitionFrom${autHelper.resolveStateName(state)?
   // entry state(s)
       //TODO sub states in automaton
 
-  this.${autHelper.resolveCurrentStateName(automaton)} =  ${autHelper.resolveEnumName(automaton)}.${autHelper.resolveTransitionName(state,transition.getTgt())};
+  this.${autHelper.resolveCurrentStateName(automaton)} =  ${autHelper.resolveEnumName(automaton)}.${transition.getTgt()};
   <#if autHelper.isAutomaton(transition.getTgt(),state)>
     this.${autHelper.resolveCurrentStateName(autHelper.resolveStateUsage(transition.getTgt(),state))} =  ${autHelper.resolveEnumName(autHelper.resolveStateUsage(transition.getTgt(),state))}.start;
   </#if>
-
-  this.entry${autHelper.resolveTransitionName(state,transition.getTgt()?cap_first)}();
+  this.entry${(autHelper.resolveTransitionName(automaton,transition.getTgt())?cap_first)}();
     <#if transition.isPresentGuard()>
       }
     </#if>

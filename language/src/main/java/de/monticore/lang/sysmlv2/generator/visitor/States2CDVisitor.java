@@ -105,11 +105,9 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
       componentUtils.setPortLists((ASTSysMLElement) astStateUsage.getEnclosingScope().getAstNode());
 
       generatorUtils.addMethods(stateUsageClass, attributeList, true, true);
-      cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesExitMethod", stateList,
-          automatonHelper.resolveEnumName(astStateUsage));
-      cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesCompute", stateList);
+      cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesCompute", stateList, astStateUsage);
       cd4C.addConstructor(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesConstructor", astStateUsage,
-          automatonHelper.resolveEnumName(astStateUsage), parentAttribute.printType());
+          parentAttribute.printType());
 
       createTransitionsForStateList(stateList, astStateUsage);
 

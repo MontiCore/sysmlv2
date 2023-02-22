@@ -1,13 +1,13 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("stateList")}
+${tc.signature("stateList", "automaton")}
 
 ${cd4c.method("public void compute()")}
 
     de.monticore.lang.sysmlv2.generator.log.Log.comment("Computing component " + this.getClass().getName() + "");
     // log state @ pre
-    de.monticore.lang.sysmlv2.generator.log.Log.trace("State@pre = "+ this.getCurrentState());
+    de.monticore.lang.sysmlv2.generator.log.Log.trace("State@pre = "+ ${autHelper.resolveCurrentStateName(automaton)});
     // transition from the current state
-    switch (currentState) {
+    switch (${autHelper.resolveCurrentStateName(automaton)}) {
     <#list stateList as state>
       case ${state.getName()}:
      <#if state.getIsAutomaton()>
@@ -21,4 +21,4 @@ ${cd4c.method("public void compute()")}
 
     // log state @ post
     de.monticore.lang.sysmlv2.generator.log.Log.trace(
-    "State@post = "+ this.getCurrentState());
+    "State@post = "+ ${autHelper.resolveCurrentStateName(automaton)});

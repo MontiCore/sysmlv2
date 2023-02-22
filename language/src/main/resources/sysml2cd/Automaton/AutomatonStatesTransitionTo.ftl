@@ -6,9 +6,9 @@ ${cd4c.method("protected void transitionTo${autHelper.resolveStateName(state)?ca
 
   de.monticore.lang.sysmlv2.generator.log.Log.comment("Computing sub automaton  ${state.getName()}");
   // log state @ pre
-  de.monticore.lang.sysmlv2.generator.log.Log.trace("State@pre = "+ currentState_${ autHelper.resolveStateName(state)});
+  de.monticore.lang.sysmlv2.generator.log.Log.trace("State@pre = "+ ${autHelper.resolveCurrentStateName(state)});
   // transition from the current state
-  switch (currentState_${ autHelper.resolveStateName(state)}) {
+  switch (${autHelper.resolveCurrentStateName(state)}) {
     <#list substateList as substate>
       case ${substate.getName()}:
       <#if substate.getIsAutomaton()>
@@ -22,4 +22,4 @@ ${cd4c.method("protected void transitionTo${autHelper.resolveStateName(state)?ca
 
   // log state @ post
   de.monticore.lang.sysmlv2.generator.log.Log.trace(
-  "State@post = "+ this.getCurrentState());
+  "State@post = "+ ${autHelper.resolveCurrentStateName(state)});
