@@ -34,7 +34,7 @@ component grammar SysMLActions
   SendActionUsage extends ActionUsage =
     "send" payload:Expression key("to") target:MCQualifiedName (";")? ;
 
-  AssignmentActionUsage implements SysMLElement =
+  AssignmentActionUsage extends ActionUsage =
     "assign" target:MCQualifiedName ":=" valueExpression:Expression ";" ;
 
   // TODO Name nicht optimal, dass AcceptActionUsage die Inline-Variante erweitert passt nicht so richtig
@@ -50,7 +50,7 @@ component grammar SysMLActions
     ("first" src:Name@ActionUsage)?
     (InlineAcceptActionUsage)?
     ("if" guard:Expression)?
-        "then" tgt:Name@ActionUsage ";" ;
+        "then" (tgt:Name@ActionUsage ";" | ActionUsage);
 
   SysMLFirst implements SysMLElement =
     "first" name:Name ";" ;
