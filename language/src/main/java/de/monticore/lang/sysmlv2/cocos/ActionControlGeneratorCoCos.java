@@ -41,6 +41,18 @@ public class ActionControlGeneratorCoCos implements SysMLActionsASTActionUsageCo
             + " has more than 1 incoming successions without being a join/merge action.");
       }
     }
+    var merge = elementList.stream().filter(t->t instanceof ASTMergeAction).count();
+    var decide = elementList.stream().filter(t->t instanceof ASTDecideAction).count();
+    var fork = elementList.stream().filter(t->t instanceof ASTForkAction).count();
+    var join = elementList.stream().filter(t->t instanceof ASTJoinAction).count();
+    if(merge>1 || decide>1|| fork>1 || join >1)         Log.error("The parent of " + node.getName()
+        + " has more than 1 merge, decide, fork or join, this is not allowed");
+    if((merge == 1 || decide == 1) && !(merge ==1 &&decide ==1))         Log.error("The parent of " + node.getName()
+        + " has a merge/decide node without the corresponding node.");
+    if((fork == 1 || join == 1) && !(fork ==1 &&join ==1))         Log.error("The parent of " + node.getName()
+        + " has a fork/join node without the corresponding node.");
+    if(merge+decide+fork+join>2)         Log.error("The parent of " + node.getName()
+        + " can have either no control nodes,1 merge and 1 decide or 1 fork and 1 join.");
   }
 
 }
