@@ -56,6 +56,14 @@ public class ComponentHelper {
     }
     else return "";
   }
+  public String getDefaultValue(ASTAttributeUsage attributeUsage) {
+
+    if(attributeUsage.isPresentExpression()){
+      CommonExpressionsJavaPrinter prettyPrinter = new CommonExpressionsJavaPrinter(new IndentPrinter());
+      return prettyPrinter.prettyprint(attributeUsage.getExpression());
+    }
+    else return "";
+  }
 
   public String getValueTypeOfPort(ASTPortUsage portUsage) {
     return componentUtils.getValueTypeOfPort(portUsage);
