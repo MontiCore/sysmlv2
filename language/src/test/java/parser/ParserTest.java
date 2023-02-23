@@ -55,6 +55,7 @@ public class ParserTest {
       "refinement.sysml",
       "cardinalities.sysml",
       "connections.sysml",
+      "collections.sysml",
       "StateDecomposition1.sysml",
       "FlowConectionInterfaceExample.sysml",
       "StateActions.sysml",

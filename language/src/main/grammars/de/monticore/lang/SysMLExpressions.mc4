@@ -6,6 +6,7 @@ component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiteral
                                            de.monticore.expressions.AssignmentExpressions,
                                            de.monticore.expressions.StreamExpressions,
                                            de.monticore.ocl.OCLExpressions,
+                                           de.monticore.ocl.SetExpressions,
                                            de.monticore.types.MCBasicTypes                  // MCType
 {
   /**
@@ -20,9 +21,6 @@ component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiteral
    */
   SysMLFieldAccessExpression extends FieldAccessExpression implements Expression <290> =
     Expression "::" Name;
-
-  SysMLCollectionExpression implements Expression <310> =
-    "{" (Expression || ",")* "}";
 
   SysMLInstantiation implements Expression = MCType Arguments;
 
