@@ -1,0 +1,28 @@
+#node
+node_modules/
+!bin/visualization*
+lib/sysml.library
+out/
+logs/
+venv/
+*.vsix
+
+
+### Isabelle/jEdit ###
+\#*
+*.thy~
+*.thy~~
+*.*~
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### Mac-OS ###
+.DS_Store
+
+
+### vscode ###
+.vscode-test

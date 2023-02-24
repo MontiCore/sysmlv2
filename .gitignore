@@ -5,7 +5,7 @@ target
 .settings
 .classpath
 out/
-bin/
+bin/*
 
 # Ignore Macintosh Desktop Service Stores
 .DS_Store

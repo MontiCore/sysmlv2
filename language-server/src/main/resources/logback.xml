@@ -17,7 +17,7 @@
   <appender name="FILE" class="ch.qos.logback.core.FileAppender">
     <file>sysml-language-server.log</file>
     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-      <level>TRACE</level>
+      <level>WARN</level>
     </filter>
     <encoder>
       <pattern>
@@ -26,7 +26,7 @@
     </encoder>
   </appender>
 
-  <variable name="LSPLOG_LEVEL" value="${LSPLOG_LEVEL:-INFO}"/>
+  <variable name="LSPLOG_LEVEL" value="${LSPLOG_LEVEL:-ERROR}"/>
 
   <root level="${LSPLOG_LEVEL}">
     <appender-ref ref="CONSOLE"/>

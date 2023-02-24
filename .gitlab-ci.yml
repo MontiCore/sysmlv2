@@ -2,6 +2,7 @@
 stages:
   - gradle
   - docker
+  - plugin
 
 before_script:
   - chmod +x gradlew
@@ -71,3 +72,18 @@ deploy docker:
   only:
     - master
     - /^release/.*$/
+
+build:extension:
+  stage: plugin
+  image: node:latest
+  script:
+    - cd visualization-plugin
+    - rm .npmrc && mv .npmrc.ci .npmrc
+    - npm install -g vsce typescript
+    - npm install
+    - npm run compile
+    - vsce package --no-rewrite-relative-links
+    - mv sysml*.vsix vis.vsix
+  artifacts:
+    paths:
+      - visualization-plugin/vis.vsix

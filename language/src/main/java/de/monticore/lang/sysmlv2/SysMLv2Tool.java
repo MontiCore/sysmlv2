@@ -57,6 +57,8 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     //  checker.addCoCo(new ConstraintIsBoolean());
     // TODO Erroring when checking Generics. See disabled test in SpecializationExistsTest
     //  checker.addCoCo(new SpecializationExists());
+    // MSh: nonetheless we add ConstraintIsCoCo
+    checker.addCoCo(new ConstraintIsBoolean());
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTPartDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTPortDefCoCo) new NameCompatible4Isabelle());
