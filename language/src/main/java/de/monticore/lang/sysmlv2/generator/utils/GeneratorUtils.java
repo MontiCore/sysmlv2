@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 public class GeneratorUtils {
   private HashMap<String, String> scalarValueMapping = new HashMap<String, String>();
 
+  private HashMap<String, String> primitiveWrapperMap = new HashMap<String, String>();
   protected final CD4C cd4C;
 
   public GeneratorUtils() {
@@ -40,6 +41,14 @@ public class GeneratorUtils {
     scalarValueMapping.put("Real", "float");
     scalarValueMapping.put("ScalarValue", "float");
     scalarValueMapping.put("String", "String");
+    primitiveWrapperMap.put("boolean", "Boolean");
+    primitiveWrapperMap.put("char", "Character");
+    primitiveWrapperMap.put("byte", "Byte");
+    primitiveWrapperMap.put("short", "Short");
+    primitiveWrapperMap.put("int", "Integer");
+    primitiveWrapperMap.put("long", "Long");
+    primitiveWrapperMap.put("float", "Float");
+    primitiveWrapperMap.put("double", "Double");
     //TODO maybe support Collections
   }
 
@@ -112,4 +121,5 @@ public class GeneratorUtils {
   public ImmutableMap<String, String> getScalarValueMapping(){
     return ImmutableMap.copyOf(scalarValueMapping);
   }
+  public String mapToWrapper(String primitive){return primitiveWrapperMap.get(primitive);}
 }

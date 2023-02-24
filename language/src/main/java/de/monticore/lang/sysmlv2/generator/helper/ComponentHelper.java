@@ -43,6 +43,10 @@ public class ComponentHelper {
     return !generatorUtils.getScalarValueMapping().containsValue(
         printer.prettyprint(generatorUtils.attributeType(astAttributeUsage)));
   }
+  public String mapToWrapped(ASTAttributeUsage astAttributeUsage){
+    return generatorUtils.mapToWrapper(getAttributeType(astAttributeUsage));
+  }
+
 
   public boolean isPortDelayed(ASTPortUsage portUsage) {
     return componentUtils.isPortDelayed(portUsage);

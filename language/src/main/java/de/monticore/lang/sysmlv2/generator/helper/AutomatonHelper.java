@@ -1,7 +1,6 @@
 package de.monticore.lang.sysmlv2.generator.helper;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.lang.sysmlactions._ast.ASTActionUsage;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
@@ -83,7 +82,7 @@ public class AutomatonHelper {
     return stateUsage.getDoActionList().size() > 0;
   }
 
-  public String getParametersOfActionAsString(ASTActionUsage astActionUsage, List<ASTSysMLElement> attributeUsageList) {
+  public String getParametersOfActionAsString(List<ASTSysMLElement> attributeUsageList) {
     return attributeUsageList.stream().map(t -> typeWithNameOfElement(t)).collect(
         Collectors.joining(","));
   }
