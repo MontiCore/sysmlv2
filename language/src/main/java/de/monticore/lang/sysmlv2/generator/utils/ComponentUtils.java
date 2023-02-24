@@ -133,9 +133,7 @@ public class ComponentUtils {
   }
 
   public String getValueTypeOfPort(ASTPortUsage portUsage) {
-    var attributeUsage = portUsage.getValueAttribute().getSpecializationList().stream().filter(
-        t -> t instanceof ASTSysMLTyping).flatMap(ASTSpecialization::streamSuperTypes).findFirst();
-    return printName(attributeUsage.get());
+    return generatorUtils.mapToWrapper(printName(generatorUtils.attributeType(portUsage.getValueAttribute())));
   }
 
   public boolean isPortDelayed(ASTPortUsage portUsage) {
