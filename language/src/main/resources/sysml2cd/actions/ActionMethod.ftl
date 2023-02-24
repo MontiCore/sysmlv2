@@ -5,71 +5,86 @@ ${tc.signature("action","parameterList", "attributeList")}
 ${cd4c.method("public void ${action.getName()}(${autHelper.getParametersOfActionAsString(parameterList) })")}
 
 <#assign openBracketsCount = 0>
-
-<#list actionsHelper.getFromAllSubActions(action) as attribute>
+<#list attributeList as attribute>
     <#if compHelper.isObjectAttribute(attribute)>
         ${compHelper.getAttributeType(attribute)} ${attribute.getName()} = new ${compHelper.getAttributeType(attribute)}();
       this.${attribute.getName()}.setUp();
     <#else>
-        ${compHelper.mapToWrapped(attribute)} ${attribute.getName()} = new ${compHelper.mapToWrapped(attribute)}();
+        ${compHelper.mapToWrapped(attribute)} ${attribute.getName()} = ${compHelper.mapToWrapped(attribute)}.valueOf(<#if attribute.isPresentExpression()>${autHelper.printExpression(attribute.getExpression())}<#else >0</#if>);
     </#if>
+</#list>
+
+<#list actionsHelper.getSubActions(action) as subaction>
+    <#list actionsHelper.getParameters(subaction) as parameter>
+        <#if compHelper.isObjectAttribute(parameter)>
+            ${compHelper.getAttributeType(parameter)} ${subaction.getName()}_${parameter.getName()} = new ${compHelper.getAttributeType(parameter)}();
+          this.${parameter.getName()}.setUp();
+        <#else>
+            ${compHelper.mapToWrapped(parameter)} ${subaction.getName()}_${parameter.getName()} = ${compHelper.mapToWrapped(parameter)}.valueOf(<#if parameter.isPresentExpression()>${autHelper.printExpression(parameter.getExpression())}<#else >0</#if>);
+        </#if>
+    </#list>
 </#list>
 <#if actionsHelper.hasActionDecideMerge(action)>
     <#assign  firstControlNode = actionsHelper.getFirstControlNode(action)>
     <#assign  secondControlNode = actionsHelper.getSecondControlNode(action)>
-        //start
-    <@printPath actionsHelper.getPathFromStart(action)/>
-        <#if actionsHelper.isMergeNode(firstControlNode)>
-            <#else >
-    <#list actionsHelper.getDecisionPaths(firstControlNode,secondControlNode) as path>
-        //path:
-     <@printPath path/>
-    </#list>
-        </#if>
-  <#else >
+  //start
+    <@printPath actionsHelper.getPathFromStart(action) action/>
+    <#if actionsHelper.isMergeNode(firstControlNode)>
+    <#else >
+        <#list actionsHelper.getDecisionPaths(firstControlNode,secondControlNode) as path>
+          //path:
+            <@printPath path action/>
+        </#list>
+    </#if>
+<#else >
 
     <#if actionsHelper.hasActionForkJoin(action)>
         <#assign  firstControlNode = actionsHelper.getFirstControlNode(action)>
         <#assign  secondControlNode = actionsHelper.getSecondControlNode(action)>
-        //start
-        <@printPath actionsHelper.getPathFromStart(action)/>
+      //start
+        <@printPath actionsHelper.getPathFromStart(action) action/>
         <#list actionsHelper.getDecisionPaths(firstControlNode,secondControlNode) as path>
           //path:
-            <@printPath path/>
+            <@printPath path action/>
         </#list>
 
-        <@printPath actionsHelper.getEndPath(action)/>
-        <#else>
-        just print path
-    <@printPath actionsHelper.getPathFromStart(action)/>
+        <@printPath actionsHelper.getEndPath(action) action/>
+    <#else>
+      just print path
+        <@printPath actionsHelper.getPathFromStart(action) action/>
     </#if>
 </#if>
 
-<#macro printPath successionList>
-
-
+<#macro printPath successionList action>
     <#list successionList as succession>
         <#if succession.isPresentGuard()>
           if (${autHelper.printExpression(succession.getGuard())}){
-            ${succession.getTgt()}();
             <#assign openBracketsCount = openBracketsCount + 1>
-        <#else>
-            <#if actionsHelper.isDoneOrControlNode(succession.getTgt(),succession)>
+        </#if>
+        <#if actionsHelper.isDoneOrControlNode(succession.getTgt(),succession)>
+        <#else >
+            <#assign resolvedTarget = actionsHelper.resolveAction(succession.getTgt(), succession)>
+            <#if actionsHelper.isSendAction(resolvedTarget)>
+              this.get${resolvedTarget.getTarget()?cap_first}().setValue(${autHelper.printExpression(resolvedTarget.getPayload())});
             <#else >
-                <#assign resolvedTarget = actionsHelper.resolveAction(succession.getTgt(), succession)>
-            ${succession.getTgt()}(<#list  (actionsHelper.getParameters(resolvedTarget)) as param>${param.getName()}<#sep>, </#sep></#list>);
+                <#if actionsHelper.isAssignmentAction(resolvedTarget)>
+                  ${resolvedTarget.getTarget()} = ${autHelper.printExpression(resolvedTarget.getValueExpression())};
+                <#else >
+                    ${succession.getTgt()}(<#list  actionsHelper.getParametersWithActionPrefix(resolvedTarget) as param>${param}<#sep>, </#sep></#list>);
+                </#if>
             </#if>
         </#if>
     </#list>
     <#if openBracketsCount gt 0>
-    <#list 0..openBracketsCount-1 as i>
-      }
-    </#list>
+        <#list 0..openBracketsCount-1 as i>
+          }
+        </#list>
         <#assign openBracketsCount = 0>
     </#if>
 </#macro>
 
 
-<#macro printAttributes attributeList>
+<#macro printAction action>
 
 </#macro>
+

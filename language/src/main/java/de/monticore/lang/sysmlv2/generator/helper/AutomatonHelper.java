@@ -89,7 +89,7 @@ public class AutomatonHelper {
 
   String typeWithNameOfElement(ASTSysMLElement element) {
     if(element instanceof ASTAttributeUsage) {
-      return componentHelper.getAttributeType((ASTAttributeUsage) element) + " "
+      return componentHelper.mapToWrapped((ASTAttributeUsage) element) + " "
           + ((ASTAttributeUsage) element).getName();
     }
     if(element instanceof ASTPartUsage) {

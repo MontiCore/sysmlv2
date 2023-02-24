@@ -139,17 +139,18 @@ public class ComponentUtils {
   }
 
   public boolean isPortDelayed(ASTPortUsage portUsage) {
+    if(portUsage.isPresentDelayed()) {
+      var expression = portUsage.getDelayedAttribute().getExpression();
+      SysMLExpressionsDeriver sysMLExpressionsDeriver = new SysMLExpressionsDeriver();
+      //var type =sysMLExpressionsDeriver.deriveType(expression);
+      //TODO remove, its just a proof of concept
+      if(expression instanceof ASTLiteralExpression) {
+        ASTLiteral literal = ((ASTLiteralExpression) expression).getLiteral();
 
-    var expression = portUsage.getDelayedAttribute().getExpression();
-    SysMLExpressionsDeriver sysMLExpressionsDeriver = new SysMLExpressionsDeriver();
-    //var type =sysMLExpressionsDeriver.deriveType(expression);
-    //TODO remove, its just a proof of concept
-    if(expression instanceof ASTLiteralExpression) {
-      ASTLiteral literal = ((ASTLiteralExpression) expression).getLiteral();
-
-      if(literal instanceof ASTBooleanLiteral) {
-        if(((ASTBooleanLiteral) literal).getValue())
-          return true;
+        if(literal instanceof ASTBooleanLiteral) {
+          if(((ASTBooleanLiteral) literal).getValue())
+            return true;
+        }
       }
     }
     return false;

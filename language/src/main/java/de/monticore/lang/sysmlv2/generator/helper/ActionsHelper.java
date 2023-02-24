@@ -1,6 +1,7 @@
 package de.monticore.lang.sysmlv2.generator.helper;
 
 import de.monticore.lang.sysmlactions._ast.ASTActionUsage;
+import de.monticore.lang.sysmlactions._ast.ASTAssignmentActionUsage;
 import de.monticore.lang.sysmlactions._ast.ASTDecideAction;
 import de.monticore.lang.sysmlactions._ast.ASTForkAction;
 import de.monticore.lang.sysmlactions._ast.ASTJoinAction;
@@ -27,6 +28,12 @@ public class ActionsHelper {
       }
     }
     return false;
+  }
+
+  public boolean isSendAction(ASTActionUsage actionUsage) {
+
+    return actionUsage instanceof ASTSendActionUsage;
+
   }
 
   public ASTSendActionUsage castToSend(ASTDoAction doAction) {
@@ -190,12 +197,23 @@ public class ActionsHelper {
         Collectors.toList());
   }
 
-  public List<ASTAttributeUsage> getFromAllSubActions(ASTActionUsage actionUsage) {
-    var subActions = actionUsage.streamSysMLElements().filter(t -> t instanceof ASTActionUsage).map(
-        t -> (ASTActionUsage) t).collect(Collectors.toList());
-    return subActions.stream().flatMap(t -> getParameters(t).stream()).collect(Collectors.toList());
+  public List<ASTAttributeUsage> getParametersFromAllSubActions(ASTActionUsage actionUsage) {
+    return getSubActions(actionUsage).stream().flatMap(t -> getParameters(t).stream()).collect(Collectors.toList());
   }
-  public ASTActionUsage resolveAction(String name, ASTSysMLSuccession succession){
+
+  public List<ASTActionUsage> getSubActions(ASTActionUsage actionUsage) {
+    return actionUsage.streamSysMLElements().filter(t -> t instanceof ASTActionUsage).map(
+        t -> (ASTActionUsage) t).collect(Collectors.toList());
+  }
+
+  public ASTActionUsage resolveAction(String name, ASTSysMLSuccession succession) {
     return succession.getEnclosingScope().resolveActionUsage(name).get().getAstNode();
+  }
+
+  public boolean isAssignmentAction(ASTActionUsage actionUsage) {
+    return actionUsage instanceof ASTAssignmentActionUsage;
+  }
+  public List<String> getParametersWithActionPrefix(ASTActionUsage childAction){
+    return getParameters(childAction).stream().map(t-> childAction.getName()+"_"+t.getName()).collect(Collectors.toList());
   }
 }
