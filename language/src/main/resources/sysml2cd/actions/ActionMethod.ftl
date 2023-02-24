@@ -1,9 +1,7 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
 ${tc.signature("action","parameterList", "attributeList")}
-
-
 ${cd4c.method("public void ${action.getName()}(${autHelper.getParametersOfActionAsString(parameterList) })")}
-
+      //local variables
 <#assign openBracketsCount = 0>
 <#list attributeList as attribute>
     <#if compHelper.isObjectAttribute(attribute)>
@@ -13,7 +11,7 @@ ${cd4c.method("public void ${action.getName()}(${autHelper.getParametersOfAction
         ${compHelper.mapToWrapped(attribute)} ${attribute.getName()} = ${compHelper.mapToWrapped(attribute)}.valueOf(<#if attribute.isPresentExpression()>${autHelper.printExpression(attribute.getExpression())}<#else >0</#if>);
     </#if>
 </#list>
-
+      //Pointer to parameters of sub actions
 <#list actionsHelper.getSubActions(action) as subaction>
     <#list actionsHelper.getParameters(subaction) as parameter>
         <#if compHelper.isObjectAttribute(parameter)>
@@ -24,6 +22,7 @@ ${cd4c.method("public void ${action.getName()}(${autHelper.getParametersOfAction
         </#if>
     </#list>
 </#list>
+      //control flow
 <#if actionsHelper.hasActionDecideMerge(action)>
     <#assign  firstControlNode = actionsHelper.getFirstControlNode(action)>
     <#assign  secondControlNode = actionsHelper.getSecondControlNode(action)>
@@ -50,7 +49,6 @@ ${cd4c.method("public void ${action.getName()}(${autHelper.getParametersOfAction
 
         <@printPath actionsHelper.getEndPath(action) action/>
     <#else>
-      just print path
         <@printPath actionsHelper.getPathFromStart(action) action/>
     </#if>
 </#if>

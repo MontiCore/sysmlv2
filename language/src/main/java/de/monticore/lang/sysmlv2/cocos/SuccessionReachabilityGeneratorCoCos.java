@@ -29,7 +29,8 @@ public class SuccessionReachabilityGeneratorCoCos
   @Override
   public void check(ASTActionUsage node) {
     if(!(node instanceof ASTJoinAction || node instanceof ASTDecideAction || node instanceof ASTForkAction
-        || node instanceof ASTMergeAction || node instanceof ASTLoopAction || node instanceof ASTSendActionUsage)) {
+        || node instanceof ASTMergeAction || node instanceof ASTLoopAction || node instanceof ASTSendActionUsage
+        || node instanceof ASTAssignmentActionUsage)) {
       checkReachability(node);
     }
   }
@@ -38,31 +39,31 @@ public class SuccessionReachabilityGeneratorCoCos
     var successionList = node.streamSysMLElements().filter(t -> t instanceof ASTSysMLSuccession).map(
         t -> (ASTSysMLSuccession) t).collect(
         Collectors.toList());
-    if(!checkReachabilityOfNode("start", successionList,new HashSet<>())) {
+    if(!checkReachabilityOfNode("start", successionList, new HashSet<>())) {
       Log.error("ActionUsage " + node.getName() + " has a succession that does not reach \"done\".");
 
     }
   }
 
   boolean checkReachabilityOfNode(String source, List<ASTSysMLSuccession> successionList, Set<String> visited) {
-    if(!visited.contains(source)){
-    if(source.equals("done")) {
-      return true;
-    }
-    else {
-      var successors = successionList.stream().filter(t -> t.getSrc().equals(source)).collect(Collectors.toList());
-      if(successors.isEmpty()) {
-        return false;
+    if(!visited.contains(source)) {
+      if(source.equals("done")) {
+        return true;
       }
       else {
-        visited.add(source);
-        return successors.stream()
-            .allMatch(
-                t -> checkReachabilityOfNode(t.getTgt(), successionList, visited));
+        var successors = successionList.stream().filter(t -> t.getSrc().equals(source)).collect(Collectors.toList());
+        if(successors.isEmpty()) {
+          return false;
+        }
+        else {
+          visited.add(source);
+          return successors.stream()
+              .allMatch(
+                  t -> checkReachabilityOfNode(t.getTgt(), successionList, visited));
+        }
       }
     }
-  }
-  return true;
+    return true;
   }
 
 }
