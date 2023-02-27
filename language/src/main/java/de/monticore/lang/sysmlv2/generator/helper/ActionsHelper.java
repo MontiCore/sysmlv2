@@ -10,6 +10,8 @@ import de.monticore.lang.sysmlactions._ast.ASTSendActionUsage;
 import de.monticore.lang.sysmlactions._ast.ASTSysMLSuccession;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlstates._ast.ASTDoAction;
+import de.monticore.lang.sysmlstates._ast.ASTEntryAction;
+import de.monticore.lang.sysmlstates._ast.ASTExitAction;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -18,19 +20,6 @@ import java.util.stream.Collectors;
 
 public class ActionsHelper {
   ComponentHelper componentHelper = new ComponentHelper();
-
-  public boolean isSendAction(ASTDoAction doAction) {
-    if(doAction.isPresentActionUsage()) {
-      return doAction.getActionUsage() instanceof ASTSendActionUsage;
-    }
-    else if(doAction.isPresentAction()) {
-      var actionResolve = doAction.getEnclosingScope().resolveActionUsage(doAction.getAction());
-      if(actionResolve.isPresent()) {
-        return actionResolve.get().getAstNode() instanceof ASTSendActionUsage;
-      }
-    }
-    return false;
-  }
 
   public boolean isSendAction(ASTActionUsage actionUsage) {
 
@@ -277,7 +266,7 @@ public class ActionsHelper {
     }
     for (ASTActionUsage subAction : subActions) {
       for (ASTAttributeUsage parameter : getParameters(subAction)) {
-        String parameterString = subAction.getName()+"_"+parameter.getName();
+        String parameterString = subAction.getName() + "_" + parameter.getName();
         if(withTypes) {
           if(componentHelper.isObjectAttribute(parameter)) {
             parameterString = componentHelper.getAttributeType(parameter) + " " + parameterString;
@@ -290,5 +279,44 @@ public class ActionsHelper {
       }
     }
     return StringUtils.join(returnStringList, ',');
+  }
+
+  public ASTActionUsage getActionFromDoAction(ASTDoAction doAction) {
+    if(doAction.isPresentActionUsage()) {
+      return doAction.getActionUsage();
+    }
+    else if(doAction.isPresentAction()) {
+      var actionResolve = doAction.getEnclosingScope().resolveActionUsage(doAction.getAction());
+      if(actionResolve.isPresent()) {
+        return actionResolve.get().getAstNode();
+      }
+    }
+    return null;
+  }
+
+  public ASTActionUsage getActionFromEntryAction(ASTEntryAction entryAction) {
+    if(entryAction.isPresentActionUsage()) {
+      return entryAction.getActionUsage();
+    }
+    else if(entryAction.isPresentAction()) {
+      var actionResolve = entryAction.getEnclosingScope().resolveActionUsage(entryAction.getAction());
+      if(actionResolve.isPresent()) {
+        return actionResolve.get().getAstNode();
+      }
+    }
+    return null;
+  }
+
+  public ASTActionUsage getActionFromExitAction(ASTExitAction exitAction) {
+    if(exitAction.isPresentActionUsage()) {
+      return exitAction.getActionUsage();
+    }
+    else if(exitAction.isPresentAction()) {
+      var actionResolve = exitAction.getEnclosingScope().resolveActionUsage(exitAction.getAction());
+      if(actionResolve.isPresent()) {
+        return actionResolve.get().getAstNode();
+      }
+    }
+    return null;
   }
 }

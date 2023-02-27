@@ -3,19 +3,25 @@ ${tc.signature("state", "automaton")}
 ${cd4c.method("protected void entry${autHelper.resolveStateName(state)?cap_first}()")}
 
 <#if autHelper.hasEntryAction(state)>
-  // inputs
-  //TODO inputs
-
-  // outputs
-  //TODO print outputs
   // entry action
       <#assign entryActions = state.getEntryActionList()/>
-
-  <#list entryActions>
-      <#items as entryAction>
-    ${entryAction.getAction()}
-    </#items>
+  <#list entryActions as entryAction>
+      <@handleAction actionsHelper.getActionFromEntryAction(entryAction)/>
 </#list>
-  // result
-    //TODO print results
 </#if>
+
+
+
+
+<#macro handleAction action>
+    <#if actionsHelper.isSendAction(action)>
+      this.parentPart.get${action.getTarget()?cap_first}().setValue(${autHelper.printExpression(action.getPayload())});
+    </#if>
+    <#if actionsHelper.isAssignmentAction(action)>
+        ${action.getTarget()} = ${autHelper.printExpression(action.getValueExpression())};
+    </#if>
+    <#if !actionsHelper.isSendAction(action) && !actionsHelper.isAssignmentAction(action)>
+    ${action.getName()}();
+</#if>
+</#macro>
+

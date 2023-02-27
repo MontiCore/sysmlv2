@@ -1,6 +1,12 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
 ${tc.signature("state", "automaton", "inputPorts", "outputPorts")}
 ${cd4c.method("protected void transitionFrom${autHelper.resolveStateName(state)?cap_first}()")}
+    <#if !state.getIsAutomaton()>
+        <#assign doActions = state.getDoActionList()/>
+        <#list doActions as doAction>
+            <@handleAction actionsHelper.getActionFromDoAction(doAction)/>
+        </#list>
+    </#if>
 
   // input
     <#list inputPorts as port>
@@ -37,13 +43,11 @@ ${cd4c.method("protected void transitionFrom${autHelper.resolveStateName(state)?
   // reaction
       //TODO add do actions
     <#if transition.isPresentDoAction()>
-        ${tc.includeArgs("sysml2cd.actions.ActionUsage.ftl",transition.getDoAction())
-        }
+      <@handleAction actionsHelper.getActionFromDoAction(transition.getDoAction())/>
     </#if>
   // result
     //TODO set outputs
   // entry state(s)
-      //TODO sub states in automaton
 
   this.${autHelper.resolveCurrentStateName(automaton)} =  ${autHelper.resolveEnumName(automaton)}.${transition.getTgt()};
   <#if autHelper.isAutomaton(transition.getTgt(),state)>
@@ -52,5 +56,18 @@ ${cd4c.method("protected void transitionFrom${autHelper.resolveStateName(state)?
   this.entry${(autHelper.resolveTransitionName(automaton,transition.getTgt())?cap_first)}();
     <#if transition.isPresentGuard()>
       }
+    </#if>
+</#macro>
+
+
+<#macro handleAction action>
+    <#if actionsHelper.isSendAction(action)>
+      this.parentPart.get${action.getTarget()?cap_first}().setValue(${autHelper.printExpression(action.getPayload())});
+    </#if>
+    <#if actionsHelper.isAssignmentAction(action)>
+        ${action.getTarget()} = ${autHelper.printExpression(action.getValueExpression())};
+    </#if>
+    <#if !actionsHelper.isSendAction(action) && !actionsHelper.isAssignmentAction(action)>
+        ${action.getName()}();
     </#if>
 </#macro>
