@@ -2,7 +2,6 @@
 ${tc.signature("action","parameterList", "attributeList")}
 ${cd4c.method("public void ${action.getName()}(${autHelper.getParametersOfActionAsString(parameterList) })")}
       //local variables
-<#assign openBracketsCount = 0>
 <#list attributeList as attribute>
     <#if compHelper.isObjectAttribute(attribute)>
         ${compHelper.getAttributeType(attribute)} ${attribute.getName()} = new ${compHelper.getAttributeType(attribute)}();
@@ -56,8 +55,9 @@ ${cd4c.method("public void ${action.getName()}(${autHelper.getParametersOfAction
 <#macro printPath successionList action>
     <#list successionList as succession>
         <#if succession.isPresentGuard()>
-          if (${autHelper.printExpression(succession.getGuard())}){
-            <#assign openBracketsCount = openBracketsCount + 1>
+          if (!(${autHelper.printExpression(succession.getGuard())})){
+              throw new RuntimeException("Could not evaluate the guard \"${autHelper.printExpression(succession.getGuard())}\" in action \"${action.getName()}\" to true, but the execution has to terminate.");
+          }
         </#if>
         <#if actionsHelper.isDoneOrControlNode(succession.getTgt(),succession)>
         <#else >
@@ -73,12 +73,6 @@ ${cd4c.method("public void ${action.getName()}(${autHelper.getParametersOfAction
             </#if>
         </#if>
     </#list>
-    <#if openBracketsCount gt 0>
-        <#list 0..openBracketsCount-1 as i>
-          }
-        </#list>
-        <#assign openBracketsCount = 0>
-    </#if>
 </#macro>
 
 
