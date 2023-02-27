@@ -66,7 +66,13 @@ import java.util.function.Predicate;
 
         // we omit to set the ASTNode
         var variable = new PortUsage2VariableSymbolAdapter(portUsage);
-        variable.setType(SymTypeExpressionFactory.createTypeObject(resolved));
+
+        if(portUsage.getAstNode().getCardinality().isPresent()) {
+          variable.setType(SymTypeExpressionFactory.createTypeArray(resolved, 1,
+              SymTypeExpressionFactory.createTypeObject(resolved)));
+        }else {
+          variable.setType(SymTypeExpressionFactory.createTypeObject(resolved));
+        }
 
         adapted.add(variable);
       }
@@ -90,7 +96,13 @@ import java.util.function.Predicate;
 
         // we omit to set the ASTNode
         var variable = new AttributeUsage2VariableSymbolAdapter(attrUsage);
-        variable.setType(streamOfAttrType);
+
+        if(attrUsage.getAstNode().getCardinality().isPresent()) {
+          variable.setType(SymTypeExpressionFactory.createTypeArray(streamOfAttrType.getTypeInfo(), 1,
+              streamOfAttrType));
+        }else {
+          variable.setType(streamOfAttrType);
+        }
 
         adapted.add(variable);
       }
