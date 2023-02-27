@@ -94,6 +94,18 @@ component grammar SysMLParts extends SysMLBasis {
       types:de.monticore.types.check.SymTypeExpression*
       direction:de.monticore.lang.SysMLBasis.SysMLFeatureDirection ;
 
+  astrule AttributeUsage =
+      method public Optional<de.monticore.cardinality._ast.ASTCardinality> getCardinality() {
+        for (de.monticore.lang.sysmlbasis._ast.ASTSpecialization s: this.getSpecializationList()) {
+          if(s instanceof de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) {
+            if(((de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) s).isPresentCardinality()) {
+              return Optional.of(((de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) s).getCardinality());
+            }
+          }
+        }
+        return Optional.empty();
+      } ;
+
   /**
    * PortUsage has a shadowing scope to allow instantiating attributes from its definition. This is done to store
    * additional information resulting from tools processing models. This is a work-in-progress concept as part of
