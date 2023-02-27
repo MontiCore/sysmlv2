@@ -11,8 +11,7 @@ import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
-import de.monticore.lang.sysmlv2.SysMLv2Mill;
-import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
+import de.monticore.lang.sysmlv2.generator.utils.ActionsUtils;
 import de.monticore.lang.sysmlv2.generator.utils.AttributeUtils;
 import de.monticore.lang.sysmlv2.generator.utils.ComponentUtils;
 import de.monticore.lang.sysmlv2.generator.utils.GeneratorUtils;
@@ -62,6 +61,8 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
 
   AttributeResolveUtils attributeResolveUtils;
 
+  ActionsUtils actionsUtils = new ActionsUtils();
+
   public Parts2CDVisitor(GlobalExtensionManagement glex, ASTCDCompilationUnit cdCompilationUnit,
                          ASTCDPackage basePackage, ASTCDDefinition astcdDefinition) {
     this.cd4C = CD4C.getInstance();
@@ -102,6 +103,8 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     componentUtils.createComponentMethods(astPartDef, cd4C, partDefClass,
         partResolveUtils.getPartUsageOfNode(astPartDef),
         attributeResolveUtils.getAttributesOfElement(astPartDef));
+
+
   }
 
   @Override
@@ -133,10 +136,8 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
           partResolveUtils.getPartUsageOfNode(astPartUsage),
           attributeResolveUtils.getAttributesOfElement(astPartUsage));
       generatorUtils.addMethods(partDefClass, attributeList, true, true);
-      Actions2CDVisitor actions2CDVisitor = new Actions2CDVisitor(partDefClass);
-      SysMLv2Traverser traverser = SysMLv2Mill.inheritanceTraverser();
-      traverser.add4SysMLActions(actions2CDVisitor);
-      traverser.handle(astPartUsage);
+
+      actionsUtils.createActionsForPart(astPartUsage,partDefClass);
 
     }
 

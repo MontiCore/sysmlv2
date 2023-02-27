@@ -75,6 +75,8 @@ public class InterfaceUtils {
     ASTCDExtendUsage extendUsage = createExtendUsage(supertypeList, true);
     ASTCDInterface partInterface = CD4CodeMill.cDInterfaceBuilder().setName(name + "Interface").setModifier(
         CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
+    ActionsUtils actionsUtils = new ActionsUtils();
+    actionsUtils.createActionsForInterface(sysMLElement,partInterface);
     if(!extendUsage.isEmptySuperclass()) {
       partInterface.setCDExtendUsage(extendUsage);
     }
