@@ -28,6 +28,10 @@ ${cd4c.method("public void ${action.getName()}(${autHelper.getParametersOfAction
   //start
     <@printPath actionsHelper.getPathFromStart(action) action/>
     <#if actionsHelper.isMergeNode(firstControlNode)>
+        do{
+        <@printPath actionsHelper.getPathFromAction(actionsHelper.getDirectSuccessor(firstControlNode),actionsHelper.getSuccessions(action)) action/>
+        }while(returnPath_${secondControlNode.getName()}(${actionsHelper.parameterListForDecisionMethod(action, false) }));
+        <@printPath actionsHelper.getEndPath(action) action/>
     <#else >
         <#list actionsHelper.getDecisionPaths(firstControlNode,secondControlNode) as path>
           //path:

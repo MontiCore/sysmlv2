@@ -7,12 +7,13 @@ import de.monticore.lang.sysmlactions._ast.ASTActionUsage;
 import de.monticore.lang.sysmlactions._visitor.SysMLActionsVisitor2;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
+import de.monticore.lang.sysmlv2.generator.helper.ActionsHelper;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Actions2CDVisitor implements SysMLActionsVisitor2 {
-
+ActionsHelper actionsHelper = new ActionsHelper();
   protected ASTCDClass astcdClass;
 
   /**
@@ -29,6 +30,11 @@ public class Actions2CDVisitor implements SysMLActionsVisitor2 {
   public void visit(ASTActionUsage actionUsage) {
     cd4C.addMethod(astcdClass, "sysml2cd.actions.ActionMethod", actionUsage, getParameterList(actionUsage),
         getAttributeList(actionUsage));
+    if(actionsHelper.hasActionDecideMerge(actionUsage) &&
+        actionsHelper.isMergeNode(actionsHelper.getFirstControlNode(actionUsage))){
+      cd4C.addMethod(astcdClass, "sysml2cd.actions.DecideMethod", actionUsage, getParameterList(actionUsage),
+          getAttributeList(actionUsage));
+    }
   }
 
   List<ASTSysMLElement> getParameterList(ASTActionUsage actionUsage) {

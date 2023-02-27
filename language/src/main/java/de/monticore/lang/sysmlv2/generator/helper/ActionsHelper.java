@@ -10,12 +10,14 @@ import de.monticore.lang.sysmlactions._ast.ASTSendActionUsage;
 import de.monticore.lang.sysmlactions._ast.ASTSysMLSuccession;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlstates._ast.ASTDoAction;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ActionsHelper {
+  ComponentHelper componentHelper = new ComponentHelper();
 
   public boolean isSendAction(ASTDoAction doAction) {
     if(doAction.isPresentActionUsage()) {
@@ -65,8 +67,7 @@ public class ActionsHelper {
     if(actionName.equals("done"))
       return true;
     ASTActionUsage actionUsage = sysMLSuccession.getEnclosingScope().resolveActionUsage(actionName).get().getAstNode();
-    return actionUsage instanceof ASTMergeAction || actionUsage instanceof ASTDecideAction
-        || actionUsage instanceof ASTForkAction || actionUsage instanceof ASTJoinAction;
+    return isControlNode(actionUsage);
   }
 
   public List<ASTSysMLSuccession> getPathFromAction(ASTActionUsage actionUsage,
@@ -108,14 +109,50 @@ public class ActionsHelper {
 
   public List<ASTSysMLSuccession> getEndPath(ASTActionUsage parent) {
     var secondControlNode = getSecondControlNode(parent);
-    var successorNode = getDirectSuccessor(secondControlNode);
-    var successions = getSuccessions(parent);
+    var successionList = getSuccessions(parent);
 
-    var successionToSuccessor = successions.stream().filter(t -> t.getSrc().equals(secondControlNode.getName())).filter(
-        t -> t.getTgt().equals(successorNode.getName())).findFirst();
-    List<ASTSysMLSuccession> returnList = new ArrayList<>(List.of(successionToSuccessor.get()));
-    returnList.addAll(getPathFromAction(successorNode, successions));
+    var successionToSuccessor = successionList.stream().filter(
+        t -> t.getSrc().equals(secondControlNode.getName())).collect(Collectors.toList());
+    var succession = successionToSuccessor.stream().filter(
+        t -> canDirectlyReachEnd(t, successionList)).findFirst().get();
+
+    var actionUsage = parent.getSpannedScope().resolveActionUsage(succession.getTgt()).get().getAstNode();
+    List<ASTSysMLSuccession> returnList = new ArrayList<>(List.of(succession));
+    returnList.addAll(getPathFromAction(actionUsage, successionList));
     return returnList;
+  }
+
+  public List<ASTSysMLSuccession> getReturnPath(ASTActionUsage parent) {
+    var secondControlNode = getSecondControlNode(parent);
+    var successionList = getSuccessions(parent);
+
+    var successionToSuccessor = successionList.stream().filter(
+        t -> t.getSrc().equals(secondControlNode.getName())).collect(Collectors.toList());
+    var succession = successionToSuccessor.stream().filter(
+        t -> !canDirectlyReachEnd(t, successionList)).findFirst().get();
+
+    var actionUsage = parent.getSpannedScope().resolveActionUsage(succession.getTgt()).get().getAstNode();
+    return new ArrayList<>(getPathFromAction(actionUsage, successionList));
+  }
+
+  public ASTSysMLSuccession getFirstReturnPathSuccessor(ASTActionUsage parent) {
+    var secondControlNode = getSecondControlNode(parent);
+    var successionList = getSuccessions(parent);
+
+    var successionToSuccessor = successionList.stream().filter(
+        t -> t.getSrc().equals(secondControlNode.getName())).collect(Collectors.toList());
+    return successionToSuccessor.stream().filter(t -> !canDirectlyReachEnd(t, successionList)).findFirst().get();
+  }
+
+  boolean canDirectlyReachEnd(ASTSysMLSuccession succession, List<ASTSysMLSuccession> successionList) {
+    if(succession.getTgt().equals("done"))
+      return true;
+    var actionUsage = succession.getEnclosingScope().resolveActionUsage(succession.getTgt()).get().getAstNode();
+    if(isControlNode(actionUsage))
+      return false;
+    return canDirectlyReachEnd(
+        successionList.stream().filter(t -> t.getSrc().equals(actionUsage.getName())).findFirst().get(),
+        successionList);
   }
 
   public boolean hasActionDecideMerge(ASTActionUsage actionUsage) {
@@ -213,7 +250,45 @@ public class ActionsHelper {
   public boolean isAssignmentAction(ASTActionUsage actionUsage) {
     return actionUsage instanceof ASTAssignmentActionUsage;
   }
-  public List<String> getParametersWithActionPrefix(ASTActionUsage childAction){
-    return getParameters(childAction).stream().map(t-> childAction.getName()+"_"+t.getName()).collect(Collectors.toList());
+
+  public List<String> getParametersWithActionPrefix(ASTActionUsage childAction) {
+    return getParameters(childAction).stream().map(t -> childAction.getName() + "_" + t.getName()).collect(
+        Collectors.toList());
+  }
+
+  public String parameterListForDecisionMethod(ASTActionUsage actionUsage, boolean withTypes) {
+    List<String> returnStringList = new ArrayList<>();
+    var attributeList = actionUsage.streamSysMLElements().filter(t -> t instanceof ASTAttributeUsage).filter(
+        t -> ((ASTAttributeUsage) t).isPresentSysMLFeatureDirection()).map(t -> (ASTAttributeUsage) t).collect(
+        Collectors.toList());
+    var subActions = getSubActions(actionUsage);
+    for (ASTAttributeUsage attributeUsage :
+        attributeList) {
+      String parameterString = attributeUsage.getName();
+      if(withTypes) {
+        if(componentHelper.isObjectAttribute(attributeUsage)) {
+          parameterString = componentHelper.getAttributeType(attributeUsage) + " " + parameterString;
+        }
+        else {
+          parameterString = componentHelper.mapToWrapped(attributeUsage) + " " + parameterString;
+        }
+      }
+      returnStringList.add(parameterString);
+    }
+    for (ASTActionUsage subAction : subActions) {
+      for (ASTAttributeUsage parameter : getParameters(subAction)) {
+        String parameterString = subAction.getName()+"_"+parameter.getName();
+        if(withTypes) {
+          if(componentHelper.isObjectAttribute(parameter)) {
+            parameterString = componentHelper.getAttributeType(parameter) + " " + parameterString;
+          }
+          else {
+            parameterString = componentHelper.mapToWrapped(parameter) + " " + parameterString;
+          }
+        }
+        returnStringList.add(parameterString);
+      }
+    }
+    return StringUtils.join(returnStringList, ',');
   }
 }
