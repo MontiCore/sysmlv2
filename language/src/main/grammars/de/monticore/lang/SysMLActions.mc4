@@ -31,10 +31,10 @@ component grammar SysMLActions
       SysMLElement*
     "}" "until" until:Expression ";";
 
-  SendActionUsage extends ActionUsage =
+  symbol scope SendActionUsage extends ActionUsage =
     ("action" Name)? "send" payload:Expression key("to") target:MCQualifiedName (";")? ;
 
-  AssignmentActionUsage extends ActionUsage =
+  symbol scope AssignmentActionUsage extends ActionUsage =
     ("action" Name)? "assign" target:MCQualifiedName ":=" valueExpression:Expression ";" ;
 
   // TODO Name nicht optimal, dass AcceptActionUsage die Inline-Variante erweitert passt nicht so richtig
