@@ -18,47 +18,45 @@ package AvionicsParts {
     import Items::*;
     import ScalarValues::*;
     port def VoltagePort{
-        value : Real;
+        in value : Real;
     }
     port def DataOutPort{
-        value : Real;
+        out value : Real;
     }
 
     port def ParachutePort{
-        value : Boolean;
+        out value : Boolean;
     }
 
     part def RecoveryBoard{
-        in port drogue : ParachutePort;
-        in port main : ParachutePort;
+        port drogue : ParachutePort;
+        port main : ParachutePort;
 
-        in port voltageIn : VoltagePort;
+        port voltageIn : VoltagePort;
     }
 
     part def COTSRecovery specializes RecoveryBoard;
     part def SRADRecovery specializes RecoveryBoard{
 
         part def Sensor{
-         in port dataOut : DataOutPort;
+         port dataOut : DataOutPort;
         }
         part def IMU specializes Sensor {
-            in port zAcc : DataOutPort;
-            in port zSpeed : DataOutPort;
+            port zAcc : DataOutPort;
+            port zSpeed : DataOutPort;
         }
-        part def Memory{//braucht man das??
-         in port logData : DataOutPort;
+        part def Memory{
+         port logData : DataOutPort;
         }
         part Microcontroller{
-            in port voltageIn : VoltagePort;
-            in port pressData : DataOutPort;
-            in port zAcc : DataOutPort;
-            in port zSpeed : DataOutPort;
+            port voltageIn : VoltagePort;
+            port pressData : ~DataOutPort;
+            port zAcc : ~DataOutPort;
+            port zSpeed : ~DataOutPort;
             exhibit state flightHandler {
                             in height : Real;
                             in zSpeed : Real;
                             in zAcceleraction : Real;
-                            out drogue : ParachutePort;
-                            out main : ParachutePort;
                             entry;
                             then Idle;
                             state Idle;
@@ -74,12 +72,12 @@ package AvionicsParts {
 
                             transition Coasting
                             if zSpeed <= 0
-                                do send true to drogue
+                                do action send_0 send true to drogue //TODO reset to short notation
                                 then Descend;
                             state Descend;
                             transition Descend
                             if height <= 400
-                                do send true to main
+                                do action send_1 send true to main
                                 then Landing;
                             state Landing;
 
@@ -89,10 +87,10 @@ package AvionicsParts {
                             state PostFlight;
 
                         }
-            out port logData : DataOutPort;
+            port logData : DataOutPort;
 
-            out port main : ParachutePort;
-            out port drogue : ParachutePort;
+            port main : ParachutePort;
+            port drogue : ParachutePort;
             bind pressData.value = flightHandler.height;
             bind zAcc.value = flightHandler.zAcceleraction;
             bind zSpeed.value = flightHandler.zSpeed;
@@ -115,15 +113,14 @@ package AvionicsParts {
     }
     part def PowerSystem{
 
-        part def Battery{
-            out port batteryVoltage : VoltagePort; //voltage und energie
+        part battery{
+            port batteryVoltage : ~VoltagePort; //voltage und energie
         }
-        part battery : Battery [2];
 
     }
     part def PyroSystem{
-        in port drogueSignal : ParachutePort;
-        in port mainSignal : ParachutePort;
+        port drogueSignal : ~ParachutePort;
+        port mainSignal : ~ParachutePort;
 
 
         part def Parachute;
