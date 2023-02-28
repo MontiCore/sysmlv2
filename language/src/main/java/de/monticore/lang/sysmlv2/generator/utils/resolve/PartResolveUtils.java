@@ -12,6 +12,7 @@ import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsageTOP;
 import de.monticore.lang.sysmlparts._ast.ASTPortDef;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
+import de.monticore.lang.sysmlparts._symboltable.ICommonSysMLPartsSymbol;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
@@ -19,6 +20,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +61,8 @@ public class PartResolveUtils {
       List<ASTPartUsage> parentWithoutRedefinedParts = attributeUsageListUnion(parentPart, listOfRedefinedParts);
       List<ASTPartUsage> partsWithoutRedefinition = new ArrayList<>(partUsages);
       partsWithoutRedefinition.removeAll(listOfRedefinedParts);
-      List<String> stringList = partsWithoutRedefinition.stream().map(ASTPartUsageTOP::getName).collect(Collectors.toList());
+      List<String> stringList = partsWithoutRedefinition.stream().map(ASTPartUsageTOP::getName).collect(
+          Collectors.toList());
       if(parentWithoutRedefinedParts.stream().anyMatch(t -> stringList.contains(t.getName()))) {
         Log.error(
             "A subparts of " + getNameOfNode(node)
@@ -292,6 +295,45 @@ public class PartResolveUtils {
 
   private String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+  }
+  public Optional<ICommonSysMLPartsSymbol> resolvePartQname(String QName, ISysMLPartsScope scope) {
+    var QnameArray = QName.split("\\.");
+    var first = QnameArray[0];
+    var resolvePartDef = scope.resolvePartDef(first);
+    var resolvePartUsage = scope.resolvePartUsage(first);
+    var newQName = String.join(".", Arrays.copyOfRange(QnameArray, 1, QnameArray.length));
+    if(resolvePartDef.isPresent()) {
+      var partDef = resolvePartDef.get().getAstNode();
+      return resolvePartQnameWithParent(newQName,
+          partDef);
+    }
+    if(resolvePartUsage.isPresent()) {
+      var partUsage = resolvePartUsage.get().getAstNode();
+      return resolvePartQnameWithParent(newQName,
+          partUsage);
+    }
+    return Optional.empty();
+  }
+
+  public Optional<ICommonSysMLPartsSymbol> resolvePartQnameWithParent(String QName, ASTSysMLElement element) {
+    var QnameArray = QName.split("\\.");
+    var first = QnameArray[0];
+    var partUsageList = getSubPartsOfElement(element);
+    if(partUsageList.stream().anyMatch(t -> t.getName().equals(first))) {
+      var matchingParts = partUsageList.stream().filter(t -> t.getName().equals(first)).collect(Collectors.toList());
+      if(matchingParts.size() > 1) {
+        Log.error("Found more than one part named " + first + " in part usage " + getNameOfNode(element)
+            + " this is not resolvable.");
+      }
+      if(QnameArray.length == 1)
+        return Optional.ofNullable(matchingParts.get(0).getSymbol());
+      var newQName = String.join(".", Arrays.copyOfRange(QnameArray, 1, QnameArray.length));
+      return resolvePartQnameWithParent(newQName, matchingParts.get(0));
+    }
+    else {
+      Log.error("Part named " + first + " in part usage " + getNameOfNode(element) + " is not resolvable.");
+    }
+    return Optional.empty();
   }
 
 }

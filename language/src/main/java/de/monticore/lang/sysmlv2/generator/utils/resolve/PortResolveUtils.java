@@ -1,13 +1,11 @@
 package de.monticore.lang.sysmlv2.generator.utils.resolve;
 
 import de.monticore.lang.sysmlbasis._ast.*;
-import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
 import de.monticore.lang.sysmlparts._ast.*;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
-import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.se_rwth.commons.logging.Log;
+import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
+import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
+import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +16,8 @@ import java.util.stream.Collectors;
 
 public class PortResolveUtils {
   ResolveUtils resolveUtils = new ResolveUtils();
+
+  PartResolveUtils partResolveUtils = new PartResolveUtils();
 
   public List<ASTPortUsage> getPortsOfElement(ASTSysMLElement node) {
     List<ASTSysMLElement> parentList = resolveUtils.getDirectSupertypes(node);
@@ -55,7 +55,40 @@ public class PortResolveUtils {
         t -> stringSet.contains((t.getName()))).collect(
         Collectors.toList());
   }
-  private String printName(ASTMCType type) {
-    return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+
+  public Optional<PortUsageSymbol> resolvePort(String QName, String BaseName, ISysMLPartsScope scope) {
+    String parentPart;
+    Optional<PartDefSymbol> parentPartDef = Optional.empty();
+    Optional<PartUsageSymbol> parentPartUsage = Optional.empty();
+    if(!QName.equals(BaseName)) {
+      if(QName.split("\\.").length > 2) {
+        var symbol = partResolveUtils.resolvePartQname(QName.substring(0, QName.length() - BaseName.length() - 1),
+            scope);
+        if(symbol.isPresent()) {
+          if(symbol.get() instanceof PartUsageSymbol)
+            parentPartUsage = Optional.of((PartUsageSymbol) symbol.get());
+        }
+      }
+      else {
+        parentPart = QName.substring(0, QName.length() - BaseName.length() - 1);
+        parentPartDef = scope.resolvePartDefDown(parentPart);
+        parentPartUsage = scope.resolvePartUsageDown(parentPart);
+      }
+    }
+
+    //check first if its present in transitive supertypes of parts
+    if(parentPartUsage.isPresent()) {
+      var portUsageList = getPortsOfElement(parentPartUsage.get().getAstNode());
+      if(portUsageList.stream().anyMatch(t -> t.getName().equals(BaseName)))
+        return portUsageList.stream().filter(t -> t.getName().equals(BaseName)).map(t -> t.getSymbol()).findFirst();
+    }
+    if(parentPartDef.isPresent()) {
+      var portUsageList = getPortsOfElement(parentPartDef.get().getAstNode());
+      if(portUsageList.stream().anyMatch(t -> t.getName().equals(BaseName)))
+        return portUsageList.stream().filter(t -> t.getName().equals(BaseName)).map(t -> t.getSymbol()).findFirst();
+    }
+
+    return scope.resolvePortUsageDown(QName);
+
   }
 }

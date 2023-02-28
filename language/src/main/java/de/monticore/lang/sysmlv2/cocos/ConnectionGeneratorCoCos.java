@@ -9,14 +9,12 @@ import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
-import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.PortResolveUtils;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class ConnectionGeneratorCoCos implements SysMLConnectionsASTFlowCoCo {
   /**
@@ -55,9 +53,9 @@ public class ConnectionGeneratorCoCos implements SysMLConnectionsASTFlowCoCo {
 
   List<ASTPortUsage> checkResolvable(ISysMLPartsScope scope, ASTMCQualifiedName source, ASTMCQualifiedName target) {
     List<ASTPortUsage> usageList = new ArrayList<>();
-    var sourceResolvable = resolvePort(source.getQName(), source.getBaseName(), scope);
+    var sourceResolvable = portResolveUtils.resolvePort(source.getQName(), source.getBaseName(), scope);
 
-    var targetResolvable = resolvePort(target.getQName(), target.getBaseName(), scope);
+    var targetResolvable = portResolveUtils.resolvePort(target.getQName(), target.getBaseName(), scope);
     if(sourceResolvable.isEmpty()) {
       Log.error("Flow from port " + source.getQName() + " is not resolvable.");
 
@@ -75,32 +73,7 @@ public class ConnectionGeneratorCoCos implements SysMLConnectionsASTFlowCoCo {
     return usageList;
   }
 
-  Optional<PortUsageSymbol> resolvePort(String QName, String BaseName, ISysMLPartsScope scope) {
-    String parentPart;
-    if(QName.equals(BaseName)) {
-      parentPart = QName;
-    }
-    else {
-      parentPart = QName.substring(0, QName.length() - BaseName.length() - 1);
-    }
 
-    var parentPartDef = scope.resolvePartDefDown(parentPart);
-    var parentPartUsage = scope.resolvePartUsageDown(parentPart);
-    //check first if its present in transitive supertypes of parts
-    if(parentPartUsage.isPresent()) {
-      var portUsageList = portResolveUtils.getPortsOfElement(parentPartUsage.get().getAstNode());
-      if(portUsageList.stream().anyMatch(t -> t.getName().equals(BaseName)))
-        return portUsageList.stream().filter(t -> t.getName().equals(BaseName)).map(t -> t.getSymbol()).findFirst();
-    }
-    if(parentPartDef.isPresent()) {
-      var portUsageList = portResolveUtils.getPortsOfElement(parentPartDef.get().getAstNode());
-      if(portUsageList.stream().anyMatch(t -> t.getName().equals(BaseName)))
-        return portUsageList.stream().filter(t -> t.getName().equals(BaseName)).map(t -> t.getSymbol()).findFirst();
-    }
-
-    return scope.resolvePortUsageDown(QName);
-
-  }
 
   void checkPortDirections(ASTPortUsage source, ASTPortUsage target) {
     ASTAttributeUsage sourceValue = source.getValueAttribute();
