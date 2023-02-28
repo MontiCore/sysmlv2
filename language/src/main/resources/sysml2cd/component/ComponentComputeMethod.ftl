@@ -25,7 +25,7 @@ ${cd4c.method("public void compute()")}
         }
       }
       if(computedThisIteration.isEmpty()) {
-        throw new RuntimeException("Could not complete compute cycle due to not all ports being synced. Likely reasons: Forgot to call init() or cyclic connector loop.");
+        de.monticore.lang.sysmlv2.generator.log.Log.error("Could not complete compute cycle due to not all ports being synced. Likely reasons: Forgot to call init() or cyclic connector loop.");
       } else {
         notYetComputed.removeAll(computedThisIteration);
       }

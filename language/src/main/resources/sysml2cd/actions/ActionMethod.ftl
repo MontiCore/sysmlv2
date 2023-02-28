@@ -60,7 +60,7 @@ ${cd4c.method("public void ${action.getName()}(${autHelper.getParametersOfAction
     <#list successionList as succession>
         <#if succession.isPresentGuard()>
           if (!(${autHelper.printExpression(succession.getGuard())})){
-              throw new RuntimeException("Could not evaluate the guard \"${autHelper.printExpression(succession.getGuard())}\" in action \"${action.getName()}\" to true, but the execution has to terminate.");
+            de.monticore.lang.sysmlv2.generator.log.Log.error("Could not evaluate the guard \"${autHelper.printExpression(succession.getGuard())}\" in action \"${action.getName()}\" to true, but the execution has to terminate.");
           }
         </#if>
         <#if actionsHelper.isDoneOrControlNode(succession.getTgt(),succession)>
