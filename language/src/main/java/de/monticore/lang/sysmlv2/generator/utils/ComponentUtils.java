@@ -9,10 +9,8 @@ import de.monticore.lang.sysmlbasis._ast.*;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
-import de.monticore.lang.sysmlv2.generator.utils.resolve.AttributeResolveUtils;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.PortResolveUtils;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
-import de.monticore.lang.sysmlv2.types.SysMLExpressionsDeriver;
 import de.monticore.literals.mccommonliterals._ast.ASTBooleanLiteral;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
 import de.monticore.prettyprint.IndentPrinter;
@@ -30,8 +28,6 @@ public class ComponentUtils {
   GeneratorUtils generatorUtils = new GeneratorUtils();
 
   PortResolveUtils portResolveUtils = new PortResolveUtils();
-
-  AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
 
   public List<ASTPortUsage> inputPortList;
 
@@ -110,6 +106,8 @@ public class ComponentUtils {
     List<ASTPortUsage> input = new ArrayList<>();
     for (ASTPortUsage p : inOutPortList) {
       var element = p.deepClone();
+      element.setValueAttribute(p.getValueAttribute().deepClone());
+      element.setDelayedAttribute(p.getDelayedAttribute().deepClone());
       element.setEnclosingScope(p.getEnclosingScope());
       input.add(element);
     }
@@ -118,6 +116,8 @@ public class ComponentUtils {
     List<ASTPortUsage> output = new ArrayList<>();
     for (ASTPortUsage p : inOutPortList) {
       var element = p.deepClone();
+      element.setValueAttribute(p.getValueAttribute().deepClone());
+      element.setDelayedAttribute(p.getDelayedAttribute().deepClone());
       element.setEnclosingScope(p.getEnclosingScope());
       output.add(element);
     }
@@ -139,15 +139,11 @@ public class ComponentUtils {
   public boolean isPortDelayed(ASTPortUsage portUsage) {
     if(portUsage.isPresentDelayed()) {
       var expression = portUsage.getDelayedAttribute().getExpression();
-      SysMLExpressionsDeriver sysMLExpressionsDeriver = new SysMLExpressionsDeriver();
-      //var type =sysMLExpressionsDeriver.deriveType(expression);
-      //TODO remove, its just a proof of concept
       if(expression instanceof ASTLiteralExpression) {
         ASTLiteral literal = ((ASTLiteralExpression) expression).getLiteral();
 
         if(literal instanceof ASTBooleanLiteral) {
-          if(((ASTBooleanLiteral) literal).getValue())
-            return true;
+          return ((ASTBooleanLiteral) literal).getValue();
         }
       }
     }
