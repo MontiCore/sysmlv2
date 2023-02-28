@@ -1,82 +1,83 @@
 package AdderExample {
 	import ScalarValues::*;
-	part TestSystem {
+
 
 	  port def ZahlenPort{
-	    attribute value : Integer;
+	    out attribute value : Integer;
 	  }
     part GenerateOneToThree{
-      out port outputPort : ZahlenPort;
+      port outputPort : ZahlenPort;
       exhibit state verhalten{
           entry;
           attribute zahl : Integer;
         transition start
-        do send 0 to outputPort
+        do action send_11 send 0 to outputPort
         then eins;
 
         state eins;
 
         transition first eins
-        do send 1 to outputPort
+        do action send_10 send 1 to outputPort
         then zwei;
         state zwei;
 
         transition zwei
-        do send 2 to outputPort
+        do action send_9 send 2 to outputPort
         then drei;
         state drei;
 
         transition zwei
-        do send 3 to outputPort
+        do  action send_8 send 3 to outputPort
         then start;
       }
     }
         part GenerateOneToFive{
-          out port outputPort : ZahlenPort;
-          exhibit state behaviour{
+          port outputPort : ZahlenPort;
+
+          exhibit state behaviourTemplate{
               entry;
             transition start
-            do send 0 to outputPort
+            do action send_0 send 0 to outputPort
             then eins;
 
             state eins;
 
             transition first eins
-            do send 1 to outputPort
+            do  action send_1  send 1 to outputPort
             then zwei;
             state zwei;
 
             transition zwei
-            do send 2 to outputPort
+            do  action send_2 send 2 to outputPort
             then drei;
             state drei;
 
             transition drei
-            do send 3 to outputPort
+            do  action send_3 send 3 to outputPort
             then vier;
             state vier;
             transition vier
-            do send 4 to outputPort
+            do  action send_4 send 4 to outputPort
             then fuenf;
             state fuenf;
             transition fuenf
-            do send 5 to outputPort
+            do  action send_5 send 5 to outputPort
             then start;
           }
         }
 
             part Adder{
-              in port number1 : ZahlenPort;
-              in port number2 : ZahlenPort;
-              out port outputPort : ZahlenPort;
+              port number1 : ~ZahlenPort;
+              port number2 : ~ZahlenPort;
+              port outputPort : ZahlenPort;
               exhibit state adderBehaviour{
-                  entry;
+                  entry action send_611 send number1.value+number2.value to outputPort;
                 transition start
-                do send number1.value+number2.value to outputPort
+                do action send_6 send number1.value+number2.value to outputPort
                 then Idle;
                 state Idle;
                 transition Idle
-                do send number1.value+number2.value to outputPort
+                do action send_7  send number1.value+number2.value to outputPort
                 then Idle;
               }
             }
@@ -84,10 +85,10 @@ package AdderExample {
     flow GenerateOneToFive.outputPort to Adder.number2;
     flow Adder.outputPort to Drain.drainPort;
     part Drain{
-      in port drainPort : ZahlenPort;
+      port drainPort : ~ZahlenPort;
     }
 
-	}
+
 
 
 }

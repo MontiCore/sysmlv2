@@ -12,11 +12,6 @@ public interface IComponent {
    */
   void setUp();
 
-  /**
-   * Produces the initial output. Requires that the ports were created in the
-   * subcomponents beforehand (see {@code setUp()}).
-   */
-  void init();
 
   /**
    * Called for the component to compute its next values.
