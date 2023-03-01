@@ -14,6 +14,7 @@ import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2ArtifactScope;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.se_rwth.commons.Splitters;
 
@@ -26,6 +27,7 @@ public class GeneratorUtils {
   private HashMap<String, String> scalarValueMapping = new HashMap<String, String>();
 
   private HashMap<String, String> primitiveWrapperMap = new HashMap<String, String>();
+
   protected final CD4C cd4C;
 
   public GeneratorUtils() {
@@ -84,12 +86,19 @@ public class GeneratorUtils {
   public ASTCDPackage initCdPackage(ASTSysMLElement element, ASTCDDefinition astcdDefinition, String baseName) {
     List<String> basePackageName = List.of(baseName);
     List<String> partList = initCdPackage(element, basePackageName);
-    ASTCDPackage cdPackage = CD4CodeMill.cDPackageBuilder()
-        .setMCQualifiedName(CD4CodeMill.mCQualifiedNameBuilder()
-            .setPartsList(partList)
-            .build())
+    ASTMCQualifiedName qualifiedName = CD4CodeMill.mCQualifiedNameBuilder()
+        .setPartsList(partList)
         .build();
-    astcdDefinition.addCDElement(cdPackage);
+    ASTCDPackage cdPackage = CD4CodeMill.cDPackageBuilder()
+        .setMCQualifiedName(qualifiedName)
+        .build();
+    var ListCDPackages = astcdDefinition.getCDElementList().stream().filter(t -> t instanceof ASTCDPackage).flatMap(
+        t -> ((ASTCDPackage) t).streamCDElements()).filter(t -> t instanceof ASTCDPackage).collect(Collectors.toList());
+    if(ListCDPackages.stream().noneMatch(
+        t -> ((ASTCDPackage) t).getMCQualifiedName().getQName().equals(qualifiedName.getQName()))) {
+      astcdDefinition.addCDElement(cdPackage);
+    }
+
     return cdPackage;
   }
 
@@ -118,8 +127,12 @@ public class GeneratorUtils {
   boolean isBasicType(String typeName) {
     return scalarValueMapping.containsKey(typeName);
   }
-  public ImmutableMap<String, String> getScalarValueMapping(){
+
+  public ImmutableMap<String, String> getScalarValueMapping() {
     return ImmutableMap.copyOf(scalarValueMapping);
   }
-  public String mapToWrapper(String primitive){return primitiveWrapperMap.get(primitive);}
+
+  public String mapToWrapper(String primitive) {
+    return primitiveWrapperMap.get(primitive);
+  }
 }
