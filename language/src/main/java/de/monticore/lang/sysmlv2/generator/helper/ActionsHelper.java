@@ -213,7 +213,6 @@ public class ActionsHelper {
         succssesorPaths.stream().filter(t -> t.isEmpty()).forEach(t -> t.add(0, succession));
       }
     }
-    succssesorPaths.forEach(t -> t.addAll(lastPath));
     return succssesorPaths;
   }
 
@@ -318,5 +317,8 @@ public class ActionsHelper {
       }
     }
     return null;
+  }
+  public List<ASTSysMLSuccession> dropFirstElement(List<ASTSysMLSuccession> list){
+    return list.subList(1, list.size());
   }
 }
