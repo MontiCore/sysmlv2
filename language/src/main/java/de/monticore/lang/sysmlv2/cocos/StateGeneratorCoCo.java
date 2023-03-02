@@ -63,7 +63,7 @@ public class StateGeneratorCoCo implements SysMLStatesASTStateUsageCoCo, SysMLSt
     if(node.getSysMLElementList().size() > 0 && (typeTypes.size() > 0 || specTypes.size() > 0))
       Log.error("State usage " + node.getName()
           + " has sub-elements, but uses a type or a specialization. This is not allowed.");
-    checkActions(node.getEntryActionList(), node.streamEntryActions(), node.getExitActionList(), node.getDoActionList());
+    checkActions(node.getEntryActionList(), node.getExitActionList(), node.getDoActionList());
   }
 
   /**
@@ -76,26 +76,26 @@ public class StateGeneratorCoCo implements SysMLStatesASTStateUsageCoCo, SysMLSt
       Log.error(
           "State def " + node.getName() + " has a specialization, redefinition or type none of these are allowed.");
 
-    checkActions(node.getEntryActionList(), node.streamEntryActions(), node.getExitActionList(), node.getDoActionList());
+    checkActions(node.getEntryActionList(), node.getExitActionList(), node.getDoActionList());
 
   }
 
-  private void checkActions(List<ASTEntryAction> entryActionList, Stream<ASTEntryAction> astEntryActionStream,
+  private void checkActions(List<ASTEntryAction> entryActionList,
                             List<ASTExitAction> exitActionList, List<ASTDoAction> doActionList) {
     if(!entryActionList.isEmpty()) {
-      if(astEntryActionStream.filter(ASTEntryAction::isPresentAction).anyMatch(
+      if(entryActionList.stream().filter(ASTEntryAction::isPresentAction).anyMatch(
           t -> !resolveAction(t.getAction(), (SysMLv2Scope) t.getEnclosingScope()))) {
         Log.error("State usage has an entry action that is not resolvable.");
       }
     }
     if(!exitActionList.isEmpty()) {
-      if(astEntryActionStream.filter(ASTEntryAction::isPresentAction).anyMatch(
+      if(exitActionList.stream().filter(ASTExitAction::isPresentAction).anyMatch(
           t -> !resolveAction(t.getAction(), (SysMLv2Scope) t.getEnclosingScope()))) {
         Log.error("State usage has an entry action that is not resolvable.");
       }
     }
     if(!doActionList.isEmpty()) {
-      if(astEntryActionStream.filter(ASTEntryAction::isPresentAction).anyMatch(
+      if(doActionList.stream().filter(ASTDoAction::isPresentAction).anyMatch(
           t -> !resolveAction(t.getAction(), (SysMLv2Scope) t.getEnclosingScope()))){
         Log.error("State usage has an entry action that is not resolvable.");
       }
