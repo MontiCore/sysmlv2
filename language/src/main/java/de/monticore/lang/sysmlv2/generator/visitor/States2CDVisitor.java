@@ -76,6 +76,8 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
 
   @Override
   public void visit(ASTStateUsage astStateUsage) {
+
+    ASTSysMLElement parentPart = getParentPart(astStateUsage);
     cdPackage = generatorUtils.initCdPackage(astStateUsage, astcdDefinition, basePackage.getName());
     var parent = astStateUsage.getEnclosingScope().getAstNode();
     if(astStateUsage.getIsAutomaton() && (parent instanceof ASTPartUsage || parent instanceof ASTPartDef)) {
@@ -108,8 +110,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
       cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesCompute", stateList, astStateUsage);
       cd4C.addConstructor(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesConstructor", astStateUsage,
           parentAttribute.printType());
-
-      createTransitionsForStateList(stateList, astStateUsage);
+      createTransitionsForStateList(stateList, astStateUsage, parentPart);
 
     }
   }
@@ -152,16 +153,15 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
     return CD4CodeMill.cDAttributeBuilder().setName("parentPart").setModifier(
         CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(type).build();
   }
-
-  List<ASTStateUsage> getStatesAndSubstates(ASTStateUsage stateUsages) {
-    var stateList = statesResolveUtils.getStatesOfElement(stateUsages);
-    var subAutomatonList = stateList.stream().filter(
-        t -> t.getIsAutomaton()).collect(
-        Collectors.toList());
-    var statesSubAutomaton = subAutomatonList.stream().flatMap(t -> getStatesAndSubstates(t).stream()).collect(
-        Collectors.toList());
-    stateList.addAll(statesSubAutomaton);
-    return stateList;
+  ASTSysMLElement getParentPart(ASTStateUsage astStateUsage){
+    var parent = astStateUsage.getEnclosingScope().getAstNode();
+    if(parent instanceof ASTPartUsage || parent instanceof  ASTPartDef) {
+      return (ASTSysMLElement) parent;
+    }
+    if(parent instanceof ASTStateUsage){
+      return getParentPart((ASTStateUsage) parent);
+    }
+    return null;
   }
 
   List<ASTCDAttribute> createCurrentStateAttributeList(ASTStateUsage parentAutomaton,
@@ -192,7 +192,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
     return subAutomatonList;
   }
 
-  void createTransitionsForStateList(List<ASTStateUsage> stateList, ASTStateUsage astStateUsage) {
+  void createTransitionsForStateList(List<ASTStateUsage> stateList, ASTStateUsage astStateUsage, ASTSysMLElement parentPart) {
     var inputPortsParent = componentUtils.inputPortList;
     var outputPortsParent = componentUtils.outputPortList;
 
@@ -200,12 +200,12 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
         stateList) {
 
       cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesTransitionFrom", state, astStateUsage,
-          inputPortsParent, outputPortsParent);
-      cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesEntryAction", state, astStateUsage);
-      cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesExitAction", state, astStateUsage);
+          inputPortsParent, outputPortsParent, parentPart);
+      cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesEntryAction", state, astStateUsage,parentPart);
+      cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesExitAction", state, astStateUsage, parentPart);
       if(state.getIsAutomaton()) {
-        cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesTransitionTo", state);
-        createTransitionsForStateList(statesResolveUtils.getStatesOfElement(state), state);
+        cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesTransitionTo", state, parentPart);
+        createTransitionsForStateList(statesResolveUtils.getStatesOfElement(state), state, parentPart);
       }
     }
   }

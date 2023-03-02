@@ -1,5 +1,6 @@
 package de.monticore.lang.sysmlv2.generator.helper;
 
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.lang.sysmlactions._ast.ASTActionUsage;
 import de.monticore.lang.sysmlactions._ast.ASTAssignmentActionUsage;
 import de.monticore.lang.sysmlactions._ast.ASTDecideAction;
@@ -12,6 +13,8 @@ import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlstates._ast.ASTDoAction;
 import de.monticore.lang.sysmlstates._ast.ASTEntryAction;
 import de.monticore.lang.sysmlstates._ast.ASTExitAction;
+import de.monticore.lang.sysmlv2.types.CommonExpressionsJavaPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -144,7 +147,10 @@ public class ActionsHelper {
         successionList.stream().filter(t -> t.getSrc().equals(actionUsage.getName())).findFirst().get(),
         successionList);
   }
-
+  public String printExpression(ASTExpression expr) {
+    CommonExpressionsJavaPrinter prettyPrinter = new CommonExpressionsJavaPrinter(new IndentPrinter());
+    return prettyPrinter.prettyprint(expr);
+  }
   public boolean hasActionDecideMerge(ASTActionUsage actionUsage) {
     return actionUsage.streamSysMLElements().anyMatch(t -> t instanceof ASTMergeAction || t instanceof ASTDecideAction);
   }

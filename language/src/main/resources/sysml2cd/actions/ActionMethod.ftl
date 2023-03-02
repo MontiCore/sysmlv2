@@ -12,7 +12,7 @@ ${cd4c.method("${abstract}public void ${action.getName()}(${autHelper.getParamet
         ${compHelper.getAttributeType(attribute)} ${attribute.getName()} = new ${compHelper.getAttributeType(attribute)}();
       this.${attribute.getName()}.setUp();
     <#else>
-        ${compHelper.mapToWrapped(attribute)} ${attribute.getName()} = ${compHelper.mapToWrapped(attribute)}.valueOf(<#if attribute.isPresentExpression()>${autHelper.printExpression(attribute.getExpression())}<#else >0</#if>);
+        ${compHelper.mapToWrapped(attribute)} ${attribute.getName()} = ${compHelper.mapToWrapped(attribute)}.valueOf(<#if attribute.isPresentExpression()>${actionsHelper.printExpression(attribute.getExpression())}<#else >0</#if>);
     </#if>
 </#list>
       //Pointer to parameters of sub actions
@@ -22,7 +22,7 @@ ${cd4c.method("${abstract}public void ${action.getName()}(${autHelper.getParamet
             ${compHelper.getAttributeType(parameter)} ${subaction.getName()}_${parameter.getName()} = new ${compHelper.getAttributeType(parameter)}();
           this.${parameter.getName()}.setUp();
         <#else>
-            ${compHelper.mapToWrapped(parameter)} ${subaction.getName()}_${parameter.getName()} = ${compHelper.mapToWrapped(parameter)}.valueOf(<#if parameter.isPresentExpression()>${autHelper.printExpression(parameter.getExpression())}<#else >0</#if>);
+            ${compHelper.mapToWrapped(parameter)} ${subaction.getName()}_${parameter.getName()} = ${compHelper.mapToWrapped(parameter)}.valueOf(<#if parameter.isPresentExpression()>${actionsHelper.printExpression(parameter.getExpression())}<#else >0</#if>);
         </#if>
     </#list>
 </#list>
@@ -65,8 +65,8 @@ ${cd4c.method("${abstract}public void ${action.getName()}(${autHelper.getParamet
 <#macro printPath successionList action>
     <#list successionList as succession>
         <#if succession.isPresentGuard()>
-    if (!(${autHelper.printExpression(succession.getGuard())})){
-        de.monticore.lang.sysmlv2.generator.log.Log.error("Could not evaluate the guard \"${autHelper.printExpression(succession.getGuard())}\" in action \"${action.getName()}\" to true, but the execution has to terminate.");
+    if (!(${actionsHelper.printExpression(succession.getGuard())})){
+        de.monticore.lang.sysmlv2.generator.log.Log.error("Could not evaluate the guard \"${actionsHelper.printExpression(succession.getGuard())}\" in action \"${action.getName()}\" to true, but the execution has to terminate.");
     }
         </#if>
       <@printAction succession/>
@@ -79,10 +79,10 @@ ${cd4c.method("${abstract}public void ${action.getName()}(${autHelper.getParamet
     <#else >
         <#assign resolvedTarget = actionsHelper.resolveAction(succession.getTgt(), succession)>
         <#if actionsHelper.isSendAction(resolvedTarget)>
-        this.get${resolvedTarget.getTarget()?cap_first}().setValue(${autHelper.printExpression(resolvedTarget.getPayload())});
+        this.get${resolvedTarget.getTarget()?cap_first}().setValue(${actionsHelper.printExpression(resolvedTarget.getPayload())});
         <#else >
             <#if actionsHelper.isAssignmentAction(resolvedTarget)>
-        ${resolvedTarget.getTarget()} = ${autHelper.printExpression(resolvedTarget.getValueExpression())};
+        ${resolvedTarget.getTarget()} = ${actionsHelper.printExpression(resolvedTarget.getValueExpression())};
             <#else >
         ${succession.getTgt()}(<#list  actionsHelper.getParametersWithActionPrefix(resolvedTarget) as param>${param}<#sep>, </#sep></#list>);
             </#if>
@@ -92,14 +92,14 @@ ${cd4c.method("${abstract}public void ${action.getName()}(${autHelper.getParamet
 
 <#macro printDecision paths>
   //path:
-  if (${autHelper.printExpression(paths[0][0].getGuard())}){
+  if (${actionsHelper.printExpression(paths[0][0].getGuard())}){
 <@printAction paths[0][0] />
 <@printPath actionsHelper.dropFirstElement(paths[0]) action/>
-  } else if(${autHelper.printExpression(paths[1][0].getGuard())}){
+  } else if(${actionsHelper.printExpression(paths[1][0].getGuard())}){
 <@printAction paths[1][0] />
 <@printPath actionsHelper.dropFirstElement(paths[1]) action/>
     }else{
-        de.monticore.lang.sysmlv2.generator.log.Log.error("Could not evaluate the guard \"${autHelper.printExpression(paths[0][0].getGuard())}\" or guard \"${autHelper.printExpression(paths[1][0].getGuard())}\" at the \"decide\" in action \"${action.getName()}\" to true, but the execution has to terminate.");
+        de.monticore.lang.sysmlv2.generator.log.Log.error("Could not evaluate the guard \"${actionsHelper.printExpression(paths[0][0].getGuard())}\" or guard \"${actionsHelper.printExpression(paths[1][0].getGuard())}\" at the \"decide\" in action \"${action.getName()}\" to true, but the execution has to terminate.");
   }
 <@printPath actionsHelper.getEndPath(action) action/>
 </#macro>

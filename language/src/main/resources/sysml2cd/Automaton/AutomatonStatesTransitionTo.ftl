@@ -1,5 +1,5 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("state")}
+${tc.signature("state", "parent")}
 ${cd4c.method("protected void transitionTo${autHelper.resolveStateName(state)?cap_first}()")}
 //do actions
     <#assign doActions = state.getDoActionList()/>
@@ -30,10 +30,10 @@ ${cd4c.method("protected void transitionTo${autHelper.resolveStateName(state)?ca
 
 <#macro handleAction action>
     <#if actionsHelper.isSendAction(action)>
-      this.parentPart.get${action.getTarget()?cap_first}().setValue(${autHelper.printExpression(action.getPayload())});
+      this.parentPart.get${action.getTarget()?cap_first}().setValue(${autHelper.printExpression(action.getPayload(), parent)});
     </#if>
     <#if actionsHelper.isAssignmentAction(action)>
-        ${action.getTarget()} = ${autHelper.printExpression(action.getValueExpression())};
+        ${autHelper.renameAction(action, parent)} = ${autHelper.printExpression(action.getValueExpression(), parent)};
     </#if>
     <#if !actionsHelper.isSendAction(action) && !actionsHelper.isAssignmentAction(action)>
         ${action.getName()}();

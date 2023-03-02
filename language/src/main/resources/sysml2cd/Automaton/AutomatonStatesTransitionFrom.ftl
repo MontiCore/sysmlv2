@@ -1,5 +1,5 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("state", "automaton", "inputPorts", "outputPorts")}
+${tc.signature("state", "automaton", "inputPorts", "outputPorts", "parent")}
 ${cd4c.method("protected void transitionFrom${autHelper.resolveStateName(state)?cap_first}()")}
     <#if !state.getIsAutomaton()>
         <#assign doActions = state.getDoActionList()/>
@@ -36,7 +36,7 @@ ${cd4c.method("protected void transitionFrom${autHelper.resolveStateName(state)?
 <#macro printTransition transition state automaton output result>
 
     <#if transition.isPresentGuard()>
-      if(${autHelper.printExpression(transition.getGuard())}) {
+      if(${autHelper.printExpression(transition.getGuard(), parent)}) {
     </#if>
   // output
     //TODO output
@@ -62,10 +62,10 @@ ${cd4c.method("protected void transitionFrom${autHelper.resolveStateName(state)?
 
 <#macro handleAction action>
     <#if actionsHelper.isSendAction(action)>
-      this.parentPart.get${action.getTarget()?cap_first}().setValue(${autHelper.printExpression(action.getPayload())});
+      this.parentPart.get${action.getTarget()?cap_first}().setValue(${autHelper.printExpression(action.getPayload(), parent)});
     </#if>
     <#if actionsHelper.isAssignmentAction(action)>
-        ${action.getTarget()} = ${autHelper.printExpression(action.getValueExpression())};
+        ${autHelper.renameAction(action, parent)} = ${autHelper.printExpression(action.getValueExpression(), parent)};
     </#if>
     <#if !actionsHelper.isSendAction(action) && !actionsHelper.isAssignmentAction(action)>
         ${action.getName()}();

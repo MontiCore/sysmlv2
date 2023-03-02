@@ -1,6 +1,7 @@
 package de.monticore.lang.sysmlv2.generator.helper;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.lang.sysmlactions._ast.ASTAssignmentActionUsage;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
@@ -9,7 +10,11 @@ import de.monticore.lang.sysmlstates._ast.ASTStateDef;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
 import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
+import de.monticore.lang.sysmlv2.SysMLv2Mill;
+import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
+import de.monticore.lang.sysmlv2.generator.utils.resolve.AttributeResolveUtils;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.StatesResolveUtils;
+import de.monticore.lang.sysmlv2.generator.visitor.ExpressionRenameVisitor;
 import de.monticore.lang.sysmlv2.types.CommonExpressionsJavaPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 
@@ -18,7 +23,7 @@ import java.util.stream.Collectors;
 
 public class AutomatonHelper {
   ComponentHelper componentHelper = new ComponentHelper();
-
+  AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
   StatesResolveUtils statesResolveUtils = new StatesResolveUtils();
 
   public List<ASTSysMLTransition> getAllTransitionsWithGuardFrom(ASTStateUsage automaton, ASTStateUsage state) {
@@ -61,11 +66,23 @@ public class AutomatonHelper {
     return state.getName().equals("start");
   }
 
-  public String printExpression(ASTExpression expr) {
+  public String printExpression(ASTExpression expr, ASTSysMLElement parentPart) {
+    //expressions in states have to be mapped
+
+    ExpressionRenameVisitor visitor = new ExpressionRenameVisitor(attributeResolveUtils.getAttributesOfElement(parentPart));
+    SysMLv2Traverser sysMLv2Traverser = SysMLv2Mill.traverser();
+    sysMLv2Traverser.add4ExpressionsBasis(visitor);
+    expr.accept(sysMLv2Traverser);
     CommonExpressionsJavaPrinter prettyPrinter = new CommonExpressionsJavaPrinter(new IndentPrinter());
     return prettyPrinter.prettyprint(expr);
   }
 
+  public String renameAction(ASTAssignmentActionUsage assignmentActionUsage, ASTSysMLElement parentPart){
+    if(attributeResolveUtils.getAttributesOfElement(parentPart).stream().anyMatch(t->t.getName().equals(assignmentActionUsage.getTarget().getQName()))){
+     return "this.getParentPart()."+assignmentActionUsage.getTarget().getQName();
+    }
+    return assignmentActionUsage.getTarget().getQName();
+  }
   public String getNameOfDoAction(ASTDoAction doAction) {
     return doAction.getAction();
   }
