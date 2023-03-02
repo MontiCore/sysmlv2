@@ -99,6 +99,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     attributeList.addAll(handleBehaviour(astPartDef));
     partDefClass.setCDAttributeList(attributeList);
     //Step 4 create Methods
+    actionsUtils.createActionsForPart(astPartDef,partDefClass);
     generatorUtils.addMethods(partDefClass, attributeList, true, true);
     componentUtils.createComponentMethods(astPartDef, cd4C, partDefClass,
         partResolveUtils.getPartUsageOfNode(astPartDef),

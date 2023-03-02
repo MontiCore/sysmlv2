@@ -1,7 +1,11 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
 ${tc.signature("action","parameterList", "attributeList")}
 
-
+<#if isAbstract>
+    <#assign abstract = "abstract "/>
+<#else >
+    <#assign abstract = ""/>
+</#if>
 <#assign  secondControlNode = actionsHelper.getSecondControlNode(action)>
 ${cd4c.method("public boolean returnPath_${secondControlNode.getName()}(${actionsHelper.parameterListForDecisionMethod(action, true) })")}
 //TODO richtige sachen als parameter aka: alle lokalen variablen des vaters und alle benötigten parameter für den path

@@ -1,6 +1,11 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("action","parameterList", "attributeList")}
-${cd4c.method("public void ${action.getName()}(${autHelper.getParametersOfActionAsString(parameterList) })")}
+${tc.signature("action","parameterList", "attributeList", "isAbstract")}
+<#if isAbstract>
+  <#assign abstract = "abstract "/>
+    <#else >
+    <#assign abstract = ""/>
+</#if>
+${cd4c.method("${abstract}public void ${action.getName()}(${autHelper.getParametersOfActionAsString(parameterList) })")}
       //local variables
 <#list attributeList as attribute>
     <#if compHelper.isObjectAttribute(attribute)>

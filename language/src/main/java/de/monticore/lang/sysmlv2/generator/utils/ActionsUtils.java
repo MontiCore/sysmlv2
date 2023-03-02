@@ -29,41 +29,47 @@ public class ActionsUtils {
 
   public void createActionsForPart(ASTPartUsage partUsage, ASTCDClass astcdClass) {
     partUsage.streamSysMLElements().filter(t -> t instanceof ASTActionUsage).map(t -> (ASTActionUsage) t).forEach(
-        t->createAction(t,astcdClass));
+        t -> createAction(t, astcdClass));
+  }
+  public void createActionsForPart(ASTPartDef partUsage, ASTCDClass astcdClass) {
+    partUsage.streamSysMLElements().filter(t -> t instanceof ASTActionUsage).map(t -> (ASTActionUsage) t).forEach(
+        t -> createAction(t, astcdClass));
   }
 
   public void createActionsForInterface(ASTSysMLElement element, ASTCDInterface anInterface) {
     List<ASTSysMLElement> elementList = new ArrayList<>();
-    if(element instanceof ASTPartDef){
-      elementList=((ASTPartDef) element).getSysMLElementList();
-    }    if(element instanceof ASTPartUsage){
-      elementList=((ASTPartUsage) element).getSysMLElementList();
+    if(element instanceof ASTPartDef) {
+      elementList = ((ASTPartDef) element).getSysMLElementList();
+    }
+    if(element instanceof ASTPartUsage) {
+      elementList = ((ASTPartUsage) element).getSysMLElementList();
     }
 
     elementList.stream().filter(t -> t instanceof ASTActionUsage).map(t -> (ASTActionUsage) t).forEach(
-        t->createAction(t,anInterface));
+        t -> createAction(t, anInterface));
   }
 
   public void createAction(ASTActionUsage actionUsage, ASTCDClass astcdClass) {
     actionUsage.streamSysMLElements().filter(t -> t instanceof ASTActionUsage).map(t -> (ASTActionUsage) t).forEach(
-        t->createAction(t,astcdClass));
+        t -> createAction(t, astcdClass));
     cd4C.addMethod(astcdClass, "sysml2cd.actions.ActionMethod", actionUsage, getParameterList(actionUsage),
-        getAttributeList(actionUsage));
+        getAttributeList(actionUsage), false);
     if(actionsHelper.hasActionDecideMerge(actionUsage) &&
         actionsHelper.isMergeNode(actionsHelper.getFirstControlNode(actionUsage))) {
       cd4C.addMethod(astcdClass, "sysml2cd.actions.DecideMethod", actionUsage, getParameterList(actionUsage),
-          getAttributeList(actionUsage));
+          getAttributeList(actionUsage), false);
     }
   }
+
   public void createAction(ASTActionUsage actionUsage, ASTCDInterface anInterface) {
     actionUsage.streamSysMLElements().filter(t -> t instanceof ASTActionUsage).map(t -> (ASTActionUsage) t).forEach(
-        t->createAction(t,anInterface));
+        t -> createAction(t, anInterface));
     cd4C.addMethod(anInterface, "sysml2cd.actions.ActionMethod", actionUsage, getParameterList(actionUsage),
-        getAttributeList(actionUsage));
+        getAttributeList(actionUsage), true);
     if(actionsHelper.hasActionDecideMerge(actionUsage) &&
         actionsHelper.isMergeNode(actionsHelper.getFirstControlNode(actionUsage))) {
       cd4C.addMethod(anInterface, "sysml2cd.actions.DecideMethod", actionUsage, getParameterList(actionUsage),
-          getAttributeList(actionUsage));
+          getAttributeList(actionUsage), true);
     }
   }
 
