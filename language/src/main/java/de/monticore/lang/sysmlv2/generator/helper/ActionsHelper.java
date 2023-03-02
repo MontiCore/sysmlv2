@@ -104,10 +104,11 @@ public class ActionsHelper {
         t -> t.getSrc().equals(secondControlNode.getName())).collect(Collectors.toList());
     var succession = successionToSuccessor.stream().filter(
         t -> canDirectlyReachEnd(t, successionList)).findFirst().get();
-
-    var actionUsage = parent.getSpannedScope().resolveActionUsage(succession.getTgt()).get().getAstNode();
     List<ASTSysMLSuccession> returnList = new ArrayList<>(List.of(succession));
-    returnList.addAll(getPathFromAction(actionUsage, successionList));
+    if(!succession.getTgt().equals("done")) {
+      var actionUsage = parent.getSpannedScope().resolveActionUsage(succession.getTgt()).get().getAstNode();
+      returnList.addAll(getPathFromAction(actionUsage, successionList));
+    }
     return returnList;
   }
 
@@ -199,7 +200,6 @@ public class ActionsHelper {
     var succs = getSuccessions((ASTActionUsage) parent);
     var succsFromDecision = succs.stream().filter(t -> t.getSrc().equals(decisionNode.getName())).collect(
         Collectors.toList());
-    List<ASTSysMLSuccession> lastPath = getEndPath((ASTActionUsage) parent);
     var succssesorPaths = getDirectSuccessorList(decisionNode).stream().map(t -> getPathFromAction(t, succs)).collect(
         Collectors.toList());
     for (ASTSysMLSuccession succession : succsFromDecision) {
@@ -318,7 +318,8 @@ public class ActionsHelper {
     }
     return null;
   }
-  public List<ASTSysMLSuccession> dropFirstElement(List<ASTSysMLSuccession> list){
+
+  public List<ASTSysMLSuccession> dropFirstElement(List<ASTSysMLSuccession> list) {
     return list.subList(1, list.size());
   }
 }
