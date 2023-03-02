@@ -14,17 +14,11 @@ import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2Scope;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.AttributeResolveUtils;
-import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 
 public class ExpressionResolvableGenerator implements ExpressionsBasisASTNameExpressionCoCo {
   AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
 
-  private String printName(ASTMCType type) {
-    return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
-  }
 
   @Override
   public void check(ASTNameExpression node) {
@@ -51,9 +45,7 @@ public class ExpressionResolvableGenerator implements ExpressionsBasisASTNameExp
     if(scope.resolveAttributeUsageDown(node.getName()).isPresent())
       return true;
     var attributesListPart = attributeResolveUtils.getAttributesOfElement((ASTSysMLElement) scope.getAstNode());
-    if(attributesListPart.stream().anyMatch(t -> t.getName().equals(node.getName())))
-      return true;
-    return false;
+    return attributesListPart.stream().anyMatch(t -> t.getName().equals(node.getName()));
   }
 
   boolean resolveInBehaviour(ASTNameExpression node, SysMLv2Scope scope) {
