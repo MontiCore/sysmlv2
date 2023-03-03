@@ -2,9 +2,9 @@
 ${tc.signature("state", "automaton", "parent")}
 ${cd4c.method("protected void entry${autHelper.resolveStateName(state)?cap_first}()")}
 
-<#if autHelper.hasEntryAction(state)>
+
   // entry action
-    <#assign entryActions = state.getEntryActionList()/>
+    <#assign entryActions = autHelper.getEntryActionsOfElement(state)/>
     <#list entryActions as entryAction>
         <#assign subaction = actionsHelper.getActionFromEntryAction(entryAction)/>
         <#list actionsHelper.getParameters(subaction) as parameter>
@@ -21,9 +21,6 @@ ${cd4c.method("protected void entry${autHelper.resolveStateName(state)?cap_first
     <#list entryActions as entryAction>
         <@handleAction actionsHelper.getActionFromEntryAction(entryAction)/>
     </#list>
-</#if>
-
-
 
 
 <#macro handleAction action>

@@ -5,7 +5,7 @@ ${cd4c.method("protected void exit${autHelper.resolveStateName(state)?cap_first}
 <#if autHelper.hasExitAction(state)>
   // exit action
 
-    <#assign exitActions = state.getExitActionList()/>
+    <#assign exitActions = autHelper.getExitActionsOfElement(state)/>
     <#list exitActions as exitAction>
         <#assign subaction = actionsHelper.getActionFromExitAction(exitAction)/>
         <#list actionsHelper.getParameters(subaction) as parameter>

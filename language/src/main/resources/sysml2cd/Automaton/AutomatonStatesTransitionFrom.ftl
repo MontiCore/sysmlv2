@@ -2,7 +2,7 @@
 ${tc.signature("state", "automaton", "inputPorts", "outputPorts", "parent")}
 ${cd4c.method("protected void transitionFrom${autHelper.resolveStateName(state)?cap_first}()")}
     <#if !state.getIsAutomaton()>
-        <#assign doActions = state.getDoActionList()/>
+        <#assign doActions = autHelper.getDoActionsOfElement(state)/>
         <#list doActions as doAction>
             <#assign subaction = actionsHelper.getActionFromDoAction(doAction)/>
             <#list actionsHelper.getParameters(subaction) as parameter>

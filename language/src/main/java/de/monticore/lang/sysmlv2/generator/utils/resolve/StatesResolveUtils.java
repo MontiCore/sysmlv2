@@ -1,6 +1,9 @@
 package de.monticore.lang.sysmlv2.generator.utils.resolve;
 
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
+import de.monticore.lang.sysmlstates._ast.ASTDoAction;
+import de.monticore.lang.sysmlstates._ast.ASTEntryAction;
+import de.monticore.lang.sysmlstates._ast.ASTExitAction;
 import de.monticore.lang.sysmlstates._ast.ASTStateDef;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
@@ -25,6 +28,42 @@ public class StatesResolveUtils {
     parentState = parentList.stream().map(this::getStatesOfElement).collect(Collectors.toList());
     stateUsages.addAll(removeDuplicateStates(parentState));
     return stateUsages;
+  }
+
+  public List<ASTEntryAction> getEntryActionsOfElement(ASTStateUsage node) {
+    List<ASTSysMLElement> parentList = resolveUtils.getDirectSupertypes(node);
+    List<ASTEntryAction> entryActionList = node.getEntryActionList();
+    var entryActionsUsages = parentList.stream().filter(t -> t instanceof ASTStateDef).map(
+        t -> (ASTStateDef) t).flatMap(t -> t.streamEntryActions()).collect(Collectors.toList());
+    var entryActionsDefs = parentList.stream().filter(t -> t instanceof ASTStateUsage).map(
+        t -> (ASTStateUsage) t).flatMap(t -> t.streamEntryActions()).collect(Collectors.toList());
+    entryActionList.addAll(entryActionsUsages);
+    entryActionList.addAll(entryActionsDefs);
+    return entryActionList;
+  }
+
+  public List<ASTDoAction> getDoActionsOfElement(ASTStateUsage node) {
+    List<ASTSysMLElement> parentList = resolveUtils.getDirectSupertypes(node);
+    List<ASTDoAction> entryActionList = node.getDoActionList();
+    var entryActionsUsages = parentList.stream().filter(t -> t instanceof ASTStateDef).map(
+        t -> (ASTStateDef) t).flatMap(t -> t.streamDoActions()).collect(Collectors.toList());
+    var entryActionsDefs = parentList.stream().filter(t -> t instanceof ASTStateUsage).map(
+        t -> (ASTStateUsage) t).flatMap(t -> t.streamDoActions()).collect(Collectors.toList());
+    entryActionList.addAll(entryActionsUsages);
+    entryActionList.addAll(entryActionsDefs);
+    return entryActionList;
+  }
+
+  public List<ASTExitAction> getExitActionsOfElement(ASTStateUsage node) {
+    List<ASTSysMLElement> parentList = resolveUtils.getDirectSupertypes(node);
+    List<ASTExitAction> entryActionList = node.getExitActionList();
+    var entryActionsUsages = parentList.stream().filter(t -> t instanceof ASTStateDef).map(
+        t -> (ASTStateDef) t).flatMap(t -> t.streamExitActions()).collect(Collectors.toList());
+    var entryActionsDefs = parentList.stream().filter(t -> t instanceof ASTStateUsage).map(
+        t -> (ASTStateUsage) t).flatMap(t -> t.streamExitActions()).collect(Collectors.toList());
+    entryActionList.addAll(entryActionsUsages);
+    entryActionList.addAll(entryActionsDefs);
+    return entryActionList;
   }
 
   List<ASTStateUsage> getStateUsageOfNode(ASTSysMLElement node) {

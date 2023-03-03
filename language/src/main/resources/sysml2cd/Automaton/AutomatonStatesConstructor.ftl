@@ -5,4 +5,5 @@ ${cd4c.constructor("public ${automaton.getName()}(${parentType} parentPart)")}
 
     this.parentPart = parentPart;
     this.${autHelper.resolveCurrentStateName(automaton)} = ${autHelper.resolveEnumName(automaton)}.start;
+    entry${automaton.getName()?cap_first}();
 

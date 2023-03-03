@@ -6,6 +6,8 @@ import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlstates._ast.ASTDoAction;
+import de.monticore.lang.sysmlstates._ast.ASTEntryAction;
+import de.monticore.lang.sysmlstates._ast.ASTExitAction;
 import de.monticore.lang.sysmlstates._ast.ASTStateDef;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
@@ -165,5 +167,14 @@ public class AutomatonHelper {
 
   public String resolveEnumName(ASTStateUsage automaton) {
     return automaton.getName() + "Enum";
+  }
+  public List<ASTEntryAction> getEntryActionsOfElement(ASTStateUsage node) {
+    return statesResolveUtils.getEntryActionsOfElement(node);
+  }
+  public List<ASTDoAction> getDoActionsOfElement(ASTStateUsage node) {
+    return statesResolveUtils.getDoActionsOfElement(node);
+  }
+  public List<ASTExitAction> getExitActionsOfElement(ASTStateUsage node) {
+    return statesResolveUtils.getExitActionsOfElement(node);
   }
 }
