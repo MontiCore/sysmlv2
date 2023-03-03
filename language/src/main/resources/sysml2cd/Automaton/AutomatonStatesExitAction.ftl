@@ -17,7 +17,11 @@ ${cd4c.method("protected void exit${autHelper.resolveStateName(state)?cap_first}
             </#if>
         </#list>
     </#list>
-
+  //binds
+    <#assign bindList = actionsHelper.getBindList(state)>
+    <#list bindList as bind>
+        ${actionsHelper.mapBindEnd(bind.getSource())} = ${actionsHelper.mapBindEnd(bind.getTarget())};
+    </#list>
     <#list exitActions as exitAction>
         <@handleAction actionsHelper.getActionFromExitAction(exitAction)/>
     </#list>
@@ -33,7 +37,7 @@ ${cd4c.method("protected void exit${autHelper.resolveStateName(state)?cap_first}
         ${autHelper.renameAction(actionUsage, parent)} = ${autHelper.printExpression(actionUsage.getValueExpression(), parent)};
     </#if>
     <#if !actionsHelper.isSendAction(actionUsage) && !actionsHelper.isAssignmentAction(actionUsage)>
-        ${actionUsage.getName()}(<#list  actionsHelper.getParametersWithActionPrefix(actionUsage) as param>${param}<#sep>, </#sep></#list>);
+      this.getParentPart().${actionUsage.getName()}(<#list  actionsHelper.getParametersWithActionPrefix(actionUsage) as param>${param}<#sep>, </#sep></#list>);
     </#if>
 </#macro>
 

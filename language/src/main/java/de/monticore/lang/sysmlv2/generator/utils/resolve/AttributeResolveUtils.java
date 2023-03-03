@@ -1,10 +1,13 @@
 package de.monticore.lang.sysmlv2.generator.utils.resolve;
 
+import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLQualifiedName;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
@@ -14,14 +17,18 @@ import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
 import de.monticore.lang.sysmlstates._ast.ASTStateDef;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
+import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
+import de.monticore.lang.sysmlv2._symboltable.SysMLv2Scope;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class AttributeResolveUtils {
@@ -245,6 +252,60 @@ public class AttributeResolveUtils {
 
   static String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+  }
+
+
+  public static Optional<ASTAttributeUsage> resolveExprInParts(ASTNameExpression node) {
+    var scope = (SysMLv2Scope) node.getEnclosingScope();
+    if(scope.resolveAttributeUsageDown(node.getName()).isPresent())
+      return Optional.ofNullable(scope.resolveAttributeUsageDown(node.getName()).get().getAstNode());
+    var attributesListPart = AttributeResolveUtils.getAttributesOfElement((ASTSysMLElement) scope.getAstNode());
+    var attribute = attributesListPart.stream().filter(t -> t.getName().equals(node.getName())).findFirst();
+    if(attribute.isPresent()) return attribute;
+    return Optional.empty();
+  }
+
+  public static Optional<ASTAttributeUsage> resolveExprInBehaviour(ASTNameExpression node, SysMLv2Scope scope) {
+    var parent = scope.getAstNode();
+    if(parent instanceof ASTSysMLModel || parent instanceof ASTSysMLPackage)
+      return null;
+
+    if(scope.resolveAttributeUsageDown(node.getName()).isPresent())
+      return Optional.ofNullable(scope.resolveAttributeUsageDown(node.getName()).get().getAstNode());
+    var attributesListPart = AttributeResolveUtils.getAttributesOfElement((ASTSysMLElement) parent);
+    var attribute = attributesListPart.stream().filter(t -> t.getName().equals(node.getName())).findFirst();
+    if(attribute.isPresent())
+      return Optional.of(attribute.get());
+    if(parent instanceof ASTPartUsage || parent instanceof ASTPartDef) {
+      return resolveExprInParts(node);
+    }
+    return resolveExprInBehaviour(node, (SysMLv2Scope) parent.getEnclosingScope());
+  }
+  public static Optional<ASTAttributeUsage> resolveInParts(ASTMCQualifiedName node) {
+    var scope = (SysMLv2Scope) node.getEnclosingScope();
+    if(scope.resolveAttributeUsageDown(node.getQName()).isPresent())
+      return Optional.ofNullable(scope.resolveAttributeUsageDown(node.getQName()).get().getAstNode());
+    var attributesListPart = AttributeResolveUtils.getAttributesOfElement((ASTSysMLElement) scope.getAstNode());
+    var attribute = attributesListPart.stream().filter(t -> t.getName().equals(node.getQName())).findFirst();
+    if(attribute.isPresent()) return attribute;
+    return Optional.empty();
+  }
+
+  public static Optional<ASTAttributeUsage> resolveInBehaviour(ASTMCQualifiedName node, SysMLv2Scope scope) {
+    var parent = scope.getAstNode();
+    if(parent instanceof ASTSysMLModel || parent instanceof ASTSysMLPackage)
+      return null;
+
+    if(scope.resolveAttributeUsageDown(node.getQName()).isPresent())
+      return Optional.ofNullable(scope.resolveAttributeUsageDown(node.getQName()).get().getAstNode());
+    var attributesListPart = AttributeResolveUtils.getAttributesOfElement((ASTSysMLElement) parent);
+    var attribute = attributesListPart.stream().filter(t -> t.getName().equals(node.getQName())).findFirst();
+    if(attribute.isPresent())
+      return Optional.of(attribute.get());
+    if(parent instanceof ASTPartUsage || parent instanceof ASTPartDef) {
+      return resolveInParts(node);
+    }
+    return resolveInBehaviour(node, (SysMLv2Scope) parent.getEnclosingScope());
   }
 
 }

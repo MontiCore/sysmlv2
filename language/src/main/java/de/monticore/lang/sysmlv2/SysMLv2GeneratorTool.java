@@ -9,6 +9,8 @@ import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.lang.sysml4verification.cocos.WarnNonExhibited;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionUsageCoCo;
+import de.monticore.lang.sysmlconnections._cocos.SysMLConnectionsASTBindCoCo;
+import de.monticore.lang.sysmlconnections._cocos.SysMLConnectionsASTFlowCoCo;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintDefCoCo;
 import de.monticore.lang.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTSysMLPackageCoCo;
 import de.monticore.lang.sysmlinterfaces._cocos.SysMLInterfacesASTInterfaceDefCoCo;
@@ -38,6 +40,7 @@ import de.monticore.lang.sysmlv2.cocos.ActionNameCoCos;
 import de.monticore.lang.sysmlv2.cocos.ActionSupertypes;
 import de.monticore.lang.sysmlv2.cocos.AttributeGeneratorCoCos;
 import de.monticore.lang.sysmlv2.cocos.ConnectionGeneratorCoCos;
+import de.monticore.lang.sysmlv2.cocos.ExpressionResolvableGenerator;
 import de.monticore.lang.sysmlv2.cocos.InterfaceSupertypes;
 import de.monticore.lang.sysmlv2.cocos.ItemsSupertypes;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
@@ -136,7 +139,8 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     checker.addCoCo(new PortDefHasOneType());
     checker.addCoCo(new PortDefNeedsDirection());
     checker.addCoCo(new ActionControlGeneratorCoCos());
-    checker.addCoCo(new ConnectionGeneratorCoCos());
+    checker.addCoCo((SysMLConnectionsASTFlowCoCo) new ConnectionGeneratorCoCos());
+    checker.addCoCo((SysMLConnectionsASTBindCoCo) new ConnectionGeneratorCoCos());
     checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new AttributeGeneratorCoCos());
     checker.addCoCo((SysMLPartsASTAttributeUsageCoCo) new AttributeGeneratorCoCos());
     checker.addCoCo((SysMLPartsASTPartDefCoCo) new PartsGeneratorCoCos());
@@ -147,6 +151,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLActionsASTActionDefCoCo) new SuccessionReachabilityGeneratorCoCos());
     checker.addCoCo(new TransitionResolvableCoCo());
     checker.addCoCo(new SuccessionCoCo());
+    checker.addCoCo(new ExpressionResolvableGenerator());
     checker.checkAll(ast);
   }
 

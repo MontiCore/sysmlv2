@@ -26,6 +26,11 @@ ${cd4c.method("${abstract}public void ${action.getName()}(${autHelper.getParamet
         </#if>
     </#list>
 </#list>
+    //binds
+    <#assign bindList = actionsHelper.getBindList(state)>
+    <#list bindList as bind>
+      ${actionsHelper.mapBindEnd(bind.getSource())} = ${actionsHelper.mapBindEnd(bind.getTarget())};
+    </#list>
       //control flow
 <#if actionsHelper.hasActionDecideMerge(action)>
     <#assign  firstControlNode = actionsHelper.getFirstControlNode(action)>

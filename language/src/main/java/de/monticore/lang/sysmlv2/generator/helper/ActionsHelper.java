@@ -10,13 +10,16 @@ import de.monticore.lang.sysmlactions._ast.ASTMergeAction;
 import de.monticore.lang.sysmlactions._ast.ASTSendActionUsage;
 import de.monticore.lang.sysmlactions._ast.ASTSysMLSuccession;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
+import de.monticore.lang.sysmlconnections._ast.ASTBind;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlstates._ast.ASTDoAction;
 import de.monticore.lang.sysmlstates._ast.ASTEntryAction;
 import de.monticore.lang.sysmlstates._ast.ASTExitAction;
+import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2Scope;
 import de.monticore.lang.sysmlv2.types.CommonExpressionsJavaPrinter;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -149,10 +152,12 @@ public class ActionsHelper {
         successionList.stream().filter(t -> t.getSrc().equals(actionUsage.getName())).findFirst().get(),
         successionList);
   }
+
   public String printExpression(ASTExpression expr) {
     CommonExpressionsJavaPrinter prettyPrinter = new CommonExpressionsJavaPrinter(new IndentPrinter());
     return prettyPrinter.prettyprint(expr);
   }
+
   public boolean hasActionDecideMerge(ASTActionUsage actionUsage) {
     return actionUsage.streamSysMLElements().anyMatch(t -> t instanceof ASTMergeAction || t instanceof ASTDecideAction);
   }
@@ -252,14 +257,18 @@ public class ActionsHelper {
         Collectors.toList());
   }
 
-  public ASTActionUsage getActionUsage(String resolveName, ASTSysMLElement element){
-   var attributeUsage=  ((SysMLv2Scope)element.getEnclosingScope()).resolveActionUsage(resolveName);
-    if(attributeUsage.isPresent()){
+  public ASTActionUsage getActionUsage(String resolveName, ASTSysMLElement element) {
+    var attributeUsage = ((SysMLv2Scope) element.getEnclosingScope()).resolveActionUsage(resolveName);
+    if(attributeUsage.isPresent()) {
       return attributeUsage.get().getAstNode();
     }
     return null;
   }
-  public ASTActionUsage getActionUsage(ASTActionUsage resolveName, ASTSysMLElement element){return resolveName;}
+
+  public ASTActionUsage getActionUsage(ASTActionUsage resolveName, ASTSysMLElement element) {
+    return resolveName;
+  }
+
   public String parameterListForDecisionMethod(ASTActionUsage actionUsage, boolean withTypes) {
     List<String> returnStringList = new ArrayList<>();
     var attributeList = actionUsage.streamSysMLElements().filter(t -> t instanceof ASTAttributeUsage).filter(
@@ -337,5 +346,27 @@ public class ActionsHelper {
 
   public List<ASTSysMLSuccession> dropFirstElement(List<ASTSysMLSuccession> list) {
     return list.subList(1, list.size());
+  }
+
+  public List<ASTBind> getBindList(ASTSysMLElement element) {
+    if(element instanceof ASTActionUsage)
+      return ((ASTActionUsage) element).streamSysMLElements().filter(t -> t instanceof ASTBind).map(
+          t -> (ASTBind) t).collect(
+          Collectors.toList());
+
+    if(element instanceof ASTStateUsage)
+      return ((ASTStateUsage) element).streamSysMLElements().filter(t -> t instanceof ASTBind).map(
+          t -> (ASTBind) t).collect(
+          Collectors.toList());
+    return new ArrayList<>();
+  }
+
+  public String mapBindEnd(ASTMCQualifiedName qualifiedName) {
+    if(!qualifiedName.getQName().equals(qualifiedName.getBaseName())) {
+      return qualifiedName.getQName().replace(".", "_");
+    }
+    else {
+      return qualifiedName.getQName();
+    }
   }
 }

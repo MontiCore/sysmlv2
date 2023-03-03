@@ -15,6 +15,11 @@ ${cd4c.method("public void compute()")}
             </#if>
         </#list>
     </#list>
+    //binds
+    <#assign bindList = actionsHelper.getBindList(state)>
+    <#list bindList as bind>
+        ${actionsHelper.mapBindEnd(bind.getSource())} = ${actionsHelper.mapBindEnd(bind.getTarget())};
+    </#list>
     //Do Actions
     <#list doActions as doAction>
         <@handleAction actionsHelper.getActionFromDoAction(doAction)/>
