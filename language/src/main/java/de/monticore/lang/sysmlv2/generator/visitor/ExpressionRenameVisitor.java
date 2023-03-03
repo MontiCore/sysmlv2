@@ -15,18 +15,51 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExpressionRenameVisitor implements ExpressionsBasisVisitor2 {
+  public ExpressionRenameVisitor(ASTAttributeUsage attribute, String newName,
+                                 List<ASTAttributeUsage> parentAttributeList) {
+    this.attribute = attribute;
+    this.newName = newName;
+    this.parentAttributeList = parentAttributeList;
+  }
+
   public ExpressionRenameVisitor(List<ASTAttributeUsage> parentAttributeList) {
     this.parentAttributeList = parentAttributeList;
   }
+
+  public ASTAttributeUsage getAttribute() {
+    return attribute;
+  }
+
+  public void setAttribute(ASTAttributeUsage attribute) {
+    this.attribute = attribute;
+  }
+
+  public String getNewName() {
+    return newName;
+  }
+
+  public void setNewName(String newName) {
+    this.newName = newName;
+  }
+
+  ASTAttributeUsage attribute;
+
+  String newName = "";
+
   List<ASTAttributeUsage> parentAttributeList = new ArrayList<>();
 
   AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
 
   @Override
   public void visit(ASTNameExpression nameExpression) {
-   var attributeUsage = resolveInBehaviour(nameExpression, (SysMLv2Scope) nameExpression.getEnclosingScope());
-    if(parentAttributeList.contains(attributeUsage)){
-      nameExpression.setName("this.getParentPart()."+nameExpression.getName());
+    var attributeUsage = resolveInBehaviour(nameExpression, (SysMLv2Scope) nameExpression.getEnclosingScope());
+    if(parentAttributeList.contains(attributeUsage)) {
+      nameExpression.setName("this.getParentPart()." + nameExpression.getName());
+    }
+    if(attribute != null) {
+      if(attribute.equalAttributes(attributeUsage)) {
+        nameExpression.setName(newName);
+      }
     }
   }
 

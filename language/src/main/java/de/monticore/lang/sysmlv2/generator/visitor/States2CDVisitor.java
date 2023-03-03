@@ -25,9 +25,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class States2CDVisitor implements SysMLStatesVisitor2 {
-
-  public final static String ERROR_CODE = "0xDC012";
-
   protected ASTCDCompilationUnit cdCompilationUnit;
 
   protected ASTCDPackage cdPackage;
@@ -94,7 +91,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
       attributeList.addAll(createCurrentStateAttributeList(astStateUsage, subAutomatons));
       ASTCDAttribute parentAttribute = createParentAttribute(astStateUsage);
       attributeList.add(parentAttribute);
-      attributeList.addAll(createAttributeListSubStates(astStateUsage, ""));
+      attributeList.addAll(createAttributeListSubStates(astStateUsage, "", parentPart));
       stateUsageClass.setCDAttributeList(attributeList);
 
       cdPackage.addCDElement(stateUsageClass);
@@ -102,7 +99,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
       var stateList = statesResolveUtils.getStatesOfElement(astStateUsage);
       cdPackage.addCDElement(createEnum(astStateUsage));
       stateList.stream().filter(t -> t.getIsAutomaton()).forEach(
-          t -> cdPackage.addCDElement(createEnum(t))); //Todo nested automatons
+          t -> cdPackage.addCDElement(createEnum(t)));
       //add methods
       componentUtils.setPortLists((ASTSysMLElement) astStateUsage.getEnclosingScope().getAstNode());
 
@@ -125,17 +122,18 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
         CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
   }
 
-  List<ASTCDAttribute> createAttributeListSubStates(ASTStateUsage astStateUsage, String prefix) {
+  List<ASTCDAttribute> createAttributeListSubStates(ASTStateUsage astStateUsage, String prefix,
+                                                    ASTSysMLElement parent) {
     var attributeUsageList = attributeResolveUtils.getAttributesOfElement(astStateUsage);
     var subAutomatonList = statesResolveUtils.getStatesOfElement(astStateUsage).stream().filter(
         t -> t.getIsAutomaton()).collect(
         Collectors.toList());
 
     List<ASTCDAttribute> astcdAttributeList = attributeUsageList.stream().map(
-        attributeUsage -> attributeUtils.createAttributeWithPrefix(attributeUsage, prefix)).collect(
+        attributeUsage -> attributeUtils.createAttributeWithPrefix(attributeUsage, prefix, parent)).collect(
         Collectors.toList());
     var attributesSubAutomaton = subAutomatonList.stream().flatMap(
-        t -> createAttributeListSubStates(t, prefix + t.getName() + "_").stream()).collect(
+        t -> createAttributeListSubStates(t, prefix + t.getName() + "_", parent).stream()).collect(
         Collectors.toList());
     astcdAttributeList.addAll(attributesSubAutomaton);
     return astcdAttributeList;
@@ -153,12 +151,13 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
     return CD4CodeMill.cDAttributeBuilder().setName("parentPart").setModifier(
         CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(type).build();
   }
-  ASTSysMLElement getParentPart(ASTStateUsage astStateUsage){
+
+  ASTSysMLElement getParentPart(ASTStateUsage astStateUsage) {
     var parent = astStateUsage.getEnclosingScope().getAstNode();
-    if(parent instanceof ASTPartUsage || parent instanceof  ASTPartDef) {
+    if(parent instanceof ASTPartUsage || parent instanceof ASTPartDef) {
       return (ASTSysMLElement) parent;
     }
-    if(parent instanceof ASTStateUsage){
+    if(parent instanceof ASTStateUsage) {
       return getParentPart((ASTStateUsage) parent);
     }
     return null;
@@ -167,7 +166,8 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
   List<ASTCDAttribute> createCurrentStateAttributeList(ASTStateUsage parentAutomaton,
                                                        List<ASTStateUsage> subAutomatons) {
     List<ASTCDAttribute> attributeList = new ArrayList<>();
-    attributeList.add(createCurrentStateAttribute(automatonHelper.resolveEnumName(parentAutomaton), automatonHelper.resolveCurrentStateName(parentAutomaton)));
+    attributeList.add(createCurrentStateAttribute(automatonHelper.resolveEnumName(parentAutomaton),
+        automatonHelper.resolveCurrentStateName(parentAutomaton)));
     attributeList.addAll(subAutomatons.stream().map(
         t -> createCurrentStateAttribute(automatonHelper.resolveEnumName(t),
             automatonHelper.resolveCurrentStateName(t))).collect(
@@ -192,7 +192,8 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
     return subAutomatonList;
   }
 
-  void createTransitionsForStateList(List<ASTStateUsage> stateList, ASTStateUsage astStateUsage, ASTSysMLElement parentPart) {
+  void createTransitionsForStateList(List<ASTStateUsage> stateList, ASTStateUsage astStateUsage,
+                                     ASTSysMLElement parentPart) {
     var inputPortsParent = componentUtils.inputPortList;
     var outputPortsParent = componentUtils.outputPortList;
 
@@ -201,7 +202,8 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
 
       cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesTransitionFrom", state, astStateUsage,
           inputPortsParent, outputPortsParent, parentPart);
-      cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesEntryAction", state, astStateUsage,parentPart);
+      cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesEntryAction", state, astStateUsage,
+          parentPart);
       cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesExitAction", state, astStateUsage, parentPart);
       if(state.getIsAutomaton()) {
         cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesTransitionTo", state, parentPart);
