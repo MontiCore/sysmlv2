@@ -4,6 +4,17 @@ ${cd4c.method("protected void transitionTo${autHelper.resolveStateName(state)?ca
 //do actions
     <#assign doActions = state.getDoActionList()/>
     <#list doActions as doAction>
+        <#assign subaction = actionsHelper.getActionFromDoAction(doAction)/>
+        <#list actionsHelper.getParameters(subaction) as parameter>
+            <#if compHelper.isObjectAttribute(parameter)>
+                ${compHelper.getAttributeType(parameter)} ${subaction.getName()}_${parameter.getName()} = new ${compHelper.getAttributeType(parameter)}();
+              this.${parameter.getName()}.setUp();
+            <#else>
+                ${compHelper.mapToWrapped(parameter)} ${subaction.getName()}_${parameter.getName()} = ${compHelper.mapToWrapped(parameter)}.valueOf(<#if parameter.isPresentExpression()>${actionsHelper.printExpression(parameter.getExpression())}<#else >0</#if>);
+            </#if>
+        </#list>
+    </#list>
+    <#list doActions as doAction>
         <@handleAction actionsHelper.getActionFromDoAction(doAction)/>
     </#list>
   <#assign substateList = autHelper.getSubStates(state)>
@@ -29,13 +40,14 @@ ${cd4c.method("protected void transitionTo${autHelper.resolveStateName(state)?ca
   "State@post = "+ ${autHelper.resolveCurrentStateName(state)});
 
 <#macro handleAction action>
-    <#if actionsHelper.isSendAction(action)>
-      this.parentPart.get${action.getTarget()?cap_first}().setValue(${autHelper.printExpression(action.getPayload(), parent)});
+    <#assign actionUsage = actionsHelper.getActionUsage(action,state)/>
+    <#if actionsHelper.isSendAction(actionUsage)>
+      this.parentPart.get${actionUsage.getTarget()?cap_first}().setValue(${autHelper.printExpression(actionUsage.getPayload(), parent)});
     </#if>
-    <#if actionsHelper.isAssignmentAction(action)>
-        ${autHelper.renameAction(action, parent)} = ${autHelper.printExpression(action.getValueExpression(), parent)};
+    <#if actionsHelper.isAssignmentAction(actionUsage)>
+        ${autHelper.renameAction(actionUsage, parent)} = ${autHelper.printExpression(actionUsage.getValueExpression(), parent)};
     </#if>
-    <#if !actionsHelper.isSendAction(action) && !actionsHelper.isAssignmentAction(action)>
-        ${action.getName()}();
+    <#if !actionsHelper.isSendAction(actionUsage) && !actionsHelper.isAssignmentAction(actionUsage)>
+        ${actionUsage.getName()}(<#list  actionsHelper.getParametersWithActionPrefix(actionUsage) as param>${param}<#sep>, </#sep></#list>);
     </#if>
 </#macro>

@@ -9,10 +9,12 @@ import de.monticore.lang.sysmlactions._ast.ASTJoinAction;
 import de.monticore.lang.sysmlactions._ast.ASTMergeAction;
 import de.monticore.lang.sysmlactions._ast.ASTSendActionUsage;
 import de.monticore.lang.sysmlactions._ast.ASTSysMLSuccession;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlstates._ast.ASTDoAction;
 import de.monticore.lang.sysmlstates._ast.ASTEntryAction;
 import de.monticore.lang.sysmlstates._ast.ASTExitAction;
+import de.monticore.lang.sysmlv2._symboltable.SysMLv2Scope;
 import de.monticore.lang.sysmlv2.types.CommonExpressionsJavaPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import org.apache.commons.lang3.StringUtils;
@@ -250,6 +252,14 @@ public class ActionsHelper {
         Collectors.toList());
   }
 
+  public ASTActionUsage getActionUsage(String resolveName, ASTSysMLElement element){
+   var attributeUsage=  ((SysMLv2Scope)element.getEnclosingScope()).resolveActionUsage(resolveName);
+    if(attributeUsage.isPresent()){
+      return attributeUsage.get().getAstNode();
+    }
+    return null;
+  }
+  public ASTActionUsage getActionUsage(ASTActionUsage resolveName, ASTSysMLElement element){return resolveName;}
   public String parameterListForDecisionMethod(ASTActionUsage actionUsage, boolean withTypes) {
     List<String> returnStringList = new ArrayList<>();
     var attributeList = actionUsage.streamSysMLElements().filter(t -> t instanceof ASTAttributeUsage).filter(

@@ -4,6 +4,18 @@ ${cd4c.method("protected void transitionFrom${autHelper.resolveStateName(state)?
     <#if !state.getIsAutomaton()>
         <#assign doActions = state.getDoActionList()/>
         <#list doActions as doAction>
+            <#assign subaction = actionsHelper.getActionFromDoAction(doAction)/>
+            <#list actionsHelper.getParameters(subaction) as parameter>
+                <#if compHelper.isObjectAttribute(parameter)>
+                    ${compHelper.getAttributeType(parameter)} ${subaction.getName()}_${parameter.getName()} = new ${compHelper.getAttributeType(parameter)}();
+                  this.${parameter.getName()}.setUp();
+                <#else>
+                    ${compHelper.mapToWrapped(parameter)} ${subaction.getName()}_${parameter.getName()} = ${compHelper.mapToWrapped(parameter)}.valueOf(<#if parameter.isPresentExpression()>${actionsHelper.printExpression(parameter.getExpression())}<#else >0</#if>);
+                </#if>
+            </#list>
+        </#list>
+
+        <#list doActions as doAction>
             <@handleAction actionsHelper.getActionFromDoAction(doAction)/>
         </#list>
     </#if>
@@ -53,6 +65,7 @@ ${cd4c.method("protected void transitionFrom${autHelper.resolveStateName(state)?
   <#if autHelper.isAutomaton(transition.getTgt(),state)>
     this.${autHelper.resolveCurrentStateName(autHelper.resolveStateUsage(transition.getTgt(),state))} =  ${autHelper.resolveEnumName(autHelper.resolveStateUsage(transition.getTgt(),state))}.start;
   </#if>
+  this.exit${(autHelper.resolveTransitionName(automaton,transition.getSrc())?cap_first)}();
   this.entry${(autHelper.resolveTransitionName(automaton,transition.getTgt())?cap_first)}();
     <#if transition.isPresentGuard()>
       }
@@ -61,13 +74,14 @@ ${cd4c.method("protected void transitionFrom${autHelper.resolveStateName(state)?
 
 
 <#macro handleAction action>
-    <#if actionsHelper.isSendAction(action)>
-      this.parentPart.get${action.getTarget()?cap_first}().setValue(${autHelper.printExpression(action.getPayload(), parent)});
+    <#assign actionUsage = actionsHelper.getActionUsage(action,state)/>
+    <#if actionsHelper.isSendAction(actionUsage)>
+      this.parentPart.get${actionUsage.getTarget()?cap_first}().setValue(${autHelper.printExpression(actionUsage.getPayload(), parent)});
     </#if>
-    <#if actionsHelper.isAssignmentAction(action)>
-        ${autHelper.renameAction(action, parent)} = ${autHelper.printExpression(action.getValueExpression(), parent)};
+    <#if actionsHelper.isAssignmentAction(actionUsage)>
+        ${autHelper.renameAction(actionUsage, parent)} = ${autHelper.printExpression(actionUsage.getValueExpression(), parent)};
     </#if>
-    <#if !actionsHelper.isSendAction(action) && !actionsHelper.isAssignmentAction(action)>
-        ${action.getName()}();
+    <#if !actionsHelper.isSendAction(actionUsage) && !actionsHelper.isAssignmentAction(actionUsage)>
+        ${actionUsage.getName()}(<#list  actionsHelper.getParametersWithActionPrefix(actionUsage) as param>${param}<#sep>, </#sep></#list>);
     </#if>
 </#macro>
