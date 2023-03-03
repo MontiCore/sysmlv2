@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class InterfaceUtils {
-  public ASTCDInterfaceUsage createInterfaceUsage(List<ASTSysMLElement> sysMLList) {
+  static public ASTCDInterfaceUsage createInterfaceUsage(List<ASTSysMLElement> sysMLList) {
     //Step 1 get a list of all specializations
     ASTCDInterfaceUsage interfaceUsage = CD4CodeMill.cDInterfaceUsageBuilder().build();
     for (ASTSysMLElement sysMLElement : sysMLList) {
@@ -40,7 +40,7 @@ public class InterfaceUtils {
     return interfaceUsage;
   }
 
-  public ASTCDExtendUsage createExtendUsage(List<ASTMCType> supertypeList, boolean extendsInterface) {
+  static public ASTCDExtendUsage createExtendUsage(List<ASTMCType> supertypeList, boolean extendsInterface) {
     String suffix = "";
     if(extendsInterface)
       suffix = "Interface";
@@ -58,7 +58,7 @@ public class InterfaceUtils {
     return extendUsage;
   }
 
-  public ASTCDInterface createInterface(ASTSysMLElement sysMLElement) {
+  static public ASTCDInterface createInterface(ASTSysMLElement sysMLElement) {
     String name = null;
     List<ASTSpecialization> specializationList = new ArrayList<>();
     if(sysMLElement instanceof ASTPartDef) {
@@ -76,7 +76,7 @@ public class InterfaceUtils {
     ASTCDInterface partInterface = CD4CodeMill.cDInterfaceBuilder().setName(name + "Interface").setModifier(
         CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
     ActionsUtils actionsUtils = new ActionsUtils();
-    actionsUtils.createActionsForInterface(sysMLElement,partInterface);
+    actionsUtils.createActionsForInterface(sysMLElement, partInterface);
     if(!extendUsage.isEmptySuperclass()) {
       partInterface.setCDExtendUsage(extendUsage);
     }

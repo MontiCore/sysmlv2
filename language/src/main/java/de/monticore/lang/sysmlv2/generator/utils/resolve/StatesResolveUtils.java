@@ -5,7 +5,9 @@ import de.monticore.lang.sysmlstates._ast.ASTDoAction;
 import de.monticore.lang.sysmlstates._ast.ASTEntryAction;
 import de.monticore.lang.sysmlstates._ast.ASTExitAction;
 import de.monticore.lang.sysmlstates._ast.ASTStateDef;
+import de.monticore.lang.sysmlstates._ast.ASTStateDefTOP;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
+import de.monticore.lang.sysmlstates._ast.ASTStateUsageTOP;
 import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
@@ -18,55 +20,54 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class StatesResolveUtils {
-  ResolveUtils resolveUtils = new ResolveUtils();
 
-  public List<ASTStateUsage> getStatesOfElement(ASTSysMLElement node) {
-    List<ASTSysMLElement> parentList = resolveUtils.getDirectSupertypes(node);
+  static public List<ASTStateUsage> getStatesOfElement(ASTSysMLElement node) {
+    List<ASTSysMLElement> parentList = ResolveUtils.getDirectSupertypes(node);
     List<List<ASTStateUsage>> parentState;
     List<ASTStateUsage> stateUsages = getStateUsageOfNode(node);
 
-    parentState = parentList.stream().map(this::getStatesOfElement).collect(Collectors.toList());
+    parentState = parentList.stream().map(StatesResolveUtils::getStatesOfElement).collect(Collectors.toList());
     stateUsages.addAll(removeDuplicateStates(parentState));
     return stateUsages;
   }
 
-  public List<ASTEntryAction> getEntryActionsOfElement(ASTStateUsage node) {
-    List<ASTSysMLElement> parentList = resolveUtils.getDirectSupertypes(node);
+  static public List<ASTEntryAction> getEntryActionsOfElement(ASTStateUsage node) {
+    List<ASTSysMLElement> parentList = ResolveUtils.getDirectSupertypes(node);
     List<ASTEntryAction> entryActionList = node.getEntryActionList();
     var entryActionsUsages = parentList.stream().filter(t -> t instanceof ASTStateDef).map(
-        t -> (ASTStateDef) t).flatMap(t -> t.streamEntryActions()).collect(Collectors.toList());
+        t -> (ASTStateDef) t).flatMap(ASTStateDefTOP::streamEntryActions).collect(Collectors.toList());
     var entryActionsDefs = parentList.stream().filter(t -> t instanceof ASTStateUsage).map(
-        t -> (ASTStateUsage) t).flatMap(t -> t.streamEntryActions()).collect(Collectors.toList());
+        t -> (ASTStateUsage) t).flatMap(ASTStateUsageTOP::streamEntryActions).collect(Collectors.toList());
     entryActionList.addAll(entryActionsUsages);
     entryActionList.addAll(entryActionsDefs);
     return entryActionList;
   }
 
-  public List<ASTDoAction> getDoActionsOfElement(ASTStateUsage node) {
-    List<ASTSysMLElement> parentList = resolveUtils.getDirectSupertypes(node);
+  static public List<ASTDoAction> getDoActionsOfElement(ASTStateUsage node) {
+    List<ASTSysMLElement> parentList = ResolveUtils.getDirectSupertypes(node);
     List<ASTDoAction> entryActionList = node.getDoActionList();
     var entryActionsUsages = parentList.stream().filter(t -> t instanceof ASTStateDef).map(
-        t -> (ASTStateDef) t).flatMap(t -> t.streamDoActions()).collect(Collectors.toList());
+        t -> (ASTStateDef) t).flatMap(ASTStateDefTOP::streamDoActions).collect(Collectors.toList());
     var entryActionsDefs = parentList.stream().filter(t -> t instanceof ASTStateUsage).map(
-        t -> (ASTStateUsage) t).flatMap(t -> t.streamDoActions()).collect(Collectors.toList());
+        t -> (ASTStateUsage) t).flatMap(ASTStateUsageTOP::streamDoActions).collect(Collectors.toList());
     entryActionList.addAll(entryActionsUsages);
     entryActionList.addAll(entryActionsDefs);
     return entryActionList;
   }
 
-  public List<ASTExitAction> getExitActionsOfElement(ASTStateUsage node) {
-    List<ASTSysMLElement> parentList = resolveUtils.getDirectSupertypes(node);
+  static public List<ASTExitAction> getExitActionsOfElement(ASTStateUsage node) {
+    List<ASTSysMLElement> parentList = ResolveUtils.getDirectSupertypes(node);
     List<ASTExitAction> entryActionList = node.getExitActionList();
     var entryActionsUsages = parentList.stream().filter(t -> t instanceof ASTStateDef).map(
-        t -> (ASTStateDef) t).flatMap(t -> t.streamExitActions()).collect(Collectors.toList());
+        t -> (ASTStateDef) t).flatMap(ASTStateDefTOP::streamExitActions).collect(Collectors.toList());
     var entryActionsDefs = parentList.stream().filter(t -> t instanceof ASTStateUsage).map(
-        t -> (ASTStateUsage) t).flatMap(t -> t.streamExitActions()).collect(Collectors.toList());
+        t -> (ASTStateUsage) t).flatMap(ASTStateUsageTOP::streamExitActions).collect(Collectors.toList());
     entryActionList.addAll(entryActionsUsages);
     entryActionList.addAll(entryActionsDefs);
     return entryActionList;
   }
 
-  List<ASTStateUsage> getStateUsageOfNode(ASTSysMLElement node) {
+  static List<ASTStateUsage> getStateUsageOfNode(ASTSysMLElement node) {
     List<ASTStateUsage> stateUsageList = new ArrayList<>();
     if(node instanceof ASTStateDef) {
       stateUsageList = ((ASTStateDef) node).getSysMLElementList().stream().filter(
@@ -81,7 +82,7 @@ public class StatesResolveUtils {
     return stateUsageList;
   }
 
-  List<ASTStateUsage> removeDuplicateStates(List<List<ASTStateUsage>> stateList) {
+  static List<ASTStateUsage> removeDuplicateStates(List<List<ASTStateUsage>> stateList) {
 
     Set<String> stringSet = stateList.stream().flatMap(Collection::stream).map(ASTStateUsage::getName).collect(
         Collectors.toSet());
@@ -93,17 +94,17 @@ public class StatesResolveUtils {
         Collectors.toList());
   }
 
-  public List<ASTSysMLTransition> getTransitionOfElement(ASTSysMLElement node) {
-    List<ASTSysMLElement> parentList = resolveUtils.getDirectSupertypes(node);
+  static public List<ASTSysMLTransition> getTransitionOfElement(ASTSysMLElement node) {
+    List<ASTSysMLElement> parentList = ResolveUtils.getDirectSupertypes(node);
     List<List<ASTSysMLTransition>> parentTransition;
     List<ASTSysMLTransition> transitions = getTransitionUsageOfNode(node);
 
-    parentTransition = parentList.stream().map(this::getTransitionOfElement).collect(Collectors.toList());
-    transitions.addAll(parentTransition.stream().flatMap(t -> t.stream()).collect(Collectors.toList()));
+    parentTransition = parentList.stream().map(StatesResolveUtils::getTransitionOfElement).collect(Collectors.toList());
+    transitions.addAll(parentTransition.stream().flatMap(Collection::stream).collect(Collectors.toList()));
     return transitions;
   }
 
-  List<ASTSysMLTransition> getTransitionUsageOfNode(ASTSysMLElement node) {
+  static List<ASTSysMLTransition> getTransitionUsageOfNode(ASTSysMLElement node) {
     List<ASTSysMLTransition> transitionList = new ArrayList<>();
     if(node instanceof ASTStateDef) {
       transitionList = ((ASTStateDef) node).getSysMLElementList().stream().filter(
@@ -116,9 +117,5 @@ public class StatesResolveUtils {
           Collectors.toList());
     }
     return transitionList;
-  }
-
-  private String printName(ASTMCType type) {
-    return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
   }
 }

@@ -12,19 +12,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ActionResolveUtils {
-  ResolveUtils resolveUtils = new ResolveUtils();
 
-  public List<ASTActionUsage> getActionsOfElement(ASTSysMLElement node) {
-    List<ASTSysMLElement> parentList = resolveUtils.getDirectSupertypes(node);
+  static public List<ASTActionUsage> getActionsOfElement(ASTSysMLElement node) {
+    List<ASTSysMLElement> parentList = ResolveUtils.getDirectSupertypes(node);
     List<List<ASTActionUsage>> parentActions;
     List<ASTActionUsage> attributeUsages = getActionUsageOfNode(node);
 
-    parentActions = parentList.stream().map(this::getActionsOfElement).collect(Collectors.toList());
+    parentActions = parentList.stream().map(ActionResolveUtils::getActionsOfElement).collect(Collectors.toList());
     attributeUsages.addAll(removeDuplicateActions(parentActions));
     return attributeUsages;
   }
 
-  List<ASTActionUsage> getActionUsageOfNode(ASTSysMLElement node) {
+  static List<ASTActionUsage> getActionUsageOfNode(ASTSysMLElement node) {
     List<ASTActionUsage> portUsageList = new ArrayList<>();
     if(node instanceof ASTPartDef) {
       portUsageList = ((ASTPartDef) node).getSysMLElementList().stream().filter(
@@ -39,7 +38,7 @@ public class ActionResolveUtils {
     return portUsageList;
   }
 
-  List<ASTActionUsage> removeDuplicateActions(List<List<ASTActionUsage>> actionList) {
+  static List<ASTActionUsage> removeDuplicateActions(List<List<ASTActionUsage>> actionList) {
 
     Set<String> stringSet = actionList.stream().flatMap(Collection::stream).map(ASTActionUsage::getName).collect(
         Collectors.toSet());

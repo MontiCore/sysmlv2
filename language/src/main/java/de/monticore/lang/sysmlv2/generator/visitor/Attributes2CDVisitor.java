@@ -21,9 +21,6 @@ import de.monticore.lang.sysmlv2.generator.utils.resolve.AttributeResolveUtils;
 import java.util.List;
 
 public class Attributes2CDVisitor implements SysMLPartsVisitor2 {
-
-  public final static String ERROR_CODE = "0xDC012";
-
   protected ASTCDCompilationUnit cdCompilationUnit;
 
   protected ASTCDPackage cdPackage;
@@ -41,10 +38,6 @@ public class Attributes2CDVisitor implements SysMLPartsVisitor2 {
 
   protected GeneratorUtils generatorUtils;
 
-  InterfaceUtils interfaceUtils;
-
-  AttributeUtils attributeUtils;
-AttributeResolveUtils attributeResolveUtils;
   protected final GlobalExtensionManagement glex;
 
   public Attributes2CDVisitor(GlobalExtensionManagement glex, ASTCDCompilationUnit cdCompilationUnit,
@@ -52,26 +45,22 @@ AttributeResolveUtils attributeResolveUtils;
     this.cd4C = CD4C.getInstance();
     this.glex = glex;
     this.cdCompilationUnit = cdCompilationUnit;
-    this.basePackage = basePackage;
+    Attributes2CDVisitor.basePackage = basePackage;
     this.astcdDefinition = astcdDefinition;
-    this.generatorUtils = new GeneratorUtils();
-    this.interfaceUtils = new InterfaceUtils();
-    this.attributeUtils = new AttributeUtils();
-    this.attributeResolveUtils = new AttributeResolveUtils();
   }
 
   @Override
   public void visit(ASTAttributeDef astAttributeDef) {
     cdPackage = generatorUtils.initCdPackage(astAttributeDef, astcdDefinition, basePackage.getName());
     // Step 1: Create Interface for the Part Def to support multiple inheritance
-    ASTCDInterfaceUsage interfaceUsage = interfaceUtils.createInterfaceUsage(List.of(astAttributeDef));
-    cdPackage.addCDElement(interfaceUtils.createInterface(astAttributeDef));
+    ASTCDInterfaceUsage interfaceUsage = InterfaceUtils.createInterfaceUsage(List.of(astAttributeDef));
+    cdPackage.addCDElement(InterfaceUtils.createInterface(astAttributeDef));
     //Step 2 Create class
     partDefClass = CD4CodeMill.cDClassBuilder().setCDInterfaceUsage(interfaceUsage)
         .setName(astAttributeDef.getName())
         .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).setCDInterfaceUsage(interfaceUsage).build();
-    List<ASTAttributeUsage> attributeUsageList = attributeResolveUtils.getAttributesOfElement(astAttributeDef);
-    List<ASTCDAttribute> attributeList = attributeUtils.createAttributes(astAttributeDef);
+    List<ASTAttributeUsage> attributeUsageList = AttributeResolveUtils.getAttributesOfElement(astAttributeDef);
+    List<ASTCDAttribute> attributeList = AttributeUtils.createAttributes(astAttributeDef);
     partDefClass.setCDAttributeList(attributeList);
     generatorUtils.addMethods(partDefClass, attributeList, true, true);
 

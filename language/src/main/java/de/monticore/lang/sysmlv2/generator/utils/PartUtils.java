@@ -19,17 +19,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class PartUtils {
-PartResolveUtils partResolveUtils = new PartResolveUtils();
-GeneratorUtils generatorUtils = new GeneratorUtils();
-  public List<ASTCDAttribute> createPartsAsAttributes(ASTSysMLElement astPartUsage){
-    List<ASTPartUsage> attributeUsageList = partResolveUtils.getSubPartsOfElement(astPartUsage);
+
+  public static List<ASTCDAttribute> createPartsAsAttributes(ASTSysMLElement astPartUsage) {
+    List<ASTPartUsage> attributeUsageList = PartResolveUtils.getSubPartsOfElement(astPartUsage);
     //create astcdattributes for the current element
     return attributeUsageList.stream().map(
-        this::createAttribute).collect(
+        PartUtils::createAttribute).collect(
         Collectors.toList());
   }
 
-  ASTCDAttribute createAttribute(ASTSysMLElement element) {
+  static ASTCDAttribute createAttribute(ASTSysMLElement element) {
     if(element instanceof ASTPartUsage) {
       String attributeName = ((ASTPartUsage) element).getName();
 
@@ -41,27 +40,30 @@ GeneratorUtils generatorUtils = new GeneratorUtils();
     return null;
   }
 
-  public ASTMCQualifiedType partType(ASTPartUsage element) {
+  public static ASTMCQualifiedType partType(ASTPartUsage element) {
     var sysMLTypingList = element.getSpecializationList().stream().filter(
         t -> t instanceof ASTSysMLTyping).map(u -> ((ASTSysMLTyping) u)).collect(Collectors.toList());
-    if(isAdHocClassDefinition(element)) return generatorUtils.qualifiedType(element.getName());
-    if(!sysMLTypingList.isEmpty()){
-    if(sysMLTypingList.get(0).getSuperTypesList().size()==1){
-      String typString = sysMLTypingList.get(0).getSuperTypes(0).printType(
-          new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
-      List<String> partsList = Splitters.DOT.splitToList(typString);
-      String typeName = partsList.get(partsList.size() - 1);
-      return generatorUtils.qualifiedType(typeName);
-    }}else {
+    if(isAdHocClassDefinition(element))
+      return GeneratorUtils.qualifiedType(element.getName());
+    if(!sysMLTypingList.isEmpty()) {
+      if(sysMLTypingList.get(0).getSuperTypesList().size() == 1) {
+        String typString = sysMLTypingList.get(0).getSuperTypes(0).printType(
+            new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+        List<String> partsList = Splitters.DOT.splitToList(typString);
+        String typeName = partsList.get(partsList.size() - 1);
+        return GeneratorUtils.qualifiedType(typeName);
+      }
+    }
+    else {
       var sysmlSpec = element.getSpecializationList().stream().filter(
           t -> t instanceof ASTSysMLSpecialization).map(u -> ((ASTSysMLSpecialization) u)).collect(Collectors.toList());
       if(!sysmlSpec.isEmpty()) {
-        if(sysmlSpec.get(0).getSuperTypesList().size() == 1){
+        if(sysmlSpec.get(0).getSuperTypesList().size() == 1) {
           String typString = sysmlSpec.get(0).getSuperTypes(0).printType(
               new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
           List<String> partsList = Splitters.DOT.splitToList(typString);
           String typeName = partsList.get(partsList.size() - 1);
-          return generatorUtils.qualifiedType(typeName);
+          return GeneratorUtils.qualifiedType(typeName);
         }
       }
     }
@@ -69,9 +71,10 @@ GeneratorUtils generatorUtils = new GeneratorUtils();
     Log.error(
         "The type of partUsage " + element.getName()
             + " could not be resolved.");
-  return generatorUtils.qualifiedType("");
+    return GeneratorUtils.qualifiedType("");
   }
-  public ASTMCType getNameOfSpecialication(ASTMCType spec, ASTPartUsage astPartUsage) {
+
+  public static ASTMCType getNameOfSpecialication(ASTMCType spec, ASTPartUsage astPartUsage) {
     ASTPartUsage specPartUsage = astPartUsage.getEnclosingScope().resolvePartUsage(printName(spec)).get().getAstNode();
     var specializationList = specPartUsage.streamSpecializations().filter(
         t -> t instanceof ASTSysMLSpecialization).flatMap(
@@ -95,7 +98,7 @@ GeneratorUtils generatorUtils = new GeneratorUtils();
     return null;
   }
 
-  public boolean isAdHocClassDefinition(ASTPartUsage astPartUsage) {
+  public static boolean isAdHocClassDefinition(ASTPartUsage astPartUsage) {
 
     var specializationList = astPartUsage.streamSpecializations().filter(
         t -> t instanceof ASTSysMLSpecialization).flatMap(
@@ -111,7 +114,7 @@ GeneratorUtils generatorUtils = new GeneratorUtils();
             | (!astPartUsage.getSysMLElementList().isEmpty()));
   }
 
-  String printName(ASTMCType type) {
+  static String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
   }
 }

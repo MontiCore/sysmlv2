@@ -46,9 +46,7 @@ public class ExpressionRenameVisitor implements ExpressionsBasisVisitor2 {
 
   String newName = "";
 
-  List<ASTAttributeUsage> parentAttributeList = new ArrayList<>();
-
-  AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
+  List<ASTAttributeUsage> parentAttributeList;
 
   @Override
   public void visit(ASTNameExpression nameExpression) {
@@ -67,7 +65,7 @@ public class ExpressionRenameVisitor implements ExpressionsBasisVisitor2 {
     var scope = (SysMLv2Scope) node.getEnclosingScope();
     if(scope.resolveAttributeUsageDown(node.getName()).isPresent())
       return scope.resolveAttributeUsageDown(node.getName()).get().getAstNode();
-    var attributesListPart = attributeResolveUtils.getAttributesOfElement((ASTSysMLElement) scope.getAstNode());
+    var attributesListPart = AttributeResolveUtils.getAttributesOfElement((ASTSysMLElement) scope.getAstNode());
     var attribute = attributesListPart.stream().filter(t -> t.getName().equals(node.getName())).findFirst();
     return attribute.orElse(null);
   }
@@ -79,7 +77,7 @@ public class ExpressionRenameVisitor implements ExpressionsBasisVisitor2 {
 
     if(scope.resolveAttributeUsageDown(node.getName()).isPresent())
       return scope.resolveAttributeUsageDown(node.getName()).get().getAstNode();
-    var attributesListPart = attributeResolveUtils.getAttributesOfElement((ASTSysMLElement) parent);
+    var attributesListPart = AttributeResolveUtils.getAttributesOfElement((ASTSysMLElement) parent);
     var attribute = attributesListPart.stream().filter(t -> t.getName().equals(node.getName())).findFirst();
     if(attribute.isPresent())
       return attribute.get();

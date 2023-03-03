@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 public class ResolveUtils {
 
-  List<ASTSysMLElement> getDirectSupertypes(ASTSysMLElement node) {
+  static List<ASTSysMLElement> getDirectSupertypes(ASTSysMLElement node) {
     List<ASTSysMLElement> parentList = new ArrayList<>();
     //Get direct supertypes
     if(node instanceof ASTPartDef) {
@@ -99,7 +99,7 @@ public class ResolveUtils {
     return parentList;
   }
 
-  String printName(ASTMCType type) {
+  static String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
   }
 

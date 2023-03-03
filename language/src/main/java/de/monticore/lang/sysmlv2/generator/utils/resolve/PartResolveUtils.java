@@ -27,10 +27,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class PartResolveUtils {
-  ResolveUtils resolveUtils = new ResolveUtils();
 
-  public List<ASTPartUsage> getSubPartsOfElement(ASTSysMLElement node) {
-    List<ASTSysMLElement> parentList = resolveUtils.getDirectSupertypes(node);
+  public static List<ASTPartUsage> getSubPartsOfElement(ASTSysMLElement node) {
+    List<ASTSysMLElement> parentList = ResolveUtils.getDirectSupertypes(node);
     List<List<ASTPartUsage>> parentPart = new ArrayList<>();
     List<ASTPartUsage> intersectList;
     //if no supertypes then the list of intersecting attributes is empty
@@ -50,7 +49,7 @@ public class PartResolveUtils {
       }
     }
     else {
-      parentPart = parentList.stream().map(this::getSubPartsOfElement).collect(Collectors.toList());
+      parentPart = parentList.stream().map(PartResolveUtils::getSubPartsOfElement).collect(Collectors.toList());
       intersectList = emptyIntersection(parentPart);
       checkRedefinitionTypes(listOfRedefinedParts, parentPart);
     }
@@ -79,8 +78,8 @@ public class PartResolveUtils {
     return new ArrayList<>();
   }
 
-  void checkRedefinitionTypes(List<ASTPartUsage> redefinedTypes,
-                              List<List<ASTPartUsage>> parentAttributeList) {
+  static void checkRedefinitionTypes(List<ASTPartUsage> redefinedTypes,
+                                     List<List<ASTPartUsage>> parentAttributeList) {
 
     for (ASTPartUsage attributeUsage : redefinedTypes) {
       String attributeName = attributeUsage.getName();
@@ -107,7 +106,7 @@ public class PartResolveUtils {
     }
   }
 
-  boolean checkCompatibility(ASTMCType first, ASTMCType second, ISysMLPartsScope parts) {
+  static boolean checkCompatibility(ASTMCType first, ASTMCType second, ISysMLPartsScope parts) {
     if(printName(first).equals(printName(second)))
       return true;
     //TODO
@@ -127,8 +126,8 @@ public class PartResolveUtils {
       return false;
   }
 
-  List<ASTPartUsage> filterSameTypeInAttributeList(ASTSysMLElement node,
-                                                   List<ASTPartUsage> listOfAttributeUsages) {
+  static List<ASTPartUsage> filterSameTypeInAttributeList(ASTSysMLElement node,
+                                                          List<ASTPartUsage> listOfAttributeUsages) {
 
     List<ASTPartUsage> attributeUsagesOfNode = getPartUsageOfNode(node);
     List<ASTMCType> namesOfAttributesWithRedefinitions = attributeUsagesOfNode.stream().flatMap(
@@ -137,9 +136,10 @@ public class PartResolveUtils {
         Collectors.toList());
     List<ASTPartUsage> returnList = new ArrayList<>(listOfAttributeUsages);
     for (ASTPartUsage element : listOfAttributeUsages) {
-      var superTypesElement = getAttributeTypes(element).stream().map(this::printName).collect(Collectors.toList());
+      var superTypesElement = getAttributeTypes(element).stream().map(PartResolveUtils::printName).collect(
+          Collectors.toList());
       var listOfSupertypeLists = listOfAttributeUsages.stream().filter(t -> t.getName().equals(element.getName())).map(
-          this::getAttributeTypes).collect(Collectors.toList());
+          PartResolveUtils::getAttributeTypes).collect(Collectors.toList());
       var filteredSupertypes = listOfSupertypeLists.stream().flatMap(
           t -> t.stream().filter(item -> !superTypesElement.contains(printName(item)))).collect(
           Collectors.toList());
@@ -151,7 +151,7 @@ public class PartResolveUtils {
     return astMcTypeListUnion(listOfLists, namesOfAttributesWithRedefinitions);
   }
 
-  List<ASTPartUsage> emptyIntersection(List<List<ASTPartUsage>> attributeLists) {
+  static List<ASTPartUsage> emptyIntersection(List<List<ASTPartUsage>> attributeLists) {
     //remove all sublists that are empty
     List<List<ASTPartUsage>> notEmpty = attributeLists.stream().filter(t -> !t.isEmpty()).collect(
         Collectors.toList());
@@ -170,21 +170,21 @@ public class PartResolveUtils {
       return new ArrayList<>();
   }
 
-  List<ASTPartUsage> attributeUsageListUnion(List<List<ASTPartUsage>> attributeLists,
-                                             List<ASTPartUsage> undesiredAttributes) {
+  static List<ASTPartUsage> attributeUsageListUnion(List<List<ASTPartUsage>> attributeLists,
+                                                    List<ASTPartUsage> undesiredAttributes) {
     return attributeLists.stream().flatMap(Collection::stream).filter(
         t -> !(undesiredAttributes.stream().map(ASTPartUsage::getName).collect(Collectors.toList()).contains(
             t.getName()))).collect(Collectors.toList());
   }
 
-  List<ASTPartUsage> astMcTypeListUnion(List<List<ASTPartUsage>> attributeLists,
-                                        List<ASTMCType> undesiredAttributes) {
+  static List<ASTPartUsage> astMcTypeListUnion(List<List<ASTPartUsage>> attributeLists,
+                                               List<ASTMCType> undesiredAttributes) {
     return attributeLists.stream().flatMap(Collection::stream).filter(
-        t -> !(undesiredAttributes.stream().map(this::printName).collect(Collectors.toList()).contains(
+        t -> !(undesiredAttributes.stream().map(PartResolveUtils::printName).collect(Collectors.toList()).contains(
             t.getName()))).collect(Collectors.toList());
   }
 
-  String getNameOfNode(ASTSysMLElement node) {
+  static String getNameOfNode(ASTSysMLElement node) {
     if(node instanceof ASTPartDef)
       return ((ASTPartDef) node).getName();
     if(node instanceof ASTPartUsage)
@@ -196,61 +196,7 @@ public class PartResolveUtils {
     return "";
   }
 
-  List<ASTSysMLElement> getDirectSupertypes(ASTSysMLElement node) {
-    List<ASTSysMLElement> parentList = new ArrayList<>();
-    //Get direct supertypes
-    if(node instanceof ASTPartDef) {
-      parentList = ((ASTPartDef) node).streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization).flatMap(
-          f -> f.getSuperTypesList().stream()).map(
-          t -> ((ASTPartDef) node).getEnclosingScope().resolvePartDef(printName(t))).filter(Optional::isPresent).map(
-          t -> t.get().getAstNode()).collect(
-          Collectors.toList());
-    }
-    if(node instanceof ASTPartUsage) {
-      parentList = ((ASTPartUsage) node).streamSpecializations().filter(
-          t -> t instanceof ASTSysMLSpecialization).flatMap(
-          f -> f.getSuperTypesList().stream()).map(
-          t -> ((ASTPartUsage) node).getEnclosingScope().resolvePartUsage(printName(t))).filter(
-          Optional::isPresent).map(
-          t -> t.get().getAstNode()).collect(
-          Collectors.toList());
-      parentList.addAll(((ASTPartUsage) node).streamSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
-          f -> f.getSuperTypesList().stream()).map(
-          t -> ((ASTPartUsage) node).getEnclosingScope().resolvePartDef(printName(t))).filter(Optional::isPresent).map(
-          t -> t.get().getAstNode()).collect(
-          Collectors.toList()));
-    }
-    if(node instanceof ASTAttributeDef) {
-      parentList = ((ASTAttributeDef) node).streamSpecializations().filter(
-          t -> t instanceof ASTSysMLSpecialization).flatMap(
-          f -> f.getSuperTypesList().stream()).map(
-          t -> ((ASTAttributeDef) node).getEnclosingScope().resolveAttributeDef(printName(t))).filter(
-          Optional::isPresent).map(
-          t -> t.get().getAstNode()).collect(
-          Collectors.toList());
-    }
-    if(node instanceof ASTPortUsage) {
-      parentList = ((ASTPortUsage) node).streamSpecializations().filter(
-          t -> t instanceof ASTSysMLTyping).flatMap(
-          f -> f.getSuperTypesList().stream()).map(
-          t -> ((ASTPortUsage) node).getEnclosingScope().resolvePortDef(printName(t))).filter(
-          Optional::isPresent).map(
-          t -> t.get().getAstNode()).collect(
-          Collectors.toList());
-    }
-    if(node instanceof ASTPortDef) {
-      parentList = ((ASTPortDef) node).streamSpecializations().filter(
-          t -> t instanceof ASTSysMLSpecialization).flatMap(
-          f -> f.getSuperTypesList().stream()).map(
-          t -> ((ASTPortDef) node).getEnclosingScope().resolvePortDef(printName(t))).filter(
-          Optional::isPresent).map(
-          t -> t.get().getAstNode()).collect(
-          Collectors.toList());
-    }
-    return parentList;
-  }
-
-  public List<ASTPartUsage> getPartUsageOfNode(ASTSysMLElement node) {
+  static public List<ASTPartUsage> getPartUsageOfNode(ASTSysMLElement node) {
     List<ASTPartUsage> attributeUsageList = new ArrayList<>();
     if(node instanceof ASTPartDef) {
       attributeUsageList = ((ASTPartDef) node).getSysMLElementList().stream().filter(
@@ -285,7 +231,7 @@ public class PartResolveUtils {
     return attributeUsageList;
   }
 
-  List<ASTMCType> getAttributeTypes(ASTPartUsage astAttributeUsage) {
+  static List<ASTMCType> getAttributeTypes(ASTPartUsage astAttributeUsage) {
 
     //TODO hier muss gefixed werden
     return astAttributeUsage.streamSpecializations().filter(f -> f instanceof ASTSysMLTyping).flatMap(
@@ -293,10 +239,11 @@ public class PartResolveUtils {
         Collectors.toList());
   }
 
-  private String printName(ASTMCType type) {
+  static private String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
   }
-  public Optional<ICommonSysMLPartsSymbol> resolvePartQname(String QName, ISysMLPartsScope scope) {
+
+  static public Optional<ICommonSysMLPartsSymbol> resolvePartQname(String QName, ISysMLPartsScope scope) {
     var QnameArray = QName.split("\\.");
     var first = QnameArray[0];
     var resolvePartDef = scope.resolvePartDef(first);
@@ -315,7 +262,7 @@ public class PartResolveUtils {
     return Optional.empty();
   }
 
-  public Optional<ICommonSysMLPartsSymbol> resolvePartQnameWithParent(String QName, ASTSysMLElement element) {
+  static public Optional<ICommonSysMLPartsSymbol> resolvePartQnameWithParent(String QName, ASTSysMLElement element) {
     var QnameArray = QName.split("\\.");
     var first = QnameArray[0];
     var partUsageList = getSubPartsOfElement(element);

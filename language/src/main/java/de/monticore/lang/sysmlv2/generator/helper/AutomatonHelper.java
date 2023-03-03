@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
 
 public class AutomatonHelper {
   ComponentHelper componentHelper = new ComponentHelper();
-  AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
-  StatesResolveUtils statesResolveUtils = new StatesResolveUtils();
 
   public List<ASTSysMLTransition> getAllTransitionsWithGuardFrom(ASTStateUsage automaton, ASTStateUsage state) {
     return getAllTransitionsFrom(state).stream().filter(ASTSysMLTransition::isPresentGuard).collect(
@@ -39,7 +37,7 @@ public class AutomatonHelper {
 
   public List<ASTSysMLTransition> getAllTransitionsFrom(ASTStateUsage state) {
     var parent = state.getEnclosingScope().getAstNode();
-    return statesResolveUtils.getTransitionOfElement((ASTSysMLElement) parent).stream().filter(
+    return StatesResolveUtils.getTransitionOfElement((ASTSysMLElement) parent).stream().filter(
         t -> t.getSrc().equals(state.getName())).collect(
         Collectors.toList());
 
@@ -71,7 +69,8 @@ public class AutomatonHelper {
   public String printExpression(ASTExpression expr, ASTSysMLElement parentPart) {
     //expressions in states have to be mapped
 
-    ExpressionRenameVisitor visitor = new ExpressionRenameVisitor(attributeResolveUtils.getAttributesOfElement(parentPart));
+    ExpressionRenameVisitor visitor = new ExpressionRenameVisitor(
+        AttributeResolveUtils.getAttributesOfElement(parentPart));
     SysMLv2Traverser sysMLv2Traverser = SysMLv2Mill.traverser();
     sysMLv2Traverser.add4ExpressionsBasis(visitor);
     expr.accept(sysMLv2Traverser);
@@ -79,12 +78,14 @@ public class AutomatonHelper {
     return prettyPrinter.prettyprint(expr);
   }
 
-  public String renameAction(ASTAssignmentActionUsage assignmentActionUsage, ASTSysMLElement parentPart){
-    if(attributeResolveUtils.getAttributesOfElement(parentPart).stream().anyMatch(t->t.getName().equals(assignmentActionUsage.getTarget().getQName()))){
-     return "this.getParentPart()."+assignmentActionUsage.getTarget().getQName();
+  public String renameAction(ASTAssignmentActionUsage assignmentActionUsage, ASTSysMLElement parentPart) {
+    if(AttributeResolveUtils.getAttributesOfElement(parentPart).stream().anyMatch(
+        t -> t.getName().equals(assignmentActionUsage.getTarget().getQName()))) {
+      return "this.getParentPart()." + assignmentActionUsage.getTarget().getQName();
     }
     return assignmentActionUsage.getTarget().getQName();
   }
+
   public String getNameOfDoAction(ASTDoAction doAction) {
     return doAction.getAction();
   }
@@ -143,7 +144,7 @@ public class AutomatonHelper {
   }
 
   public List<ASTStateUsage> getSubStates(ASTStateUsage stateUsage) {
-    return statesResolveUtils.getStatesOfElement(stateUsage);
+    return StatesResolveUtils.getStatesOfElement(stateUsage);
   }
 
   public boolean isAutomaton(String stateName, ASTStateUsage stateUsage) {
@@ -160,6 +161,7 @@ public class AutomatonHelper {
     }
     return "currentState";
   }
+
   public ASTStateUsage resolveStateUsage(String targetName, ASTStateUsage stateUsage) {
     var resolvedState = stateUsage.getSpannedScope().resolveStateUsage(targetName);
     return resolvedState.map(StateUsageSymbol::getAstNode).orElse(null);
@@ -168,13 +170,16 @@ public class AutomatonHelper {
   public String resolveEnumName(ASTStateUsage automaton) {
     return automaton.getName() + "Enum";
   }
+
   public List<ASTEntryAction> getEntryActionsOfElement(ASTStateUsage node) {
-    return statesResolveUtils.getEntryActionsOfElement(node);
+    return StatesResolveUtils.getEntryActionsOfElement(node);
   }
+
   public List<ASTDoAction> getDoActionsOfElement(ASTStateUsage node) {
-    return statesResolveUtils.getDoActionsOfElement(node);
+    return StatesResolveUtils.getDoActionsOfElement(node);
   }
+
   public List<ASTExitAction> getExitActionsOfElement(ASTStateUsage node) {
-    return statesResolveUtils.getExitActionsOfElement(node);
+    return StatesResolveUtils.getExitActionsOfElement(node);
   }
 }

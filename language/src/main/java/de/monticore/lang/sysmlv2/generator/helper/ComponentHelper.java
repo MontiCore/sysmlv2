@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ComponentHelper {
-  PartUtils partUtils = new PartUtils();
-
   ComponentUtils componentUtils = new ComponentUtils();
 
   GeneratorUtils generatorUtils = new GeneratorUtils();
@@ -32,21 +30,21 @@ public class ComponentHelper {
 
   public String getPartType(ASTPartUsage subcomponent) {
 
-    return printer.prettyprint(partUtils.partType(subcomponent));
+    return printer.prettyprint(PartUtils.partType(subcomponent));
   }
 
   public String getAttributeType(ASTAttributeUsage astAttributeUsage) {
-    return printer.prettyprint(generatorUtils.attributeType(astAttributeUsage));
+    return printer.prettyprint(GeneratorUtils.attributeType(astAttributeUsage));
   }
 
   public boolean isObjectAttribute(ASTAttributeUsage astAttributeUsage) {
     return !generatorUtils.getScalarValueMapping().containsValue(
-        printer.prettyprint(generatorUtils.attributeType(astAttributeUsage)));
-  }
-  public String mapToWrapped(ASTAttributeUsage astAttributeUsage){
-    return generatorUtils.mapToWrapper(getAttributeType(astAttributeUsage));
+        printer.prettyprint(GeneratorUtils.attributeType(astAttributeUsage)));
   }
 
+  public String mapToWrapped(ASTAttributeUsage astAttributeUsage) {
+    return generatorUtils.mapToWrapper(getAttributeType(astAttributeUsage));
+  }
 
   public boolean isPortDelayed(ASTPortUsage portUsage) {
     return componentUtils.isPortDelayed(portUsage);
@@ -54,19 +52,22 @@ public class ComponentHelper {
 
   public String getDefaultValue(ASTPortUsage portUsage) {
 
-    if(portUsage.getValueAttribute().isPresentExpression()){
+    if(portUsage.getValueAttribute().isPresentExpression()) {
       CommonExpressionsJavaPrinter prettyPrinter = new CommonExpressionsJavaPrinter(new IndentPrinter());
       return prettyPrinter.prettyprint(portUsage.getValueAttribute().getExpression());
     }
-    else return "";
+    else
+      return "";
   }
+
   public String getDefaultValue(ASTAttributeUsage attributeUsage) {
 
-    if(attributeUsage.isPresentExpression()){
+    if(attributeUsage.isPresentExpression()) {
       CommonExpressionsJavaPrinter prettyPrinter = new CommonExpressionsJavaPrinter(new IndentPrinter());
       return prettyPrinter.prettyprint(attributeUsage.getExpression());
     }
-    else return "";
+    else
+      return "";
   }
 
   public String getValueTypeOfPort(ASTPortUsage portUsage) {

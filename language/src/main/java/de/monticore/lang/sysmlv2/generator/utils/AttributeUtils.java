@@ -18,29 +18,26 @@ public class AttributeUtils {
 
   GeneratorUtils generatorUtils;
 
-  AttributeResolveUtils attributeResolveUtils;
-
   public AttributeUtils() {
     this.generatorUtils = new GeneratorUtils();
-    this.attributeResolveUtils = new AttributeResolveUtils();
   }
 
-  public List<ASTCDAttribute> createAttributes(ASTSysMLElement astSysMLElement) {
-    List<ASTAttributeUsage> attributeUsageList = attributeResolveUtils.getAttributesOfElement(astSysMLElement);
+  static public List<ASTCDAttribute> createAttributes(ASTSysMLElement astSysMLElement) {
+    List<ASTAttributeUsage> attributeUsageList = AttributeResolveUtils.getAttributesOfElement(astSysMLElement);
     //create astcdattributes for the current element
     return attributeUsageList.stream().map(
-        this::createAttribute).collect(
+        AttributeUtils::createAttribute).collect(
         Collectors.toList());
   }
 
-  ASTCDAttribute createAttribute(ASTSysMLElement element) {
+  static ASTCDAttribute createAttribute(ASTSysMLElement element) {
     if(element instanceof ASTAttributeUsage) {
       ASTCDAttributeBuilder attributeBuilder = CD4CodeMill.cDAttributeBuilder();
       String attributeName = ((ASTAttributeUsage) element).getName();
       if(((ASTAttributeUsage) element).isPresentExpression()) {
         attributeBuilder.setInitial(((ASTAttributeUsage) element).getExpression());
       }
-      ASTMCQualifiedType qualifiedType = generatorUtils.attributeType((ASTAttributeUsage) element);
+      ASTMCQualifiedType qualifiedType = GeneratorUtils.attributeType((ASTAttributeUsage) element);
       return attributeBuilder.setName(attributeName).setModifier(
           CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(qualifiedType).build();
 
@@ -48,7 +45,7 @@ public class AttributeUtils {
     return null;
   }
 
-  public ASTCDAttribute createAttributeWithPrefix(ASTSysMLElement attribute, String prefix,
+  static public ASTCDAttribute createAttributeWithPrefix(ASTSysMLElement attribute, String prefix,
                                                   ASTSysMLElement parentPart) {
     if(attribute instanceof ASTAttributeUsage) {
       String attributeName = prefix + ((ASTAttributeUsage) attribute).getName();
@@ -56,14 +53,14 @@ public class AttributeUtils {
       if(((ASTAttributeUsage) attribute).isPresentExpression()) {
         var expr = ((ASTAttributeUsage) attribute).getExpression();
         ExpressionRenameVisitor visitor = new ExpressionRenameVisitor((ASTAttributeUsage) attribute, attributeName,
-            attributeResolveUtils.getAttributesOfElement(parentPart));
+            AttributeResolveUtils.getAttributesOfElement(parentPart));
         SysMLv2Traverser sysMLv2Traverser = SysMLv2Mill.traverser();
         sysMLv2Traverser.add4ExpressionsBasis(visitor);
         var parent = attribute.getEnclosingScope().getAstNode();
         parent.accept(sysMLv2Traverser);
         attributeBuilder.setInitial(expr);
       }
-      ASTMCQualifiedType qualifiedType = generatorUtils.attributeType((ASTAttributeUsage) attribute);
+      ASTMCQualifiedType qualifiedType = GeneratorUtils.attributeType((ASTAttributeUsage) attribute);
       return attributeBuilder.setName(attributeName).setModifier(
           CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(qualifiedType).build();
     }

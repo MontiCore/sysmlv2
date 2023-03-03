@@ -73,12 +73,12 @@ public class ActionsUtils {
     }
   }
 
-  List<ASTSysMLElement> getParameterList(ASTActionUsage actionUsage) {
+  static List<ASTSysMLElement> getParameterList(ASTActionUsage actionUsage) {
     return actionUsage.streamSysMLElements().filter(t -> t instanceof ASTAttributeUsage).filter(
         t -> ((ASTAttributeUsage) t).isPresentSysMLFeatureDirection()).collect(Collectors.toList());
   }
 
-  List<ASTSysMLElement> getAttributeList(ASTActionUsage actionUsage) {
+  static List<ASTSysMLElement> getAttributeList(ASTActionUsage actionUsage) {
     return actionUsage.streamSysMLElements().filter(t -> t instanceof ASTAttributeUsage).filter(
         t -> !((ASTAttributeUsage) t).isPresentSysMLFeatureDirection()).collect(Collectors.toList());
   }

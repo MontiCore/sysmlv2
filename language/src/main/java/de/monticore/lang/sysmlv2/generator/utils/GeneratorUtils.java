@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GeneratorUtils {
-  private HashMap<String, String> scalarValueMapping = new HashMap<String, String>();
+  private static final HashMap<String, String> scalarValueMapping = new HashMap<>();
 
-  private HashMap<String, String> primitiveWrapperMap = new HashMap<String, String>();
+  private final HashMap<String, String> primitiveWrapperMap = new HashMap<>();
 
   protected final CD4C cd4C;
 
@@ -62,7 +62,7 @@ public class GeneratorUtils {
 
   }
 
-  public ASTMCQualifiedType attributeType(ASTAttributeUsage element) {
+  static public ASTMCQualifiedType attributeType(ASTAttributeUsage element) {
     var sysMLTypingList = element.getSpecializationList().stream().filter(
         t -> t instanceof ASTSysMLTyping).map(u -> ((ASTSysMLTyping) u)).collect(Collectors.toList());
     String typString = sysMLTypingList.get(0).getSuperTypes(0).printType(
@@ -74,11 +74,11 @@ public class GeneratorUtils {
     return qualifiedType(partsList);
   }
 
-  public ASTMCQualifiedType qualifiedType(String qname) {
+  static public ASTMCQualifiedType qualifiedType(String qname) {
     return qualifiedType(Splitters.DOT.splitToList(qname));
   }
 
-  protected ASTMCQualifiedType qualifiedType(List<String> partsList) {
+  static protected ASTMCQualifiedType qualifiedType(List<String> partsList) {
     return CD4CodeMill.mCQualifiedTypeBuilder()
         .setMCQualifiedName(CD4CodeMill.mCQualifiedNameBuilder().setPartsList(partsList).build()).build();
   }
@@ -97,7 +97,8 @@ public class GeneratorUtils {
     if(ListCDPackages.stream().noneMatch(
         t -> ((ASTCDPackage) t).getMCQualifiedName().getQName().equals(qualifiedName.getQName()))) {
       astcdDefinition.addCDElement(cdPackage);
-    }else{
+    }
+    else {
       cdPackage = (ASTCDPackage) ListCDPackages.stream().filter(
           t -> ((ASTCDPackage) t).getMCQualifiedName().getQName().equals(qualifiedName.getQName())).findFirst().get();
     }

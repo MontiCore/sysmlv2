@@ -15,21 +15,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class PortResolveUtils {
-  ResolveUtils resolveUtils = new ResolveUtils();
 
-  PartResolveUtils partResolveUtils = new PartResolveUtils();
-
-  public List<ASTPortUsage> getPortsOfElement(ASTSysMLElement node) {
-    List<ASTSysMLElement> parentList = resolveUtils.getDirectSupertypes(node);
+  static public List<ASTPortUsage> getPortsOfElement(ASTSysMLElement node) {
+    List<ASTSysMLElement> parentList = ResolveUtils.getDirectSupertypes(node);
     List<List<ASTPortUsage>> parentPort;
     List<ASTPortUsage> attributeUsages = getPortUsageOfNode(node);
 
-    parentPort = parentList.stream().map(this::getPortsOfElement).collect(Collectors.toList());
+    parentPort = parentList.stream().map(PortResolveUtils::getPortsOfElement).collect(Collectors.toList());
     attributeUsages.addAll(removeDuplicateAttributes(parentPort));
     return attributeUsages;
   }
 
-  List<ASTPortUsage> getPortUsageOfNode(ASTSysMLElement node) {
+  static List<ASTPortUsage> getPortUsageOfNode(ASTSysMLElement node) {
     List<ASTPortUsage> portUsageList = new ArrayList<>();
     if(node instanceof ASTPartDef) {
       portUsageList = ((ASTPartDef) node).getSysMLElementList().stream().filter(
@@ -44,7 +41,7 @@ public class PortResolveUtils {
     return portUsageList;
   }
 
-  List<ASTPortUsage> removeDuplicateAttributes(List<List<ASTPortUsage>> attributeLists) {
+  static List<ASTPortUsage> removeDuplicateAttributes(List<List<ASTPortUsage>> attributeLists) {
 
     Set<String> stringSet = attributeLists.stream().flatMap(Collection::stream).map(ASTPortUsage::getName).collect(
         Collectors.toSet());
@@ -56,13 +53,13 @@ public class PortResolveUtils {
         Collectors.toList());
   }
 
-  public Optional<PortUsageSymbol> resolvePort(String QName, String BaseName, ISysMLPartsScope scope) {
+  static public Optional<PortUsageSymbol> resolvePort(String QName, String BaseName, ISysMLPartsScope scope) {
     String parentPart;
     Optional<PartDefSymbol> parentPartDef = Optional.empty();
     Optional<PartUsageSymbol> parentPartUsage = Optional.empty();
     if(!QName.equals(BaseName)) {
       if(QName.split("\\.").length > 2) {
-        var symbol = partResolveUtils.resolvePartQname(QName.substring(0, QName.length() - BaseName.length() - 1),
+        var symbol = PartResolveUtils.resolvePartQname(QName.substring(0, QName.length() - BaseName.length() - 1),
             scope);
         if(symbol.isPresent()) {
           if(symbol.get() instanceof PartUsageSymbol)
@@ -80,12 +77,12 @@ public class PortResolveUtils {
     if(parentPartUsage.isPresent()) {
       var portUsageList = getPortsOfElement(parentPartUsage.get().getAstNode());
       if(portUsageList.stream().anyMatch(t -> t.getName().equals(BaseName)))
-        return portUsageList.stream().filter(t -> t.getName().equals(BaseName)).map(t -> t.getSymbol()).findFirst();
+        return portUsageList.stream().filter(t -> t.getName().equals(BaseName)).map(ASTPortUsageTOP::getSymbol).findFirst();
     }
     if(parentPartDef.isPresent()) {
       var portUsageList = getPortsOfElement(parentPartDef.get().getAstNode());
       if(portUsageList.stream().anyMatch(t -> t.getName().equals(BaseName)))
-        return portUsageList.stream().filter(t -> t.getName().equals(BaseName)).map(t -> t.getSymbol()).findFirst();
+        return portUsageList.stream().filter(t -> t.getName().equals(BaseName)).map(ASTPortUsageTOP::getSymbol).findFirst();
     }
 
     return scope.resolvePortUsageDown(QName);
