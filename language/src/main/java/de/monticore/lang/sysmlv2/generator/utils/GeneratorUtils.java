@@ -97,6 +97,9 @@ public class GeneratorUtils {
     if(ListCDPackages.stream().noneMatch(
         t -> ((ASTCDPackage) t).getMCQualifiedName().getQName().equals(qualifiedName.getQName()))) {
       astcdDefinition.addCDElement(cdPackage);
+    }else{
+      cdPackage = (ASTCDPackage) ListCDPackages.stream().filter(
+          t -> ((ASTCDPackage) t).getMCQualifiedName().getQName().equals(qualifiedName.getQName())).findFirst().get();
     }
 
     return cdPackage;
