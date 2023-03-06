@@ -369,4 +369,15 @@ public class ActionsHelper {
       return qualifiedName.getQName();
     }
   }
+  public boolean isInParameters(List<ASTAttributeUsage> parameterList, ASTMCQualifiedName source, ASTMCQualifiedName target){
+    if(!source.getQName().equals(source.getBaseName())) {
+
+   return parameterList.stream().anyMatch(t->t.getName().equals(source.getBaseName()));
+    }
+    else if(!target.getQName().equals(target.getBaseName())) {
+      return parameterList.stream().anyMatch(t->t.getName().equals(target.getBaseName()));
+    }else{
+      return false;
+    }
+  }
 }

@@ -15,8 +15,10 @@ ${cd4c.method("${abstract}public void ${action.getName()}(${autHelper.getParamet
         ${compHelper.mapToWrapped(attribute)} ${attribute.getName()} = ${compHelper.mapToWrapped(attribute)}.valueOf(<#if attribute.isPresentExpression()>${actionsHelper.printExpression(attribute.getExpression())}<#else >0</#if>);
     </#if>
 </#list>
+<#assign actionsParameters = []/>
       //Pointer to parameters of sub actions
 <#list actionsHelper.getSubActions(action) as subaction>
+    <#assign actionsParameters = actionsParameters + actionsHelper.getParameters(subaction)/>
     <#list actionsHelper.getParameters(subaction) as parameter>
         <#if compHelper.isObjectAttribute(parameter)>
             ${compHelper.getAttributeType(parameter)} ${subaction.getName()}_${parameter.getName()} = new ${compHelper.getAttributeType(parameter)}();
@@ -27,9 +29,11 @@ ${cd4c.method("${abstract}public void ${action.getName()}(${autHelper.getParamet
     </#list>
 </#list>
     //binds
-    <#assign bindList = actionsHelper.getBindList(state)>
+    <#assign bindList = actionsHelper.getBindList(action)>
     <#list bindList as bind>
+        <#if actionsHelper.isInParameters(actionsParameters,bind.getSource(),bind.getTarget())>
       ${actionsHelper.mapBindEnd(bind.getSource())} = ${actionsHelper.mapBindEnd(bind.getTarget())};
+      </#if>
     </#list>
       //control flow
 <#if actionsHelper.hasActionDecideMerge(action)>
@@ -87,7 +91,7 @@ ${cd4c.method("${abstract}public void ${action.getName()}(${autHelper.getParamet
         this.get${resolvedTarget.getTarget()?cap_first}().setValue(${actionsHelper.printExpression(resolvedTarget.getPayload())});
         <#else >
             <#if actionsHelper.isAssignmentAction(resolvedTarget)>
-        ${resolvedTarget.getTarget()} = ${actionsHelper.printExpression(resolvedTarget.getValueExpression())};
+                ${actionsHelper.mapBindEnd(resolvedTarget.getTarget())} = ${actionsHelper.printExpression(resolvedTarget.getValueExpression())};
             <#else >
         ${succession.getTgt()}(<#list  actionsHelper.getParametersWithActionPrefix(resolvedTarget) as param>${param}<#sep>, </#sep></#list>);
             </#if>

@@ -4,8 +4,10 @@ ${tc.signature("stateList", "automaton")}
 ${cd4c.method("public void compute()")}
 //Parameter
     <#assign doActions = autHelper.getDoActionsOfElement(automaton)/>
+    <#assign actionsParameters = []/>
     <#list doActions as doAction>
         <#assign subaction = actionsHelper.getActionFromDoAction(doAction)/>
+        <#assign actionsParameters = actionsParameters + actionsHelper.getParameters(subaction)/>
         <#list actionsHelper.getParameters(subaction) as parameter>
             <#if compHelper.isObjectAttribute(parameter)>
                 ${compHelper.getAttributeType(parameter)} ${subaction.getName()}_${parameter.getName()} = new ${compHelper.getAttributeType(parameter)}();
@@ -18,7 +20,9 @@ ${cd4c.method("public void compute()")}
     //binds
     <#assign bindList = actionsHelper.getBindList(state)>
     <#list bindList as bind>
+        <#if actionsHelper.isInParameters(actionsParameters,bind.getSource(),bind.getTarget())>
         ${actionsHelper.mapBindEnd(bind.getSource())} = ${actionsHelper.mapBindEnd(bind.getTarget())};
+        </#if>
     </#list>
     //Do Actions
     <#list doActions as doAction>

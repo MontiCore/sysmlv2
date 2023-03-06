@@ -37,7 +37,7 @@ ${cd4c.method("public boolean returnPath_${secondControlNode.getName()}(${action
           this.get${resolvedTarget.getTarget()?cap_first}().setValue(${autHelper.printExpression(resolvedTarget.getPayload())});
         <#else >
             <#if actionsHelper.isAssignmentAction(resolvedTarget)>
-                ${resolvedTarget.getTarget()} = ${autHelper.printExpression(resolvedTarget.getValueExpression())};
+                ${actionsHelper.mapBindEnd(resolvedTarget.getTarget())} = ${autHelper.printExpression(resolvedTarget.getValueExpression())};
             <#else >
                 ${succession.getTgt()}(<#list  actionsHelper.getParametersWithActionPrefix(resolvedTarget) as param>${param}<#sep>, </#sep></#list>);
             </#if>

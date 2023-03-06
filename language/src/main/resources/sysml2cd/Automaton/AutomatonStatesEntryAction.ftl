@@ -5,8 +5,10 @@ ${cd4c.method("protected void entry${autHelper.resolveStateName(state)?cap_first
 
   // entry action
     <#assign entryActions = autHelper.getEntryActionsOfElement(state)/>
+    <#assign actionsParameters = []/>
     <#list entryActions as entryAction>
         <#assign subaction = actionsHelper.getActionFromEntryAction(entryAction)/>
+        <#assign actionsParameters = actionsParameters + actionsHelper.getParameters(subaction)/>
         <#list actionsHelper.getParameters(subaction) as parameter>
             <#if compHelper.isObjectAttribute(parameter)>
                 ${compHelper.getAttributeType(parameter)} ${subaction.getName()}_${parameter.getName()} = new ${compHelper.getAttributeType(parameter)}();
@@ -19,7 +21,9 @@ ${cd4c.method("protected void entry${autHelper.resolveStateName(state)?cap_first
     //binds
     <#assign bindList = actionsHelper.getBindList(state)>
     <#list bindList as bind>
+        <#if actionsHelper.isInParameters(actionsParameters,bind.getSource(),bind.getTarget())>
         ${actionsHelper.mapBindEnd(bind.getSource())} = ${actionsHelper.mapBindEnd(bind.getTarget())};
+        </#if>
     </#list>
     <#list entryActions as entryAction>
         <@handleAction actionsHelper.getActionFromEntryAction(entryAction)/>
