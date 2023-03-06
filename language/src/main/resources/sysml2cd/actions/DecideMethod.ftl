@@ -1,6 +1,5 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
 ${tc.signature("action","parameterList", "attributeList")}
-
 <#if isAbstract>
     <#assign abstract = "abstract "/>
 <#else >
@@ -8,12 +7,10 @@ ${tc.signature("action","parameterList", "attributeList")}
 </#if>
 <#assign  secondControlNode = actionsHelper.getSecondControlNode(action)>
 ${cd4c.method("public boolean returnPath_${secondControlNode.getName()}(${actionsHelper.parameterListForDecisionMethod(action, true) })")}
-//TODO richtige sachen als parameter aka: alle lokalen variablen des vaters und alle benötigten parameter für den path
 <#assign firstReturn = actionsHelper.getFirstReturnPathSuccessor(action)/>
       if (${autHelper.printExpression(firstReturn.getGuard())}){
         <@printAction firstReturn action/>
         <@printPath actionsHelper.getReturnPath(action) action/>
-
           return true;
       }
           return false;
@@ -21,13 +18,8 @@ ${cd4c.method("public boolean returnPath_${secondControlNode.getName()}(${action
 
 
 
-
-
-
-
 <#macro printPath successionList action>
     <#list successionList as succession>
-
         <#if succession.isPresentGuard()>
           if (!(${autHelper.printExpression(succession.getGuard())})){
           throw new RuntimeException("Could not evaluate the guard \"${autHelper.printExpression(succession.getGuard())}\" in action \"${action.getName()}\" to true, but the execution has to terminate.");
