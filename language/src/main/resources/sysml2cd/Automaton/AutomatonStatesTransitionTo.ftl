@@ -3,6 +3,7 @@ ${tc.signature("state", "parent")}
 ${cd4c.method("protected void transitionTo${autHelper.resolveStateName(state)?cap_first}()")}
 //do actions
     <#assign doActions = autHelper.getDoActionsOfElement(state)/>
+    <#assign actionsParameters = []/>
     <#list doActions as doAction>
         <#assign subaction = actionsHelper.getActionFromDoAction(doAction)/>
         <#assign actionsParameters = actionsParameters + actionsHelper.getParameters(subaction)/>
