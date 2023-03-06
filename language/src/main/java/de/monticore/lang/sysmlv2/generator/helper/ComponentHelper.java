@@ -24,10 +24,6 @@ public class ComponentHelper {
 
   SysMLBasisTypesFullPrettyPrinter printer = new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter());
 
-  public List<String> getTargets(ASTPortUsage port) {
-    return new ArrayList<>();
-  }
-
   public String getPartType(ASTPartUsage subcomponent) {
 
     return printer.prettyprint(PartUtils.partType(subcomponent));
@@ -38,7 +34,7 @@ public class ComponentHelper {
   }
 
   public boolean isObjectAttribute(ASTAttributeUsage astAttributeUsage) {
-    return !generatorUtils.getScalarValueMapping().containsValue(
+    return !GeneratorUtils.getScalarValueMapping().containsValue(
         printer.prettyprint(GeneratorUtils.attributeType(astAttributeUsage)));
   }
 
@@ -87,5 +83,9 @@ public class ComponentHelper {
     }
 
     return new ArrayList<>();
+  }
+
+  public String cdPackageAsQualifiedName(ASTSysMLElement element, String baseName) {
+    return GeneratorUtils.cdPackageAsQualifiedName(element, baseName);
   }
 }

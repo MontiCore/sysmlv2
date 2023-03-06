@@ -28,10 +28,8 @@ public class GeneratorUtils {
 
   private final HashMap<String, String> primitiveWrapperMap = new HashMap<>();
 
-  protected final CD4C cd4C;
 
   public GeneratorUtils() {
-    this.cd4C = CD4C.getInstance();
     //mapping of ScalarValues defined in the Kernel Modeling language
     scalarValueMapping.put("Boolean", "boolean");
     scalarValueMapping.put("Integer", "int");
@@ -56,6 +54,7 @@ public class GeneratorUtils {
 
   public void addMethods(ASTCDType astcdType, List<ASTCDAttribute> attributeList, boolean addGetter,
                          boolean addSetter) {
+    CD4C cd4C = CD4C.getInstance();
     for (ASTCDAttribute element : attributeList) {
       cd4C.addMethods(astcdType, element, addGetter, addSetter);
     }
@@ -83,7 +82,7 @@ public class GeneratorUtils {
         .setMCQualifiedName(CD4CodeMill.mCQualifiedNameBuilder().setPartsList(partsList).build()).build();
   }
 
-  public ASTCDPackage initCdPackage(ASTSysMLElement element, ASTCDDefinition astcdDefinition, String baseName) {
+  static public ASTCDPackage initCdPackage(ASTSysMLElement element, ASTCDDefinition astcdDefinition, String baseName) {
     List<String> basePackageName = List.of(baseName);
     List<String> partList = initCdPackage(element, basePackageName);
     ASTMCQualifiedName qualifiedName = CD4CodeMill.mCQualifiedNameBuilder()
@@ -106,7 +105,7 @@ public class GeneratorUtils {
     return cdPackage;
   }
 
-  List<String> initCdPackage(ASTSysMLElement element, List<String> partList) {
+  static List<String> initCdPackage(ASTSysMLElement element, List<String> partList) {
     List<String> packagePartList = new ArrayList<>(partList);
     var astNode = element.getEnclosingScope().getAstNode();
     if(astNode instanceof ASTSysMLElement) {
@@ -128,11 +127,12 @@ public class GeneratorUtils {
     return packagePartList;
   }
 
-  boolean isBasicType(String typeName) {
-    return scalarValueMapping.containsKey(typeName);
+  public static String cdPackageAsQualifiedName(ASTSysMLElement element, String baseName){
+    List<String> basePackageName = List.of(baseName);
+    return String.join(".",initCdPackage(element, basePackageName));
   }
 
-  public ImmutableMap<String, String> getScalarValueMapping() {
+  public static ImmutableMap<String, String> getScalarValueMapping() {
     return ImmutableMap.copyOf(scalarValueMapping);
   }
 

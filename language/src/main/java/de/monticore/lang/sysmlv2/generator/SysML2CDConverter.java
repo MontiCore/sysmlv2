@@ -46,12 +46,11 @@ public class SysML2CDConverter {
     Attributes2CDVisitor attributeVisitor = new Attributes2CDVisitor(glex, cdCompilationUnit, cdPackage,
         astcdDefinition);
     traverser.add4SysMLParts(attributeVisitor);
-    createMainClass(astSysMLModel);
     // we use the CD4Code language for the CD (and now switch to it)
     CD4CodeMill.init();
 
     traverser.handle(astSysMLModel);
-
+    createMainClass(astSysMLModel);
     // voila
     return new SysML2CDData(phase1Visitor.getCdCompilationUnit(), phase1Visitor.getScClass());
   }
@@ -78,16 +77,15 @@ public class SysML2CDConverter {
     ASTCDClass mainClass = CD4CodeMill.cDClassBuilder().setName("Main").setModifier(
         CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
     cdPackage.addCDElement(mainClass);
-    PartResolveUtils partResolveUtils = new PartResolveUtils();
     var partUsages = astSysMLModel.streamSysMLElements().filter(t -> t instanceof ASTSysMLPackage).flatMap(
-        t -> partResolveUtils.getSubPartsOfElement(t).stream()).collect(Collectors.toList());
+        t -> PartResolveUtils.getSubPartsOfElement(t).stream()).collect(Collectors.toList());
     var flows = astSysMLModel.streamSysMLElements().filter(t -> t instanceof ASTSysMLPackage).flatMap(
         t -> ((ASTSysMLPackage) t).streamSysMLElements()).filter(t-> t instanceof ASTFlow).map(t -> (ASTFlow)t).collect(Collectors.toList());
     if(partUsages.isEmpty()) {
       Log.error("No Part Usages found that could be used for the simulation.");
 
     }
-    CD4C.getInstance().addMethod(mainClass, "sysml2cd.MainMethod", partUsages, flows);
+    CD4C.getInstance().addMethod(mainClass, "sysml2cd.MainMethod", partUsages, flows, cdPackage.getName());
   }
 
 }

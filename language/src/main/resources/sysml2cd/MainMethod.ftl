@@ -1,6 +1,6 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
 <#-- Generates the deployment class for a component. -->
-${tc.signature("listMainComponent", "listFlows")}
+${tc.signature("listMainComponent", "listFlows", "baseName")}
 ${cd4c.method("public static void main(String[] args)")}
 
     de.monticore.lang.sysmlv2.generator.DeployUtils deployUtils = new de.monticore.lang.sysmlv2.generator.DeployUtils();
@@ -13,7 +13,7 @@ ${cd4c.method("public static void main(String[] args)")}
     de.monticore.lang.sysmlv2.generator.log.Log.setTraceEnabled(true);
 
     <#list listMainComponent as subcomponent>
-        ${compHelper.getPartType(subcomponent)} ${subcomponent.getName()} = new ${compHelper.getPartType(subcomponent)}();
+        ${compHelper.cdPackageAsQualifiedName(subcomponent,baseName)}.${compHelper.getPartType(subcomponent)} ${subcomponent.getName()} = new ${compHelper.getPartType(subcomponent)}();
         ${subcomponent.getName()}.setUp();
     </#list>
     <#list listFlows as connection>
