@@ -36,7 +36,6 @@ public class Attributes2CDVisitor implements SysMLPartsVisitor2 {
    */
   protected final CD4C cd4C;
 
-  protected GeneratorUtils generatorUtils;
 
   protected final GlobalExtensionManagement glex;
 
@@ -51,7 +50,7 @@ public class Attributes2CDVisitor implements SysMLPartsVisitor2 {
 
   @Override
   public void visit(ASTAttributeDef astAttributeDef) {
-    cdPackage = generatorUtils.initCdPackage(astAttributeDef, astcdDefinition, basePackage.getName());
+    cdPackage = GeneratorUtils.initCdPackage(astAttributeDef, astcdDefinition, basePackage.getName());
     // Step 1: Create Interface for the Part Def to support multiple inheritance
     ASTCDInterfaceUsage interfaceUsage = InterfaceUtils.createInterfaceUsage(List.of(astAttributeDef));
     cdPackage.addCDElement(InterfaceUtils.createInterface(astAttributeDef));
@@ -62,7 +61,7 @@ public class Attributes2CDVisitor implements SysMLPartsVisitor2 {
     List<ASTAttributeUsage> attributeUsageList = AttributeResolveUtils.getAttributesOfElement(astAttributeDef);
     List<ASTCDAttribute> attributeList = AttributeUtils.createAttributes(astAttributeDef);
     partDefClass.setCDAttributeList(attributeList);
-    generatorUtils.addMethods(partDefClass, attributeList, true, true);
+    GeneratorUtils.addMethods(partDefClass, attributeList, true, true);
 
     cd4C.addMethod(partDefClass, "sysml2cd.attribute.AttributeDefSetUpMethod", attributeUsageList);
     cdPackage.addCDElement(partDefClass);

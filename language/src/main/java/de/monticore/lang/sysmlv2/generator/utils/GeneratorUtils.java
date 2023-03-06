@@ -52,7 +52,7 @@ public class GeneratorUtils {
     //TODO maybe support Collections
   }
 
-  public void addMethods(ASTCDType astcdType, List<ASTCDAttribute> attributeList, boolean addGetter,
+  public static void addMethods(ASTCDType astcdType, List<ASTCDAttribute> attributeList, boolean addGetter,
                          boolean addSetter) {
     CD4C cd4C = CD4C.getInstance();
     for (ASTCDAttribute element : attributeList) {
