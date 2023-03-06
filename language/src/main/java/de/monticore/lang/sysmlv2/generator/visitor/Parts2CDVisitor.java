@@ -45,8 +45,6 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
    */
   protected final CD4C cd4C;
 
-  protected GeneratorUtils generatorUtils;
-
   protected final GlobalExtensionManagement glex;
 
   ComponentUtils componentUtils;
@@ -60,14 +58,13 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     this.cdCompilationUnit = cdCompilationUnit;
     Parts2CDVisitor.basePackage = basePackage;
     this.astcdDefinition = astcdDefinition;
-    this.generatorUtils = new GeneratorUtils();
     this.componentUtils = new ComponentUtils();
   }
 
   @Override
   public void visit(ASTPartDef astPartDef) {
     // Step 0: Init Package
-    cdPackage = generatorUtils.initCdPackage(astPartDef, astcdDefinition, basePackage.getName());
+    cdPackage = GeneratorUtils.initCdPackage(astPartDef, astcdDefinition, basePackage.getName());
     // Step 1: Create Interface for the Part Def to support multiple inheritance
     ASTCDInterfaceUsage interfaceUsage = InterfaceUtils.createInterfaceUsage(List.of(astPartDef));
     interfaceUsage.addInterface(componentUtils.createComponent());
@@ -85,7 +82,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     partDefClass.setCDAttributeList(attributeList);
     //Step 4 create Methods
     actionsUtils.createActionsForPart(astPartDef, partDefClass);
-    generatorUtils.addMethods(partDefClass, attributeList, true, true);
+    GeneratorUtils.addMethods(partDefClass, attributeList, true, true);
     componentUtils.createComponentMethods(astPartDef, cd4C, partDefClass,
         PartResolveUtils.getPartUsageOfNode(astPartDef),
         AttributeResolveUtils.getAttributesOfElement(astPartDef));
@@ -95,7 +92,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   @Override
   public void visit(ASTPartUsage astPartUsage) {
     //step 0 init Package
-    cdPackage = generatorUtils.initCdPackage(astPartUsage, astcdDefinition, basePackage.getName());
+    cdPackage = GeneratorUtils.initCdPackage(astPartUsage, astcdDefinition, basePackage.getName());
     // step 1 check if adhoc class definiton, if not do nothing
     if(PartUtils.isAdHocClassDefinition(astPartUsage)) {
       //step 2 create class
@@ -120,7 +117,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
       componentUtils.createComponentMethods(astPartUsage, cd4C, partDefClass,
           PartResolveUtils.getPartUsageOfNode(astPartUsage),
           AttributeResolveUtils.getAttributesOfElement(astPartUsage));
-      generatorUtils.addMethods(partDefClass, attributeList, true, true);
+      GeneratorUtils.addMethods(partDefClass, attributeList, true, true);
 
       actionsUtils.createActionsForPart(astPartUsage, partDefClass);
 
