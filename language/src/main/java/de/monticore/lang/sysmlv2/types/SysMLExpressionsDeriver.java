@@ -4,11 +4,13 @@ package de.monticore.lang.sysmlv2.types;
 import de.monticore.lang.sysmlexpressions.SysMLExpressionsMill;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsTraverser;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLExpressions;
+import de.monticore.ocl.types.check.DeriveSymTypeOfSetExpressions;
 import de.monticore.types.check.AbstractDerive;
 import de.monticore.types.check.DeriveSymTypeOfCommonExpressions;
 import de.monticore.types.check.DeriveSymTypeOfExpression;
 import de.monticore.types.check.DeriveSymTypeOfLiterals;
 import de.monticore.types.check.DeriveSymTypeOfMCCommonLiterals;
+import de.monticore.types.check.SynthesizeSymTypeFromMCBasicTypes;
 
 public class SysMLExpressionsDeriver extends AbstractDerive {
 
@@ -26,9 +28,9 @@ public class SysMLExpressionsDeriver extends AbstractDerive {
     forLiterals.setTypeCheckResult(typeCheckResult);
     getTraverser().add4MCLiteralsBasis(forLiterals);
 
-    DeriveSymTypeOfMCCommonLiterals commonliterals = new DeriveSymTypeOfMCCommonLiterals();
-    commonliterals.setTypeCheckResult(typeCheckResult);
-    getTraverser().add4MCCommonLiterals(commonliterals);
+    DeriveSymTypeOfMCCommonLiterals commonLiterals = new DeriveSymTypeOfMCCommonLiterals();
+    commonLiterals.setTypeCheckResult(typeCheckResult);
+    getTraverser().add4MCCommonLiterals(commonLiterals);
 
     DeriveSymTypeOfExpression forBasisExpr = new DeriveSymTypeOfExpression();
     forBasisExpr.setTypeCheckResult(typeCheckResult);
@@ -40,15 +42,19 @@ public class SysMLExpressionsDeriver extends AbstractDerive {
     getTraverser().add4CommonExpressions(forCommonExpr);
     getTraverser().setCommonExpressionsHandler(forCommonExpr);
 
-    DeriveSymTypeOfOCLExpressions forOCLExpr = new DeriveSymTypeOfOCLExpressions();
-    forOCLExpr.setTypeCheckResult(typeCheckResult);
-    getTraverser().setOCLExpressionsHandler(forOCLExpr);
+    DeriveSymTypeOfSetExpressions deriveSymTypeOfSetExpressions = new DeriveSymTypeOfSetExpressions();
+    deriveSymTypeOfSetExpressions.setTypeCheckResult(typeCheckResult);
+    getTraverser().add4SetExpressions(deriveSymTypeOfSetExpressions);
+    getTraverser().setSetExpressionsHandler(deriveSymTypeOfSetExpressions);
 
-    // TODO Ausbauen
-    //  anschauen welche Grammatiken zu einer Exppression beitragen
-    //  Stück für Stück für diese Grammatiken Visitoren/ Traversers bauen, die ihre Komponenten
-    //  in Variable-Usage, Variable-Declaration, Member, Objekte transformieren auf denen
-    //  dann ein Typ check durchgeführt wird.
+    DeriveSymTypeOfOCLExpressions deriveSymTypeOfOCLExpressions = new DeriveSymTypeOfOCLExpressions();
+    deriveSymTypeOfOCLExpressions.setTypeCheckResult(typeCheckResult);
+    getTraverser().setOCLExpressionsHandler(deriveSymTypeOfOCLExpressions);
+
+    SynthesizeSymTypeFromMCBasicTypes synthesizeSymTypeFromMCBasicTypes = new SynthesizeSymTypeFromMCBasicTypes();
+    synthesizeSymTypeFromMCBasicTypes.setTypeCheckResult(typeCheckResult);
+    getTraverser().add4MCBasicTypes(synthesizeSymTypeFromMCBasicTypes);
+    getTraverser().setMCBasicTypesHandler(synthesizeSymTypeFromMCBasicTypes);
   }
 
 }

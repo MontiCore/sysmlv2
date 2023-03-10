@@ -2,16 +2,16 @@
 package de.monticore.lang.sysmlv2._symboltable;
 
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
+import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
+import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeUsage2VariableSymbolAdapter;
-import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts.symboltable.adapters.EnumDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.PartDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.PortDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.PortUsage2VariableSymbolAdapter;
-import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
-import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlrequirements._ast.ASTRequirementUsage;
+import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;

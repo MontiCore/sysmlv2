@@ -11,8 +11,6 @@ import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
 import de.monticore.lang.sysmlparts.coco.PortDefHasOneType;
 import de.monticore.lang.sysmlparts.coco.PortDefNeedsDirection;
 import de.monticore.lang.sysmlrequirements._cocos.SysMLRequirementsASTRequirementDefCoCo;
-import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTDoActionCoCo;
-import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTExitActionCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateUsageCoCo;
 import de.monticore.lang.sysmlstates.cocos.NoDoActions;
@@ -21,16 +19,17 @@ import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
-import de.monticore.lang.sysmlv2.symboltable.completers.ScopeNamingCompleter;
-import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
-import de.monticore.lang.sysmlv2.symboltable.completers.TypesAndDirectionCompleter;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
-import de.monticore.lang.sysmlv2.cocos.SpecializationExists;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
+import de.monticore.lang.sysmlv2.symboltable.completers.ScopeNamingCompleter;
+import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
+import de.monticore.lang.sysmlv2.symboltable.completers.TypesAndDirectionCompleter;
+import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCompleter;
+import de.monticore.ocl.types.check.OCLDeriver;
 
 public class SysMLv2Tool extends SysMLv2ToolTOP {
 
@@ -53,11 +52,8 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
-    // TODO Not ready for prime time. see ConstraintCoCoTest input 8_valid.sysml
-    //  checker.addCoCo(new ConstraintIsBoolean());
     // TODO Erroring when checking Generics. See disabled test in SpecializationExistsTest
     //  checker.addCoCo(new SpecializationExists());
-    // MSh: nonetheless we add ConstraintIsCoCo
     checker.addCoCo(new ConstraintIsBoolean());
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTPartDefCoCo) new NameCompatible4Isabelle());
@@ -147,6 +143,12 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     traverser.add4SysMLBasis(completer);
     traverser.add4SysMLParts(completer);
     traverser.add4SysMLRequirements(completer);
+
+    // Phase 3b: Set types for OCL components. We never evaluated the order of this completer.
+    // null parameters to fail hard if there are used
+    var oclCompleter = new OCLExpressionsSymbolTableCompleter(null, null);
+    oclCompleter.setDeriver(new OCLDeriver());
+    traverser.add4OCLExpressions(oclCompleter);
 
     if(node.getEnclosingScope() != null) {
       node.getEnclosingScope().accept(traverser);

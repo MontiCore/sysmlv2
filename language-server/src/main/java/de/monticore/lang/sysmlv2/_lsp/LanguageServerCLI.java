@@ -4,7 +4,7 @@ package de.monticore.lang.sysmlv2._lsp;
 import de.mclsg.CommandLineUtil;
 import de.mclsg.LanguageServerOptions;
 import de.monticore.io.paths.MCPath;
-import de.se_rwth.commons.logging.Slf4jLog;
+import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,7 @@ public class LanguageServerCLI {
   public static final Logger logger = LoggerFactory.getLogger(SysMLv2LanguageServerCLI.class);
 
   public static void main(final String[] args) throws Exception {
-    Slf4jLog.init();
+    new SysMLv2Tool().init();
     LanguageServerOptions options = CommandLineUtil.parseOptions(args);
     MCPath modelPath = new MCPath(options.getModelPaths());
 
