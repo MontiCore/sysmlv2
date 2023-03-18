@@ -25,7 +25,6 @@ import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
-import de.monticore.lang.sysmlv2.symboltable.completers.ScopeNamingCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.TypesAndDirectionCompleter;
 import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCompleter;
@@ -106,9 +105,9 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
 
   @Override
   public void completeSymbolTable(ASTSysMLModel node) {
-    SysMLv2Traverser traverser = SysMLv2Mill.traverser();
-
-    traverser.add4SysMLv2(new ScopeNamingCompleter());
+    // Phase 1
+    SysMLv2Traverser traverser = SysMLv2Mill.inheritanceTraverser();
+    traverser.add4SysMLBasis(new SpecializationCompleter());
 
     // Aus mir unerklärlichen Gründen ist die Traversierung so implementiert, dass nur das SpannedScope des jeweiligen
     // AST-Knoten visitiert wird. Wenn wir hier also das ASTSysMLModel reinstecken (was kein Scope spannt (wieso eigtl.
@@ -118,42 +117,28 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     if(node.getEnclosingScope() != null) {
       node.getEnclosingScope().accept(traverser);
     }
-
     // Und dann wird nicht das Scope traversiert um die darin gefindlichen Symbole und daranhängende AST-Knoten zu
     // besuchen, sondern es wird nichts getan. Der Default-Traverser geht nämlich davon aus, dass man sich am AST
     // entlang hangelt.
     node.accept(traverser);
 
-    // Phase 2: Requires that all scopes have a name (done in phase 1).
-    // reset traverser
-    traverser = SysMLv2Mill.inheritanceTraverser();
-
-    traverser.add4SysMLBasis(new SpecializationCompleter());
-
-    if(node.getEnclosingScope() != null) {
-      node.getEnclosingScope().accept(traverser);
-    }
-
-    node.accept(traverser);
-
-    // Phase 3: Sets types for usages. Bases on types of specializations completed in phase 1.
+    // Phase 2: Sets types for usages and declarations (let-in, quantifiers) in expressions.
+    // Based on types of specializations completed in phase 1.
     traverser = SysMLv2Mill.traverser();
 
     TypesAndDirectionCompleter completer = new TypesAndDirectionCompleter();
+    // null parameters since we don't really understand any of those (yet)
+    var oclCompleter = new OCLExpressionsSymbolTableCompleter(null, null);
+    oclCompleter.setDeriver(new OCLDeriver());
+    traverser.add4OCLExpressions(oclCompleter);
     traverser.add4SysMLBasis(completer);
     traverser.add4SysMLParts(completer);
     traverser.add4SysMLRequirements(completer);
 
-    // Phase 3b: Set types for OCL components. We never evaluated the order of this completer.
-    // null parameters to fail hard if there are used
-    var oclCompleter = new OCLExpressionsSymbolTableCompleter(null, null);
-    oclCompleter.setDeriver(new OCLDeriver());
-    traverser.add4OCLExpressions(oclCompleter);
-
+    // gleiches Spiel wie oben: Alles besuchen verlangt zwei Calls
     if(node.getEnclosingScope() != null) {
       node.getEnclosingScope().accept(traverser);
     }
-
     node.accept(traverser);
   }
 }

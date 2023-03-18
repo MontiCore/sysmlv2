@@ -10,10 +10,23 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Scope trees and symbols have to be invariant to resolution inside ArtifactScopes.
- * This test checks if adapted type-resolution methods have side effects on scope-spanning symbols.
+ * Resolving symbols should be side-effect-free. This class checks this fact!
  */
 public class ScopeSettingTest {
+
+  /**
+   * Resolves (adapted) symbols from different locations within the symbol table.
+   * Checks that scopes and contained symbols do not change as a result.
+   *
+   * Problem before was:
+   * - resolveVariable
+   *    - resolveVariableAdapted
+   *       - finds and adapts a SysML attribute to VariableSymbol
+   *       - sets the enclosingScope of the attribute
+   *       - leads to the (newly created) VariableSymbol to be added to the scope
+   * - resolveVariable
+   *    ... finds two variables (one newly adapted, one previously adapted)!
+   */
   @Test
   public void testScopeSetting() throws IOException {
     var sysmlTool = new SysMLv2Tool();
@@ -37,4 +50,5 @@ public class ScopeSettingTest {
     assertEquals(scopeSpanningSymbolBefore.getClass().getName(),
         scopeSpanningSymbolAfter.getClass().getName());
   }
+
 }
