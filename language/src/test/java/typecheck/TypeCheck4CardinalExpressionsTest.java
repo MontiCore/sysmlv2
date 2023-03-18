@@ -1,4 +1,4 @@
-package cocos;
+package typecheck;
 
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
@@ -77,4 +77,5 @@ public class TypeCheck4CardinalExpressionsTest {
     assertTrue(!Log.getFindings().isEmpty());
   }
 }
+
 

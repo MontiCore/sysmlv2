@@ -12,7 +12,6 @@ import de.monticore.lang.sysmlparts.symboltable.adapters.PortDef2TypeSymbolAdapt
 import de.monticore.lang.sysmlparts.symboltable.adapters.PortUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlrequirements._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
-import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -20,7 +19,6 @@ import de.monticore.symboltable.IScopeSpanningSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
-import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,26 +80,16 @@ import java.util.function.Predicate;
       var types = attrUsage.getTypesList();
 
       if(types.size() == 1) {
-        // resolve the globally defined generic Stream-type
-        var streamType = SysMLv2Mill.globalScope().resolveType("Stream");
         var attributeType = types.get(0);
-
-        if(streamType.isEmpty()) {
-          Log.error("Stream not defined in global scope. Initialize it with 'SysMLv2Mill.addStreamType()'!");
-          continue;
-        }
-
-        // set concrete type to generic stream
-        var streamOfAttrType = SymTypeExpressionFactory.createGenerics(streamType.get(), attributeType);
 
         // we omit to set the ASTNode
         var variable = new AttributeUsage2VariableSymbolAdapter(attrUsage);
 
         if(attrUsage.getAstNode().getCardinality().isPresent()) {
-          variable.setType(SymTypeExpressionFactory.createTypeArray(streamOfAttrType.getTypeInfo(), 1,
-              streamOfAttrType));
+          variable.setType(SymTypeExpressionFactory.createTypeArray(attributeType.getTypeInfo(), 1,
+              attributeType));
         }else {
-          variable.setType(streamOfAttrType);
+          variable.setType(attributeType);
         }
 
         adapted.add(variable);

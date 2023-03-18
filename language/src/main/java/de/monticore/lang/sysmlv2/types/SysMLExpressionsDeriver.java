@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.types;
 
+import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.lang.sysmlexpressions.SysMLExpressionsMill;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsTraverser;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLExpressions;
@@ -13,9 +14,28 @@ import de.monticore.types.check.DeriveSymTypeOfMCCommonLiterals;
 import de.monticore.types.check.SynthesizeSymTypeFromMCBasicTypes;
 
 public class SysMLExpressionsDeriver extends AbstractDerive {
+  /**
+   * <p>{@code isStream} is used to determine whether the type of the expression is calculated as a Stream,
+   * it is initialized in the constructor and as a parameter when {@link SysMLv2DeriveSymTypeOfCommonExpressions}
+   * is instantiated.</p>
+   * @see SysMLv2DeriveSymTypeOfCommonExpressions#calculateFieldAccess(ASTFieldAccessExpression, boolean)
+   */
+  protected boolean isStream;
 
+  /**
+   * For constructor without parameter, we set isStream default as true,
+   * because it involves some previous unit tests,
+   * the type of AttributeUsageSymbol was previously set to Stream by default.
+   */
   public SysMLExpressionsDeriver() {
     super(SysMLExpressionsMill.traverser());
+    this.isStream = true;
+    init();
+  }
+
+  public SysMLExpressionsDeriver(boolean isStream) {
+    super(SysMLExpressionsMill.traverser());
+    this.isStream = isStream;
     init();
   }
 
@@ -37,7 +57,7 @@ public class SysMLExpressionsDeriver extends AbstractDerive {
     getTraverser().add4ExpressionsBasis(forBasisExpr);
     getTraverser().setExpressionsBasisHandler(forBasisExpr);
 
-    DeriveSymTypeOfCommonExpressions forCommonExpr = new DeriveSymTypeOfCommonExpressions();
+    SysMLv2DeriveSymTypeOfCommonExpressions forCommonExpr = new SysMLv2DeriveSymTypeOfCommonExpressions(this.isStream);
     forCommonExpr.setTypeCheckResult(typeCheckResult);
     getTraverser().add4CommonExpressions(forCommonExpr);
     getTraverser().setCommonExpressionsHandler(forCommonExpr);
@@ -56,5 +76,4 @@ public class SysMLExpressionsDeriver extends AbstractDerive {
     getTraverser().add4MCBasicTypes(synthesizeSymTypeFromMCBasicTypes);
     getTraverser().setMCBasicTypesHandler(synthesizeSymTypeFromMCBasicTypes);
   }
-
 }
