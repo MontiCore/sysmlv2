@@ -93,6 +93,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     spannedScope.add(typeVar);
     spannedScope.add(buildSnthFunction(typeVar));
     spannedScope.add(buildLengthFunction());
+    spannedScope.add(buildValuesFunction(typeVar));
 
     return OOSymbolsMill.oOTypeSymbolBuilder()
         .setName("Stream")
@@ -159,7 +160,22 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
   }
 
   protected FunctionSymbol buildLengthFunction() {
-    var spannedScopeOfLength = new BasicSymbolsScope();
-    return SysMLv2Mill.functionSymbolBuilder().setName("length").setType(buildIntType()).setSpannedScope(spannedScopeOfLength).build();
+    return SysMLv2Mill.functionSymbolBuilder()
+        .setName("length")
+        .setType(buildIntType())
+        .setSpannedScope(new BasicSymbolsScope())
+        .build();
+  }
+
+  protected FunctionSymbol buildValuesFunction(TypeVarSymbol typeVar) {
+    var listSymbol = SysMLv2Mill.globalScope().resolveType("Set").get();
+    return SysMLv2Mill.functionSymbolBuilder()
+        .setName("values")
+        .setType(SymTypeExpressionFactory.createGenerics(
+            listSymbol,
+            SymTypeExpressionFactory.createTypeVariable(typeVar))
+        )
+        .setSpannedScope(new BasicSymbolsScope())
+        .build();
   }
 }

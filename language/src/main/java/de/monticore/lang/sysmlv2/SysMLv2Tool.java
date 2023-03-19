@@ -24,11 +24,21 @@ import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
+import de.monticore.lang.sysmlv2.cocos.SpecializationExists;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
+import de.monticore.lang.sysmlv2.cocos.TypeCheckTransitionGuards;
 import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.TypesAndDirectionCompleter;
-import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCompleter;
-import de.monticore.ocl.types.check.OCLDeriver;
+import de.se_rwth.commons.logging.Log;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.io.FilenameUtils;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Collectors;
 
 public class SysMLv2Tool extends SysMLv2ToolTOP {
 
@@ -38,30 +48,22 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     SysMLv2Mill.globalScope().clear();
     SysMLv2Mill.initializePrimitives();
     SysMLv2Mill.addStringType();
-    SysMLv2Mill.addStreamType();
     SysMLv2Mill.addCollectionTypes();
+    SysMLv2Mill.addStreamType();
   }
 
   /**
    * Official Language Implementation CoCos
    */
   @Override
-  public  void runDefaultCoCos (de.monticore.lang.sysmlv2._ast.ASTSysMLModel ast)
+  public  void runDefaultCoCos(ASTSysMLModel ast)
   {
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
-    // TODO Erroring when checking Generics. See disabled test in SpecializationExistsTest
-    //  checker.addCoCo(new SpecializationExists());
+    checker.addCoCo(new SpecializationExists());
     checker.addCoCo(new ConstraintIsBoolean());
-    checker.addCoCo((SysMLStatesASTStateDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLPartsASTPartDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLPartsASTPortDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLConstraintsASTConstraintDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLActionsASTActionDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLRequirementsASTRequirementDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLImportsAndPackagesASTSysMLPackageCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo(new TypeCheckTransitionGuards());
     checker.checkAll(ast);
   }
 
@@ -72,13 +74,30 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
   public  void runAdditionalCoCos (de.monticore.lang.sysmlv2._ast.ASTSysMLModel ast)
   {
     var checker = new SysMLv2CoCoChecker();
-    checker.addCoCo(new WarnNonExhibited());
-    checker.addCoCo(new OneCardinality());
+
+    // Not-supported language elements
     checker.addCoCo(new NoExitActions());
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new NoDoActions());
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new NoDoActions());
+
+    // Errors regarding correctness of models, i.e., following "the MontiBelle approach"
+    checker.addCoCo(new OneCardinality());
     checker.addCoCo(new PortDefHasOneType());
     checker.addCoCo(new PortDefNeedsDirection());
+
+    // Additional warnings, things might be ignored
+    checker.addCoCo(new WarnNonExhibited());
+
+    // Check names to be compatible with Isabelle names
+    checker.addCoCo((SysMLStatesASTStateDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLPartsASTPartDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLPartsASTPortDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLConstraintsASTConstraintDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLActionsASTActionDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLRequirementsASTRequirementDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLImportsAndPackagesASTSysMLPackageCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new NameCompatible4Isabelle());
+
     checker.checkAll(ast);
   }
 
@@ -127,13 +146,17 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     traverser = SysMLv2Mill.traverser();
 
     TypesAndDirectionCompleter completer = new TypesAndDirectionCompleter();
-    // null parameters since we don't really understand any of those (yet)
-    var oclCompleter = new OCLExpressionsSymbolTableCompleter(null, null);
-    oclCompleter.setDeriver(new OCLDeriver());
-    traverser.add4OCLExpressions(oclCompleter);
     traverser.add4SysMLBasis(completer);
     traverser.add4SysMLParts(completer);
     traverser.add4SysMLRequirements(completer);
+    // TODO Currently breaks for MontiBelle Expressions in Data Link Upload Feed
+    /*
+    // null parameters since we don't really understand any of those (yet)
+    var oclCompleter = new OCLExpressionsSymbolTableCompleter(null, null);
+    oclCompleter.setDeriver(new SysMLExpressionsDeriver(true));
+    oclCompleter.setSynthesizer(new SysMLSynthesizer());
+    traverser.add4OCLExpressions(oclCompleter);
+    */
 
     // gleiches Spiel wie oben: Alles besuchen verlangt zwei Calls
     if(node.getEnclosingScope() != null) {
@@ -141,4 +164,51 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     }
     node.accept(traverser);
   }
+
+  // MontiCore generiert hier leider herzlich wenig Sinnvolles
+  @Override
+  public  void run (String[] args) {
+    init();
+    Options options = initOptions();
+
+    try{
+      CommandLineParser cliparser = new org.apache.commons.cli.DefaultParser();
+      CommandLine cmd = cliparser.parse(options,args);
+
+      if(cmd.hasOption("help")){
+        printHelp(options);
+        return;
+      }
+      else if(cmd.hasOption("version")){
+        printVersion();
+        return;
+      }
+      else if(cmd.hasOption("input")){
+        check(Path.of(cmd.getOptionValue("input")));
+        return;
+      }
+
+    } catch (org.apache.commons.cli.ParseException e) {
+      Log.error("0xA5C06x33289 Could not process SysMLv2Tool parameters: " + e.getMessage());
+    }
+  }
+
+  public void check(Path models) {
+    try {
+      var asts = Files.walk(models)
+          .filter(p -> FilenameUtils.getExtension(p.toString()).equals("sysml"))
+          .map(p -> parse(p.toString()))
+          .collect(Collectors.toList());
+
+      asts.forEach(it -> createSymbolTable(it));
+      asts.forEach(it -> completeSymbolTable(it));
+
+      asts.forEach(it -> runDefaultCoCos(it));
+      asts.forEach(it -> runAdditionalCoCos(it));
+    }
+    catch (IOException ex) {
+      Log.error("Could not read the input directory: " + ex.getMessage());
+    }
+  }
+
 }

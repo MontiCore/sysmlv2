@@ -17,7 +17,7 @@ public class ConstraintIsBoolean implements SysMLConstraintsASTConstraintUsageCo
     ASTExpression expr = node.getExpression();
 
     // TypeCheck (Deriver) initialisieren
-    var deriver = new SysMLExpressionsDeriver();
+    var deriver = new SysMLExpressionsDeriver(true);
 
     try {
       TypeCheckResult type = deriver.deriveType(expr);

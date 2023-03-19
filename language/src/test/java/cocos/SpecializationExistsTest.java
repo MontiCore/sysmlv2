@@ -44,8 +44,9 @@ public class SpecializationExistsTest {
     var ast = parse(model);
     createSt(ast);
     var errors = check(ast);
-    assertThat(errors).hasSize(1);
-    assertThat(errors.get(0).getMsg()).contains("Could not resolve");
+    assertThat(errors).hasSize(2);
+    assertThat(errors.get(0).getMsg()).contains("0xA0324 Cannot find symbol NonExistent");
+    assertThat(errors.get(1).getMsg()).contains("Could not check the existence of this type reference");
   }
 
   @Test
@@ -68,7 +69,6 @@ public class SpecializationExistsTest {
   }
 
   @Test
-  @Disabled
   public void testExistingCollectionType() throws IOException {
     var model = "attribute def Existent; part def Valid { attribute e: List<Existent>; }";
     var ast = parse(model);
