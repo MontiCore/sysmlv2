@@ -1,2 +1,11 @@
 #  LF line endings
-* text eol=lf
+*.java text eol=lf
+*.mc4 text eol=lf
+*.gradle text eol=lf
+*.properties text eol=lf
+*.md text eol=lf
+Dockerfile text eol=lf
+.editorconfig text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+gradlew text eol=lf
