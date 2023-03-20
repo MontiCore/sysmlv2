@@ -162,4 +162,28 @@ public class SymbolTableCompletionTest {
         .isEqualTo("() -> Set<A>");
   }
 
+  @Test
+  public void testEnums() throws IOException {
+    var models = List.of(
+        "enum def E { enum X; enum Y; }",
+        "port def P { attribute a: E; }",
+        "part def S { port p:P; constraint c { p.a.snth(0) == E.X } }"
+    );
+
+    List<ASTSysMLModel> asts = new ArrayList<>();
+    for(var model: models) {
+      Optional<ASTSysMLModel> ast = parser.parse_String(model);
+      assertThat(ast).isPresent();
+      asts.add(ast.get());
+    }
+
+    asts.forEach(ast -> tool.createSymbolTable(ast));
+    asts.forEach(ast -> tool.completeSymbolTable(ast));
+    asts.forEach(ast -> tool.finalizeSymbolTable(ast));
+    assertThat(Log.getFindings()).isEmpty();
+
+    asts.forEach(ast -> tool.runDefaultCoCos(ast));
+    asts.forEach(ast -> tool.runAdditionalCoCos(ast));
+  }
+
 }
