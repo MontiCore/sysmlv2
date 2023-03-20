@@ -3,8 +3,7 @@ ${tc.signature("state", "automaton", "parent")}
 ${cd4c.method("protected void exit${autHelper.resolveStateName(state)?cap_first}()")}
 
 <#if autHelper.hasExitAction(state)>
-  // exit action
-
+  //exit action
     <#assign exitActions = autHelper.getExitActionsOfElement(state)/>
     <#assign actionsParameters = []/>
     <#list exitActions as exitAction>

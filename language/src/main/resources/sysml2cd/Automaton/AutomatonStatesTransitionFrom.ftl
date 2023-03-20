@@ -16,7 +16,7 @@ ${cd4c.method("protected void transitionFrom${autHelper.resolveStateName(state)?
                 </#if>
             </#list>
         </#list>
-      //binds
+  //binds
         <#assign bindList = actionsHelper.getBindList(state)>
         <#list bindList as bind>
         <#if actionsHelper.isInParameters(actionsParameters,bind.getSource(),bind.getTarget())>
@@ -28,7 +28,7 @@ ${cd4c.method("protected void transitionFrom${autHelper.resolveStateName(state)?
         </#list>
     </#if>
 
-  // input
+  //input
     <#list inputPorts as port>
       ${compHelper.getValueTypeOfPort(port)} ${port.getName()}_value = this.parentPart.get${port.getName()?cap_first}().getValue();
     </#list>
@@ -58,16 +58,13 @@ ${cd4c.method("protected void transitionFrom${autHelper.resolveStateName(state)?
     <#if transition.isPresentGuard()>
       if(${autHelper.printExpression(transition.getGuard(), parent)}) {
     </#if>
-  // output
+  //output
     //TODO output
-  // reaction
-      //TODO add do actions
+  //reaction
     <#if transition.isPresentDoAction()>
       <@handleAction actionsHelper.getActionFromDoAction(transition.getDoAction())/>
     </#if>
-  // result
-    //TODO set outputs
-  // entry state(s)
+  //entry state(s)
 
   this.${autHelper.resolveCurrentStateName(automaton)} =  ${autHelper.resolveEnumName(automaton)}.${transition.getTgt()};
   <#if autHelper.isAutomaton(transition.getTgt(),state)>

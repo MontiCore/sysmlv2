@@ -3,7 +3,7 @@ ${tc.signature("state", "automaton", "parent")}
 ${cd4c.method("protected void entry${autHelper.resolveStateName(state)?cap_first}()")}
 
 
-  // entry action
+  //entry action
     <#assign entryActions = autHelper.getEntryActionsOfElement(state)/>
     <#assign actionsParameters = []/>
     <#list entryActions as entryAction>
