@@ -58,8 +58,6 @@ ${cd4c.method("protected void transitionFrom${autHelper.resolveStateName(state)?
     <#if transition.isPresentGuard()>
       if(${autHelper.printExpression(transition.getGuard(), parent)}) {
     </#if>
-  //output
-    //TODO output
   //reaction
     <#if transition.isPresentDoAction()>
       <@handleAction actionsHelper.getActionFromDoAction(transition.getDoAction())/>
