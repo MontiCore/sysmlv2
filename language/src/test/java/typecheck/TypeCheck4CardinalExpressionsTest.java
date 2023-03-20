@@ -5,9 +5,10 @@ import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
-import de.monticore.lang.sysmlv2.types.SysMLExpressionsDeriver;
+import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -21,21 +22,19 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TypeCheck4CardinalExpressionsTest {
+
   private final SysMLv2Parser parser = new SysMLv2Parser();
-  private final SysMLv2Tool st = new SysMLv2Tool();
+  private final SysMLv2Tool tool = new SysMLv2Tool();
 
   @BeforeAll
   public static void init(){
-    Log.init();
-    SysMLv2Mill.init();
+    LogStub.init();
   }
 
   @BeforeEach
-  public void reset(){
-    SysMLv2Mill.globalScope().clear();
-    BasicSymbolsMill.initializePrimitives();
-    SysMLv2Mill.addStreamType();
+  public void reset() {
     Log.getFindings().clear();
+    tool.init();
   }
 
   @ParameterizedTest
@@ -46,13 +45,16 @@ public class TypeCheck4CardinalExpressionsTest {
     var ast = parser.parse_String(model);
     assertThat(ast).isPresent();
     var astSysMLModel = ast.get();
-    SysMLv2Mill.scopesGenitorDelegator().createFromAST(astSysMLModel);
-    st.completeSymbolTable(astSysMLModel);
+
+    tool.createSymbolTable(astSysMLModel);
+    tool.completeSymbolTable(astSysMLModel);
+    tool.finalizeSymbolTable(astSysMLModel);
+
     var sysmlelements = astSysMLModel.getSysMLElementList();
     var astPartUsage = sysmlelements.get(1);
     var constraintUsage = ((ASTPartUsage) astPartUsage).getSysMLElement(1);
     var expr = ((ASTConstraintUsage) constraintUsage).getExpression();
-    var deriver = new SysMLExpressionsDeriver();
+    var deriver = new SysMLDeriver();
     var type = deriver.deriveType(expr);
     assertTrue(type.isPresentResult());
     assertThat(type.getResult().printFullName()).isEqualTo("Stream<boolean>");
@@ -65,13 +67,16 @@ public class TypeCheck4CardinalExpressionsTest {
     var ast = parser.parse_String(model);
     assertThat(ast).isPresent();
     var astSysMLModel = ast.get();
-    SysMLv2Mill.scopesGenitorDelegator().createFromAST(astSysMLModel);
-    st.completeSymbolTable(astSysMLModel);
+
+    tool.createSymbolTable(astSysMLModel);
+    tool.completeSymbolTable(astSysMLModel);
+    tool.finalizeSymbolTable(astSysMLModel);
+
     var sysmlelements = astSysMLModel.getSysMLElementList();
     var astPartUsage = sysmlelements.get(1);
     var constraintUsage = ((ASTPartUsage) astPartUsage).getSysMLElement(1);
     var expr = ((ASTConstraintUsage) constraintUsage).getExpression();
-    var deriver = new SysMLExpressionsDeriver();
+    var deriver = new SysMLDeriver();
     var type = deriver.deriveType(expr);
     assertTrue(type.getResult().isObscureType());
     assertTrue(!Log.getFindings().isEmpty());

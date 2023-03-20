@@ -13,7 +13,7 @@ import de.monticore.types.check.DeriveSymTypeOfLiterals;
 import de.monticore.types.check.DeriveSymTypeOfMCCommonLiterals;
 import de.monticore.types.check.SynthesizeSymTypeFromMCBasicTypes;
 
-public class SysMLExpressionsDeriver extends AbstractDerive {
+public class SysMLDeriver extends AbstractDerive {
   /**
    * <p>{@code isStream} is used to determine whether the type of the expression is calculated as a Stream,
    * it is initialized in the constructor and as a parameter when {@link SysMLv2DeriveSymTypeOfCommonExpressions}
@@ -27,13 +27,13 @@ public class SysMLExpressionsDeriver extends AbstractDerive {
    * because it involves some previous unit tests,
    * the type of AttributeUsageSymbol was previously set to Stream by default.
    */
-  public SysMLExpressionsDeriver() {
+  public SysMLDeriver() {
     super(SysMLExpressionsMill.traverser());
     this.isStream = true;
     init();
   }
 
-  public SysMLExpressionsDeriver(boolean isStream) {
+  public SysMLDeriver(boolean isStream) {
     super(SysMLExpressionsMill.traverser());
     this.isStream = isStream;
     init();
@@ -75,5 +75,10 @@ public class SysMLExpressionsDeriver extends AbstractDerive {
     synthesizeSymTypeFromMCBasicTypes.setTypeCheckResult(typeCheckResult);
     getTraverser().add4MCBasicTypes(synthesizeSymTypeFromMCBasicTypes);
     getTraverser().setMCBasicTypesHandler(synthesizeSymTypeFromMCBasicTypes);
+
+    var deriverForSysMLExpressions = new SysMLExressionsDeriver(getTraverser());
+    deriverForSysMLExpressions.setTypeCheckResult(typeCheckResult);
+    getTraverser().add4SysMLExpressions(deriverForSysMLExpressions);
+    getTraverser().setSysMLExpressionsHandler(deriverForSysMLExpressions);
   }
 }

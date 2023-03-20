@@ -9,9 +9,10 @@ import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
-import de.monticore.lang.sysmlv2.types.SysMLExpressionsDeriver;
+import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,21 +39,19 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
  * we test whether ASTFieldAccessExpression will still be calculated as Stream.</p>
  */
 public class FieldAccessExpressionInStateUsageTest {
+
   private final SysMLv2Parser parser = new SysMLv2Parser();
-  private final SysMLv2Tool st = new SysMLv2Tool();
+  private final SysMLv2Tool tool = new SysMLv2Tool();
 
   @BeforeAll
   public static void init() {
-    Log.init();
-    SysMLv2Mill.init();
+    LogStub.init();
   }
 
   @BeforeEach
   public void reset() {
-    SysMLv2Mill.globalScope().clear();
-    BasicSymbolsMill.initializePrimitives();
-    SysMLv2Mill.addStreamType();
     Log.getFindings().clear();
+    tool.init();
   }
 
   static Stream<Arguments> createInputs() {
@@ -84,10 +83,10 @@ public class FieldAccessExpressionInStateUsageTest {
   public void test(String model, boolean isStream) throws IOException {
     var ast = parser.parse_String(model);
     assertThat(ast).isPresent();
-    var deriver = new SysMLExpressionsDeriver(isStream);
+    var deriver = new SysMLDeriver(isStream);
     var astSysmlmodel = ast.get();
     SysMLv2Mill.scopesGenitorDelegator().createFromAST(astSysmlmodel);
-    st.completeSymbolTable(astSysmlmodel);
+    tool.completeSymbolTable(astSysmlmodel);
     var astPartdef = astSysmlmodel.getSysMLElementList().get(1);
     var astSysmlelement = ((ASTPartDef) astPartdef).getSysMLElement(1);
     if (astSysmlelement instanceof ASTStateUsage) {
@@ -111,7 +110,7 @@ public class FieldAccessExpressionInStateUsageTest {
     assertThat(ast).isPresent();
     var astSysmlmodel = ast.get();
     SysMLv2Mill.scopesGenitorDelegator().createFromAST(astSysmlmodel);
-    st.completeSymbolTable(astSysmlmodel);
+    tool.completeSymbolTable(astSysmlmodel);
     ASTAttributeUsage attr = (ASTAttributeUsage) astSysmlmodel.getSysMLElementList().get(0);
     assertThat(attr.getEnclosingScope().resolveVariable("a").get().getType().printFullName()).isEqualTo("boolean");
   }
@@ -122,7 +121,7 @@ public class FieldAccessExpressionInStateUsageTest {
     assertThat(ast).isPresent();
     var astSysmlmodel = ast.get();
     SysMLv2Mill.scopesGenitorDelegator().createFromAST(astSysmlmodel);
-    st.completeSymbolTable(astSysmlmodel);
+    tool.completeSymbolTable(astSysmlmodel);
     var attr = (ASTPortDef) astSysmlmodel.getSysMLElementList().get(0);
     assertThat(attr.getSpannedScope().resolveVariable("a").get().getType().printFullName()).isEqualTo("boolean");
   }

@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2;
 
-import de.monticore.lang.sysml4verification.cocos.WarnNonExhibited;
+import de.monticore.lang.sysmlv2.cocos.WarnNonExhibited;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintDefCoCo;
 import de.monticore.lang.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTSysMLPackageCoCo;
@@ -29,6 +29,9 @@ import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.TypeCheckTransitionGuards;
 import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.TypesAndDirectionCompleter;
+import de.monticore.lang.sysmlv2.types.SysMLDeriver;
+import de.monticore.lang.sysmlv2.types.SysMLSynthesizer;
+import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCompleter;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -144,20 +147,40 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     // Phase 2: Sets types for usages and declarations (let-in, quantifiers) in expressions.
     // Based on types of specializations completed in phase 1.
     traverser = SysMLv2Mill.traverser();
-
     TypesAndDirectionCompleter completer = new TypesAndDirectionCompleter();
     traverser.add4SysMLBasis(completer);
     traverser.add4SysMLParts(completer);
     traverser.add4SysMLRequirements(completer);
-    // TODO Currently breaks for MontiBelle Expressions in Data Link Upload Feed
-    /*
+
+    // gleiches Spiel wie oben: Alles besuchen verlangt zwei Calls
+    if(node.getEnclosingScope() != null) {
+      node.getEnclosingScope().accept(traverser);
+    }
+    node.accept(traverser);
+  }
+
+  /**
+   * Da der OCL-Completer davon ausgeht, dass alle anderen Symbole vorhanden sind, muss dieser in einer Extra-Etappe
+   * laufen. Die Vervollständigung beschäftigt sich mit Let-ins und Quantifizierten Variablen.
+   *
+   * Beispiel: "forall v in input.data.values(): ..."
+   *
+   * Dabei versucht der Completer das Feld (den Kanal) "data" in "input" (Port) zu finden. Dieses Feld wird als Variable
+   * adaptiert von unserem SysMLv2Scope geliefert. Allerdings klappt das nur, wenn das Attribut seinen Typen bereits
+   * kennt. Da dieses aber auch im Completer gesetzt wird, können wir die Reihenfolge nicht garantieren.
+   *
+   * TODO Ich habe den Eindruck, dass es in MontiCore das Konzept eines "Surrogates" gibt. Allerdings habe ich nicht den
+   *   Eindruck, dass die OCL-Completer damit umgehen könnte. Ausserdem: Wieso ist der OCL-Completer dermassen
+   *   übergriffig?
+   */
+  public void finalizeSymbolTable(ASTSysMLModel node) {
+    var traverser = SysMLv2Mill.traverser();
     // null parameters since we don't really understand any of those (yet)
     var oclCompleter = new OCLExpressionsSymbolTableCompleter(null, null);
-    oclCompleter.setDeriver(new SysMLExpressionsDeriver(true));
+    // TODO The "true" here assumes, that OCL-Expr. are only ever used in history-oriented constraints
+    oclCompleter.setDeriver(new SysMLDeriver(true));
     oclCompleter.setSynthesizer(new SysMLSynthesizer());
     traverser.add4OCLExpressions(oclCompleter);
-    */
-
     // gleiches Spiel wie oben: Alles besuchen verlangt zwei Calls
     if(node.getEnclosingScope() != null) {
       node.getEnclosingScope().accept(traverser);
@@ -202,6 +225,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
 
       asts.forEach(it -> createSymbolTable(it));
       asts.forEach(it -> completeSymbolTable(it));
+      asts.forEach(it -> finalizeSymbolTable(it));
 
       asts.forEach(it -> runDefaultCoCos(it));
       asts.forEach(it -> runAdditionalCoCos(it));

@@ -17,6 +17,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -24,19 +25,17 @@ public class ConstraintCoCoTest {
 
   private static final String MODEL_PATH = "src/test/resources/cocos/constraints";
 
+  private SysMLv2Tool tool;
+
   @BeforeAll public static void init() {
     LogStub.init();
     SysMLv2Mill.init();
   }
 
   @BeforeEach public void reset() {
-    SysMLv2Mill.globalScope().clear();
-    BasicSymbolsMill.initializePrimitives();
-    SysMLv2Mill.addStreamType();
-    SysMLv2Mill.addCollectionTypes();
-
-    LogStub.init();
     Log.getFindings().clear();
+    tool = new SysMLv2Tool();
+    tool.init();
   }
 
   @ParameterizedTest(name = "{index} - {0} does pass all checks w/o errors")
@@ -57,22 +56,19 @@ public class ConstraintCoCoTest {
   })
   public void testValid(String modelName) throws IOException {
     var optAst = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName);
+    assertThat(optAst).isPresent();
 
-    if(optAst.isPresent()) {
-      ASTSysMLModel ast = optAst.get();
+    ASTSysMLModel ast = optAst.get();
 
-      SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
-      new SysMLv2Tool().completeSymbolTable(ast);
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
 
-      var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo(new ConstraintIsBoolean());
-      checker.checkAll(ast);
+    var checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new ConstraintIsBoolean());
+    checker.checkAll(ast);
 
-      assertTrue(Log.getFindings().isEmpty(), () -> Log.getFindings().toString());
-    }
-    else {
-      Assertions.fail("not parsable");
-    }
+    assertTrue(Log.getFindings().isEmpty(), () -> Log.getFindings().toString());
   }
 
   @ParameterizedTest(name = "{index} - {0} does pass all checks w/o errors")
@@ -93,23 +89,20 @@ public class ConstraintCoCoTest {
   })
   public void testInvalid(String modelName) throws IOException {
     var optAst = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName);
+    assertThat(optAst).isPresent();
 
-    if(optAst.isPresent()) {
-      ASTSysMLModel ast = optAst.get();
+    ASTSysMLModel ast = optAst.get();
 
-      SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
-      new SysMLv2Tool().completeSymbolTable(ast);
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
 
-      var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo(new ConstraintIsBoolean());
-      Log.enableFailQuick(false);
-      checker.checkAll(ast);
-      Log.enableFailQuick(true);
-
-      assertFalse(Log.getFindings().isEmpty());
-    }
-    else {
-      Assertions.fail("not parsable");
-    }
+    var checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new ConstraintIsBoolean());
+    Log.enableFailQuick(false);
+    checker.checkAll(ast);
+    assertFalse(Log.getFindings().isEmpty());
+    Log.clearFindings();
+    Log.enableFailQuick(true);
   }
 }

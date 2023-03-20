@@ -12,11 +12,14 @@ import de.monticore.types.check.DeriveSymTypeOfCommonExpressions;
 import de.monticore.types.check.SymTypeArray;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.check.TypeCheck;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
 import java.util.Optional;
+
+import static de.monticore.types.check.SymTypePrimitive.unbox;
 
 /**
  * <p>In SysMLv2, the expression in StateUsage is not type of Stream.
@@ -24,13 +27,30 @@ import java.util.Optional;
  */
 public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfCommonExpressions {
   /**
-   * @see SysMLExpressionsDeriver#isStream
+   * @see SysMLDeriver#isStream
    */
   protected boolean isStream;
 
   public SysMLv2DeriveSymTypeOfCommonExpressions(boolean isStream) {
     super();
     this.isStream = isStream;
+  }
+
+  /**
+   * Übernommen von TypeCheck.isInt
+   */
+  protected boolean isNat(SymTypeExpression type) {
+    return "nat".equals(unbox(type.print()));
+  }
+
+  /**
+   * Nat hinzufügen
+   */
+  @Override
+  public boolean isIntegralType(SymTypeExpression type) {
+    return (TypeCheck.isLong(type) || TypeCheck.isInt(type) ||
+        TypeCheck.isChar(type) || TypeCheck.isShort(type) ||
+        TypeCheck.isByte(type)) || isNat(type);
   }
 
   /**

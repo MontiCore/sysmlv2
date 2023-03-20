@@ -5,6 +5,7 @@ import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.BasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolSurrogateBuilder;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
@@ -53,7 +54,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
       return;
     }
 
-    var type =  OOSymbolsMill.oOTypeSymbolBuilder()
+    var type = OOSymbolsMill.oOTypeSymbolBuilder()
         .setName("String")
         .setSpannedScope(new OOSymbolsScope())
         .build();
@@ -95,10 +96,16 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     spannedScope.add(buildLengthFunction());
     spannedScope.add(buildValuesFunction(typeVar));
 
-    return OOSymbolsMill.oOTypeSymbolBuilder()
+    var res = OOSymbolsMill.oOTypeSymbolBuilder()
         .setName("Stream")
         .setSpannedScope(spannedScope)
         .build();
+
+    // Stream muss bereits existieren
+    spannedScope.add(buildAtTimeFunction(res, typeVar));
+    spannedScope.add(buildMessagesFunction(res, typeVar));
+
+    return res;
   }
 
   public static void addCollectionTypes() {
@@ -108,8 +115,9 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
   protected void _addCollectionTypes() {
     // ensures adding the type symbol only once
     if(SysMLv2Mill.globalScope().resolveType("List").isEmpty()) {
-      // TODO add collection function such as size
-      SysMLv2Mill.globalScope().add(buildCollectionType("List", "A"));
+      var list = buildCollectionType("List", "A");
+      list.getSpannedScope().add(buildCountFunction());
+      SysMLv2Mill.globalScope().add(list);
     }
 
     if(SysMLv2Mill.globalScope().resolveType("Optional").isEmpty()) {
@@ -143,6 +151,10 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     return SymTypeExpressionFactory.createPrimitive(SysMLv2Mill.globalScope().resolveType("int").get());
   }
 
+  protected SymTypePrimitive buildNatType() {
+    return SymTypeExpressionFactory.createPrimitive(SysMLv2Mill.globalScope().resolveType("nat").get());
+  }
+
   protected FunctionSymbol buildSnthFunction(TypeVarSymbol typeVar) {
     var parameterList = new BasicSymbolsScope();
 
@@ -167,12 +179,48 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         .build();
   }
 
+  protected FunctionSymbol buildCountFunction() {
+    return SysMLv2Mill.functionSymbolBuilder()
+        .setName("count")
+        .setType(buildIntType())
+        .setSpannedScope(new BasicSymbolsScope())
+        .build();
+  }
+
   protected FunctionSymbol buildValuesFunction(TypeVarSymbol typeVar) {
     var listSymbol = SysMLv2Mill.globalScope().resolveType("Set").get();
     return SysMLv2Mill.functionSymbolBuilder()
         .setName("values")
         .setType(SymTypeExpressionFactory.createGenerics(
             listSymbol,
+            SymTypeExpressionFactory.createTypeVariable(typeVar))
+        )
+        .setSpannedScope(new BasicSymbolsScope())
+        .build();
+  }
+
+  protected FunctionSymbol buildAtTimeFunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
+    var scope = new BasicSymbolsScope();
+    scope.add(SysMLv2Mill.variableSymbolBuilder()
+        .setName("t")
+        .setType(buildNatType())
+        .build());
+
+    return SysMLv2Mill.functionSymbolBuilder()
+        .setName("atTime")
+        .setType(SymTypeExpressionFactory.createGenerics(
+            streamSymbol,
+            SymTypeExpressionFactory.createTypeVariable(typeVar))
+        )
+        .setSpannedScope(scope)
+        .build();
+  }
+
+  protected FunctionSymbol buildMessagesFunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
+    return SysMLv2Mill.functionSymbolBuilder()
+        .setName("messages")
+        .setType(SymTypeExpressionFactory.createGenerics(
+            streamSymbol,
             SymTypeExpressionFactory.createTypeVariable(typeVar))
         )
         .setSpannedScope(new BasicSymbolsScope())

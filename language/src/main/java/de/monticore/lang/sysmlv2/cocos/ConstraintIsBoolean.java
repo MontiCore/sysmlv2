@@ -4,7 +4,7 @@ package de.monticore.lang.sysmlv2.cocos;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintUsageCoCo;
-import de.monticore.lang.sysmlv2.types.SysMLExpressionsDeriver;
+import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.SourcePositionBuilder;
@@ -17,7 +17,7 @@ public class ConstraintIsBoolean implements SysMLConstraintsASTConstraintUsageCo
     ASTExpression expr = node.getExpression();
 
     // TypeCheck (Deriver) initialisieren
-    var deriver = new SysMLExpressionsDeriver(true);
+    var deriver = new SysMLDeriver(true);
 
     try {
       TypeCheckResult type = deriver.deriveType(expr);
