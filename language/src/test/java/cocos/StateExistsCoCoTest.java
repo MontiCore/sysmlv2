@@ -8,6 +8,7 @@ import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.monticore.lang.sysmlv2.cocos.StateExistsCoCo;
+import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.Assertions;
@@ -18,15 +19,13 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StateExistsCoCoTest {
   private final SysMLv2Parser parser = new SysMLv2Parser();
   private final SysMLv2Tool st = new SysMLv2Tool();
-
-  private final String validPath = "src/test/resources/cocos/StateExists/0_valid.sysml";
-  private final String invalidPath = "src/test/resources/cocos/StateExists/0_invalid.sysml";
 
   @BeforeAll
   public static void init(){
@@ -42,30 +41,27 @@ public class StateExistsCoCoTest {
 
   @Test
   public void testValidState() throws IOException{
-    Optional<ASTSysMLModel> ast = parser.parse(validPath);
-    if(ast.isPresent()) {
-      st.createSymbolTable(ast.get());
-      SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
-      checker.addCoCo(new StateExistsCoCo());
-      checker.checkAll(ast.get());
-      assertTrue(Log.getFindings().isEmpty());
-    }else {
-      Assertions.fail("AST is not present");
-    }
+    Optional<ASTSysMLModel> ast = parser.parse_String("state def v { state S; state T; transition first S then T; }");
+    assertThat(ast).isPresent();
+
+    st.createSymbolTable(ast.get());
+    SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new StateExistsCoCo());
+    checker.checkAll(ast.get());
+    assertThat(Log.getFindings()).isEmpty();
   }
 
   @Test
   public void testInvalidState() throws IOException{
-    Optional<ASTSysMLModel> ast = parser.parse(invalidPath);
-    if(ast.isPresent()) {
-      st.createSymbolTable(ast.get());
-      SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
-      checker.addCoCo(new StateExistsCoCo());
-      checker.checkAll(ast.get());
-      assertFalse(Log.getFindings().isEmpty());
-    }else {
-      Assertions.fail("AST is not present");
-    }
+    Optional<ASTSysMLModel> ast = parser.parse_String("state def i { transition first S then T; }");
+    assertThat(ast).isPresent();
+
+    st.createSymbolTable(ast.get());
+    SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new StateExistsCoCo());
+    checker.checkAll(ast.get());
+    assertThat(Log.getFindings().stream().map(Finding::getMsg))
+        .contains("Source state is not defined", "Target state is not defined");
   }
 }
 
