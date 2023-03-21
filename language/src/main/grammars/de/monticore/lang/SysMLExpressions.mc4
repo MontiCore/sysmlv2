@@ -22,7 +22,7 @@ component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiteral
   SysMLFieldAccessExpression extends FieldAccessExpression implements Expression <290> =
     Expression "::" Name;
 
-  SysMLInstantiation implements Expression = MCType Arguments;
+  SysMLInstantiation implements Expression = key("new") {noSpace(2)}? MCType Arguments;
 
   // Infinity literal can be negative, but there cannot be any space between "-" and "INF"
   Infinity implements Literal, SignedLiteral = {noSpace(2)}? (negative:["-"]) "INF" | "INF";
