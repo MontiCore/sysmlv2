@@ -2,6 +2,7 @@ package de.monticore.lang.sysmlv2.types;
 
 import de.monticore.lang.sysmlexpressions._ast.ASTInfinity;
 import de.monticore.lang.sysmlexpressions._ast.ASTSubsetEquationExpression;
+import de.monticore.lang.sysmlexpressions._ast.ASTSysMLInstantiation;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsHandler;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsTraverser;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsVisitor2;
@@ -16,8 +17,11 @@ public class SysMLExressionsDeriver extends AbstractDeriveFromExpression impleme
   /* ########################## HÄSSLICHER BOILERPLATE CODE START ########################## */
   protected SysMLExpressionsTraverser traverser;
 
-  public SysMLExressionsDeriver(SysMLExpressionsTraverser traverser) {
+  protected SysMLSynthesizer synthesizer;
+
+  public SysMLExressionsDeriver(SysMLExpressionsTraverser traverser, SysMLSynthesizer synthesizer) {
     this.traverser = traverser;
+    this.synthesizer = synthesizer;
   }
 
   @Override
@@ -73,6 +77,11 @@ public class SysMLExressionsDeriver extends AbstractDeriveFromExpression impleme
       // TODO Inner types vergleichen / compatibility checken
       getTypeCheckResult().setResult(SymTypeExpressionFactory.createPrimitive("boolean"));
     }
+  }
+
+  @Override
+  public void traverse(ASTSysMLInstantiation node) {
+    getTypeCheckResult().setResult(synthesizer.synthesizeType(node.getMCType()).getResult());
   }
 
 }

@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2;
 
+import de.monticore.lang.sysmlv2.cocos.AssignActionTypeCheck;
+import de.monticore.lang.sysmlv2.cocos.SendActionTypeCheck;
 import de.monticore.lang.sysmlv2.cocos.WarnNonExhibited;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintDefCoCo;
@@ -67,6 +69,8 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo(new SpecializationExists());
     checker.addCoCo(new ConstraintIsBoolean());
     checker.addCoCo(new TypeCheckTransitionGuards());
+    checker.addCoCo(new SendActionTypeCheck());
+    checker.addCoCo(new AssignActionTypeCheck());
     checker.checkAll(ast);
   }
 

@@ -4,6 +4,8 @@ package de.monticore.lang.sysmlv2.types;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.lang.sysmlexpressions.SysMLExpressionsMill;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsTraverser;
+import de.monticore.lang.sysmlv2.SysMLv2Mill;
+import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLExpressions;
 import de.monticore.ocl.types.check.DeriveSymTypeOfSetExpressions;
 import de.monticore.types.check.AbstractDerive;
@@ -28,7 +30,7 @@ public class SysMLDeriver extends AbstractDerive {
    * the type of AttributeUsageSymbol was previously set to Stream by default.
    */
   public SysMLDeriver() {
-    super(SysMLExpressionsMill.traverser());
+    super(SysMLv2Mill.traverser());
     this.isStream = true;
     init();
   }
@@ -39,8 +41,8 @@ public class SysMLDeriver extends AbstractDerive {
     init();
   }
 
-  @Override public SysMLExpressionsTraverser getTraverser() {
-    return (SysMLExpressionsTraverser) traverser;
+  @Override public SysMLv2Traverser getTraverser() {
+    return (SysMLv2Traverser) traverser;
   }
 
   public void init() {
@@ -76,7 +78,10 @@ public class SysMLDeriver extends AbstractDerive {
     getTraverser().add4MCBasicTypes(synthesizeSymTypeFromMCBasicTypes);
     getTraverser().setMCBasicTypesHandler(synthesizeSymTypeFromMCBasicTypes);
 
-    var deriverForSysMLExpressions = new SysMLExressionsDeriver(getTraverser());
+    var synthesizer = new SysMLSynthesizer();
+    synthesizer.init(getTraverser());
+
+    var deriverForSysMLExpressions = new SysMLExressionsDeriver(getTraverser(), synthesizer);
     deriverForSysMLExpressions.setTypeCheckResult(typeCheckResult);
     getTraverser().add4SysMLExpressions(deriverForSysMLExpressions);
     getTraverser().setSysMLExpressionsHandler(deriverForSysMLExpressions);

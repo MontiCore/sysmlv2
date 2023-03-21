@@ -186,4 +186,38 @@ public class SymbolTableCompletionTest {
     asts.forEach(ast -> tool.runAdditionalCoCos(ast));
   }
 
+  // TODO Diese Tests gehören irgendwo anders hin und sollten spezfischer genau den TypeCheck prüfen, statt
+  //  die Keule zu schwingen mit `Tool.init()` und `Tool.runCoCos()`...
+  @Test
+  public void testTransitionEffects() throws IOException {
+    var models = List.of(
+        "port def P { attribute a: boolean; }",
+        "part def S1 { port p:P; exhibit state s { state S; attribute b: List<boolean>;  " // Füllen bis 80 Characters
+            + "transition first S if true do action { send b.tail().head() to p.a; } then S; } }",
+        "part def S2 { port p:P; exhibit state s { state S; attribute b: List<boolean>;  "
+            + "transition first S if true do action { assign b := List<boolean>(); } then S; } }",
+        "part def S3 { port p:P; exhibit state s { state S; attribute b: List<boolean>;  "
+            + "transition first S if true do action { assign b := List<boolean>(); } then S; } }",
+        "part def S3 { port p:P; exhibit state s { state S; attribute b: List<boolean>;  "
+            + "transition first S if true do action { assign b := List<boolean>(true, false); } then S; } }",
+        "part def S4 { port p:P; exhibit state s { state S; attribute b: List<boolean>;  "
+            + "transition first S if true do action { assign b := b.append(b); } then S; } }"
+    );
+
+    List<ASTSysMLModel> asts = new ArrayList<>();
+    for(var model: models) {
+      Optional<ASTSysMLModel> ast = parser.parse_String(model);
+      assertThat(ast).isPresent();
+      asts.add(ast.get());
+    }
+
+    asts.forEach(ast -> tool.createSymbolTable(ast));
+    asts.forEach(ast -> tool.completeSymbolTable(ast));
+    asts.forEach(ast -> tool.finalizeSymbolTable(ast));
+    assertThat(Log.getFindings()).isEmpty();
+
+    asts.forEach(ast -> tool.runDefaultCoCos(ast));
+    asts.forEach(ast -> tool.runAdditionalCoCos(ast));
+  }
+
 }

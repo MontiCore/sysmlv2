@@ -116,7 +116,11 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     // ensures adding the type symbol only once
     if(SysMLv2Mill.globalScope().resolveType("List").isEmpty()) {
       var list = buildCollectionType("List", "A");
+      var typeVar = list.getSpannedScope().getTypeVarSymbols().get("A").get(0);
       list.getSpannedScope().add(buildCountFunction());
+      list.getSpannedScope().add(buildHeadFunction(typeVar));
+      list.getSpannedScope().add(buildTailFunction(list, typeVar));
+      list.getSpannedScope().add(buildAppendFunction(list, typeVar));
       SysMLv2Mill.globalScope().add(list);
     }
 
@@ -184,6 +188,44 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         .setName("count")
         .setType(buildIntType())
         .setSpannedScope(new BasicSymbolsScope())
+        .build();
+  }
+
+  protected FunctionSymbol buildHeadFunction(TypeVarSymbol typeVar) {
+    return SysMLv2Mill.functionSymbolBuilder()
+        .setName("head")
+        .setType(SymTypeExpressionFactory.createTypeVariable(typeVar))
+        .setSpannedScope(new BasicSymbolsScope())
+        .build();
+  }
+
+  protected FunctionSymbol buildTailFunction(TypeSymbol listSymbol, TypeVarSymbol typeVar) {
+    return SysMLv2Mill.functionSymbolBuilder()
+        .setName("tail")
+        .setType(SymTypeExpressionFactory.createGenerics(
+            listSymbol,
+            SymTypeExpressionFactory.createTypeVariable(typeVar))
+        )
+        .setSpannedScope(new BasicSymbolsScope())
+        .build();
+  }
+
+  protected FunctionSymbol buildAppendFunction(TypeSymbol listSymbol, TypeVarSymbol typeVar) {
+    var scope = new BasicSymbolsScope();
+    scope.add(SysMLv2Mill.variableSymbolBuilder()
+        .setName("xs")
+        .setType(SymTypeExpressionFactory.createGenerics(
+            listSymbol,
+            SymTypeExpressionFactory.createTypeVariable(typeVar))
+        )
+        .build());
+    return SysMLv2Mill.functionSymbolBuilder()
+        .setName("append")
+        .setType(SymTypeExpressionFactory.createGenerics(
+            listSymbol,
+            SymTypeExpressionFactory.createTypeVariable(typeVar))
+        )
+        .setSpannedScope(scope)
         .build();
   }
 
