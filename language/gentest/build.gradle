@@ -4,20 +4,6 @@ plugins {
   id "java"
 }
 
-group = 'de.monticore.language.gentest'
-
-mainClassName = "de.monticore.lang.sysmlv2._lsp.LanguageServerCLI"
-repositories {
-  if (("true").equals(getProperty('useLocalRepo'))) {
-    mavenLocal()
-  }
-  maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
-    url repo
-  }
-}
-
 def junit_version = '4.13.1'
 
 dependencies {

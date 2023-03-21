@@ -14,6 +14,8 @@ rootProject.name = 'sysml_v2'
 
 // The MontiCore-based language implementation
 include 'language'
+// The MontiCore-based language generator test
+include 'language:gentest'
 
 // Wrapper for the Github-publication of the official vizualizer
 include 'visualization'
