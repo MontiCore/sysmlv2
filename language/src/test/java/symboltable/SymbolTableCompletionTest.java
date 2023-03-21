@@ -195,11 +195,11 @@ public class SymbolTableCompletionTest {
         "part def S1 { port p:P; exhibit state s { state S; attribute b: List<boolean>;  " // Füllen bis 80 Characters
             + "transition first S if true do action { send b.tail().head() to p.a; } then S; } }",
         "part def S2 { port p:P; exhibit state s { state S; attribute b: List<boolean>;  "
-            + "transition first S if true do action { assign b := List<boolean>(); } then S; } }",
+            + "transition first S if true do action { assign b := new List<boolean>(); } then S; } }",
         "part def S3 { port p:P; exhibit state s { state S; attribute b: List<boolean>;  "
-            + "transition first S if true do action { assign b := List<boolean>(); } then S; } }",
+            + "transition first S if true do action { assign b := new List<boolean>(); } then S; } }",
         "part def S3 { port p:P; exhibit state s { state S; attribute b: List<boolean>;  "
-            + "transition first S if true do action { assign b := List<boolean>(true, false); } then S; } }",
+            + "transition first S if true do action { assign b := new List<boolean>(true, false); } then S; } }",
         "part def S4 { port p:P; exhibit state s { state S; attribute b: List<boolean>;  "
             + "transition first S if true do action { assign b := b.append(b); } then S; } }"
     );

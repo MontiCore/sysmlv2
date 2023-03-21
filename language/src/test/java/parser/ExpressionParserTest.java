@@ -40,7 +40,7 @@ public class ExpressionParserTest {
       "b.append(new List<Packet>(para))",
       "b.append(new List<Packet>(para, para))"
   })
-  public void testInstantiationExpressionEmpty(String expr) throws IOException {
+  public void testInstantiationInCallExpression(String expr) throws IOException {
     var ast = parser.parse_StringExpression(expr);
 
     assertThat(ast).isPresent();
@@ -49,6 +49,23 @@ public class ExpressionParserTest {
     assertThat(((ASTCallExpression)ast.get()).getArguments().getExpressionList()).hasSize(1);
     assertThat(((ASTCallExpression)ast.get()).getArguments().getExpression(0))
         .isInstanceOf(ASTSysMLInstantiation.class);
+  }
+
+  /**
+   * Checks that instantiation is parsed as such (and not as greater-than expressions or similar!)
+   */
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "new List<Packet>()",
+      "new List<Packet>(para)",
+      "new List<Packet>(para, para)"
+  })
+  public void testInstantiation(String expr) throws IOException {
+    var ast = parser.parse_StringExpression(expr);
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    assertThat(ast.get()).isInstanceOf(ASTSysMLInstantiation.class);
   }
 
 }
