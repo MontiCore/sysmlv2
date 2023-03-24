@@ -1,5 +1,5 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("action","parameterList", "attributeList")}
+${tc.signature("action","parameterList", "attributeList", "isAbstract")}
 <#if isAbstract>
     <#assign abstract = "abstract "/>
 <#else >
@@ -8,7 +8,7 @@ ${tc.signature("action","parameterList", "attributeList")}
 <#assign  secondControlNode = actionsHelper.getSecondControlNode(action)>
 ${cd4c.method("public boolean returnPath_${secondControlNode.getName()}(${actionsHelper.parameterListForDecisionMethod(action, true) })")}
 <#assign firstReturn = actionsHelper.getFirstReturnPathSuccessor(action)/>
-      if (${autHelper.printExpression(firstReturn.getGuard())}){
+      if (${actionsHelper.printExpression(firstReturn.getGuard())}){
         <@printAction firstReturn action/>
         <@printPath actionsHelper.getReturnPath(action) action/>
           return true;
@@ -34,10 +34,10 @@ ${cd4c.method("public boolean returnPath_${secondControlNode.getName()}(${action
     <#else >
         <#assign resolvedTarget = actionsHelper.resolveAction(succession.getTgt(), succession)>
         <#if actionsHelper.isSendAction(resolvedTarget)>
-          this.get${resolvedTarget.getTarget()?cap_first}().setValue(${autHelper.printExpression(resolvedTarget.getPayload())});
+          this.get${resolvedTarget.getTarget()?cap_first}().setValue(${actionsHelper.printExpression(resolvedTarget.getPayload())});
         <#else >
             <#if actionsHelper.isAssignmentAction(resolvedTarget)>
-                ${actionsHelper.mapBindEnd(resolvedTarget.getTarget())} = ${autHelper.printExpression(resolvedTarget.getValueExpression())};
+                ${actionsHelper.mapBindEnd(resolvedTarget.getTarget())} = ${actionsHelper.printExpression(resolvedTarget.getValueExpression())};
             <#else >
                 ${succession.getTgt()}(<#list  actionsHelper.getParametersWithActionPrefix(resolvedTarget) as param>${param}<#sep>, </#sep></#list>);
             </#if>
