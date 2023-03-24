@@ -49,7 +49,7 @@ public class ActionSuccessionVisitor implements SysMLActionsVisitor2 {
         }
         if(!node.isPresentSrc()
             && !srcSet) {
-          Log.error("Could not resolve source of the succession.");
+          Log.error("Could not resolve source of the succession with target "+ node.getTgt());
         }
       }
     }
