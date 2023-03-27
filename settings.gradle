@@ -20,3 +20,6 @@ include 'visualization'
 
 // MontiCore-Language-Server-Generator-based language server imlementation
 include 'language-server'
+
+// Visualization-Plugin for VSCode
+include 'visualization-plugin'

@@ -32,7 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   vscode.commands.registerCommand("sysmlvisualisation.visualization.dispose", (uri: vscode.Uri) => {
-    visualisation.dispose; 
+    visualisation.dispose;
   });
 
   context.subscriptions.push(disposable);
