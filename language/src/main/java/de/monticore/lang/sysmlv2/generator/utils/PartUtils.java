@@ -5,6 +5,7 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLSubsetting;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.PartResolveUtils;
@@ -55,11 +56,11 @@ public class PartUtils {
       }
     }
     else {
-      var sysmlSpec = element.getSpecializationList().stream().filter(
-          t -> t instanceof ASTSysMLSpecialization).map(u -> ((ASTSysMLSpecialization) u)).collect(Collectors.toList());
-      if(!sysmlSpec.isEmpty()) {
-        if(sysmlSpec.get(0).getSuperTypesList().size() == 1) {
-          String typString = sysmlSpec.get(0).getSuperTypes(0).printType(
+      var sysmlSubset = element.getSpecializationList().stream().filter(
+          t -> t instanceof ASTSysMLSubsetting).map(u -> ((ASTSysMLSubsetting) u)).collect(Collectors.toList());
+      if(!sysmlSubset.isEmpty()) {
+        if(sysmlSubset.get(0).getSuperTypesList().size() == 1) {
+          String typString = sysmlSubset.get(0).getSuperTypes(0).printType(
               new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
           List<String> partsList = Splitters.DOT.splitToList(typString);
           String typeName = partsList.get(partsList.size() - 1);
@@ -101,7 +102,7 @@ public class PartUtils {
   public static boolean isAdHocClassDefinition(ASTPartUsage astPartUsage) {
 
     var specializationList = astPartUsage.streamSpecializations().filter(
-        t -> t instanceof ASTSysMLSpecialization).flatMap(
+        t -> t instanceof ASTSysMLSubsetting).flatMap(
         f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
 
     var typingList = astPartUsage.streamSpecializations().filter(c -> c instanceof ASTSysMLTyping).flatMap(

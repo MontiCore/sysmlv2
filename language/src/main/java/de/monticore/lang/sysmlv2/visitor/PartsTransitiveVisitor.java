@@ -3,6 +3,7 @@ package de.monticore.lang.sysmlv2.visitor;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLSubsetting;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
@@ -137,7 +138,7 @@ public class PartsTransitiveVisitor implements SysMLPartsVisitor2 {
 
   List<ASTMCType> getPartUsageList(ASTPartUsage node) {
     return node.streamSpecializations().filter(
-            t -> t instanceof ASTSysMLSpecialization | t instanceof ASTSysMLRedefinition)
+            t -> t instanceof ASTSysMLSubsetting | t instanceof ASTSysMLRedefinition)
         .flatMap(ASTSpecialization::streamSuperTypes).collect(Collectors.toList());
 
   }

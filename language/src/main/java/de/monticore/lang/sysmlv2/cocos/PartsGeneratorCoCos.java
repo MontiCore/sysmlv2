@@ -4,6 +4,7 @@ import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLSubsetting;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
@@ -30,6 +31,9 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
    * Check that at least one part def is extended.
    */
   @Override public void check(ASTPartUsage node) {
+    var subsets = node.streamSpecializations().filter(
+        t -> t instanceof ASTSysMLSubsetting).map(ASTSpecialization::getSuperTypesList).collect(
+        Collectors.toList());
     var specialications = node.streamSpecializations().filter(
         t -> t instanceof ASTSysMLSpecialization).map(ASTSpecialization::getSuperTypesList).collect(
         Collectors.toList());
@@ -39,15 +43,19 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
     var typing = node.streamSpecializations().filter(
         t -> t instanceof ASTSysMLTyping).map(ASTSpecialization::getSuperTypesList).collect(
         Collectors.toList());
-    if(specialications.isEmpty() && node.getSysMLElementList().size() == 0 && redefinitons.isEmpty() && typing.isEmpty()) {
+    if(subsets.isEmpty() && node.getSysMLElementList().size() == 0 && redefinitons.isEmpty() && typing.isEmpty()) {
       Log.error("The Part Usage " + node.getName()
-          + " needs a type (at least one part def), redefine a part usage or specialize another part usage");
+          + " needs a type (at least one part def), redefine a part usage or subset another part usage");
+    }
+    if(!specialications.isEmpty()) {
+      Log.error("The Part Usage " + node.getName()
+          + " uses specialize. This is not allowed use subsets instead.");
     }
     attributeResolveUtils.getAttributesOfElement(node);
-    var redeinitionSpec = node.streamSpecializations().filter(
+    var redefinitionSpec = node.streamSpecializations().filter(
         t -> t instanceof ASTSysMLRedefinition).collect(Collectors.toList());
-    if(!redeinitionSpec.isEmpty())
-      checkRefinition(redeinitionSpec, node);
+    if(!redefinitionSpec.isEmpty())
+      checkRefinition(redefinitionSpec, node);
     checkExhbitUsages(node);
   }
 
