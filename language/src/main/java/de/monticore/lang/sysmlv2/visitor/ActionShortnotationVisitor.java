@@ -6,9 +6,10 @@ import de.monticore.lang.sysmlactions._ast.ASTActionUsage;
 import de.monticore.lang.sysmlactions._ast.ASTAssignmentActionUsage;
 import de.monticore.lang.sysmlactions._ast.ASTSendActionUsage;
 import de.monticore.lang.sysmlactions._ast.ASTSysMLSuccession;
-import de.monticore.lang.sysmlactions._symboltable.ActionUsageSymbol;
-import de.monticore.lang.sysmlactions._symboltable.ActionUsageSymbolBuilder;
-import de.monticore.lang.sysmlactions._symboltable.ISysMLActionsScope;
+import de.monticore.lang.sysmlactions._symboltable.AssignmentActionUsageSymbol;
+import de.monticore.lang.sysmlactions._symboltable.AssignmentActionUsageSymbolBuilder;
+import de.monticore.lang.sysmlactions._symboltable.SendActionUsageSymbol;
+import de.monticore.lang.sysmlactions._symboltable.SendActionUsageSymbolBuilder;
 import de.monticore.lang.sysmlactions._visitor.SysMLActionsVisitor2;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlstates._ast.ASTStateDef;
@@ -16,19 +17,25 @@ import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ActionShortnotationVisitor implements SysMLActionsVisitor2 {
+
+  static HashMap<ASTSysMLElement, List<ASTSysMLElement>> changes = new HashMap<>();
 
   @Override
   public void visit(ASTSysMLSuccession node) {
     if(!node.isPresentTgt()) {
       if(node.isPresentActionUsage()) {
+        if(!changes.containsKey(node)) {
+          changes.put((ASTSysMLElement) node.getEnclosingScope().getAstNode(),
+              new ArrayList(getElementsOfParent(node.getEnclosingScope().getAstNode())));
+        }
         var actionUsage = node.getActionUsage();
         if(actionUsage.isPresentName()) {
           node.setTgt(actionUsage.getName());
-          addElementToParent(actionUsage, node.getEnclosingScope(),
-              getElementsofParent(node.getEnclosingScope().getAstNode()).indexOf(node));
+          addElementToParent(actionUsage, node);
         }
         else {
           if(actionUsage instanceof ASTSendActionUsage || actionUsage instanceof ASTAssignmentActionUsage) {
@@ -40,8 +47,7 @@ public class ActionShortnotationVisitor implements SysMLActionsVisitor2 {
             }
             node.setTgt(name + counter);
             actionUsage.setName(name + counter);
-            addElementToParent(actionUsage, node.getEnclosingScope(),
-                getElementsofParent(node.getEnclosingScope().getAstNode()).indexOf(node));
+            addElementToParent(actionUsage, node);
           }
           else
             Log.error("Could not get the name of the action usage within a succession."
@@ -55,7 +61,7 @@ public class ActionShortnotationVisitor implements SysMLActionsVisitor2 {
     }
   }
 
-  List<ASTSysMLElement> getElementsofParent(ASTNode astNode) {
+  List<ASTSysMLElement> getElementsOfParent(ASTNode astNode) {
     if(astNode instanceof ASTActionDef) {
       return ((ASTActionDef) astNode).getSysMLElementList();
 
@@ -72,19 +78,60 @@ public class ActionShortnotationVisitor implements SysMLActionsVisitor2 {
     return new ArrayList<>();
   }
 
-  void addElementToParent(ASTActionUsage element, ISysMLActionsScope scope, int index) {
-    ActionUsageSymbol usageSymbol = new ActionUsageSymbolBuilder().setName(element.getName()).setAstNode(
-        element).setEnclosingScope(scope).build();
-    element.setSymbol(usageSymbol);
-    scope.add(element.getSymbol());
-    var parent = scope.getAstNode();
+  void addElementToParent(ASTActionUsage element, ASTSysMLSuccession node) {
+
+    if(element instanceof ASTAssignmentActionUsage) {
+      AssignmentActionUsageSymbol usageSymbol = (AssignmentActionUsageSymbol) new AssignmentActionUsageSymbolBuilder().setName(
+          element.getName()).setAstNode(
+          element).setEnclosingScope(node.getEnclosingScope()).build();
+      ((ASTAssignmentActionUsage) element).setSymbol(usageSymbol);
+    }
+    if(element instanceof ASTSendActionUsage) {
+      SendActionUsageSymbol usageSymbol = (SendActionUsageSymbol) new SendActionUsageSymbolBuilder().setName(
+          element.getName()).setAstNode(
+          element).setEnclosingScope(node.getEnclosingScope()).build();
+      ((ASTSendActionUsage) element).setSymbol(usageSymbol);
+    }
+
+    var parent = node.getEnclosingScope().getAstNode();
     if(parent instanceof ASTActionUsage) {
-      ((ASTActionUsage) parent).getSpannedScope().add(element.getSymbol());
-      ((ASTActionUsage) parent).getSysMLElementList().add(index+1, element);
+      //((ASTActionUsage) parent).getSpannedScope().add(element.getSymbol());
+      List<ASTSysMLElement> elementList = changes.get(parent);
+      int index = elementList.indexOf(node);
+      elementList.add(index + 1, element);
     }
     if(parent instanceof ASTActionDef) {
-      ((ASTActionDef) parent).getSpannedScope().add(element.getSymbol());
-      ((ASTActionDef) parent).getSysMLElementList().add(index+1, element);
+      // ((ASTActionDef) parent).getSpannedScope().add(element.getSymbol());
+      List<ASTSysMLElement> elementList = changes.get(parent);
+      int index = elementList.indexOf(node);
+      elementList.add(index + 1, element);
     }
+  }
+
+  public void applyTransformations() {
+    for (ASTSysMLElement action : changes.keySet()
+    ) {
+      if(action instanceof ASTActionUsage) {
+        List<ASTSysMLElement> elementList = changes.get(action);
+        for (ASTSysMLElement element : elementList) {
+          if(element instanceof ASTActionUsage) {
+            ((ASTActionUsage) action).getSpannedScope().add(((ASTActionUsage) element).getSymbol());
+          }
+        }
+        ((ASTActionUsage) action).setSysMLElementList(changes.get(action));
+
+      }
+      if(action instanceof ASTActionDef) {
+        List<ASTSysMLElement> elementList = changes.get(action);
+        for (ASTSysMLElement element : elementList) {
+          if(element instanceof ASTActionUsage) {
+            ((ASTActionUsage) action).getSpannedScope().add(((ASTActionUsage) element).getSymbol());
+          }
+        }
+        ((ASTActionDef) action).setSysMLElementList(changes.get(action));
+      }
+
+    }
+
   }
 }

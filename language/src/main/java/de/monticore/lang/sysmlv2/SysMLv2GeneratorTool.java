@@ -61,6 +61,7 @@ import de.monticore.lang.sysmlv2.generator.SysML2CDConverter;
 import de.monticore.lang.sysmlv2.symboltable.completers.ScopeNamingCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.TypesAndDirectionCompleter;
+import de.monticore.lang.sysmlv2.visitor.ActionShortnotationVisitor;
 import de.monticore.lang.sysmlv2.visitor.ActionSuccessionVisitor;
 import de.monticore.lang.sysmlv2.visitor.PartsTransitiveVisitor;
 import de.monticore.lang.sysmlv2.visitor.PortsVisitor;
@@ -97,8 +98,6 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
-    checker.addCoCo((SysMLActionsASTActionUsageCoCo) new ActionGeneratorCoCos());
-    checker.addCoCo((SysMLActionsASTActionDefCoCo) new ActionGeneratorCoCos());
     checker.addCoCo((SysMLActionsASTActionDefCoCo) new ActionSupertypes());
     checker.addCoCo((SysMLActionsASTActionUsageCoCo) new ActionSupertypes());
     checker.addCoCo((SysMLInterfacesASTInterfaceDefCoCo) new InterfaceSupertypes());
@@ -134,6 +133,8 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
   @Override
   public void runAdditionalCoCos(ASTSysMLModel ast) {
     var checker = new SysMLv2CoCoChecker();
+    checker.addCoCo((SysMLActionsASTActionUsageCoCo) new ActionGeneratorCoCos());
+    checker.addCoCo((SysMLActionsASTActionDefCoCo) new ActionGeneratorCoCos());
     checker.addCoCo(new WarnNonExhibited());
     checker.addCoCo(new OneCardinality());
     checker.addCoCo(new PortDefHasOneType());
@@ -302,6 +303,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
   }
 
   public void transform(ASTSysMLModel ast) {
+    transformActionShortNotation(ast);
     transformSuccession(ast);
     transformTransitions(ast);
     transformStates(ast);
@@ -315,7 +317,13 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     sysMLv2Traverser.add4SysMLParts(partsTransitiveVisitor);
     sysMLv2Traverser.handle(ast);
   }
-
+  public void transformActionShortNotation(ASTSysMLModel ast) {
+    ActionShortnotationVisitor shortnotationVisitor = new ActionShortnotationVisitor();
+    SysMLv2Traverser sysMLv2Traverser = getTraverser();
+    sysMLv2Traverser.add4SysMLActions(shortnotationVisitor);
+    sysMLv2Traverser.handle(ast);
+    shortnotationVisitor.applyTransformations();
+  }
   public void transformSuccession(ASTSysMLModel ast) {
     ActionSuccessionVisitor actionSuccessionVisitor = new ActionSuccessionVisitor();
     SysMLv2Traverser sysMLv2Traverser = getTraverser();
