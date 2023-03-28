@@ -6,7 +6,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLSubsetting;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
@@ -126,12 +126,12 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   }
 
   void initExtendForPartUsage(ASTPartUsage astPartUsage) {
-    var specializationList = astPartUsage.streamSpecializations().filter(
-        t -> t instanceof ASTSysMLSpecialization).flatMap(
+    var subsetList = astPartUsage.streamSpecializations().filter(
+        t -> t instanceof ASTSysMLSubsetting).flatMap(
         f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
-    if(!specializationList.isEmpty()) {
+    if(!subsetList.isEmpty()) {
       List<ASTMCType> extendList = new ArrayList<>();
-      extendList.add(PartUtils.getNameOfSpecialication(specializationList.get(0), astPartUsage));
+      extendList.add(PartUtils.getNameOfSubsetPart(subsetList.get(0), astPartUsage));
       ASTCDExtendUsage extendUsage = InterfaceUtils.createExtendUsage(extendList, false);
       partDefClass.setCDExtendUsage(extendUsage);
     }

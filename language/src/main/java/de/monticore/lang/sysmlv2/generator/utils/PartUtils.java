@@ -4,7 +4,6 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSubsetting;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
@@ -75,23 +74,20 @@ public class PartUtils {
     return GeneratorUtils.qualifiedType("");
   }
 
-  public static ASTMCType getNameOfSpecialication(ASTMCType spec, ASTPartUsage astPartUsage) {
+  public static ASTMCType getNameOfSubsetPart(ASTMCType spec, ASTPartUsage astPartUsage) {
     ASTPartUsage specPartUsage = astPartUsage.getEnclosingScope().resolvePartUsage(printName(spec)).get().getAstNode();
-    var specializationList = specPartUsage.streamSpecializations().filter(
-        t -> t instanceof ASTSysMLSpecialization).flatMap(
+    var subsetList = specPartUsage.streamSpecializations().filter(
+        t -> t instanceof ASTSysMLSubsetting).flatMap(
         f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
 
     var typingList = specPartUsage.streamSpecializations().filter(c -> c instanceof ASTSysMLTyping).flatMap(
         f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
 
-    var redefinitionList = specPartUsage.streamSpecializations().filter(e -> e instanceof ASTSysMLRedefinition).flatMap(
-        f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
-    if((!specializationList.isEmpty() && !typingList.isEmpty() && redefinitionList.isEmpty()) | (typingList.size() > 1
-        | (!specPartUsage.getSysMLElementList().isEmpty()))) {
+    if(isAdHocClassDefinition(specPartUsage)) {
       return spec;
     }
-    if(!specializationList.isEmpty()) {
-      return specializationList.get(0);
+    if(!subsetList.isEmpty()) {
+      return getNameOfSubsetPart(subsetList.get(0), specPartUsage);
     }
     if(typingList.size() == 1) {
       return typingList.get(0);
@@ -101,7 +97,7 @@ public class PartUtils {
 
   public static boolean isAdHocClassDefinition(ASTPartUsage astPartUsage) {
 
-    var specializationList = astPartUsage.streamSpecializations().filter(
+    var subsetList = astPartUsage.streamSpecializations().filter(
         t -> t instanceof ASTSysMLSubsetting).flatMap(
         f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
 
@@ -110,7 +106,7 @@ public class PartUtils {
 
     var redefinitionList = astPartUsage.streamSpecializations().filter(e -> e instanceof ASTSysMLRedefinition).flatMap(
         f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
-    return (!specializationList.isEmpty() && !typingList.isEmpty() && redefinitionList.isEmpty()) | (
+    return (!subsetList.isEmpty() && !typingList.isEmpty() && redefinitionList.isEmpty()) | (
         typingList.size() > 1
             | (!astPartUsage.getSysMLElementList().isEmpty()));
   }

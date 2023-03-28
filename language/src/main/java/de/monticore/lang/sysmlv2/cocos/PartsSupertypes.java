@@ -1,8 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.cocos;
 
+import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLSubsetting;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
@@ -34,7 +36,7 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
   @Override
   public void check(ASTPartDef node) {
     var nonExistent = node.streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization)
-        .flatMap(s -> s.streamSuperTypes())
+        .flatMap(ASTSpecialization::streamSuperTypes)
         .filter(t -> node.getEnclosingScope().resolvePartDef(printName(t)).isEmpty())
         .collect(Collectors.toList());
 
@@ -42,7 +44,7 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
       Log.error("Could not find part definition \"" + printName(problem) + "\".");
     }
     var numberOfOtherSpecialications = node.streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization)
-        .flatMap(s -> s.streamSuperTypes())
+        .flatMap(ASTSpecialization::streamSuperTypes)
         .filter(t -> node.getEnclosingScope().resolvePartDef(printName(t)).isEmpty())
         .count();
     if(numberOfOtherSpecialications != 0)
@@ -54,15 +56,15 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
    */
   @Override
   public void check(ASTPartUsage node) {
-    var nonExistent = node.streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization | t instanceof ASTSysMLRedefinition)
-        .flatMap(s -> s.streamSuperTypes())
+    var nonExistent = node.streamSpecializations().filter(t -> t instanceof ASTSysMLSubsetting | t instanceof ASTSysMLRedefinition)
+        .flatMap(ASTSpecialization::streamSuperTypes)
         .filter(t -> node.getEnclosingScope().resolvePartUsage(printName(t)).isEmpty())
         .collect(Collectors.toList());
     for(var problem: nonExistent) {
       Log.error("Could not find part usage with the name \"" + printName(problem) + "\".");
     }
     var nonExistentType = node.streamSpecializations().filter(t -> t instanceof ASTSysMLTyping)
-        .flatMap(s -> s.streamSuperTypes())
+        .flatMap(ASTSpecialization::streamSuperTypes)
         .filter(t -> node.getEnclosingScope().resolvePartDef(printName(t)).isEmpty())
         .collect(Collectors.toList());
     for(var problem: nonExistentType) {
@@ -73,7 +75,7 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
   @Override
   public void check(ASTPortDef node) {
     var nonExistent = node.streamSpecializations()
-        .flatMap(s -> s.streamSuperTypes())
+        .flatMap(ASTSpecialization::streamSuperTypes)
         .filter(t -> node.getEnclosingScope().resolvePortDef(printName(t)).isEmpty())
         .collect(Collectors.toList());
 
@@ -88,7 +90,7 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
   @Override
   public void check(ASTPortUsage node) {
     var nonExistent = node.streamSpecializations()
-        .flatMap(s -> s.streamSuperTypes())
+        .flatMap(ASTSpecialization::streamSuperTypes)
         .filter(t -> node.getEnclosingScope().resolvePortDef(printName(t)).isEmpty())
         .collect(Collectors.toList());
 
