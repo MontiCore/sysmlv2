@@ -79,6 +79,28 @@ import java.util.List;
 import java.util.Optional;
 
 public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
+  public static void main(String[] args) {
+    SysMLv2GeneratorTool tool = new SysMLv2GeneratorTool();
+    tool.run(args);
+  }
+
+  public org.apache.commons.cli.Options initOptions() {
+    org.apache.commons.cli.Options options = new org.apache.commons.cli.Options();
+    options = addStandardOptions(options);
+    options = addAdditionalOptions(options);
+    return options;
+  }
+
+  public org.apache.commons.cli.Options addAdditionalOptions(org.apache.commons.cli.Options options) {
+    options.addOption(org.apache.commons.cli.Option.builder("o")
+        .longOpt("output")
+        .argName("file")
+        .optionalArg(true)
+        .numberOfArgs(1)
+        .desc("Defines the target path (optional)")
+        .build());
+    return options;
+  }
 
   @Override
   public void init() {
@@ -91,39 +113,28 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
   }
 
   /**
-   * Official Language Implementation CoCos
+   * Supertypes and name check
    */
   @Override
   public void runDefaultCoCos(ASTSysMLModel ast) {
     var checker = new SysMLv2CoCoChecker();
+    //Supertypes
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
     checker.addCoCo((SysMLActionsASTActionDefCoCo) new ActionSupertypes());
     checker.addCoCo((SysMLActionsASTActionUsageCoCo) new ActionSupertypes());
-    checker.addCoCo((SysMLInterfacesASTInterfaceDefCoCo) new InterfaceSupertypes());
-    checker.addCoCo((SysMLInterfacesASTInterfaceUsageCoCo) new InterfaceSupertypes());
-    checker.addCoCo((SysMLItemsASTItemDefCoCo) new ItemsSupertypes());
-    checker.addCoCo((SysMLItemsASTItemUsageCoCo) new ItemsSupertypes());
     checker.addCoCo((SysMLPartsASTPartDefCoCo) new PartsSupertypes());
     checker.addCoCo((SysMLPartsASTPartUsageCoCo) new PartsSupertypes());
-    // TODO Not ready for prime time. see ConstraintCoCoTest input 8_valid.sysml
-    //  checker.addCoCo(new ConstraintIsBoolean());
-    // TODO Erroring when checking Generics. See disabled test in SpecializationExistsTest
-    //  checker.addCoCo(new SpecializationExists());
-    checker.addCoCo((SysMLStatesASTStateDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLPartsASTPartDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLPartsASTPortDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLConstraintsASTConstraintDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLActionsASTActionDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLRequirementsASTRequirementDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLImportsAndPackagesASTSysMLPackageCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLPartsASTPortDefCoCo) new PartsSupertypes());
+    checker.addCoCo((SysMLPartsASTPortUsageCoCo) new PartsSupertypes());
+    //Names
     checker.addCoCo((SysMLActionsASTActionDefCoCo) new ActionNameCoCos());
     checker.addCoCo((SysMLActionsASTActionUsageCoCo) new ActionNameCoCos());
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateNameCoCos());
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateNameCoCos());
+    //check port directions
     checker.addCoCo((SysMLPartsASTPortUsageCoCo) new PortsGeneratorCoCos());
-    checker.addCoCo((SysMLPartsASTPortDefCoCo)new PortsGeneratorCoCos());
+    checker.addCoCo((SysMLPartsASTPortDefCoCo) new PortsGeneratorCoCos());
     checker.checkAll(ast);
   }
 
@@ -317,6 +328,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     sysMLv2Traverser.add4SysMLParts(partsTransitiveVisitor);
     sysMLv2Traverser.handle(ast);
   }
+
   public void transformActionShortNotation(ASTSysMLModel ast) {
     ActionShortnotationVisitor shortnotationVisitor = new ActionShortnotationVisitor();
     SysMLv2Traverser sysMLv2Traverser = getTraverser();
@@ -324,30 +336,35 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     sysMLv2Traverser.handle(ast);
     shortnotationVisitor.applyTransformations();
   }
+
   public void transformSuccession(ASTSysMLModel ast) {
     ActionSuccessionVisitor actionSuccessionVisitor = new ActionSuccessionVisitor();
     SysMLv2Traverser sysMLv2Traverser = getTraverser();
     sysMLv2Traverser.add4SysMLActions(actionSuccessionVisitor);
     sysMLv2Traverser.handle(ast);
   }
+
   public void transformStates(ASTSysMLModel ast) {
     StateVisitor stateVisitorveVisitor = new StateVisitor();
     SysMLv2Traverser sysMLv2Traverser = getTraverser();
     sysMLv2Traverser.add4SysMLStates(stateVisitorveVisitor);
     sysMLv2Traverser.handle(ast);
   }
+
   public void transformTransitions(ASTSysMLModel ast) {
     TransitionVisitor transitionVisitor = new TransitionVisitor();
     SysMLv2Traverser sysMLv2Traverser = getTraverser();
     sysMLv2Traverser.add4SysMLStates(transitionVisitor);
     sysMLv2Traverser.handle(ast);
   }
+
   public void transformPorts(ASTSysMLModel ast) {
     PortsVisitor portsVisitor = new PortsVisitor();
     SysMLv2Traverser sysMLv2Traverser = getTraverser();
     sysMLv2Traverser.add4SysMLParts(portsVisitor);
     sysMLv2Traverser.handle(ast);
   }
+
   public void generateCD(ASTSysMLModel ast, String outputDir, String fileName) {
 
     GeneratorSetup setup = new GeneratorSetup();
