@@ -13,7 +13,7 @@ ${cd4c.method("public static void main(String[] args)")}
     de.monticore.lang.sysmlv2.generator.log.Log.setTraceEnabled(true);
 
     <#list listMainComponent as subcomponent>
-        ${compHelper.cdPackageAsQualifiedName(subcomponent,baseName)}.${compHelper.getPartType(subcomponent)} ${subcomponent.getName()} = new ${compHelper.getPartType(subcomponent)}();
+        ${compHelper.cdPackageAsQualifiedName(subcomponent,baseName)}.${compHelper.getPartType(subcomponent)} ${subcomponent.getName()} = new ${compHelper.cdPackageAsQualifiedName(subcomponent,baseName)}.${compHelper.getPartType(subcomponent)}();
         ${subcomponent.getName()}.setUp();
     </#list>
     <#list listFlows as connection>
