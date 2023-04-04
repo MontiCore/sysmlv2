@@ -5,6 +5,7 @@ import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.lang.sysmlparts.symboltable.adapters.PortUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLArrayQualification;
+import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -12,14 +13,17 @@ import de.monticore.types.check.DeriveSymTypeOfCommonExpressions;
 import de.monticore.types.check.SymTypeArray;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types.check.TypeCheck;
 import de.monticore.types.check.TypeCheckResult;
+import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
 import java.util.Optional;
 
 import static de.monticore.types.check.SymTypePrimitive.unbox;
+import static de.monticore.types.check.TypeCheck.isBoolean;
 
 /**
  * <p>In SysMLv2, the expression in StateUsage is not type of Stream.
@@ -210,5 +214,21 @@ public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfComm
         logError("0xA1317", expr.get_SourcePositionStart());
       }
     }
+  }
+
+  @Override
+  protected SymTypeExpression logicalNot(SymTypeExpression inner, SourcePosition pos) {
+    if (isBoolean(inner)) {
+      return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
+    } else if (isStream && inner instanceof SymTypeOfGenerics) {
+      // An inverted Boolean Stream is still a Boolean Stream
+      if (((SymTypeOfGenerics) inner).getArgumentList().size() == 1){
+        if (isBoolean(((SymTypeOfGenerics) inner).getArgumentList().get(0))) {
+          return inner;
+        }
+      }
+    }
+    Log.error("0xA0171 Operator '!' not applicable to " + "'" + inner.print() + "'", pos);
+    return SymTypeExpressionFactory.createObscureType();
   }
 }
