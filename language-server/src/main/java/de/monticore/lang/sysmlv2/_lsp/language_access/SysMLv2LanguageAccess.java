@@ -5,6 +5,9 @@ import de.mclsg.lsp.document_management.DocumentManager;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
+import de.monticore.prettyprint.AstPrettyPrinter;
+
+import java.util.Optional;
 
 public class SysMLv2LanguageAccess extends SysMLv2LanguageAccessTOP {
   private final SysMLv2Traverser traverser = SysMLv2Mill.traverser();
@@ -30,5 +33,11 @@ public class SysMLv2LanguageAccess extends SysMLv2LanguageAccessTOP {
     ast.accept(traverser);
 
     super.runCoCos(ast);
+  }
+
+  @Override
+  public Optional<AstPrettyPrinter<ASTSysMLModel>> getPrettyPrinter() {
+    AstPrettyPrinter printer = node -> node.toString();
+    return Optional.of(printer);
   }
 }

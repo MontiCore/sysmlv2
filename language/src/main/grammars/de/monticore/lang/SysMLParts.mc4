@@ -46,6 +46,10 @@ component grammar SysMLParts extends SysMLBasis {
       return refinements;
     } ;
 
+   enum SysMLReqType = "UNKNOWN" | "HLR" | "LLR" | "MIXED" ;
+   symbolrule PartDef =
+      requirementType:SysMLReqType;
+
   symbol scope AttributeDef implements SysMLType =
     "attribute" "def" Name Specialization*
     ("{"
@@ -85,7 +89,20 @@ component grammar SysMLParts extends SysMLBasis {
    * table completion. The SymTypeExpressions only store type expressions, not the actual types or any symbols.
    */
   symbolrule PartUsage =
-      types:de.monticore.types.check.SymTypeExpression* ;
+      types:de.monticore.types.check.SymTypeExpression*
+      method public Optional<de.monticore.lang.sysmlparts._symboltable.PartDefSymbol> getPartDef() {
+        for (de.monticore.lang.sysmlbasis._ast.ASTSpecialization specialization : this.getAstNode().getSpecializationList()) {
+          for (de.monticore.types.mcbasictypes._ast.ASTMCType specializationType : specialization.getSuperTypesList()) {
+            var qualified = (de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType) specializationType;
+            var name = qualified.getMCQualifiedName().getQName();
+            var partDef = (Optional<de.monticore.lang.sysmlparts._symboltable.PartDefSymbol>) this.getEnclosingScope().resolvePartDef(name);
+            if(partDef.isPresent()) {
+              return partDef;
+            }
+          }
+        }
+        return Optional.empty();
+      } ;
 
   symbol AttributeUsage implements SysMLElement =
       SysMLFeatureDirection? "attribute" Name Specialization* ("=" Expression)? ";"  ;
