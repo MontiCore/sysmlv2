@@ -32,13 +32,13 @@ package AvionicsParts {
         port drogue : ParachutePort;
         port main : ParachutePort;
 
-        port voltageIn : VoltagePort;
+        //port voltageIn : VoltagePort; //das vlt weg
     }
 
     part def COTSRecovery specializes RecoveryBoard;
     part def SRADRecovery specializes RecoveryBoard{
 
-        part def Sensor{
+        part def Sensor{ //weird
          port dataOut : DataOutPort;
         }
         part def IMU specializes Sensor {
@@ -46,18 +46,17 @@ package AvionicsParts {
             port zSpeed : DataOutPort;
         }
         part def Memory{
-         port logData : DataOutPort;
+         port logData : DataOutPort; //sinnvoll zu modellieren?
         }
         part Microcontroller{
-            port voltageIn : VoltagePort;
+            //port voltageIn : VoltagePort; //?
             port pressData : ~DataOutPort;
             port zAcc : ~DataOutPort;
             port zSpeed : ~DataOutPort;
             exhibit state flightHandler {
-                            in height : Real;
-                            in zSpeed : Real;
-                            in zAcceleraction : Real;
-                            entry;
+                            in height : Real = pressData.value;
+                            in zSpeed : Real = zSpeed.value;
+                            in zAcceleraction : Real = zAcc.value;
                             then Idle;
                             state Idle;
                             transition Idle
@@ -91,24 +90,20 @@ package AvionicsParts {
 
             port main : ParachutePort;
             port drogue : ParachutePort;
-            bind pressData.value = flightHandler.height;
-            bind zAcc.value = flightHandler.zAcceleraction;
-            bind zSpeed.value = flightHandler.zSpeed;
         }
 
-        part ESP32 :> Microcontroller;
         part pressureSensor : Sensor; //vereinfachung: gibt höhe in metern an, ein wert
         part imuSensor : IMU; //vereinfachung: gibt beschleunigung auf der z achse an, und geschwindigkeit auf z achse an jeweils ein wert
         part sdCard : Memory;
 
-
-        bind pressureSensor.dataOut = ESP32.pressData;
-        bind imuSensor.zAcc = ESP32.zAcc;
-        bind imuSensor.zSpeed = ESP32.zSpeed;
-        bind ESP32.logData = sdCard.logData;
-        bind voltageIn = ESP32.voltageIn;
-        bind ESP32.drogue = drogue;
-        bind ESP32.main = main;
+//Durch flows ersetzen
+        bind pressureSensor.dataOut = Microcontroller.pressData;
+        bind imuSensor.zAcc = Microcontroller.zAcc;
+        bind imuSensor.zSpeed = Microcontroller.zSpeed;
+        bind Microcontroller.logData = sdCard.logData;
+        //bind voltageIn = Microcontroller.voltageIn;
+        bind Microcontroller.drogue = drogue;
+        bind Microcontroller.main = main;
 
     }
     part def PowerSystem{
@@ -134,8 +129,8 @@ package AvionicsParts {
         part powerSys : PowerSystem;
         part pyroSys : PyroSystem;
 
-        flow from powerSys.battery.batteryVoltage to sradRec.voltageIn;
-        flow from powerSys.battery.batteryVoltage to cotsRec.voltageIn;
+        //flow from powerSys.battery.batteryVoltage to sradRec.voltageIn;
+        //flow from powerSys.battery.batteryVoltage to cotsRec.voltageIn;
 
         flow from cotsRec.main to pyroSys.mainSignal;
         flow from cotsRec.drogue to pyroSys.drogueSignal;
