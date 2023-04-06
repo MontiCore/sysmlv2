@@ -24,6 +24,7 @@ import de.monticore.lang.sysmlv2.cocos.AssignActionTypeCheck;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
+import de.monticore.lang.sysmlv2.cocos.RefinementChainCheck;
 import de.monticore.lang.sysmlv2.cocos.SendActionTypeCheck;
 import de.monticore.lang.sysmlv2.cocos.SpecializationExists;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
@@ -92,6 +93,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo(new OneCardinality());
     checker.addCoCo(new PortDefHasOneType());
     checker.addCoCo(new PortDefNeedsDirection());
+    checker.addCoCo(new RefinementChainCheck());
 
     // Additional warnings, things might be ignored
     checker.addCoCo(new WarnNonExhibited());

@@ -39,7 +39,12 @@ public class RequirementClassificationCompleter implements SysMLPartsVisitor2 {
     }
 
     var usageTypes = symbol.getSpannedScope().getPartUsageSymbols().values().stream().map((usage) ->
-        usage.getPartDef().get().getRequirementType());
+        usage.getPartDef().orElseGet(() -> {
+          var tmp = new PartDefSymbol("");
+          tmp.setRequirementType(ASTSysMLReqType.UNKNOWN);
+          return tmp;
+        }).getRequirementType());
+
     res = usageTypes.reduce(res, this::mergeClassification);
 
     return res != null ? res : ASTSysMLReqType.UNKNOWN;
