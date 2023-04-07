@@ -132,6 +132,9 @@ publishing {
     mavenJava(MavenPublication) {
       artifactId = "sysml_v2"
       from components.java
+      artifact shadowJar {
+        classifier = 'cli'
+      }
     }
   }
   // and where to upload them
