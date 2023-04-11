@@ -1,11 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.cocos;
 
-import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTDefSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSubsetting;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlbasis._ast.ASTUsageSpecialization;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortDef;
@@ -35,16 +36,16 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
    */
   @Override
   public void check(ASTPartDef node) {
-    var nonExistent = node.streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization)
-        .flatMap(ASTSpecialization::streamSuperTypes)
+    var nonExistent = node.streamDefSpecializations().filter(t -> t instanceof ASTSysMLSpecialization)
+        .flatMap(ASTDefSpecialization::streamSuperTypes)
         .filter(t -> node.getEnclosingScope().resolvePartDef(printName(t)).isEmpty())
         .collect(Collectors.toList());
 
     for(var problem: nonExistent) {
       Log.error("Could not find part definition \"" + printName(problem) + "\".");
     }
-    var numberOfOtherSpecialications = node.streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization)
-        .flatMap(ASTSpecialization::streamSuperTypes)
+    var numberOfOtherSpecialications = node.streamDefSpecializations().filter(t -> t instanceof ASTSysMLSpecialization)
+        .flatMap(ASTDefSpecialization::streamSuperTypes)
         .filter(t -> node.getEnclosingScope().resolvePartDef(printName(t)).isEmpty())
         .count();
     if(numberOfOtherSpecialications != 0)
@@ -56,15 +57,15 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
    */
   @Override
   public void check(ASTPartUsage node) {
-    var nonExistent = node.streamSpecializations().filter(t -> t instanceof ASTSysMLSubsetting | t instanceof ASTSysMLRedefinition)
-        .flatMap(ASTSpecialization::streamSuperTypes)
+    var nonExistent = node.streamUsageSpecializations().filter(t -> t instanceof ASTSysMLSubsetting | t instanceof ASTSysMLRedefinition)
+        .flatMap(ASTUsageSpecialization::streamSuperTypes)
         .filter(t -> node.getEnclosingScope().resolvePartUsage(printName(t)).isEmpty())
         .collect(Collectors.toList());
     for(var problem: nonExistent) {
       Log.error("Could not find part usage with the name \"" + printName(problem) + "\".");
     }
-    var nonExistentType = node.streamSpecializations().filter(t -> t instanceof ASTSysMLTyping)
-        .flatMap(ASTSpecialization::streamSuperTypes)
+    var nonExistentType = node.streamUsageSpecializations().filter(t -> t instanceof ASTSysMLTyping)
+        .flatMap(ASTUsageSpecialization::streamSuperTypes)
         .filter(t -> node.getEnclosingScope().resolvePartDef(printName(t)).isEmpty())
         .collect(Collectors.toList());
     for(var problem: nonExistentType) {
@@ -74,8 +75,8 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
   }
   @Override
   public void check(ASTPortDef node) {
-    var nonExistent = node.streamSpecializations()
-        .flatMap(ASTSpecialization::streamSuperTypes)
+    var nonExistent = node.streamDefSpecializations()
+        .flatMap(ASTDefSpecialization::streamSuperTypes)
         .filter(t -> node.getEnclosingScope().resolvePortDef(printName(t)).isEmpty())
         .collect(Collectors.toList());
 
@@ -89,8 +90,8 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
    */
   @Override
   public void check(ASTPortUsage node) {
-    var nonExistent = node.streamSpecializations()
-        .flatMap(ASTSpecialization::streamSuperTypes)
+    var nonExistent = node.streamUsageSpecializations()
+        .flatMap(ASTUsageSpecialization::streamSuperTypes)
         .filter(t -> node.getEnclosingScope().resolvePortDef(printName(t)).isEmpty())
         .collect(Collectors.toList());
 

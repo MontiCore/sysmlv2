@@ -6,7 +6,7 @@ component grammar SysMLConstraints
             SysMLActions {
 
   symbol scope (shadowing) ConstraintDef implements SysMLType =
-    "constraint" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    "constraint" "def" Name DefSpecialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
       SysMLElement* // TODO Auf AttributeUsages beschränken in finale (nicht component) SysMLv2-Sprache
       Expression
@@ -14,7 +14,7 @@ component grammar SysMLConstraints
 
   symbol scope (shadowing) ConstraintUsage implements SysMLElement =
     ((["require"] | ["assume"] | ["assert"]) "constraint"? | "constraint")
-    Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    Name UsageSpecialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
       SysMLElement*
       Expression

@@ -1,10 +1,10 @@
 package de.monticore.lang.sysmlv2.cocos;
 
-import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlbasis._ast.ASTUsageSpecialization;
 import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
@@ -22,7 +22,6 @@ import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class StateGeneratorCoCo implements SysMLStatesASTStateUsageCoCo, SysMLStatesASTStateDefCoCo {
   ActionResolveUtils actionResolveUtils = new ActionResolveUtils();
@@ -46,13 +45,13 @@ public class StateGeneratorCoCo implements SysMLStatesASTStateUsageCoCo, SysMLSt
             "StateUsage " + node.getName() + " has " + parallelStates + " \"StateUsages\" , but needs at least 2.");
       }
     }
-    var specTypes = node.streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization).flatMap(
-        ASTSpecialization::streamSuperTypes).collect(
+    var specTypes = node.streamUsageSpecializations().filter(t -> t instanceof ASTSysMLSpecialization).flatMap(
+        ASTUsageSpecialization::streamSuperTypes).collect(
         Collectors.toList());
-    var typeTypes = node.streamSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
-        ASTSpecialization::streamSuperTypes).collect(
+    var typeTypes = node.streamUsageSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
+        ASTUsageSpecialization::streamSuperTypes).collect(
         Collectors.toList());
-    if(node.streamSpecializations().anyMatch(t -> t instanceof ASTSysMLRedefinition))
+    if(node.streamUsageSpecializations().anyMatch(t -> t instanceof ASTSysMLRedefinition))
       Log.error("State usage " + node.getName() + " uses redefinition, this is not allowed.");
     if(specTypes.size() > 1)
       Log.error("State usage " + node.getName() + " has more than one specialization, this is not allowed.");
@@ -72,7 +71,7 @@ public class StateGeneratorCoCo implements SysMLStatesASTStateUsageCoCo, SysMLSt
   @Override
   public void check(ASTStateDef node) {
 
-    if(node.getSpecializationList().size() > 0)
+    if(node.getDefSpecializationList().size() > 0)
       Log.error(
           "State def " + node.getName() + " has a specialization, redefinition or type none of these are allowed.");
 

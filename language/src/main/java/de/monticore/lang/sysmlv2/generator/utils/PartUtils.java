@@ -41,7 +41,7 @@ public class PartUtils {
   }
 
   public static ASTMCQualifiedType partType(ASTPartUsage element) {
-    var sysMLTypingList = element.getSpecializationList().stream().filter(
+    var sysMLTypingList = element.getUsageSpecializationList().stream().filter(
         t -> t instanceof ASTSysMLTyping).map(u -> ((ASTSysMLTyping) u)).collect(Collectors.toList());
     if(isAdHocClassDefinition(element))
       return GeneratorUtils.qualifiedType(element.getName());
@@ -55,7 +55,7 @@ public class PartUtils {
       }
     }
     else {
-      var sysmlSubset = element.getSpecializationList().stream().filter(
+      var sysmlSubset = element.getUsageSpecializationList().stream().filter(
           t -> t instanceof ASTSysMLSubsetting).map(u -> ((ASTSysMLSubsetting) u)).collect(Collectors.toList());
       if(!sysmlSubset.isEmpty()) {
         if(sysmlSubset.get(0).getSuperTypesList().size() == 1) {
@@ -76,11 +76,11 @@ public class PartUtils {
 
   public static ASTMCType getNameOfSubsetPart(ASTMCType spec, ASTPartUsage astPartUsage) {
     ASTPartUsage specPartUsage = astPartUsage.getEnclosingScope().resolvePartUsage(printName(spec)).get().getAstNode();
-    var subsetList = specPartUsage.streamSpecializations().filter(
+    var subsetList = specPartUsage.streamUsageSpecializations().filter(
         t -> t instanceof ASTSysMLSubsetting).flatMap(
         f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
 
-    var typingList = specPartUsage.streamSpecializations().filter(c -> c instanceof ASTSysMLTyping).flatMap(
+    var typingList = specPartUsage.streamUsageSpecializations().filter(c -> c instanceof ASTSysMLTyping).flatMap(
         f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
 
     if(isAdHocClassDefinition(specPartUsage)) {
@@ -97,14 +97,14 @@ public class PartUtils {
 
   public static boolean isAdHocClassDefinition(ASTPartUsage astPartUsage) {
 
-    var subsetList = astPartUsage.streamSpecializations().filter(
+    var subsetList = astPartUsage.streamUsageSpecializations().filter(
         t -> t instanceof ASTSysMLSubsetting).flatMap(
         f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
 
-    var typingList = astPartUsage.streamSpecializations().filter(c -> c instanceof ASTSysMLTyping).flatMap(
+    var typingList = astPartUsage.streamUsageSpecializations().filter(c -> c instanceof ASTSysMLTyping).flatMap(
         f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
 
-    var redefinitionList = astPartUsage.streamSpecializations().filter(e -> e instanceof ASTSysMLRedefinition).flatMap(
+    var redefinitionList = astPartUsage.streamUsageSpecializations().filter(e -> e instanceof ASTSysMLRedefinition).flatMap(
         f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
     return (!subsetList.isEmpty() && !typingList.isEmpty() && redefinitionList.isEmpty()) | (
         typingList.size() > 1

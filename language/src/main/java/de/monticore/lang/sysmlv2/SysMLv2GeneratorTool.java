@@ -9,6 +9,8 @@ import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.lang.sysml4verification.cocos.WarnNonExhibited;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionUsageCoCo;
+import de.monticore.lang.sysmlbasis._cocos.SysMLBasisASTDefSpecializationCoCo;
+import de.monticore.lang.sysmlbasis._cocos.SysMLBasisASTUsageSpecializationCoCo;
 import de.monticore.lang.sysmlconnections._cocos.SysMLConnectionsASTBindCoCo;
 import de.monticore.lang.sysmlconnections._cocos.SysMLConnectionsASTFlowCoCo;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintDefCoCo;
@@ -147,7 +149,8 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLActionsASTActionUsageCoCo) new ActionGeneratorCoCos());
     checker.addCoCo((SysMLActionsASTActionDefCoCo) new ActionGeneratorCoCos());
     checker.addCoCo(new WarnNonExhibited());
-    checker.addCoCo(new OneCardinality());
+    checker.addCoCo((SysMLBasisASTUsageSpecializationCoCo) new OneCardinality());
+    checker.addCoCo((SysMLBasisASTDefSpecializationCoCo) new OneCardinality());
     checker.addCoCo(new PortDefHasOneType());
     checker.addCoCo(new PortDefNeedsDirection());
     checker.addCoCo(new ActionControlGeneratorCoCos());

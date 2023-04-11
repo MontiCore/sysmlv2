@@ -1,11 +1,11 @@
 package de.monticore.lang.sysmlv2.cocos;
 
-import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSubsetting;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlbasis._ast.ASTUsageSpecialization;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
@@ -31,17 +31,17 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
    * Check that at least one part def is extended.
    */
   @Override public void check(ASTPartUsage node) {
-    var subsets = node.streamSpecializations().filter(
-        t -> t instanceof ASTSysMLSubsetting).map(ASTSpecialization::getSuperTypesList).collect(
+    var subsets = node.streamUsageSpecializations().filter(
+        t -> t instanceof ASTSysMLSubsetting).map(ASTUsageSpecialization::getSuperTypesList).collect(
         Collectors.toList());
-    var specialications = node.streamSpecializations().filter(
-        t -> t instanceof ASTSysMLSpecialization).map(ASTSpecialization::getSuperTypesList).collect(
+    var specialications = node.streamUsageSpecializations().filter(
+        t -> t instanceof ASTSysMLSpecialization).map(ASTUsageSpecialization::getSuperTypesList).collect(
         Collectors.toList());
-    var redefinitons = node.streamSpecializations().filter(
-        t -> t instanceof ASTSysMLRedefinition).map(ASTSpecialization::getSuperTypesList).collect(
+    var redefinitons = node.streamUsageSpecializations().filter(
+        t -> t instanceof ASTSysMLRedefinition).map(ASTUsageSpecialization::getSuperTypesList).collect(
         Collectors.toList());
-    var typing = node.streamSpecializations().filter(
-        t -> t instanceof ASTSysMLTyping).map(ASTSpecialization::getSuperTypesList).collect(
+    var typing = node.streamUsageSpecializations().filter(
+        t -> t instanceof ASTSysMLTyping).map(ASTUsageSpecialization::getSuperTypesList).collect(
         Collectors.toList());
     if(subsets.isEmpty() && node.getSysMLElementList().size() == 0 && redefinitons.isEmpty() && typing.isEmpty()) {
       Log.error("The Part Usage " + node.getName()
@@ -52,7 +52,7 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
           + " uses specialize. This is not allowed use subsets instead.");
     }
     attributeResolveUtils.getAttributesOfElement(node);
-    var redefinitionSpec = node.streamSpecializations().filter(
+    var redefinitionSpec = node.streamUsageSpecializations().filter(
         t -> t instanceof ASTSysMLRedefinition).collect(Collectors.toList());
     if(!redefinitionSpec.isEmpty())
       checkRefinition(redefinitionSpec, node);
@@ -60,7 +60,7 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
   }
 
   @Override public void check(ASTPartDef node) {
-    long numberIllegalSpecs = node.streamSpecializations().filter(
+    long numberIllegalSpecs = node.streamDefSpecializations().filter(
         t -> t instanceof ASTSysMLTyping | t instanceof ASTSysMLRedefinition).count();
     if(numberIllegalSpecs != 0)
       Log.error("The Part Def " + node.getName()
@@ -76,7 +76,7 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
 
   //
 
-  void checkRefinition(List<ASTSpecialization> redefinitionList, ASTPartUsage node) {
+  void checkRefinition(List<ASTUsageSpecialization> redefinitionList, ASTPartUsage node) {
 
     if(redefinitionList.get(0).getSuperTypesList().size() != 1) {
       Log.error("Part Usage " + node.getName() + " has "
@@ -123,7 +123,7 @@ public class PartsGeneratorCoCos implements SysMLPartsASTPartUsageCoCo, SysMLPar
   int checkPartUsageSymbol(int partFoundInParents, Optional<PartUsageSymbol> partUsageSymbol) {
     if(partUsageSymbol.isPresent()) {
       ASTPartUsage refinedAttr = partUsageSymbol.get().getAstNode();
-      if(refinedAttr.getSpecializationList().stream().noneMatch(
+      if(refinedAttr.getUsageSpecializationList().stream().noneMatch(
           t -> t instanceof ASTSysMLRedefinition)) //we only count attributeUsages where no redefinition is used
       {
         partFoundInParents++;

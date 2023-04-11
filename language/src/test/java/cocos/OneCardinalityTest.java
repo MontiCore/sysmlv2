@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package cocos;
 
+import de.monticore.lang.sysmlbasis._cocos.SysMLBasisASTDefSpecializationCoCo;
+import de.monticore.lang.sysmlbasis._cocos.SysMLBasisASTUsageSpecializationCoCo;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
@@ -46,7 +48,8 @@ public class OneCardinalityTest {
     if(ast.isPresent()) {
       st.createSymbolTable(ast.get());
       SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
-      checker.addCoCo(new OneCardinality());
+      checker.addCoCo((SysMLBasisASTUsageSpecializationCoCo) new OneCardinality());
+      checker.addCoCo((SysMLBasisASTDefSpecializationCoCo) new OneCardinality());
       checker.checkAll(ast.get());
       assertTrue(Log.getFindings().isEmpty());
     }else {
@@ -67,7 +70,8 @@ public class OneCardinalityTest {
     if(ast.isPresent()) {
       st.createSymbolTable(ast.get());
       SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
-      checker.addCoCo(new OneCardinality());
+      checker.addCoCo((SysMLBasisASTUsageSpecializationCoCo) new OneCardinality());
+      checker.addCoCo((SysMLBasisASTDefSpecializationCoCo) new OneCardinality());
       checker.checkAll(ast.get());
       assertFalse(Log.getFindings().isEmpty());
     }else {

@@ -5,7 +5,6 @@ import de.monticore.lang.sysmlinterfaces._ast.ASTInterfaceDef;
 import de.monticore.lang.sysmlinterfaces._ast.ASTInterfaceUsage;
 import de.monticore.lang.sysmlinterfaces._cocos.SysMLInterfacesASTInterfaceDefCoCo;
 import de.monticore.lang.sysmlinterfaces._cocos.SysMLInterfacesASTInterfaceUsageCoCo;
-import de.monticore.lang.sysmlinterfaces._cocos.SysMLInterfacesASTInterfaceDefCoCo;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -26,7 +25,7 @@ public class InterfaceSupertypes implements SysMLInterfacesASTInterfaceDefCoCo, 
    */
   @Override
   public void check(ASTInterfaceDef node) {
-    var nonExistent = node.streamSpecializations()
+    var nonExistent = node.streamDefSpecializations()
         .flatMap(s -> s.streamSuperTypes())
         .filter(t -> node.getEnclosingScope().resolveInterfaceDef(printName(t)).isEmpty())
         .collect(Collectors.toList());
@@ -41,7 +40,7 @@ public class InterfaceSupertypes implements SysMLInterfacesASTInterfaceDefCoCo, 
    */
   @Override
   public void check(ASTInterfaceUsage node) {
-    var nonExistent = node.streamSpecializations()
+    var nonExistent = node.streamUsageSpecializations()
         .flatMap(s -> s.streamSuperTypes())
         .filter(t -> node.getEnclosingScope().resolveInterfaceDef(printName(t)).isEmpty()
             && node.getEnclosingScope().resolveInterfaceUsage(printName(t)).isEmpty())

@@ -4,14 +4,14 @@ package de.monticore.lang;
 component grammar SysMLAdvRequirements extends SysMLRequirements {
 
   symbol scope AdvRequirementDef implements SysMLType =
-    "adv" "requirement" "def" ("<" humanId:String ">")? Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    "adv" "requirement" "def" ("<" humanId:String ">")? Name DefSpecialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
       AdvRequirementSubject?
       SysMLElement*
     "}" | ";") ;
 
   symbol scope AdvRequirementUsage =
-    "adv" "requirement" ("<" humanId:String ">")? Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    "adv" "requirement" ("<" humanId:String ">")? Name UsageSpecialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
       AdvRequirementSubject?
       SysMLElement*

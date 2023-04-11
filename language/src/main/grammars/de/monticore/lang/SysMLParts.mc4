@@ -16,7 +16,7 @@ component grammar SysMLParts extends SysMLBasis {
    */
 
   symbol scope (shadowing) PartDef implements SysMLType =
-    Modifier "part" "def" Name Specialization*
+    Modifier "part" "def" Name DefSpecialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
@@ -24,7 +24,7 @@ component grammar SysMLParts extends SysMLBasis {
   astrule PartDef =
     method public List<de.monticore.lang.sysmlparts._symboltable.PartDefSymbol> getRefinements() {
       List<de.monticore.lang.sysmlparts._symboltable.PartDefSymbol> refinements = new ArrayList<>();
-      for(de.monticore.lang.sysmlbasis._ast.ASTSpecialization spec: this.getSpecializationList()) {
+      for(de.monticore.lang.sysmlbasis._ast.ASTDefSpecialization spec: this.getDefSpecializationList()) {
         if(spec instanceof de.monticore.lang.sysmlbasis._ast.ASTSysMLRefinement) {
           for(de.monticore.types.mcbasictypes._ast.ASTMCType superType: spec.getSuperTypesList()) {
             String superTypeName = superType.printType(
@@ -47,13 +47,13 @@ component grammar SysMLParts extends SysMLBasis {
     } ;
 
   symbol scope AttributeDef implements SysMLType =
-    "attribute" "def" Name Specialization*
+    "attribute" "def" Name DefSpecialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
 
   symbol scope EnumDef implements SysMLType =
-    "enum" "def" Name Specialization*
+    "enum" "def" Name DefSpecialization*
     ("{"
       SysMLEnumConstant*
     "}" | ";") ;
@@ -61,7 +61,7 @@ component grammar SysMLParts extends SysMLBasis {
   SysMLEnumConstant implements Field = "enum"? Name ";" ;
 
   symbol scope (shadowing) PortDef implements SysMLType =
-    Modifier "port" "def" Name Specialization*
+    Modifier "port" "def" Name DefSpecialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
@@ -73,7 +73,7 @@ component grammar SysMLParts extends SysMLBasis {
    */
 
   symbol scope (shadowing) PartUsage implements SysMLElement =
-    Modifier SysMLFeatureDirection? "part" Name Specialization*
+    Modifier SysMLFeatureDirection? "part" Name UsageSpecialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
@@ -88,7 +88,7 @@ component grammar SysMLParts extends SysMLBasis {
       types:de.monticore.types.check.SymTypeExpression* ;
 
   symbol AttributeUsage implements SysMLElement =
-      SysMLFeatureDirection? ("attribute")? Name Specialization* ("=" Expression)? ";"  ;
+      SysMLFeatureDirection? ("attribute")? Name UsageSpecialization* ("=" Expression)? ";"  ;
 
   symbolrule AttributeUsage =
       types:de.monticore.types.check.SymTypeExpression*
@@ -105,7 +105,7 @@ component grammar SysMLParts extends SysMLBasis {
    * symboltable (and not needing to re-processes the original models).
    */
   symbol scope (shadowing) PortUsage implements SysMLElement =
-      Modifier SysMLFeatureDirection? "port" Name Specialization* DefaultValue
+      Modifier SysMLFeatureDirection? "port" Name UsageSpecialization* DefaultValue
        ("{"
           SysMLElement*
        "}" | ";") ;
@@ -116,7 +116,7 @@ component grammar SysMLParts extends SysMLBasis {
 
   astrule PortUsage =
     method public Optional<de.monticore.cardinality._ast.ASTCardinality> getCardinality() {
-      for (de.monticore.lang.sysmlbasis._ast.ASTSpecialization s: this.getSpecializationList()) {
+      for (de.monticore.lang.sysmlbasis._ast.ASTUsageSpecialization s: this.getUsageSpecializationList()) {
         if(s instanceof de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) {
           if(((de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) s).isPresentCardinality()) {
             return Optional.of(((de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) s).getCardinality());

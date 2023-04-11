@@ -1,12 +1,12 @@
 package de.monticore.lang.sysmlv2.generator.utils.resolve;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
-import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTDefSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLQualifiedName;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlbasis._ast.ASTUsageSpecialization;
 import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
@@ -40,7 +40,7 @@ public class AttributeResolveUtils {
 
     List<ASTAttributeUsage> attributeUsages = getAttributeUsageOfNode(node);
     List<ASTAttributeUsage> listOfRedefinedAttributes = attributeUsages.stream().filter(
-        t -> t.streamSpecializations().anyMatch(f -> f instanceof ASTSysMLRedefinition)).collect(
+        t -> t.streamUsageSpecializations().anyMatch(f -> f instanceof ASTSysMLRedefinition)).collect(
         Collectors.toList());
 
     if(parentList.isEmpty()) {
@@ -53,7 +53,8 @@ public class AttributeResolveUtils {
       }
     }
     else {
-      parentAttribute = parentList.stream().map(AttributeResolveUtils::getAttributesOfElement).collect(Collectors.toList());
+      parentAttribute = parentList.stream().map(AttributeResolveUtils::getAttributesOfElement).collect(
+          Collectors.toList());
       intersectList = emptyIntersection(parentAttribute);
       checkRedefinitionTypes(listOfRedefinedAttributes, parentAttribute);
     }
@@ -65,7 +66,8 @@ public class AttributeResolveUtils {
           listOfRedefinedAttributes);
       List<ASTAttributeUsage> partsWithoutRedefinition = new ArrayList<>(attributeUsages);
       partsWithoutRedefinition.removeAll(listOfRedefinedAttributes);
-      List<String> stringList = partsWithoutRedefinition.stream().map(ASTAttributeUsage::getName).collect(Collectors.toList());
+      List<String> stringList = partsWithoutRedefinition.stream().map(ASTAttributeUsage::getName).collect(
+          Collectors.toList());
       if(parentWithoutRedefinedParts.stream().anyMatch(t -> stringList.contains(t.getName()))) {
         Log.error(
             "An attribute usage of " + getNameOfNode(node)
@@ -83,12 +85,12 @@ public class AttributeResolveUtils {
   }
 
   static void checkRedefinitionTypes(List<ASTAttributeUsage> redefinedTypes,
-                              List<List<ASTAttributeUsage>> parentAttributeList) {
+                                     List<List<ASTAttributeUsage>> parentAttributeList) {
 
     for (ASTAttributeUsage attributeUsage : redefinedTypes) {
       String attributeName = attributeUsage.getName();
-      List<ASTMCType> redefinedASTMCTypes = attributeUsage.streamSpecializations().filter(
-          t -> t instanceof ASTSysMLTyping).flatMap(ASTSpecialization::streamSuperTypes).collect(
+      List<ASTMCType> redefinedASTMCTypes = attributeUsage.streamUsageSpecializations().filter(
+          t -> t instanceof ASTSysMLTyping).flatMap(ASTUsageSpecialization::streamSuperTypes).collect(
           Collectors.toList());
 
       var astmcTypesFromParents = parentAttributeList.stream().flatMap(Collection::stream).filter(
@@ -110,14 +112,15 @@ public class AttributeResolveUtils {
     }
   }
 
-  static boolean checkCompatibility(ASTMCType first, ASTMCType second, ISysMLPartsScope parts) {
+  static boolean checkCompatibility(ASTMCType first, ASTMCType second,
+                                    ISysMLPartsScope parts) { //ist eher ein "isSubType first of second" check
     if(printName(first).equals(printName(second)))
       return true;
     var optionalAttributeDef = parts.resolveAttributeDef(printName(first));
     if(optionalAttributeDef.isPresent()) {
       var attributeDef = optionalAttributeDef.get().getAstNode();
-      var superTypesAttributeDef = attributeDef.streamSpecializations().filter(
-          t -> t instanceof ASTSysMLSpecialization).flatMap(ASTSpecialization::streamSuperTypes).collect(
+      var superTypesAttributeDef = attributeDef.streamDefSpecializations().filter(
+          t -> t instanceof ASTSysMLSpecialization).flatMap(ASTDefSpecialization::streamSuperTypes).collect(
           Collectors.toList());
       var dsad = superTypesAttributeDef.stream().map(
           t -> checkCompatibility(t, second, attributeDef.getEnclosingScope())).collect(Collectors.toList());
@@ -130,16 +133,17 @@ public class AttributeResolveUtils {
   }
 
   static List<ASTAttributeUsage> filterSameTypeInAttributeList(ASTSysMLElement node,
-                                                        List<ASTAttributeUsage> listOfAttributeUsages) {
-
+                                                               List<ASTAttributeUsage> listOfAttributeUsages) {
+//Really dafuq
     List<ASTAttributeUsage> attributeUsagesOfNode = getAttributeUsageOfNode(node);
     List<ASTMCType> namesOfAttributesWithRedefinitions = attributeUsagesOfNode.stream().flatMap(
-        ASTAttributeUsage::streamSpecializations).filter(t -> t instanceof ASTSysMLRedefinition).flatMap(
+        ASTAttributeUsage::streamUsageSpecializations).filter(t -> t instanceof ASTSysMLRedefinition).flatMap(
         t -> t.getSuperTypesList().stream()).collect(
         Collectors.toList());
     List<ASTAttributeUsage> returnList = new ArrayList<>(listOfAttributeUsages);
     for (ASTAttributeUsage element : listOfAttributeUsages) {
-      var superTypesElement = getAttributeTypes(element).stream().map(AttributeResolveUtils::printName).collect(Collectors.toList());
+      var superTypesElement = getAttributeTypes(element).stream().map(AttributeResolveUtils::printName).collect(
+          Collectors.toList());
       var listOfSupertypeLists = listOfAttributeUsages.stream().filter(t -> t.getName().equals(element.getName())).map(
           AttributeResolveUtils::getAttributeTypes).collect(Collectors.toList());
       var filteredSupertypes = listOfSupertypeLists.stream().flatMap(
@@ -153,7 +157,8 @@ public class AttributeResolveUtils {
     return astMcTypeListUnion(listOfLists, namesOfAttributesWithRedefinitions);
   }
 
-  static List<ASTAttributeUsage> emptyIntersection(List<List<ASTAttributeUsage>> attributeLists) {
+  static List<ASTAttributeUsage> emptyIntersection(
+      List<List<ASTAttributeUsage>> attributeLists) { //was heißt empty intersection
     //remove all sublists that are empty
     List<List<ASTAttributeUsage>> notEmpty = attributeLists.stream().filter(t -> !t.isEmpty()).collect(
         Collectors.toList());
@@ -162,7 +167,8 @@ public class AttributeResolveUtils {
           Collectors.toList())).filter(t -> !t.isEmpty()).collect(Collectors.toList());
       List<String> stringIntersection = stringListOfLists.get(0);
       for (int i = 1; i < stringListOfLists.size(); i++) {
-        stringIntersection.retainAll(stringListOfLists.get(i));
+        stringIntersection.retainAll(stringListOfLists.get(
+            i)); //Dafuq ist es nicht sinnvoller alles zusammenzuschmeißen als set? kein attribut name sollte mehrfach vorkommen innerhalb eines nodes, also kann man mehrfach vorkommen durch  set erkennen
       }
       return notEmpty.stream().flatMap(Collection::stream).filter(
           t -> stringIntersection.contains((t.getName()))).collect(
@@ -173,14 +179,14 @@ public class AttributeResolveUtils {
   }
 
   static List<ASTAttributeUsage> attributeUsageListUnion(List<List<ASTAttributeUsage>> attributeLists,
-                                                  List<ASTAttributeUsage> undesiredAttributes) {
+                                                         List<ASTAttributeUsage> undesiredAttributes) {
     return attributeLists.stream().flatMap(Collection::stream).filter(
         t -> !(undesiredAttributes.stream().map(ASTAttributeUsage::getName).collect(Collectors.toList()).contains(
             t.getName()))).collect(Collectors.toList());
   }
 
   static List<ASTAttributeUsage> astMcTypeListUnion(List<List<ASTAttributeUsage>> attributeLists,
-                                             List<ASTMCType> undesiredAttributes) {
+                                                    List<ASTMCType> undesiredAttributes) {
     return attributeLists.stream().flatMap(Collection::stream).filter(
         t -> !(undesiredAttributes.stream().map(AttributeResolveUtils::printName).collect(Collectors.toList()).contains(
             t.getName()))).collect(Collectors.toList());
@@ -244,9 +250,9 @@ public class AttributeResolveUtils {
     return attributeUsageList;
   }
 
-  static List<ASTMCType> getAttributeTypes(ASTAttributeUsage astAttributeUsage) {
-    return astAttributeUsage.streamSpecializations().filter(f -> f instanceof ASTSysMLTyping).flatMap(
-        ASTSpecialization::streamSuperTypes).collect(
+  static List<ASTMCType> getAttributeTypes(ASTAttributeUsage astAttributeUsage) { //sollte nur ein typing sein
+    return astAttributeUsage.streamUsageSpecializations().filter(f -> f instanceof ASTSysMLTyping).flatMap(
+        ASTUsageSpecialization::streamSuperTypes).collect(
         Collectors.toList());
   }
 
@@ -254,14 +260,14 @@ public class AttributeResolveUtils {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
   }
 
-
   public static Optional<ASTAttributeUsage> resolveExprInParts(ASTNameExpression node) {
     var scope = (SysMLv2Scope) node.getEnclosingScope();
     if(scope.resolveAttributeUsageDown(node.getName()).isPresent())
       return Optional.ofNullable(scope.resolveAttributeUsageDown(node.getName()).get().getAstNode());
     var attributesListPart = AttributeResolveUtils.getAttributesOfElement((ASTSysMLElement) scope.getAstNode());
     var attribute = attributesListPart.stream().filter(t -> t.getName().equals(node.getName())).findFirst();
-    if(attribute.isPresent()) return attribute;
+    if(attribute.isPresent())
+      return attribute;
     return Optional.empty();
   }
 
@@ -281,13 +287,15 @@ public class AttributeResolveUtils {
     }
     return resolveExprInBehaviour(node, (SysMLv2Scope) parent.getEnclosingScope());
   }
+
   public static Optional<ASTAttributeUsage> resolveInParts(ASTMCQualifiedName node) {
     var scope = (SysMLv2Scope) node.getEnclosingScope();
     if(scope.resolveAttributeUsageDown(node.getQName()).isPresent())
       return Optional.ofNullable(scope.resolveAttributeUsageDown(node.getQName()).get().getAstNode());
     var attributesListPart = AttributeResolveUtils.getAttributesOfElement((ASTSysMLElement) scope.getAstNode());
     var attribute = attributesListPart.stream().filter(t -> t.getName().equals(node.getQName())).findFirst();
-    if(attribute.isPresent()) return attribute;
+    if(attribute.isPresent())
+      return attribute;
     return Optional.empty();
   }
 

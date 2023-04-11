@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2._symboltable;
 
-import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTUsageSpecialization;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
@@ -101,7 +101,8 @@ import java.util.function.Predicate;
       var ast = (ASTRequirementUsage) this.astNode.get();
       if(ast.isPresentRequirementSubject()) {
         // Alle Typen kommen in Frage
-        ast.getRequirementSubject().getSpecializationList().stream().flatMap(ASTSpecialization::streamSuperTypes).forEach(t -> {
+        ast.getRequirementSubject().getUsageSpecializationList().stream().flatMap(
+            ASTUsageSpecialization::streamSuperTypes).forEach(t -> {
           var typeSymbol = t.getDefiningSymbol();
           if(typeSymbol.isPresent() && typeSymbol.get() instanceof IScopeSpanningSymbol) {
             var scope = ((IScopeSpanningSymbol)typeSymbol.get()).getSpannedScope();

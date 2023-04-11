@@ -32,10 +32,10 @@ public class PortsGeneratorCoCos implements SysMLPartsASTPortUsageCoCo, SysMLPar
     if(node.isPresentSysMLFeatureDirection()) {
       Log.error("The Port usage " + node.getName() + " has a direction, but is not allowed to have one.");
     }
-    if(node.streamSpecializations().anyMatch(t -> !(t instanceof ASTSysMLTyping))) {
+    if(node.streamUsageSpecializations().anyMatch(t -> !(t instanceof ASTSysMLTyping))) {
       Log.error("The Port usage " + node.getName() + " has specialications that are not typings, this is not allowed.");
     }
-    if(node.streamSpecializations().filter(t -> (t instanceof ASTSysMLTyping)).count() > 1) {
+    if(node.streamUsageSpecializations().filter(t -> (t instanceof ASTSysMLTyping)).count() > 1) {
       Log.error("The Port usage " + node.getName() + " has more than one type this is not allowed.");
     }
     if(node.streamSysMLElements().anyMatch(t -> !(t instanceof ASTAttributeUsage))) {
@@ -53,7 +53,7 @@ public class PortsGeneratorCoCos implements SysMLPartsASTPortUsageCoCo, SysMLPar
       Log.error(
           "The Port def " + node.getName() + " has sub elements that are not attribute usages this is not allowed.");
     }
-    if(node.streamSpecializations().anyMatch(t -> !(t instanceof ASTSysMLSpecialization))) {
+    if(node.streamDefSpecializations().anyMatch(t -> !(t instanceof ASTSysMLSpecialization))) {
       Log.error("The Port def " + node.getName() + " has redefinitions or typings, this is not allowed.");
     }
     AttributeResolveUtils attributeResolveUtils = new AttributeResolveUtils();
@@ -87,7 +87,7 @@ public class PortsGeneratorCoCos implements SysMLPartsASTPortUsageCoCo, SysMLPar
     }
 
     if(!delayedAttribute.isEmpty()) {
-      var astmcTypes = delayedAttribute.get(0).streamSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
+      var astmcTypes = delayedAttribute.get(0).streamUsageSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
           t -> t.streamSuperTypes()).collect(
           Collectors.toList());
       if(!printName(astmcTypes.get(0)).equals("Boolean") || astmcTypes.size() != 1) {

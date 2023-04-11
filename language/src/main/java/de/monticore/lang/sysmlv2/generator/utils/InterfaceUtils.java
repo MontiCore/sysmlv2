@@ -4,7 +4,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDExtendUsage;
 import de.monticore.cdbasis._ast.ASTCDInterfaceUsage;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTDefSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
@@ -60,17 +60,17 @@ public class InterfaceUtils {
 
   static public ASTCDInterface createInterface(ASTSysMLElement sysMLElement) {
     String name = null;
-    List<ASTSpecialization> specializationList = new ArrayList<>();
+    List<ASTDefSpecialization> specializationList = new ArrayList<>();
     if(sysMLElement instanceof ASTPartDef) {
       name = ((ASTPartDef) sysMLElement).getName();
-      specializationList = ((ASTPartDef) sysMLElement).getSpecializationList();
+      specializationList = ((ASTPartDef) sysMLElement).getDefSpecializationList();
     }
     if(sysMLElement instanceof ASTAttributeDef) {
       name = ((ASTAttributeDef) sysMLElement).getName();
-      specializationList = ((ASTAttributeDef) sysMLElement).getSpecializationList();
+      specializationList = ((ASTAttributeDef) sysMLElement).getDefSpecializationList();
     }
     List<ASTMCType> supertypeList = specializationList.stream().filter(
-        t -> t instanceof ASTSysMLSpecialization).flatMap(ASTSpecialization::streamSuperTypes).collect(
+        t -> t instanceof ASTSysMLSpecialization).flatMap(ASTDefSpecialization::streamSuperTypes).collect(
         Collectors.toList());
     ASTCDExtendUsage extendUsage = createExtendUsage(supertypeList, true);
     ASTCDInterface partInterface = CD4CodeMill.cDInterfaceBuilder().setName(name + "Interface").setModifier(

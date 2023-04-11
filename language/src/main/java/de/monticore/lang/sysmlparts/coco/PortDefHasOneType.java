@@ -24,7 +24,7 @@ public class PortDefHasOneType implements SysMLPartsASTPortDefCoCo {
         .filter(e -> (e.isPresentSysMLFeatureDirection()))
         .collect(Collectors.toList()))
     {
-      if (attr.getSpecializationList().stream().noneMatch(s -> s instanceof ASTSysMLTyping)) {
+      if (attr.getUsageSpecializationList().stream().noneMatch(s -> s instanceof ASTSysMLTyping)) {
         Log.error("Channels do need a type", attr.get_SourcePositionStart(), attr.get_SourcePositionEnd());
       }
     }

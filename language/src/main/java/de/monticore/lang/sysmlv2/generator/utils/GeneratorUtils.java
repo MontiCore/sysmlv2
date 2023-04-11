@@ -62,7 +62,7 @@ public class GeneratorUtils {
   }
 
   static public ASTMCQualifiedType attributeType(ASTAttributeUsage element) {
-    var sysMLTypingList = element.getSpecializationList().stream().filter(
+    var sysMLTypingList = element.getUsageSpecializationList().stream().filter(
         t -> t instanceof ASTSysMLTyping).map(u -> ((ASTSysMLTyping) u)).collect(Collectors.toList());
     String typString = sysMLTypingList.get(0).getSuperTypes(0).printType(
         new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));

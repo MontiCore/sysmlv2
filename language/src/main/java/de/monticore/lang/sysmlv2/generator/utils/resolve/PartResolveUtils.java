@@ -1,10 +1,11 @@
 package de.monticore.lang.sysmlv2.generator.utils.resolve;
 
-import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTDefSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlbasis._ast.ASTUsageSpecialization;
 import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
@@ -36,7 +37,7 @@ public class PartResolveUtils {
 
     List<ASTPartUsage> partUsages = getPartUsageOfNode(node);
     List<ASTPartUsage> listOfRedefinedParts = partUsages.stream().filter(
-        t -> t.streamSpecializations().anyMatch(f -> f instanceof ASTSysMLRedefinition)).collect(
+        t -> t.streamUsageSpecializations().anyMatch(f -> f instanceof ASTSysMLRedefinition)).collect(
         Collectors.toList());
 
     if(parentList.isEmpty()) {
@@ -83,8 +84,8 @@ public class PartResolveUtils {
 
     for (ASTPartUsage attributeUsage : redefinedTypes) {
       String attributeName = attributeUsage.getName();
-      List<ASTMCType> redefinedASTMCTypes = attributeUsage.streamSpecializations().filter(
-          t -> t instanceof ASTSysMLTyping).flatMap(ASTSpecialization::streamSuperTypes).collect(
+      List<ASTMCType> redefinedASTMCTypes = attributeUsage.streamUsageSpecializations().filter(
+          t -> t instanceof ASTSysMLTyping).flatMap(ASTUsageSpecialization::streamSuperTypes).collect(
           Collectors.toList());
 
       var astmcTypesFromParents = parentAttributeList.stream().flatMap(Collection::stream).filter(
@@ -109,12 +110,11 @@ public class PartResolveUtils {
   static boolean checkCompatibility(ASTMCType first, ASTMCType second, ISysMLPartsScope parts) {
     if(printName(first).equals(printName(second)))
       return true;
-    //TODO
     var optionalAttributeDef = parts.resolveAttributeDef(printName(first));
     if(optionalAttributeDef.isPresent()) {
       var attributeDef = optionalAttributeDef.get().getAstNode();
-      var superTypesAttributeDef = attributeDef.streamSpecializations().filter(
-          t -> t instanceof ASTSysMLSpecialization).flatMap(ASTSpecialization::streamSuperTypes).collect(
+      var superTypesAttributeDef = attributeDef.streamDefSpecializations().filter(
+          t -> t instanceof ASTSysMLSpecialization).flatMap(ASTDefSpecialization::streamSuperTypes).collect(
           Collectors.toList());
       var dsad = superTypesAttributeDef.stream().map(
           t -> checkCompatibility(t, second, attributeDef.getEnclosingScope())).collect(Collectors.toList());
@@ -131,7 +131,7 @@ public class PartResolveUtils {
 
     List<ASTPartUsage> attributeUsagesOfNode = getPartUsageOfNode(node);
     List<ASTMCType> namesOfAttributesWithRedefinitions = attributeUsagesOfNode.stream().flatMap(
-        ASTPartUsage::streamSpecializations).filter(t -> t instanceof ASTSysMLRedefinition).flatMap(
+        ASTPartUsage::streamUsageSpecializations).filter(t -> t instanceof ASTSysMLRedefinition).flatMap(
         t -> t.getSuperTypesList().stream()).collect(
         Collectors.toList());
     List<ASTPartUsage> returnList = new ArrayList<>(listOfAttributeUsages);
@@ -233,9 +233,8 @@ public class PartResolveUtils {
 
   static List<ASTMCType> getAttributeTypes(ASTPartUsage astAttributeUsage) {
 
-    //TODO hier muss gefixed werden
-    return astAttributeUsage.streamSpecializations().filter(f -> f instanceof ASTSysMLTyping).flatMap(
-        ASTSpecialization::streamSuperTypes).collect(
+    return astAttributeUsage.streamUsageSpecializations().filter(f -> f instanceof ASTSysMLTyping).flatMap(
+        ASTUsageSpecialization::streamSuperTypes).collect(
         Collectors.toList());
   }
 

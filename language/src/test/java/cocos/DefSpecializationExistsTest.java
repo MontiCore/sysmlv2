@@ -6,7 +6,7 @@ import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
-import de.monticore.lang.sysmlv2.cocos.SpecializationExists;
+import de.monticore.lang.sysmlv2.cocos.DefSpecializationExists;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.AfterEach;
@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Prüft das Finden von Types der Specializations
  */
-public class SpecializationExistsTest {
+public class DefSpecializationExistsTest {
 
   @BeforeAll
   static void setup() {
@@ -92,7 +92,8 @@ public class SpecializationExistsTest {
 
   private List<Finding> check(ASTSysMLModel ast) {
     var checker = new SysMLv2CoCoChecker();
-    checker.addCoCo(new SpecializationExists());
+    checker.addCoCo( new DefSpecializationExists());
+    //checker.addCoCo((SysMLBasisASTDefSpecializationCoCo) new SpecializationExists());
     Log.enableFailQuick(false);
     checker.checkAll(ast);
     return Log.getFindings().stream().filter(f -> f.isError()).collect(Collectors.toList());

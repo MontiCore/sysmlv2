@@ -25,28 +25,28 @@ public class ResolveUtils {
     List<ASTSysMLElement> parentList = new ArrayList<>();
     //Get direct supertypes
     if(node instanceof ASTPartDef) {
-      parentList = ((ASTPartDef) node).streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization).flatMap(
+      parentList = ((ASTPartDef) node).streamDefSpecializations().filter(t -> t instanceof ASTSysMLSpecialization).flatMap(
           f -> f.getSuperTypesList().stream()).map(
           t -> ((ASTPartDef) node).getEnclosingScope().resolvePartDef(printName(t))).filter(Optional::isPresent).map(
           t -> t.get().getAstNode()).collect(
           Collectors.toList());
     }
     if(node instanceof ASTPartUsage) {
-      parentList = ((ASTPartUsage) node).streamSpecializations().filter(
+      parentList = ((ASTPartUsage) node).streamUsageSpecializations().filter(
           t -> t instanceof ASTSysMLSpecialization).flatMap(
           f -> f.getSuperTypesList().stream()).map(
           t -> ((ASTPartUsage) node).getEnclosingScope().resolvePartUsage(printName(t))).filter(
           Optional::isPresent).map(
           t -> t.get().getAstNode()).collect(
           Collectors.toList());
-      parentList.addAll(((ASTPartUsage) node).streamSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
+      parentList.addAll(((ASTPartUsage) node).streamUsageSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
           f -> f.getSuperTypesList().stream()).map(
           t -> ((ASTPartUsage) node).getEnclosingScope().resolvePartDef(printName(t))).filter(Optional::isPresent).map(
           t -> t.get().getAstNode()).collect(
           Collectors.toList()));
     }
     if(node instanceof ASTAttributeDef) {
-      parentList = ((ASTAttributeDef) node).streamSpecializations().filter(
+      parentList = ((ASTAttributeDef) node).streamDefSpecializations().filter(
           t -> t instanceof ASTSysMLSpecialization).flatMap(
           f -> f.getSuperTypesList().stream()).map(
           t -> ((ASTAttributeDef) node).getEnclosingScope().resolveAttributeDef(printName(t))).filter(
@@ -55,7 +55,7 @@ public class ResolveUtils {
           Collectors.toList());
     }
     if(node instanceof ASTPortUsage) {
-      parentList = ((ASTPortUsage) node).streamSpecializations().filter(
+      parentList = ((ASTPortUsage) node).streamUsageSpecializations().filter(
           t -> t instanceof ASTSysMLTyping).flatMap(
           f -> f.getSuperTypesList().stream()).map(
           t -> ((ASTPortUsage) node).getEnclosingScope().resolvePortDef(printName(t))).filter(
@@ -64,7 +64,7 @@ public class ResolveUtils {
           Collectors.toList());
     }
     if(node instanceof ASTPortDef) {
-      parentList = ((ASTPortDef) node).streamSpecializations().filter(
+      parentList = ((ASTPortDef) node).streamDefSpecializations().filter(
           t -> t instanceof ASTSysMLSpecialization).flatMap(
           f -> f.getSuperTypesList().stream()).map(
           t -> ((ASTPortDef) node).getEnclosingScope().resolvePortDef(printName(t))).filter(
@@ -73,7 +73,7 @@ public class ResolveUtils {
           Collectors.toList());
     }
     if(node instanceof ASTStateDef) {
-      parentList = ((ASTStateDef) node).streamSpecializations().filter(
+      parentList = ((ASTStateDef) node).streamDefSpecializations().filter(
           t -> t instanceof ASTSysMLSpecialization).flatMap(
           f -> f.getSuperTypesList().stream()).map(
           t -> ((ASTStateDef) node).getEnclosingScope().resolveStateDef(printName(t))).filter(
@@ -82,14 +82,14 @@ public class ResolveUtils {
           Collectors.toList());
     }
     if(node instanceof ASTStateUsage) {
-      parentList = ((ASTStateUsage) node).streamSpecializations().filter(
+      parentList = ((ASTStateUsage) node).streamUsageSpecializations().filter(
           t -> t instanceof ASTSysMLSpecialization).flatMap(
           f -> f.getSuperTypesList().stream()).map(
           t -> ((ASTStateUsage) node).getEnclosingScope().resolveStateUsage(printName(t))).filter(
           Optional::isPresent).map(
           t -> t.get().getAstNode()).collect(
           Collectors.toList());
-      parentList.addAll(((ASTStateUsage) node).streamSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
+      parentList.addAll(((ASTStateUsage) node).streamUsageSpecializations().filter(t -> t instanceof ASTSysMLTyping).flatMap(
           f -> f.getSuperTypesList().stream()).map(
           t -> ((ASTStateUsage) node).getEnclosingScope().resolveStateDef(printName(t))).filter(
           Optional::isPresent).map(

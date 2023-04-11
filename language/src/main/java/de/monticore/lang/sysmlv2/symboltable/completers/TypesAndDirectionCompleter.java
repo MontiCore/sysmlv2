@@ -1,10 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.symboltable.completers;
 
-import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLFeatureDirection;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLParameter;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlbasis._ast.ASTUsageSpecialization;
 import de.monticore.lang.sysmlbasis._visitor.SysMLBasisVisitor2;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTEnumDef;
@@ -35,7 +35,7 @@ public class TypesAndDirectionCompleter implements SysMLBasisVisitor2, SysMLPart
    * Returns type completion for Usages. Bases on types completed in the SpecializationCompleter. We solely store the qualified name as
    * SymTypeExpression using the defining symbol, outside of generic types (require type printing)
    */
-  private List<SymTypeExpression> getTypeCompletion(List<ASTSpecialization> specializationList, boolean conjugated) {
+  private List<SymTypeExpression> getTypeCompletion(List<ASTUsageSpecialization> specializationList, boolean conjugated) {
     List<SymTypeExpression> typeExpressions = new ArrayList<>();
 
     for(var specialization: specializationList) {
@@ -66,7 +66,7 @@ public class TypesAndDirectionCompleter implements SysMLBasisVisitor2, SysMLPart
 
   @Override
   public void visit(ASTSysMLParameter node) {
-    List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
+    List<SymTypeExpression> types = getTypeCompletion(node.getUsageSpecializationList(), false);
 
     if(node.isPresentSymbol() && !types.isEmpty()) {
       node.getSymbol().setType(types.get(0));
@@ -79,7 +79,7 @@ public class TypesAndDirectionCompleter implements SysMLBasisVisitor2, SysMLPart
    */
   @Override
   public void visit(ASTPartUsage node) {
-    List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
+    List<SymTypeExpression> types = getTypeCompletion(node.getUsageSpecializationList(), false);
 
     if(node.isPresentSymbol()) {
       node.getSymbol().setTypesList(types);
@@ -94,8 +94,8 @@ public class TypesAndDirectionCompleter implements SysMLBasisVisitor2, SysMLPart
     if(node.isPresentSymbol()) {
       PortUsageSymbol symbol = node.getSymbol();
 
-      List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
-      List<SymTypeExpression> conjugatedTypes = getTypeCompletion(node.getSpecializationList(), true);
+      List<SymTypeExpression> types = getTypeCompletion(node.getUsageSpecializationList(), false);
+      List<SymTypeExpression> conjugatedTypes = getTypeCompletion(node.getUsageSpecializationList(), true);
 
       symbol.setTypesList(types);
       symbol.setConjugatedTypesList(conjugatedTypes);
@@ -110,7 +110,7 @@ public class TypesAndDirectionCompleter implements SysMLBasisVisitor2, SysMLPart
     if(node.isPresentSymbol()) {
       AttributeUsageSymbol symbol = node.getSymbol();
       // type
-      List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
+      List<SymTypeExpression> types = getTypeCompletion(node.getUsageSpecializationList(), false);
 
       symbol.setTypesList(types);
 
@@ -129,7 +129,7 @@ public class TypesAndDirectionCompleter implements SysMLBasisVisitor2, SysMLPart
     if(node.isPresentSymbol()) {
       RequirementSubjectSymbol symbol = node.getSymbol();
       // type
-      List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
+      List<SymTypeExpression> types = getTypeCompletion(node.getUsageSpecializationList(), false);
 
       symbol.setTypesList(types);
     }

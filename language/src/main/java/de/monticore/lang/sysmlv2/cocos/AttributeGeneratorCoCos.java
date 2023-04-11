@@ -1,8 +1,8 @@
 package de.monticore.lang.sysmlv2.cocos;
 
-import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlbasis._ast.ASTUsageSpecialization;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeDefCoCo;
@@ -27,10 +27,10 @@ public class AttributeGeneratorCoCos implements SysMLPartsASTAttributeUsageCoCo,
   @Override
   public void check(ASTAttributeUsage node) {
     checkTypingExists(node);
-    var redefinitionList = node.getSpecializationList().stream().filter(t -> t instanceof ASTSysMLRedefinition).collect(
+    var redefinitionList = node.getUsageSpecializationList().stream().filter(t -> t instanceof ASTSysMLRedefinition).collect(
         Collectors.toList());
     if(!redefinitionList.isEmpty()) {
-      for (ASTSpecialization redefinition : redefinitionList) {
+      for (ASTUsageSpecialization redefinition : redefinitionList) {
         if(redefinition.getSuperTypesList().size() != 1) {
           Log.error("Attribute Usage " + node.getName() + " has "
               + redefinition.getSuperTypesList().size()
@@ -53,7 +53,7 @@ public void check(ASTAttributeDef node){
 }
 
   void checkTypingExists(ASTAttributeUsage node) {
-    long typeCount = node.getSpecializationList().stream().filter(t -> t instanceof ASTSysMLTyping).count();
+    long typeCount = node.getUsageSpecializationList().stream().filter(t -> t instanceof ASTSysMLTyping).count();
     if(typeCount != 1) {
       Log.error("Attribute usage " + node.getName() + " has " + typeCount + " typings, but needs exactly 1.");
     }

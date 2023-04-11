@@ -1,9 +1,9 @@
 package de.monticore.lang.sysmlv2.visitor;
 
-import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLFeatureDirection;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlbasis._ast.ASTUsageSpecialization;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortDef;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
@@ -64,7 +64,7 @@ public class PortsVisitor implements SysMLPartsVisitor2 {
   int countConjugations(ASTSysMLElement element) {
 
     if(element instanceof ASTPortUsage) {
-      List<ASTSpecialization> specializations = ((ASTPortUsage) element).streamSpecializations().filter(
+      List<ASTUsageSpecialization> specializations = ((ASTPortUsage) element).streamUsageSpecializations().filter(
           t -> t instanceof ASTSysMLTyping).collect(
           Collectors.toList());
 

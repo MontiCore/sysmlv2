@@ -3,6 +3,8 @@ package de.monticore.lang.sysmlv2;
 
 import de.monticore.lang.sysml4verification.cocos.WarnNonExhibited;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
+import de.monticore.lang.sysmlbasis._cocos.SysMLBasisASTDefSpecializationCoCo;
+import de.monticore.lang.sysmlbasis._cocos.SysMLBasisASTUsageSpecializationCoCo;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintDefCoCo;
 import de.monticore.lang.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTSysMLPackageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeDefCoCo;
@@ -11,8 +13,6 @@ import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
 import de.monticore.lang.sysmlparts.coco.PortDefHasOneType;
 import de.monticore.lang.sysmlparts.coco.PortDefNeedsDirection;
 import de.monticore.lang.sysmlrequirements._cocos.SysMLRequirementsASTRequirementDefCoCo;
-import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTDoActionCoCo;
-import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTExitActionCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateUsageCoCo;
 import de.monticore.lang.sysmlstates.cocos.NoDoActions;
@@ -29,7 +29,6 @@ import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
-import de.monticore.lang.sysmlv2.cocos.SpecializationExists;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 
 public class SysMLv2Tool extends SysMLv2ToolTOP {
@@ -78,7 +77,8 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
   {
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo(new WarnNonExhibited());
-    checker.addCoCo(new OneCardinality());
+    checker.addCoCo((SysMLBasisASTUsageSpecializationCoCo) new OneCardinality());
+    checker.addCoCo((SysMLBasisASTDefSpecializationCoCo) new OneCardinality());
     checker.addCoCo(new NoExitActions());
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new NoDoActions());
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new NoDoActions());

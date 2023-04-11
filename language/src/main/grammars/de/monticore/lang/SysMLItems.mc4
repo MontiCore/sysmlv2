@@ -5,13 +5,13 @@ component grammar SysMLItems
     extends de.monticore.lang.SysMLBasis {
 
   symbol scope ItemDef implements SysMLType =
-    Modifier "item" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    Modifier "item" "def" Name DefSpecialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
       SysMLElement*
     "}" | ";") ;
 
   symbol scope ItemUsage implements SysMLElement =
-    Modifier SysMLFeatureDirection? "item" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")? DefaultValue
+    Modifier SysMLFeatureDirection? "item" (Name UsageSpecialization*)? ("(" (SysMLParameter || ",")* ")")? DefaultValue
     ("{"
       SysMLElement*
      "}" | ";")? ;

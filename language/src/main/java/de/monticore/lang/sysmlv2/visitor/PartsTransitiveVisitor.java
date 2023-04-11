@@ -1,10 +1,11 @@
 package de.monticore.lang.sysmlv2.visitor;
 
-import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTDefSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSubsetting;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlbasis._ast.ASTUsageSpecialization;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
@@ -52,14 +53,14 @@ public class PartsTransitiveVisitor implements SysMLPartsVisitor2 {
   }
 
   List<ASTMCType> getSpecializationList(ASTPartDef node) {
-    return node.streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization)
-        .flatMap(ASTSpecialization::streamSuperTypes).collect(Collectors.toList());
+    return node.streamDefSpecializations().filter(t -> t instanceof ASTSysMLSpecialization)
+        .flatMap(ASTDefSpecialization::streamSuperTypes).collect(Collectors.toList());
 
   }
 
   List<ASTMCType> getSpecializationList(ASTAttributeDef node) {
-    return node.streamSpecializations().filter(t -> t instanceof ASTSysMLSpecialization)
-        .flatMap(ASTSpecialization::streamSuperTypes).collect(Collectors.toList());
+    return node.streamDefSpecializations().filter(t -> t instanceof ASTSysMLSpecialization)
+        .flatMap(ASTDefSpecialization::streamSuperTypes).collect(Collectors.toList());
 
   }
 
@@ -131,15 +132,15 @@ public class PartsTransitiveVisitor implements SysMLPartsVisitor2 {
   }
 
   List<ASTMCType> getPartDefList(ASTPartUsage node) {
-    return node.streamSpecializations().filter(t -> t instanceof ASTSysMLTyping)
-        .flatMap(ASTSpecialization::streamSuperTypes).collect(Collectors.toList());
+    return node.streamUsageSpecializations().filter(t -> t instanceof ASTSysMLTyping)
+        .flatMap(ASTUsageSpecialization::streamSuperTypes).collect(Collectors.toList());
 
   }
 
   List<ASTMCType> getPartUsageList(ASTPartUsage node) {
-    return node.streamSpecializations().filter(
+    return node.streamUsageSpecializations().filter(
             t -> t instanceof ASTSysMLSubsetting | t instanceof ASTSysMLRedefinition)
-        .flatMap(ASTSpecialization::streamSuperTypes).collect(Collectors.toList());
+        .flatMap(ASTUsageSpecialization::streamSuperTypes).collect(Collectors.toList());
 
   }
 

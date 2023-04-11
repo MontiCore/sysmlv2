@@ -85,12 +85,12 @@ public class StateVisitor implements SysMLStatesVisitor2 {
     if(element instanceof ASTStateUsage) {
       if(isNodeAutomaton(element) || ((ASTStateUsage) element).getIsAutomaton())
         return true;
-      var stateDefList = ((ASTStateUsage) element).getSpecializationList().stream().filter(
+      var stateDefList = ((ASTStateUsage) element).getUsageSpecializationList().stream().filter(
           t -> t instanceof ASTSysMLTyping).flatMap(t -> t.streamSuperTypes()).map(
           t -> ((ASTStateUsage) element).getEnclosingScope().resolveStateDef(printName(t))).filter(
           Optional::isPresent
       ).map(t -> t.get().getAstNode()).collect(Collectors.toList());
-      var stateUsageList = ((ASTStateUsage) element).getSpecializationList().stream().filter(
+      var stateUsageList = ((ASTStateUsage) element).getUsageSpecializationList().stream().filter(
           t -> t instanceof ASTSysMLSpecialization).flatMap(t -> t.streamSuperTypes()).map(
           t -> ((ASTStateUsage) element).getEnclosingScope().resolveStateUsage(printName(t))).filter(
           Optional::isPresent
@@ -105,7 +105,7 @@ public class StateVisitor implements SysMLStatesVisitor2 {
     if(element instanceof ASTStateDef) {
       if(isNodeAutomaton(element) || ((ASTStateDef) element).getIsAutomaton())
         return true;
-      var stateDefList = ((ASTStateDef) element).getSpecializationList().stream().filter(
+      var stateDefList = ((ASTStateDef) element).getDefSpecializationList().stream().filter(
           t -> t instanceof ASTSysMLSpecialization).flatMap(t -> t.streamSuperTypes()).map(
           t -> ((ASTStateDef) element).getEnclosingScope().resolveStateDef(printName(t))).filter(
           Optional::isPresent

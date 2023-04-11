@@ -25,7 +25,7 @@ public class ActionSupertypes implements SysMLActionsASTActionDefCoCo, SysMLActi
    */
   @Override
   public void check(ASTActionDef node) {
-    var nonExistent = node.streamSpecializations()
+    var nonExistent = node.streamDefSpecializations()
         .flatMap(s -> s.streamSuperTypes())
         .filter(t -> node.getEnclosingScope().resolveActionDef(printName(t)).isEmpty())
         .collect(Collectors.toList());
@@ -40,7 +40,7 @@ public class ActionSupertypes implements SysMLActionsASTActionDefCoCo, SysMLActi
    */
   @Override
   public void check(ASTActionUsage node) {
-    var nonExistent = node.streamSpecializations()
+    var nonExistent = node.streamUsageSpecializations()
         .flatMap(s -> s.streamSuperTypes())
         .filter(t -> node.getEnclosingScope().resolveActionDef(printName(t)).isEmpty()
             && node.getEnclosingScope().resolveActionUsage(printName(t)).isEmpty())

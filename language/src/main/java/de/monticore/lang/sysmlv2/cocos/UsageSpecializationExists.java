@@ -1,20 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.cocos;
 
-import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
-import de.monticore.lang.sysmlbasis._cocos.SysMLBasisASTSpecializationCoCo;
-import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
-import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTSysMLTransitionCoCo;
-import de.monticore.lang.sysmlstates._symboltable.ISysMLStatesScope;
+import de.monticore.lang.sysmlbasis._ast.ASTUsageSpecialization;
+import de.monticore.lang.sysmlbasis._cocos.SysMLBasisASTUsageSpecializationCoCo;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 
-public class SpecializationExists implements SysMLBasisASTSpecializationCoCo {
+public class UsageSpecializationExists implements SysMLBasisASTUsageSpecializationCoCo {
 
   @Override
-  public void check(ASTSpecialization node) {
+  public void check(ASTUsageSpecialization node) {
     if (node.getEnclosingScope() instanceof ISysMLv2Scope) {
       var scope = (ISysMLv2Scope)node.getEnclosingScope();
       for(var type : node.getSuperTypesList()) {

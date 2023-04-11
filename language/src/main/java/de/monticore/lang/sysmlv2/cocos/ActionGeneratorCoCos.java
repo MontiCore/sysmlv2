@@ -13,9 +13,9 @@ import de.monticore.lang.sysmlactions._ast.ASTSendActionUsage;
 import de.monticore.lang.sysmlactions._ast.ASTSysMLFirst;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionUsageCoCo;
-import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLFeatureDirection;
+import de.monticore.lang.sysmlbasis._ast.ASTUsageSpecialization;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
@@ -76,11 +76,11 @@ public class ActionGeneratorCoCos implements SysMLActionsASTActionDefCoCo, SysML
 
   void checkControlNodes(ASTActionUsage node) {
     boolean presentName = false;
-    List<ASTSpecialization> specialicationList = new ArrayList<>();
+    List<ASTUsageSpecialization> specialicationList = new ArrayList<>();
     if(node instanceof ASTJoinAction || node instanceof ASTDecideAction || node instanceof ASTForkAction
         || node instanceof ASTMergeAction || node instanceof ASTSendActionUsage || node instanceof ASTAssignmentActionUsage) {
       presentName = node.isPresentName();
-      specialicationList = node.getSpecializationList();
+      specialicationList = node.getUsageSpecializationList();
     }
     if(!presentName) {
       Log.error("ActionUsage  has no name, but needs a name.");

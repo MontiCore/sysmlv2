@@ -4,21 +4,21 @@ package de.monticore.lang;
 component grammar SysMLRequirements extends SysMLBasis {
 
   symbol scope (shadowing) RequirementDef implements SysMLType  =
-    "requirement" "def" ("<" humanId:String ">")? Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    "requirement" "def" ("<" humanId:String ">")? Name DefSpecialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
       RequirementSubject?
       SysMLElement*
     "}" | ";") ;
 
   symbol scope (shadowing) RequirementUsage implements SysMLElement =
-    ["satisfy"]? "requirement" ("<" humanId:String ">")? Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    ["satisfy"]? "requirement" ("<" humanId:String ">")? Name UsageSpecialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
       RequirementSubject?
       SysMLElement*
     "}" | ";") ;
 
   symbol RequirementSubject =
-      "subject" Name Specialization* ";" ;
+      "subject" Name UsageSpecialization* ";" ; //muss ueberprueft werden
 
   symbolrule RequirementSubject =
       types:de.monticore.types.check.SymTypeExpression* ;

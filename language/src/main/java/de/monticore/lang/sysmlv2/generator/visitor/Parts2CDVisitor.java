@@ -126,7 +126,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   }
 
   void initExtendForPartUsage(ASTPartUsage astPartUsage) {
-    var subsetList = astPartUsage.streamSpecializations().filter(
+    var subsetList = astPartUsage.streamUsageSpecializations().filter(
         t -> t instanceof ASTSysMLSubsetting).flatMap(
         f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
     if(!subsetList.isEmpty()) {
@@ -139,7 +139,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   }
 
   private ASTCDInterfaceUsage createTypingInterfaceUsage(ASTPartUsage astPartUsage) {
-    var typingList = astPartUsage.streamSpecializations().filter(c -> c instanceof ASTSysMLTyping).flatMap(
+    var typingList = astPartUsage.streamUsageSpecializations().filter(c -> c instanceof ASTSysMLTyping).flatMap(
         f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
     ASTCDInterfaceUsage interfaceUsage;
     List<ASTSysMLElement> sysMLElementList = new ArrayList<>();

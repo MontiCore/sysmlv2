@@ -25,7 +25,7 @@ public class ItemsSupertypes implements SysMLItemsASTItemDefCoCo, SysMLItemsASTI
    */
   @Override
   public void check(ASTItemDef node) {
-    var nonExistent = node.streamSpecializations()
+    var nonExistent = node.streamDefSpecializations()
         .flatMap(s -> s.streamSuperTypes())
         .filter(t -> node.getEnclosingScope().resolveItemDef(printName(t)).isEmpty())
         .collect(Collectors.toList());
@@ -40,7 +40,7 @@ public class ItemsSupertypes implements SysMLItemsASTItemDefCoCo, SysMLItemsASTI
    */
   @Override
   public void check(ASTItemUsage node) {
-    var nonExistent = node.streamSpecializations()
+    var nonExistent = node.streamUsageSpecializations()
         .flatMap(s -> s.streamSuperTypes())
         .filter(t -> node.getEnclosingScope().resolveItemDef(printName(t)).isEmpty()
             && node.getEnclosingScope().resolveItemUsage(printName(t)).isEmpty())

@@ -29,15 +29,17 @@ component grammar SysMLBasis
    * etc. Needs MCType instead of MCQualifiedName, because attribute usages (any maybe others) can be typed by MontiCore
    * types.
    */
-  interface Specialization = superTypes:MCType+;
+  interface UsageSpecialization = superTypes:MCType+;
 
-  SysMLSpecialization implements Specialization =
+  interface DefSpecialization = superTypes:MCType+;
+
+  SysMLSpecialization implements DefSpecialization =
       (":>" | "specializes") superTypes:(MCType || ",")+;
 
-  SysMLSubsetting implements Specialization =
+  SysMLSubsetting implements UsageSpecialization =
       (":>" | "subsets") superTypes:(MCType || ",")+;
 
-  SysMLRedefinition implements Specialization =
+  SysMLRedefinition implements UsageSpecialization, DefSpecialization =
       (":>>" | "redefines") superTypes:(MCType || ",")+;
 
   /**
@@ -45,11 +47,11 @@ component grammar SysMLBasis
    * Cardinality bei mehreren Typen macht wenig Sinn, aber die Grammatik und damit der AST werden sehr kompliziert, wenn
    * man versucht alle Eventualitäten durch die Grammatik abzudecken.
    */
-  SysMLTyping implements Specialization =
+  SysMLTyping implements UsageSpecialization, DefSpecialization =
        ":" conjugated:["~"]? superTypes:(MCType || ",")+ Cardinality?;
 
   /** Refinement relates two behaviors and enforces a subset wrt. to FOCUS SPSes */
-  SysMLRefinement implements Specialization =
+  SysMLRefinement implements UsageSpecialization, DefSpecialization =
        "refines" superTypes:(MCType || ",")+;
 
   /*
@@ -69,7 +71,7 @@ component grammar SysMLBasis
    * TODO "stream" überall ausser AdvRequirements verbieten? Gibts eine bessere Lösung?
    */
   SysMLParameter implements Field =
-    ["stream"]? SysMLFeatureDirection? Name Specialization* ("=" binding:Expression)? DefaultValue;
+    ["stream"]? SysMLFeatureDirection? Name UsageSpecialization* ("=" binding:Expression)? DefaultValue;
 
   DefaultValue = ("default" default:Expression)?;
   /*
