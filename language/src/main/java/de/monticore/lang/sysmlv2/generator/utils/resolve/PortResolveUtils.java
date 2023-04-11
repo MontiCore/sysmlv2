@@ -57,6 +57,12 @@ public class PortResolveUtils {
     String parentPart;
     Optional<PartDefSymbol> parentPartDef = Optional.empty();
     Optional<PartUsageSymbol> parentPartUsage = Optional.empty();
+    if(scope.getAstNode() instanceof ASTPartDef){
+      parentPartDef = Optional.ofNullable(((ASTPartDef) scope.getAstNode()).getSymbol());
+    }
+    if(scope.getAstNode() instanceof ASTPartUsage){
+      parentPartUsage = Optional.ofNullable(((ASTPartUsage) scope.getAstNode()).getSymbol());
+    }
     if(!QName.equals(BaseName)) {
       if(QName.split("\\.").length > 2) {
         var symbol = PartResolveUtils.resolvePartQname(QName.substring(0, QName.length() - BaseName.length() - 1),

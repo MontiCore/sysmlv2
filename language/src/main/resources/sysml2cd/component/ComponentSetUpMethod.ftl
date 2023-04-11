@@ -48,5 +48,11 @@ ${cd4c.method("public void setUp()")}
           </#if>
     </#list>
     <#list compHelper.getFlowOfPart(part) as connection>
+      <#if compHelper.isOutPort(connection.getSource(), part) && compHelper.isOutPort(connection.getTarget(), part)>
+      ${connection.getTarget()} = ${connection.getSource()};
+      <#elseif compHelper.isInPort(connection.getSource(), part) && compHelper.isInPort(connection.getTarget(), part)>
+      ${connection.getTarget()} = ${connection.getSource()};
+      <#else >
       this.${connection.getSource()}.connect(${connection.getTarget()});
+      </#if>
     </#list>

@@ -9,16 +9,22 @@ import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlv2.generator.utils.ComponentUtils;
 import de.monticore.lang.sysmlv2.generator.utils.GeneratorUtils;
 import de.monticore.lang.sysmlv2.generator.utils.PartUtils;
+import de.monticore.lang.sysmlv2.generator.utils.resolve.PortResolveUtils;
 import de.monticore.lang.sysmlv2.types.CommonExpressionsJavaPrinter;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ComponentHelper {
   ComponentUtils componentUtils = new ComponentUtils();
+
+  static int out_direction = 4;
+
+  static int in_direction = 2;
 
   GeneratorUtils generatorUtils = new GeneratorUtils();
 
@@ -87,5 +93,31 @@ public class ComponentHelper {
 
   public String cdPackageAsQualifiedName(ASTSysMLElement element, String baseName) {
     return GeneratorUtils.cdPackageAsQualifiedName(element, baseName);
+  }
+
+  public boolean isOutPort(String nameOfPort, ASTSysMLElement astSysMLElement) {
+    var stringParts = Arrays.asList(nameOfPort.split("\\."));
+    String baseName = stringParts.get(stringParts.size() - 1);
+    var optionalPortUsageSymbol = PortResolveUtils.resolvePort(nameOfPort, baseName,
+        ((ASTPartDef) astSysMLElement).getSpannedScope());
+    if(optionalPortUsageSymbol.isPresent()) {
+      ASTPortUsage portUsage = optionalPortUsageSymbol.get().getAstNode();
+      return portUsage.getValueAttribute().getSysMLFeatureDirection().getIntValue() == out_direction;
+    }
+    else
+      return false;
+  }
+
+  public boolean isInPort(String nameOfPort, ASTSysMLElement astSysMLElement) {
+    var stringParts = Arrays.asList(nameOfPort.split("\\."));
+    String baseName = stringParts.get(stringParts.size() - 1);
+    var optionalPortUsageSymbol = PortResolveUtils.resolvePort(nameOfPort, baseName,
+        ((ASTPartDef) astSysMLElement).getSpannedScope());
+    if(optionalPortUsageSymbol.isPresent()) {
+      ASTPortUsage portUsage = optionalPortUsageSymbol.get().getAstNode();
+      return portUsage.getValueAttribute().getSysMLFeatureDirection().getIntValue() == in_direction;
+    }
+    else
+      return false;
   }
 }
