@@ -2,6 +2,7 @@ package de.monticore.lang.sysmlv2.generator.utils.resolve;
 
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLSubsetting;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
@@ -33,7 +34,7 @@ public class ResolveUtils {
     }
     if(node instanceof ASTPartUsage) {
       parentList = ((ASTPartUsage) node).streamUsageSpecializations().filter(
-          t -> t instanceof ASTSysMLSpecialization).flatMap(
+          t -> t instanceof ASTSysMLSubsetting).flatMap(
           f -> f.getSuperTypesList().stream()).map(
           t -> ((ASTPartUsage) node).getEnclosingScope().resolvePartUsage(printName(t))).filter(
           Optional::isPresent).map(

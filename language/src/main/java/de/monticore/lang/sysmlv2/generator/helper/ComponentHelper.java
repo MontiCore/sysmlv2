@@ -6,6 +6,8 @@ import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
+import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
+import de.monticore.lang.sysmlparts._symboltable.SysMLPartsScope;
 import de.monticore.lang.sysmlv2.generator.utils.ComponentUtils;
 import de.monticore.lang.sysmlv2.generator.utils.GeneratorUtils;
 import de.monticore.lang.sysmlv2.generator.utils.PartUtils;
@@ -98,8 +100,13 @@ public class ComponentHelper {
   public boolean isOutPort(String nameOfPort, ASTSysMLElement astSysMLElement) {
     var stringParts = Arrays.asList(nameOfPort.split("\\."));
     String baseName = stringParts.get(stringParts.size() - 1);
+    ISysMLPartsScope scope = new SysMLPartsScope();
+    if(astSysMLElement instanceof ASTPartDef)
+      scope = ((ASTPartDef) astSysMLElement).getSpannedScope();
+    if(astSysMLElement instanceof ASTPartUsage)
+      scope = ((ASTPartUsage) astSysMLElement).getSpannedScope();
     var optionalPortUsageSymbol = PortResolveUtils.resolvePort(nameOfPort, baseName,
-        ((ASTPartDef) astSysMLElement).getSpannedScope());
+        scope);
     if(optionalPortUsageSymbol.isPresent()) {
       ASTPortUsage portUsage = optionalPortUsageSymbol.get().getAstNode();
       return portUsage.getValueAttribute().getSysMLFeatureDirection().getIntValue() == out_direction;
@@ -111,8 +118,13 @@ public class ComponentHelper {
   public boolean isInPort(String nameOfPort, ASTSysMLElement astSysMLElement) {
     var stringParts = Arrays.asList(nameOfPort.split("\\."));
     String baseName = stringParts.get(stringParts.size() - 1);
+    ISysMLPartsScope scope = new SysMLPartsScope();
+    if(astSysMLElement instanceof ASTPartDef)
+      scope = ((ASTPartDef) astSysMLElement).getSpannedScope();
+    if(astSysMLElement instanceof ASTPartUsage)
+      scope = ((ASTPartUsage) astSysMLElement).getSpannedScope();
     var optionalPortUsageSymbol = PortResolveUtils.resolvePort(nameOfPort, baseName,
-        ((ASTPartDef) astSysMLElement).getSpannedScope());
+        scope);
     if(optionalPortUsageSymbol.isPresent()) {
       ASTPortUsage portUsage = optionalPortUsageSymbol.get().getAstNode();
       return portUsage.getValueAttribute().getSysMLFeatureDirection().getIntValue() == in_direction;
