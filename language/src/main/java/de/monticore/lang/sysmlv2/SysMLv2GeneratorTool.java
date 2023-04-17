@@ -6,6 +6,7 @@ import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
+import de.monticore.io.paths.MCPath;
 import de.monticore.lang.sysml4verification.cocos.WarnNonExhibited;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionUsageCoCo;
@@ -290,7 +291,11 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
           transform(ast.get());
           //5. run additional CoCos
           runAdditionalCoCos(ast.get());
-
+          String handcoded = cmd.hasOption("hwc")
+              ?
+              cmd.getOptionValue("hwc")
+              :
+              "";
           String outputDir = cmd.hasOption("o")
               ?
               cmd.getOptionValue("o")
@@ -299,7 +304,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
           Path model = Paths.get(cmd.getOptionValue("i"));
 
           String fileName = FilenameUtils.removeExtension(model.toFile().getName());
-          generateCD(ast.get(), outputDir, fileName);
+          generateCD(ast.get(), outputDir, fileName, handcoded);
 
         }
       }
@@ -369,7 +374,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     sysMLv2Traverser.handle(ast);
   }
 
-  public void generateCD(ASTSysMLModel ast, String outputDir, String fileName) {
+  public void generateCD(ASTSysMLModel ast, String outputDir, String fileName, String handwrittenDir) {
 
     GeneratorSetup setup = new GeneratorSetup();
     GlobalExtensionManagement glex = new GlobalExtensionManagement();
@@ -382,6 +387,10 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     if(!outputDir.isEmpty()) {
       File targetDir = new File(outputDir);
       setup.setOutputDirectory(targetDir);
+    }
+    if(!handwrittenDir.isEmpty()) {
+      MCPath targetDir = new MCPath(handwrittenDir);
+      setup.setHandcodedPath(targetDir);
     }
 
     String configTemplate = "sysml2cd.SysML2CD";
