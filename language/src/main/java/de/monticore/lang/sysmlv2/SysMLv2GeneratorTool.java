@@ -336,6 +336,7 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     ActionShortnotationVisitor shortnotationVisitor = new ActionShortnotationVisitor();
     SysMLv2Traverser sysMLv2Traverser = getTraverser();
     sysMLv2Traverser.add4SysMLActions(shortnotationVisitor);
+    sysMLv2Traverser.add4SysMLStates(shortnotationVisitor);
     sysMLv2Traverser.handle(ast);
     shortnotationVisitor.applyTransformations();
   }

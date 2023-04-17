@@ -12,17 +12,81 @@ import de.monticore.lang.sysmlactions._symboltable.SendActionUsageSymbol;
 import de.monticore.lang.sysmlactions._symboltable.SendActionUsageSymbolBuilder;
 import de.monticore.lang.sysmlactions._visitor.SysMLActionsVisitor2;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
+import de.monticore.lang.sysmlstates._ast.ASTDoAction;
+import de.monticore.lang.sysmlstates._ast.ASTEntryAction;
+import de.monticore.lang.sysmlstates._ast.ASTExitAction;
 import de.monticore.lang.sysmlstates._ast.ASTStateDef;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
+import de.monticore.lang.sysmlstates._visitor.SysMLStatesVisitor2;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ActionShortnotationVisitor implements SysMLActionsVisitor2 {
+public class ActionShortnotationVisitor implements SysMLActionsVisitor2, SysMLStatesVisitor2 {
 
   static HashMap<ASTSysMLElement, List<ASTSysMLElement>> changes = new HashMap<>();
+  @Override
+  public void visit(ASTDoAction node){
+    if(node.isPresentActionUsage()) {
+      var actionUsage = node.getActionUsage();
+      if(!actionUsage.isPresentName()) {
+        if(actionUsage instanceof ASTSendActionUsage || actionUsage instanceof ASTAssignmentActionUsage) {
+          int counter = 0;
+          String name = "actionShort_";
+          boolean nameNotFound = true;
+          while (nameNotFound) {
+            nameNotFound = node.getEnclosingScope().resolveActionUsage(name + counter).isPresent();
+          }
+          actionUsage.setName(name + counter);
+        }
+        else
+          Log.error("Could not get the name of the action usage within a do action."
+          );
+      }
+    }
+  }
+  @Override
+  public void visit(ASTEntryAction node){
+    if(node.isPresentActionUsage()) {
+      var actionUsage = node.getActionUsage();
+      if(!actionUsage.isPresentName()) {
+        if(actionUsage instanceof ASTSendActionUsage || actionUsage instanceof ASTAssignmentActionUsage) {
+          int counter = 0;
+          String name = "actionShort_";
+          boolean nameNotFound = true;
+          while (nameNotFound) {
+            nameNotFound = node.getEnclosingScope().resolveActionUsage(name + counter).isPresent();
+          }
+          actionUsage.setName(name + counter);
+        }
+        else
+          Log.error("Could not get the name of the action usage within an entry action."
+          );
+      }
+    }
+  }
+  @Override
+  public void visit(ASTExitAction node){
+    if(node.isPresentActionUsage()) {
+      var actionUsage = node.getActionUsage();
+      if(!actionUsage.isPresentName()) {
+        if(actionUsage instanceof ASTSendActionUsage || actionUsage instanceof ASTAssignmentActionUsage) {
+          int counter = 0;
+          String name = "actionShort_";
+          boolean nameNotFound = true;
+          while (nameNotFound) {
+            nameNotFound = node.getEnclosingScope().resolveActionUsage(name + counter).isPresent();
+          }
+          actionUsage.setName(name + counter);
+        }
+        else
+          Log.error("Could not get the name of the action usage within an exit action."
+          );
+      }
+    }
+  }
 
   @Override
   public void visit(ASTSysMLSuccession node) {
@@ -125,7 +189,7 @@ public class ActionShortnotationVisitor implements SysMLActionsVisitor2 {
         List<ASTSysMLElement> elementList = changes.get(action);
         for (ASTSysMLElement element : elementList) {
           if(element instanceof ASTActionUsage) {
-            ((ASTActionUsage) action).getSpannedScope().add(((ASTActionUsage) element).getSymbol());
+            ((ASTActionDef) action).getSpannedScope().add(((ASTActionUsage) element).getSymbol());
           }
         }
         ((ASTActionDef) action).setSysMLElementList(changes.get(action));
