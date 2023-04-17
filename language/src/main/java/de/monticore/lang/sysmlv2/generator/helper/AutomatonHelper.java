@@ -1,8 +1,11 @@
 package de.monticore.lang.sysmlv2.generator.helper;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.lang.sysmlactions._ast.ASTAssignmentActionUsage;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLQualifiedName;
+import de.monticore.lang.sysmlconnections._ast.ASTBind;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlstates._ast.ASTDoAction;
@@ -15,10 +18,12 @@ import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.AttributeResolveUtils;
+import de.monticore.lang.sysmlv2.generator.utils.resolve.PortResolveUtils;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.StatesResolveUtils;
 import de.monticore.lang.sysmlv2.generator.visitor.ExpressionRenameVisitor;
 import de.monticore.lang.sysmlv2.types.CommonExpressionsJavaPrinter;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -70,12 +75,25 @@ public class AutomatonHelper {
     //expressions in states have to be mapped
 
     ExpressionRenameVisitor visitor = new ExpressionRenameVisitor(
-        AttributeResolveUtils.getAttributesOfElement(parentPart));
+        AttributeResolveUtils.getAttributesOfElement(parentPart), PortResolveUtils.getPortsOfElement(parentPart));
     SysMLv2Traverser sysMLv2Traverser = SysMLv2Mill.traverser();
     sysMLv2Traverser.add4ExpressionsBasis(visitor);
     expr.accept(sysMLv2Traverser);
     CommonExpressionsJavaPrinter prettyPrinter = new CommonExpressionsJavaPrinter(new IndentPrinter());
     return prettyPrinter.prettyprint(expr);
+  }
+
+  public ASTNameExpression mapQualifiedName(ASTSysMLQualifiedName qualifiedName, ASTSysMLElement sysMLElement){
+    ASTNameExpression nameExpression = new ASTNameExpression();
+    nameExpression.setName(qualifiedName.getQName());
+    nameExpression.setEnclosingScope(sysMLElement.getEnclosingScope());
+    return nameExpression;
+  }
+  public ASTNameExpression mapQualifiedName(ASTMCQualifiedName qualifiedName, ASTBind sysMLElement){
+    ASTNameExpression nameExpression = new ASTNameExpression();
+    nameExpression.setName(qualifiedName.getQName());
+    nameExpression.setEnclosingScope(sysMLElement.getEnclosingScope());
+    return nameExpression;
   }
 
   public String renameAction(ASTAssignmentActionUsage assignmentActionUsage, ASTSysMLElement parentPart) {

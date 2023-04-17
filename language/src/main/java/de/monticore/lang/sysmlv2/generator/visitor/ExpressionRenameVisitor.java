@@ -7,11 +7,12 @@ import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
+import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2Scope;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.AttributeResolveUtils;
+import de.monticore.lang.sysmlv2.generator.utils.resolve.PortResolveUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ExpressionRenameVisitor implements ExpressionsBasisVisitor2 {
@@ -24,6 +25,11 @@ public class ExpressionRenameVisitor implements ExpressionsBasisVisitor2 {
 
   public ExpressionRenameVisitor(List<ASTAttributeUsage> parentAttributeList) {
     this.parentAttributeList = parentAttributeList;
+  }
+
+  public ExpressionRenameVisitor(List<ASTAttributeUsage> parentAttributeList, List<ASTPortUsage> parentPortList) {
+    this.parentAttributeList = parentAttributeList;
+    this.parentPortList = parentPortList;
   }
 
   public ASTAttributeUsage getAttribute() {
@@ -48,9 +54,22 @@ public class ExpressionRenameVisitor implements ExpressionsBasisVisitor2 {
 
   List<ASTAttributeUsage> parentAttributeList;
 
+  List<ASTPortUsage> parentPortList;
+
   @Override
   public void visit(ASTNameExpression nameExpression) {
-    var attributeUsage = resolveInBehaviour(nameExpression, (SysMLv2Scope) nameExpression.getEnclosingScope());
+    if(nameExpression.getName().endsWith(".value")) {
+      String newName = nameExpression.getName().substring(0, nameExpression.getName().lastIndexOf(".value"));
+      ASTNameExpression astNameExpression = new ASTNameExpression();
+      astNameExpression.setEnclosingScope(nameExpression.getEnclosingScope());
+      astNameExpression.setName(newName);
+      var portUsage = resolvePortInBehaviour(astNameExpression, (SysMLv2Scope) astNameExpression.getEnclosingScope());
+      if(parentPortList.contains(portUsage)) {
+        nameExpression.setName("this.getParentPart()." + astNameExpression.getName()+ ".getValue()");
+      }
+    }
+
+    var attributeUsage = resolveAttributeInBehaviour(nameExpression, (SysMLv2Scope) nameExpression.getEnclosingScope());
     if(parentAttributeList.contains(attributeUsage)) {
       nameExpression.setName("this.getParentPart()." + nameExpression.getName());
     }
@@ -61,7 +80,7 @@ public class ExpressionRenameVisitor implements ExpressionsBasisVisitor2 {
     }
   }
 
-  ASTAttributeUsage resolveInParts(ASTNameExpression node) {
+  ASTAttributeUsage resolveAttributeInParts(ASTNameExpression node) {
     var scope = (SysMLv2Scope) node.getEnclosingScope();
     if(scope.resolveAttributeUsageDown(node.getName()).isPresent())
       return scope.resolveAttributeUsageDown(node.getName()).get().getAstNode();
@@ -70,7 +89,7 @@ public class ExpressionRenameVisitor implements ExpressionsBasisVisitor2 {
     return attribute.orElse(null);
   }
 
-  ASTAttributeUsage resolveInBehaviour(ASTNameExpression node, SysMLv2Scope scope) {
+  ASTAttributeUsage resolveAttributeInBehaviour(ASTNameExpression node, SysMLv2Scope scope) {
     var parent = scope.getAstNode();
     if(parent instanceof ASTSysMLModel || parent instanceof ASTSysMLPackage)
       return null;
@@ -82,9 +101,35 @@ public class ExpressionRenameVisitor implements ExpressionsBasisVisitor2 {
     if(attribute.isPresent())
       return attribute.get();
     if(parent instanceof ASTPartUsage || parent instanceof ASTPartDef) {
-      return resolveInParts(node);
+      return resolveAttributeInParts(node);
     }
-    return resolveInBehaviour(node, (SysMLv2Scope) parent.getEnclosingScope());
+    return resolveAttributeInBehaviour(node, (SysMLv2Scope) parent.getEnclosingScope());
+  }
+
+  ASTPortUsage resolvePortInParts(ASTNameExpression node) {
+    var scope = (SysMLv2Scope) node.getEnclosingScope();
+    if(scope.resolvePortUsageDown(node.getName()).isPresent())
+      return scope.resolvePortUsageDown(node.getName()).get().getAstNode();
+    var portsOfElement = PortResolveUtils.getPortsOfElement((ASTSysMLElement) scope.getAstNode());
+    var portUsage = portsOfElement.stream().filter(t -> t.getName().equals(node.getName())).findFirst();
+    return portUsage.orElse(null);
+  }
+
+  ASTPortUsage resolvePortInBehaviour(ASTNameExpression node, SysMLv2Scope scope) {
+    var parent = scope.getAstNode();
+    if(parent instanceof ASTSysMLModel || parent instanceof ASTSysMLPackage)
+      return null;
+
+    if(scope.resolvePortUsageDown(node.getName()).isPresent())
+      return scope.resolvePortUsageDown(node.getName()).get().getAstNode();
+    var portsOfElement = PortResolveUtils.getPortsOfElement((ASTSysMLElement) parent);
+    var portUsage = portsOfElement.stream().filter(t -> t.getName().equals(node.getName())).findFirst();
+    if(portUsage.isPresent())
+      return portUsage.get();
+    if(parent instanceof ASTPartUsage || parent instanceof ASTPartDef) {
+      return resolvePortInParts(node);
+    }
+    return resolvePortInBehaviour(node, (SysMLv2Scope) parent.getEnclosingScope());
   }
 
 }

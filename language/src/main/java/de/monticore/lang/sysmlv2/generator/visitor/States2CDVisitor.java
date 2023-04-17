@@ -86,7 +86,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
       //add methods
 
       GeneratorUtils.addMethods(stateUsageClass, attributeList, true, true);
-      cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesCompute", stateList, astStateUsage);
+      cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesCompute", stateList, astStateUsage, astStateUsage.getEnclosingScope().getAstNode());
       cd4C.addConstructor(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesConstructor", astStateUsage,
           parentAttribute.printType());
       cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesEntryAction", astStateUsage, astStateUsage,

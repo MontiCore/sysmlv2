@@ -1,8 +1,8 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("stateList", "automaton")}
+${tc.signature("stateList", "automaton", "parentPart")}
 
 ${cd4c.method("public void compute()")}
-//Parameter
+    //Parameter
     <#assign doActions = autHelper.getDoActionsOfElement(automaton)/>
     <#assign actionsParameters = []/>
     <#list doActions as doAction>
@@ -18,10 +18,13 @@ ${cd4c.method("public void compute()")}
         </#list>
     </#list>
     //binds
-    <#assign bindList = actionsHelper.getBindList(state)>
+    <#assign bindList = actionsHelper.getBindList(automaton)>
     <#list bindList as bind>
         <#if actionsHelper.isInParameters(actionsParameters,bind.getSource(),bind.getTarget())>
-        ${actionsHelper.mapBindEnd(bind.getSource())} = ${actionsHelper.mapBindEnd(bind.getTarget())};
+    ${actionsHelper.mapBindEnd(bind.getSource())} = ${actionsHelper.mapBindEnd(bind.getTarget())};
+        <#else>
+
+    ${autHelper.printExpression(autHelper.mapQualifiedName(bind.getSource(), bind), parentPart)} = ${autHelper.printExpression(autHelper.mapQualifiedName(bind.getTarget(), bind),parentPart)};
         </#if>
     </#list>
     //Do Actions
