@@ -50,3 +50,15 @@ ${cd4c.method("public void compute()")}
     // log state @ post
     de.monticore.lang.sysmlv2.generator.log.Log.trace(
     "State@post = "+ ${autHelper.resolveCurrentStateName(automaton)});
+<#macro handleAction action>
+    <#assign actionUsage = actionsHelper.getActionUsage(action,state)/>
+    <#if actionsHelper.isSendAction(actionUsage)>
+      this.parentPart.get${actionUsage.getTarget()?cap_first}().setValue(${autHelper.printExpression(actionUsage.getPayload(), parent)});
+    </#if>
+    <#if actionsHelper.isAssignmentAction(actionUsage)>
+        ${autHelper.renameAction(actionUsage, parent)} = ${autHelper.printExpression(actionUsage.getValueExpression(), parent)};
+    </#if>
+    <#if !actionsHelper.isSendAction(actionUsage) && !actionsHelper.isAssignmentAction(actionUsage)>
+      this.getParentPart().${actionUsage.getName()}(<#list  actionsHelper.getParametersWithActionPrefix(actionUsage) as param>${param}<#sep>, </#sep></#list>);
+    </#if>
+</#macro>
