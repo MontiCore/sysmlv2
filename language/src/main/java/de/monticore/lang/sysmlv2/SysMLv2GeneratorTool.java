@@ -14,12 +14,6 @@ import de.monticore.lang.sysmlbasis._cocos.SysMLBasisASTDefSpecializationCoCo;
 import de.monticore.lang.sysmlbasis._cocos.SysMLBasisASTUsageSpecializationCoCo;
 import de.monticore.lang.sysmlconnections._cocos.SysMLConnectionsASTBindCoCo;
 import de.monticore.lang.sysmlconnections._cocos.SysMLConnectionsASTFlowCoCo;
-import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintDefCoCo;
-import de.monticore.lang.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTSysMLPackageCoCo;
-import de.monticore.lang.sysmlinterfaces._cocos.SysMLInterfacesASTInterfaceDefCoCo;
-import de.monticore.lang.sysmlinterfaces._cocos.SysMLInterfacesASTInterfaceUsageCoCo;
-import de.monticore.lang.sysmlitems._cocos.SysMLItemsASTItemDefCoCo;
-import de.monticore.lang.sysmlitems._cocos.SysMLItemsASTItemUsageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeUsageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
@@ -28,7 +22,6 @@ import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortUsageCoCo;
 import de.monticore.lang.sysmlparts.coco.PortDefHasOneType;
 import de.monticore.lang.sysmlparts.coco.PortDefNeedsDirection;
-import de.monticore.lang.sysmlrequirements._cocos.SysMLRequirementsASTRequirementDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateUsageCoCo;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
@@ -44,9 +37,6 @@ import de.monticore.lang.sysmlv2.cocos.ActionSupertypes;
 import de.monticore.lang.sysmlv2.cocos.AttributeGeneratorCoCos;
 import de.monticore.lang.sysmlv2.cocos.ConnectionGeneratorCoCos;
 import de.monticore.lang.sysmlv2.cocos.ExpressionResolvableGenerator;
-import de.monticore.lang.sysmlv2.cocos.InterfaceSupertypes;
-import de.monticore.lang.sysmlv2.cocos.ItemsSupertypes;
-import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
 import de.monticore.lang.sysmlv2.cocos.PartsGeneratorCoCos;
 import de.monticore.lang.sysmlv2.cocos.PartsSupertypes;
@@ -101,6 +91,12 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
         .optionalArg(true)
         .numberOfArgs(1)
         .desc("Defines the target path (optional)")
+        .build());
+    options.addOption(org.apache.commons.cli.Option.builder("hwc")
+        .argName("file")
+        .optionalArg(true)
+        .numberOfArgs(1)
+        .desc("Defines the hand written code path (optional)")
         .build());
     return options;
   }
@@ -241,8 +237,6 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
 
   @Override
   public void run(String[] args) {
-
-    //transform(ast);
 
     init();
     org.apache.commons.cli.Options options = initOptions();
