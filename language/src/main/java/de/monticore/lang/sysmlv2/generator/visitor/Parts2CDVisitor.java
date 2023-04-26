@@ -91,10 +91,10 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
 
   @Override
   public void visit(ASTPartUsage astPartUsage) {
-    //step 0 init Package
-    cdPackage = GeneratorUtils.initCdPackage(astPartUsage, astcdDefinition, basePackage.getName());
-    // step 1 check if adhoc class definiton, if not do nothing
+    // step 0 check if adhoc class definiton, if not do nothing
     if(PartUtils.isAdHocClassDefinition(astPartUsage)) {
+      //step 1 init Package
+      cdPackage = GeneratorUtils.initCdPackage(astPartUsage, astcdDefinition, basePackage.getName());
       //step 2 create class
       partDefClass = CD4CodeMill.cDClassBuilder()
           .setName(astPartUsage.getName())
