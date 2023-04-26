@@ -9,16 +9,17 @@ def junit_version = '4.13.1'
 dependencies {
   implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
   implementation "de.se_rwth.commons:se-commons-utilities:$se_commons_version"
+  implementation project(':language')
   testImplementation group: 'junit', name: 'junit', version: junit_version
 }
 
 sourceSets {
-  main.java.srcDirs += ["$projectDir/target/generated-sources"]
+  main.java.srcDirs += ["/target/generated-sources"]
 }
 
 task generateSimulator(type: JavaExec) {
   classpath += parent.tasks.shadowJar.outputs.files
-  args '-i','src/main/resources/adder.sysml', '-o', 'target/generated-sources/'
+  args '-i','src/main/resources/adder.sysml', '-hwc', 'src/main/java/', '-o', 'target/generated-sources/'
   dependsOn parent.tasks.shadowJar
 }
 

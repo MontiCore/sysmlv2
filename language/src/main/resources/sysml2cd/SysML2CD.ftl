@@ -9,8 +9,8 @@ ${tc.signature("glex", "converter", "hwPath", "generator", "fileName")}
 <!-- ====================================================================
      call TopDecorator
 -->
-<#--<#assign topDecorator = tc.instantiate("de.monticore.cd.codegen.TopDecorator", [hwPath])>
-${topDecorator.decorate(cdata.getCompilationUnit())}-->
+<#assign topDecorator = tc.instantiate("de.monticore.cd.codegen.TopDecorator", [hwPath])>
+${topDecorator.decorate(cdata.getCompilationUnit())}
 
 <!-- ====================================================================
      Generate Java-classes
