@@ -58,11 +58,11 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
 
   @Override
   public void visit(ASTStateUsage astStateUsage) {
-
-    ASTSysMLElement parentPart = getParentPart(astStateUsage);
-    cdPackage = GeneratorUtils.initCdPackage(astStateUsage, astcdDefinition, basePackage.getName());
     var parent = astStateUsage.getEnclosingScope().getAstNode();
     if(astStateUsage.getIsAutomaton() && (parent instanceof ASTPartUsage || parent instanceof ASTPartDef)) {
+      //init package
+      ASTSysMLElement parentPart = getParentPart(astStateUsage);
+      cdPackage = GeneratorUtils.initCdPackage(astStateUsage, astcdDefinition, basePackage.getName());
       //create class
       stateUsageClass = CD4CodeMill.cDClassBuilder()
           .setName(astStateUsage.getName())
@@ -86,7 +86,8 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
       //add methods
 
       GeneratorUtils.addMethods(stateUsageClass, attributeList, true, true);
-      cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesCompute", stateList, astStateUsage, astStateUsage.getEnclosingScope().getAstNode());
+      cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesCompute", stateList, astStateUsage,
+          astStateUsage.getEnclosingScope().getAstNode());
       cd4C.addConstructor(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesConstructor", astStateUsage,
           parentAttribute.printType());
       cd4C.addMethod(stateUsageClass, "sysml2cd.Automaton.AutomatonStatesEntryAction", astStateUsage, astStateUsage,
@@ -130,7 +131,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
     var parent = astStateUsage.getEnclosingScope().getAstNode();
     ASTMCQualifiedType type = null;
     if(parent instanceof ASTPartUsage) {
-      type = PartUtils.partType((ASTPartUsage) parent);
+      type = PartUtils.getPartUsageType((ASTPartUsage) parent);
     }
     else if(parent instanceof ASTPartDef) {
       type = GeneratorUtils.qualifiedType(((ASTPartDef) parent).getName());
@@ -170,7 +171,8 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
         attributeName).setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
   }
 
-  List<ASTStateUsage> getSubautomatons(ASTStateUsage parent) {
+  List<ASTStateUsage> getSubautomatons(
+      ASTStateUsage parent) { //ist der name korrekt weil scheint eher alle substates zurück zu geben
     var stateList = StatesResolveUtils.getStatesOfElement(parent);
     var subAutomatonList = stateList.stream().filter(ASTStateUsage::getIsAutomaton).collect(Collectors.toList());
     var subStatesOfSubstates = subAutomatonList.stream().flatMap(t -> getSubautomatons(t).stream()).collect(
