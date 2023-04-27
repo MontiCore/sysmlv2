@@ -34,7 +34,7 @@ public class ComponentHelper {
 
   public String getPartType(ASTPartUsage subcomponent) {
 
-    return printer.prettyprint(PartUtils.partType(subcomponent));
+    return printer.prettyprint(PartUtils.getPartUsageType(subcomponent));
   }
 
   public String getAttributeType(ASTAttributeUsage astAttributeUsage) {

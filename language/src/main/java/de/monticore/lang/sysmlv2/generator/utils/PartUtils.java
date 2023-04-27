@@ -32,7 +32,7 @@ public class PartUtils {
     if(element instanceof ASTPartUsage) {
       String attributeName = ((ASTPartUsage) element).getName();
 
-      ASTMCQualifiedType qualifiedType = partType((ASTPartUsage) element);
+      ASTMCQualifiedType qualifiedType = getPartUsageType((ASTPartUsage) element);
       return CD4CodeMill.cDAttributeBuilder().setName(attributeName).setModifier(
           CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(qualifiedType).build();
 
@@ -40,7 +40,7 @@ public class PartUtils {
     return null;
   }
 
-  public static ASTMCQualifiedType partType(ASTPartUsage element) {
+  public static ASTMCQualifiedType getPartUsageType(ASTPartUsage element) {
     var sysMLTypingList = element.getUsageSpecializationList().stream().filter(
         t -> t instanceof ASTSysMLTyping).map(u -> ((ASTSysMLTyping) u)).collect(Collectors.toList());
     if(isAdHocClassDefinition(element))
