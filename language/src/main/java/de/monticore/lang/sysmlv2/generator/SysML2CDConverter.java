@@ -51,6 +51,7 @@ public class SysML2CDConverter {
 
     traverser.handle(astSysMLModel);
     createMainClass(astSysMLModel);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(phase1Visitor.getCdCompilationUnit());
     // voila
     return new SysML2CDData(phase1Visitor.getCdCompilationUnit(), phase1Visitor.getScClass());
   }
