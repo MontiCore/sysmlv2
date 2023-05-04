@@ -36,7 +36,6 @@ import de.monticore.lang.sysmlv2.cocos.ActionNameCoCos;
 import de.monticore.lang.sysmlv2.cocos.ActionSupertypes;
 import de.monticore.lang.sysmlv2.cocos.AttributeGeneratorCoCos;
 import de.monticore.lang.sysmlv2.cocos.ConnectionGeneratorCoCos;
-import de.monticore.lang.sysmlv2.cocos.ExpressionResolvableGenerator;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
 import de.monticore.lang.sysmlv2.cocos.PartsGeneratorCoCos;
 import de.monticore.lang.sysmlv2.cocos.PartsSupertypes;
@@ -163,7 +162,6 @@ public class SysMLv2GeneratorTool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLActionsASTActionDefCoCo) new SuccessionReachabilityGeneratorCoCos());
     checker.addCoCo(new TransitionResolvableCoCo());
     checker.addCoCo(new SuccessionCoCo());
-    checker.addCoCo(new ExpressionResolvableGenerator());
     checker.checkAll(ast);
   }
 
