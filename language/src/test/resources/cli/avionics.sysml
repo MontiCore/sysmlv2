@@ -1,26 +1,6 @@
-
-/**
-* Example MBSE4U Blogpost: What's inside the SysML v2 Releases
-**/
-package Items {
-
-        item def ArmingSignal;
-    item def DrogueSignal specializes Signal;
-    item def MainSignal specializes Signal;
-    item def Signal;
-
-
-
-}
-
-
 package AvionicsParts {
-    import Items::*;
     import ScalarValues::*;
-    port def VoltagePort{
-        in value : Real;
-    }
-    port def DataOutPort{
+    port def DataPort{
         out value : Real;
     }
 
@@ -28,116 +8,79 @@ package AvionicsParts {
         out value : Boolean;
     }
 
-    part def RecoveryBoard{
+    part def FlightComputer {
         port drogue : ParachutePort;
         port main : ParachutePort;
-
-        //port voltageIn : VoltagePort; //das vlt weg
+        part pressureSensor{
+         port altitude : DataPort;
+        }
+        part IMU{
+            port acceleration : DataPort;
+            port velocity : DataPort;
+        }
+        part esp32 : Microcontroller;
+        flow pressureSensor.altitude to esp32.altitude;
+        flow IMU.acceleration to esp32.acceleration;
+        flow IMU.velocity to esp32.velocity;
+        flow esp32.drogue to drogue;
+        flow esp32.main to main;
     }
 
-    part def COTSRecovery specializes RecoveryBoard;
-    part def SRADRecovery specializes RecoveryBoard{
-
-        part def Sensor{ //weird
-         port dataOut : DataOutPort;
+    part def Microcontroller{
+        port altitude : ~DataPort;
+        port acceleration : ~DataPort;
+        port velocity : ~DataPort;
+        port main : ParachutePort;
+        port drogue : ParachutePort;
+        action sendFalse {
+            first start;
+            then send false to main;
+            then send false to drogue;
+            then done;
         }
-        part def IMU specializes Sensor {
-            port zAcc : DataOutPort;
-            port zSpeed : DataOutPort;
+        exhibit state flightHandler {
+            attribute altitude : Real;
+            attribute velocity : Real;
+            attribute acceleraction : Real;
+            do sendFalse;
+            bind altitude = altitude.value;
+            bind velocity = velocity.value;
+            bind acceleraction = acceleration.value;
+            then Idle;
+            state Idle;
+            transition Idle
+              if acceleraction >= 10
+              then Ascend;
+            state Ascend;
+            transition Ascend
+              if acceleraction <= 0
+              then Coasting;
+            state Coasting;
+            transition Coasting
+              if velocity <= 0
+              do send true to drogue
+              then Descend;
+            state Descend;
+            transition Descend
+              if altitude <= 250
+              do send true to main
+              then Landing;
+            state Landing;
+            transition Landing
+              if velocity <= 10 && altitude <= 10
+              then PostFlight;
+            state PostFlight;
         }
-        part def Memory{
-         port logData : DataOutPort; //sinnvoll zu modellieren?
-        }
-        part Microcontroller{
-            //port voltageIn : VoltagePort; //?
-            port pressData : ~DataOutPort;
-            port zAcc : ~DataOutPort;
-            port zSpeed : ~DataOutPort;
-            exhibit state flightHandler {
-                            in height : Real = pressData.value;
-                            in zSpeed : Real = zSpeed.value;
-                            in zAcceleraction : Real = zAcc.value;
-                            then Idle;
-                            state Idle;
-                            transition Idle
-                            if zAcceleraction >= 10
-                            then Ascend;
-
-                            state Ascend;
-                            transition Ascend
-                            if zAcceleraction <= 0
-                                then Coasting;
-                            state Coasting;
-
-                            transition Coasting
-                            if zSpeed <= 0
-                                do action send_0 send true to drogue //TODO reset to short notation
-                                then Descend;
-                            state Descend;
-                            transition Descend
-                            if height <= 400
-                                do action send_1 send true to main
-                                then Landing;
-                            state Landing;
-
-                            transition Landing
-                            if zSpeed == 0 //Landung
-                                then PostFlight;
-                            state PostFlight;
-
-                        }
-            port logData : DataOutPort;
-
-            port main : ParachutePort;
-            port drogue : ParachutePort;
-        }
-
-        part pressureSensor : Sensor; //vereinfachung: gibt höhe in metern an, ein wert
-        part imuSensor : IMU; //vereinfachung: gibt beschleunigung auf der z achse an, und geschwindigkeit auf z achse an jeweils ein wert
-        part sdCard : Memory;
-
-//Durch flows ersetzen
-        bind pressureSensor.dataOut = Microcontroller.pressData;
-        bind imuSensor.zAcc = Microcontroller.zAcc;
-        bind imuSensor.zSpeed = Microcontroller.zSpeed;
-        bind Microcontroller.logData = sdCard.logData;
-        //bind voltageIn = Microcontroller.voltageIn;
-        bind Microcontroller.drogue = drogue;
-        bind Microcontroller.main = main;
-
-    }
-    part def PowerSystem{
-
-        part battery{
-            port batteryVoltage : ~VoltagePort; //voltage und energie
-        }
-
-    }
-    part def PyroSystem{
-        port drogueSignal : ~ParachutePort;
-        port mainSignal : ~ParachutePort;
-
-
-        part def Parachute;
-        part main : Parachute;
-        part drogue : Parachute;
     }
 
-    part def RecoverySystem {
-        part cotsRec : COTSRecovery;
-        part sradRec : SRADRecovery;
-        part powerSys : PowerSystem;
-        part pyroSys : PyroSystem;
+    part RecoverySystem {
+        part RecoveryComputer : FlightComputer;
+        part PyroSystem{
+                     port drogueSignal : ~ParachutePort;
+                     port mainSignal : ~ParachutePort;
+        }
 
-        //flow from powerSys.battery.batteryVoltage to sradRec.voltageIn;
-        //flow from powerSys.battery.batteryVoltage to cotsRec.voltageIn;
-
-        flow from cotsRec.main to pyroSys.mainSignal;
-        flow from cotsRec.drogue to pyroSys.drogueSignal;
-
-        flow from sradRec.main to pyroSys.mainSignal;
-        flow from sradRec.drogue to pyroSys.drogueSignal;
+        flow from RecoveryComputer.main to PyroSystem.mainSignal;
+        flow from RecoveryComputer.drogue to PyroSystem.drogueSignal;
     }
-    part system : RecoverySystem;
-
 }
