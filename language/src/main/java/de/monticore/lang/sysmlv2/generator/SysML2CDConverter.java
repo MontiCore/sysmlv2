@@ -39,10 +39,10 @@ public class SysML2CDConverter {
     Parts2CDVisitor phase1Visitor = new Parts2CDVisitor(glex, cdCompilationUnit, cdPackage, astcdDefinition);
     SysMLv2Traverser traverser = SysMLv2Mill.inheritanceTraverser();
     traverser.add4SysMLParts(phase1Visitor);
-
+    // Phase 2: Work on states
     States2CDVisitor states1Visitor = new States2CDVisitor(glex, cdCompilationUnit, cdPackage, astcdDefinition);
     traverser.add4SysMLStates(states1Visitor);
-
+    // Phase 3: Work on attributes
     Attributes2CDVisitor attributeVisitor = new Attributes2CDVisitor(glex, cdCompilationUnit, cdPackage,
         astcdDefinition);
     traverser.add4SysMLParts(attributeVisitor);
