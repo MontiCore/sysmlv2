@@ -68,14 +68,18 @@ package AdderExample {
               port number1 : ~ZahlenPort;
               port number2 : ~ZahlenPort;
               port outputPort : ZahlenPort;
+              attribute num1 : Integer;
+              attribute num2 : Integer;
               exhibit state adderBehaviour{
-                  entry action send_611 send number1.value+number2.value to outputPort;
+                  entry action send_611 send num1+num2 to outputPort;
+                bind num1 = number1.value;
+                bind num2 = number2.value;
                 transition start
-                do action send_6 send number1.value+number2.value to outputPort
+                do action send_6 send num1+num2 to outputPort
                 then Idle;
                 state Idle;
                 transition Idle
-                do action send_7  send number1.value+number2.value to outputPort
+                do action send_7  send num1+num2 to outputPort
                 then Idle;
               }
             }

@@ -3,13 +3,9 @@ package adder.adderexample;
 
 
 
-import java.util.*;
-
-
-
 /* Hookpoint: ClassContent:Annotations */
 
- public  class Adder  extends AdderTOP {
+ public  class Drain  extends DrainTOP {
 
    // just to show that TOP works
 
