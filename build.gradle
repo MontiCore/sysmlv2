@@ -16,6 +16,11 @@ subprojects {
     }
   }
 
+  // Java JDK Warning
+  if (JavaVersion.current() > sourceCompatibility) {
+    logger.warn("\u001B[33m Warning: You are currently using JDK Version " + JavaVersion.current() + ". " + "Higher JDK versions may cause compatibility problems. JDK 11 is recommended. \u001B[0m")
+  }
+
   // Use the same testing framework for all modules
   dependencies {
     implementation "org.slf4j:slf4j-simple:2.0.0-beta1"
