@@ -8,7 +8,6 @@ import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
 import de.monticore.lang.sysmlparts._symboltable.SysMLPartsScope;
-import de.monticore.lang.sysmlv2.generator.utils.ComponentUtils;
 import de.monticore.lang.sysmlv2.generator.utils.PackageUtils;
 import de.monticore.lang.sysmlv2.generator.utils.PartUtils;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.PortResolveUtils;
@@ -22,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ComponentHelper {
-  ComponentUtils componentUtils = new ComponentUtils();
+  PartUtils partUtils = new PartUtils();
 
   static int out_direction = 4;
 
@@ -51,7 +50,7 @@ public class ComponentHelper {
   }
 
   public boolean isPortDelayed(ASTPortUsage portUsage) {
-    return componentUtils.isPortDelayed(portUsage);
+    return partUtils.isPortDelayed(portUsage);
   }
 
   public String getDefaultValue(ASTPortUsage portUsage) {
@@ -75,7 +74,7 @@ public class ComponentHelper {
   }
 
   public String getValueTypeOfPort(ASTPortUsage portUsage) {
-    return componentUtils.getValueTypeOfPort(portUsage);
+    return partUtils.getValueTypeOfPort(portUsage);
   }
 
   public List<ASTFlow> getFlowOfPart(ASTSysMLElement element) {

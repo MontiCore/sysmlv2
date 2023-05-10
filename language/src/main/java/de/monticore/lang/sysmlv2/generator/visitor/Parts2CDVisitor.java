@@ -13,7 +13,6 @@ import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 import de.monticore.lang.sysmlv2.generator.utils.ActionsUtils;
 import de.monticore.lang.sysmlv2.generator.utils.AttributeUtils;
-import de.monticore.lang.sysmlv2.generator.utils.ComponentUtils;
 import de.monticore.lang.sysmlv2.generator.utils.PackageUtils;
 import de.monticore.lang.sysmlv2.generator.utils.InterfaceUtils;
 import de.monticore.lang.sysmlv2.generator.utils.PartUtils;
@@ -45,7 +44,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
 
   protected final GlobalExtensionManagement glex;
 
-  ComponentUtils componentUtils;
+  PartUtils partUtils;
 
   ActionsUtils actionsUtils = new ActionsUtils();
 
@@ -56,7 +55,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     this.cdCompilationUnit = cdCompilationUnit;
     Parts2CDVisitor.basePackage = basePackage;
     this.astcdDefinition = astcdDefinition;
-    this.componentUtils = new ComponentUtils();
+    this.partUtils = new PartUtils();
   }
 
   @Override
@@ -67,7 +66,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     // Step 1: Create Interface for the Part Def to support multiple inheritance
     ASTCDInterfaceUsage interfaceUsage = InterfaceUtils
         .createInterfaceUsage(List.of(astPartDef));
-    interfaceUsage.addInterface(componentUtils.createComponent());
+    interfaceUsage.addInterface(partUtils.createComponent());
     cdPackage.addCDElement(InterfaceUtils
         .createInterface(astPartDef));
     //Step 2 Create class
@@ -79,7 +78,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     //Step 3 create Attributes
     List<ASTCDAttribute> attributeList = AttributeUtils
         .createAttributes(astPartDef);
-    attributeList.addAll(componentUtils.createPorts(astPartDef));
+    attributeList.addAll(partUtils.createPorts(astPartDef));
     attributeList.addAll(PartUtils
         .createPartsAsAttributes(astPartDef));
     attributeList.addAll(handleBehaviour(astPartDef));
@@ -88,7 +87,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     actionsUtils.createActionsForPart(astPartDef, partDefClass);
     PackageUtils.addMethods(partDefClass, attributeList,
         true, true);
-    componentUtils.createComponentMethods(astPartDef, cd4C,
+    partUtils.createComponentMethods(astPartDef, cd4C,
         partDefClass);
   }
 
@@ -109,19 +108,19 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
       //Step 3 create Interface usage
       ASTCDInterfaceUsage interfaceUsage =
           createTypingInterfaceUsage(astPartUsage);
-      interfaceUsage.addInterface(componentUtils.createComponent());
+      interfaceUsage.addInterface(partUtils.createComponent());
       partDefClass.setCDInterfaceUsage(interfaceUsage);
       //step 4 create extends usage
       initExtendForPartUsage(astPartUsage);
       //step 5 create attributes
       List<ASTCDAttribute> attributeList = AttributeUtils.
           createAttributes(astPartUsage);
-      attributeList.addAll(componentUtils.createPorts(astPartUsage));
+      attributeList.addAll(partUtils.createPorts(astPartUsage));
       attributeList.addAll(PartUtils.createPartsAsAttributes(astPartUsage));
       attributeList.addAll(handleBehaviour(astPartUsage));
       partDefClass.setCDAttributeList(attributeList);
       //step 6 create Methods
-      componentUtils.createComponentMethods(astPartUsage, cd4C,
+      partUtils.createComponentMethods(astPartUsage, cd4C,
           partDefClass);
       PackageUtils.addMethods(partDefClass, attributeList,
           true, true);

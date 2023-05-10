@@ -14,7 +14,6 @@ import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._visitor.SysMLStatesVisitor2;
 import de.monticore.lang.sysmlv2.generator.helper.AutomatonHelper;
 import de.monticore.lang.sysmlv2.generator.utils.AttributeUtils;
-import de.monticore.lang.sysmlv2.generator.utils.ComponentUtils;
 import de.monticore.lang.sysmlv2.generator.utils.PackageUtils;
 import de.monticore.lang.sysmlv2.generator.utils.PartUtils;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.AttributeResolveUtils;
@@ -40,7 +39,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
    */
   protected final CD4C cd4C;
 
-  ComponentUtils componentUtils;
+  PartUtils partUtils;
 
   protected final GlobalExtensionManagement glex;
 
@@ -53,7 +52,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
     this.cdCompilationUnit = cdCompilationUnit;
     States2CDVisitor.basePackage = basePackage;
     this.astcdDefinition = astcdDefinition;
-    this.componentUtils = new ComponentUtils();
+    this.partUtils = new PartUtils();
   }
 
   @Override
@@ -102,7 +101,7 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
       cd4C.addMethod(stateUsageClass,
           "sysml2cd.Automaton.AutomatonStatesExitAction",
           astStateUsage, astStateUsage, parentPart);
-      componentUtils.setPortLists((ASTSysMLElement) astStateUsage
+      partUtils.setPortLists((ASTSysMLElement) astStateUsage
           .getEnclosingScope().getAstNode());
       createTransitionsForStateList(stateList, astStateUsage,
           parentPart);
@@ -192,8 +191,8 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
 
   void createTransitionsForStateList(List<ASTStateUsage> stateList, ASTStateUsage astStateUsage,
                                      ASTSysMLElement parentPart) {
-    var inputPortsParent = componentUtils.inputPortList;
-    var outputPortsParent = componentUtils.outputPortList;
+    var inputPortsParent = partUtils.inputPortList;
+    var outputPortsParent = partUtils.outputPortList;
 
     for (ASTStateUsage state :
         stateList) {
