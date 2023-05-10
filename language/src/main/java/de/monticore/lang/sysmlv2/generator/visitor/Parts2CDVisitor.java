@@ -17,8 +17,6 @@ import de.monticore.lang.sysmlv2.generator.utils.ComponentUtils;
 import de.monticore.lang.sysmlv2.generator.utils.GeneratorUtils;
 import de.monticore.lang.sysmlv2.generator.utils.InterfaceUtils;
 import de.monticore.lang.sysmlv2.generator.utils.PartUtils;
-import de.monticore.lang.sysmlv2.generator.utils.resolve.AttributeResolveUtils;
-import de.monticore.lang.sysmlv2.generator.utils.resolve.PartResolveUtils;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
@@ -64,29 +62,34 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   @Override
   public void visit(ASTPartDef astPartDef) {
     // Step 0: Init Package
-    cdPackage = GeneratorUtils.initCdPackage(astPartDef, astcdDefinition, basePackage.getName());
+    cdPackage = GeneratorUtils.initCdPackage(astPartDef, astcdDefinition,
+        basePackage.getName());
     // Step 1: Create Interface for the Part Def to support multiple inheritance
-    ASTCDInterfaceUsage interfaceUsage = InterfaceUtils.createInterfaceUsage(List.of(astPartDef));
+    ASTCDInterfaceUsage interfaceUsage = InterfaceUtils
+        .createInterfaceUsage(List.of(astPartDef));
     interfaceUsage.addInterface(componentUtils.createComponent());
-    cdPackage.addCDElement(InterfaceUtils.createInterface(astPartDef));
+    cdPackage.addCDElement(InterfaceUtils
+        .createInterface(astPartDef));
     //Step 2 Create class
     partDefClass = CD4CodeMill.cDClassBuilder()
         .setName(astPartDef.getName())
-        .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).setCDInterfaceUsage(interfaceUsage).build();
+        .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build())
+        .setCDInterfaceUsage(interfaceUsage).build();
     cdPackage.addCDElement(partDefClass);
     //Step 3 create Attributes
-    List<ASTCDAttribute> attributeList = AttributeUtils.createAttributes(astPartDef);
+    List<ASTCDAttribute> attributeList = AttributeUtils
+        .createAttributes(astPartDef);
     attributeList.addAll(componentUtils.createPorts(astPartDef));
-    attributeList.addAll(PartUtils.createPartsAsAttributes(astPartDef));
+    attributeList.addAll(PartUtils
+        .createPartsAsAttributes(astPartDef));
     attributeList.addAll(handleBehaviour(astPartDef));
     partDefClass.setCDAttributeList(attributeList);
     //Step 4 create Methods
     actionsUtils.createActionsForPart(astPartDef, partDefClass);
-    GeneratorUtils.addMethods(partDefClass, attributeList, true, true);
-    componentUtils.createComponentMethods(astPartDef, cd4C, partDefClass,
-        PartResolveUtils.getPartUsageOfNode(astPartDef),
-        AttributeResolveUtils.getAttributesOfElement(astPartDef));
-
+    GeneratorUtils.addMethods(partDefClass, attributeList,
+        true, true);
+    componentUtils.createComponentMethods(astPartDef, cd4C,
+        partDefClass);
   }
 
   @Override
@@ -94,30 +97,34 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     // step 0 check if adhoc class definiton, if not do nothing
     if(PartUtils.isAdHocClassDefinition(astPartUsage)) {
       //step 1 init Package
-      cdPackage = GeneratorUtils.initCdPackage(astPartUsage, astcdDefinition, basePackage.getName());
+      cdPackage = GeneratorUtils.initCdPackage(astPartUsage,
+          astcdDefinition, basePackage.getName());
       //step 2 create class
       partDefClass = CD4CodeMill.cDClassBuilder()
           .setName(astPartUsage.getName())
-          .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
+          .setModifier(CD4CodeMill.modifierBuilder().PUBLIC()
+          .build()).build();
       cdPackage.addCDElement(partDefClass);
 
       //Step 3 create Interface usage
-      ASTCDInterfaceUsage interfaceUsage = createTypingInterfaceUsage(astPartUsage);
+      ASTCDInterfaceUsage interfaceUsage =
+          createTypingInterfaceUsage(astPartUsage);
       interfaceUsage.addInterface(componentUtils.createComponent());
       partDefClass.setCDInterfaceUsage(interfaceUsage);
       //step 4 create extends usage
       initExtendForPartUsage(astPartUsage);
       //step 5 create attributes
-      List<ASTCDAttribute> attributeList = AttributeUtils.createAttributes(astPartUsage);
+      List<ASTCDAttribute> attributeList = AttributeUtils.
+          createAttributes(astPartUsage);
       attributeList.addAll(componentUtils.createPorts(astPartUsage));
       attributeList.addAll(PartUtils.createPartsAsAttributes(astPartUsage));
       attributeList.addAll(handleBehaviour(astPartUsage));
       partDefClass.setCDAttributeList(attributeList);
       //step 6 create Methods
-      componentUtils.createComponentMethods(astPartUsage, cd4C, partDefClass,
-          PartResolveUtils.getPartUsageOfNode(astPartUsage),
-          AttributeResolveUtils.getAttributesOfElement(astPartUsage));
-      GeneratorUtils.addMethods(partDefClass, attributeList, true, true);
+      componentUtils.createComponentMethods(astPartUsage, cd4C,
+          partDefClass);
+      GeneratorUtils.addMethods(partDefClass, attributeList,
+          true, true);
 
       actionsUtils.createActionsForPart(astPartUsage, partDefClass);
 

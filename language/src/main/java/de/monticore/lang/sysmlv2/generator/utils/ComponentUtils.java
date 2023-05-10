@@ -9,6 +9,8 @@ import de.monticore.lang.sysmlbasis._ast.*;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
+import de.monticore.lang.sysmlv2.generator.utils.resolve.AttributeResolveUtils;
+import de.monticore.lang.sysmlv2.generator.utils.resolve.PartResolveUtils;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.PortResolveUtils;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.literals.mccommonliterals._ast.ASTBooleanLiteral;
@@ -27,14 +29,13 @@ public class ComponentUtils {
 
   GeneratorUtils generatorUtils = new GeneratorUtils();
 
-  PortResolveUtils portResolveUtils = new PortResolveUtils();
-
   public List<ASTPortUsage> inputPortList;
 
   public List<ASTPortUsage> outputPortList;
 
-  public void createComponentMethods(ASTSysMLElement astSysMLElement, CD4C cd4C, ASTCDClass partClass,
-                                     List<ASTPartUsage> subComponents, List<ASTAttributeUsage> attributeUsageList) {
+  public void createComponentMethods(ASTSysMLElement astSysMLElement, CD4C cd4C, ASTCDClass partClass) {
+    List<ASTPartUsage> subComponents = PartResolveUtils.getPartUsageOfNode(astSysMLElement);
+    List<ASTAttributeUsage> attributeUsageList = AttributeResolveUtils.getAttributesOfElement(astSysMLElement);
     setPortLists(astSysMLElement);
     cd4C.addMethod(partClass, "sysml2cd.component.ComponentIsSyncedMethod", inputPortList);
     cd4C.addMethod(partClass, "sysml2cd.component.ComponentTickMethod", outputPortList, subComponents);
@@ -91,7 +92,7 @@ public class ComponentUtils {
   }
 
   public void setPortLists(ASTSysMLElement astSysMLElement) {
-    List<ASTPortUsage> portUsageList = portResolveUtils.getPortsOfElement(astSysMLElement);
+    List<ASTPortUsage> portUsageList = PortResolveUtils.getPortsOfElement(astSysMLElement);
     //divide into the different directions
     List<ASTPortUsage> inPortList = portUsageList.stream().filter(
         t -> t.getValueAttribute().getSysMLFeatureDirection().getIntValue() == 2).collect(
