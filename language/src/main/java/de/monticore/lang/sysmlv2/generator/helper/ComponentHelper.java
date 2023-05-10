@@ -9,7 +9,7 @@ import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
 import de.monticore.lang.sysmlparts._symboltable.SysMLPartsScope;
 import de.monticore.lang.sysmlv2.generator.utils.ComponentUtils;
-import de.monticore.lang.sysmlv2.generator.utils.GeneratorUtils;
+import de.monticore.lang.sysmlv2.generator.utils.PackageUtils;
 import de.monticore.lang.sysmlv2.generator.utils.PartUtils;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.PortResolveUtils;
 import de.monticore.lang.sysmlv2.types.CommonExpressionsJavaPrinter;
@@ -28,7 +28,7 @@ public class ComponentHelper {
 
   static int in_direction = 2;
 
-  GeneratorUtils generatorUtils = new GeneratorUtils();
+  PackageUtils packageUtils = new PackageUtils();
 
   SysMLBasisTypesFullPrettyPrinter printer = new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter());
 
@@ -38,16 +38,16 @@ public class ComponentHelper {
   }
 
   public String getAttributeType(ASTAttributeUsage astAttributeUsage) {
-    return printer.prettyprint(GeneratorUtils.attributeType(astAttributeUsage));
+    return printer.prettyprint(PackageUtils.attributeType(astAttributeUsage));
   }
 
   public boolean isObjectAttribute(ASTAttributeUsage astAttributeUsage) {
-    return !GeneratorUtils.getScalarValueMapping().containsValue(
-        printer.prettyprint(GeneratorUtils.attributeType(astAttributeUsage)));
+    return !PackageUtils.getScalarValueMapping().containsValue(
+        printer.prettyprint(PackageUtils.attributeType(astAttributeUsage)));
   }
 
   public String mapToWrapped(ASTAttributeUsage astAttributeUsage) {
-    return generatorUtils.mapToWrapper(getAttributeType(astAttributeUsage));
+    return packageUtils.mapToWrapper(getAttributeType(astAttributeUsage));
   }
 
   public boolean isPortDelayed(ASTPortUsage portUsage) {
@@ -94,7 +94,7 @@ public class ComponentHelper {
   }
 
   public String cdPackageAsQualifiedName(ASTSysMLElement element, String baseName) {
-    return GeneratorUtils.cdPackageAsQualifiedName(element, baseName);
+    return PackageUtils.cdPackageAsQualifiedName(element, baseName);
   }
 
   public boolean isOutPort(String nameOfPort, ASTSysMLElement astSysMLElement) {

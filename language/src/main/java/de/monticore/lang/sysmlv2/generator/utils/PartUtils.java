@@ -44,14 +44,14 @@ public class PartUtils {
     var sysMLTypingList = element.getUsageSpecializationList().stream().filter(
         t -> t instanceof ASTSysMLTyping).map(u -> ((ASTSysMLTyping) u)).collect(Collectors.toList());
     if(isAdHocClassDefinition(element))
-      return GeneratorUtils.qualifiedType(element.getName());
+      return PackageUtils.qualifiedType(element.getName());
     if(!sysMLTypingList.isEmpty()) {
       if(sysMLTypingList.get(0).getSuperTypesList().size() == 1) {
         String typString = sysMLTypingList.get(0).getSuperTypes(0).printType(
             new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
         List<String> partsList = Splitters.DOT.splitToList(typString);
         String typeName = partsList.get(partsList.size() - 1);
-        return GeneratorUtils.qualifiedType(typeName);
+        return PackageUtils.qualifiedType(typeName);
       }
     }
     else {
@@ -63,7 +63,7 @@ public class PartUtils {
               new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
           List<String> partsList = Splitters.DOT.splitToList(typString);
           String typeName = partsList.get(partsList.size() - 1);
-          return GeneratorUtils.qualifiedType(typeName);
+          return PackageUtils.qualifiedType(typeName);
         }
       }
     }
@@ -71,7 +71,7 @@ public class PartUtils {
     Log.error(
         "The type of partUsage " + element.getName()
             + " could not be resolved.");
-    return GeneratorUtils.qualifiedType("");
+    return PackageUtils.qualifiedType("");
   }
 
   public static ASTMCType getNameOfSubsetPart(ASTMCType spec, ASTPartUsage astPartUsage) {

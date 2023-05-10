@@ -23,13 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GeneratorUtils {
+public class PackageUtils {
   private static final HashMap<String, String> scalarValueMapping = new HashMap<>();
 
   private final HashMap<String, String> primitiveWrapperMap = new HashMap<>();
 
 
-  public GeneratorUtils() {
+  public PackageUtils() {
     //mapping of ScalarValues defined in the Kernel Modeling language
     scalarValueMapping.put("Boolean", "boolean");
     scalarValueMapping.put("Integer", "int");

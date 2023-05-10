@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 public class ComponentUtils {
 
-  GeneratorUtils generatorUtils = new GeneratorUtils();
+  PackageUtils packageUtils = new PackageUtils();
 
   public List<ASTPortUsage> inputPortList;
 
@@ -81,7 +81,7 @@ public class ComponentUtils {
       String portName = ((ASTPortUsage) element).getName();
       if(!stringList.contains(portName)) {
         stringList.add(portName);
-        ASTMCQualifiedType qualifiedType = generatorUtils.qualifiedType(
+        ASTMCQualifiedType qualifiedType = packageUtils.qualifiedType(
             Arrays.asList("de", "monticore", "lang", "sysmlv2", "generator", "timesync",
                 typeWithGenerics));
         return CD4CodeMill.cDAttributeBuilder().setName(portName).setModifier(
@@ -134,7 +134,7 @@ public class ComponentUtils {
   }
 
   public String getValueTypeOfPort(ASTPortUsage portUsage) {
-    return generatorUtils.mapToWrapper(printName(generatorUtils.attributeType(portUsage.getValueAttribute())));
+    return packageUtils.mapToWrapper(printName(packageUtils.attributeType(portUsage.getValueAttribute())));
   }
 
   public boolean isPortDelayed(ASTPortUsage portUsage) {

@@ -14,7 +14,7 @@ import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 import de.monticore.lang.sysmlv2.generator.utils.ActionsUtils;
 import de.monticore.lang.sysmlv2.generator.utils.AttributeUtils;
 import de.monticore.lang.sysmlv2.generator.utils.ComponentUtils;
-import de.monticore.lang.sysmlv2.generator.utils.GeneratorUtils;
+import de.monticore.lang.sysmlv2.generator.utils.PackageUtils;
 import de.monticore.lang.sysmlv2.generator.utils.InterfaceUtils;
 import de.monticore.lang.sysmlv2.generator.utils.PartUtils;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
@@ -62,7 +62,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
   @Override
   public void visit(ASTPartDef astPartDef) {
     // Step 0: Init Package
-    cdPackage = GeneratorUtils.initCdPackage(astPartDef, astcdDefinition,
+    cdPackage = PackageUtils.initCdPackage(astPartDef, astcdDefinition,
         basePackage.getName());
     // Step 1: Create Interface for the Part Def to support multiple inheritance
     ASTCDInterfaceUsage interfaceUsage = InterfaceUtils
@@ -86,7 +86,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     partDefClass.setCDAttributeList(attributeList);
     //Step 4 create Methods
     actionsUtils.createActionsForPart(astPartDef, partDefClass);
-    GeneratorUtils.addMethods(partDefClass, attributeList,
+    PackageUtils.addMethods(partDefClass, attributeList,
         true, true);
     componentUtils.createComponentMethods(astPartDef, cd4C,
         partDefClass);
@@ -97,7 +97,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     // step 0 check if adhoc class definiton, if not do nothing
     if(PartUtils.isAdHocClassDefinition(astPartUsage)) {
       //step 1 init Package
-      cdPackage = GeneratorUtils.initCdPackage(astPartUsage,
+      cdPackage = PackageUtils.initCdPackage(astPartUsage,
           astcdDefinition, basePackage.getName());
       //step 2 create class
       partDefClass = CD4CodeMill.cDClassBuilder()
@@ -123,7 +123,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
       //step 6 create Methods
       componentUtils.createComponentMethods(astPartUsage, cd4C,
           partDefClass);
-      GeneratorUtils.addMethods(partDefClass, attributeList,
+      PackageUtils.addMethods(partDefClass, attributeList,
           true, true);
 
       actionsUtils.createActionsForPart(astPartUsage, partDefClass);
@@ -171,7 +171,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     List<ASTCDAttribute> attributeList = new ArrayList<>();
     if(element.hasAutomaton()) {
       String attributeName = element.getAutomaton().getName();
-      ASTMCQualifiedType qualifiedType = GeneratorUtils.qualifiedType(attributeName);
+      ASTMCQualifiedType qualifiedType = PackageUtils.qualifiedType(attributeName);
       var automaton = CD4CodeMill.cDAttributeBuilder().setName(attributeName).setModifier(
           CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(qualifiedType).build();
       attributeList.add(automaton);
@@ -183,7 +183,7 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
     List<ASTCDAttribute> attributeList = new ArrayList<>();
     if(element.hasAutomaton()) {
       String attributeName = element.getAutomaton().getName();
-      ASTMCQualifiedType qualifiedType = GeneratorUtils.qualifiedType(attributeName);
+      ASTMCQualifiedType qualifiedType = PackageUtils.qualifiedType(attributeName);
       var automaton = CD4CodeMill.cDAttributeBuilder().setName(attributeName).setModifier(
           CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(qualifiedType).build();
       attributeList.add(automaton);

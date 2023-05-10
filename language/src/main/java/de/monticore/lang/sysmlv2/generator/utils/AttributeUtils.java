@@ -16,10 +16,10 @@ import java.util.stream.Collectors;
 
 public class AttributeUtils {
 
-  GeneratorUtils generatorUtils;
+  PackageUtils packageUtils;
 
   public AttributeUtils() {
-    this.generatorUtils = new GeneratorUtils();
+    this.packageUtils = new PackageUtils();
   }
 
   static public List<ASTCDAttribute> createAttributes(ASTSysMLElement astSysMLElement) {
@@ -37,7 +37,7 @@ public class AttributeUtils {
       if(((ASTAttributeUsage) element).isPresentExpression()) {
         attributeBuilder.setInitial(((ASTAttributeUsage) element).getExpression());
       }
-      ASTMCQualifiedType qualifiedType = GeneratorUtils.attributeType((ASTAttributeUsage) element);
+      ASTMCQualifiedType qualifiedType = ScalarValues.attributeType((ASTAttributeUsage) element);
       return attributeBuilder.setName(attributeName).setModifier(
           CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(qualifiedType).build();
 
@@ -60,7 +60,7 @@ public class AttributeUtils {
         parent.accept(sysMLv2Traverser);
         attributeBuilder.setInitial(expr);
       }
-      ASTMCQualifiedType qualifiedType = GeneratorUtils.attributeType((ASTAttributeUsage) attribute);
+      ASTMCQualifiedType qualifiedType = ScalarValues.attributeType((ASTAttributeUsage) attribute);
       return attributeBuilder.setName(attributeName).setModifier(
           CD4CodeMill.modifierBuilder().PUBLIC().build()).setMCType(qualifiedType).build();
     }
