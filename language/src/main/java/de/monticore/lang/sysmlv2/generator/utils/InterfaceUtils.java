@@ -1,14 +1,18 @@
 package de.monticore.lang.sysmlv2.generator.utils;
 
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDExtendUsage;
 import de.monticore.cdbasis._ast.ASTCDInterfaceUsage;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.lang.sysmlbasis._ast.ASTDefSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLSubsetting;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
+import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
@@ -82,6 +86,33 @@ public class InterfaceUtils {
     }
     return partInterface;
 
+  }
+
+  public static void initExtendForPartUsage(ASTPartUsage astPartUsage, ASTCDClass partDefClass) {
+    var subsetList = astPartUsage.streamUsageSpecializations().filter(
+        t -> t instanceof ASTSysMLSubsetting).flatMap(
+        f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
+    if(!subsetList.isEmpty()) {
+      List<ASTMCType> extendList = new ArrayList<>();
+      extendList.add(PartUtils.getNameOfSubsetPart(subsetList.get(0), astPartUsage));
+      ASTCDExtendUsage extendUsage = InterfaceUtils.createExtendUsage(extendList, false);
+      partDefClass.setCDExtendUsage(extendUsage);
+    }
+
+  }
+
+  public static ASTCDInterfaceUsage createTypingInterfaceUsage(ASTPartUsage astPartUsage) {
+    var typingList = astPartUsage.streamUsageSpecializations().filter(c -> c instanceof ASTSysMLTyping).flatMap(
+        f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
+    ASTCDInterfaceUsage interfaceUsage;
+    List<ASTSysMLElement> sysMLElementList = new ArrayList<>();
+    for (ASTMCType astmcType : typingList) {
+      String name = astmcType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+      var partDef = astPartUsage.getEnclosingScope().resolvePartDef(name);
+      partDef.ifPresent(partDefSymbol -> sysMLElementList.add(partDefSymbol.getAstNode()));
+    }
+    interfaceUsage = InterfaceUtils.createInterfaceUsage(sysMLElementList);
+    return interfaceUsage;
   }
 
 }

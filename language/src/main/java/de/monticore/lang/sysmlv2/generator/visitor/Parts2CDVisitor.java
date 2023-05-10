@@ -5,9 +5,6 @@ import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLSubsetting;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
@@ -16,14 +13,10 @@ import de.monticore.lang.sysmlv2.generator.utils.AttributeUtils;
 import de.monticore.lang.sysmlv2.generator.utils.PackageUtils;
 import de.monticore.lang.sysmlv2.generator.utils.InterfaceUtils;
 import de.monticore.lang.sysmlv2.generator.utils.PartUtils;
-import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
-import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Parts2CDVisitor implements SysMLPartsVisitor2 {
 
@@ -107,11 +100,11 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
 
       //Step 3 create Interface usage
       ASTCDInterfaceUsage interfaceUsage =
-          createTypingInterfaceUsage(astPartUsage);
+          InterfaceUtils.createTypingInterfaceUsage(astPartUsage);
       interfaceUsage.addInterface(partUtils.createComponent());
       partDefClass.setCDInterfaceUsage(interfaceUsage);
       //step 4 create extends usage
-      initExtendForPartUsage(astPartUsage);
+      InterfaceUtils.initExtendForPartUsage(astPartUsage, partDefClass);
       //step 5 create attributes
       List<ASTCDAttribute> attributeList = AttributeUtils.
           createAttributes(astPartUsage);
@@ -131,32 +124,6 @@ public class Parts2CDVisitor implements SysMLPartsVisitor2 {
 
   }
 
-  void initExtendForPartUsage(ASTPartUsage astPartUsage) {
-    var subsetList = astPartUsage.streamUsageSpecializations().filter(
-        t -> t instanceof ASTSysMLSubsetting).flatMap(
-        f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
-    if(!subsetList.isEmpty()) {
-      List<ASTMCType> extendList = new ArrayList<>();
-      extendList.add(PartUtils.getNameOfSubsetPart(subsetList.get(0), astPartUsage));
-      ASTCDExtendUsage extendUsage = InterfaceUtils.createExtendUsage(extendList, false);
-      partDefClass.setCDExtendUsage(extendUsage);
-    }
-
-  }
-
-  private ASTCDInterfaceUsage createTypingInterfaceUsage(ASTPartUsage astPartUsage) {
-    var typingList = astPartUsage.streamUsageSpecializations().filter(c -> c instanceof ASTSysMLTyping).flatMap(
-        f -> f.getSuperTypesList().stream()).collect(Collectors.toList());
-    ASTCDInterfaceUsage interfaceUsage;
-    List<ASTSysMLElement> sysMLElementList = new ArrayList<>();
-    for (ASTMCType astmcType : typingList) {
-      String name = astmcType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
-      var partDef = astPartUsage.getEnclosingScope().resolvePartDef(name);
-      partDef.ifPresent(partDefSymbol -> sysMLElementList.add(partDefSymbol.getAstNode()));
-    }
-    interfaceUsage = InterfaceUtils.createInterfaceUsage(sysMLElementList);
-    return interfaceUsage;
-  }
 
   public ASTCDCompilationUnit getCdCompilationUnit() {
     return cdCompilationUnit;
