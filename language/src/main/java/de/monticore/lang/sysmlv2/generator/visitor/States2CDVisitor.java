@@ -88,24 +88,29 @@ public class States2CDVisitor implements SysMLStatesVisitor2 {
       //add methods
       PackageUtils.addMethods(stateUsageClass, attributeList,
           true, true);
-      cd4C.addMethod(stateUsageClass,
-          "sysml2cd.Automaton.AutomatonStatesCompute",
-          stateList, astStateUsage,
-          astStateUsage.getEnclosingScope().getAstNode());
-      cd4C.addConstructor(stateUsageClass,
-          "sysml2cd.Automaton.AutomatonStatesConstructor",
-          astStateUsage, parentAttribute.printType());
-      cd4C.addMethod(stateUsageClass,
-          "sysml2cd.Automaton.AutomatonStatesEntryAction",
-          astStateUsage, astStateUsage, parentPart);
-      cd4C.addMethod(stateUsageClass,
-          "sysml2cd.Automaton.AutomatonStatesExitAction",
-          astStateUsage, astStateUsage, parentPart);
-      partUtils.setPortLists((ASTSysMLElement) astStateUsage
-          .getEnclosingScope().getAstNode());
-      createTransitionsForStateList(stateList, astStateUsage,
-          parentPart);
+      createMethods(astStateUsage, parentPart, parentAttribute, stateList);
     }
+  }
+
+  private void createMethods(ASTStateUsage astStateUsage, ASTSysMLElement parentPart, ASTCDAttribute parentAttribute,
+                         List<ASTStateUsage> stateList) {
+    cd4C.addMethod(stateUsageClass,
+        "sysml2cd.Automaton.AutomatonStatesCompute",
+        stateList, astStateUsage,
+        astStateUsage.getEnclosingScope().getAstNode());
+    cd4C.addConstructor(stateUsageClass,
+        "sysml2cd.Automaton.AutomatonStatesConstructor",
+        astStateUsage, parentAttribute.printType());
+    cd4C.addMethod(stateUsageClass,
+        "sysml2cd.Automaton.AutomatonStatesEntryAction",
+        astStateUsage, astStateUsage, parentPart);
+    cd4C.addMethod(stateUsageClass,
+        "sysml2cd.Automaton.AutomatonStatesExitAction",
+        astStateUsage, astStateUsage, parentPart);
+    partUtils.setPortLists((ASTSysMLElement) astStateUsage
+        .getEnclosingScope().getAstNode());
+    createTransitionsForStateList(stateList, astStateUsage,
+        parentPart);
   }
 
   ASTCDEnum createEnum(ASTStateUsage astStateUsage) {
