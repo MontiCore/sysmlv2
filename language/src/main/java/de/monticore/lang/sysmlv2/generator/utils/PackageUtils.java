@@ -1,6 +1,5 @@
 package de.monticore.lang.sysmlv2.generator.utils;
 
-import com.google.common.collect.ImmutableMap;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -8,49 +7,17 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
-import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2ArtifactScope;
-import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.se_rwth.commons.Splitters;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class PackageUtils {
-  private static final HashMap<String, String> scalarValueMapping = new HashMap<>();
-
-  private final HashMap<String, String> primitiveWrapperMap = new HashMap<>();
-
-
-  public PackageUtils() {
-    //mapping of ScalarValues defined in the Kernel Modeling language
-    scalarValueMapping.put("Boolean", "boolean");
-    scalarValueMapping.put("Integer", "int");
-    scalarValueMapping.put("Natural", "int");
-    scalarValueMapping.put("Number", "int");
-    scalarValueMapping.put("NumericalValue", "int");
-    scalarValueMapping.put("Positive", "int");
-    scalarValueMapping.put("Rational", "double");
-    scalarValueMapping.put("Real", "float");
-    scalarValueMapping.put("ScalarValue", "float");
-    scalarValueMapping.put("String", "String");
-    primitiveWrapperMap.put("boolean", "Boolean");
-    primitiveWrapperMap.put("char", "Character");
-    primitiveWrapperMap.put("byte", "Byte");
-    primitiveWrapperMap.put("short", "Short");
-    primitiveWrapperMap.put("int", "Integer");
-    primitiveWrapperMap.put("long", "Long");
-    primitiveWrapperMap.put("float", "Float");
-    primitiveWrapperMap.put("double", "Double");
-    //TODO maybe support Collections
-  }
 
   public static void addMethods(ASTCDType astcdType, List<ASTCDAttribute> attributeList, boolean addGetter,
                          boolean addSetter) {
@@ -59,18 +26,6 @@ public class PackageUtils {
       cd4C.addMethods(astcdType, element, addGetter, addSetter);
     }
 
-  }
-
-  static public ASTMCQualifiedType attributeType(ASTAttributeUsage element) {
-    var sysMLTypingList = element.getUsageSpecializationList().stream().filter(
-        t -> t instanceof ASTSysMLTyping).map(u -> ((ASTSysMLTyping) u)).collect(Collectors.toList());
-    String typString = sysMLTypingList.get(0).getSuperTypes(0).printType(
-        new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
-    List<String> partsList = Splitters.DOT.splitToList(typString);
-    String typeName = partsList.get(partsList.size() - 1);
-    if(scalarValueMapping.containsKey(typeName))
-      partsList = List.of(scalarValueMapping.get(typeName));
-    return qualifiedType(partsList);
   }
 
   static public ASTMCQualifiedType qualifiedType(String qname) {
@@ -130,13 +85,5 @@ public class PackageUtils {
   public static String cdPackageAsQualifiedName(ASTSysMLElement element, String baseName){
     List<String> basePackageName = List.of(baseName);
     return String.join(".",initCdPackage(element, basePackageName));
-  }
-
-  public static ImmutableMap<String, String> getScalarValueMapping() {
-    return ImmutableMap.copyOf(scalarValueMapping);
-  }
-
-  public String mapToWrapper(String primitive) {
-    return primitiveWrapperMap.get(primitive);
   }
 }

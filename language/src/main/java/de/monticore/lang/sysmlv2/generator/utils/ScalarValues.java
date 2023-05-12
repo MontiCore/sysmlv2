@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class ScalarValues {
 
-  public ScalarValues() {
+  public static void init() {
     //mapping of ScalarValues defined in the Kernel Modeling language
     ScalarValues.scalarValueMapping.put("Boolean", "boolean");
     ScalarValues.scalarValueMapping.put("Integer", "int");

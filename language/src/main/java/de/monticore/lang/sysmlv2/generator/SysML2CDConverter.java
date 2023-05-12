@@ -14,6 +14,7 @@ import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
+import de.monticore.lang.sysmlv2.generator.utils.ScalarValues;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.PartResolveUtils;
 import de.monticore.lang.sysmlv2.generator.visitor.Attributes2CDVisitor;
 import de.monticore.lang.sysmlv2.generator.visitor.Parts2CDVisitor;
@@ -33,6 +34,7 @@ public class SysML2CDConverter {
 
   public SysML2CDData doConvert(ASTSysMLModel astSysMLModel, GlobalExtensionManagement glex, String packageName) {
     init(packageName);
+    ScalarValues.init();
     // Main class, names equally to the Automaton
 
     // Phase 1: Work on parts

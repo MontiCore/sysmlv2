@@ -133,7 +133,7 @@ public class PartUtils {
   }
 
   public String getValueTypeOfPort(ASTPortUsage portUsage) {
-    return packageUtils.mapToWrapper(printName(packageUtils.attributeType(portUsage.getValueAttribute())));
+    return ScalarValues.mapToWrapper(printName(AttributeUtils.attributeType(portUsage.getValueAttribute())));
   }
 
   public boolean isPortDelayed(ASTPortUsage portUsage) {

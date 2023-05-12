@@ -8,8 +8,10 @@ import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
 import de.monticore.lang.sysmlparts._symboltable.SysMLPartsScope;
+import de.monticore.lang.sysmlv2.generator.utils.AttributeUtils;
 import de.monticore.lang.sysmlv2.generator.utils.PackageUtils;
 import de.monticore.lang.sysmlv2.generator.utils.PartUtils;
+import de.monticore.lang.sysmlv2.generator.utils.ScalarValues;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.PortResolveUtils;
 import de.monticore.lang.sysmlv2.types.CommonExpressionsJavaPrinter;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
@@ -37,16 +39,16 @@ public class ComponentHelper {
   }
 
   public String getAttributeType(ASTAttributeUsage astAttributeUsage) {
-    return printer.prettyprint(PackageUtils.attributeType(astAttributeUsage));
+    return printer.prettyprint(AttributeUtils.attributeType(astAttributeUsage));
   }
 
   public boolean isObjectAttribute(ASTAttributeUsage astAttributeUsage) {
-    return !PackageUtils.getScalarValueMapping().containsValue(
-        printer.prettyprint(PackageUtils.attributeType(astAttributeUsage)));
+    return !ScalarValues.getScalarValueMapping().containsValue(
+        printer.prettyprint(AttributeUtils.attributeType(astAttributeUsage)));
   }
 
   public String mapToWrapped(ASTAttributeUsage astAttributeUsage) {
-    return packageUtils.mapToWrapper(getAttributeType(astAttributeUsage));
+    return ScalarValues.mapToWrapper(getAttributeType(astAttributeUsage));
   }
 
   public boolean isPortDelayed(ASTPortUsage portUsage) {
