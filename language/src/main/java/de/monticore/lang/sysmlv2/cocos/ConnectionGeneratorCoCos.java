@@ -17,6 +17,7 @@ import de.monticore.lang.sysmlstates._ast.ASTStateDef;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2Scope;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.AttributeResolveUtils;
+import de.monticore.lang.sysmlv2.generator.utils.resolve.PartResolveUtils;
 import de.monticore.lang.sysmlv2.generator.utils.resolve.PortResolveUtils;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
@@ -39,7 +40,7 @@ public class ConnectionGeneratorCoCos implements SysMLConnectionsASTFlowCoCo, Sy
   @Override public void check(ASTFlow node) {
 
     var astNode = node.getEnclosingScope().getAstNode();
-    List<ASTPortUsage> usageList = new ArrayList<>();
+    List<ASTSysMLElement> usageList = new ArrayList<>();
     if(astNode instanceof ASTPartDef) {
       usageList = checkResolvable(((ASTPartDef) astNode).getSpannedScope(), node.getSource(),
           node.getTarget());
@@ -55,7 +56,8 @@ public class ConnectionGeneratorCoCos implements SysMLConnectionsASTFlowCoCo, Sy
           node.getSource(),
           node.getTarget());
     }
-    checkPortDirections(usageList.get(0), usageList.get(1));
+    checkPortDirections((ASTPortUsage) usageList.get(0), (ASTPortUsage) usageList.get(1), usageList.get(2),
+        usageList.get(3));
 
   }
 
@@ -80,35 +82,50 @@ public class ConnectionGeneratorCoCos implements SysMLConnectionsASTFlowCoCo, Sy
     if(targetResolve.equals(Optional.empty()))
       Log.error("Target:\"" + target + "\" of Bind can not be resolved.");
 
-    if(!source.getQName().equals(source.getBaseName()) && !target.getQName().equals(target.getBaseName())){
+    if(!source.getQName().equals(source.getBaseName()) && !target.getQName().equals(target.getBaseName())) {
       Log.error("A bind uses two full qualified names, only can be full qualified.");
     }
 
   }
 
-  List<ASTPortUsage> checkResolvable(ISysMLPartsScope scope, ASTMCQualifiedName source, ASTMCQualifiedName target) {
-    List<ASTPortUsage> usageList = new ArrayList<>();
+  List<ASTSysMLElement> checkResolvable(ISysMLPartsScope scope, ASTMCQualifiedName source, ASTMCQualifiedName target) {
+    List<ASTSysMLElement> usageList = new ArrayList<>();
     var sourceResolvable = PortResolveUtils.resolvePort(source.getQName(), source.getBaseName(), scope);
-
     var targetResolvable = PortResolveUtils.resolvePort(target.getQName(), target.getBaseName(), scope);
     if(sourceResolvable.isEmpty()) {
       Log.error("Flow from port " + source.getQName() + " is not resolvable.");
-
     }
     else {
-      usageList.add(sourceResolvable.get().getAstNode());
+      usageList.add(0, sourceResolvable.get().getAstNode());
     }
     if(targetResolvable.isEmpty()) {
       Log.error("Flow from port " + target.getQName() + " is not resolvable.");
 
     }
     else {
-      usageList.add(targetResolvable.get().getAstNode());
+      usageList.add(1, targetResolvable.get().getAstNode());
+    }
+    if(!source.getQName().equals(source.getBaseName())) {
+      var qNameString = source.getQName().substring(0, source.getQName().length() - source.getBaseName().length() - 1);
+      usageList.add(2, (ASTSysMLElement) PartResolveUtils.resolvePartQnameWithParent(qNameString,
+          (ASTSysMLElement) scope.getAstNode()).get().getAstNode());
+    }
+    else {
+      usageList.add(2, (ASTSysMLElement) scope.getAstNode());
+    }
+    if(!target.getQName().equals(target.getBaseName())) {
+      var qNameString = target.getQName().substring(0, target.getQName().length() - target.getBaseName().length() - 1);
+      usageList.add(3, (ASTSysMLElement) PartResolveUtils.resolvePartQnameWithParent(qNameString,
+          (ASTSysMLElement) scope.getAstNode()).get().getAstNode());
+    }
+    else {
+      usageList.add(3, (ASTSysMLElement) scope.getAstNode());
     }
     return usageList;
   }
 
-  void checkPortDirections(ASTPortUsage source, ASTPortUsage target) {
+  void checkPortDirections(ASTPortUsage source, ASTPortUsage target, ASTSysMLElement sourcePart,
+                           ASTSysMLElement targetPart) {
     ASTAttributeUsage sourceValue = source.getValueAttribute();
     ASTAttributeUsage targetValue = target.getValueAttribute();
 
@@ -116,28 +133,28 @@ public class ConnectionGeneratorCoCos implements SysMLConnectionsASTFlowCoCo, Sy
         targetValue.getSysMLFeatureDirection().getIntValue() == in
             || targetValue.getSysMLFeatureDirection().getIntValue() == inout)) {
       //target parent needs to be a sub element of source parent
-      if(!areParentsSubParts(source, target))
+      if(!isSubPart(sourcePart, targetPart))
         Log.error("Flow from port " + source.getName() + " to " + target.getName()
             + " is from \"in\" to \"in\"/\"inout\", but they are not sub-elements.");
     }
     if(sourceValue.getSysMLFeatureDirection().getIntValue() == out
         && targetValue.getSysMLFeatureDirection().getIntValue() == in) {
       //target kein sub element of source bzw source kein sub element von target
-      if(areParentsSubParts(source, target) || areParentsSubParts(target, source))
+      if(isSubPart(sourcePart, targetPart) || isSubPart(target, source))
         Log.error("Flow from port " + source.getName() + " to " + target.getName()
             + " is from \"out\" to \"in\", but cannot be sub-elements.");
     }
     if(sourceValue.getSysMLFeatureDirection().getIntValue() == out
         && targetValue.getSysMLFeatureDirection().getIntValue() == out) {
       //target sub element of source
-      if(!areParentsSubParts(target, source))
+      if(!isSubPart(targetPart, sourcePart))
         Log.error("Flow from port " + source.getName() + " to " + target.getName()
             + " is from \"out\" to \"out\", but they are not sub-elements.");
     }
     if(sourceValue.getSysMLFeatureDirection().getIntValue() == inout
         && targetValue.getSysMLFeatureDirection().getIntValue() == out) {
       //target sub element of source
-      if(!areParentsSubParts(source, target))
+      if(!isSubPart(sourcePart, targetPart))
         Log.error("Flow from port " + source.getName() + " to " + target.getName()
             + " is from \"inout\" to \"out\", but they are not sub-elements.");
     }
@@ -151,16 +168,14 @@ public class ConnectionGeneratorCoCos implements SysMLConnectionsASTFlowCoCo, Sy
 
   }
 
-  boolean areParentsSubParts(ASTPortUsage parentPort, ASTPortUsage childPort) {
-    var parentPortPart = parentPort.getEnclosingScope().getAstNode();
-    var childPortPart = childPort.getEnclosingScope().getAstNode();
+  boolean isSubPart(ASTSysMLElement enclosingPart, ASTSysMLElement subPart) {
     List<ASTSysMLElement> sysMLElementList = new ArrayList<>();
-    if(parentPortPart instanceof ASTPartDef)
-      sysMLElementList = ((ASTPartDef) parentPortPart).getSysMLElementList();
-    if(parentPortPart instanceof ASTPartUsage)
-      sysMLElementList = ((ASTPartUsage) parentPortPart).getSysMLElementList();
+    if(enclosingPart instanceof ASTPartDef)
+      sysMLElementList = ((ASTPartDef) enclosingPart).getSysMLElementList();
+    if(enclosingPart instanceof ASTPartUsage)
+      sysMLElementList = ((ASTPartUsage) enclosingPart).getSysMLElementList();
 
-    return sysMLElementList.contains((ASTSysMLElement) childPortPart);
+    return sysMLElementList.contains(subPart);
 
   }
 
