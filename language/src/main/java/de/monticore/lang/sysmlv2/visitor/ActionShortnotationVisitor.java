@@ -25,15 +25,16 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ActionShortnotationVisitor implements SysMLActionsVisitor2, SysMLStatesVisitor2 {
+  static int counter = 0;
 
   static HashMap<ASTSysMLElement, List<ASTSysMLElement>> changes = new HashMap<>();
+
   @Override
-  public void visit(ASTDoAction node){
+  public void visit(ASTDoAction node) {
     if(node.isPresentActionUsage()) {
       var actionUsage = node.getActionUsage();
       if(!actionUsage.isPresentName()) {
         if(actionUsage instanceof ASTSendActionUsage || actionUsage instanceof ASTAssignmentActionUsage) {
-          int counter = 0;
           String name = "actionShort_";
           boolean nameNotFound = true;
           while (nameNotFound) {
@@ -47,13 +48,13 @@ public class ActionShortnotationVisitor implements SysMLActionsVisitor2, SysMLSt
       }
     }
   }
+
   @Override
-  public void visit(ASTEntryAction node){
+  public void visit(ASTEntryAction node) {
     if(node.isPresentActionUsage()) {
       var actionUsage = node.getActionUsage();
       if(!actionUsage.isPresentName()) {
         if(actionUsage instanceof ASTSendActionUsage || actionUsage instanceof ASTAssignmentActionUsage) {
-          int counter = 0;
           String name = "actionShort_";
           boolean nameNotFound = true;
           while (nameNotFound) {
@@ -67,13 +68,13 @@ public class ActionShortnotationVisitor implements SysMLActionsVisitor2, SysMLSt
       }
     }
   }
+
   @Override
-  public void visit(ASTExitAction node){
+  public void visit(ASTExitAction node) {
     if(node.isPresentActionUsage()) {
       var actionUsage = node.getActionUsage();
       if(!actionUsage.isPresentName()) {
         if(actionUsage instanceof ASTSendActionUsage || actionUsage instanceof ASTAssignmentActionUsage) {
-          int counter = 0;
           String name = "actionShort_";
           boolean nameNotFound = true;
           while (nameNotFound) {
@@ -92,9 +93,10 @@ public class ActionShortnotationVisitor implements SysMLActionsVisitor2, SysMLSt
   public void visit(ASTSysMLSuccession node) {
     if(!node.isPresentTgt()) {
       if(node.isPresentActionUsage()) {
-        if(!changes.containsKey(node)) {
-          changes.put((ASTSysMLElement) node.getEnclosingScope().getAstNode(),
-              new ArrayList(getElementsOfParent(node.getEnclosingScope().getAstNode())));
+        var parent = (ASTSysMLElement) node.getEnclosingScope().getAstNode();
+        if(!changes.containsKey(parent)) {
+          changes.put(parent,
+              new ArrayList(getElementsOfParent(parent)));
         }
         var actionUsage = node.getActionUsage();
         if(actionUsage.isPresentName()) {
@@ -103,11 +105,11 @@ public class ActionShortnotationVisitor implements SysMLActionsVisitor2, SysMLSt
         }
         else {
           if(actionUsage instanceof ASTSendActionUsage || actionUsage instanceof ASTAssignmentActionUsage) {
-            int counter = 0;
             String name = "actionShort_";
             boolean nameNotFound = true;
             while (nameNotFound) {
               nameNotFound = node.getEnclosingScope().resolveActionUsage(name + counter).isPresent();
+              counter++;
             }
             node.setTgt(name + counter);
             actionUsage.setName(name + counter);
@@ -159,13 +161,11 @@ public class ActionShortnotationVisitor implements SysMLActionsVisitor2, SysMLSt
 
     var parent = node.getEnclosingScope().getAstNode();
     if(parent instanceof ASTActionUsage) {
-      //((ASTActionUsage) parent).getSpannedScope().add(element.getSymbol());
       List<ASTSysMLElement> elementList = changes.get(parent);
       int index = elementList.indexOf(node);
       elementList.add(index + 1, element);
     }
     if(parent instanceof ASTActionDef) {
-      // ((ASTActionDef) parent).getSpannedScope().add(element.getSymbol());
       List<ASTSysMLElement> elementList = changes.get(parent);
       int index = elementList.indexOf(node);
       elementList.add(index + 1, element);
