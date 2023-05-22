@@ -5,7 +5,6 @@ import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.BasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolSurrogateBuilder;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
@@ -16,8 +15,6 @@ import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.SymTypeVariable;
 
 import java.util.Arrays;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class SysMLv2Mill extends SysMLv2MillTOP {
 
@@ -25,13 +22,8 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
    * Wraps the {@link BasicSymbolsMill#initializePrimitives()} and adds the "nat" primitive.
    */
   public static void initializePrimitives() {
-    var primitives = BasicSymbolsMill.PRIMITIVE_LIST;
     var boxMap = SymTypePrimitive.boxMap;
     var unboxMap = SymTypePrimitive.unboxMap;
-
-    if(!primitives.contains("nat")) {
-      primitives.add("nat");
-    }
 
     if(!boxMap.containsKey("nat")) {
       boxMap.put("nat", "Natural");

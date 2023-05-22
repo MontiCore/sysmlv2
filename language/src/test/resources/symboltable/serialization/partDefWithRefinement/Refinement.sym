@@ -1,0 +1,41 @@
+{
+  "generated-using": "www.MontiCore.de technology",
+  "name": "Refinement",
+  "symbols": [
+    {
+      "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
+      "name": "Refinement",
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol",
+            "name": "UnfairMedium",
+            "requirementType": "UNKNOWN"
+          },
+          {
+            "kind": "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol",
+            "name": "FairMedium",
+            "directRefinements": [
+              {
+                "kind": "de.monticore.types.check.SymTypeOfObject",
+                "objName": "Refinement.UnfairMedium"
+              }
+            ],
+            "requirementType": "UNKNOWN"
+          },
+          {
+            "kind": "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol",
+            "name": "PerfectMedium",
+            "directRefinements": [
+              {
+                "kind": "de.monticore.types.check.SymTypeOfObject",
+                "objName": "Refinement.FairMedium"
+              }
+            ],
+            "requirementType": "UNKNOWN"
+          }
+        ]
+      }
+    }
+  ]
+}

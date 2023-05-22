@@ -22,14 +22,17 @@ import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.cocos.AssignActionTypeCheck;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
+import de.monticore.lang.sysmlv2.cocos.RefinementCyclic;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
 import de.monticore.lang.sysmlv2.cocos.RefinementChainCheck;
+import de.monticore.lang.sysmlv2.cocos.RefinementInterfaceNotMatching;
 import de.monticore.lang.sysmlv2.cocos.SendActionTypeCheck;
 import de.monticore.lang.sysmlv2.cocos.SpecializationExists;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.TypeCheckTransitionGuards;
 import de.monticore.lang.sysmlv2.cocos.WarnNonExhibited;
+import de.monticore.lang.sysmlv2.symboltable.completers.DirectRefinementCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.RequirementClassificationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.TypesAndDirectionCompleter;
@@ -94,6 +97,8 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo(new PortDefHasOneType());
     checker.addCoCo(new PortDefNeedsDirection());
     checker.addCoCo(new RefinementChainCheck());
+    checker.addCoCo(new RefinementCyclic());
+    checker.addCoCo(new RefinementInterfaceNotMatching());
 
     // Additional warnings, things might be ignored
     checker.addCoCo(new WarnNonExhibited());
@@ -159,8 +164,8 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     traverser.add4SysMLParts(completer);
     traverser.add4SysMLRequirements(completer);
 
-    var reqCompleter = new RequirementClassificationCompleter();
-    traverser.add4SysMLParts(reqCompleter);
+    traverser.add4SysMLParts(new RequirementClassificationCompleter());
+    traverser.add4SysMLParts(new DirectRefinementCompleter());
 
     // gleiches Spiel wie oben: Alles besuchen verlangt zwei Calls
     if(node.getEnclosingScope() != null) {

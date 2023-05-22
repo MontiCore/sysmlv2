@@ -1,5 +1,6 @@
 package de.monticore.lang.sysmlv2.symboltable.completers;
 
+import de.monticore.lang.sysmlconstraints._symboltable.ISysMLConstraintsScope;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTSysMLReqType;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
@@ -60,6 +61,10 @@ public class RequirementClassificationCompleter implements SysMLPartsVisitor2 {
 
     if (scope instanceof ISysMLRequirementsScope){
       hlr = ((ISysMLRequirementsScope) scope).getRequirementUsageSymbols().size() > 0;
+    }
+
+    if (scope instanceof ISysMLConstraintsScope){
+      hlr = hlr || ((ISysMLConstraintsScope) scope).getConstraintUsageSymbols().size() > 0;
     }
 
     if (llr && hlr){

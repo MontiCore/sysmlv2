@@ -5,6 +5,9 @@ import de.mclsg.lsp.document_management.DocumentInformation;
 import de.mclsg.lsp.document_management.DocumentManager;
 import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
+import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
+import de.monticore.lang.sysmlv2._lsp.features.code_action.utils.DecompositionUtils;
+import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symboltable.ISymbol;
 import org.eclipse.lsp4j.Hover;
 import org.eclipse.lsp4j.MarkupContent;
@@ -33,11 +36,16 @@ public class SysMLv2HoverProvider extends SysMLv2HoverProviderTOP {
     for (ISymbol s : symbols){
       var info = new ArrayList<String>();
 
-      if (s instanceof PartUsageSymbol){
-        info.addAll(getInfo((PartUsageSymbol) s));
-      } else if (s instanceof PartDefSymbol){
-        info.addAll(getInfo((PartDefSymbol) s));
-      }
+      diOpt.get().syncAccessGlobalScope(gs -> {
+        if (s instanceof PartUsageSymbol){
+          info.addAll(getInfo((PartUsageSymbol) s, (ISysMLv2Scope) gs));
+        } else if (s instanceof PartDefSymbol){
+          info.addAll(getInfo((PartDefSymbol) s, (ISysMLv2Scope) gs));
+        } else if (s instanceof PortUsageSymbol){
+          info.addAll(getInfo((PortUsageSymbol) s));
+        }
+      });
+
 
       if (!info.isEmpty()){
         var m = new MarkupContent();
@@ -49,23 +57,34 @@ public class SysMLv2HoverProvider extends SysMLv2HoverProviderTOP {
     return super.getHoverInformation(document, position);
   }
 
+  public ArrayList<String> getInfo(PortUsageSymbol symbol){
+    var info = new ArrayList<String>();
+    info.add("**Estimated direction:** " + DecompositionUtils.estimatePortDirection(symbol.getAstNode()));
+    return info;
+  }
 
-  public ArrayList<String> getInfo(PartUsageSymbol symbol){
+  public ArrayList<String> getInfo(PartUsageSymbol symbol, ISysMLv2Scope scope){
     if (symbol.getPartDef().isPresent()){
-      return getInfo(symbol.getPartDef().get());
+      return getInfo(symbol.getPartDef().get(), scope);
     }
     return new ArrayList<>();
   }
 
-  public ArrayList<String> getInfo(PartDefSymbol symbol){
+  public ArrayList<String> getInfo(PartDefSymbol symbol, ISysMLv2Scope scope){
     var info = new ArrayList<String>();
     if (symbol.getRequirementType() != null){
       info.add("**RequirementType:** " + symbol.getRequirementType().name().toLowerCase());
     }
 
-    var refiners = symbol.getRefiners().collect(Collectors.toList());
+
+    var refiners = symbol.getRefiners(scope);
     if (refiners.size() > 0){
-      info.add("**Refined by:** " + refiners.stream().map(ISymbol::getName).collect(Collectors.joining(", ")));
+      info.add("**Refined by:** " + refiners.stream().map(ISymbol::getFullName).sorted().collect(Collectors.joining(", ")));
+    }
+
+    var refinements = symbol.getRefinements(scope);
+    if (refinements.size() > 0){
+      info.add("**Refines:** " + refinements.stream().map(ISymbol::getFullName).sorted().collect(Collectors.joining(", ")));
     }
     return info;
   }

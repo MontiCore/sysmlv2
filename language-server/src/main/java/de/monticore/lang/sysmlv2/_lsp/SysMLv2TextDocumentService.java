@@ -4,6 +4,7 @@ package de.monticore.lang.sysmlv2._lsp;
 import de.mclsg.lsp.CommonLanguageServer;
 import de.mclsg.lsp.ISymbolUsageResolutionProvider;
 import de.mclsg.lsp.document_management.DocumentManager;
+import de.monticore.lang.sysmlv2._lsp.features.code_action.SysMLv2CodeActionProvider;
 import de.monticore.lang.sysmlv2._lsp.features.symbols.SysMLv2DocumentSymbolProvider;
 import de.monticore.lang.sysmlv2._lsp.language_access.SysMLv2LanguageAccess;
 import org.eclipse.lsp4j.services.LanguageClient;
@@ -18,11 +19,7 @@ public class SysMLv2TextDocumentService extends SysMLv2TextDocumentServiceTOP {
     super(languageServer, documentManager, languageClient, languageAccess, symbolUsageResolutionProvider);
 
     register(new SysMLv2DocumentSymbolProvider(documentManager));
+    register(new SysMLv2CodeActionProvider(documentManager, languageAccess.getPrettyPrinter().get()));
   }
-
-
-
-
-
 }
 
