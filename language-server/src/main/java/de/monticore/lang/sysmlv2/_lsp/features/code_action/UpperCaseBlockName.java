@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.lang.sysmlv2.codeAction;
+package de.monticore.lang.sysmlv2._lsp.features.code_action;
 
 import de.mclsg.lsp.document_management.DocumentManager;
 import de.mclsg.lsp.document_management.DocumentInformation;
@@ -22,11 +22,10 @@ import java.util.function.Consumer;
  *
  * Diese CodeAction wird im SysML4VerificationCodeActionProvider registriert
  */
-public class UpperCaseBlockNameCoCoCodeActionProvider extends CoCoCodeActionProvider {
-  private DocumentManager documentManager;
+public class UpperCaseBlockName extends CoCoCodeActionProvider {
 
-  public UpperCaseBlockNameCoCoCodeActionProvider(DocumentManager documentManager) {
-    this.documentManager = documentManager;
+  public UpperCaseBlockName(DocumentManager documentManager) {
+    super(documentManager, "0xSML01");
   }
 
   @Override
@@ -78,8 +77,4 @@ public class UpperCaseBlockNameCoCoCodeActionProvider extends CoCoCodeActionProv
     }
   }
 
-  @Override
-  public boolean providesActionFor(Diagnostic diagnostic) {
-    return diagnostic != null && diagnostic.getCode() != null && "0xSML01".equals(diagnostic.getCode().get());
-  }
 }

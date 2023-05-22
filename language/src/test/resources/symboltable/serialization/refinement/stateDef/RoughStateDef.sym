@@ -10,6 +10,7 @@
           {
             "kind": "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol",
             "name": "UnfairMedium",
+            "requirementType": "LLR",
             "spannedScope": {
               "isShadowingScope": true,
               "symbols": [

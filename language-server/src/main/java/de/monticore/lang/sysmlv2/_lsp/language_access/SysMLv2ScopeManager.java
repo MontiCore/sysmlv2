@@ -12,8 +12,22 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SysMLv2ScopeManager extends SysMLv2ScopeManagerTOP {
+
+
+  private static SysMLv2ScopeManager instance;
+
+  public SysMLv2ScopeManager() {
+    super();
+    instance = this;
+  }
+
+  public static SysMLv2ScopeManager getInstance() {
+    return instance;
+  }
 
   private static final Logger logger = LoggerFactory.getLogger(SysMLv2ScopeManager.class);
 
@@ -47,7 +61,11 @@ public class SysMLv2ScopeManager extends SysMLv2ScopeManagerTOP {
 
     var scope = super.createArtifactScope(ast, oldArtifactScope);
     if (createSymbolTable){
-      syncAccessGlobalScope(gs -> new SysMLv2Tool().completeSymbolTable(ast));
+      syncAccessGlobalScope(gs -> {
+        var tool = new SysMLv2Tool();
+        tool.completeSymbolTable(ast);
+        tool.finalizeSymbolTable(ast);
+      });
     }
     return scope;
   }
@@ -70,6 +88,9 @@ public class SysMLv2ScopeManager extends SysMLv2ScopeManagerTOP {
       SysMLv2Tool tool = new SysMLv2Tool();
       for(ASTSysMLModel node : astNodes){
         tool.completeSymbolTable(node);
+      }
+      for(ASTSysMLModel node : astNodes){
+        tool.finalizeSymbolTable(node);
       }
     });
     return res;

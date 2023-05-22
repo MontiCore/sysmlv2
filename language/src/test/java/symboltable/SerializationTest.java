@@ -3,18 +3,19 @@ package symboltable;
 
 import de.monticore.io.paths.MCPath;
 import de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol;
+import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortDefSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
-import de.monticore.lang.sysmlv2._symboltable.SysMLv2GlobalScope;
 import de.monticore.symboltable.serialization.JsonPrinter;
 import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -158,5 +159,54 @@ public class SerializationTest {
     // resolution of relative symbols does not work if symbol is in another artifact scope (i.e. top-down resolution is required).
     Optional<SysMLTypeSymbol> relativeResolved = packageScope.resolveSysMLType(relativeSymbol);
     assertThat(relativeResolved).isEmpty();
+  }
+
+  @Test
+  public void testRefinmentReferenceSerialization() throws IOException {
+    var modelReferencePath = BASE + "/partDefWithRefinement/Refinement.sysml";
+    var symboltablePathExpected = BASE + "/partDefWithRefinement/Refinement.sym";
+    var symboltablePathActual = BASE + "/partDefWithRefinement/RefinementActual.sym";
+
+    ASTSysMLModel ast = sysmlTool.parse(modelReferencePath);
+    ISysMLv2ArtifactScope firstArtifactScope = sysmlTool.createSymbolTable(ast);
+    sysmlTool.completeSymbolTable(ast);
+    sysmlTool.finalizeSymbolTable(ast);
+
+    try {
+      sysmlTool.storeSymbols(firstArtifactScope, symboltablePathActual);
+
+      assertTrue(FileUtils.contentEqualsIgnoreEOL(Paths.get(symboltablePathActual).toFile(), Paths.get(
+          symboltablePathExpected).toFile(), "UTF-8"));
+    }
+    finally {
+      //cleanUp
+      Files.deleteIfExists(Paths.get(symboltablePathActual));
+    }
+  }
+
+  @Test
+  public void testRefinmentReferenceDeSerialization(){
+    var modelReferencePath = BASE + "/partDefWithRefinement/RefinementReference.sysml";
+    var symboltablePathExpected = BASE + "/partDefWithRefinement/Refinement.sym";
+    var symboltablePathActual = BASE + "/partDefWithRefinement/RefinementActual.sym";
+    var fqnSymbol = "Refinement.PerfectMedium";
+
+    ASTSysMLModel ast = sysmlTool.parse(modelReferencePath);
+    sysmlTool.createSymbolTable(ast);
+
+    var symbolPath = new MCPath();
+    // MCPath entries correspond to the directories that contain symboltables
+    symbolPath.addEntry(Paths.get(symboltablePathExpected).getParent());
+    var gs = sysmlTool.getGlobalScope();
+    gs.setSymbolPath(symbolPath);
+
+    sysmlTool.completeSymbolTable(ast);
+    sysmlTool.finalizeSymbolTable(ast);
+
+    Optional<PartDefSymbol> resolved = gs.resolvePartDef(fqnSymbol);
+
+    assertThat(resolved).isPresent();
+    assertThat(resolved.get().getDirectRefinements(gs)).size().isEqualTo(1);
+    assertThat(resolved.get().getRefinements(gs)).size().isEqualTo(2);
   }
 }

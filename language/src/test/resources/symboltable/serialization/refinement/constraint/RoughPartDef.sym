@@ -10,6 +10,7 @@
           {
             "kind": "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol",
             "name": "B",
+            "requirementType": "HLR",
             "spannedScope": {
               "isShadowingScope": true,
               "symbols": [

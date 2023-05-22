@@ -1,22 +1,25 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.lang.sysmlv2;
+package de.monticore.lang.sysmlv2._lsp.features.code_action;
 
 import de.mclsg.lsp.document_management.DocumentManager;
-import de.mclsg.lsp.features.CodeActionProvider;
-import de.monticore.lang.sysmlv2.codeAction.UpperCaseBlockNameCoCoCodeActionProvider;
-import de.monticore.lang.sysmlv2.codeAction.CoCoCodeActionProvider;
+import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
+import de.monticore.prettyprint.AstPrettyPrinter;
 import org.eclipse.lsp4j.*;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SysML4VerificationCodeActionProvider implements CodeActionProvider {
+public class SysMLv2CodeActionProvider extends SysMLv2CodeActionProviderTOP {
 
-  private List<CoCoCodeActionProvider> coCoCodeActionProviders = new ArrayList<>();
+  private final List<CoCoCodeActionProvider> coCoCodeActionProviders = new ArrayList<>();
 
-  public SysML4VerificationCodeActionProvider(DocumentManager documentManager) {
-    coCoCodeActionProviders.add(new UpperCaseBlockNameCoCoCodeActionProvider(documentManager));
+  public SysMLv2CodeActionProvider(DocumentManager documentManager,
+                                   AstPrettyPrinter<ASTSysMLModel> astSysMLModelAstPrettyPrinter) {
+    super(documentManager, astSysMLModelAstPrettyPrinter);
+    coCoCodeActionProviders.add(new UpperCaseBlockName(documentManager));
+    coCoCodeActionProviders.add(new MissingRefinement(documentManager));
+    coCoCodeActionProviders.add(new MissingRefiner(documentManager));
   }
 
   @Override

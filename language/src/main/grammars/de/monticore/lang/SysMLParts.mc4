@@ -35,11 +35,6 @@ component grammar SysMLParts extends SysMLBasis {
             if(refinementDef.isPresent()) {
               refinements.add(refinementDef.get());
             }
-            else {
-              Log.warn("Refinement " + superTypeName + " of " + this.getName() + " could not be resolved.",
-                  this.get_SourcePositionStart(),
-                  this.get_SourcePositionEnd());
-            }
           }
         }
       }
@@ -48,6 +43,7 @@ component grammar SysMLParts extends SysMLBasis {
 
    enum SysMLReqType = "UNKNOWN" | "HLR" | "LLR" | "MIXED" ;
    symbolrule PartDef =
+      directRefinements:de.monticore.types.check.SymTypeExpression*
       requirementType:SysMLReqType;
 
   symbol scope AttributeDef implements SysMLType =
