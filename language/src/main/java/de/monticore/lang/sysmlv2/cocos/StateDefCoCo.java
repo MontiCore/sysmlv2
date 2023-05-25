@@ -13,8 +13,7 @@ public class StateDefCoCo implements SysMLPartsASTPartDefCoCo {
   public void check(ASTPartDef node) {
     List<ASTStateUsage> stateDefs = node.getSysMLElements(ASTStateUsage.class);
     if(stateDefs.size() != 1){
-      Log.warn("Part " + node.getName() + " must contain exactly one state usage!");
+      Log.warn("0xA70003 Part " + node.getName() + " must contain exactly one state usage!");
     }
   }
 }
-
