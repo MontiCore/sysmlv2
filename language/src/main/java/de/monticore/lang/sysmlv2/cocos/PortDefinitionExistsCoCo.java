@@ -12,7 +12,7 @@ public class PortDefinitionExistsCoCo implements SysMLPartsASTPartDefCoCo {
   public void check(ASTPartDef node) {
     List<ASTPortUsage> portUsages = node.getSysMLElements(ASTPortUsage.class);
     if(portUsages.isEmpty()) {
-      Log.warn("Part " + node.getName() + " must use at least one port!");
+      Log.warn("0xA70002 Part " + node.getName() + " must use at least one port!");
     }
   }
 }
