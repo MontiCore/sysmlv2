@@ -1,0 +1,84 @@
+package de.monticore.lang;
+
+component grammar ComponentConnector extends
+    de.monticore.types.MCBasicTypes,
+    de.monticore.symbols.CompSymbols,
+    de.monticore.Cardinality {
+
+  // Name is a fqn
+  abstract symbol Definition implements Component = Name Timing strongCausal:["strong"]? inputs:Name@PortImpl* outputs:Name@PortImpl*
+    parameters:Name@Parameter* refinementOf:Name@Definition*;
+  astrule Definition =
+    method public  String getSimpleName() {
+      return getName().substring(getName().lastIndexOf(".") + 1);
+    }
+    method public List<String> getPackage() {
+      String packageString = getName().substring(getName().lastIndexOf(getSimpleName()) + getSimpleName().length());
+      if (packageString.isEmpty()) {
+        return new ArrayList<>();
+      }
+      else {
+        return Arrays.asList(packageString.split("."));
+      }
+    }
+  ;
+
+  symbol Parameter = Name MCType;
+
+  CCType implements MCType = Name countable:["countable"]? finite:["finite"]?;
+
+  interface symbol Timing;
+
+  // copy pasted from Focus*
+  SyncronousTiming implements Timing = "sync" ;
+  astrule SyncronousTiming =
+    method public String getName() {
+      return "sync";
+    }
+  ;
+
+  StrictlySyncronousTiming implements Timing = "tone" ;
+  astrule StrictlySyncronousTiming =
+    method public String getName() {
+      return "tone";
+    }
+  ;
+
+  EventTiming implements Timing = "event" ;
+  astrule EventTiming =
+    method public String getName() {
+      return "event";
+    }
+  ;
+
+  // TODO usages will probably be linked to Def IO and thus do not need direction on AST side.
+  symbol PortImpl implements Port = Name Cardinality MCType;
+  astrule PortImpl =
+    method public  String getSimpleName() {
+      return getName().substring(getName().lastIndexOf(".") + 1);
+    }
+    method public List<String> getPackage() {
+      String packageString = getName().substring(getName().lastIndexOf(getSimpleName()) + getSimpleName().length());
+      if (packageString.isEmpty()) {
+        return new ArrayList<>();
+      }
+      else {
+        return Arrays.asList(packageString.split("."));
+      }
+    }
+    ;
+
+  symbol PortInstanceImpl implements Port = Name instanceOf:PortImpl instantiatedIn:Name@Definition;
+
+  // have to reimplement name from Definition otherwise generation errors with 0xA4047 from Component
+  symbol Specification extends Definition = Name assumptions:String* predicates:String*;
+
+  symbol Composition extends Definition = Name parts:Name@Instance* Connector*;
+
+  symbol Instance implements Subcomponent = Name instanceOf:Name@Component ParameterValue*;
+
+  symbol ParameterValue = Name value:String parameter:Name@Parameter;
+
+  // Port acts as Endpoint
+  symbol Connector = Name source:Name@Port target:Name@Port;
+}
