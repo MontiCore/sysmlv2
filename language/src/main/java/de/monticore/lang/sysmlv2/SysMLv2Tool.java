@@ -22,6 +22,8 @@ import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.cocos.AssignActionTypeCheck;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
+import de.monticore.lang.sysmlv2.cocos.FlowCheckCoCo;
+import de.monticore.lang.sysmlv2.cocos.PortDefinitionExistsCoCo;
 import de.monticore.lang.sysmlv2.cocos.RefinementCyclic;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
@@ -29,6 +31,7 @@ import de.monticore.lang.sysmlv2.cocos.RefinementChainCheck;
 import de.monticore.lang.sysmlv2.cocos.RefinementInterfaceNotMatching;
 import de.monticore.lang.sysmlv2.cocos.SendActionTypeCheck;
 import de.monticore.lang.sysmlv2.cocos.SpecializationExists;
+import de.monticore.lang.sysmlv2.cocos.PartBehaviorCoCo;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.TypeCheckTransitionGuards;
 import de.monticore.lang.sysmlv2.cocos.WarnNonExhibited;
@@ -112,6 +115,11 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLRequirementsASTRequirementDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLImportsAndPackagesASTSysMLPackageCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new NameCompatible4Isabelle());
+
+    //SpesML CoCos
+    checker.addCoCo(new FlowCheckCoCo());
+    checker.addCoCo(new PortDefinitionExistsCoCo());
+    checker.addCoCo(new PartBehaviorCoCo());
 
     checker.checkAll(ast);
   }
