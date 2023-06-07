@@ -9,6 +9,7 @@ public class FlowCheckCoCo implements SysMLConnectionsASTFlowCoCo {
 
   @Override
   public void check(ASTFlow node) {
-    Log.warn("0xA70001 Make use of Connector instead of Flow Connections");
+    Log.warn("0xA70001 Make use of Connector instead of Flow Connections",
+        node.get_SourcePositionStart(), node.get_SourcePositionEnd());
   }
 }

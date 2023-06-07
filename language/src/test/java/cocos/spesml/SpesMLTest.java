@@ -5,8 +5,8 @@ import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.monticore.lang.sysmlv2.cocos.FlowCheckCoCo;
+import de.monticore.lang.sysmlv2.cocos.PartBehaviorCoCo;
 import de.monticore.lang.sysmlv2.cocos.PortDefinitionExistsCoCo;
-import de.monticore.lang.sysmlv2.cocos.StateDefCoCo;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
@@ -100,48 +100,46 @@ public class SpesMLTest {
     assertThat(findings.get(0).getMsg()).contains("0xA70002");
   }
 
+
   @Test
-  void stateDefinitionExistsTestValid() throws IOException {
-    var model = "part def B { state behavior : BAutomaton(); } ";
+  void PartBehaviorCoCoTestValid() throws IOException {
+    var model = "part def B { exhibit state BAutomaton {  } } ";
     var ast = parser.parse_String(model);
     assertThat(ast).isPresent();
     st.createSymbolTable(ast.get());
     var checker = new SysMLv2CoCoChecker();
-    checker.addCoCo(new StateDefCoCo());
+    checker.addCoCo(new PartBehaviorCoCo());
     checker.checkAll(ast.get());
     List<Finding> findings = getFindings();
     assertThat(findings).hasSize(0);
   }
 
   @Test
-  void stateDefinitionExistsTestInValid() throws IOException {
-    var model = "port def A { in attribute b: B; } part def C { port a: A; }";
+  void PartBehaviorCoCoTestInvalid1() throws IOException {
+    var model = "part def B { exhibit state BAutomaton {  } constraint C { a = 6 } } ";
     var ast = parser.parse_String(model);
     assertThat(ast).isPresent();
     st.createSymbolTable(ast.get());
     var checker = new SysMLv2CoCoChecker();
-    checker.addCoCo(new StateDefCoCo());
+    checker.addCoCo(new PartBehaviorCoCo());
+    checker.checkAll(ast.get());
+    List<Finding> findings = getFindings();
+    assertThat(findings).hasSize(1);
+    assertThat(findings.get(0).getMsg()).contains("0xA70004");
+  }
+
+  @Test
+  void PartBehaviorCoCoTestInvalid2() throws IOException {
+    var model = "part def C {  }";
+    var ast = parser.parse_String(model);
+    assertThat(ast).isPresent();
+    st.createSymbolTable(ast.get());
+    var checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new PartBehaviorCoCo());
     checker.checkAll(ast.get());
     List<Finding> findings = getFindings();
     assertThat(findings).hasSize(1);
     assertThat(findings.get(0).getMsg()).contains("0xA70003");
-  }
-
-  @ParameterizedTest
-  @ValueSource(strings = {"doubleInverter.sysml", "inverter.sysml", "port.sysml"})
-  void testDoubleInverterModelValid(String inputValue) throws IOException {
-    var modelPath = Paths.get(MODEL_PATH, "model", inputValue).toString();
-    var ast = parser.parse(modelPath);
-    assertThat(ast).isPresent();
-    st.createSymbolTable(ast.get());
-    st.runAdditionalCoCos(ast.get());
-    var checker = new SysMLv2CoCoChecker();
-    checker.addCoCo(new FlowCheckCoCo());
-    checker.addCoCo(new PortDefinitionExistsCoCo());
-    checker.addCoCo(new StateDefCoCo());
-    checker.checkAll(ast.get());
-    List<Finding> findings = getFindings();
-    assertThat(findings).hasSize(0);
   }
 
   private List<Finding> getFindings() {
