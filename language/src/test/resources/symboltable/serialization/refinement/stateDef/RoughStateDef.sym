@@ -15,6 +15,26 @@
               "isShadowingScope": true,
               "symbols": [
                 {
+                  "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
+                  "name": "i1",
+                  "types": [
+                    {
+                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                      "objName": "RoughStateDef.Input"
+                    }
+                  ]
+                },
+                {
+                  "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
+                  "name": "o1",
+                  "types": [
+                    {
+                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                      "objName": "RoughStateDef.Output"
+                    }
+                  ]
+                },
+                {
                   "kind": "de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol",
                   "name": "behavior",
                   "spannedScope": {
@@ -34,26 +54,6 @@
                       }
                     ]
                   }
-                },
-                {
-                  "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
-                  "name": "i1",
-                  "types": [
-                    {
-                      "kind": "de.monticore.types.check.SymTypeOfObject",
-                      "objName": "RoughStateDef.Input"
-                    }
-                  ]
-                },
-                {
-                  "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
-                  "name": "o1",
-                  "types": [
-                    {
-                      "kind": "de.monticore.types.check.SymTypeOfObject",
-                      "objName": "RoughStateDef.Output"
-                    }
-                  ]
                 }
               ]
             }

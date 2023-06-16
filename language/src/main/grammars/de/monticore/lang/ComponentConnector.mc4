@@ -4,81 +4,46 @@ component grammar ComponentConnector extends
     de.monticore.types.MCBasicTypes,
     de.monticore.symbols.CompSymbols,
     de.monticore.Cardinality {
+  /* TODO concrete symbols implementing other interface symbols is problematic and should not happen.
+      In our case we require additional symbolrules for transformation that are not present in CompSymbols.
+      - Overriding the interface is not possible (0xA4007)
+      Potential solution: We define our own component interface symbols with extension to be later migrated to MontiCore
+                          - con: no traversal is generated for the ASTs (neither in traverser nor in handler)
+   */
 
-  // Name is a fqn
-  abstract symbol Definition implements Component = Name Timing strongCausal:["strong"]? inputs:Name@PortImpl* outputs:Name@PortImpl*
-    parameters:Name@Parameter* refinementOf:Name@Definition*;
-  astrule Definition =
-    method public  String getSimpleName() {
-      return getName().substring(getName().lastIndexOf(".") + 1);
-    }
-    method public List<String> getPackage() {
-      String packageString = getName().substring(getName().lastIndexOf(getSimpleName()) + getSimpleName().length());
-      if (packageString.isEmpty()) {
-        return new ArrayList<>();
-      }
-      else {
-        return Arrays.asList(packageString.split("."));
-      }
-    }
-  ;
+  /*
+    Pseudo-abstract Component Connector language only for symbols.
+   */
 
-  symbol Parameter = Name MCType;
-
-  CCType implements MCType = Name countable:["countable"]? finite:["finite"]?;
-
-  interface symbol Timing;
-
-  // copy pasted from Focus*
-  SyncronousTiming implements Timing = "sync" ;
-  astrule SyncronousTiming =
-    method public String getName() {
-      return "sync";
+  // Scope spanning property is inherited from Component
+  symbol MildComponent implements Component = Name;
+  symbolrule MildComponent =
+    refinementStart: de.monticore.types.check.CompKindExpression?
+    isStrongCausal:Boolean
+    timing: de.monticore.symbols.compsymbols._symboltable.Timing
+    method public MildComponentSymbol resolveRefinementStart() {
+      return getEnclosingScope().resolveMildComponent(refinementStart.get().printName()).get();
     }
   ;
 
-  StrictlySyncronousTiming implements Timing = "tone" ;
-  astrule StrictlySyncronousTiming =
-    method public String getName() {
-      return "tone";
+  symbol Parameter = Name;
+  symbolrule Parameter =
+    type: de.monticore.types.check.SymTypeExpression
+  ;
+
+  symbol MildPort implements Port = Name;
+  symbolrule MildPort =
+    cardinality: int
+
+    method public boolean equals(Object other) {
+      return other instanceof MildPortSymbol && Objects.equals(getFullName(),
+          ((MildPortSymbol) other).getFullName());
+    }
+
+    method public int hashCode() {
+      return getFullName().hashCode();
     }
   ;
 
-  EventTiming implements Timing = "event" ;
-  astrule EventTiming =
-    method public String getName() {
-      return "event";
-    }
-  ;
-
-  // TODO usages will probably be linked to Def IO and thus do not need direction on AST side.
-  symbol PortImpl implements Port = Name Cardinality MCType;
-  astrule PortImpl =
-    method public  String getSimpleName() {
-      return getName().substring(getName().lastIndexOf(".") + 1);
-    }
-    method public List<String> getPackage() {
-      String packageString = getName().substring(getName().lastIndexOf(getSimpleName()) + getSimpleName().length());
-      if (packageString.isEmpty()) {
-        return new ArrayList<>();
-      }
-      else {
-        return Arrays.asList(packageString.split("."));
-      }
-    }
-    ;
-
-  symbol PortInstanceImpl implements Port = Name instanceOf:PortImpl instantiatedIn:Name@Definition;
-
-  // have to reimplement name from Definition otherwise generation errors with 0xA4047 from Component
-  symbol Specification extends Definition = Name assumptions:String* predicates:String*;
-
-  symbol Composition extends Definition = Name parts:Name@Instance* Connector*;
-
-  symbol Instance implements Subcomponent = Name instanceOf:Name@Component ParameterValue*;
-
-  symbol ParameterValue = Name value:String parameter:Name@Parameter;
-
-  // Port acts as Endpoint
-  symbol Connector = Name source:Name@Port target:Name@Port;
+  symbol MildSpecification extends MildComponent = Name assumptions:String* predicates:String*;
 }
