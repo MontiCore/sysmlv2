@@ -1,6 +1,5 @@
 package de.monticore.lang.componentconnector._symboltable;
 
-import de.monticore.symbols.compsymbols._symboltable.PortSymbolDeSer;
 import de.monticore.symbols.compsymbols._symboltable.Timing;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.SymTypeExpression;
@@ -9,8 +8,7 @@ import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
 
-// Copied from PortSymbolDeSer
-public class PortImplSymbolDeSer extends PortImplSymbolDeSerTOP {
+public class MildPortSymbolDeSer extends MildPortSymbolDeSerTOP {
   @Override
   protected void serializeType(SymTypeExpression type, ComponentConnectorSymbols2Json s2j) {
     SymTypeExpressionDeSer.serializeMember(s2j.getJsonPrinter(), "type", type);

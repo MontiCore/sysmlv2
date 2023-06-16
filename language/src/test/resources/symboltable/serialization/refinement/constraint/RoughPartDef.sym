@@ -15,10 +15,6 @@
               "isShadowingScope": true,
               "symbols": [
                 {
-                  "kind": "de.monticore.lang.sysmlconstraints._symboltable.ConstraintUsageSymbol",
-                  "name": "SomeName"
-                },
-                {
                   "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
                   "name": "input",
                   "types": [
@@ -37,6 +33,10 @@
                       "objName": "RoughPartDef.BooleanOutput"
                     }
                   ]
+                },
+                {
+                  "kind": "de.monticore.lang.sysmlconstraints._symboltable.ConstraintUsageSymbol",
+                  "name": "SomeName"
                 }
               ]
             }
