@@ -5,6 +5,11 @@ import de.monticore.lang.sysmlconnections._ast.ASTFlow;
 import de.monticore.lang.sysmlconnections._cocos.SysMLConnectionsASTFlowCoCo;
 import de.se_rwth.commons.logging.Log;
 
+/**
+ * Flow-Konnectoren stellen ein Spezialfall der regulären Konnektoren dar.
+ * Wir (SpesML v2) sehen es so vor, die Verwendung der allgemeinen Konnektoren
+ * dem Flow-Konnectoren vorzuziehen.
+ */
 public class FlowCheckCoCo implements SysMLConnectionsASTFlowCoCo {
 
   @Override

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package cocos.spesml;
 
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
@@ -13,12 +14,6 @@ import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-
-import java.io.File;
-
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
@@ -26,8 +21,12 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Die Testklasse beinhaltet JUnit-Testfälle zur Verifizierung von SpesMLv2-spezifischen
+ * Condext-Conditions.
+ */
 public class SpesMLTest {
-  private static final String MODEL_PATH = "src/test/resources/cocos/doubleInverter/";
+  private static final String MODEL_PATH = "src/test/resources/cocos/";
 
   private final SysMLv2Parser parser = new SysMLv2Parser();
 
