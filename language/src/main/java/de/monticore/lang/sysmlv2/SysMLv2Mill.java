@@ -19,20 +19,11 @@ import java.util.Arrays;
 public class SysMLv2Mill extends SysMLv2MillTOP {
 
   /**
-   * Wraps the {@link BasicSymbolsMill#initializePrimitives()} and adds the "nat" primitive.
+   * Wraps the {@link BasicSymbolsMill#initializePrimitives()}. Convencience method and central hook-point if we ever
+   * needed any change to primitives. See {@link de.monticore.lang.sysmlv2._auxiliary.BasicSymbolsMillForSysMLv2} for
+   * adding new primitives!
    */
   public static void initializePrimitives() {
-    var boxMap = SymTypePrimitive.boxMap;
-    var unboxMap = SymTypePrimitive.unboxMap;
-
-    if(!boxMap.containsKey("nat")) {
-      boxMap.put("nat", "Natural");
-    }
-
-    if(!unboxMap.containsKey("Natural")) {
-      unboxMap.put("Natural", "nat");
-    }
-
     BasicSymbolsMill.initializePrimitives();
   }
 

@@ -124,12 +124,13 @@ public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfComm
     SymTypeExpression fieldOwnerExpr = fieldOwner.getResult();
     TypeSymbol fieldOwnerSymbol = fieldOwnerExpr.getTypeInfo();
     if (fieldOwnerSymbol instanceof TypeVarSymbol && !quiet) {
-      Log.error("0xA0321 The type " + fieldOwnerSymbol.getName() + " is a type variable and cannot have methods and attributes");
+      Log.error("0xA0321 The type " + fieldOwnerSymbol.getName() + " is a type variable and cannot have methods and attributes", expr.get_SourcePositionStart());
     }
     //search for a method, field or type in the scope of the type of the inner expression
     List<VariableSymbol> fieldSymbols = getCorrectFieldsFromInnerType(fieldOwnerExpr, expr);
     Optional<TypeSymbol> typeSymbolOpt = fieldOwnerSymbol.getSpannedScope().resolveType(expr.getName());
     Optional<TypeVarSymbol> typeVarOpt = fieldOwnerSymbol.getSpannedScope().resolveTypeVar(expr.getName());
+    String qualName = fieldOwnerSymbol.getName() + "." + expr.getName();
 
     if (!fieldSymbols.isEmpty()) {
       //cannot be a method, test variable first
@@ -141,7 +142,7 @@ public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfComm
       if (fieldSymbols.size() != 1) {
         getTypeCheckResult().setResult(SymTypeExpressionFactory.createObscureType());
         if(!quiet) {
-          logError("0xA1236", expr.get_SourcePositionStart());
+          Log.error("0xA1236 Ambiguous: Found " + fieldSymbols.size() + " symbols for " + qualName, expr.get_SourcePositionStart());
         }
       }
       if (!fieldSymbols.isEmpty()) {
@@ -191,7 +192,7 @@ public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfComm
       } else{
         getTypeCheckResult().setResult(SymTypeExpressionFactory.createObscureType());
         if(!quiet) {
-          logError("0xA1306", expr.get_SourcePositionStart());
+          Log.error("0xA1306 The referenced type variable " + typeVar.getName() + " is not accessible.", expr.get_SourcePositionStart());
         }
       }
     } else if (typeSymbolOpt.isPresent()) {
@@ -205,13 +206,13 @@ public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfComm
       } else {
         getTypeCheckResult().setResult(SymTypeExpressionFactory.createObscureType());
         if(!quiet) {
-          logError("0xA1303", expr.get_SourcePositionStart());
+          Log.error("0xA1303 The referenced type " + typeSymbol.getName() + " is not accessible.", expr.get_SourcePositionStart());
         }
       }
     } else {
       getTypeCheckResult().setResult(SymTypeExpressionFactory.createObscureType());
       if(!quiet) {
-        logError("0xA1317", expr.get_SourcePositionStart());
+        Log.error("0xA1317 Cannot find symbol " + qualName, expr.get_SourcePositionStart());
       }
     }
   }

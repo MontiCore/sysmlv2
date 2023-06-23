@@ -1,5 +1,6 @@
 package de.monticore.lang.componentconnector._symboltable;
 
+import de.monticore.cardinality._ast.ASTCardinality;
 import de.monticore.symbols.compsymbols._symboltable.Timing;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.SymTypeExpression;
@@ -9,6 +10,11 @@ import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 
 public class MildPortSymbolDeSer extends MildPortSymbolDeSerTOP {
+  @Override protected void serializeCardinality(ASTCardinality cardinality, ComponentConnectorSymbols2Json s2j) {
+    // TODO
+    Log.error("Implement me");
+  }
+
   @Override
   protected void serializeType(SymTypeExpression type, ComponentConnectorSymbols2Json s2j) {
     SymTypeExpressionDeSer.serializeMember(s2j.getJsonPrinter(), "type", type);
@@ -17,6 +23,13 @@ public class MildPortSymbolDeSer extends MildPortSymbolDeSerTOP {
   @Override
   protected void serializeTiming(Timing timing, ComponentConnectorSymbols2Json s2j) {
     s2j.getJsonPrinter().member("timing", timing.getName());
+  }
+
+  @Override
+  protected ASTCardinality deserializeCardinality(JsonObject symbolJson) {
+    // TODO
+    Log.error("Implement me");
+    return null;
   }
 
   @Override
