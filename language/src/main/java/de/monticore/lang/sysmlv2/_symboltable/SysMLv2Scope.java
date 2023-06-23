@@ -12,9 +12,11 @@ import de.monticore.lang.sysmlparts.symboltable.adapters.PortDef2TypeSymbolAdapt
 import de.monticore.lang.sysmlparts.symboltable.adapters.PortUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlrequirements._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
+import de.monticore.lang.sysmlv2.symboltable.adapters.PartDef2ComponentAdapter;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symbols.compsymbols._symboltable.ComponentSymbol;
 import de.monticore.symboltable.IScopeSpanningSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
@@ -168,4 +170,22 @@ import java.util.function.Predicate;
 
     return adapted;
   }
+
+  @Override
+  public List<ComponentSymbol> resolveAdaptedComponentLocallyMany(
+      boolean foundSymbols,
+      String name,
+      AccessModifier modifier,
+      Predicate<ComponentSymbol> predicate
+  ) {
+    var adapted = new ArrayList<ComponentSymbol>();
+
+    var partDef = resolvePartDefLocally(name);
+    if(partDef.isPresent()) {
+      adapted.add(new PartDef2ComponentAdapter(partDef.get()));
+    }
+
+    return adapted;
+  }
+
 }
