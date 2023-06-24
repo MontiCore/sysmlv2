@@ -14,7 +14,7 @@ plugins {
 /* ========================= Project ========================== */
 /* ============================================================ */
 
-group = 'de.monticore.lang'
+group = 'de.monticore.lang.sysml_v2'
 description = 'SysML_v2_official'
 
 /* ============================================================ */
@@ -43,7 +43,6 @@ sourceSets {
     }
   }
 }
-
 
 configurations { grammar }
 
@@ -74,7 +73,7 @@ dependencies {
 task generate {}
 
 fileTree(grammarDir).matching { include '**/*.mc4' }.each { g ->
-    def taskname = "generateGrammar${g.getName().substring(0,g.getName().lastIndexOf('.'))}"
+  def taskname = "generateGrammar${g.getName().substring(0,g.getName().lastIndexOf('.'))}"
 
   task "$taskname" (type: MCTask) {
     grammar = g
@@ -91,7 +90,7 @@ compileJava.dependsOn generate
 compileTestJava.doFirst { mkdir sourceSets.main.output.resourcesDir }
 
 tasks.withType(Test) {
-    maxParallelForks = Runtime.runtime.availableProcessors() ?: 1
+  maxParallelForks = Runtime.runtime.availableProcessors() ?: 1
 }
 
 tasks.withType(JavaCompile) {
@@ -119,7 +118,7 @@ java {
   }
 }
 
-jar.dependsOn grammarsJar, shadowJar
+jar.dependsOn grammarsJar
 
 
 /* ============================================================ */
@@ -130,7 +129,6 @@ publishing {
   // configure what artifacts to publish
   publications {
     mavenJava(MavenPublication) {
-      artifactId = "sysml_v2"
       from components.java
       artifact shadowJar {
         classifier = 'cli'
