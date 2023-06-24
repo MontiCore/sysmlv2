@@ -4,7 +4,7 @@ plugins {
   id 'de.monticore.language-server' version "$mclsg_version"
 }
 
-group = 'de.monticore.lang.sysml'
+group = 'de.monticore.lang.sysml_v2'
 
 mainClassName = "de.monticore.lang.sysmlv2._lsp.LanguageServerCLI"
 
@@ -13,7 +13,7 @@ dependencies {
   grammar(project(":language")) {
     exclude group: 'de.monticore', module: 'monticore-grammar'
     capabilities {
-      requireCapability("de.monticore.lang:language-grammars")
+      requireCapability("de.monticore.lang.sysml_v2:language-grammars")
     }
   }
   // MPf: Kopiert von MontiArc wegen Dopplung der Grammatik in "normaler" JAR und "-grammars" JAR
