@@ -34,7 +34,6 @@ public class ComponentSymbolAdapterTest extends NervigeSymboltableTests {
     assertThat(parameters.get(0).getType().printFullName()).isEqualTo("int");
   }
 
-  @Disabled
   @Test
   public void testPorts() throws IOException {
     var as = process("part def A { port i: Booleans; } port def Booleans { in attribute c: boolean; }");
