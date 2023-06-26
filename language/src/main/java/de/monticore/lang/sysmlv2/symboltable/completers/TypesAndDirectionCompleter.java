@@ -43,20 +43,28 @@ public class TypesAndDirectionCompleter implements SysMLBasisVisitor2, SysMLPart
         var astTyping = (ASTSysMLTyping) specialization;
 
         for(var mcType: astTyping.getSuperTypesList()) {
+          SymTypeExpression res = null;
           if(mcType instanceof ASTMCGenericType) {
             // We still have to print when the type is generic because the defining symbol does not give info about the instantiation with type arguments
-            typeExpressions.add(SymTypeExpressionFactory.createTypeExpression(
+            res = SymTypeExpressionFactory.createTypeExpression(
                 mcType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())),
-                (IBasicSymbolsScope) mcType.getEnclosingScope()));
+                (IBasicSymbolsScope) mcType.getEnclosingScope());
           }
           else if(mcType.getDefiningSymbol().isPresent() && mcType.getDefiningSymbol().get() instanceof TypeSymbol) {
-            typeExpressions.add(SymTypeExpressionFactory.createTypeExpression((TypeSymbol) mcType.getDefiningSymbol().get()));
+            res = SymTypeExpressionFactory.createTypeExpression((TypeSymbol) mcType.getDefiningSymbol().get());
           }
           else if(mcType.getDefiningSymbol().isEmpty()) {
             Log.warn("Defining symbol for " + mcType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())) + " was not set.");
           }
           else if(!(mcType.getDefiningSymbol().get() instanceof TypeSymbol)) {
             Log.warn("Defining symbol for " + mcType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())) + " is not a TypeSymbol");
+          }
+
+          if(res != null) {
+            if(astTyping.isPresentCardinality()) {
+              res = SymTypeExpressionFactory.createTypeArray(res.getTypeInfo(), 1, res);
+            }
+            typeExpressions.add(res);
           }
         }
       }
