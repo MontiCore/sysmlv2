@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2._symboltable;
 
+import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
@@ -87,12 +88,13 @@ import java.util.function.Predicate;
         // we omit to set the ASTNode
         var variable = new AttributeUsage2VariableSymbolAdapter(attrUsage);
 
-        if(attrUsage.getAstNode().getCardinality().isPresent()) {
+        // Jetzt direkt korrekt im Completer
+        /*if(attrUsage.getAstNode().getCardinality().isPresent()) {
           variable.setType(SymTypeExpressionFactory.createTypeArray(attributeType.getTypeInfo(), 1,
               attributeType));
         }else {
           variable.setType(attributeType);
-        }
+        }*/
 
         adapted.add(variable);
       }
@@ -172,13 +174,13 @@ import java.util.function.Predicate;
   }
 
   @Override
-  public List<ComponentSymbol> resolveAdaptedComponentLocallyMany(
+  public List<MildComponentSymbol> resolveAdaptedMildComponentLocallyMany(
       boolean foundSymbols,
       String name,
       AccessModifier modifier,
-      Predicate<ComponentSymbol> predicate
+      Predicate<MildComponentSymbol> predicate
   ) {
-    var adapted = new ArrayList<ComponentSymbol>();
+    var adapted = new ArrayList<MildComponentSymbol>();
 
     var partDef = resolvePartDefLocally(name);
     if(partDef.isPresent()) {

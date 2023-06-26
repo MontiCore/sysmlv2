@@ -2,6 +2,8 @@ package de.monticore.lang.componentconnector._symboltable;
 
 import de.monticore.lang.componentconnector._ast.ASTConnector;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symbols.compsymbols._symboltable.ComponentSymbolDeSer;
+import de.monticore.symboltable.serialization.JsonPrinter;
 import de.monticore.symboltable.serialization.json.JsonElement;
 import de.monticore.symboltable.serialization.json.JsonElementFactory;
 import de.monticore.symboltable.serialization.json.JsonObject;
@@ -42,8 +44,10 @@ public class MildComponentSymbolDeSer extends MildComponentSymbolDeSerTOP{
 
   @Override
   protected void serializeParameters(List<VariableSymbol> parameters, ComponentConnectorSymbols2Json s2j) {
-    // TODO
-    Log.error("Not Implemented");
+    JsonPrinter printer = s2j.getJsonPrinter();
+    printer.beginArray(ComponentSymbolDeSer.PARAMETERS);
+    parameters.forEach(p -> p.accept(s2j.getTraverser()));
+    printer.endArray();
   }
 
   @Override

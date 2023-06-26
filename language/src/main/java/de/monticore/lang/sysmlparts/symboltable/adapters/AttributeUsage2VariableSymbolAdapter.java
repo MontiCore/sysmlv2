@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.SourcePosition;
 
 public class AttributeUsage2VariableSymbolAdapter extends VariableSymbol {
@@ -45,6 +46,11 @@ public class AttributeUsage2VariableSymbolAdapter extends VariableSymbol {
   @Override
   public SourcePosition getSourcePosition() {
     return this.getAdaptee().getSourcePosition();
+  }
+
+  @Override
+  public SymTypeExpression getType() {
+    return getAdaptee().getTypes(0);
   }
 
   @Override
