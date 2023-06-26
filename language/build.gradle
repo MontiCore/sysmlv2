@@ -130,9 +130,6 @@ publishing {
   publications {
     mavenJava(MavenPublication) {
       from components.java
-      artifact shadowJar {
-        classifier = 'cli'
-      }
     }
   }
   // and where to upload them
