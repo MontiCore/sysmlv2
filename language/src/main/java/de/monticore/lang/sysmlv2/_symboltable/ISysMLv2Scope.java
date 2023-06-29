@@ -1,4 +1,3 @@
-/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2._symboltable;
 
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
@@ -17,7 +16,6 @@ import de.monticore.lang.sysmlv2.symboltable.adapters.PartDef2ComponentAdapter;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.symbols.compsymbols._symboltable.ComponentSymbol;
 import de.monticore.symboltable.IScopeSpanningSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
@@ -27,15 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-@SuppressWarnings("OptionalIsPresent") public class SysMLv2Scope extends SysMLv2ScopeTOP {
-
-  public SysMLv2Scope() {
-    super();
-  }
-
-  public SysMLv2Scope(boolean shadowing) {
-    super(shadowing);
-  }
+public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
   /**
    * Adaptiert AttributeUsages oder PortUsages zu Variablen.
@@ -46,7 +36,7 @@ import java.util.function.Predicate;
    * @author: Marc Schmidt, Mathias Pfeiffer
    */
   @Override
-  public List<VariableSymbol> resolveAdaptedVariableLocallyMany(
+  default List<VariableSymbol> resolveAdaptedVariableLocallyMany(
       boolean foundSymbols,
       String name,
       AccessModifier modifier,
@@ -101,11 +91,12 @@ import java.util.function.Predicate;
     }
 
     // Falls Requirement, dann subject befragen
-    if(this.astNode.isPresent() && this.astNode.get() instanceof ASTRequirementUsage) {
-      var ast = (ASTRequirementUsage) this.astNode.get();
+    if(this.isPresentAstNode() && this.getAstNode() instanceof ASTRequirementUsage) {
+      var ast = (ASTRequirementUsage) this.getAstNode();
       if(ast.isPresentRequirementSubject()) {
         // Alle Typen kommen in Frage
-        ast.getRequirementSubject().getSpecializationList().stream().flatMap(ASTSpecialization::streamSuperTypes).forEach(t -> {
+        ast.getRequirementSubject().getSpecializationList().stream().flatMap(
+            ASTSpecialization::streamSuperTypes).forEach(t -> {
           var typeSymbol = t.getDefiningSymbol();
           if(typeSymbol.isPresent() && typeSymbol.get() instanceof IScopeSpanningSymbol) {
             var scope = ((IScopeSpanningSymbol)typeSymbol.get()).getSpannedScope();
@@ -131,7 +122,7 @@ import java.util.function.Predicate;
    * @author Marc Schmidt
    */
   @Override
-  public List<TypeSymbol> resolveAdaptedTypeLocallyMany(
+  default List<TypeSymbol> resolveAdaptedTypeLocallyMany(
       boolean foundSymbols,
       String name,
       AccessModifier modifier,
@@ -174,7 +165,7 @@ import java.util.function.Predicate;
   }
 
   @Override
-  public List<MildComponentSymbol> resolveAdaptedMildComponentLocallyMany(
+  default List<MildComponentSymbol> resolveAdaptedMildComponentLocallyMany(
       boolean foundSymbols,
       String name,
       AccessModifier modifier,
