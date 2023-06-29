@@ -1,6 +1,7 @@
 package parser;
 
 import de.monticore.expressions.commonexpressions._ast.ASTCallExpression;
+import de.monticore.lang.sysmlexpressions._ast.ASTElementOfExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSysMLInstantiation;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
@@ -8,6 +9,7 @@ import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -66,6 +68,18 @@ public class ExpressionParserTest {
     assertThat(ast).isPresent();
     assertThat(Log.getFindings()).isEmpty();
     assertThat(ast.get()).isInstanceOf(ASTSysMLInstantiation.class);
+  }
+
+  /**
+   * Checks that "\in" is parsed as ElementOf
+   */
+  @Test
+  public void testElementOf() throws IOException {
+    var ast = parser.parse_StringExpression("a \\in mySet");
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    assertThat(ast.get()).isInstanceOf(ASTElementOfExpression.class);
   }
 
 }

@@ -1,5 +1,6 @@
 package de.monticore.lang.sysmlv2.types;
 
+import de.monticore.lang.sysmlexpressions._ast.ASTElementOfExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTInfinity;
 import de.monticore.lang.sysmlexpressions._ast.ASTSubsetEquationExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSysMLInstantiation;
@@ -40,21 +41,48 @@ public class SysMLExressionsDeriver extends AbstractDeriveFromExpression impleme
     getTypeCheckResult().setResult(SymTypeExpressionFactory.createPrimitive("int"));
   }
 
-  protected TypeCheckResult lhs;
-  protected TypeCheckResult rhs;
-
   @Override
   public void traverse(ASTSubsetEquationExpression node) {
     getTypeCheckResult().reset();
     node.getLeft().accept(getTraverser());
-    lhs = getTypeCheckResult().copy();
+    TypeCheckResult lhs = getTypeCheckResult().copy();
     getTypeCheckResult().reset();
     node.getRight().accept(getTraverser());
-    rhs = getTypeCheckResult().copy();
+    TypeCheckResult rhs = getTypeCheckResult().copy();
+
+    var start = node.get_SourcePositionStart();
+    var end = node.get_SourcePositionEnd();
+    if(!lhs.isPresentResult()) {
+      Log.error("LHS could not be calculated", start, end);
+      typeCheckResult.setResult(SymTypeExpressionFactory.createObscureType());
+    }
+    else if(!rhs.isPresentResult()) {
+      Log.error("RHS could not be calculated", start, end);
+      typeCheckResult.setResult(SymTypeExpressionFactory.createObscureType());
+    }
+    else if(!lhs.getResult().getTypeInfo().getFullName().equals("Set")) {
+      Log.error("LHS was expected to be a set, but was " + lhs.getResult().printFullName(), start, end);
+      typeCheckResult.setResult(SymTypeExpressionFactory.createObscureType());
+    }
+    else if(!rhs.getResult().getTypeInfo().getFullName().equals("Set")) {
+      Log.error("RHS was expected to be a set, but was " + lhs.getResult().printFullName(), start, end);
+      typeCheckResult.setResult(SymTypeExpressionFactory.createObscureType());
+    }
+    else {
+      // TODO Inner types vergleichen / compatibility checken
+      getTypeCheckResult().setResult(SymTypeExpressionFactory.createPrimitive("boolean"));
+    }
   }
 
   @Override
-  public void endVisit(ASTSubsetEquationExpression node) {
+  public void traverse(ASTElementOfExpression node) {
+    getTypeCheckResult().reset();
+    node.getLeft().accept(getTraverser());
+    TypeCheckResult lhs = getTypeCheckResult().copy();
+    getTypeCheckResult().reset();
+    node.getRight().accept(getTraverser());
+    TypeCheckResult rhs = getTypeCheckResult().copy();
+
     var start = node.get_SourcePositionStart();
     var end = node.get_SourcePositionEnd();
     if(!lhs.isPresentResult()) {

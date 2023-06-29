@@ -43,4 +43,7 @@ component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiteral
 
   SupersetExpression implements Expression <150>, InfixExpression =
     left:Expression operator:"\\supset" right:Expression ;
+
+  ElementOfExpression implements Expression <150>, InfixExpression =
+    left:Expression operator:"\\in" right:Expression ;
 }
