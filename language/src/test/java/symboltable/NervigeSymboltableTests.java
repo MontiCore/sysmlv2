@@ -4,6 +4,7 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
 
@@ -12,8 +13,13 @@ abstract public class NervigeSymboltableTests {
   protected static SysMLv2Tool tool;
 
   @BeforeAll
-  public static void init() {
+  public static void setup() {
     tool = new SysMLv2Tool();
+  }
+
+  @BeforeEach
+  public void init() {
+    // Important: Resets everything, including crude DeSer setup!
     tool.init();
   }
 
