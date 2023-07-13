@@ -4,6 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.types.check.SymTypeExpression;
 import org.antlr.v4.runtime.misc.Pair;
 
 import java.util.ArrayList;
@@ -23,22 +24,31 @@ public class PartDefSymbol extends PartDefSymbolTOP {
    * @return List of all direct refinements that can be found in the given scope.
    */
   public List<PartDefSymbol> getDirectRefinements(ISysMLv2Scope scope) {
-    return getDirectRefinementsList().stream()
-        .map(symType -> scope.resolvePartDef(symType.getTypeInfo().getFullName()))
-        .map(opt -> opt.orElse(null))
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList());
+    try {
+      return getDirectRefinementsList().stream()
+          .filter(SymTypeExpression::hasTypeInfo)
+          .map(symType -> scope.resolvePartDef(symType.getTypeInfo().getFullName()))
+          .map(opt -> opt.orElse(null))
+          .filter(Objects::nonNull)
+          .collect(Collectors.toList());
+    } catch (Exception e){
+      return new ArrayList<>();
+    }
   }
 
   /**
    * @return List of all refinements, including transitive ones, that can be found in the given scope.
    */
   public List<PartDefSymbol> getRefinements(ISysMLv2Scope scope){
-    ListMultimap<PartDefSymbol, PartDefSymbol> result = ArrayListMultimap.create();
-    result.put(this, this);
-    traverseRefinements(this, p -> filterCyclicRelation(this, p, result), scope);
-    result.remove(this, this);
-    return result.get(this).stream().distinct().collect(Collectors.toList());
+    try {
+      ListMultimap<PartDefSymbol, PartDefSymbol> result = ArrayListMultimap.create();
+      result.put(this, this);
+      traverseRefinements(this, p -> filterCyclicRelation(this, p, result), scope);
+      result.remove(this, this);
+      return result.get(this).stream().distinct().collect(Collectors.toList());
+    } catch (Exception e){
+      return new ArrayList<>();
+    }
   }
 
   public static void filterCyclicRelation(PartDefSymbol origin, Pair<PartDefSymbol, PartDefSymbol> p,
@@ -76,24 +86,33 @@ public class PartDefSymbol extends PartDefSymbolTOP {
    * @return List of all direct refiners that can be found in the given scope
    */
   public List<PartDefSymbol> getDirectRefiners(ISysMLv2Scope scope) {
-    return getAllPartDefs(scope)
-        .filter(partDef -> !partDef.getDirectRefinements(scope).isEmpty())
-        .filter(partDef -> partDef.getDirectRefinements(scope)
-            .stream().anyMatch(ref -> ref.equals(this)))
-        .distinct()
-        .collect(Collectors.toList());
+    try {
+      return getAllPartDefs(scope)
+          .filter(partDef -> !partDef.getDirectRefinements(scope).isEmpty())
+          .filter(partDef -> partDef.getDirectRefinements(scope)
+              .stream().anyMatch(ref -> ref.equals(this)))
+          .distinct()
+          .collect(Collectors.toList());
+    } catch (Exception e){
+      return new ArrayList<>();
+    }
+
   }
 
   /**
    * @return List of all direct and transitive refiners
    */
   public List<PartDefSymbol> getRefiners(ISysMLv2Scope scope){
-    return getAllPartDefs(scope)
-        .filter(partDef -> !partDef.getRefinements(scope).isEmpty())
-        .filter(partDef -> partDef.getRefinements(scope)
-            .stream().anyMatch(ref -> ref.equals(this)))
-        .distinct()
-        .collect(Collectors.toList());
+    try {
+      return getAllPartDefs(scope)
+          .filter(partDef -> !partDef.getRefinements(scope).isEmpty())
+          .filter(partDef -> partDef.getRefinements(scope)
+              .stream().anyMatch(ref -> ref.equals(this)))
+          .distinct()
+          .collect(Collectors.toList());
+    } catch (Exception e){
+      return new ArrayList<>();
+    }
   }
 
   /**

@@ -2,6 +2,7 @@ package de.monticore.lang.sysmlv2._lsp.features.code_action.utils;
 
 import de.monticore.ast.Comment;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpressionBuilder;
+import de.monticore.lang.sysmlbasis.SysMLBasisMill;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLFeatureDirection;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsageBuilder;
@@ -93,11 +94,11 @@ public class PartDefTemplateBuilder {
   }
 
   public PartDefTemplateBuilder removeProperties(ASTSysMLReqType propertyType) {
-    if (propertyType == ASTSysMLReqType.LLR){
+    if (propertyType == ASTSysMLReqType.LLR || propertyType == ASTSysMLReqType.MIXED){
       result.removeIfSysMLElement(e -> e instanceof ASTStateUsage);
     }
 
-    if (propertyType == ASTSysMLReqType.HLR){
+    if (propertyType == ASTSysMLReqType.HLR || propertyType == ASTSysMLReqType.MIXED){
       result.removeIfSysMLElement(e -> e instanceof ASTRequirementUsage);
       result.removeIfSysMLElement(e -> e instanceof ASTConstraintUsage);
     }
@@ -139,14 +140,23 @@ public class PartDefTemplateBuilder {
   }
 
   public PartDefTemplateBuilder addEmptyStateUsage(String name) {
-    var fillOutComment = new Comment();
-    fillOutComment.setText("/* TODO: Fill out */");
-
-    var newStateUsage = new ASTStateUsageBuilder()
+    var newStateUsage = SysMLv2Mill.stateUsageBuilder()
         .setName(name)
-        .setModifier(SysMLv2Mill.modifierBuilder().build())
         .setDefaultValue(SysMLv2Mill.defaultValueBuilder().build())
-        .add_PostComment(fillOutComment)
+        .setEntryAction(SysMLv2Mill.entryActionBuilder()
+            .setActionUsage(SysMLv2Mill.actionUsageBuilder()
+                .setName("Entry")
+                .setModifier(SysMLv2Mill.modifierBuilder().build())
+                .setDefaultValue(SysMLv2Mill.defaultValueBuilder().build())
+                .build())
+            .build())
+        .addSysMLElement(SysMLv2Mill.sysMLSuccessionBuilder().setTgt("Init").build())
+        .addSysMLElement(SysMLv2Mill.stateUsageBuilder()
+            .setName("Init")
+            .setModifier(SysMLv2Mill.modifierBuilder().build())
+            .setDefaultValue(SysMLv2Mill.defaultValueBuilder().build())
+            .build())
+        .setModifier(SysMLv2Mill.modifierBuilder().build())
         .setExhibited(true)
         .build();
 
