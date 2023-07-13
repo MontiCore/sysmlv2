@@ -16,14 +16,8 @@ public class SpecializationExists implements SysMLBasisASTSpecializationCoCo {
       // Synthesizers are used to "build" the SymType from ASTs
       var synthesizer = new SysMLSynthesizer();
       for(var typeAst : node.getSuperTypesList()) {
-        var type = synthesizer.synthesizeType(typeAst);
-        // Unfortunately, MontiCore's "ObscureType" does not yet provide any information about
-        // what went wrong.
-        if(!type.isPresentResult() || type.getResult().isObscureType()) {
-          Log.error("Could not check the existence of this type reference",
-              typeAst.get_SourcePositionStart(),
-              typeAst.get_SourcePositionEnd());
-        }
+        // This will throw an 0xA0324 if the type does not exist.
+        synthesizer.synthesizeType(typeAst);
       }
     }
   }

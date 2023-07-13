@@ -8,6 +8,8 @@ import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlrequirements._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
+import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
+import de.monticore.lang.sysmlv2._ast.ASTSysMLModelBuilder;
 import de.monticore.lang.sysmlv2._lsp.language_access.SysMLv2ScopeManager;
 import de.monticore.lang.sysmlv2._prettyprint.SysMLv2FullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
@@ -168,7 +170,12 @@ public abstract class CodeActionFactory {
     return codeActions;
   }
 
-  private static List<Either<TextDocumentEdit, ResourceOperation>> buildModelCreationEdits(VersionedTextDocumentIdentifier newDocument, ASTPartDef partDef){
+  public static List<Either<TextDocumentEdit, ResourceOperation>> buildModelCreationEdits(VersionedTextDocumentIdentifier newDocument, ASTPartDef partDef){
+    ASTSysMLModel model = new ASTSysMLModelBuilder().addSysMLElement(partDef).build();
+    return buildModelCreationEdits(newDocument, model);
+  }
+
+  public static List<Either<TextDocumentEdit, ResourceOperation>> buildModelCreationEdits(VersionedTextDocumentIdentifier newDocument, ASTSysMLModel model){
     var createFile = new CreateFile();
     createFile.setUri(newDocument.getUri());
     createFile.setOptions(new CreateFileOptions(false, false));
@@ -177,7 +184,7 @@ public abstract class CodeActionFactory {
     setModelText.setRange(new Range(new Position(0, 0), new Position(0, 0)));
 
     var pp = new SysMLv2FullPrettyPrinter(new IndentPrinter());
-    setModelText.setNewText(pp.prettyprint(partDef));
+    setModelText.setNewText(pp.prettyprint(model));
 
     return List.of(
         Either.forRight(createFile),
