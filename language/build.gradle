@@ -7,7 +7,7 @@
 plugins {
   id "monticore" version "$mc_version"
   id "com.github.johnrengelman.shadow" version "6.1.0"
-  id "io.github.themrmilchmann.ecj" version "0.2.0" apply false
+  id "io.github.themrmilchmann.ecj" version "0.2.0"
 }
 
 /* ============================================================ */

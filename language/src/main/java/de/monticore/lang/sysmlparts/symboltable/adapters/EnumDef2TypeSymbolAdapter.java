@@ -2,13 +2,18 @@
 package de.monticore.lang.sysmlparts.symboltable.adapters;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import de.monticore.lang.sysmlparts._symboltable.EnumDefSymbol;
-import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
+import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.se_rwth.commons.SourcePosition;
 
-public class EnumDef2TypeSymbolAdapter extends TypeSymbol {
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class EnumDef2TypeSymbolAdapter extends OOTypeSymbol {
   protected EnumDefSymbol adaptee;
 
   public EnumDef2TypeSymbolAdapter(EnumDefSymbol adaptee){
@@ -38,12 +43,26 @@ public class EnumDef2TypeSymbolAdapter extends TypeSymbol {
   }
 
   @Override
-  public IBasicSymbolsScope getSpannedScope() {
+  public IOOSymbolsScope getSpannedScope() {
     return getAdaptee().getSpannedScope();
   }
 
+  /** Nur das richtige spannedScope verwenden */
   @Override
-  public IBasicSymbolsScope getEnclosingScope() {
+  public List<FieldSymbol> getFieldList() {
+    // ersetzt das "spannedScope == null" - wir können nicht auf das private Feld zugreifen und machen deswegen diesen
+    // Murks.
+    try {
+      getSpannedScope();
+    }
+    catch(NullPointerException ex) {
+      return Lists.newArrayList();
+    }
+    return getSpannedScope().getLocalFieldSymbols();
+  }
+
+  @Override
+  public IOOSymbolsScope getEnclosingScope() {
     return getAdaptee().getEnclosingScope();
   }
 

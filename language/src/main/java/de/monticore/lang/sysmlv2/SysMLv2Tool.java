@@ -101,7 +101,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo(new PortDefNeedsDirection());
     checker.addCoCo(new RefinementChainCheck());
     checker.addCoCo(new RefinementCyclic());
-    checker.addCoCo(new RefinementInterfaceNotMatching());
+    //checker.addCoCo(new RefinementInterfaceNotMatching()); TODO does not work without AST
 
     // Additional warnings, things might be ignored
     checker.addCoCo(new WarnNonExhibited());

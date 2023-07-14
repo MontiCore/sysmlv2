@@ -3,12 +3,12 @@ package de.monticore.lang.sysmlparts.symboltable.adapters;
 
 import com.google.common.base.Preconditions;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.SourcePosition;
 
-public class AttributeUsage2VariableSymbolAdapter extends VariableSymbol {
+public class AttributeUsage2VariableSymbolAdapter extends FieldSymbol {
   protected AttributeUsageSymbol adaptee;
 
   public AttributeUsage2VariableSymbolAdapter(AttributeUsageSymbol adaptee) {
@@ -39,7 +39,7 @@ public class AttributeUsage2VariableSymbolAdapter extends VariableSymbol {
   }
 
   @Override
-  public IBasicSymbolsScope getEnclosingScope() {
+  public IOOSymbolsScope getEnclosingScope() {
     return this.getAdaptee().getEnclosingScope();
   }
 

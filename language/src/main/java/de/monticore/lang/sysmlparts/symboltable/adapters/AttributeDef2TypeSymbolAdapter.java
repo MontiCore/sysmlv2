@@ -2,13 +2,18 @@
 package de.monticore.lang.sysmlparts.symboltable.adapters;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import de.monticore.lang.sysmlparts._symboltable.AttributeDefSymbol;
-import de.monticore.lang.sysmlparts._symboltable.EnumDefSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
+import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.se_rwth.commons.SourcePosition;
 
-public class AttributeDef2TypeSymbolAdapter extends TypeSymbol {
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class AttributeDef2TypeSymbolAdapter extends OOTypeSymbol {
   protected AttributeDefSymbol adaptee;
 
   public AttributeDef2TypeSymbolAdapter(AttributeDefSymbol adaptee){
@@ -38,18 +43,33 @@ public class AttributeDef2TypeSymbolAdapter extends TypeSymbol {
   }
 
   @Override
-  public IBasicSymbolsScope getSpannedScope() {
+  public IOOSymbolsScope getSpannedScope() {
     return getAdaptee().getSpannedScope();
   }
 
   @Override
-  public IBasicSymbolsScope getEnclosingScope() {
+  public IOOSymbolsScope getEnclosingScope() {
     return getAdaptee().getEnclosingScope();
   }
 
   @Override
   public SourcePosition getSourcePosition() {
     return getAdaptee().getSourcePosition();
+  }
+
+  @Override
+  public List<FieldSymbol> getFieldList() {
+    // ersetzt das "spannedScope == null" - wir können nicht auf das private Feld zugreifen und machen deswegen diesen
+    // Murks.
+    try {
+      getSpannedScope();
+    }
+    catch(NullPointerException ex) {
+      return Lists.newArrayList();
+    }
+
+    var attributes = ((ISysMLv2Scope)getSpannedScope()).getLocalAttributeUsageSymbols();
+    return attributes.stream().map(a -> new AttributeUsage2VariableSymbolAdapter(a)).collect(Collectors.toList());
   }
 
   // TODO needed?

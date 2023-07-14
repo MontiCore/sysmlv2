@@ -1,14 +1,10 @@
 package de.monticore.lang.sysmlv2.symboltable.adapters;
 
 import com.google.common.base.Preconditions;
-import de.monticore.lang.componentconnector.ComponentConnectorMill;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
-import de.monticore.lang.componentconnector._symboltable.MildPortSymbol;
-import de.monticore.lang.componentconnector._symboltable.MildPortSymbolBuilder;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLFeatureDirection;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
-import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.PortDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
@@ -39,6 +35,16 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
   }
 
   @Override
+  public String getFullName() {
+    return getAdaptee().getFullName();
+  }
+
+  @Override
+  public ISysMLv2Scope getEnclosingScope() {
+    return (ISysMLv2Scope) getAdaptee().getEnclosingScope();
+  }
+
+  @Override
   public ISysMLv2Scope getSpannedScope() {
     return (ISysMLv2Scope) getAdaptee().getSpannedScope();
   }
@@ -51,51 +57,16 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
         .collect(Collectors.toList());
   }
 
-  /**
-   * Adapter wegen Scopes - die müssen auf die echten Scopes des Originals verweisen
-   */
-  class PortSymbolAdapter extends PortSymbol {
-
-    protected AttributeUsageSymbol adaptee;
-
-    protected PortSymbolAdapter(String name) {
-      super(name);
-    }
-
-    /**
-     * Use {@code name} to specifiy a unique name, typically "portUsage.attrUsage"
-     */
-    public PortSymbolAdapter(String name, AttributeUsageSymbol adaptee, boolean conjugated) {
-      super(name);
-      this.adaptee = adaptee;
-      this.incoming = conjugated ^ adaptee.getDirection().equals(ASTSysMLFeatureDirection.IN);
-      this.outgoing = !this.incoming;
-    }
-
-    @Override
-    public SymTypeExpression getType() {
-      // TODO CoCo?
-      return adaptee.getTypes(0);
-    }
-
-    @Override
-    public ICompSymbolsScope getEnclosingScope() {
-      return (ICompSymbolsScope) adaptee.getEnclosingScope();
-    }
-  }
-
   @Override
   public List<PortSymbol> getPorts() {
     return getAdaptee().getSpannedScope().getLocalPortUsageSymbols().stream()
-        // Alle PortUsages, deren Type eine PortDef ist
-        .filter(pu -> pu.getTypes(0).getTypeInfo() instanceof PortDef2TypeSymbolAdapter)
         // (PortUsage x List(AttrUsage)) um eindeutigen Namen bilden zu können & Richtung zu kennen
-        .map(pu -> Pair.of(pu, ((ISysMLv2Scope)pu.getTypes(0).getTypeInfo().getSpannedScope()).getLocalAttributeUsageSymbols()))
+        .map(pu -> Pair.of(pu, pu.getInnerAttributes())) // TODO Könnten Conjugated sein...
         .flatMap(pair -> pair.getRight().stream()
-            .map(au -> new PortSymbolAdapter(
+            .map(au -> new AttributeUsage2PortSymbolAdapter(
                 pair.getLeft().getName() + "." + au.getName(),
                 au,
-                !pair.getLeft().isEmptyConjugatedTypes()))
+                !pair.getLeft().isEmptyConjugatedTypes())) // TODO ... ich nehme an es ist eins von beiden
         )
         .collect(Collectors.toList());
   }

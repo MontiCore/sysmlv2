@@ -1,6 +1,7 @@
 package de.monticore.lang.sysmlv2._symboltable;
 
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
+import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
@@ -12,7 +13,9 @@ import de.monticore.lang.sysmlparts.symboltable.adapters.PortDef2TypeSymbolAdapt
 import de.monticore.lang.sysmlparts.symboltable.adapters.PortUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlrequirements._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
+import de.monticore.lang.sysmlv2.symboltable.adapters.Constraint2SpecificationAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.PartDef2ComponentAdapter;
+import de.monticore.lang.sysmlv2.symboltable.adapters.Requirement2SpecificationAdapter;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -176,6 +179,30 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     var partDef = resolvePartDefLocally(name);
     if(partDef.isPresent()) {
       adapted.add(new PartDef2ComponentAdapter(partDef.get()));
+    }
+
+    return adapted;
+  }
+
+  @Override
+  public List<MildSpecificationSymbol> resolveAdaptedMildSpecificationLocallyMany(
+      boolean foundSymbols,
+      String name,
+      AccessModifier modifier,
+      Predicate<MildSpecificationSymbol> predicate
+  ) {
+    var adapted = new ArrayList<MildSpecificationSymbol>();
+
+    // TODO Check "satisfy" is present
+    var requirementUsage = resolveRequirementUsageLocally(name);
+    if(requirementUsage.isPresent()) {
+      adapted.add(new Requirement2SpecificationAdapter(requirementUsage.get()));
+    }
+
+    // TODO Check "assert" is present
+    var constraintUsage = resolveConstraintUsageLocally(name);
+    if(constraintUsage.isPresent()) {
+      adapted.add(new Constraint2SpecificationAdapter(constraintUsage.get()));
     }
 
     return adapted;
