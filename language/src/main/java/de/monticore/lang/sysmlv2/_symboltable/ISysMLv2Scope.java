@@ -185,7 +185,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
   }
 
   @Override
-  public List<MildSpecificationSymbol> resolveAdaptedMildSpecificationLocallyMany(
+  default List<MildSpecificationSymbol> resolveAdaptedMildSpecificationLocallyMany(
       boolean foundSymbols,
       String name,
       AccessModifier modifier,
