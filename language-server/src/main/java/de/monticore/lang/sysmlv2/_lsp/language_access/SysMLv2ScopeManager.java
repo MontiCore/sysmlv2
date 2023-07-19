@@ -2,9 +2,11 @@
 package de.monticore.lang.sysmlv2._lsp.language_access;
 
 import de.monticore.io.paths.MCPath;
+import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
+import de.monticore.lang.sysmlv2._symboltable.SysMLv2GlobalScope;
 import de.se_rwth.commons.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class SysMLv2ScopeManager extends SysMLv2ScopeManagerTOP {
 
@@ -33,10 +33,16 @@ public class SysMLv2ScopeManager extends SysMLv2ScopeManagerTOP {
 
   @Override
   public void initGlobalScope(MCPath modelPath) {
-    super.initGlobalScope(modelPath);
+    SysMLv2Mill.init();
+    SysMLv2Mill.globalScope().clear();
+    SysMLv2Mill.initializePrimitives();
+    SysMLv2Mill.addStringType();
+    SysMLv2Mill.addCollectionTypes();
+    SysMLv2Mill.addStreamType();
 
-    // Initialize Type Checker
-    new SysMLv2Tool().init();
+    SysMLv2GlobalScope globalScope = (SysMLv2GlobalScope) SysMLv2Mill.globalScope();
+    globalScope.setSymbolPath(modelPath);
+    setGlobalScope(globalScope);
   }
 
   @Override
