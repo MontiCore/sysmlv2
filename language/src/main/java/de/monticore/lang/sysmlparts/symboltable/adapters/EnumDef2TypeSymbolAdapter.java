@@ -71,6 +71,11 @@ public class EnumDef2TypeSymbolAdapter extends OOTypeSymbol {
     return getAdaptee().getSourcePosition();
   }
 
+  @Override
+  public boolean isIsEnum() {
+    return true;
+  }
+
   // TODO needed?
   public EnumDef2TypeSymbolAdapter deepClone() {
     EnumDef2TypeSymbolAdapter clone = new EnumDef2TypeSymbolAdapter(this.getAdaptee());

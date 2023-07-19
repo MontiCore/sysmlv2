@@ -206,7 +206,7 @@ public class SerializationTest {
     Optional<PartDefSymbol> resolved = gs.resolvePartDef(fqnSymbol);
 
     assertThat(resolved).isPresent();
-    assertThat(resolved.get().getDirectRefinements(gs)).size().isEqualTo(1);
-    assertThat(resolved.get().getRefinements(gs)).size().isEqualTo(2);
+    assertThat(resolved.get().getDirectRefinements()).size().isEqualTo(1);
+    assertThat(resolved.get().getTransitiveRefinements()).size().isEqualTo(2);
   }
 }

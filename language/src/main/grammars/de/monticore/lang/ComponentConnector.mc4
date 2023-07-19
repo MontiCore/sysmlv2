@@ -38,7 +38,7 @@ component grammar ComponentConnector
    * Unsere Java-Implementation sieht vor, dass die Connectors aus dem AST der jeweiligen konkreten Sprache (SysML oder
    * MontiArc) abgeleitet werden.
    */
-  interface Connector = source:MildPort target:MildPort ;
+  interface Connector = source:MCQualifiedName target:MCQualifiedName ; // TODO vielleicht nur Name?
 
   /**
    * Wir fügen hinzu:
@@ -98,7 +98,7 @@ component grammar ComponentConnector
    * - ParameterValues. Wir konnten diese noch nicht in MontiCore's Implementierung finden.
    */
   symbolrule MildInstance =
-    parameterValues:Expression*
+    parameterValues:ParameterValue*
   ;
 
 }

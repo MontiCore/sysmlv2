@@ -21,27 +21,8 @@ component grammar SysMLParts extends SysMLBasis {
       SysMLElement*
     "}" | ";") ;
 
-  astrule PartDef =
-    method public List<de.monticore.lang.sysmlparts._symboltable.PartDefSymbol> getRefinements() {
-      List<de.monticore.lang.sysmlparts._symboltable.PartDefSymbol> refinements = new ArrayList<>();
-      for(de.monticore.lang.sysmlbasis._ast.ASTSpecialization spec: this.getSpecializationList()) {
-        if(spec instanceof de.monticore.lang.sysmlbasis._ast.ASTSysMLRefinement) {
-          for(de.monticore.types.mcbasictypes._ast.ASTMCType superType: spec.getSuperTypesList()) {
-            String superTypeName = superType.printType(
-                new de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter(
-                    new de.monticore.prettyprint.IndentPrinter()));
-            Optional<de.monticore.lang.sysmlparts._symboltable.PartDefSymbol> refinementDef =
-                this.getEnclosingScope().resolvePartDef(superTypeName);
-            if(refinementDef.isPresent()) {
-              refinements.add(refinementDef.get());
-            }
-          }
-        }
-      }
-      return refinements;
-    } ;
-
    enum SysMLReqType = "UNKNOWN" | "HLR" | "LLR" | "MIXED" ;
+
    symbolrule PartDef =
       directRefinements:de.monticore.types.check.SymTypeExpression*
       requirementType:SysMLReqType;

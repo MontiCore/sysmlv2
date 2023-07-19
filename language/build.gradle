@@ -89,8 +89,9 @@ compileJava.dependsOn generate
 // Fixes issue with java plugin in projects without resources
 compileTestJava.doFirst { mkdir sourceSets.main.output.resourcesDir }
 
+// static delegate of "Log" prohibits parallel execution of tests that check the log...
 tasks.withType(Test) {
-  maxParallelForks = Runtime.runtime.availableProcessors() ?: 1
+  maxParallelForks = 1
 }
 
 tasks.withType(JavaCompile) {

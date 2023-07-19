@@ -20,8 +20,8 @@ public class RefinementCyclic implements SysMLPartsASTPartDefCoCo {
     if (node == null || !node.isPresentSymbol()){
       return;
     }
-    var refiners = node.getSymbol().getRefiners(SysMLv2Mill.globalScope());
-    var refinements = node.getSymbol().getRefinements(SysMLv2Mill.globalScope());
+    var refiners = node.getSymbol().getTransitiveRefiners();
+    var refinements = node.getSymbol().getTransitiveRefinements();
 
     var cyclicRefinements = refiners.stream().filter(refinements::contains).map(SysMLTypeSymbol::getName).collect(Collectors.toList());
     var pos = node.getSpecializationList().stream()

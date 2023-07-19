@@ -77,12 +77,12 @@ public class SysMLv2HoverProvider extends SysMLv2HoverProviderTOP {
     }
 
 
-    var refiners = symbol.getRefiners(scope);
+    var refiners = symbol.getTransitiveRefiners();
     if (refiners.size() > 0){
       info.add("**Refined by:** " + refiners.stream().map(ISymbol::getFullName).sorted().collect(Collectors.joining(", ")));
     }
 
-    var refinements = symbol.getRefinements(scope);
+    var refinements = symbol.getTransitiveRefinements();
     if (refinements.size() > 0){
       info.add("**Refines:** " + refinements.stream().map(ISymbol::getFullName).sorted().collect(Collectors.joining(", ")));
     }

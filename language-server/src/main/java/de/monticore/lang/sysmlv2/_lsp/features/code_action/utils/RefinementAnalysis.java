@@ -8,6 +8,8 @@ import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// TODO Pascal Devant das gehört zur Sprache, nicht zum LS
+//  -> COCOs
 public abstract class RefinementAnalysis {
 
   /**
@@ -18,7 +20,7 @@ public abstract class RefinementAnalysis {
   public static List<PartDefSymbol> getRefinementOrRoughCandidates(PartDefSymbol partDefSymbol,
                                                                    ISysMLv2Scope scope,
                                                                    boolean matchConnectionUsages){
-    var parts = PartDefSymbol.getAllPartDefs(scope)
+    var parts = PartDefSymbol.getAllPartDefs()
         .filter(p -> p.matchesInterfaceOf(partDefSymbol))
         .filter(p -> p.getAstNode().getRefinements().stream()
             .noneMatch(r -> r.getAstNode().equals(partDefSymbol.getAstNode())))

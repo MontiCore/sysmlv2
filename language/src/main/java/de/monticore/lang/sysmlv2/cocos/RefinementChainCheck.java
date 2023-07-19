@@ -5,8 +5,6 @@ import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTSysMLReqType;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
 import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
-import de.monticore.lang.sysmlv2.SysMLv2Mill;
-import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.SourcePositionBuilder;
 import de.se_rwth.commons.logging.Log;
 
@@ -22,7 +20,7 @@ public class RefinementChainCheck implements SysMLPartsASTPartDefCoCo {
       return;
     }
 
-    SourcePosition partDefNameEnd = new SourcePositionBuilder().setFileName(node.get_SourcePositionStart().getFileName().get())
+    var partDefNameEnd = new SourcePositionBuilder().setFileName(node.get_SourcePositionStart().getFileName().get())
         .setLine(node.get_SourcePositionStart().getLine())
         .setColumn(node.get_SourcePositionStart().getColumn() + node.getName().length() + "part def".length() + 2)
         .build();
@@ -33,7 +31,7 @@ public class RefinementChainCheck implements SysMLPartsASTPartDefCoCo {
       // If there are ConnectionUsages in a Lrr,
       // there should be a refinement with similar ConnectionUsages that uses HLR parts only.
       if (node.getSysMLElementList().stream().anyMatch(e -> e instanceof ASTConnectionUsage)){
-        if (getAllWithSimiliarConnectionUsages(node.getSymbol(), node.getSymbol().getRefinements(SysMLv2Mill.globalScope())).size() == 0){
+        if (filterSimilarCompositions(node.getSymbol(), node.getSymbol().getTransitiveRefinements()).size() == 0){
           Log.warn("0x90011 Llr with ConnectionUsages should refine at least one HLR with similiar ConnectionUsages.",
               node.get_SourcePositionStart(),
               partDefNameEnd);
@@ -43,29 +41,34 @@ public class RefinementChainCheck implements SysMLPartsASTPartDefCoCo {
 
     if (node.getSymbol().getRequirementType() == ASTSysMLReqType.HLR ||
         node.getSymbol().getRequirementType() == ASTSysMLReqType.MIXED){
-      var refiners = node.getSymbol().getRefiners(SysMLv2Mill.globalScope());
+      var refiners = node.getSymbol().getTransitiveRefiners();
       if (refiners.isEmpty()){
-        Log.warn("0x90020 High level or mixed requirements should be refined.", node.get_SourcePositionStart(), partDefNameEnd);
+        Log.warn("0x90020 High level or mixed requirements should be refined.",
+            node.get_SourcePositionStart(), partDefNameEnd);
       } else {
         // If there are ConnectionUsages in a Hlr,
         // there should be a refiner with similar ConnectionUsages that uses Llr parts only.
         if (node.getSysMLElementList().stream().anyMatch(e -> e instanceof ASTConnectionUsage)){
-          if (getAllWithSimiliarConnectionUsages(node.getSymbol(), node.getSymbol().getRefiners(SysMLv2Mill.globalScope())).size() == 0){
-            Log.warn("0x90021 High level or mixed with ConnectionUsages should be refined by at least one other component with similiar ConnectionUsages.",
-                node.get_SourcePositionStart(),
-                partDefNameEnd);
+          if (filterSimilarCompositions(node.getSymbol(), node.getSymbol().getTransitiveRefiners()).size() == 0){
+            Log.warn("0x90021 A composition should be (further) refined by a similarly composed composition.",
+                node.get_SourcePositionStart(), partDefNameEnd);
           }
         }
       }
       if (node.getSysMLElementList().stream().anyMatch(e -> e instanceof ASTConnectionUsage)) {
+        // TODO Diese Meldung verstehe ich nicht. Klarer machen.
         if (getAllWithoutConnectionUsages(node.getRefinements()).size() == 0){
-          Log.warn("0x90022 High level requirements should refine at least one basic requirement", node.get_SourcePositionStart(), partDefNameEnd);
+          Log.warn("0x90022 High level requirements should refine at least one basic requirement",
+              node.get_SourcePositionStart(), partDefNameEnd);
         }
       }
     }
   }
 
-  private List<PartDefSymbol> getAllWithSimiliarConnectionUsages(PartDefSymbol reference, List<PartDefSymbol> symbols){
+  /**
+   * Attempts to filter the {@code symbols} for ones that are similarly composed as {@code reference}
+   */
+  private List<PartDefSymbol> filterSimilarCompositions(PartDefSymbol reference, List<PartDefSymbol> symbols) {
     var result = new ArrayList<PartDefSymbol>();
     var connectionUsages = reference.getAstNode().getSysMLElementList().stream()
         .filter(e -> e instanceof ASTConnectionUsage)
@@ -84,7 +87,9 @@ public class RefinementChainCheck implements SysMLPartsASTPartDefCoCo {
     return result;
   }
 
-  private List<PartDefSymbol> getAllWithoutConnectionUsages(List<PartDefSymbol> symbols){
-    return symbols.stream().filter(e -> e.getAstNode().getSysMLElements(ASTConnectionUsage.class).isEmpty()).collect(Collectors.toList());
+  private List<PartDefSymbol> getAllWithoutConnectionUsages(List<PartDefSymbol> symbols) {
+    return symbols.stream()
+        .filter(e -> e.getAstNode().getSysMLElements(ASTConnectionUsage.class).isEmpty())
+        .collect(Collectors.toList());
   }
 }

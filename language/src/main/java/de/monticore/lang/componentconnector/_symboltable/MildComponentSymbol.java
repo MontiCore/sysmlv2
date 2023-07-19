@@ -24,11 +24,11 @@ public class MildComponentSymbol extends MildComponentSymbolTOP {
    * geben (zB. A refines B, C), wird ein Fehler ausgegeben.
    */
   public Optional<MildComponentSymbol> getRefinementStart() {
-    if(refinements == null || refinements.isEmpty()) {
+    if(getRefinementsList() == null || getRefinementsList().isEmpty()) {
       return Optional.of(this);
     }
     else {
-      var candidates = refinements.stream()
+      var candidates = getRefinementsList().stream()
           .map(refinement -> refinement.getTypeInfo())
           .filter(component -> component instanceof MildComponentSymbol)
           .map(component -> (MildComponentSymbol)component)
