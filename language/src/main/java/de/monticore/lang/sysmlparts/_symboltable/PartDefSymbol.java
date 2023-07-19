@@ -1,16 +1,15 @@
 package de.monticore.lang.sysmlparts._symboltable;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
+import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
-import org.antlr.v4.runtime.misc.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,98 +20,73 @@ public class PartDefSymbol extends PartDefSymbolTOP {
   }
 
   /**
-   * @return List of all direct refinements that can be found in the given scope.
+   * @return List of all direct refinements that can be resolved. Will not crash for non-resolvable entries.
    */
-  public List<PartDefSymbol> getDirectRefinements(ISysMLv2Scope scope) {
-    try {
-      return getDirectRefinementsList().stream()
-          .filter(SymTypeExpression::hasTypeInfo)
-          .map(symType -> scope.resolvePartDef(symType.getTypeInfo().getFullName()))
-          .map(opt -> opt.orElse(null))
-          .filter(Objects::nonNull)
-          .collect(Collectors.toList());
-    } catch (Exception e){
-      return new ArrayList<>();
-    }
+  public List<PartDefSymbol> getDirectRefinements() {
+    return getDirectRefinementsList().stream()
+        .filter(SymTypeExpression::hasTypeInfo)
+        .map(SymTypeExpression::getTypeInfo)
+        .map(TypeSymbol::getFullName)
+        .map(name -> getEnclosingScope().resolvePartDef(name))
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .collect(Collectors.toList());
   }
 
   /**
-   * @return List of all refinements, including transitive ones, that can be found in the given scope.
+   * @return List of all refinements that can be resolved, including transitive ones. Will not crash for non-resolvable
+   * entries.
    */
-  public List<PartDefSymbol> getRefinements(ISysMLv2Scope scope){
-    try {
-      ListMultimap<PartDefSymbol, PartDefSymbol> result = ArrayListMultimap.create();
-      result.put(this, this);
-      traverseRefinements(this, p -> filterCyclicRelation(this, p, result), scope);
-      result.remove(this, this);
-      return result.get(this).stream().distinct().collect(Collectors.toList());
-    } catch (Exception e){
-      return new ArrayList<>();
-    }
-  }
-
-  public static void filterCyclicRelation(PartDefSymbol origin, Pair<PartDefSymbol, PartDefSymbol> p,
-                                          ListMultimap<PartDefSymbol, PartDefSymbol> result){
-    if (result.containsEntry(origin, p.b) && result.containsEntry(p.b,origin)){
-      // Signal traverser to not continue with this refinement
-      throw new IllegalStateException("Cyclic refinement detected: " + origin.getName() + " <-> " + p.a.getName());
-    }
-    result.put(origin, p.b);
-    result.put(p.a, p.b);
-  }
-
-  private static void traverseRefinements(PartDefSymbol partDef, Consumer<Pair<PartDefSymbol, PartDefSymbol>> consumer, ISysMLv2Scope scope){
-    // Direct refinements
-    List<PartDefSymbol> nonCyclicRefinement = new ArrayList<>();
-    for (var refinement : partDef.getDirectRefinements(scope)){
-      if (refinement == partDef){
-        continue;
-      }
-      try {
-        consumer.accept(new Pair<>(partDef, refinement));
-        nonCyclicRefinement.add(refinement);
-      } catch (IllegalStateException e){
-        // Ignore cyclic refinements / refiners
-      }
-    }
-
-    // Transitive refinements
-    for (var refinement : nonCyclicRefinement){
-      traverseRefinements(refinement, consumer, scope);
-    }
+  public List<PartDefSymbol> getTransitiveRefinements() {
+    var res = this.getTransitiveRefinementsRecursively(new ArrayList<>());
+    // Das "this" sollte nicht rein
+    res.remove(this);
+    return res;
   }
 
   /**
-   * @return List of all direct refiners that can be found in the given scope
+   * Recursive helper function with pseudo-state
+   *
+   * @param visited Already visited part defs
    */
-  public List<PartDefSymbol> getDirectRefiners(ISysMLv2Scope scope) {
-    try {
-      return getAllPartDefs(scope)
-          .filter(partDef -> !partDef.getDirectRefinements(scope).isEmpty())
-          .filter(partDef -> partDef.getDirectRefinements(scope)
-              .stream().anyMatch(ref -> ref.equals(this)))
+  protected List<PartDefSymbol> getTransitiveRefinementsRecursively(List<PartDefSymbol> visited) {
+    // Sich selbst markieren
+    visited.add(this);
+
+    // Die finden, die noch in Frage kommen
+    var candidates = getDirectRefinements().stream().filter(r -> !visited.contains(r));
+
+    // Rekursiv weiter
+    candidates.forEach(p -> p.getTransitiveRefinementsRecursively(visited));
+
+    // Alle haben sich in visited eingetragen
+    return visited;
+  }
+
+  /**
+   * @return List of all direct refiners. Will only return ones that can be resolved, fails silently otherwise.
+   * Direct refiners are those that explicitly specify they ("are a refinement of") {@code this}.
+   *
+   * Inverse of {@link #getDirectRefinements()}.
+   */
+  public List<PartDefSymbol> getDirectRefiners() {
+      return getAllPartDefs()
+          .filter(partDef -> partDef.getDirectRefinements().contains(this))
           .distinct()
           .collect(Collectors.toList());
-    } catch (Exception e){
-      return new ArrayList<>();
-    }
-
   }
 
   /**
-   * @return List of all direct and transitive refiners
+   * @return List of all direct and transitive refiners. Will only return ones that can be resolved, fails silently
+   * otherwise. Compared to {@link #getDirectRefiners()}, this includes transitive relations.
+   *
+   * Inverse of {@link #getTransitiveRefinements()}.
    */
-  public List<PartDefSymbol> getRefiners(ISysMLv2Scope scope){
-    try {
-      return getAllPartDefs(scope)
-          .filter(partDef -> !partDef.getRefinements(scope).isEmpty())
-          .filter(partDef -> partDef.getRefinements(scope)
-              .stream().anyMatch(ref -> ref.equals(this)))
-          .distinct()
-          .collect(Collectors.toList());
-    } catch (Exception e){
-      return new ArrayList<>();
-    }
+  public List<PartDefSymbol> getTransitiveRefiners() {
+    return getAllPartDefs()
+        .filter(partDef -> partDef.getTransitiveRefinements().contains(this))
+        .distinct()
+        .collect(Collectors.toList());
   }
 
   /**
@@ -167,12 +141,17 @@ public class PartDefSymbol extends PartDefSymbolTOP {
   /**
    * @return Stream of all PartDefs in the given scope and sub scopes
    */
-  public static Stream<PartDefSymbol> getAllPartDefs(ISysMLv2Scope scope) {
-    Stream<PartDefSymbol> result = Stream.empty();
-    if (scope != null) {
-      result = scope.getPartDefSymbols().values().stream();
-      result = Stream.concat(result, scope.getSubScopes().stream().flatMap(PartDefSymbol::getAllPartDefs));
-    }
+  public static Stream<PartDefSymbol> getAllPartDefs() {
+    var gs = SysMLv2Mill.globalScope();
+    return getAllPartDefsRecursively(gs);
+  }
+
+  /**
+   * Recursive helper function with pseudo-state
+   */
+  protected static Stream<PartDefSymbol> getAllPartDefsRecursively(ISysMLv2Scope scope) {
+    var result = scope.getLocalPartDefSymbols().stream();
+    result = Stream.concat(result, scope.getSubScopes().stream().flatMap(PartDefSymbol::getAllPartDefsRecursively));
     return result;
   }
 }

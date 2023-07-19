@@ -1,6 +1,5 @@
 package de.monticore.lang.componentconnector._symboltable;
 
-import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.lang.componentconnector._ast.ASTParameterValue;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.CompKindExpression;
@@ -14,7 +13,7 @@ public class MildInstanceSymbolDeSer extends MildInstanceSymbolDeSerTOP {
   private final KindOfComponentDeSer deSer = new KindOfComponentDeSer();
 
   @Override protected void serializeParameterValues(
-      List<ASTExpression> parameterValues,
+      List<ASTParameterValue> parameterValues,
       ComponentConnectorSymbols2Json s2j)
   {
     // TODO
@@ -25,7 +24,7 @@ public class MildInstanceSymbolDeSer extends MildInstanceSymbolDeSerTOP {
     s2j.getJsonPrinter().memberJson("type", deSer.serializeAsJson((KindOfComponent) type));
   }
 
-  @Override protected List<ASTExpression> deserializeParameterValues(JsonObject symbolJson) {
+  @Override protected List<ASTParameterValue> deserializeParameterValues(JsonObject symbolJson) {
     // TODO
     Log.error("Implement me");
     return null;

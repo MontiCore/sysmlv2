@@ -2,11 +2,9 @@ package de.monticore.lang.sysmlv2._lsp.features.code_action.utils;
 
 import de.monticore.ast.Comment;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpressionBuilder;
-import de.monticore.lang.sysmlbasis.SysMLBasisMill;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLFeatureDirection;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsageBuilder;
-import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
@@ -14,12 +12,10 @@ import de.monticore.lang.sysmlparts._ast.ASTSysMLReqType;
 import de.monticore.lang.sysmlrequirements._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlrequirements._ast.ASTRequirementUsageBuilder;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
-import de.monticore.lang.sysmlstates._ast.ASTStateUsageBuilder;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._lsp.language_access.SysMLv2ScopeManager;
 import de.monticore.literals.mccommonliterals._ast.ASTBooleanLiteralBuilder;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedTypeBuilder;
-import de.monticore.umlmodifier._ast.ASTModifier;
 
 import java.util.Comparator;
 import java.util.List;
@@ -28,9 +24,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static de.monticore.lang.sysmlv2._lsp.features.code_action.utils.DecompositionUtils.estimatePortDirection;
-import static de.monticore.lang.sysmlv2._lsp.features.code_action.utils.DecompositionUtils.getDecompositionMapping;
 import static de.monticore.lang.sysmlv2._lsp.features.code_action.utils.RefinementAnalysis.calculateRefinementScore;
 
+// TODO Pascal Devant verschieben
 public class PartDefTemplateBuilder {
 
   private final ASTPartDef referencePartDef;
@@ -66,8 +62,8 @@ public class PartDefTemplateBuilder {
             }
 
             var candidates = targetType == ASTSysMLReqType.HLR
-                ? originalPartDef.getRefinements(scope)
-                : originalPartDef.getRefiners(scope);
+                ? originalPartDef.getTransitiveRefinements()
+                : originalPartDef.getTransitiveRefiners();
 
             if (candidates.isEmpty()){
               continue;

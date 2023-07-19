@@ -18,8 +18,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+// TODO Pascal Devant sind die Util-Klassen
+//  a) nach Language verschiebbar
+//  b) durch MontiCore-Konstrukte (CoCos) ersetzbar
+//  c) Reihenweise private-statics vermeidbar?
 public abstract class DecompositionUtils {
-
 
   private static int complexityDifference(ASTPartDef comp1, ASTPartDef comp2){
     int score = 0;
@@ -55,7 +58,7 @@ public abstract class DecompositionUtils {
 
   public static Stream<Pair<ASTPartDef, ASTPartDef>> getDecompositionCandidates(ASTPartDef reference, ASTSysMLReqType type, ISysMLv2Scope scope){
     var decompositions = new HashMap<Pair<ASTPartDef, ASTPartDef>, Map<Pair<ASTPartDef, ASTPartDef>, Map<ASTPortUsage, ASTPortUsage>>> ();
-    var parts = PartDefSymbol.getAllPartDefs(scope)
+    var parts = PartDefSymbol.getAllPartDefs()
         .filter(p -> p.getRequirementType() == type)
         .map(PartDefSymbol::getAstNode)
         .filter(p -> !p.equals(reference))

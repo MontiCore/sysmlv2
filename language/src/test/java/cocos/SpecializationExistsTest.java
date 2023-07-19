@@ -36,6 +36,7 @@ public class SpecializationExistsTest {
     SysMLv2Mill.globalScope().clear();
     SysMLv2Mill.initializePrimitives();
     SysMLv2Mill.addCollectionTypes();
+    Log.clearFindings();
   }
 
   @Test

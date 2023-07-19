@@ -35,7 +35,7 @@ public class CreateRefinementCommand extends Command<Boolean> {
     var refinementType = args[1];
     var modelName = args[2];
     var modelUri = args[3];
-
+    // TODO Pascal Devant durch syncAccessGlobalScope austauschen (Siehe Warning)
     var baseSymbol = SysMLv2Mill.globalScope().resolvePartDef(baseModelName);
     if (baseSymbol.isEmpty()) {
       return false;

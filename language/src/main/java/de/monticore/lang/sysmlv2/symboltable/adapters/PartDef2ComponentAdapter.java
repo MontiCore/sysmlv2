@@ -3,22 +3,24 @@ package de.monticore.lang.sysmlv2.symboltable.adapters;
 import com.google.common.base.Preconditions;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLFeatureDirection;
-import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeUsage2VariableSymbolAdapter;
-import de.monticore.lang.sysmlparts.symboltable.adapters.PortDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.symbols.compsymbols._symboltable.ICompSymbolsScope;
+import de.monticore.symbols.compsymbols._symboltable.ComponentSymbol;
 import de.monticore.symbols.compsymbols._symboltable.PortSymbol;
 import de.monticore.symbols.compsymbols._symboltable.SubcomponentSymbol;
+import de.monticore.types.check.CompKindExpression;
+import de.monticore.types.check.KindOfComponent;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.tuple.Pair;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class PartDef2ComponentAdapter extends MildComponentSymbol {
@@ -84,6 +86,18 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
   @Override
   public List<SubcomponentSymbol> getSubcomponents() {
     return getSpannedScope().getLocalSubcomponentSymbols();
+  }
+
+  @Override
+  public List<CompKindExpression> getRefinementsList() {
+    List<CompKindExpression> res = new ArrayList<>();
+    for(var partDefSymbol: adaptee.getDirectRefinements()) {
+      var compSymbol = ((ISysMLv2Scope)partDefSymbol.getEnclosingScope()).resolveComponent(partDefSymbol.getName());
+      if(compSymbol.isPresent()) {
+        res.add(new KindOfComponent(compSymbol.get()));
+      }
+    }
+    return res;
   }
 
 }
