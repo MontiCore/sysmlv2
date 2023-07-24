@@ -1,6 +1,8 @@
 package de.monticore.lang.sysmlparts._symboltable;
 
+import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
+import de.monticore.lang.sysmlparts._ast.ASTSysMLReqType;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -152,6 +154,75 @@ public class PartDefSymbol extends PartDefSymbolTOP {
   protected static Stream<PartDefSymbol> getAllPartDefsRecursively(ISysMLv2Scope scope) {
     var result = scope.getLocalPartDefSymbols().stream();
     result = Stream.concat(result, scope.getSubScopes().stream().flatMap(PartDefSymbol::getAllPartDefsRecursively));
+    return result;
+  }
+
+  /**
+   * Calculates a score for how well this PartDefSymbol refines another PartDefSymbol.
+   * This method DOES NOT consider semantics but only structural properties.
+   * @return A higher score means higher structural similarity.
+   */
+  public int getRefinementScore(PartDefSymbol rough) {
+    var score = 0;
+
+    // Prefer refinements of higher level components
+    if (rough.getRequirementType() == ASTSysMLReqType.LLR){
+      if (this.getRequirementType() == ASTSysMLReqType.MIXED) {
+        score += 5;
+      } else if (this.getRequirementType() == ASTSysMLReqType.HLR){
+        score += 10;
+      }
+    } else if (rough.getRequirementType() == ASTSysMLReqType.MIXED){
+      if (this.getRequirementType() == ASTSysMLReqType.HLR){
+        score += 10;
+      }
+    }
+
+    // Prefer refinements with the same number of connections
+    if (rough.getAstNode() != null){
+      var connectionUsages = this.getAstNode().getSysMLElementList().stream()
+          .filter(e -> e instanceof ASTConnectionUsage)
+          .collect(Collectors.toList());
+
+      var refConnectionUsages = rough.getAstNode().getSysMLElementList().stream()
+          .filter(e -> e instanceof ASTConnectionUsage)
+          .collect(Collectors.toList());
+
+      if (connectionUsages.size() == refConnectionUsages.size()){
+        score += 10;
+      }
+    }
+    return score;
+  }
+
+  /**
+   * Is used to find partDefsSymbols with the same port interface as the given partDefSymbol.
+   */
+  public List<PartDefSymbol> getRefinementOrRoughCandidates(boolean matchConnectionUsages){
+    var parts = PartDefSymbol.getAllPartDefs()
+        .filter(p -> p.matchesInterfaceOf(this))
+        .filter(p -> p.getAstNode().getRefinements().stream()
+            .noneMatch(r -> r.getAstNode().equals(this.getAstNode())))
+        .filter(p -> !p.getName().equals(this.getName()));
+
+    if (matchConnectionUsages){
+      var connectionUsages = this.getAstNode().getSysMLElements(ASTConnectionUsage.class);
+
+      parts = parts.filter(p -> {
+        var refConnectionUsages = p.getAstNode().getSysMLElements(ASTConnectionUsage.class);
+        return refConnectionUsages.size() == connectionUsages.size();
+      });
+    }
+
+    return parts.collect(Collectors.toList());
+  }
+
+  public List<PartDefSymbol> getBasicRefinementCandidates(){
+    var result = getRefinementOrRoughCandidates(false);
+    result = result.stream()
+        .filter(p -> p.getAstNode().getSysMLElements(ASTConnectionUsage.class).size() == 0)
+        .collect(Collectors.toList());
+
     return result;
   }
 }

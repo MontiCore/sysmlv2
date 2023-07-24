@@ -56,9 +56,10 @@ public class RefinementChainCheck implements SysMLPartsASTPartDefCoCo {
         }
       }
       if (node.getSysMLElementList().stream().anyMatch(e -> e instanceof ASTConnectionUsage)) {
-        // TODO Diese Meldung verstehe ich nicht. Klarer machen.
         if (getAllWithoutConnectionUsages(node.getRefinements()).size() == 0){
-          Log.warn("0x90022 High level requirements should refine at least one basic requirement",
+          // High Level Architekturen / Dekompositionen sollte auf ein "Basis Requirement" zurückzuführen sein,
+          // welches das Verhalten nur anhand von beispielsweise Constraints beschreibt.
+          Log.warn("0x90022 High level decompositions should refine at least one basic requirement",
               node.get_SourcePositionStart(), partDefNameEnd);
         }
       }

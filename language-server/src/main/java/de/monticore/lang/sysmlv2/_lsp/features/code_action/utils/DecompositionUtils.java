@@ -1,6 +1,5 @@
 package de.monticore.lang.sysmlv2._lsp.features.code_action.utils;
 
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLFeatureDirection;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
@@ -8,7 +7,6 @@ import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._ast.ASTSysMLReqType;
 import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
-import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import org.antlr.v4.runtime.misc.Pair;
 
 import java.util.ArrayList;
@@ -56,7 +54,7 @@ public abstract class DecompositionUtils {
     return score;
   }
 
-  public static Stream<Pair<ASTPartDef, ASTPartDef>> getDecompositionCandidates(ASTPartDef reference, ASTSysMLReqType type, ISysMLv2Scope scope){
+  public static Stream<Pair<ASTPartDef, ASTPartDef>> getDecompositionCandidates(ASTPartDef reference, ASTSysMLReqType type){
     var decompositions = new HashMap<Pair<ASTPartDef, ASTPartDef>, Map<Pair<ASTPartDef, ASTPartDef>, Map<ASTPortUsage, ASTPortUsage>>> ();
     var parts = PartDefSymbol.getAllPartDefs()
         .filter(p -> p.getRequirementType() == type)
@@ -85,36 +83,5 @@ public abstract class DecompositionUtils {
     // We don't really care how to exactly connect the components for now.
     // But this will be the place to do it in future.
     return mappings;
-  }
-
-  public static ASTSysMLFeatureDirection estimatePortDirection(ASTPortUsage portUsage){
-    if (portUsage.isPresentSysMLFeatureDirection() && portUsage.getSysMLFeatureDirection() != ASTSysMLFeatureDirection.FINAL) {
-      return portUsage.getSysMLFeatureDirection();
-    }
-
-    var conjugatedPortDefs = portUsage.getPortDefs(true);
-    var unconjugatedPortDefs = portUsage.getPortDefs(false);
-
-    long in = Stream.concat(
-            conjugatedPortDefs.stream().flatMap(p -> p.getSysMLElementList().stream())
-                .filter(a ->  a instanceof ASTAttributeUsage && ((ASTAttributeUsage) a).getSysMLFeatureDirection() == ASTSysMLFeatureDirection.OUT),
-            unconjugatedPortDefs.stream().flatMap(p -> p.getSysMLElementList().stream())
-                .filter(a ->  a instanceof ASTAttributeUsage && ((ASTAttributeUsage) a).getSysMLFeatureDirection() == ASTSysMLFeatureDirection.IN))
-        .count();
-
-    long out = Stream.concat(
-            conjugatedPortDefs.stream().flatMap(p -> p.getSysMLElementList().stream())
-                .filter(a ->  a instanceof ASTAttributeUsage && ((ASTAttributeUsage) a).getSysMLFeatureDirection() == ASTSysMLFeatureDirection.IN),
-            unconjugatedPortDefs.stream().flatMap(p -> p.getSysMLElementList().stream())
-                .filter(a ->  a instanceof ASTAttributeUsage && ((ASTAttributeUsage) a).getSysMLFeatureDirection() == ASTSysMLFeatureDirection.OUT))
-        .count();
-
-    if (in > 0 && out == 0){
-      return ASTSysMLFeatureDirection.IN;
-    } else if (out > 0 && in == 0){
-      return ASTSysMLFeatureDirection.OUT;
-    } else {
-      return ASTSysMLFeatureDirection.INOUT;
-    }
   }
 }

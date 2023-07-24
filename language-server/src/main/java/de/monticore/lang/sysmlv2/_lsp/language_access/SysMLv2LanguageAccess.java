@@ -4,8 +4,10 @@ package de.monticore.lang.sysmlv2._lsp.language_access;
 import de.mclsg.lsp.document_management.DocumentManager;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
+import de.monticore.lang.sysmlv2._prettyprint.SysMLv2FullPrettyPrinter;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.prettyprint.AstPrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 
 import java.util.Optional;
 
@@ -37,7 +39,7 @@ public class SysMLv2LanguageAccess extends SysMLv2LanguageAccessTOP {
 
   @Override
   public Optional<AstPrettyPrinter<ASTSysMLModel>> getPrettyPrinter() {
-    AstPrettyPrinter printer = node -> node.toString();
-    return Optional.of(printer);
+    AstPrettyPrinter<ASTSysMLModel> pp = node -> new SysMLv2FullPrettyPrinter(new IndentPrinter()).prettyprint(node);
+    return Optional.of(pp);
   }
 }

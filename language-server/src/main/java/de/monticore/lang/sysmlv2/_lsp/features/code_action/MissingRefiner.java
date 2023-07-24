@@ -23,8 +23,6 @@ import static de.monticore.lang.sysmlv2._lsp.features.code_action.utils.CodeActi
 import static de.monticore.lang.sysmlv2._lsp.features.code_action.utils.CodeActionFactory.buildH2LBasicTemplateCodeAction;
 import static de.monticore.lang.sysmlv2._lsp.features.code_action.utils.CodeActionFactory.buildH2LDecompositionCodeAction;
 import static de.monticore.lang.sysmlv2._lsp.features.code_action.utils.CodeActionFactory.buildH2LDecompositionTemplateCodeAction;
-import static de.monticore.lang.sysmlv2._lsp.features.code_action.utils.RefinementAnalysis.calculateRefinementScore;
-import static de.monticore.lang.sysmlv2._lsp.features.code_action.utils.RefinementAnalysis.getRefinementOrRoughCandidates;
 
 public class MissingRefiner extends CoCoCodeActionProvider {
 
@@ -57,9 +55,9 @@ public class MissingRefiner extends CoCoCodeActionProvider {
     var refCandidates = new ArrayList<PartDefSymbol>();
     di.get().syncAccessGlobalScope(gs -> {
       if (diagnostic.getCode().get().toString().equals("0x90020")) {
-        refCandidates.addAll(getRefinementOrRoughCandidates(roughPartDef, (ISysMLv2Scope) gs, false));
+        refCandidates.addAll(roughPartDef.getRefinementOrRoughCandidates(false));
       } else if (diagnostic.getCode().get().toString().equals("0x90021")) {
-        refCandidates.addAll(getRefinementOrRoughCandidates(roughPartDef, (ISysMLv2Scope) gs, true));
+        refCandidates.addAll(roughPartDef.getRefinementOrRoughCandidates(true));
       }
     });
 
@@ -69,7 +67,7 @@ public class MissingRefiner extends CoCoCodeActionProvider {
 
     // Set preferred code action based on the calculated score
     basicCodeActions.keySet().stream()
-        .max(Comparator.comparingInt(refCandidate -> calculateRefinementScore(refCandidate, roughPartDef)))
+        .max(Comparator.comparingInt(refCandidate -> refCandidate.getRefinementScore(roughPartDef)))
         .ifPresent(max -> basicCodeActions.get(max).setIsPreferred(true));
 
 
