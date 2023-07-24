@@ -1,10 +1,11 @@
 package de.monticore.lang.sysmlv2._lsp.commands;
 
+import de.monticore.lang.sysmlparts._ast.ASTPartDefBuilder;
 import de.monticore.lang.sysmlparts._ast.ASTSysMLReqType;
-import de.monticore.lang.sysmlv2.SysMLv2Mill;
+import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlv2._lsp.SysMLv2LanguageServer;
 import de.monticore.lang.sysmlv2._lsp.features.code_action.utils.CodeActionFactory;
-import de.monticore.lang.sysmlv2._lsp.features.code_action.utils.PartDefTemplateBuilder;
+import de.monticore.lang.sysmlv2._lsp.language_access.SysMLv2ScopeManager;
 import org.eclipse.lsp4j.ApplyWorkspaceEditParams;
 import org.eclipse.lsp4j.CreateFilesParams;
 import org.eclipse.lsp4j.FileCreate;
@@ -14,6 +15,8 @@ import org.eclipse.lsp4j.services.LanguageServer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class CreateRefinementCommand extends Command<Boolean> {
 
@@ -35,15 +38,16 @@ public class CreateRefinementCommand extends Command<Boolean> {
     var refinementType = args[1];
     var modelName = args[2];
     var modelUri = args[3];
-    // TODO Pascal Devant durch syncAccessGlobalScope austauschen (Siehe Warning)
-    var baseSymbol = SysMLv2Mill.globalScope().resolvePartDef(baseModelName);
-    if (baseSymbol.isEmpty()) {
+
+    AtomicReference<Optional<PartDefSymbol>> baseSymbol = new AtomicReference<>(Optional.empty());
+    SysMLv2ScopeManager.getInstance().syncAccessGlobalScope(scope -> baseSymbol.set(scope.resolvePartDef(baseModelName)));
+    if (baseSymbol.get().isEmpty()) {
       return false;
     }
 
-    var builder = new PartDefTemplateBuilder(baseSymbol.get().getAstNode());
+    var builder = new ASTPartDefBuilder(baseSymbol.get().get().getAstNode());
     builder.setName(modelName);
-    builder.addRefinement(baseSymbol.get().getAstNode());
+    builder.addRefinement(baseSymbol.get().get().getAstNode());
 
     if (refinementType.equalsIgnoreCase("Specification")) {
       builder.addEmptyConstraint(modelName);

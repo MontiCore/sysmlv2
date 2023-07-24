@@ -59,7 +59,7 @@ public class SysMLv2HoverProvider extends SysMLv2HoverProviderTOP {
 
   public ArrayList<String> getInfo(PortUsageSymbol symbol){
     var info = new ArrayList<String>();
-    info.add("**Estimated direction:** " + DecompositionUtils.estimatePortDirection(symbol.getAstNode()));
+    info.add("**Estimated direction:** " + symbol.getAstNode().estimatePortDirection().toString());
     return info;
   }
 

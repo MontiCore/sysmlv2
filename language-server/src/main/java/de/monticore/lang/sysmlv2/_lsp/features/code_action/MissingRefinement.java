@@ -18,9 +18,6 @@ import java.util.Optional;
 
 import static de.monticore.lang.sysmlv2._lsp.features.code_action.utils.CodeActionFactory.buildAddRefinementCodeAction;
 import static de.monticore.lang.sysmlv2._lsp.features.code_action.utils.CodeActionFactory.buildL2HBasicTemplateCodeAction;
-import static de.monticore.lang.sysmlv2._lsp.features.code_action.utils.RefinementAnalysis.calculateRefinementScore;
-import static de.monticore.lang.sysmlv2._lsp.features.code_action.utils.RefinementAnalysis.getBasicRefinementCandidates;
-import static de.monticore.lang.sysmlv2._lsp.features.code_action.utils.RefinementAnalysis.getRefinementOrRoughCandidates;
 
 public class MissingRefinement extends CoCoCodeActionProvider {
 
@@ -53,11 +50,11 @@ public class MissingRefinement extends CoCoCodeActionProvider {
     var roughCandidates = new ArrayList<PartDefSymbol>();
     di.get().syncAccessGlobalScope(gs -> {
         if (diagnostic.getCode().get().toString().equals("0x90020")) {
-          roughCandidates.addAll(getRefinementOrRoughCandidates(refPartDef, (ISysMLv2Scope) gs, false));
+          roughCandidates.addAll(refPartDef.getRefinementOrRoughCandidates(false));
         } else if (diagnostic.getCode().get().toString().equals("0x90021")) {
-          roughCandidates.addAll(getRefinementOrRoughCandidates(refPartDef, (ISysMLv2Scope) gs, true));
+          roughCandidates.addAll(refPartDef.getRefinementOrRoughCandidates(true));
         } else if (diagnostic.getCode().get().toString().equals("0x90022")) {
-          roughCandidates.addAll(getBasicRefinementCandidates(refPartDef, (ISysMLv2Scope) gs));
+          roughCandidates.addAll(refPartDef.getBasicRefinementCandidates());
         }
     });
 
@@ -66,7 +63,7 @@ public class MissingRefinement extends CoCoCodeActionProvider {
 
     // Set preferred code action based on the calculated score
     basicCodeActions.keySet().stream()
-        .max(Comparator.comparingInt(roughCandidate -> calculateRefinementScore(refPartDef, roughCandidate)))
+        .max(Comparator.comparingInt(refPartDef::getRefinementScore))
         .ifPresent(max -> basicCodeActions.get(max).setIsPreferred(true));
 
 

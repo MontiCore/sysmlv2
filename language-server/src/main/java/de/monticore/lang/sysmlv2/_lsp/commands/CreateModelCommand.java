@@ -1,15 +1,15 @@
 package de.monticore.lang.sysmlv2._lsp.commands;
 
-import de.mclsg.lsp.LanguageServerWriteLock;
 import de.monticore.lang.sysmlparts._ast.ASTEnumDefBuilder;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartDefBuilder;
 import de.monticore.lang.sysmlparts._ast.ASTPortDefBuilder;
 import de.monticore.lang.sysmlparts._ast.ASTSysMLEnumConstantBuilder;
+import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModelBuilder;
 import de.monticore.lang.sysmlv2._lsp.SysMLv2LanguageServer;
 import de.monticore.lang.sysmlv2._lsp.features.code_action.utils.CodeActionFactory;
-import de.monticore.lang.sysmlv2._lsp.features.code_action.utils.PartDefTemplateBuilder;
+import de.monticore.types.mcbasictypes._ast.ASTConstantsMCBasicTypes;
 import de.monticore.umlmodifier._ast.ASTModifierBuilder;
 import org.eclipse.lsp4j.ApplyWorkspaceEditParams;
 import org.eclipse.lsp4j.CreateFilesParams;
@@ -44,18 +44,24 @@ public class CreateModelCommand extends Command<Boolean> {
       var modelType = args[2];
 
       var model = new ASTSysMLModelBuilder();
+      var booleanType = SysMLv2Mill.mCPrimitiveTypeBuilder().setPrimitive(ASTConstantsMCBasicTypes.BOOLEAN).build();
       if (modelType.equalsIgnoreCase("Specification")) {
-        ASTPartDef partDef = new ASTPartDefBuilder().setName(modelName).setModifier(new ASTModifierBuilder().build()).build();
-        model.addSysMLElement(new PartDefTemplateBuilder(partDef).addEmptyConstraint(modelName).build());
+        ASTPartDef partDef = new ASTPartDefBuilder()
+            .setName(modelName)
+            .addPortUsage("port1", booleanType)
+            .build();
+        model.addSysMLElement(new ASTPartDefBuilder(partDef).addEmptyConstraint(modelName).build());
 
       } else if (modelType.equalsIgnoreCase("Automaton")) {
-        ASTPartDef partDef = new ASTPartDefBuilder().setName(modelName).setModifier(new ASTModifierBuilder().build()).build();
-        var automatonBuilder = new PartDefTemplateBuilder(partDef).addEmptyStateUsage(modelName);
+        ASTPartDef partDef = new ASTPartDefBuilder().setName(modelName).build();
+        var automatonBuilder = new ASTPartDefBuilder(partDef)
+            .addPortUsage("port1", booleanType)
+            .addEmptyStateUsage(modelName);
         if (args.length == 4) {
           automatonBuilder.addRefinement(new ASTPartDefBuilder().setName(args[3]).setModifier(new ASTModifierBuilder().build()).build());
         }
         partDef = automatonBuilder.build();
-        model.addSysMLElement(new PartDefTemplateBuilder(partDef).build());
+        model.addSysMLElement(new ASTPartDefBuilder(partDef).build());
 
       } else if (modelType.equalsIgnoreCase("Port Definition")) {
         var portDef = new ASTPortDefBuilder().setName(modelName).setModifier(new ASTModifierBuilder().build()).build();
@@ -81,6 +87,7 @@ public class CreateModelCommand extends Command<Boolean> {
 
       try {
         var r = future.get().isApplied();
+        languageServer.getWorkspaceService().setTriggerIndexing(true);
         languageServer.getWorkspaceService().didCreateFiles(new CreateFilesParams(List.of(new FileCreate(modelUri))));
         return r;
       }

@@ -16,8 +16,6 @@ import java.util.stream.Collectors;
 
 public class ExtendedPartDefSymbolDeSer extends PartDefSymbolDeSer {
 
-  private final SysMLSynthesizer syn = new SysMLSynthesizer();
-
   @Override
   public String serialize(PartDefSymbol toSerialize, SysMLPartsSymbols2Json s2j) {
     JsonPrinter p = s2j.getJsonPrinter();
