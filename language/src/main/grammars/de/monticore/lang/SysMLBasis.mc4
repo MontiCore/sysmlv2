@@ -1,15 +1,16 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
-// TODO
-
+/**
+ * Basis für die einzelnen SysML-Teilgrammatiken (ich weigere mich noch sie "Teilsprachen" zu nennen).
+ */
 component grammar SysMLBasis
     extends de.monticore.literals.MCCommonLiterals,     // SingleCharacter
             de.monticore.expressions.ExpressionsBasis,  // Expression
             de.monticore.types.MCBasicTypes,            // MCQualifiedName, MCType
             de.monticore.symbols.OOSymbols,             // OOTypes
             de.monticore.Cardinality,                   // Cardinality
-            de.monticore.UMLModifier              // Modifier
+            de.monticore.UMLModifier                    // Modifier
 {
 
   /*

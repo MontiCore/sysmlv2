@@ -1,9 +1,11 @@
 package de.monticore.lang.sysmlv2._symboltable;
 
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
+import de.monticore.lang.componentconnector._symboltable.MildPortSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
+import de.monticore.lang.sysmlparts._symboltable.PortDefSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeUsage2VariableSymbolAdapter;
@@ -13,12 +15,15 @@ import de.monticore.lang.sysmlparts.symboltable.adapters.PortDef2TypeSymbolAdapt
 import de.monticore.lang.sysmlparts.symboltable.adapters.PortUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlrequirements._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
+import de.monticore.lang.sysmlv2.symboltable.adapters.AttributeUsage2PortSymbolAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Constraint2SpecificationAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.PartDef2ComponentAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Requirement2SpecificationAdapter;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolTOP;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symbols.compsymbols._symboltable.PortSymbol;
 import de.monticore.symboltable.IScopeSpanningSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
@@ -26,6 +31,7 @@ import de.monticore.types.check.SymTypeExpressionFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
@@ -208,4 +214,36 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     return adapted;
   }
 
+  @Override
+  default List<MildPortSymbol> resolveAdaptedMildPortLocallyMany(
+      boolean foundSymbols,
+      String name,
+      AccessModifier modifier,
+      Predicate<MildPortSymbol> predicate
+  ) {
+    var adapted = new ArrayList<MildPortSymbol>();
+
+    // TODO MC-Team fragen, ob man das so macht? Gemeint ist das händische Splitten von Namen - oder ob man irgendwie
+    //  nach vollqualifizierten Sachen suchen kann (und vielleicht auch erst danach schaut, was es war)?
+    if(name.contains(".")) {
+      var port = name.split("\\.")[0];
+      var portUsage = resolvePortUsageLocally(port);
+      if(portUsage.isPresent()) {
+        var attr = name.split("\\.")[1];
+        var attrUsage = portUsage.get().getTypesList().stream()
+            .filter(SymTypeExpression::hasTypeInfo)
+            .map(SymTypeExpression::getTypeInfo)
+            .map(TypeSymbolTOP::getSpannedScope)
+            .map(scope -> ((ISysMLv2Scope)scope).resolveAttributeUsageLocally(attr))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .findFirst();
+        if(attrUsage.isPresent()) {
+          adapted.add(new AttributeUsage2PortSymbolAdapter(portUsage.get(), attrUsage.get()));
+        }
+      }
+    }
+
+    return adapted;
+  }
 }
