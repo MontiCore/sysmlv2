@@ -44,11 +44,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
  */
 public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
 
-  @BeforeEach
-  public void clear() {
-    LogStub.init();
-  }
-
   @Test
   public void forSysml() throws IOException {
     var as = process("part def A;");

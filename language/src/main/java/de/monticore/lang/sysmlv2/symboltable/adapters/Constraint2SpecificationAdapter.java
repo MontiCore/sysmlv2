@@ -32,11 +32,8 @@ public class Constraint2SpecificationAdapter extends MildSpecificationSymbol {
     if(other instanceof Constraint2SpecificationAdapter) {
       return adaptee.equals(((Constraint2SpecificationAdapter) other).adaptee);
     }
-    else if(other instanceof MildSpecificationSymbol) {
-      return adaptee.equals(other);
-    }
     else {
-      return false;
+      return super.equals(other);
     }
   }
 

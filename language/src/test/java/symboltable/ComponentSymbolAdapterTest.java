@@ -3,6 +3,7 @@ package symboltable;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
+import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.literals.mccommonliterals._ast.ASTBooleanLiteral;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
@@ -10,6 +11,7 @@ import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -150,74 +152,45 @@ public class ComponentSymbolAdapterTest extends NervigeSymboltableTests {
     assertThat(field.getType().printFullName()).isEqualTo("A");
   }
 
-  @Disabled
   @Test
   public void testPortFullName() throws IOException {
-
     var as = process("port def A { attribute b: boolean; } part def B { port a: A; }");
+    var port = as.resolveMildComponent("B").get().getPorts().get(0);
 
-    var comp = as.resolveMildComponent("B").get();
-
-    var port = comp.getPorts().get(0);
-
-    // Controversial: port "package" sollte von der port usage kommen nicht von der attribute usage.
-    // Denn sonst koennen ports in unterschiedliche part defs denselben Id haben. Vielleicht ist das gewollt in CC da es keine usages existieren?
-    // Dies hier hat auch Folgen fuer "port instances" resolution in Connectoren.
+    // Name muss widerspiegeln, dass der Port in B liegt und "a.b" heisst
     assertThat(port.getFullName()).isEqualTo("B.a.b");
 
-    // Und resolven wuerde auch nuetzlich sein aber bin nicht sicher ob das sinn macht
-    var portFromResolution = as.resolvePort("B.a.b");
-    assertThat(portFromResolution).isPresent();
+    // Resolven in der PartDef muss wegen Komposition bzw den Konnektoren möglich sein
+    var scope = as.resolveMildComponent("B").get().getSpannedScope();
+    var resolved = scope.resolveMildPort("a.b");
+    assertThat(resolved).isPresent();
+    assertThat(resolved.get()).isEqualTo(port);
   }
 
-  @Disabled
   @Test
   public void testSubcomponents() throws IOException {
-    var as = process(
-        "port def In { " +
-            "  in attribute val : boolean;" +
-            "}" +
-            "part def InstDef {" +
-            "  port i: In;" +
-            "}" +
-            "part def Comp {" +
-            "  port input: In;" +
-            "  part inst1: InstDef;" +
-            "}");
+    var as = process("part def B; part def A { part b: B; }");
 
-    var partUsages = as.resolvePartDef("Comp").get().getSpannedScope().getLocalPartUsageSymbols();
+    var A = as.resolveMildComponent("A").get();
+    assertThat(A.getSubcomponents()).hasSize(1);
 
-    var compComponent = as.resolveMildComponent("Comp").get();
+    var b = A.getSubcomponents().get(0);
+    assertThat(b.getFullName()).isEqualTo("A.b");
+    assertThat(b.getType().printFullName()).isEqualTo("B");
+    }
 
-    assertThat(compComponent.getSubcomponents()).hasSameSizeAs(partUsages);
-
-    var subcompDef = as.resolveMildComponent("InstDef").get();
-
-    var inst = compComponent.getSubcomponents().get(0);
-
-    assertThat(inst.getType().getTypeInfo()).isEqualTo(subcompDef); // wahrscheinlich ist equals zu streng. fullName.equals koennte reichen?
-  }
-
-  @Disabled
   @Test
   public void testConnector() throws IOException {
-    var as = process(
-        "port def In { " +
-            "  in attribute val : boolean;" +
-            "}" +
-            "part def InstDef {" +
-            "  port i: In;" +
-            "}" +
-            "part def Comp {" +
-            "  port input: In;" +
-            "  part inst1: InstDef;" +
-            "  connect input to inst1::i;" +
-            "}");
+    var as = process(""
+        + "port def P { attribute b: boolean; }"
+        + "part def B { port p: P; }"
+        + "part def A { port p: P; part b: B; connect p to b::p; }");
 
-    var connections = as.resolvePartDef("Comp").get().getAstNode().getSysMLElements(ASTConnectionUsage.class);
+    var A = as.resolveMildComponent("A").get();
+    assertThat(A.getConnectorsList()).hasSize(1);
 
-    var compositionComponent = as.resolveMildComponent("Comp").get();
-
-    assertThat(compositionComponent.getConnectorsList()).hasSameSizeAs(connections);
+    var c = A.getConnectors(0);
+    assertThat(c.getSource().getQName()).isEqualTo("p");
+    assertThat(c.getTarget().getQName()).isEqualTo("b.p");
   }
 }

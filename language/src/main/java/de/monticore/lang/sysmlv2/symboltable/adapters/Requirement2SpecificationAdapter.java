@@ -39,11 +39,8 @@ public class Requirement2SpecificationAdapter extends MildSpecificationSymbol {
     if(other instanceof Requirement2SpecificationAdapter) {
       return adaptee.equals(((Requirement2SpecificationAdapter) other).adaptee);
     }
-    else if(other instanceof MildSpecificationSymbol) {
-      return adaptee.equals(other);
-    }
     else {
-      return false;
+      return super.equals(other);
     }
   }
 
@@ -61,7 +58,7 @@ public class Requirement2SpecificationAdapter extends MildSpecificationSymbol {
       return asserted.map(c -> c.getAstNode().getExpression()).collect(Collectors.toList());
     }
     else {
-      Log.error("0xMPf005 AST of Requirement Usage not present");
+      Log.error("0xMPf003 AST of Requirement Usage not present");
       return new ArrayList<>();
     }
   }
