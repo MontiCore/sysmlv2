@@ -24,7 +24,6 @@ public abstract class CoCoCodeActionProvider {
   public abstract List<CodeAction> createFixesFor(TextDocumentItem document, Diagnostic diagnostic);
 
   public boolean providesActionFor(Diagnostic diagnostic){
-    return false;
-    //return diagnostic != null && diagnostic.getCode() != null && matchingErrorCodes.contains(diagnostic.getCode().get().toString());
+    return diagnostic != null && diagnostic.getCode() != null && matchingErrorCodes.contains(diagnostic.getCode().get().toString());
   }
 }

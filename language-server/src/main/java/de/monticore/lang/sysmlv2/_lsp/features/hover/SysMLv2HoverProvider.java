@@ -6,7 +6,6 @@ import de.mclsg.lsp.document_management.DocumentManager;
 import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
-import de.monticore.lang.sysmlv2._lsp.features.code_action.utils.DecompositionUtils;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symboltable.ISymbol;
 import org.eclipse.lsp4j.Hover;

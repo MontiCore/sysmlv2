@@ -60,10 +60,11 @@ public class MissingRefiner extends CoCoCodeActionProvider {
         refCandidates.addAll(roughPartDef.getRefinementOrRoughCandidates(true));
       }
     });
+    refCandidates.removeIf(p -> !p.isPresentAstNode());
 
     var partDefToDocument = mapPartDefsToDocument();
     var basicCodeActions = new HashMap<PartDefSymbol, CodeAction>();
-    refCandidates.forEach((p) -> basicCodeActions.put(p, buildAddRefinementCodeAction(partDefToDocument.get(p.getAstNode()).uri, roughPartDef.getName(), p)));
+    refCandidates.forEach((p) -> basicCodeActions.put(p, buildAddRefinementCodeAction(partDefToDocument.get(p.getAstNode()).uri, roughPartDef.getName(), p.getAstNode())));
 
     // Set preferred code action based on the calculated score
     basicCodeActions.keySet().stream()

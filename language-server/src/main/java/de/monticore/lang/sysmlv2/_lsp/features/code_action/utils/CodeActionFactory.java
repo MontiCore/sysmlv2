@@ -35,7 +35,9 @@ import java.util.stream.Collectors;
 
 public abstract class CodeActionFactory {
 
-  public static Optional<CodeAction> buildL2HBasicTemplateCodeAction(ASTPartDef partDef, VersionedTextDocumentIdentifier existingModelDocument, String folder, DocumentManager documentManager){
+  public static Optional<CodeAction> buildL2HBasicTemplateCodeAction(ASTPartDef partDef,
+                                                                     VersionedTextDocumentIdentifier existingModelDocument,
+                                                                     String folder, DocumentManager documentManager) {
 
     var newPartDefName = DocumentUtils.getNewPartDefName(partDef.getName(), new Pair<>("Llr", "Hlr"), null);
 
@@ -46,55 +48,64 @@ public abstract class CodeActionFactory {
         .removeProperties(ASTSysMLReqType.LLR)
         .setName(newPartDefName);
 
-    SysMLv2ScopeManager.getInstance().syncAccessGlobalScope(scope -> templateBuilder.transformPartUsages(ASTSysMLReqType.HLR));
+    SysMLv2ScopeManager.getInstance().syncAccessGlobalScope(
+        scope -> templateBuilder.transformPartUsages(ASTSysMLReqType.HLR));
 
     templateBuilder.ifReference(
-            reference -> !reference.getSysMLElements(ASTStateUsage.class).isEmpty(),
-            builder -> builder.addEmptyConstraint(partDef.getSysMLElements(ASTStateUsage.class).get(0).getName()));
-
-    var setRefinement = new TextDocumentEdit();
-    setRefinement.setEdits(List.of(buildAddRefinementTextEdit(newPartDefName, partDef.getSymbol())));
-    setRefinement.setTextDocument(existingModelDocument);
+        reference -> !reference.getSysMLElements(ASTStateUsage.class).isEmpty(),
+        builder -> builder.addEmptyConstraint(partDef.getSysMLElements(ASTStateUsage.class).get(0).getName()));
 
     var workspaceEdit = new WorkspaceEdit();
-    var changes = new ArrayList<>(buildModelCreationEdits(DocumentUtils.getFreeDocumentUri(documentManager, folder, newPartDefName), templateBuilder.build()));
+    var changes = new ArrayList<>(
+        buildModelCreationEdits(DocumentUtils.getFreeDocumentUri(documentManager, folder, newPartDefName),
+            templateBuilder.build()));
+
+    var setRefinement = new TextDocumentEdit();
+    setRefinement.setEdits(List.of(buildAddRefinementTextEdit(newPartDefName, partDef)));
+    setRefinement.setTextDocument(existingModelDocument);
+
     changes.add(0, Either.forLeft(setRefinement));
+
     workspaceEdit.setDocumentChanges(changes);
     codeAction.setEdit(workspaceEdit);
-
 
     return Optional.of(codeAction);
   }
 
-  public static Optional<CodeAction> buildH2LBasicTemplateCodeAction(ASTPartDef reference, String folder, DocumentManager documentManager){
+  public static Optional<CodeAction> buildH2LBasicTemplateCodeAction(ASTPartDef reference, String folder,
+                                                                     DocumentManager documentManager) {
 
     var newPartDefName = DocumentUtils.getNewPartDefName(reference.getName(), new Pair<>("Hlr", "Llr"), null);
 
     var codeAction = new CodeAction("Generate Llr template");
     codeAction.setKind(CodeActionKind.QuickFix);
 
-
     var llrBuilder = new ASTPartDefBuilder(reference)
         .removeProperties(ASTSysMLReqType.HLR)
         .setName(newPartDefName);
 
-    SysMLv2ScopeManager.getInstance().syncAccessGlobalScope(scope -> llrBuilder.transformPartUsages(ASTSysMLReqType.LLR));
+    SysMLv2ScopeManager.getInstance().syncAccessGlobalScope(
+        scope -> llrBuilder.transformPartUsages(ASTSysMLReqType.LLR));
 
     llrBuilder
         .ifReference(
-          ref -> !ref.getSysMLElements(ASTRequirementUsage.class).isEmpty() || !ref.getSysMLElements(ASTConstraintUsage.class).isEmpty(),
-          builder -> builder.addEmptyStateUsage(reference.getName() + "Automaton"))
+            ref -> !ref.getSysMLElements(ASTRequirementUsage.class).isEmpty() || !ref.getSysMLElements(
+                ASTConstraintUsage.class).isEmpty(),
+            builder -> builder.addEmptyStateUsage(reference.getName() + "Automaton"))
         .addRefinement(reference);
 
     var workspaceEdit = new WorkspaceEdit();
-    var changes = new ArrayList<>(buildModelCreationEdits(DocumentUtils.getFreeDocumentUri(documentManager,folder, newPartDefName), llrBuilder.build()));
+    var changes = new ArrayList<>(
+        buildModelCreationEdits(DocumentUtils.getFreeDocumentUri(documentManager, folder, newPartDefName),
+            llrBuilder.build()));
     workspaceEdit.setDocumentChanges(changes);
     codeAction.setEdit(workspaceEdit);
 
     return Optional.of(codeAction);
   }
 
-  public static Optional<CodeAction> buildH2LDecompositionTemplateCodeAction(ASTPartDef reference, String folder, DocumentManager documentManager){
+  public static Optional<CodeAction> buildH2LDecompositionTemplateCodeAction(ASTPartDef reference, String folder,
+                                                                             DocumentManager documentManager) {
 
     var decompName = DocumentUtils.getNewPartDefName(reference.getName(), null, "Decomp");
     var comp1Name = DocumentUtils.getNewPartDefName(decompName, null, "Comp1");
@@ -121,7 +132,8 @@ public abstract class CodeActionFactory {
         .removeProperties(ASTSysMLReqType.HLR)
         .setName(decompName);
 
-    SysMLv2ScopeManager.getInstance().syncAccessGlobalScope(scope -> decompBuilder.transformPartUsages(ASTSysMLReqType.LLR));
+    SysMLv2ScopeManager.getInstance().syncAccessGlobalScope(
+        scope -> decompBuilder.transformPartUsages(ASTSysMLReqType.LLR));
 
     decompBuilder
         .addDecomposition(comp1, comp2)
@@ -130,9 +142,12 @@ public abstract class CodeActionFactory {
     var workspaceEdit = new WorkspaceEdit();
     var changes = new ArrayList<Either<TextDocumentEdit, ResourceOperation>>();
 
-    changes.addAll(buildModelCreationEdits(DocumentUtils.getFreeDocumentUri(documentManager, folder, decompName), decompBuilder.build()));
-    changes.addAll(buildModelCreationEdits(DocumentUtils.getFreeDocumentUri(documentManager, folder, comp1Name), comp1));
-    changes.addAll(buildModelCreationEdits(DocumentUtils.getFreeDocumentUri(documentManager, folder, comp2Name), comp2));
+    changes.addAll(buildModelCreationEdits(DocumentUtils.getFreeDocumentUri(documentManager, folder, decompName),
+        decompBuilder.build()));
+    changes.addAll(
+        buildModelCreationEdits(DocumentUtils.getFreeDocumentUri(documentManager, folder, comp1Name), comp1));
+    changes.addAll(
+        buildModelCreationEdits(DocumentUtils.getFreeDocumentUri(documentManager, folder, comp2Name), comp2));
 
     workspaceEdit.setDocumentChanges(changes);
     codeAction.setEdit(workspaceEdit);
@@ -140,31 +155,36 @@ public abstract class CodeActionFactory {
     return Optional.of(codeAction);
   }
 
-  public static List<CodeAction> buildH2LDecompositionCodeAction(ASTPartDef reference, String folder, DocumentManager documentManager){
+  public static List<CodeAction> buildH2LDecompositionCodeAction(ASTPartDef reference, String folder,
+                                                                 DocumentManager documentManager) {
     var codeActions = new ArrayList<CodeAction>();
     SysMLv2ScopeManager.getInstance().syncAccessGlobalScope(gs -> {
-        var candidates = DecompositionUtils.getDecompositionCandidates(reference, ASTSysMLReqType.HLR)
+      var candidates = reference.getDecompositionCandidates(ASTSysMLReqType.HLR)
           .limit(5)
           .collect(Collectors.toList());
 
-      for (var decompCandidate : candidates){
+      for (var decompCandidate : candidates) {
         var decompName = DocumentUtils.getNewPartDefName(reference.getName(), null, "Decomp");
 
-        var codeAction = new CodeAction("Decompose with " + decompCandidate.a.getName() + " o " + decompCandidate.b.getName());
+        var codeAction = new CodeAction(
+            "Decompose with " + decompCandidate.a.getName() + " o " + decompCandidate.b.getName());
         codeAction.setKind(CodeActionKind.QuickFix);
 
         var decompBuilder = new ASTPartDefBuilder(reference)
             .removeProperties(ASTSysMLReqType.HLR)
             .setName(decompName);
 
-        SysMLv2ScopeManager.getInstance().syncAccessGlobalScope(scope -> decompBuilder.transformPartUsages(ASTSysMLReqType.LLR));
+        SysMLv2ScopeManager.getInstance().syncAccessGlobalScope(
+            scope -> decompBuilder.transformPartUsages(ASTSysMLReqType.LLR));
 
         decompBuilder
             .addDecomposition(decompCandidate.a, decompCandidate.b)
             .addRefinement(reference);
 
         var workspaceEdit = new WorkspaceEdit();
-        var changes = new ArrayList<>(buildModelCreationEdits(DocumentUtils.getFreeDocumentUri(documentManager, folder, decompName), decompBuilder.build()));
+        var changes = new ArrayList<>(
+            buildModelCreationEdits(DocumentUtils.getFreeDocumentUri(documentManager, folder, decompName),
+                decompBuilder.build()));
 
         workspaceEdit.setDocumentChanges(changes);
         codeAction.setEdit(workspaceEdit);
@@ -175,12 +195,14 @@ public abstract class CodeActionFactory {
     return codeActions;
   }
 
-  public static List<Either<TextDocumentEdit, ResourceOperation>> buildModelCreationEdits(VersionedTextDocumentIdentifier newDocument, ASTPartDef partDef){
+  public static List<Either<TextDocumentEdit, ResourceOperation>> buildModelCreationEdits(
+      VersionedTextDocumentIdentifier newDocument, ASTPartDef partDef) {
     ASTSysMLModel model = new ASTSysMLModelBuilder().addSysMLElement(partDef).build();
     return buildModelCreationEdits(newDocument, model);
   }
 
-  public static List<Either<TextDocumentEdit, ResourceOperation>> buildModelCreationEdits(VersionedTextDocumentIdentifier newDocument, ASTSysMLModel model){
+  public static List<Either<TextDocumentEdit, ResourceOperation>> buildModelCreationEdits(
+      VersionedTextDocumentIdentifier newDocument, ASTSysMLModel model) {
     var createFile = new CreateFile();
     createFile.setUri(newDocument.getUri());
     createFile.setOptions(new CreateFileOptions(false, false));
@@ -199,47 +221,46 @@ public abstract class CodeActionFactory {
 
   /**
    * Creates a code action to add a refinement to a partDef.
+   *
    * @param documentUri The uri of the document that contains refinement.
-   * @param roughName Name of the rough component that is refined.
-   * @param refinement The new refinement rough.
+   * @param rough       Name of the rough component that is refined.
+   * @param refinement  The new refinement rough.
    */
-  public static CodeAction buildAddRefinementCodeAction(String documentUri, String roughName, PartDefSymbol refinement){
-    CodeAction codeAction = new CodeAction("Make " + refinement.getName() + " refine " + roughName);
+  public static CodeAction buildAddRefinementCodeAction(String documentUri, String rough, ASTPartDef refinement) {
+    CodeAction codeAction = new CodeAction("Make " + refinement.getName() + " refine " + rough);
     codeAction.setKind(CodeActionKind.QuickFix);
 
     var workspaceEdit = new WorkspaceEdit();
     workspaceEdit.setChanges(Map.of(
         documentUri,
-        List.of(buildAddRefinementTextEdit(roughName, refinement))
+        List.of(buildAddRefinementTextEdit(rough, refinement))
     ));
 
     codeAction.setEdit(workspaceEdit);
-
     return codeAction;
   }
 
   /**
    * Creates a TextEdit to add a refinement to a partDef.
-   * @param roughName Name of the rough component that is refined.
+   *
+   * @param rough      Name of the rough component that is refined.
    * @param refinement The new refinement rough.
    */
-  public static TextEdit buildAddRefinementTextEdit(String roughName, PartDefSymbol refinement){
-    var addRefinement = new TextEdit();
-    var refinementStartPos = new Position();
-    refinementStartPos.setLine(refinement.getAstNode().get_SourcePositionStart().getLine() - 1);
-    refinementStartPos.setCharacter(refinement.getAstNode().get_SourcePositionStart().getColumn() + refinement.getName().length() + "part def ".length());
+  public static TextEdit buildAddRefinementTextEdit(String rough, ASTPartDef refinement) {
+    var pp = new SysMLv2FullPrettyPrinter(new IndentPrinter());
+    var setModelText = new TextEdit();
+    // Dirty but working for now
+    var startLine = Math.max(refinement.get_SourcePositionStart().getLine() - 1, 0);
+    var endLine = refinement.get_SourcePositionEnd().getLine();
+    var endChar = refinement.get_SourcePositionEnd().getColumn();
 
-    if (refinement.getAstNode().getSpecializationList().isEmpty()){
-      addRefinement.setNewText(" refines " + roughName);
-    } else {
-      addRefinement.setNewText(roughName + ", ");
-      refinementStartPos.setCharacter(refinementStartPos.getCharacter() + " refines ".length());
-    }
+    setModelText.setRange(new Range(new Position(startLine, 0), new Position(endLine, endChar)));
 
-    addRefinement.setRange(new Range(refinementStartPos, refinementStartPos));
+    var builder = new ASTPartDefBuilder(refinement);
+    builder.addRefinement(rough);
 
-    return addRefinement;
+    setModelText.setNewText(pp.prettyprint(builder.build()));
+
+    return setModelText;
   }
-
-
 }
