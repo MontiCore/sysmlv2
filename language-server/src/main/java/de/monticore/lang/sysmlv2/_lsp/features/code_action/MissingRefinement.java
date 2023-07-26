@@ -43,15 +43,15 @@ public class MissingRefinement extends CoCoCodeActionProvider {
         .findFirst()
         .orElse(null);
 
-    if (refPartDef == null){
+    if (refPartDef == null || !refPartDef.isPresentAstNode()){
       return new ArrayList<>();
     }
 
     var roughCandidates = new ArrayList<PartDefSymbol>();
     di.get().syncAccessGlobalScope(gs -> {
-        if (diagnostic.getCode().get().toString().equals("0x90020")) {
+        if (diagnostic.getCode().get().toString().equals("0x90010")) {
           roughCandidates.addAll(refPartDef.getRefinementOrRoughCandidates(false));
-        } else if (diagnostic.getCode().get().toString().equals("0x90021")) {
+        } else if (diagnostic.getCode().get().toString().equals("0x90011")) {
           roughCandidates.addAll(refPartDef.getRefinementOrRoughCandidates(true));
         } else if (diagnostic.getCode().get().toString().equals("0x90022")) {
           roughCandidates.addAll(refPartDef.getBasicRefinementCandidates());
@@ -59,7 +59,7 @@ public class MissingRefinement extends CoCoCodeActionProvider {
     });
 
     var basicCodeActions = new HashMap<PartDefSymbol, CodeAction>();
-    roughCandidates.forEach((p) -> basicCodeActions.put(p, buildAddRefinementCodeAction(document.getUri(), p.getName(), refPartDef)));
+    roughCandidates.forEach((p) -> basicCodeActions.put(p, buildAddRefinementCodeAction(document.getUri(), p.getName(), refPartDef.getAstNode())));
 
     // Set preferred code action based on the calculated score
     basicCodeActions.keySet().stream()

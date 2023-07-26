@@ -301,10 +301,18 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
 
   /**
    * Simplifes creating and adding a new refinement to {@link ASTPartDef#specializations}.
-   * @param partDef The part definition that is used.
+   * @param partDef The part definition that is refined.
    */
   public ASTPartDefBuilder addRefinement(ASTPartDef partDef) {
-    var partDefQName = SysMLv2Mill.mCQualifiedNameBuilder().addAllParts(List.of(partDef.getName().split("\\."))).build();
+    return this.addRefinement(partDef.getName());
+  }
+
+  /**
+   * Simplifes creating and adding a new refinement to {@link ASTPartDef#specializations}.
+   * @param partDef The part definition that is refined.
+   */
+  public ASTPartDefBuilder addRefinement(String partDef) {
+    var partDefQName = SysMLv2Mill.mCQualifiedNameBuilder().addAllParts(List.of(partDef.split("\\."))).build();
     var refinementType = new ASTMCQualifiedTypeBuilder().setMCQualifiedName(partDefQName).build();
     var refinement = SysMLv2Mill.sysMLRefinementBuilder().addSuperTypes(refinementType).build();
     this.addSpecialization(refinement);
