@@ -101,7 +101,7 @@ public class SpesMLTest {
 
 
   @Test
-  void PartBehaviorCoCoTestValid() throws IOException {
+  void partBehaviorCoCoTestValid() throws IOException {
     var model = "part def B { exhibit state BAutomaton {  } } ";
     var ast = parser.parse_String(model);
     assertThat(ast).isPresent();
@@ -114,8 +114,8 @@ public class SpesMLTest {
   }
 
   @Test
-  void PartBehaviorCoCoTestInvalid1() throws IOException {
-    var model = "part def B { exhibit state BAutomaton {  } constraint C { a = 6 } } ";
+  void partBehaviorCoCoTestInvalid1() throws IOException {
+    var model = "part def B { exhibit state BAutomaton {  } satisfy requirement C { assume constraint D { 1==1 } } } ";
     var ast = parser.parse_String(model);
     assertThat(ast).isPresent();
     st.createSymbolTable(ast.get());
@@ -128,7 +128,7 @@ public class SpesMLTest {
   }
 
   @Test
-  void PartBehaviorCoCoTestInvalid2() throws IOException {
+  void partBehaviorCoCoTestInvalid2() throws IOException {
     var model = "part def C {  }";
     var ast = parser.parse_String(model);
     assertThat(ast).isPresent();
@@ -139,6 +139,19 @@ public class SpesMLTest {
     List<Finding> findings = getFindings();
     assertThat(findings).hasSize(1);
     assertThat(findings.get(0).getMsg()).contains("0xA70003");
+  }
+
+  @Test
+  void partBehaviorCoCoTestValid3() throws IOException {
+    var model = "part def A { satisfy requirement B { require constraint C { 1==1 }  } }";
+    var ast = parser.parse_String(model);
+    assertThat(ast).isPresent();
+    st.createSymbolTable(ast.get());
+    var checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new PartBehaviorCoCo());
+    checker.checkAll(ast.get());
+    List<Finding> findings = getFindings();
+    assertThat(findings).hasSize(0);
   }
 
   private List<Finding> getFindings() {
