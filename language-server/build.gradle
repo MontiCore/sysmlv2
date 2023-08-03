@@ -4,8 +4,6 @@ plugins {
   id 'de.monticore.language-server' version "$mclsg_version"
 }
 
-group = 'de.monticore.lang.sysml_v2'
-
 mainClassName = "de.monticore.lang.sysmlv2._lsp.LanguageServerCLI"
 
 dependencies {

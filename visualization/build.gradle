@@ -3,8 +3,6 @@ plugins {
   id "com.github.johnrengelman.shadow" version "4.0.4"
 }
 
-group = 'de.monticore.lang.sysml_v2'
-
 tasks.build.dependsOn shadowJar
 
 def omg_version= '0.18.0'
