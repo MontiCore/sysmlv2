@@ -2,8 +2,6 @@
 pluginManagement {
   repositories {
     maven {
-      credentials.username nexusUser
-      credentials.password nexusPassword
       url publicNexus
     }
     gradlePluginPortal()

@@ -11,9 +11,9 @@ subprojects {
   project.buildDir = "target"
 
   repositories {
-    // "nexus" also caches maven central
+    // SE-Nexus also caches maven central
     maven {
-      name "nexus"
+      name "SE Nexus"
       url = publicNexus
     }
   }
