@@ -2,9 +2,10 @@
 package de.monticore.lang.sysmlparts._symboltable;
 
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLFeatureDirection;
+import de.monticore.lang.sysmlbasis.symboltable.SerializationUtil;
+import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.symboltable.serialization.json.JsonObject;
-import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.check.SymTypeExpressionDeSer;
+import de.monticore.types.check.*;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class AttributeUsageSymbolDeSer extends AttributeUsageSymbolDeSerTOP {
 
   @Override
   protected List<SymTypeExpression> deserializeTypes(JsonObject symbolJson) {
-    return SymTypeExpressionDeSer.deserializeListMember( "types", symbolJson);
+    return SerializationUtil.deserializeListMember("types", symbolJson, SysMLv2Mill.globalScope());
   }
 
   @Override
