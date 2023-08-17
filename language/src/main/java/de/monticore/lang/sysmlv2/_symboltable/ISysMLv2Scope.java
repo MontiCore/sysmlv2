@@ -230,16 +230,13 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       var portUsage = resolvePortUsageLocally(port);
       if(portUsage.isPresent()) {
         var attr = name.split("\\.")[1];
-        var attrUsage = portUsage.get().getTypesList().stream()
-            .filter(SymTypeExpression::hasTypeInfo)
-            .map(SymTypeExpression::getTypeInfo)
-            .map(TypeSymbolTOP::getSpannedScope)
-            .map(scope -> ((ISysMLv2Scope)scope).resolveAttributeUsageLocally(attr))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .findFirst();
-        if(attrUsage.isPresent()) {
-          adapted.add(new AttributeUsage2PortSymbolAdapter(portUsage.get(), attrUsage.get()));
+        var input = portUsage.get().getInputAttributes().stream().filter(a -> a.getName().equals(attr)).findFirst();
+        var output = portUsage.get().getOutputAttributes().stream().filter(a -> a.getName().equals(attr)).findFirst();
+        if(input.isPresent()) {
+          adapted.add(new AttributeUsage2PortSymbolAdapter(input.get(), portUsage.get(), true));
+        }
+        else if(output.isPresent()) {
+          adapted.add(new AttributeUsage2PortSymbolAdapter(output.get(), portUsage.get(),false));
         }
       }
     }

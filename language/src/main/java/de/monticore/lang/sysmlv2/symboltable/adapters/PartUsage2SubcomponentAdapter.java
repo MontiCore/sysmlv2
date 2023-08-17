@@ -3,13 +3,16 @@ package de.monticore.lang.sysmlv2.symboltable.adapters;
 import com.google.common.base.Preconditions;
 import de.monticore.lang.componentconnector._ast.ASTParameterValue;
 import de.monticore.lang.componentconnector._symboltable.MildInstanceSymbol;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLFeatureDirection;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
+import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.types.check.CompKindExpression;
 import de.monticore.types.check.KindOfComponent;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PartUsage2SubcomponentAdapter extends MildInstanceSymbol {
 
@@ -46,11 +49,10 @@ public class PartUsage2SubcomponentAdapter extends MildInstanceSymbol {
 
   @Override
   public List<ASTParameterValue> getParameterValuesList() {
-    return null;
-    // TODO getAdaptee().getSpannedScope().getLocalAttributeUsageSymbols().stream()
-    //    .filter(a -> a.getDirection().equals(ASTSysMLFeatureDirection.FINAL))
-    //    .map(a -> new AttributeUsage2VariableSymbolAdapter(a))
-    //    .collect(Collectors.toList());
+    return getAdaptee().getSpannedScope().getLocalAttributeUsageSymbols().stream()
+        .filter(a -> a.getDirection().equals(ASTSysMLFeatureDirection.FINAL))
+        .map(a -> new ParmeterValueWrapper(a, getAdaptee()))
+        .collect(Collectors.toList());
   }
 
 }

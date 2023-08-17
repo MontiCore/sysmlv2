@@ -91,7 +91,7 @@ component grammar ComponentConnector
    * (zB. ein weitergereichter Parameter der Vater-Komponente).
    * Techn. Hinweis: Die Werte sollten idealerweise Expression sein. Siehe Kommentar bei MildSpecification.
    */
-  interface ParameterValue = Variable value:Expression ;
+  interface ParameterValue = variable:Name@Variable value:Expression ;
 
   /**
    * Wir fügen hinzu:

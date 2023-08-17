@@ -1,31 +1,27 @@
 package de.monticore.lang.sysmlv2.symboltable.adapters;
 
 import com.google.common.base.Preconditions;
-import de.monticore.lang.componentconnector.ComponentConnectorMill;
 import de.monticore.lang.componentconnector._ast.ASTConnector;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLFeatureDirection;
 import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
 import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeUsage2VariableSymbolAdapter;
-import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.symbols.compsymbols._symboltable.ComponentSymbol;
 import de.monticore.symbols.compsymbols._symboltable.PortSymbol;
 import de.monticore.symbols.compsymbols._symboltable.SubcomponentSymbol;
 import de.monticore.types.check.CompKindExpression;
 import de.monticore.types.check.KindOfComponent;
-import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.lang3.tuple.Pair;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PartDef2ComponentAdapter extends MildComponentSymbol {
 
@@ -65,13 +61,18 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
 
   @Override
   public List<PortSymbol> getPorts() {
-    return getAdaptee().getSpannedScope().getLocalPortUsageSymbols().stream()
-        // (PortUsage x List(AttrUsage)) um eindeutigen Namen bilden zu können & Richtung zu kennen
-        .map(pu -> Pair.of(pu, pu.getInnerAttributes())) // TODO Könnten Conjugated sein...
-        .flatMap(pair -> pair.getRight().stream()
-            .map(au -> new AttributeUsage2PortSymbolAdapter(pair.getLeft(), au))
-        )
-        .collect(Collectors.toList());
+    var ins = getAdaptee().getSpannedScope().getLocalPortUsageSymbols().stream()
+        .flatMap(pu ->
+            pu.getInputAttributes().stream()
+                .map(au -> new AttributeUsage2PortSymbolAdapter(au, pu,true))
+        );
+    var outs = getAdaptee().getSpannedScope().getLocalPortUsageSymbols().stream()
+        .flatMap(pu ->
+            pu.getOutputAttributes().stream()
+                .map(au -> new AttributeUsage2PortSymbolAdapter(au, pu,false))
+        );
+
+    return Stream.concat(ins, outs).collect(Collectors.toList());
   }
 
   @Override
@@ -107,7 +108,10 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
   public  List<ASTConnector> getConnectorsList() {
     if(adaptee.isPresentAstNode()) {
       var sysmlConnectors = adaptee.getAstNode().getSysMLElements(ASTConnectionUsage.class);
-      return sysmlConnectors.stream().map(ConnectorWrapper::new).collect(Collectors.toList());
+      return sysmlConnectors.stream()
+          .map(ConnectorWrapper::build)
+          .flatMap(Collection::stream)
+          .collect(Collectors.toList());
     }
     else {
       Log.warn("0xMPf004 Attempted to get connectors for a symbol");

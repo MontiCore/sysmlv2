@@ -2,158 +2,104 @@ package de.monticore.lang.sysmlv2.symboltable.adapters;
 
 import de.monticore.ast.Comment;
 import de.monticore.cardinality._symboltable.ICardinalityScope;
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope;
-import de.monticore.lang.componentconnector._ast.ASTConnector;
+import de.monticore.lang.componentconnector._ast.ASTParameterValue;
 import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScope;
 import de.monticore.lang.componentconnector._visitor.ComponentConnectorTraverser;
-import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
-import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
+import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
+import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
 import de.monticore.literals.mccommonliterals._symboltable.IMCCommonLiteralsScope;
 import de.monticore.literals.mcliteralsbasis._symboltable.IMCLiteralsBasisScope;
 import de.monticore.mcbasics._symboltable.IMCBasicsScope;
+import de.monticore.symbols.basicsymbols._ast.ASTVariable;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolTOP;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.compsymbols._symboltable.ICompSymbolsScope;
-import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.mcbasictypes.MCBasicTypesMill;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._symboltable.IMCBasicTypesScope;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Optional;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * Adapter von ASTConnectionUsage auf ASTConnector. TODO Gehört vermutlich eigentlich nicht in dieses Package.
- */
-public class ConnectorWrapper implements ASTConnector {
+public class ParmeterValueWrapper implements ASTParameterValue {
 
-  protected ASTMCQualifiedName source;
-  protected ASTMCQualifiedName target;
+  ASTExpression value;
 
-  public ConnectorWrapper(ASTConnectionUsage adaptee) {
-    source = adaptee.getSrc();
-    target = adaptee.getTgt();
-  }
+  AttributeUsageSymbol adaptee;
 
-  protected ConnectorWrapper(ASTMCQualifiedName source, ASTMCQualifiedName target, String name) {
-    this.source = MCBasicTypesMill.mCQualifiedNameBuilder()
-        .addAllParts(source.getPartsList())
-        .addParts(name)
-        .build();
-    this.target = MCBasicTypesMill.mCQualifiedNameBuilder()
-        .addAllParts(target.getPartsList())
-        .addParts(name)
-        .build();
-  }
+  PartUsageSymbol container;
 
-  public static List<ConnectorWrapper> build(ASTConnectionUsage connection) {
-    // Qualified -> "part.port"
-    if(connection.getSrc().isQualified()) {
-      // Name of part usage  is the one before last
-      var partUsageName = connection.getSrc().getParts(connection.getSrc().sizeParts()-2);
-      var partUsage = connection.getEnclosingScope().resolvePartUsage(partUsageName);
-      if(!partUsage.isPresent()) {
-        Log.warn("0xMPf009 Could not resolve part usage \"" + partUsageName + "\"",
-            connection.get_SourcePositionStart(),
-            connection.get_SourcePositionEnd());
-        return Collections.emptyList();
-      }
-      else {
-        if(!partUsage.get().getPartDef().isPresent()) {
-          Log.warn("0xMPf010 Could not resolve part definition of \"" + partUsageName + "\"",
-              connection.get_SourcePositionStart(),
-              connection.get_SourcePositionEnd());
-          return Collections.emptyList();
-        }
-        else {
-          // Name of port is the last one
-          var portName = connection.getSrc().getBaseName();
-          var srcPort = partUsage.get().getPartDef().get().getSpannedScope().resolvePortUsage(portName);
-          if(!srcPort.isPresent()) {
-            Log.warn("0xMPf012 Could not resolve port \"" + portName
-                    + "\" in part definition of \"" + partUsageName + "\"",
-                connection.get_SourcePositionStart(),
-                connection.get_SourcePositionEnd());
-            return Collections.emptyList();
-          }
-          else {
-            // All attributes across all super types
-            var types = new ArrayList<>(srcPort.get().getTypesList());
-            types.addAll(srcPort.get().getConjugatedTypesList());
-
-            var attributes = types.stream()
-                .filter(SymTypeExpression::hasTypeInfo)
-                .map(SymTypeExpression::getTypeInfo)
-                .map(TypeSymbolTOP::getSpannedScope)
-                .flatMap(scope -> ((ISysMLv2Scope)scope).getLocalAttributeUsageSymbols().stream())
-                .collect(Collectors.toList());
-
-            // Now we simply append the attribute names to the name of the src
-            return attributes.stream()
-                .map(a -> new ConnectorWrapper(connection.getSrc(), connection.getTgt(), a.getName()))
-                .collect(Collectors.toList());
-          }
-        }
-      }
+  public ParmeterValueWrapper(AttributeUsageSymbol adaptee, PartUsageSymbol container) {
+    this.adaptee = adaptee;
+    this.container = container;
+    if(adaptee.isPresentAstNode()) {
+      this.value = adaptee.getAstNode().getExpression();
     }
     else {
-      // Not qualified -> "port"
-      var srcName = connection.getSrc().getQName();
-      var srcPort = connection.getEnclosingScope().resolvePortUsage(srcName);
-
-      // All attributes across all super types
-      var types = new ArrayList<>(srcPort.get().getTypesList());
-      types.addAll(srcPort.get().getConjugatedTypesList());
-
-      var attributes = types.stream()
-          .filter(SymTypeExpression::hasTypeInfo)
-          .map(SymTypeExpression::getTypeInfo)
-          .map(TypeSymbolTOP::getSpannedScope)
-          .flatMap(scope -> ((ISysMLv2Scope)scope).getLocalAttributeUsageSymbols().stream())
-          .collect(Collectors.toList());
-
-      // Now we simply append the attribute names to the name of the src
-      return attributes.stream()
-          .map(a -> new ConnectorWrapper(connection.getSrc(), connection.getTgt(), a.getName()))
-          .collect(Collectors.toList());
+      Log.warn("0xMPf013 Attribute usage \"" + adaptee.getName() + "\" has no AST",
+          adaptee.getSourcePosition());
     }
   }
 
-  @Override public ASTMCQualifiedName getSource() {
-    return source;
+  @Override
+  public ASTExpression getValue() {
+    return this.value;
   }
 
-  @Override public void setSource(ASTMCQualifiedName source) {
-    this.source = source;
+  @Override
+  public void setValue(ASTExpression value) {
+    this.value = value;
   }
 
-  @Override public ASTMCQualifiedName getTarget() {
-    return target;
+  @Override
+  public VariableSymbol getVariableSymbol() {
+    return container.getPartDef().get().getSpannedScope().resolveVariable(getVariable()).get();
   }
 
-  @Override public void setTarget(ASTMCQualifiedName target) {
-    this.target = target;
+  @Override
+  public boolean isPresentVariableSymbol() {
+    if(!container.getPartDef().isPresent()) {
+      Log.warn("0xMPf014 Cannot determine presence of variable symbol \"" + getVariable() + "\"");
+      return false;
+    }
+    else {
+      return container.getPartDef().get().getSpannedScope().resolveVariable(getVariable()).isPresent();
+    }
   }
 
+  @Override
+  public String getVariable() {
+    return adaptee.getName();
+  }
 
-  /* #################### BOILERPLATE ######################## */
+  @Override
+  public void setVariable(String variable) {
+    Log.error("Not allowed");
+  }
+
+  /* ////////////////////////// BOILERPLATE /////////////////////// */
 
   @Override public void accept(ComponentConnectorTraverser visitor) {
 
+  }
+
+  @Override public ASTVariable getVariableDefinition() {
+    return null;
+  }
+
+  @Override public boolean isPresentVariableDefinition() {
+    return false;
   }
 
   @Override public boolean deepEquals(Object o) {
@@ -180,7 +126,7 @@ public class ConnectorWrapper implements ASTConnector {
     return false;
   }
 
-  @Override public ASTConnector deepClone() {
+  @Override public ASTParameterValue deepClone() {
     return null;
   }
 
