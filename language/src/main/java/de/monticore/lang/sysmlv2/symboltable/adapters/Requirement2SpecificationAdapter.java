@@ -50,11 +50,25 @@ public class Requirement2SpecificationAdapter extends MildSpecificationSymbol {
   }
 
   @Override
+  public List<ASTExpression> getAssumptionsList() {
+    if(adaptee.isPresentAstNode()) {
+      var reqUsage = adaptee.getAstNode();
+      var constraints = ((ISysMLv2Scope)adaptee.getSpannedScope()).getLocalConstraintUsageSymbols();
+      var assumed = constraints.stream().filter(c -> c.getAstNode().isAssume());
+      return assumed.map(c -> c.getAstNode().getExpression()).collect(Collectors.toList());
+    }
+    else {
+      Log.error("0xMPf003 AST of Requirement Usage not present");
+      return new ArrayList<>();
+    }
+  }
+
+  @Override
   public List<ASTExpression> getPredicatesList() {
     if(adaptee.isPresentAstNode()) {
       var reqUsage = adaptee.getAstNode();
       var constraints = ((ISysMLv2Scope)adaptee.getSpannedScope()).getLocalConstraintUsageSymbols();
-      var asserted = constraints.stream().filter(c -> c.getAstNode().isAssert());
+      var asserted = constraints.stream().filter(c -> c.getAstNode().isAssert() || c.getAstNode().isRequire());
       return asserted.map(c -> c.getAstNode().getExpression()).collect(Collectors.toList());
     }
     else {

@@ -1,11 +1,15 @@
 package symboltable;
 
+import de.monticore.expressions.assignmentexpressions._ast.ASTAssignmentExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
+import de.monticore.lang.componentconnector._symboltable.MildInstanceSymbol;
 import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.literals.mccommonliterals._ast.ASTBooleanLiteral;
+import de.monticore.literals.mccommonliterals._ast.ASTNatLiteral;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symbols.compsymbols._symboltable.Timing;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Disabled;
@@ -48,6 +52,23 @@ public class ComponentSymbolAdapterTest extends NervigeSymboltableTests {
     var inputs = as.resolveMildComponent("A").get().getIncomingPorts();
     assertThat(inputs).hasSize(1);
     assertThat(inputs.get(0).getType().printFullName()).isEqualTo("boolean");
+    as.resolvePort("A.i.c");
+  }
+
+  @Test
+  public void testConjugatedPorts() throws IOException {
+    var as = process(""
+        + "port def P { in attribute a: int; }"
+        + "part def A { port o: ~P; }");
+
+    var A = as.resolveMildComponent("A").get();
+    assertThat(A.getIncomingPorts()).hasSize(0);
+    assertThat(A.getOutgoingPorts()).hasSize(1);
+
+    var o = A.getOutgoingPorts().get(0);
+    assertThat(o.isStronglyCausal()).isTrue(); // Default
+    assertThat(o.getTiming()).isEqualTo(Timing.TIMED);
+    assertThat(o.isTypePresent()).isTrue();
   }
 
   @Test
@@ -109,10 +130,11 @@ public class ComponentSymbolAdapterTest extends NervigeSymboltableTests {
 
   @Test
   public void testRefinementStart() throws IOException {
-    var as = process("part def A; part def B refines A;");
+    var as = process("part def A; part def B refines A; part def C refines A, B;");
 
-    var refinedComponent = as.resolveMildComponent("B").get();
+    var refinedComponent = as.resolveMildComponent("C").get();
 
+    // probably needs an equals implementation
     assertThat(refinedComponent.getRefinementStart()).isPresent();
     assertThat(refinedComponent.getRefinementStart().get().getFullName()).isEqualTo("A");
   }
@@ -182,7 +204,7 @@ public class ComponentSymbolAdapterTest extends NervigeSymboltableTests {
   @Test
   public void testConnector() throws IOException {
     var as = process(""
-        + "port def P { attribute b: boolean; }"
+        + "port def P { attribute x: boolean; }"
         + "part def B { port p: P; }"
         + "part def A { port p: P; part b: B; connect p to b::p; }");
 
@@ -190,7 +212,44 @@ public class ComponentSymbolAdapterTest extends NervigeSymboltableTests {
     assertThat(A.getConnectorsList()).hasSize(1);
 
     var c = A.getConnectors(0);
-    assertThat(c.getSource().getQName()).isEqualTo("p");
-    assertThat(c.getTarget().getQName()).isEqualTo("b.p");
+    assertThat(c.getSource().getQName()).isEqualTo("p.x");
+    assertThat(c.getTarget().getQName()).isEqualTo("b.p.x");
+  }
+
+  /** Multiple attributes per Port */
+  @Test
+  public void testConnector2() throws IOException {
+    var as = process(""
+        + "port def P { attribute x: int; attribute y: int; }"
+        + "part def B { port p: P; }"
+        + "part def A { port p: P; part b: B; connect p to b::p; }");
+
+    var A = as.resolveMildComponent("A").get();
+    assertThat(A.getConnectorsList()).hasSize(2);
+
+    var c = A.getConnectors(0);
+    assertThat(c.getSource().getQName()).isEqualTo("p.x");
+    assertThat(c.getTarget().getQName()).isEqualTo("b.p.x");
+    c = A.getConnectors(1);
+    assertThat(c.getSource().getQName()).isEqualTo("p.y");
+    assertThat(c.getTarget().getQName()).isEqualTo("b.p.y");
+  }
+
+  @Test
+  public void testParameterValues() throws IOException {
+    var as = process(""
+        + "part def B { final attribute v: nat; }"
+        + "part def A { part b: B { final attribute v = 2; } }");
+
+    var A = as.resolveMildComponent("A").get();
+    var b = (MildInstanceSymbol)A.getSubcomponents("b").get();
+
+    assertThat(b.sizeParameterValues()).isEqualTo(1);
+
+    var value = b.getParameterValues(0);
+    assertThat(value.getVariableSymbol().getFullName()).isEqualTo("B.v");
+    assertThat(value.getValue()).isInstanceOf(ASTLiteralExpression.class);
+    assertThat(((ASTLiteralExpression)value.getValue()).getLiteral()).isInstanceOf(ASTNatLiteral.class);
+    assertThat(((ASTNatLiteral)((ASTLiteralExpression)value.getValue()).getLiteral()).getValue()).isEqualTo(2);
   }
 }

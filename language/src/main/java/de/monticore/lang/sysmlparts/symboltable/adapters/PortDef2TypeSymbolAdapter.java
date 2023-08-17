@@ -15,7 +15,7 @@ public class PortDef2TypeSymbolAdapter extends TypeSymbol {
     this.adaptee = adaptee;
 }
 
-  protected PortDefSymbol getAdaptee() {
+  public PortDefSymbol getAdaptee() {
     return adaptee;
   }
 

@@ -1,9 +1,14 @@
 package de.monticore.lang.sysmlv2.symboltable.adapters;
 
 import com.google.common.base.Preconditions;
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScope;
 import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol;
 import de.monticore.lang.sysmlconstraints._symboltable.ConstraintUsageSymbol;
-import de.monticore.lang.sysmlrequirements._symboltable.RequirementUsageSymbol;
+import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Similar to {@link Requirement2SpecificationAdapter}, this wrapper poses as {@link MildSpecificationSymbol}s to the
@@ -27,10 +32,35 @@ public class Constraint2SpecificationAdapter extends MildSpecificationSymbol {
     this.adaptee = adaptee;
   }
 
+  public ConstraintUsageSymbol getAdaptee() {
+    return adaptee;
+  }
+
+  @Override
+  public IComponentConnectorScope getEnclosingScope() {
+    return (ISysMLv2Scope) getAdaptee().getEnclosingScope();
+  }
+
+  @Override
+  public List<ASTExpression> getAssumptionsList() {
+    if(getAdaptee().getAstNode().isAssume()) {
+      return Collections.singletonList(getAdaptee().getAstNode().getExpression());
+    }
+    return Collections.emptyList();
+  }
+
+  @Override
+  public List<ASTExpression> getPredicatesList() {
+    if(getAdaptee().getAstNode().isAssert() || getAdaptee().getAstNode().isRequire()) {
+      return Collections.singletonList(getAdaptee().getAstNode().getExpression());
+    }
+    return Collections.emptyList();
+  }
+
   @Override
   public boolean equals(Object other) {
     if(other instanceof Constraint2SpecificationAdapter) {
-      return adaptee.equals(((Constraint2SpecificationAdapter) other).adaptee);
+      return getAdaptee().equals(((Constraint2SpecificationAdapter) other).getAdaptee());
     }
     else {
       return super.equals(other);

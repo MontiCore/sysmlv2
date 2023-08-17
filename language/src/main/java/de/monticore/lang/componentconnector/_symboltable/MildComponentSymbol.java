@@ -3,6 +3,7 @@ package de.monticore.lang.componentconnector._symboltable;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Constraint2SpecificationAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Requirement2SpecificationAdapter;
+import de.monticore.symbols.compsymbols._symboltable.ComponentSymbol;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
@@ -76,5 +77,18 @@ public class MildComponentSymbol extends MildComponentSymbolTOP {
     else {
       return Optional.empty();
     }
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if(other instanceof ComponentSymbol) {
+      return ((ComponentSymbol)other).getFullName().equals(this.getFullName());
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return this.getFullName().hashCode();
   }
 }
