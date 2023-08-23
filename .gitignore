@@ -17,3 +17,7 @@ bin/*
 # Ignore log file
 *.log
 .gradle
+
+# Nervige Sysml-Submission-Team Sachen
+.meta.json
+.project.json
