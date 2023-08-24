@@ -4,7 +4,7 @@ package de.monticore.lang;
 component grammar SysMLParts extends SysMLBasis {
 
   /**
-   * Causality indication: "instant" = weak causal, "delayed" = strong causal. Defaults to "instant".
+   * Causality indication: "instant" = weak causal, "delayed" = strong causal. Defaults to "delayed".
    * TODO Überdenken, wie man das nicht überall erlaubt (Grammar vs. CoCo)
    */
   SysMLCausality implements SysMLElement = "timing" (["instant"] | ["delayed"]) ";" ;
@@ -115,7 +115,8 @@ component grammar SysMLParts extends SysMLBasis {
 
   symbolrule PortUsage =
       types:de.monticore.types.check.SymTypeExpression*
-      conjugatedTypes:de.monticore.types.check.SymTypeExpression*;
+      conjugatedTypes:de.monticore.types.check.SymTypeExpression*
+      strong:boolean;
 
   astrule PortUsage =
     method public Optional<de.monticore.cardinality._ast.ASTCardinality> getCardinality() {

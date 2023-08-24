@@ -29,7 +29,7 @@ public class AttributeUsage2PortSymbolAdapter extends MildPortSymbol {
     // TODO Timing aus Komponente frickeln, in der die PortUsage liegt in deren Definition das Attribut liegt
     this.timing = Timing.TIMED;
     // TODO s.o.
-    this.stronglyCausal = true;
+    this.stronglyCausal = container.isStrong();
 
     // Das muss anscheinend gesetzt sein, weil die MC-Interna immer über das Feld herausfinden, ob sie getEnclosingScope
     // benutzen können (nicht null) und so Scheissereien wie determineFullName auch über das Feld laufen.
