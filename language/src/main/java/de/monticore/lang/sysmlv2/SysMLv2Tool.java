@@ -35,10 +35,7 @@ import de.monticore.lang.sysmlv2.cocos.PartBehaviorCoCo;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.TypeCheckTransitionGuards;
 import de.monticore.lang.sysmlv2.cocos.WarnNonExhibited;
-import de.monticore.lang.sysmlv2.symboltable.completers.DirectRefinementCompleter;
-import de.monticore.lang.sysmlv2.symboltable.completers.RequirementClassificationCompleter;
-import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
-import de.monticore.lang.sysmlv2.symboltable.completers.TypesAndDirectionCompleter;
+import de.monticore.lang.sysmlv2.symboltable.completers.*;
 import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.lang.sysmlv2.types.SysMLSynthesizer;
 import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCompleter;
@@ -174,6 +171,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
 
     traverser.add4SysMLParts(new RequirementClassificationCompleter());
     traverser.add4SysMLParts(new DirectRefinementCompleter());
+    traverser.add4SysMLParts(new CausalityCompleter());
 
     // gleiches Spiel wie oben: Alles besuchen verlangt zwei Calls
     if(node.getEnclosingScope() != null) {
