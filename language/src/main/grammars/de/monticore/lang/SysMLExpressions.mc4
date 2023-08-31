@@ -27,6 +27,11 @@ component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiteral
   // Infinity literal can be negative, but there cannot be any space between "-" and "INF"
   Infinity implements Literal, SignedLiteral = {noSpace(2)}? (negative:["-"]) "INF" | "INF";
 
+  // Add "nat" to primitives. God only knows why this is necessary.
+  MCPrimitiveTypeWithNat extends MCPrimitiveType implements MCType =
+     primitive: [ "boolean" | "byte" | "short" | "int"
+                  | "long" | "char" |"float" | "double" | "nat" ];
+
   /**
    * This part is a little experiment. Instead of wasting ASCII-characters for mathematical symbols, we use the latex
    * commands and render them nicely using VSCode's "Prettify Symbols Model" extension.

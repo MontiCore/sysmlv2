@@ -1,6 +1,7 @@
 package symboltable;
 
 import de.monticore.expressions.commonexpressions._ast.ASTCallExpression;
+import de.monticore.expressions.commonexpressions._ast.ASTPlusExpression;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
@@ -186,13 +187,14 @@ public class SymbolTableCompletionTest {
   }
 
   /**
-   * Tests the Stream.atTime(1) function
+   * TODO Gehört anderswo hin
+   * Prüft, dass 'plus :: "nat => n':Number => nat"'
    */
   @Test
-  public void testAtTime() throws IOException {
+  public void testNat() throws IOException {
     var model = ""
         + "port def P { attribute a: int; }\n"
-        + "part def A { port p: P; constraint c { p.a.atTime(5) } }";
+        + "part def A { port p: P; constraint c { forall nat t: t-1 } }";
 
     Optional<ASTSysMLModel> optAst = parser.parse_String(model);
     assertThat(optAst).isPresent();
@@ -206,10 +208,44 @@ public class SymbolTableCompletionTest {
 
     var A = (ASTPartDef) ast.getSysMLElement(1);
     var c = (ASTConstraintUsage) A.getSysMLElement(1);
-    var expr = c.getExpression();
+    var expr = (ASTForallExpression) c.getExpression();
+    var plus = expr.getExpression();
 
     var deriver = new SysMLDeriver(true);
-    var type = deriver.deriveType(expr);
+    var type = deriver.deriveType(plus);
+    assertThat(type.isPresentResult());
+    assertThat(type.getResult().printFullName()).isEqualTo("nat");
+  }
+
+  /**
+   * Tests the Stream.atTime(1) function.
+   * Das ursprüngliche Problem war, dass "atTime" angeblich nicht gefunden wurde. Das reale Problem war aber, dass
+   * der Parameter als "int" berechnet wurde und der Filter für geeignete Funktionen die "atTime" nicht beachtet hat,
+   * da der dort hinterlegte Parameter "nat" ist.
+   */
+  @Test
+  public void testAtTime() throws IOException {
+    var model = ""
+        + "port def P { attribute a: int; }\n"
+        + "part def A { port p: P; constraint c { forall nat t: p.a.atTime(t+1) } }";
+
+    Optional<ASTSysMLModel> optAst = parser.parse_String(model);
+    assertThat(optAst).isPresent();
+
+    var ast = optAst.get();
+
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+    assertThat(Log.getFindings()).isEmpty();
+
+    var A = (ASTPartDef) ast.getSysMLElement(1);
+    var c = (ASTConstraintUsage) A.getSysMLElement(1);
+    var expr = (ASTForallExpression) c.getExpression();
+    var atTime = (ASTCallExpression) expr.getExpression();
+
+    var deriver = new SysMLDeriver(true);
+    var type = deriver.deriveType(atTime);
     assertThat(type.isPresentResult());
     assertThat(type.getResult().printFullName()).isEqualTo("Stream<int>");
   }

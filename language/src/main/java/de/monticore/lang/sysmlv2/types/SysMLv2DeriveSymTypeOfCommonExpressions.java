@@ -24,6 +24,9 @@ import java.util.Optional;
 
 import static de.monticore.types.check.SymTypePrimitive.unbox;
 import static de.monticore.types.check.TypeCheck.isBoolean;
+import static de.monticore.types.check.TypeCheck.isDouble;
+import static de.monticore.types.check.TypeCheck.isFloat;
+import static de.monticore.types.check.TypeCheck.isLong;
 
 /**
  * <p>In SysMLv2, the expression in StateUsage is not type of Stream.
@@ -231,5 +234,14 @@ public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfComm
     }
     Log.error("0xA0171 Operator '!' not applicable to " + "'" + inner.print() + "'", pos);
     return SymTypeExpressionFactory.createObscureType();
+  }
+
+  @Override
+  protected SymTypeExpression calculateArithmeticExpression(SymTypeExpression left, SymTypeExpression right, String op, SourcePosition pos) {
+    // If the left is a nat and the right is at least integral, keep it nat
+    if(isNat(left) && isIntegralType(right)) {
+      return SymTypeExpressionFactory.createPrimitive("nat");
+    }
+    return super.calculateArithmeticExpression(left, right, op, pos);
   }
 }
