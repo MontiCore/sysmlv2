@@ -96,7 +96,6 @@ public class SymbolTableCompletionTest {
         .isEqualTo("() -> Set<int>");
   }
 
-
   /**
    * Custom types, i.e., types defined using attribute definitions, do not work instantly?
    */
@@ -184,6 +183,35 @@ public class SymbolTableCompletionTest {
 
     asts.forEach(ast -> tool.runDefaultCoCos(ast));
     asts.forEach(ast -> tool.runAdditionalCoCos(ast));
+  }
+
+  /**
+   * Tests the Stream.atTime(1) function
+   */
+  @Test
+  public void testAtTime() throws IOException {
+    var model = ""
+        + "port def P { attribute a: int; }\n"
+        + "part def A { port p: P; constraint c { p.a.atTime(5) } }";
+
+    Optional<ASTSysMLModel> optAst = parser.parse_String(model);
+    assertThat(optAst).isPresent();
+
+    var ast = optAst.get();
+
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+    assertThat(Log.getFindings()).isEmpty();
+
+    var A = (ASTPartDef) ast.getSysMLElement(1);
+    var c = (ASTConstraintUsage) A.getSysMLElement(1);
+    var expr = c.getExpression();
+
+    var deriver = new SysMLDeriver(true);
+    var type = deriver.deriveType(expr);
+    assertThat(type.isPresentResult());
+    assertThat(type.getResult().printFullName()).isEqualTo("Stream<int>");
   }
 
   // TODO Diese Tests gehören irgendwo anders hin und sollten spezfischer genau den TypeCheck prüfen, statt
