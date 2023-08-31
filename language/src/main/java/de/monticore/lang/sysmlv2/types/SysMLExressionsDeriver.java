@@ -9,6 +9,7 @@ import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsTraverser;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsVisitor2;
 import de.monticore.types.check.AbstractDeriveFromExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 
@@ -93,12 +94,13 @@ public class SysMLExressionsDeriver extends AbstractDeriveFromExpression impleme
       Log.error("RHS could not be calculated", start, end);
       typeCheckResult.setResult(SymTypeExpressionFactory.createObscureType());
     }
-    else if(!lhs.getResult().getTypeInfo().getFullName().equals("Set")) {
-      Log.error("LHS was expected to be a set, but was " + lhs.getResult().printFullName(), start, end);
-      typeCheckResult.setResult(SymTypeExpressionFactory.createObscureType());
-    }
     else if(!rhs.getResult().getTypeInfo().getFullName().equals("Set")) {
       Log.error("RHS was expected to be a set, but was " + lhs.getResult().printFullName(), start, end);
+      typeCheckResult.setResult(SymTypeExpressionFactory.createObscureType());
+    }
+    if(!((SymTypeOfGenerics)rhs.getResult()).getArgument(0).deepEquals(lhs.getResult())) {
+      Log.error("LHS was expected to be compatible with elements of RHS, but was " + lhs.getResult().printFullName(),
+          start, end);
       typeCheckResult.setResult(SymTypeExpressionFactory.createObscureType());
     }
     else {

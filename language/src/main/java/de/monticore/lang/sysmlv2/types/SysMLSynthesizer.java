@@ -1,5 +1,6 @@
 package de.monticore.lang.sysmlv2.types;
 
+import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsVisitor2;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.types.check.AbstractSynthesize;
