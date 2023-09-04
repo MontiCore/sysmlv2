@@ -1,30 +1,48 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2;
 
+import com.google.common.collect.Lists;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.BasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsGlobalScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.symbols.oosymbols._symboltable.OOSymbolsScope;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.SymTypeVariable;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class SysMLv2Mill extends SysMLv2MillTOP {
 
   /**
-   * Wraps the {@link BasicSymbolsMill#initializePrimitives()}. Convencience method and central hook-point if we ever
-   * needed any change to primitives. See {@link de.monticore.lang.sysmlv2._auxiliary.BasicSymbolsMillForSysMLv2} for
-   * adding new primitives!
+   * BasicSymbolsMill.initializePrimitives plus our own
    */
   public static void initializePrimitives() {
     BasicSymbolsMill.initializePrimitives();
+    getMill()._initializePrimitives();
+  }
+
+  /**
+   * Adds "nat" type
+   */
+  protected void _initializePrimitives() {
+    IBasicSymbolsGlobalScope gs = globalScope();
+    gs.add(typeSymbolBuilder()
+        .setName("nat")
+        .setEnclosingScope(globalScope())
+        .setFullName("nat")
+        .setSpannedScope(scope())
+        .setAccessModifier(AccessModifier.ALL_INCLUSION)
+        .build());
   }
 
   public static void addStringType() {
