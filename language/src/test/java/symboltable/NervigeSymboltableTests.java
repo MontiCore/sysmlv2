@@ -1,6 +1,5 @@
 package symboltable;
 
-import de.monticore.lang.componentconnector.FixedComponentSymbolDeSer;
 import de.monticore.lang.componentconnector._symboltable.ComponentConnectorSymbols2Json;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbolDeSer;
@@ -65,7 +64,7 @@ abstract public class NervigeSymboltableTests {
   /** Vorläufiger Ablageort für ST-Serialization Geraffel */
   protected void fixSerialization() {
     MildComponentSymbolDeSer myComponentSymbolDeSer = new MildComponentSymbolDeSer() {
-      ComponentSymbolDeSer delegate = new FixedComponentSymbolDeSer();
+      ComponentSymbolDeSer delegate = new ComponentSymbolDeSer();
       @Override
       public String serialize (MildComponentSymbol toSerialize, ComponentConnectorSymbols2Json s2j){
         return delegate.serialize(toSerialize, new CompSymbolsSymbols2Json(s2j.getTraverser(), s2j.getJsonPrinter()));
