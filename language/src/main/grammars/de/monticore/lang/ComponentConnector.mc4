@@ -52,7 +52,6 @@ component grammar ComponentConnector
    */
   symbolrule MildComponent =
     connectors: Connector*
-    parameters: de.monticore.symbols.basicsymbols._symboltable.VariableSymbol*
   ;
 
   /**

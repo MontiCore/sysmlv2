@@ -40,7 +40,7 @@ public class ComponentSymbolAdapterTest extends NervigeSymboltableTests {
   public void testParameters() throws IOException {
     var as = process("part def A { final attribute p: int; }");
 
-    var parameters = as.resolveMildComponent("A").get().getParameters();
+    var parameters = as.resolveMildComponent("A").get().getParametersList();
     assertThat(parameters).hasSize(1);
     assertThat(parameters.get(0).getType().printFullName()).isEqualTo("int");
   }

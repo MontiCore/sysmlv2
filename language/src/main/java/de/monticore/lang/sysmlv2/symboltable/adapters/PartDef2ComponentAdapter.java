@@ -52,7 +52,7 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
   }
 
   @Override
-  public List<VariableSymbol> getParameters() {
+  public List<VariableSymbol> getParametersList() {
     return getAdaptee().getSpannedScope().getLocalAttributeUsageSymbols().stream()
         .filter(a -> a.getDirection().equals(ASTSysMLFeatureDirection.FINAL))
         .map(a -> new AttributeUsage2VariableSymbolAdapter(a))
@@ -73,11 +73,6 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
         );
 
     return Stream.concat(ins, outs).collect(Collectors.toList());
-  }
-
-  @Override
-  public void addParameter(@NonNull VariableSymbol parameter) {
-    Log.error("Should not be called");
   }
 
   @Override
