@@ -3,7 +3,9 @@ package de.monticore.lang.componentconnector._symboltable;
 import de.monticore.lang.componentconnector._ast.ASTConnector;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.compsymbols.CompSymbolsMill;
+import de.monticore.symbols.compsymbols._symboltable.CompSymbolsSymbols2Json;
 import de.monticore.symbols.compsymbols._symboltable.ComponentSymbolDeSer;
+import de.monticore.symbols.compsymbols._symboltable.PortSymbol;
 import de.monticore.symboltable.serialization.ISymbolDeSer;
 import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.JsonPrinter;
@@ -63,6 +65,15 @@ public class MildComponentSymbolDeSer extends MildComponentSymbolDeSerTOP{
     s2j.getJsonPrinter().endArray();
   }
 
+  @Override
+  protected void serializePorts(@NonNull List<PortSymbol> ports, @NonNull ComponentConnectorSymbols2Json s2j) {
+    JsonPrinter printer = s2j.getJsonPrinter();
+
+    printer.beginArray(ComponentSymbolDeSer.PORTS);
+    ports.forEach(p -> p.accept(s2j.getTraverser()));
+    printer.endArray();
+  }
+
   @Override protected List<CompKindExpression> deserializeRefinements(JsonObject symbolJson) {
     List<JsonElement> refinements = symbolJson.getArrayMemberOpt(ComponentSymbolDeSer.REFINEMENTS).orElseGet(Collections::emptyList);
     List<CompKindExpression> result = new ArrayList<>(refinements.size());
@@ -118,6 +129,33 @@ public class MildComponentSymbolDeSer extends MildComponentSymbolDeSerTOP{
     for (JsonElement superComponent : superComponents) {
       result.add(deSer.deserialize((JsonObject) superComponent));
     }
+    return result;
+  }
+
+  @Override
+  protected List<PortSymbol> deserializePorts(@NonNull JsonObject symbolJson) {
+    final String portSerializeKind = PortSymbol.class.getCanonicalName();
+
+    List<JsonElement> ports = symbolJson.getArrayMemberOpt(ComponentSymbolDeSer.PORTS).orElseGet(Collections::emptyList);
+
+    List<PortSymbol> result = new ArrayList<>(ports.size());
+
+    for (JsonElement port : ports) {
+      String portJasonKind = JsonDeSers.getKind(port.getAsJsonObject());
+      if (portJasonKind.equals(portSerializeKind)) {
+        ISymbolDeSer deSer = CompSymbolsMill.globalScope().getSymbolDeSer(portSerializeKind);
+        PortSymbol portSym = (PortSymbol) deSer.deserialize(port.getAsJsonObject());
+
+        result.add(portSym);
+
+      } else {
+        Log.error(String.format(
+            "0xD0102 Malformed json, port '%s' of unsupported kind '%s'",
+            port.getAsJsonObject().getStringMember(JsonDeSers.NAME), portJasonKind
+        ));
+      }
+    }
+
     return result;
   }
 }

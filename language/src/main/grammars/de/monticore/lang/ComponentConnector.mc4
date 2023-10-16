@@ -80,7 +80,7 @@ component grammar ComponentConnector
   ;
 
   /**
-   * Wir definieren im Folgenden Erweiterungen für PortSymbols durch Symbol Rules.
+   * Wir definieren im Folgenden Erweiterungen für SubcomponentSymbols durch Symbol Rules.
    */
   interface symbol MildInstance extends Subcomponent = Name ;
 

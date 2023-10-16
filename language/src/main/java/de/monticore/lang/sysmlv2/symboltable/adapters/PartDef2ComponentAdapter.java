@@ -60,7 +60,7 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
   }
 
   @Override
-  public List<PortSymbol> getPorts() {
+  public List<PortSymbol> getPortsList() {
     var ins = getAdaptee().getSpannedScope().getLocalPortUsageSymbols().stream()
         .flatMap(pu ->
             pu.getInputAttributes().stream()

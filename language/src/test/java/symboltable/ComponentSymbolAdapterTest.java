@@ -177,7 +177,7 @@ public class ComponentSymbolAdapterTest extends NervigeSymboltableTests {
   @Test
   public void testPortFullName() throws IOException {
     var as = process("port def A { attribute b: boolean; } part def B { port a: A; }");
-    var port = as.resolveMildComponent("B").get().getPorts().get(0);
+    var port = as.resolveMildComponent("B").get().getPorts(0);
 
     // Name muss widerspiegeln, dass der Port in B liegt und "a.b" heisst
     assertThat(port.getFullName()).isEqualTo("B.a.b");
