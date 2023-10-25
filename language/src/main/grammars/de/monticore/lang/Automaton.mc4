@@ -1,0 +1,12 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+import de.monticore.SCStateHierarchy;
+
+/**
+ * This grammar is extension of StateChart and define some extra elements for transform from Automaton to Isabelle.
+ */
+component grammar Automaton extends SCStateHierarchy {
+  //SCTBody is an unimplemented interface in SCBasis
+  SCEmptySCTBody implements SCTBody = ;
+}

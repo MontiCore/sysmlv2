@@ -19,6 +19,8 @@ import de.monticore.lang.sysmlv2.symboltable.adapters.AttributeUsage2PortSymbolA
 import de.monticore.lang.sysmlv2.symboltable.adapters.Constraint2SpecificationAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.PartDef2ComponentAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Requirement2SpecificationAdapter;
+import de.monticore.lang.sysmlv2.symboltable.adapters.StateUsage2SCStateAdapter;
+import de.monticore.scbasis._symboltable.SCStateSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolTOP;
@@ -243,4 +245,22 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
     return adapted;
   }
+
+  @Override
+  default List<SCStateSymbol> resolveAdaptedSCStateLocallyMany(
+      boolean foundSymbols,
+      String name,
+      AccessModifier modifier,
+      Predicate<SCStateSymbol> predicate
+  ) {
+    var adapted = new ArrayList<SCStateSymbol>();
+
+    var stateUsage = resolveStateUsageLocally(name);
+    if(stateUsage.isPresent()) {
+      adapted.add(new StateUsage2SCStateAdapter(stateUsage.get()));
+    }
+
+    return adapted;
+  }
+
 }
