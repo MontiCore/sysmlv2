@@ -13,7 +13,8 @@ grammar SysMLv2 extends SysMLExpressions,
                         SysMLInterfaces,
                         SysMLItems,
                         ComponentConnector,
-                        de.monticore.types.MCSimpleGenericTypes
+                        de.monticore.types.MCSimpleGenericTypes,
+                        Automaton
 {
 
   start SysMLModel ;
