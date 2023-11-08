@@ -7,7 +7,8 @@ component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiteral
                                            de.monticore.expressions.StreamExpressions,
                                            de.monticore.ocl.OCLExpressions,
                                            de.monticore.ocl.SetExpressions,
-                                           de.monticore.types.MCBasicTypes                  // MCType
+                                           de.monticore.types.MCBasicTypes,                 // MCType
+                                           SysMLBasis
 {
   /**
    * Extends the usual FieldAccessExpression by introducing a SysML specific
@@ -24,13 +25,18 @@ component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiteral
 
   SysMLInstantiation implements Expression = key("new") {noSpace(2)}? MCType Arguments;
 
-  // Infinity literal can be negative, but there cannot be any space between "-" and "INF"
-  Infinity implements Literal, SignedLiteral = {noSpace(2)}? (negative:["-"]) "INF" | "INF";
+  /**
+   * Infinity literal can be negative, but...
+   * - the second token (after "-") must be "INF" and
+   * - there cannot be any space between "-" and "INF"
+   */
+  Infinity implements Literal, SignedLiteral =
+    {cmpToken(2,"INF") && noSpace(2)}? (negative:["-"]) "INF" | "INF" ;
 
-  // Add "nat" to primitives. God only knows why this is necessary.
+  // Add "nat" to primitives
   MCPrimitiveTypeWithNat extends MCPrimitiveType implements MCType =
-     primitive: [ "boolean" | "byte" | "short" | "int"
-                  | "long" | "char" |"float" | "double" | "nat" ];
+     primitive: [ "boolean" | key("byte") | "short" | "int"
+                  | "long" | "char" |"float" | "double" | key("nat") ];
 
   /**
    * This part is a little experiment. Instead of wasting ASCII-characters for mathematical symbols, we use the latex
@@ -51,4 +57,38 @@ component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiteral
 
   ElementOfExpression implements Expression <150>, InfixExpression =
     left:Expression operator:"\\in" right:Expression ;
+
+  /**
+   * Um einem mit einer "variablen" Kardinalität (zB. [1..*]) gekennzeichneten Ding etwas zuzuweisen, benutzt SysML den
+   * Ausdruck "variablesDing = (1, 2, 3)". Man kann auch bei optionalen nix zuweisen: "optional = ( )".
+   * Prio von 330 ist ein bisschen höher als BracketExpression.
+   * Wird statt BracketExpression geparst.
+   */
+  SysMLBracketExpression extends BracketExpression implements Expression <330> = "(" (Expression || ",")* ")" ;
+
+  // Unsicher ob das irgendwo clasht
+  SysMLPower implements Expression = Expression "^" Expression ;
+
+  /* Aus MCJavaLiterals.mc4#L173 kopiert */
+  ScientificENotatationLiteral implements NumericLiteral <100> =
+     source:DecimalFloatingPointLiteral ;
+
+  /* Hier wurde im Vergleich zu MCJavaLiterals.mc4 leicht modifiziert um Clash mit DoubleLiteral zu vermeiden */
+  token DecimalFloatingPointLiteral
+     =   Digits '.' Digits? ExponentPart
+       |        '.' Digits  ExponentPart
+       | Digits             ExponentPart;
+
+  fragment token ExponentPart
+    = ExponentIndicator SignedInteger;
+
+  fragment token ExponentIndicator
+    = 'e' | 'E';
+
+  fragment token SignedInteger
+    = Sign? Digits;
+
+  fragment token Sign
+    = '+' | '-';
+
 }

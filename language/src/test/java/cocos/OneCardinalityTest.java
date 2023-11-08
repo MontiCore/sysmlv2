@@ -11,11 +11,13 @@ import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,6 +34,14 @@ public class OneCardinalityTest {
   @BeforeEach
   public void reset(){
     Log.getFindings().clear();
+  }
+
+  @Test
+  void testRawCardinalities() throws IOException {
+    var ast = parser.parse_StringCardinality("[2..3]");
+    assertThat(Log.getFindings()).isEmpty();
+    assertThat(ast).isPresent();
+    assertThat(parser.hasErrors()).isFalse();
   }
 
   @ParameterizedTest

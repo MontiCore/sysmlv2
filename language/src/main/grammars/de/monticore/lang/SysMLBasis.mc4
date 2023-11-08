@@ -32,14 +32,23 @@ component grammar SysMLBasis
    */
   interface Specialization = superTypes:MCType+;
 
+  // Specialization ist spezifisch für Definitions
   SysMLSpecialization implements Specialization =
       (":>" | "specializes") superTypes:(MCType || ",")+;
 
+  // Subsetting ist spezifisch für Usages
   SysMLSubsetting implements Specialization =
       (":>" | "subsets") superTypes:(MCType || ",")+;
 
   SysMLRedefinition implements Specialization =
       (":>>" | "redefines") superTypes:(MCType || ",")+;
+
+  /* Wenn es klar ist was redefined werden soll, kann Element-Typ (part, attribute, item) und Name weglassen */
+  RedefinedElement implements SysMLElement =
+      (":>>" | "redefines") Name Specialization* ("=" Expression)?
+      ("{"
+        SysMLElement*
+      "}" | ";") ;
 
   /**
    * TODO Conjugated nur bei Port Usages!
@@ -47,7 +56,7 @@ component grammar SysMLBasis
    * man versucht alle Eventualitäten durch die Grammatik abzudecken.
    */
   SysMLTyping implements Specialization =
-       ":" conjugated:["~"]? superTypes:(MCType || ",")+ Cardinality?;
+       (":" | "defined by") conjugated:["~"]? superTypes:(MCType || ",")+ Cardinality?;
 
   /** Refinement relates two behaviors and enforces a subset wrt. to FOCUS SPSes */
   SysMLRefinement implements Specialization =
@@ -60,10 +69,9 @@ component grammar SysMLBasis
    */
 
   /**
-   * Default: TODO Doc lesen
-   * TODO final dokumentieren + CoCo für offiziellen Einsatz verbieten
+   * Die Default-Richtung eines Elements ist "in"
    */
-  enum SysMLFeatureDirection = "in" | "out" | "inout" | "final" ;
+  enum SysMLFeatureDirection = "in" | "out" | "inout" ;
 
   /**
    * Parameters
@@ -73,6 +81,7 @@ component grammar SysMLBasis
     ["stream"]? SysMLFeatureDirection? Name Specialization* ("=" binding:Expression)? DefaultValue;
 
   DefaultValue = ("default" default:Expression)?;
+
   /*
    * ##################################################################
    * SysML-Spezifischen Syntax-Erweiterungen
@@ -88,5 +97,11 @@ component grammar SysMLBasis
   token SysMLDoc =
     'd''o''c' WS* ML_COMMENT : -> skip
     {storeComment();} ;
+
+  /** Alles ausser Anführungszeichen */
+  fragment token Anything
+      = ~ ('\'') ;
+
+  SysMLIdentifier = "<" Name ">" ;
 
 }

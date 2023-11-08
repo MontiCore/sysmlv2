@@ -4,8 +4,12 @@ package de.monticore.lang;
 component grammar SysMLImportsAndPackages extends SysMLBasis {
 
   SysMLImportStatement extends MCImportStatement implements SysMLElement =
-      Modifier  ("import" | ["alias"]) MCQualifiedName (("::" | ".") Star:["*"])?
+      Modifier "import" MCQualifiedName (("::" | ".") Star:["*"])?
         ("as" Name)? ";" ;
+
+  SysMLAlias implements SysMLElement =
+    Modifier "alias" SysMLIdentifier? Name? "for" MCQualifiedName
+    ("{" SysMLElement* "}" | ";") ;
 
   symbol scope SysMLPackage implements SysMLElement =
     ["standard"]? ["library"]? "package" Name? ("{"

@@ -81,8 +81,12 @@ component grammar SysMLParts extends SysMLBasis {
         return Optional.empty();
       } ;
 
+  // Bei Redefinition kann der Name weggelassen werden
   symbol AttributeUsage implements SysMLElement =
-      SysMLFeatureDirection? "attribute" Name Specialization* ("=" Expression)? ";"  ;
+      Modifier SysMLFeatureDirection? "attribute" SysMLIdentifier? Name? Specialization* ("=" Expression)?
+      ("{"
+        SysMLElement*
+      "}" | ";");
 
   symbolrule AttributeUsage =
       types:de.monticore.types.check.SymTypeExpression*
