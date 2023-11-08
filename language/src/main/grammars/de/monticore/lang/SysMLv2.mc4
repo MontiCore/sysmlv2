@@ -21,4 +21,19 @@ grammar SysMLv2 extends SysMLExpressions,
 
   SysMLModel = SysMLElement* ;
 
+  // Bug in MontiCore führt dazu, dass es nur hier funktioniert
+  @Override
+  token Char = "doNotParseThisEverAgain";
+
+  @Override
+  token Name =
+    ( ( 'a'..'z' | 'A'..'Z' | '_' | '$' )
+      ( 'a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '$' )* )
+    | ( '\'' Anything* '\'' ) :
+    {
+      if(getText().length() > 0 && getText().charAt(0) == '\'')
+        setText(getText().substring(1, getText().length() - 1));
+    } ;
+
+
 }

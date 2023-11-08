@@ -89,10 +89,11 @@ public class ASTPortUsage extends ASTPortUsageTOP {
 
   /**
    * Estimates the direction of a port based on the directions of the underlying attributes.
-   * @return {@link ASTSysMLFeatureDirection#IN} if all attributes are in, {@link ASTSysMLFeatureDirection#OUT} if all attributes are out, {@link ASTSysMLFeatureDirection#INOUT} otherwise.
+   * @return {@link ASTSysMLFeatureDirection#IN} if all attributes are in, {@link ASTSysMLFeatureDirection#OUT} if all
+   * attributes are out, {@link ASTSysMLFeatureDirection#INOUT} otherwise.
    */
   public ASTSysMLFeatureDirection estimatePortDirection(){
-    if (this.isPresentSysMLFeatureDirection() && this.getSysMLFeatureDirection() != ASTSysMLFeatureDirection.FINAL) {
+    if (this.isPresentSysMLFeatureDirection()) {
       return this.getSysMLFeatureDirection();
     }
 
