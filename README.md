@@ -11,14 +11,10 @@ With additional material for quick reference and examples:
 * [Intro to the SysML v2 Language-Graphical Notation](https://github.com/Systems-Modeling/SysML-v2-Release/blob/master/doc/Intro%20to%20the%20SysML%20v2%20Language-Graphical%20Notation.pdf)
 * [Intro to the SysML v2 Language-Textual Notation](https://github.com/Systems-Modeling/SysML-v2-Release/blob/master/doc/Intro%20to%20the%20SysML%20v2%20Language-Textual%20Notation.pdf)
 
-## Visualization - [`visualization`](visualization)
 
-The official pilot implementation for visualization wrapped as a gradle project (requires GitHub [setup](visualization/README.md)):
-* [SysML-v2-Pilot-Implementation/Interactive](https://github.com/Systems-Modeling/SysML-v2-Pilot-Implementation/tree/master/org.omg.sysml.interactive)
+#### Profile for Verification 
 
-## Profile for Verification - [`language4verification`](language4verification)
-
-A derivative for formal verification. Based on findings from the MontiBelle project:
+A profile of SysML v2 for formal verification. Based on findings from the MontiBelle project:
 * [[KMP+21] Model-Based Development and Logical AI for Secure and Safe Avionics Systems: A Verification Framework for
   SysML Behavior Specifications](https://www.se-rwth.de/publications/Model-Based-Development-and-Logical-AI-for-Secure-and-Safe-Avionics-Systems-A-Verification-Framework-for-SysML-Behavior-Specifications.pdf)
 
@@ -27,6 +23,13 @@ A derivative for formal verification. Based on findings from the MontiBelle proj
   Architecture and Behavior Diagrams](https://www.se-rwth.de/publications/Model-Based-Design-of-Correct-Safety-Critical-Systems-using-Dataflow-Languages-on-the-Example-of-SysML-Architecture-and-Behavior-Diagrams.pdf)
 
   ![](doc/event_transition.png)
+
+
+
+## Visualization - [`visualization`](visualization)
+
+The official pilot implementation for visualization wrapped as a gradle project (requires GitHub [setup](visualization/README.md)):
+* [SysML-v2-Pilot-Implementation/Interactive](https://github.com/Systems-Modeling/SysML-v2-Pilot-Implementation/tree/master/org.omg.sysml.interactive)
 
 ## Editor Support - [`language-server`](language-server)
 
