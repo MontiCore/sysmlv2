@@ -1,3 +1,0 @@
-- Findings nicht gecleared wenn Datei gelöscht
-- Refinement printen, statt CodeEdit?
-- MCType von PartDefSymbol finden
