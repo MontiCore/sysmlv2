@@ -10,6 +10,7 @@ import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeUsage2Variable
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symbols.compsymbols._symboltable.ComponentSymbol;
 import de.monticore.symbols.compsymbols._symboltable.PortSymbol;
 import de.monticore.symbols.compsymbols._symboltable.SubcomponentSymbol;
 import de.monticore.types.check.CompKindExpression;
@@ -52,7 +53,7 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
   }
 
   @Override
-  public List<VariableSymbol> getParametersList() {
+  public List<VariableSymbol> getParameters() {
     return getAdaptee().getSpannedScope().getLocalAttributeUsageSymbols().stream()
         .filter(a -> a.isPresentAstNode())
         .filter(a -> a.getAstNode().getModifier().isFinal())
@@ -61,7 +62,7 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
   }
 
   @Override
-  public List<PortSymbol> getPortsList() {
+  public List<PortSymbol> getPorts() {
     var ins = getAdaptee().getSpannedScope().getLocalPortUsageSymbols().stream()
         .flatMap(pu ->
             pu.getInputAttributes().stream()
@@ -113,6 +114,19 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
       Log.warn("0xMPf004 Attempted to get connectors for a symbol");
       return new ArrayList<>();
     }
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if(other instanceof ComponentSymbol) {
+      return ((ComponentSymbol)other).getFullName().equals(this.getFullName());
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return this.getFullName().hashCode();
   }
 
 }
