@@ -1,9 +1,12 @@
 package de.monticore.lang.componentconnector._symboltable;
 
+import de.monticore.lang.componentconnector.ComponentConnectorMill;
 import de.monticore.lang.componentconnector._ast.ASTConnector;
+import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.compsymbols.CompSymbolsMill;
 import de.monticore.symbols.compsymbols._symboltable.CompSymbolsSymbols2Json;
+import de.monticore.symbols.compsymbols._symboltable.ComponentSymbol;
 import de.monticore.symbols.compsymbols._symboltable.ComponentSymbolDeSer;
 import de.monticore.symbols.compsymbols._symboltable.PortSymbol;
 import de.monticore.symboltable.serialization.ISymbolDeSer;
@@ -27,8 +30,29 @@ import java.util.List;
  */
 public class MildComponentSymbolDeSer extends MildComponentSymbolDeSerTOP{
   // can't use SubcomponentSymbolDeSer or FullCompKindExprDeSer directly
+  public static final String PARAMETERS = "parameters";
+  public static final String PORTS = "ports";
+  public static final String TYPE_PARAMETERS = "typeParameters";
   public static final String SUPER = "super";
+  public static final String SUBCOMPONENTS = "subcomponents";
+  public static final String REFINEMENTS = "refinements";
+
   private final KindOfComponentDeSer deSer = new KindOfComponentDeSer();
+
+  @Override
+  protected  void serializeAddons(MildComponentSymbol toSerialize, ComponentConnectorSymbols2Json s2j) {
+    serializeParameters(toSerialize, s2j);
+    serializePorts(toSerialize, s2j);
+    serializeTypeParameters(toSerialize, s2j);
+    serializeSubcomponents(toSerialize, s2j);
+  }
+
+  @Override
+  protected void deserializeAddons(MildComponentSymbol symbol, JsonObject symbolJson) {
+    deserializeParameters(symbol, symbolJson);
+    deserializePorts(symbol, symbolJson);
+    deserializeTypeParameters(symbol, symbolJson);
+  }
 
   @Override
   protected void serializeRefinements(List<CompKindExpression> refinements,
@@ -46,11 +70,11 @@ public class MildComponentSymbolDeSer extends MildComponentSymbolDeSerTOP{
     // Wird nicht implementiert
   }
 
-  @Override
-  protected void serializeParameters(List<VariableSymbol> parameters, ComponentConnectorSymbols2Json s2j) {
+  protected void serializeParameters(@NonNull ComponentSymbol paramOwner, @NonNull ComponentConnectorSymbols2Json s2j) {
     JsonPrinter printer = s2j.getJsonPrinter();
-    printer.beginArray(ComponentSymbolDeSer.PARAMETERS);
-    parameters.forEach(p -> p.accept(s2j.getTraverser()));
+
+    printer.beginArray(PARAMETERS);
+    paramOwner.getParameters().forEach(p -> p.accept(s2j.getTraverser()));
     printer.endArray();
   }
 
@@ -65,12 +89,27 @@ public class MildComponentSymbolDeSer extends MildComponentSymbolDeSerTOP{
     s2j.getJsonPrinter().endArray();
   }
 
-  @Override
-  protected void serializePorts(@NonNull List<PortSymbol> ports, @NonNull ComponentConnectorSymbols2Json s2j) {
+  protected void serializePorts(@NonNull MildComponentSymbol portOwner, @NonNull ComponentConnectorSymbols2Json s2j) {
     JsonPrinter printer = s2j.getJsonPrinter();
 
-    printer.beginArray(ComponentSymbolDeSer.PORTS);
-    ports.forEach(p -> p.accept(s2j.getTraverser()));
+    printer.beginArray(PORTS);
+    portOwner.getPorts().forEach(p -> p.accept(s2j.getTraverser()));
+    printer.endArray();
+  }
+
+  protected void serializeTypeParameters(@NonNull MildComponentSymbol typeParamOwner, ComponentConnectorSymbols2Json s2j) {
+    JsonPrinter printer = s2j.getJsonPrinter();
+
+    printer.beginArray(TYPE_PARAMETERS);
+    typeParamOwner.getTypeParameters().forEach(tp -> tp.accept(s2j.getTraverser()));
+    printer.endArray();
+  }
+
+  protected void serializeSubcomponents(@NonNull MildComponentSymbol portOwner, @NonNull ComponentConnectorSymbols2Json s2j) {
+    JsonPrinter printer = s2j.getJsonPrinter();
+
+    printer.beginArray(SUBCOMPONENTS);
+    portOwner.getSubcomponents().forEach(p -> p.accept(s2j.getTraverser()));
     printer.endArray();
   }
 
@@ -91,23 +130,20 @@ public class MildComponentSymbolDeSer extends MildComponentSymbolDeSerTOP{
   }
 
   /**
-   * @param symbolJson the component which owns the parameters, encoded as JSON.
+   * @param paramOwnerJson the component which owns the parameters, encoded as JSON.
    */
-  @Override
-  protected List<VariableSymbol> deserializeParameters(@NonNull JsonObject symbolJson) {
+  protected void deserializeParameters(@NonNull MildComponentSymbol paramOwner, @NonNull JsonObject paramOwnerJson) {
     final String varSerializeKind = VariableSymbol.class.getCanonicalName();
 
-    List<JsonElement> params = symbolJson.getArrayMemberOpt(ComponentSymbolDeSer.PARAMETERS).orElseGet(Collections::emptyList);
-
-    List<VariableSymbol> result = new ArrayList<>(params.size());
+    List<JsonElement> params = paramOwnerJson.getArrayMemberOpt(PARAMETERS).orElseGet(Collections::emptyList);
 
     for (JsonElement param : params) {
       String paramJsonKind = JsonDeSers.getKind(param.getAsJsonObject());
       if (paramJsonKind.equals(varSerializeKind)) {
-        ISymbolDeSer deSer = CompSymbolsMill.globalScope().getSymbolDeSer(varSerializeKind);
+        ISymbolDeSer deSer = ComponentConnectorMill.globalScope().getSymbolDeSer(varSerializeKind);
         VariableSymbol paramSym = (VariableSymbol) deSer.deserialize(param.getAsJsonObject());
 
-        result.add(paramSym);
+        paramOwner.getSpannedScope().add(paramSym);
 
       } else {
         Log.error(String.format(
@@ -116,8 +152,6 @@ public class MildComponentSymbolDeSer extends MildComponentSymbolDeSerTOP{
         ));
       }
     }
-
-    return result;
   }
 
 
@@ -132,21 +166,18 @@ public class MildComponentSymbolDeSer extends MildComponentSymbolDeSerTOP{
     return result;
   }
 
-  @Override
-  protected List<PortSymbol> deserializePorts(@NonNull JsonObject symbolJson) {
+  protected void deserializePorts(@NonNull MildComponentSymbol portOwner, @NonNull JsonObject paramOwnerJson) {
     final String portSerializeKind = PortSymbol.class.getCanonicalName();
 
-    List<JsonElement> ports = symbolJson.getArrayMemberOpt(ComponentSymbolDeSer.PORTS).orElseGet(Collections::emptyList);
-
-    List<PortSymbol> result = new ArrayList<>(ports.size());
+    List<JsonElement> ports = paramOwnerJson.getArrayMemberOpt(PORTS).orElseGet(Collections::emptyList);
 
     for (JsonElement port : ports) {
       String portJasonKind = JsonDeSers.getKind(port.getAsJsonObject());
       if (portJasonKind.equals(portSerializeKind)) {
-        ISymbolDeSer deSer = CompSymbolsMill.globalScope().getSymbolDeSer(portSerializeKind);
+        ISymbolDeSer deSer = ComponentConnectorMill.globalScope().getSymbolDeSer(portSerializeKind);
         PortSymbol portSym = (PortSymbol) deSer.deserialize(port.getAsJsonObject());
 
-        result.add(portSym);
+        portOwner.getSpannedScope().add(portSym);
 
       } else {
         Log.error(String.format(
@@ -155,7 +186,31 @@ public class MildComponentSymbolDeSer extends MildComponentSymbolDeSerTOP{
         ));
       }
     }
+  }
 
-    return result;
+  protected void deserializeTypeParameters(@NonNull MildComponentSymbol typeParamOwner,
+                                           @NonNull JsonObject typeParamOwnerJson) {
+    final String typeVarSerializedKind = "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol";
+
+    List<JsonElement> typeParams =
+        typeParamOwnerJson
+            .getArrayMemberOpt(TYPE_PARAMETERS)
+            .orElseGet(Collections::emptyList);
+
+    for (JsonElement typeParam : typeParams) {
+      String typeParamJsonKind = JsonDeSers.getKind(typeParam.getAsJsonObject());
+      if (typeParamJsonKind.equals(typeVarSerializedKind)) {
+        ISymbolDeSer deSer = ComponentConnectorMill.globalScope().getSymbolDeSer(typeVarSerializedKind);
+        TypeVarSymbol typeParamSym = (TypeVarSymbol) deSer.deserialize(typeParam.getAsJsonObject());
+
+        typeParamOwner.getSpannedScope().add(typeParamSym);
+      } else {
+        Log.error(String.format(
+            "0xD0103 Malformed json, type parameter '%s' of unsupported kind '%s'",
+            typeParam.getAsJsonObject().getStringMember(JsonDeSers.NAME), typeParamJsonKind
+        ));
+
+      }
+    }
   }
 }
