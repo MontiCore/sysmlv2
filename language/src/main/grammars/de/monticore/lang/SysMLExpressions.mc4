@@ -36,7 +36,7 @@ component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiteral
   // Add "nat" to primitives
   MCPrimitiveTypeWithNat extends MCPrimitiveType implements MCType =
      primitive: [ "boolean" | key("byte") | "short" | "int"
-                  | "long" | "char" |"float" | "double" | key("nat") ];
+                  | key("long") | "char" |"float" | "double" | key("nat") ];
 
   /**
    * This part is a little experiment. Instead of wasting ASCII-characters for mathematical symbols, we use the latex
@@ -59,12 +59,40 @@ component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiteral
     left:Expression operator:"\\in" right:Expression ;
 
   /**
-   * Um einem mit einer "variablen" Kardinalität (zB. [1..*]) gekennzeichneten Ding etwas zuzuweisen, benutzt SysML den
-   * Ausdruck "variablesDing = (1, 2, 3)". Man kann auch bei optionalen nix zuweisen: "optional = ( )".
-   * Prio von 330 ist ein bisschen höher als BracketExpression.
-   * Wird statt BracketExpression geparst.
+   * A sequence expression consists of a list of one or more expressions separated by
+   * comma (,) symbols, optionally terminated by a final comma, all surrounded by parentheses (...). Such an
+   * expression specifies sequential invocations of the sequence concatenation function ',' from the
+   * BaseFunctions library model (see 9.4.2). The default behavior for this Function is given by the
+   * specialization SequenceFunctions::',', which concatenates the sequence of values resulting from
+   * evaluating its two arguments. With this behavior, a sequence expression concatenates, in order, the results
+   * of evaluating all the listed expressions.
    */
-  SysMLBracketExpression extends BracketExpression implements Expression <330> = "(" (Expression || ",")* ")" ;
+  SysMLSequenceExpression implements Expression <330> = "(" Expression "," (Expression || ",")+ ")" ;
+
+  /**
+   * A sequence expression with a single constituent expression simply evaluates to the value of the contained
+   * expression, as would be expected for a parenthesized expression. The empty sequence () is not actually a
+   * sequence expression, but, rather, an alternative notation for a null expression (see 7.4.9.4).
+   */
+  SysMLNullLiteral implements Literal = "(" ")" ;
+
+  // aka "map". Die Expression muss eine Collection von SysMLTyping sein.
+  SysMLCollectExpression implements Expression =
+    Expression ".{" "in" Name SysMLTyping? ";" inner:Expression "}" ;
+
+  // aka "filter". inner muss boolsch sein.
+  SysMLSelectExpression implements Expression =
+    Expression ".?{" "in" Name SysMLTyping? ";" inner:Expression "}" ;
+
+  // aka "chaining functions".
+  /**
+   * A function operation expression is a special syntax for an invocation
+   * expression in which the first argument is given before the arrow (->) symbol, which is followed by the
+   * name of the function to be invoked and an argument list for any remaining arguments (see 7.4.9.4). This is
+   * useful for chaining invocations in an effective data flow
+   */
+  SysMLFunctionOperationExpression implements Expression =
+    Expression "->" Name ("(" (SysMLParameter || ",")* ")")? ("{" SysMLElement* inner:Expression "}")? ;
 
   // Unsicher ob das irgendwo clasht
   SysMLPower implements Expression = Expression "^" Expression ;
@@ -72,6 +100,12 @@ component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiteral
   /* Aus MCJavaLiterals.mc4#L173 kopiert */
   ScientificENotatationLiteral implements NumericLiteral <100> =
      source:DecimalFloatingPointLiteral ;
+
+  SysMLEnumerationExpression implements Expression =
+    "(" start:Expression ".." end:Expression ")" ;
+
+  SysMLIndexExpression implements Expression =
+    sequence:Expression "#" "(" index:Expression ")" ;
 
   /* Hier wurde im Vergleich zu MCJavaLiterals.mc4 leicht modifiziert um Clash mit DoubleLiteral zu vermeiden */
   token DecimalFloatingPointLiteral
@@ -90,5 +124,44 @@ component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiteral
 
   fragment token Sign
     = '+' | '-';
+
+  /*
+   * Nach offizieller Dokumentation:
+   * Anders als "&&" und "||" sind diese Operatoren "conditional" oder "lazy" in dem Sinne, dass die rechte Seite nicht
+   * ausgeführt wird, wenn die linke Seite false evaluiert bzw. andersrum bei "or". Sind also eher Control-Statements.
+   */
+  ConditionalAndExpression implements Expression <120>, InfixExpression =
+    left:Expression operator:"and" right:Expression;
+
+  // Keine Ahnung wie man das besser macht, statt nervigen Fehlermeldungen kommt aber bei MC nix brauchbares
+  ConditionalAndExpression2 implements Expression <120>, InfixExpression =
+    left:Expression operator:"&" right:Expression;
+
+  ConditionalOrExpression implements Expression <117>, InfixExpression =
+    left:Expression operator:"or" right:Expression;
+
+  ConditionalNotExpression implements Expression <190> =
+    "not" Expression;
+
+
+  // Ist eigentlich KerML. Benutzt um "myStateUsage:MyStateDef" zur Meta-Klasse "Usage" zu casten
+  /**
+   * the meta-cast operator meta (see [KerML, 7.4.9.2]) may be
+   * used to cast a type element referenced as its first operand to the actual reflective metadata definition (or KerML
+   * metaclass) value for the type
+   */
+  KerMLMetaCast implements Expression =
+    MCQualifiedName "meta" MCType ;
+
+  SysMLCast implements Expression =
+    Expression "as" MCType ;
+
+  TernaryExpression implements Expression =
+    "if" condition:Expression "?" if:Expression "else" else:Expression ;
+
+  // exists ist in der SysMLv2 ein Name wie jeder andere auch...
+  @Override
+  ExistsExpression implements Expression <90> =
+    key("exists") (InDeclaration || ",")+ ":" Expression ;
 
 }

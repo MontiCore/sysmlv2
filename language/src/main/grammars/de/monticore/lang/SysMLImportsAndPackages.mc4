@@ -12,8 +12,18 @@ component grammar SysMLImportsAndPackages extends SysMLBasis {
     ("{" SysMLElement* "}" | ";") ;
 
   symbol scope SysMLPackage implements SysMLElement =
-    ["standard"]? ["library"]? "package" Name? ("{"
+    ["standard"]? ["library"]? "package" SysMLIdentifier? Name? ("{"
       SysMLElement*
     "}" | ";") ;
+
+  /**
+   * Metadata is additional data that can be used to annotate
+   * the elements of a model.
+   */
+  SysMLMetaDataDefinition implements SysMLElement =
+    "metadata" "def" SysMLIdentifier? Name Specialization* ("{" SysMLElement* "}" | ";") ;
+
+  SysMLMetaDataUsage implements SysMLElement =
+    ("metadata" | "@") SysMLIdentifier? Name ("{" SysMLElement* "}" | ";") ;
 
 }

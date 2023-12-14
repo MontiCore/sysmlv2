@@ -197,7 +197,9 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
                 .setDefaultValue(SysMLv2Mill.defaultValueBuilder().build())
                 .build())
             .build())
-        .addSysMLElement(SysMLv2Mill.sysMLSuccessionBuilder().setTgt("Init").build())
+        .addSysMLElement(SysMLv2Mill.sysMLSuccessionBuilder().setTgt(
+            SysMLv2Mill.nameExpressionBuilder().setName("Init").build()
+        ).build())
         .addSysMLElement(SysMLv2Mill.stateUsageBuilder()
             .setName("Init")
             .setModifier(SysMLv2Mill.modifierBuilder().build())

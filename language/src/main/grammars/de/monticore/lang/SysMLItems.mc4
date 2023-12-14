@@ -11,7 +11,7 @@ component grammar SysMLItems
     "}" | ";") ;
 
   symbol scope ItemUsage implements SysMLElement =
-    Modifier SysMLFeatureDirection? "item" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")? DefaultValue
+    SysMLFeatureDirection? Modifier "item" (Name Specialization*)? ("(" (SysMLParameter || ",")* ")")? DefaultValue
     ("{"
       SysMLElement*
      "}" | ";")? ;

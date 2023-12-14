@@ -47,12 +47,31 @@ component grammar SysMLActions
   PerformAction implements SysMLElement = "perform" action:Name@ActionUsage ";" ;
 
   SysMLSuccession implements SysMLElement =
-    ("first" src:Name@ActionUsage)?
+    Modifier ("succession" SysMLIdentifier? Name Specialization*)?
+    ("first" src:Expression)?
     (InlineAcceptActionUsage)?
     ("if" guard:Expression)?
-        "then" tgt:Name@ActionUsage ";" ;
+    "then" tgt:Expression
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
 
   SysMLFirst implements SysMLElement =
     "first" src:Name ";" ;
+
+  symbol scope (shadowing) CalcDef implements SysMLType =
+    Modifier "calc" "def" Name Specialization*
+    ("{"
+      SysMLElement*
+      Expression?
+    "}" | ";") ;
+
+  symbol CalcUsage implements SysMLElement =
+    SysMLFeatureDirection? Modifier "calc" SysMLIdentifier? Name? Specialization*
+    ("=" Expression)? DefaultValue
+    ("{"
+      SysMLElement*
+      Expression?
+    "}" | ";");
 
 }

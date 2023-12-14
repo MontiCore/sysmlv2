@@ -1,5 +1,6 @@
 package de.monticore.lang.sysmlv2._lsp.commands;
 
+import de.monticore.lang.sysmlbasis._ast.ASTModifierBuilder;
 import de.monticore.lang.sysmlparts._ast.ASTEnumDefBuilder;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartDefBuilder;
@@ -10,7 +11,6 @@ import de.monticore.lang.sysmlv2._ast.ASTSysMLModelBuilder;
 import de.monticore.lang.sysmlv2._lsp.SysMLv2LanguageServer;
 import de.monticore.lang.sysmlv2._lsp.features.code_action.utils.CodeActionFactory;
 import de.monticore.types.mcbasictypes._ast.ASTConstantsMCBasicTypes;
-import de.monticore.umlmodifier._ast.ASTModifierBuilder;
 import org.eclipse.lsp4j.ApplyWorkspaceEditParams;
 import org.eclipse.lsp4j.CreateFilesParams;
 import org.eclipse.lsp4j.FileCreate;

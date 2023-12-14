@@ -28,18 +28,22 @@ component grammar SysMLParts extends SysMLBasis {
       requirementType:SysMLReqType;
 
   symbol scope AttributeDef implements SysMLType =
-    "attribute" "def" Name Specialization*
+    Modifier "attribute" "def" Name Specialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
 
   symbol scope EnumDef implements SysMLType =
-    "enum" "def" Name Specialization*
+    Modifier "enum" "def" Name Specialization*
     ("{"
       SysMLEnumConstant*
     "}" | ";") ;
 
-  SysMLEnumConstant implements Field = "enum"? Name ";" ;
+  // TODO Was genau darf in den Body?
+  SysMLEnumConstant implements Field = "enum"? Name ("=" Expression)?
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
 
   symbol scope (shadowing) PortDef implements SysMLType =
     Modifier "port" "def" Name Specialization*
@@ -54,7 +58,8 @@ component grammar SysMLParts extends SysMLBasis {
    */
 
   symbol scope (shadowing) PartUsage implements SysMLElement =
-    Modifier SysMLFeatureDirection? "part" Name Specialization*
+    SysMLFeatureDirection? Modifier "part" SysMLIdentifier? Name
+    SysMLCardinality? Specialization* ("=" Expression)? DefaultValue
     ("{"
       SysMLElement*
     "}" | ";") ;
@@ -81,9 +86,18 @@ component grammar SysMLParts extends SysMLBasis {
         return Optional.empty();
       } ;
 
-  // Bei Redefinition kann der Name weggelassen werden
+  // Der Name kann weggelassen werden wenn "attribute" angegeben ist
+  // Die Kardinalität kann vor den Spezialisierungen stehen (aber es kann nur eine geben)
   symbol AttributeUsage implements SysMLElement =
-      Modifier SysMLFeatureDirection? "attribute" SysMLIdentifier? Name? Specialization* ("=" Expression)?
+      SysMLFeatureDirection? Modifier ("attribute" SysMLIdentifier? Name? | SysMLIdentifier? Name )
+      SysMLCardinality? Specialization* ("=" Expression)? DefaultValue
+      ("{"
+        SysMLElement*
+      "}" | ";");
+
+  // Man kann den Namen weglassen wenn es eine Specialisation gibt
+  AnonymousAttributeUsage extends AttributeUsage =
+      SysMLFeatureDirection? Modifier SysMLIdentifier? Specialization+ ("=" Expression)? DefaultValue
       ("{"
         SysMLElement*
       "}" | ";");
@@ -115,7 +129,7 @@ component grammar SysMLParts extends SysMLBasis {
    * symboltable (and not needing to re-processes the original models).
    */
   symbol scope (shadowing) PortUsage implements SysMLElement =
-      Modifier SysMLFeatureDirection? "port" Name Specialization* DefaultValue";" ;
+      SysMLFeatureDirection? Modifier "port" Name Specialization* DefaultValue";" ;
 
   symbolrule PortUsage =
       types:de.monticore.types.check.SymTypeExpression*
@@ -135,6 +149,11 @@ component grammar SysMLParts extends SysMLBasis {
     } ;
 
   ConnectionUsage implements SysMLElement =
-      "connect" src:MCQualifiedName "to" tgt:MCQualifiedName ";";
+    ("connection" SysMLIdentifier? Name? Specialization*)?
+    "connect" src:MCQualifiedName SysMLCardinality?
+    "to" tgt:MCQualifiedName SysMLCardinality?
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
 
 }

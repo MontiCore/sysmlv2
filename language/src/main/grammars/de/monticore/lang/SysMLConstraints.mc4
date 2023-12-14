@@ -9,15 +9,15 @@ component grammar SysMLConstraints
     "constraint" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
       SysMLElement* // TODO Auf AttributeUsages beschränken in finale (nicht component) SysMLv2-Sprache
-      Expression
+      Expression?
     "}" | ";") ;
 
   symbol scope (shadowing) ConstraintUsage implements SysMLElement =
-    ((["require"] | ["assume"] | ["assert"]) "constraint"? | "constraint")
-    Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    Modifier ((["require"] | ["assume"] | ["assert"]) "constraint"? | "constraint")
+    Name? Specialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
       SysMLElement*
-      Expression
+      Expression?
     "}" | ";") ;
 
 }
