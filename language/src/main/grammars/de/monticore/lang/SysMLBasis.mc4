@@ -13,6 +13,9 @@ component grammar SysMLBasis
             de.monticore.UMLModifier                    // Modifier
 {
 
+  KerMLCardinality extends Cardinality =
+    "[" lower:Expression ( ".." upper:Expression )? "]" ;
+
   /*
    * ##################################################################
    * SysML Basis Symbole
@@ -24,6 +27,9 @@ component grammar SysMLBasis
 
   /** Element mit eigenem Symbol für resolve (zB. für ReqDef) */
   interface symbol SysMLType extends SysMLElement;
+
+  SysMLCardinality =
+    Cardinality (["ordered"] | ["nonunique"])* ;
 
   /**
    * Common interface for any specialization. According to the official spes, this would include subsetting, typing,
@@ -41,14 +47,16 @@ component grammar SysMLBasis
       (":>" | "subsets") superTypes:(MCType || ",")+;
 
   SysMLRedefinition implements Specialization =
-      (":>>" | "redefines") superTypes:(MCType || ",")+;
+      (":>>" | "redefines") superTypes:(MCType || ",")+ SysMLCardinality?;
 
-  /* Wenn es klar ist was redefined werden soll, kann Element-Typ (part, attribute, item) und Name weglassen */
-  RedefinedElement implements SysMLElement =
-      (":>>" | "redefines") Name Specialization* ("=" Expression)?
-      ("{"
-        SysMLElement*
-      "}" | ";") ;
+  // TODO Nur bei Event Occurences
+  /**
+   * [An event occurence] is related to another occurrence usage,
+   * representing the occurring event, by a reference subsetting relationship, which is a special kind of subsetting
+   * relationship specified using the keyword references or the symbol ::>.
+   */
+  SysMLReference implements Specialization =
+      ("::>" | "references") superTypes:(MCType || ",")+;
 
   /**
    * TODO Conjugated nur bei Port Usages!
@@ -56,7 +64,21 @@ component grammar SysMLBasis
    * man versucht alle Eventualitäten durch die Grammatik abzudecken.
    */
   SysMLTyping implements Specialization =
-       (":" | "defined by") conjugated:["~"]? superTypes:(MCType || ",")+ Cardinality?;
+       (":" | "defined by") conjugated:["~"]? superTypes:(MCType || ",")+ SysMLCardinality?;
+
+  /* Adaptierung zwecks Rückwärtskompatibilität auf vorherige Version mit direkter MC-Cardinality */
+  astrule SysMLTyping =
+      method public de.monticore.cardinality._ast.ASTCardinality getCardinality() {
+        if(isPresentSysMLCardinality()) {
+          return getSysMLCardinality().getCardinality();
+        }
+        Log.error("0xMPf005 get for Cardinality can't return a value. Attribute is empty.");
+        // Normally this statement is not reachable
+        throw new IllegalStateException();
+      }
+      method public boolean isPresentCardinality() {
+        return isPresentSysMLCardinality();
+      } ;
 
   /** Refinement relates two behaviors and enforces a subset wrt. to FOCUS SPSes */
   SysMLRefinement implements Specialization =
@@ -69,9 +91,10 @@ component grammar SysMLBasis
    */
 
   /**
-   * Die Default-Richtung eines Elements ist "in"
+   * Die Default-Richtung eines Elements ist "in".
+   * Return darf nur in Calculations verwendet werden um das "out" zu markieren.
    */
-  enum SysMLFeatureDirection = "in" | "out" | "inout" ;
+  enum SysMLFeatureDirection = "in" | "out" | "inout" | "return" ;
 
   /**
    * Parameters
@@ -103,5 +126,22 @@ component grammar SysMLBasis
       = ~ ('\'') ;
 
   SysMLIdentifier = "<" Name ">" ;
+
+  // Zusätzliche Modifier: "ref", "end"
+  @Override
+  Modifier =
+      Stereotype?
+      (   ["public"]       | [public:"+"]
+        | ["private"]      | [private:"-"]
+        | ["protected"]    | [protected:"#"]
+        | ["final"]
+        | ["abstract"]
+        | ["local"]
+        | ["derived"]      | [derived:"/"]
+        | ["readonly"]     | [readonly:"?"]
+        | ["static"]
+        | ["ref"]
+        | ["end"]
+      )*;
 
 }

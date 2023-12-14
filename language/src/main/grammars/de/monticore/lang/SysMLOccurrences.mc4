@@ -1,0 +1,24 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+component grammar SysMLOccurrences extends SysMLBasis {
+
+  symbol scope (shadowing) OccurenceUsage implements SysMLElement =
+    Modifier ["event"]? "occurrence" SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  /**
+   * An event occurrence usage may also be declared using just the keyword event instead of event occurrence. In
+   * this case, the declaration does not include either a name or a short name. Instead, the referenced event occurrence of
+   * the event occurrence usage is identified by giving a qualified name or feature chain immediately after the event
+   * keyword.
+   */
+  EventOccurrenceUsage implements SysMLElement =
+    Modifier "event" MCQualifiedName SysMLCardinality?
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+}

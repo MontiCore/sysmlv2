@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-requirement def <"Human ID"> R1 {
+requirement def <'Human ID'> R1 {
   subject s:S;
 }
 

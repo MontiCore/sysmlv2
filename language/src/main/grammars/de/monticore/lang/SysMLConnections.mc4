@@ -7,16 +7,26 @@ component grammar SysMLConnections
   Flow implements SysMLElement =
     "flow" ("of" flowtype:MCQualifiedName)? "from"? source:MCQualifiedName "to" target:MCQualifiedName ";" ;
 
-
-
   Bind implements SysMLElement =
-    "bind" source:MCQualifiedName "=" target:MCQualifiedName ";" ;
+    ("binding" SysMLIdentifier? Name? SysMLCardinality? )?
+    "bind" source:MCQualifiedName SysMLCardinality? "=" target:MCQualifiedName SysMLCardinality? ";" ;
     // explizites bind durch keyword
 
   Message implements SysMLElement =
     "message" ("of" flowtype:MCQualifiedName)? "from"? source:MCQualifiedName "to" target:MCQualifiedName ";" ;
 
+  symbol scope (shadowing) ConnectionDef implements SysMLType =
+    Modifier "connection" "def" SysMLIdentifier? Name Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
 
-
+  // Aus Kompatibilitätsgründen ist der Name hier nicht "ConnectionUsage". Genau genommen ist ein einfaches
+  // "connect" der Sonderfall, nicht andersrum.
+  symbol scope (shadowing) ConnectionUsageProper implements SysMLElement =
+    Modifier "connection" SysMLIdentifier? Name Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
 
 }
