@@ -39,7 +39,7 @@ deploy:
   stage: gradle
   image: openjdk:11-jdk
   script:
-    - "./gradlew build publish -PgithubUser=$githubUser -PgithubToken=$githubToken -PmavenPassword=$pass -PmavenUser=$user --refresh-dependencies $GRADLE_OPT $ARGS2"
+    - "./gradlew build publish -PgithubUser=$githubUser -PgithubToken=$githubToken -PnexusPassword=$pass -PnexusUser=$user --refresh-dependencies $GRADLE_OPT $ARGS2"
     - export VERSION=$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file language-server/target/generated-sources/SysMLv2/plugins/sysmlv2-vscode-plugin/sysmlv2-${VERSION}.vsix "https://git.rwth-aachen.de/api/v4/projects/37093/packages/generic/sysmlv2-vscode-plugin/${VERSION}/sysmlv2-vscode-plugin-${VERSION}.vsix"'
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file language-server/target/generated-sources/SysMLv2/plugins/sysmlv2-vscode-plugin/sysmlv2-${VERSION}.vsix "https://git.rwth-aachen.de/api/v4/projects/37093/packages/generic/sysmlv2-vscode-plugin/latest/sysmlv2-vscode-plugin-latest.vsix"'
