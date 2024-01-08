@@ -41,12 +41,12 @@ public class AttributeUsage2PortSymbolAdapter extends MildPortSymbol {
       this.type = adaptee.getTypes(0);
     }
     else if(adaptee.getTypesList().size() > 1) {
-      Log.warn("0xMPf015 Attr. usage has more than one type, adaptation to CC-Port defaulting to first type",
+      Log.warn("0x10015 Attr. usage has more than one type, adaptation to CC-Port defaulting to first type",
           adaptee.getSourcePosition());
       this.type = adaptee.getTypes(0);
     }
     else {
-      Log.warn("0xMPf016 Attr. usage has no type, adaptation to CC-Port defaulting to obscure type",
+      Log.warn("0x10016 Attr. usage has no type, adaptation to CC-Port defaulting to obscure type",
           adaptee.getSourcePosition());
       this.type = SymTypeExpressionFactory.createObscureType();
     }

@@ -14,11 +14,11 @@ public class StateExistsCoCo implements SysMLStatesASTSysMLTransitionCoCo {
     boolean isTgtPresent = scope.resolveStateUsage(node.getTgt()).isPresent();
 
     if(!isSrcPresent){
-      Log.error("Source state is not defined", node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+      Log.error("0x10029 Source state is not defined", node.get_SourcePositionStart(), node.get_SourcePositionEnd());
     }
 
     if(!isTgtPresent){
-      Log.error("Target state is not defined", node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+      Log.error("0x10030 Target state is not defined", node.get_SourcePositionStart(), node.get_SourcePositionEnd());
     }
   }
 }

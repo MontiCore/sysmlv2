@@ -45,9 +45,12 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FilenameUtils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class SysMLv2Tool extends SysMLv2ToolTOP {
@@ -227,32 +230,53 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
         printVersion();
         return;
       }
-      else if(cmd.hasOption("input")){
-        check(Path.of(cmd.getOptionValue("input")));
-        return;
+      else {
+        // We process input, be it via file/folder (--input) or STDIN
+        List<ASTSysMLModel> asts;
+        if (cmd.hasOption("input")) {
+          var input = Path.of(cmd.getOptionValue("input"));
+          if(Files.isDirectory(input)) {
+            try {
+              asts = Files.walk(input)
+                  .filter(p -> FilenameUtils.getExtension(p.toString()).equals("sysml"))
+                  .map(p -> parse(p.toString()))
+                  .collect(Collectors.toList());
+            }
+            catch (IOException ex) {
+              Log.error("0x00001 Could not read the input directory: " + ex.getMessage());
+              return;
+            }
+          }
+          else {
+            asts = List.of(parse(cmd.getOptionValue("input")));
+          }
+        }
+        else {
+          var modelReader = new BufferedReader(new InputStreamReader(System.in));
+          try {
+            asts = List.of(SysMLv2Mill.parser().parse(modelReader).get());
+          }
+          catch (IOException ex) {
+            Log.error("0x00002 Could not read standard input: " + ex.getMessage());
+            return;
+          }
+        }
+
+        asts.forEach(it -> createSymbolTable(it));
+        asts.forEach(it -> completeSymbolTable(it));
+        asts.forEach(it -> finalizeSymbolTable(it));
+
+        asts.forEach(it -> runDefaultCoCos(it));
+        asts.forEach(it -> runAdditionalCoCos(it));
+
+        if (cmd.hasOption("prettyprint")) {
+          String target = cmd.getOptionValue("prettyprint");
+          asts.forEach(it -> prettyPrint(it, target));
+        }
       }
-
-    } catch (org.apache.commons.cli.ParseException e) {
+    }
+    catch (org.apache.commons.cli.ParseException e) {
       Log.error("0xA5C06x33289 Could not process SysMLv2Tool parameters: " + e.getMessage());
-    }
-  }
-
-  public void check(Path models) {
-    try {
-      var asts = Files.walk(models)
-          .filter(p -> FilenameUtils.getExtension(p.toString()).equals("sysml"))
-          .map(p -> parse(p.toString()))
-          .collect(Collectors.toList());
-
-      asts.forEach(it -> createSymbolTable(it));
-      asts.forEach(it -> completeSymbolTable(it));
-      asts.forEach(it -> finalizeSymbolTable(it));
-
-      asts.forEach(it -> runDefaultCoCos(it));
-      asts.forEach(it -> runAdditionalCoCos(it));
-    }
-    catch (IOException ex) {
-      Log.error("Could not read the input directory: " + ex.getMessage());
     }
   }
 

@@ -13,7 +13,7 @@ public class ASTKerMLCardinality extends ASTKerMLCardinalityTOP {
         return v.getValue();
       }
     }
-    Log.error("0xKML001 KerML cardinality cannot produce a value for lower bound");
+    Log.error("0xKML01 KerML cardinality cannot produce a value for lower bound");
     return -1;
   }
 
@@ -29,7 +29,7 @@ public class ASTKerMLCardinality extends ASTKerMLCardinalityTOP {
     else {
       return getLowerBound();
     }
-    Log.error("0xKML002 KerML cardinality cannot produce a value for upper bound");
+    Log.error("0xKML02 KerML cardinality cannot produce a value for upper bound");
     return -1;
   }
 

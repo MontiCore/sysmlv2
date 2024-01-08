@@ -32,7 +32,7 @@ public class InterfaceSupertypes implements SysMLInterfacesASTInterfaceDefCoCo, 
         .collect(Collectors.toList());
 
     for(var problem: nonExistent) {
-      Log.error("Could not find Interface definition \"" + printName(problem) + "\".");
+      Log.error("0x10021 Could not find Interface definition \"" + printName(problem) + "\".");
     }
   }
 
@@ -48,7 +48,7 @@ public class InterfaceSupertypes implements SysMLInterfacesASTInterfaceDefCoCo, 
         .collect(Collectors.toList());
 
     for(var problem: nonExistent) {
-      Log.error("Could not find Interface definition or usage with the name \"" + printName(problem) + "\".");
+      Log.error("0x10022 Could not find Interface definition or usage with the name \"" + printName(problem) + "\".");
     }
   }
 }

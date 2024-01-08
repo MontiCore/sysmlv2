@@ -47,7 +47,7 @@ public class ParmeterValueWrapper implements ASTParameterValue {
       this.value = adaptee.getAstNode().getExpression();
     }
     else {
-      Log.warn("0xMPf013 Attribute usage \"" + adaptee.getName() + "\" has no AST",
+      Log.warn("0x10013 Attribute usage \"" + adaptee.getName() + "\" has no AST",
           adaptee.getSourcePosition());
     }
   }
@@ -70,7 +70,7 @@ public class ParmeterValueWrapper implements ASTParameterValue {
   @Override
   public boolean isPresentVariableSymbol() {
     if(!container.getPartDef().isPresent()) {
-      Log.warn("0xMPf014 Cannot determine presence of variable symbol \"" + getVariable() + "\"");
+      Log.warn("0x10014 Cannot determine presence of variable symbol \"" + getVariable() + "\"");
       return false;
     }
     else {

@@ -20,11 +20,11 @@ public class OneCardinality implements SysMLBasisASTSpecializationCoCo {
               && (Cardinality.getLowerBound() < Cardinality.getUpperBound());
 
       if((Cardinality.getLowerBound() > Cardinality.getUpperBound()) && !Cardinality.isNoUpperLimit()) {
-        Log.error("invalid Cardinalities", node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+        Log.error("0x10024 invalid Cardinalities", node.get_SourcePositionStart(), node.get_SourcePositionEnd());
       }
 
       if(multipleCardinalities || Cardinality.isMany() || Cardinality.isNoUpperLimit()) {
-        Log.warn("SysML-Transformer will ignore multiple Cardinalities",
+        Log.warn("0xMB008 SysML-Transformer will ignore multiple Cardinalities",
             node.get_SourcePositionStart(), node.get_SourcePositionEnd());
       }
     }

@@ -67,14 +67,14 @@ public class ConnectorWrapper implements ASTConnector {
       var partUsageName = connection.getSrc().getParts(connection.getSrc().sizeParts()-2);
       var partUsage = connection.getEnclosingScope().resolvePartUsage(partUsageName);
       if(!partUsage.isPresent()) {
-        Log.warn("0xMPf009 Could not resolve part usage \"" + partUsageName + "\"",
+        Log.warn("0x10009 Could not resolve part usage \"" + partUsageName + "\"",
             connection.get_SourcePositionStart(),
             connection.get_SourcePositionEnd());
         return Collections.emptyList();
       }
       else {
         if(!partUsage.get().getPartDef().isPresent()) {
-          Log.warn("0xMPf010 Could not resolve part definition of \"" + partUsageName + "\"",
+          Log.warn("0x10010 Could not resolve part definition of \"" + partUsageName + "\"",
               connection.get_SourcePositionStart(),
               connection.get_SourcePositionEnd());
           return Collections.emptyList();
@@ -84,7 +84,7 @@ public class ConnectorWrapper implements ASTConnector {
           var portName = connection.getSrc().getBaseName();
           var srcPort = partUsage.get().getPartDef().get().getSpannedScope().resolvePortUsage(portName);
           if(!srcPort.isPresent()) {
-            Log.warn("0xMPf012 Could not resolve port \"" + portName
+            Log.warn("0x10012 Could not resolve port \"" + portName
                     + "\" in part definition of \"" + partUsageName + "\"",
                 connection.get_SourcePositionStart(),
                 connection.get_SourcePositionEnd());

@@ -31,7 +31,7 @@ public class ActionSupertypes implements SysMLActionsASTActionDefCoCo, SysMLActi
         .collect(Collectors.toList());
 
     for(var problem: nonExistent) {
-      Log.error("Could not find Action definition \"" + printName(problem) + "\".");
+      Log.error("0x10017 Could not find Action definition \"" + printName(problem) + "\".");
     }
   }
 
@@ -47,7 +47,7 @@ public class ActionSupertypes implements SysMLActionsASTActionDefCoCo, SysMLActi
         .collect(Collectors.toList());
 
     for(var problem: nonExistent) {
-      Log.error("Could not find Action definition or usage with the name \"" + printName(problem) + "\".");
+      Log.error("0x10020 Could not find Action definition or usage with the name \"" + printName(problem) + "\".");
     }
   }
 }

@@ -31,7 +31,7 @@ public class ItemsSupertypes implements SysMLItemsASTItemDefCoCo, SysMLItemsASTI
         .collect(Collectors.toList());
 
     for(var problem: nonExistent) {
-      Log.error("Could not find item definition \"" + printName(problem) + "\".");
+      Log.error("0x10023 Could not find item definition \"" + printName(problem) + "\".");
     }
   }
 
@@ -47,7 +47,7 @@ public class ItemsSupertypes implements SysMLItemsASTItemDefCoCo, SysMLItemsASTI
         .collect(Collectors.toList());
 
     for(var problem: nonExistent) {
-      Log.error("Could not find item definition or usage with the name \"" + printName(problem) + "\".");
+      Log.error("0x10024 Could not find item definition or usage with the name \"" + printName(problem) + "\".");
     }
   }
 }

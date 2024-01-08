@@ -41,7 +41,9 @@ public class PortSpecializationsArePortsTest extends NervigeSymboltableTests {
     checker.addCoCo((SysMLPartsASTPortUsageCoCo) new PortSpecializationsArePorts());
     Log.enableFailQuick(false);
     checker.checkAll((ASTSysMLv2Node) as.getAstNode());
-    assertThat(Log.getFindings()).hasSize(1).first().matches(f -> f.getMsg().startsWith("0xMPf001"));
+    assertThat(Log.getFindings())
+        .hasSize(1)
+        .first().matches(f -> f.getMsg().startsWith("0x10018"));
   }
 
 }

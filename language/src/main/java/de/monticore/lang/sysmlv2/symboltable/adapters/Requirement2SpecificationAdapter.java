@@ -58,7 +58,7 @@ public class Requirement2SpecificationAdapter extends MildSpecificationSymbol {
       return assumed.map(c -> c.getAstNode().getExpression()).collect(Collectors.toList());
     }
     else {
-      Log.error("0xMPf003 AST of Requirement Usage not present");
+      Log.error("0x10003 AST of Requirement Usage not present");
       return new ArrayList<>();
     }
   }
@@ -72,7 +72,7 @@ public class Requirement2SpecificationAdapter extends MildSpecificationSymbol {
       return asserted.map(c -> c.getAstNode().getExpression()).collect(Collectors.toList());
     }
     else {
-      Log.error("0xMPf003 AST of Requirement Usage not present");
+      Log.error("0x10003 AST of Requirement Usage not present");
       return new ArrayList<>();
     }
   }

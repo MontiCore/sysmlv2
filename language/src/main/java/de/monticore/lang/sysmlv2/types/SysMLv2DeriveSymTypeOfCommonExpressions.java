@@ -96,7 +96,7 @@ public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfComm
         if (type.getTypeInfo().getName().contains("Stream")) {
           getTypeCheckResult().setResult(type);
         } else {
-          Log.error("type should be Stream");
+          Log.error("0x81010 Type should be Stream");
         }
       }
     } else {
@@ -106,7 +106,7 @@ public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfComm
         getTypeCheckResult().setResult(type);
       } else {
         //but type is Stream
-        Log.error("type should not be Stream");
+        Log.error("0x81001 type should not be Stream");
       }
     }
   }

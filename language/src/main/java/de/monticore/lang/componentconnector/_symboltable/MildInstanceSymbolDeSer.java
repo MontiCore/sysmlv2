@@ -17,7 +17,7 @@ public class MildInstanceSymbolDeSer extends MildInstanceSymbolDeSerTOP {
       ComponentConnectorSymbols2Json s2j)
   {
     // TODO
-    Log.error("Implement me");
+    Log.error("0xTODO0 Implement me");
   }
 
   @Override protected void serializeType(CompKindExpression type, ComponentConnectorSymbols2Json s2j) {
@@ -26,13 +26,13 @@ public class MildInstanceSymbolDeSer extends MildInstanceSymbolDeSerTOP {
 
   @Override protected List<ASTParameterValue> deserializeParameterValues(JsonObject symbolJson) {
     // TODO
-    Log.error("Implement me");
+    Log.error("0xTODO1 Implement me");
     return null;
   }
 
   @Override protected CompKindExpression deserializeType(JsonObject symbolJson) {
     // TODO
-    Log.error("Implement me");
+    Log.error("0xTODO2 Implement me");
     return null;
   }
 }

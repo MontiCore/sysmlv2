@@ -36,7 +36,7 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
         .collect(Collectors.toList());
 
     for(var problem: nonExistent) {
-      Log.error("Could not find part definition \"" + printName(problem) + "\".");
+      Log.error("0x10025 Could not find part definition \"" + printName(problem) + "\".");
     }
   }
 
@@ -52,7 +52,7 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
         .collect(Collectors.toList());
 
     for(var problem: nonExistent) {
-      Log.error("Could not find part definition or usage with the name \"" + printName(problem) + "\".");
+      Log.error("0x10026 Could not find part definition or usage with the name \"" + printName(problem) + "\".");
     }
   }
   @Override
@@ -63,7 +63,7 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
         .collect(Collectors.toList());
 
     for(var problem: nonExistent) {
-      Log.error("Could not find part definition \"" + printName(problem) + "\".");
+      Log.error("0x10027 Could not find part definition \"" + printName(problem) + "\".");
     }
   }
 
@@ -79,7 +79,7 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
         .collect(Collectors.toList());
 
     for(var problem: nonExistent) {
-      Log.error("Could not find part definition or usage with the name \"" + printName(problem) + "\".");
+      Log.error("0x10028 Could not find part definition or usage with the name \"" + printName(problem) + "\".");
     }
   }
 }

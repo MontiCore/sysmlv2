@@ -27,7 +27,7 @@ public class NameCompatible4Isabelle implements SysMLStatesASTStateDefCoCo,
   //check for name
   private void LogsCompatible4Isabelle(String name, SourcePosition start, SourcePosition end){
     if(!name.matches("^(?!0-9)[a-zA-Z0-9_]+$") && !name.isEmpty()){
-      Log.error("This name is not Isabelle compatible", start, end);
+      Log.error("0xMB005 This name is not Isabelle compatible", start, end);
     }
   }
 

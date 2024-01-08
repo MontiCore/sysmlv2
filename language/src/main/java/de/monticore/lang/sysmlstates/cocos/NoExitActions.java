@@ -12,7 +12,7 @@ public class NoExitActions implements SysMLStatesASTExitActionCoCo {
 
   @Override
   public void check(ASTExitAction node) {
-    Log.error("ExitActions are not supported.");
+    Log.error("0xMB007 ExitActions are not supported.");
   }
 
 }

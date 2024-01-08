@@ -111,7 +111,7 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
           .collect(Collectors.toList());
     }
     else {
-      Log.warn("0xMPf004 Attempted to get connectors for a symbol");
+      Log.warn("0x10004 Attempted to get connectors for a symbol");
       return new ArrayList<>();
     }
   }
