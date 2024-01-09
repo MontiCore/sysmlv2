@@ -17,14 +17,14 @@ public class NoDoActions implements SysMLStatesASTStateUsageCoCo, SysMLStatesAST
   @Override
   public void check(ASTStateUsage node) {
     if(node.isPresentDoAction()) {
-      Log.error("0xMB003 DoActions are not supported.", node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+      Log.error("0xFF003 DoActions are not supported.", node.get_SourcePositionStart(), node.get_SourcePositionEnd());
     }
   }
 
   @Override
   public void check(ASTStateDef node) {
     if(node.isPresentDoAction()) {
-      Log.error("0xMB004 DoActions are not supported.", node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+      Log.error("0xFF004 DoActions are not supported.", node.get_SourcePositionStart(), node.get_SourcePositionEnd());
     }
   }
 }

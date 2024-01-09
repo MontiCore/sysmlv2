@@ -42,6 +42,7 @@ import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCom
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FilenameUtils;
 
@@ -212,6 +213,14 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     node.accept(traverser);
   }
 
+  public Options addAdditionalOptions(Options options) {
+    options.addOption(Option.builder("ex")
+        .longOpt("extended")
+        .desc("Runs additional checks not pertaining to the official language specification")
+        .build());
+    return options;
+  }
+
   // MontiCore generiert hier leider herzlich wenig Sinnvolles
   @Override
   public  void run (String[] args) {
@@ -267,11 +276,20 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
         asts.forEach(it -> finalizeSymbolTable(it));
 
         asts.forEach(it -> runDefaultCoCos(it));
-        asts.forEach(it -> runAdditionalCoCos(it));
+        if (cmd.hasOption("extended")) {
+          asts.forEach(it -> runAdditionalCoCos(it));
+        }
 
         if (cmd.hasOption("prettyprint")) {
           String target = cmd.getOptionValue("prettyprint");
           asts.forEach(it -> prettyPrint(it, target));
+        }
+
+        if (cmd.hasOption("symboltable")) {
+          Log.warn("0xA0003 Not implemented yet.");
+        }
+        if (cmd.hasOption("report")) {
+          Log.warn("0xA0004 Not implemented yet.");
         }
       }
     }

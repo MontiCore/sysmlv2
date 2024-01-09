@@ -24,7 +24,7 @@ public class OneCardinality implements SysMLBasisASTSpecializationCoCo {
       }
 
       if(multipleCardinalities || Cardinality.isMany() || Cardinality.isNoUpperLimit()) {
-        Log.warn("0xMB008 SysML-Transformer will ignore multiple Cardinalities",
+        Log.warn("0xFF008 SysML-Transformer will ignore multiple Cardinalities",
             node.get_SourcePositionStart(), node.get_SourcePositionEnd());
       }
     }

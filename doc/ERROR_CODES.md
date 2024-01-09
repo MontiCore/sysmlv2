@@ -8,4 +8,5 @@
 | 0x80xxx | Type Check (CoCo)                                  |
 | 0x81xxx | Type Derivation (might happen while ST completion) |
 | 0x90xxx | Refinement related                                 |
-| 0xMBxxx | Verification-specific                              |
+| 0xFFxxx | Verification-specific                              |
+| 0xA0xxx | Internal error                                     |

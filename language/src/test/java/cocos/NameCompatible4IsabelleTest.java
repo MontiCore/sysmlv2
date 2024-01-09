@@ -101,6 +101,6 @@ public class NameCompatible4IsabelleTest {
     checker.checkAll(ast.get());
 
     assertThat(Log.getFindings()).isNotEmpty();
-    assertThat(Log.getFindings()).allMatch(f -> f.getMsg().contains("0xMB005"));
+    assertThat(Log.getFindings()).allMatch(f -> f.getMsg().contains("0xFF005"));
   }
 }

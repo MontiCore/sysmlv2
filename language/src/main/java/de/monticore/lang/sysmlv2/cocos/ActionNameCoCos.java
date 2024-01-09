@@ -17,7 +17,7 @@ public class ActionNameCoCos implements SysMLActionsASTActionDefCoCo, SysMLActio
   public void check(ASTActionDef node) {
 
     if (node.getName().equals("done")) {
-      Log.error("0xMB001 Action definition can not have the name \" done\".");
+      Log.error("0xFF001 Action definition can not have the name \" done\".");
     }
   }
 
@@ -27,7 +27,7 @@ public class ActionNameCoCos implements SysMLActionsASTActionDefCoCo, SysMLActio
   @Override
   public void check(ASTActionUsage node) {
     if (node.getName().equals("done")) {
-      Log.error("0xMB002 Action definition can not have the name \" done\".");
+      Log.error("0xFF002 Action definition can not have the name \" done\".");
     }
   }
 }

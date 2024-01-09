@@ -67,9 +67,9 @@ public class SpesMLTest {
     checker.checkAll(ast.get());
     List<Finding> findings = getFindings();
     assertThat(findings).hasSize(3);
-    assertThat(findings.get(0).getMsg()).contains("0xA70001");
-    assertThat(findings.get(1).getMsg()).contains("0xA70001");
-    assertThat(findings.get(2).getMsg()).contains("0xA70001");
+    assertThat(findings.get(0).getMsg()).contains("0xFF0001");
+    assertThat(findings.get(1).getMsg()).contains("0xFF0001");
+    assertThat(findings.get(2).getMsg()).contains("0xFF0001");
   }
 
   @Test
@@ -96,7 +96,7 @@ public class SpesMLTest {
     checker.checkAll(ast.get());
     List<Finding> findings = getFindings();
     assertThat(findings).hasSize(1);
-    assertThat(findings.get(0).getMsg()).contains("0xA70002");
+    assertThat(findings.get(0).getMsg()).contains("0xFF0002");
   }
 
 
@@ -124,7 +124,7 @@ public class SpesMLTest {
     checker.checkAll(ast.get());
     List<Finding> findings = getFindings();
     assertThat(findings).hasSize(1);
-    assertThat(findings.get(0).getMsg()).contains("0xA70004");
+    assertThat(findings.get(0).getMsg()).contains("0xFF0004");
   }
 
   @Test
@@ -138,7 +138,7 @@ public class SpesMLTest {
     checker.checkAll(ast.get());
     List<Finding> findings = getFindings();
     assertThat(findings).hasSize(1);
-    assertThat(findings.get(0).getMsg()).contains("0xA70003");
+    assertThat(findings.get(0).getMsg()).contains("0xFF0003");
   }
 
   @Test
