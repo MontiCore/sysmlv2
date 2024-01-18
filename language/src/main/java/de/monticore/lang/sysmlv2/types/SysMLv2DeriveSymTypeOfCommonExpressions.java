@@ -1,10 +1,10 @@
 package de.monticore.lang.sysmlv2.types;
 
+import de.monticore.expressions.commonexpressions._ast.ASTArrayAccessExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.lang.sysmlparts.symboltable.adapters.PortUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
-import de.monticore.ocl.oclexpressions._ast.ASTOCLArrayQualification;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
@@ -163,11 +163,11 @@ public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfComm
             //else-case for SuperClass
             getTypeCheckResult().setResult(type);
           }
-        } else if (expr.getExpression() instanceof ASTOCLArrayQualification) {
+        } else if (expr.getExpression() instanceof ASTArrayAccessExpression) {
           //case for expression like f[1].a, f[1].a[1]
-          var oclExpr = expr.getExpression();
-          if (((ASTOCLArrayQualification) oclExpr).getExpression() instanceof ASTNameExpression) {
-            var nameExpr = ((ASTOCLArrayQualification) oclExpr).getExpression();
+          var arrayExpr = expr.getExpression();
+          if (((ASTArrayAccessExpression) arrayExpr).getExpression() instanceof ASTNameExpression) {
+            var nameExpr = ((ASTArrayAccessExpression) arrayExpr).getExpression();
             if (((ASTNameExpression) nameExpr).getDefiningSymbol().get() instanceof PortUsage2VariableSymbolAdapter) {
               calculateFieldAccessAboutPortUsage(type);
             } else {

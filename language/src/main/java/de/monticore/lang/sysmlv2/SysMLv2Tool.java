@@ -38,7 +38,9 @@ import de.monticore.lang.sysmlv2.cocos.WarnNonExhibited;
 import de.monticore.lang.sysmlv2.symboltable.completers.*;
 import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.lang.sysmlv2.types.SysMLSynthesizer;
-import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCompleter;
+import de.monticore.ocl.oclexpressions.symboltable.OCLExpressionsSymbolTableCompleter;
+import de.monticore.ocl.types3.OCLSymTypeRelations;
+import de.monticore.ocl.types3.util.OCLCollectionTypeRelations;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -64,6 +66,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     SysMLv2Mill.addStringType();
     SysMLv2Mill.addCollectionTypes();
     SysMLv2Mill.addStreamType();
+    OCLSymTypeRelations.init();
   }
 
   /**
@@ -201,7 +204,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
   public void finalizeSymbolTable(ASTSysMLModel node) {
     var traverser = SysMLv2Mill.traverser();
     // null parameters since we don't really understand any of those (yet)
-    var oclCompleter = new OCLExpressionsSymbolTableCompleter(null, null);
+    var oclCompleter = new OCLExpressionsSymbolTableCompleter();
     // TODO The "true" here assumes, that OCL-Expr. are only ever used in history-oriented constraints
     oclCompleter.setDeriver(new SysMLDeriver(true));
     oclCompleter.setSynthesizer(new SysMLSynthesizer());
