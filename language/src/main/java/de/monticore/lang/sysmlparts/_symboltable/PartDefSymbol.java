@@ -114,7 +114,7 @@ public class PartDefSymbol extends PartDefSymbolTOP {
 
     for (var port1 : new ArrayList<>(unmatchedPorts1)){
       for (var port2 : new ArrayList<>(unmatchedPorts2)){
-        if (matchPort(port1, port2)){
+        if (port1.matches(port2)){
           unmatchedPorts1.remove(port1);
           unmatchedPorts2.remove(port2);
           break;
@@ -122,22 +122,6 @@ public class PartDefSymbol extends PartDefSymbolTOP {
       }
     }
     return unmatchedPorts1.isEmpty() && unmatchedPorts2.isEmpty();
-  }
-
-  /**
-   * @return true if the given ports have the same type and access modifier
-   */
-  private static boolean matchPort(PortUsageSymbol port1, PortUsageSymbol port2){
-    if (port1.getAccessModifier() != port2.getAccessModifier() ||
-        port1.getTypesList().size() != port2.getTypesList().size()){
-      return false;
-    }
-    for (int i = 0; i < port1.getTypesList().size(); i++){
-      if (!Objects.equals(port1.getTypes(i).getTypeInfo().getFullName(), port2.getTypes(i).getTypeInfo().getFullName())){
-        return false;
-      }
-    }
-    return true;
   }
 
   /**
@@ -165,18 +149,23 @@ public class PartDefSymbol extends PartDefSymbolTOP {
   public int getRefinementScore(PartDefSymbol rough) {
     var score = 0;
 
-    // Prefer refinements of higher level components
-    if (rough.getRequirementType() == ASTSysMLReqType.LLR){
-      if (this.getRequirementType() == ASTSysMLReqType.MIXED) {
+    // We prefer refinements that go got the next abstraction level
+    if (this.getRequirementType() == ASTSysMLReqType.LLR && rough.getRequirementType() == ASTSysMLReqType.LLR) {
+        score += 10;
+    } else if (this.getRequirementType() == ASTSysMLReqType.MIXED){
+      if (rough.getRequirementType() == ASTSysMLReqType.MIXED){
         score += 5;
-      } else if (this.getRequirementType() == ASTSysMLReqType.HLR){
+      } else if (rough.getRequirementType() == ASTSysMLReqType.LLR){
         score += 10;
       }
-    } else if (rough.getRequirementType() == ASTSysMLReqType.MIXED){
-      if (this.getRequirementType() == ASTSysMLReqType.HLR){
+    } else if (this.getRequirementType() == ASTSysMLReqType.HLR) {
+      if (rough.getRequirementType() == ASTSysMLReqType.HLR && rough.getRequirementType() == ASTSysMLReqType.LLR){
+        score += 5;
+      } else if (rough.getRequirementType() == ASTSysMLReqType.MIXED){
         score += 10;
       }
     }
+
 
     // Prefer refinements with the same number of connections
     if (rough.getAstNode() != null){

@@ -1,11 +1,11 @@
 package de.monticore.lang.sysmlparts._symboltable;
 
 import de.monticore.lang.sysmlparts.symboltable.adapters.PortDef2TypeSymbolAdapter;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolSurrogate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PortUsageSymbol extends PortUsageSymbolTOP {
@@ -112,4 +112,19 @@ public class PortUsageSymbol extends PortUsageSymbolTOP {
     return res;
   }
 
+  /**
+   * @return true if the given ports have the same type and access modifier
+   */
+  public boolean matches( PortUsageSymbol port2){
+    if (this.getAccessModifier() != port2.getAccessModifier() ||
+        this.getTypesList().size() != port2.getTypesList().size()){
+      return false;
+    }
+    for (int i = 0; i < this.getTypesList().size(); i++){
+      if (!Objects.equals(this.getTypes(i).getTypeInfo().getFullName(), port2.getTypes(i).getTypeInfo().getFullName())){
+        return false;
+      }
+    }
+    return true;
+  }
 }
