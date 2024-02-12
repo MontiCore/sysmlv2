@@ -25,42 +25,45 @@ public class RefinementChainCheck implements SysMLPartsASTPartDefCoCo {
         .setColumn(node.get_SourcePositionStart().getColumn() + node.getName().length() + "part def".length() + 2)
         .build();
 
-    if (node.getRefinements().isEmpty() && node.getSymbol().getRequirementType() == ASTSysMLReqType.LLR){
-      Log.warn("0x90010 Low level requirement without refinement.", node.get_SourcePositionStart(), partDefNameEnd);
-    } else if (node.getSymbol().getRequirementType() == ASTSysMLReqType.LLR){
-      // If there are ConnectionUsages in a Lrr,
-      // there should be a refinement with similar ConnectionUsages that uses HLR parts only.
+    if (node.getSymbol().getRequirementType() == ASTSysMLReqType.LLR || node.getSymbol().getRequirementType() == ASTSysMLReqType.MIXED) {
+
+      if(getAllWithoutConnectionUsages(node.getSymbol().getTransitiveRefinements()).isEmpty()) {
+        Log.warn("0x90022 A low level requirement should (at least indirectly) refine at least one basic requirement",
+            node.get_SourcePositionStart(), partDefNameEnd);
+      }
+
       if (node.getSysMLElementList().stream().anyMatch(e -> e instanceof ASTConnectionUsage)){
-        if (filterSimilarCompositions(node.getSymbol(), node.getSymbol().getTransitiveRefinements()).size() == 0){
-          Log.warn("0x90011 Llr with ConnectionUsages should refine at least one HLR with similiar ConnectionUsages.",
+        // Checks dedicated to basic LLR/Mixed-Compositions
+        if (filterSimilarCompositions(node.getSymbol(), node.getSymbol().getTransitiveRefinements()).isEmpty()){
+          Log.warn("0x90011 A low level or mixed composition should refine a composition with similiar ConnectionUsages.",
               node.get_SourcePositionStart(),
               partDefNameEnd);
         }
+
       }
     }
 
-    if (node.getSymbol().getRequirementType() == ASTSysMLReqType.HLR ||
-        node.getSymbol().getRequirementType() == ASTSysMLReqType.MIXED){
-      var refiners = node.getSymbol().getTransitiveRefiners();
-      if (refiners.isEmpty()){
-        Log.warn("0x90020 High level or mixed requirements should be refined.",
-            node.get_SourcePositionStart(), partDefNameEnd);
-      } else {
-        // If there are ConnectionUsages in a Hlr,
-        // there should be a refiner with similar ConnectionUsages that uses Llr parts only.
-        if (node.getSysMLElementList().stream().anyMatch(e -> e instanceof ASTConnectionUsage)){
-          if (filterSimilarCompositions(node.getSymbol(), node.getSymbol().getTransitiveRefiners()).size() == 0){
-            Log.warn("0x90021 A composition should be (further) refined by a similarly composed composition.",
-                node.get_SourcePositionStart(), partDefNameEnd);
-          }
-        }
-      }
-      if (node.getSysMLElementList().stream().anyMatch(e -> e instanceof ASTConnectionUsage)) {
-        if (getAllWithoutConnectionUsages(node.getRefinements()).size() == 0){
-          // High Level Architekturen / Dekompositionen sollte auf ein "Basis Requirement" zurückzuführen sein,
+    if (node.getSymbol().getRequirementType() == ASTSysMLReqType.HLR || node.getSymbol().getRequirementType() == ASTSysMLReqType.MIXED) {
+      if(node.getSysMLElementList().stream().anyMatch(e -> e instanceof ASTConnectionUsage)) {
+        // Checks dedicated to HLR/Mixed-Compositions
+        if(getAllWithoutConnectionUsages(node.getSymbol().getTransitiveRefinements()).isEmpty()) {
+          // High Level Architekturen / Kompositionen sollte auf ein "Basis Requirement" zurückzuführen sein,
           // welches das Verhalten nur anhand von beispielsweise Constraints beschreibt.
-          Log.warn("0x90022 High level decompositions should refine at least one basic requirement",
+          Log.warn("0x90022 A high level composition should refine at least one basic requirement",
               node.get_SourcePositionStart(), partDefNameEnd);
+        }
+
+        if(filterSimilarCompositions(node.getSymbol(), node.getSymbol().getTransitiveRefiners()).isEmpty()) {
+          Log.warn("0x90021 A high level composition should be refined by a composition with similiar ConnectionUsages.",
+              node.get_SourcePositionStart(), partDefNameEnd);
+        }
+
+      } else {
+        // Checks dedicated to Basic/Mixed-HLRs
+        if(node.getSymbol().getTransitiveRefiners().isEmpty()) {
+          Log.warn("0x90020 A basic high level or mixed requirement should be refined.",
+              node.get_SourcePositionStart(), partDefNameEnd);
+
         }
       }
     }
@@ -83,6 +86,7 @@ public class RefinementChainCheck implements SysMLPartsASTPartDefCoCo {
 
       if (connectionUsages.size() == refConnectionUsages.size()){
         result.add(refinement);
+
       }
     }
     return result;
