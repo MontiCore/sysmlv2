@@ -179,6 +179,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     traverser.add4SysMLParts(new RequirementClassificationCompleter());
     traverser.add4SysMLParts(new DirectRefinementCompleter());
     traverser.add4SysMLParts(new CausalityCompleter());
+    traverser.add4SysMLStates(new StateExhibitionCompleter());
 
     // gleiches Spiel wie oben: Alles besuchen verlangt zwei Calls
     if(node.getEnclosingScope() != null) {

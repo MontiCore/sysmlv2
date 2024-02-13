@@ -1,11 +1,12 @@
 package de.monticore.lang.sysmlv2._symboltable;
 
+import de.monticore.lang.automaton._symboltable.AutomatonSymbol;
+import de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildPortSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
-import de.monticore.lang.sysmlparts._symboltable.PortDefSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeUsage2VariableSymbolAdapter;
@@ -14,18 +15,17 @@ import de.monticore.lang.sysmlparts.symboltable.adapters.PartDef2TypeSymbolAdapt
 import de.monticore.lang.sysmlparts.symboltable.adapters.PortDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.PortUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlrequirements._ast.ASTRequirementUsage;
+import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
 import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.AttributeUsage2PortSymbolAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Constraint2SpecificationAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.PartDef2ComponentAdapter;
+import de.monticore.lang.sysmlv2.symboltable.adapters.PartDef2ExtendedMildComponentAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Requirement2SpecificationAdapter;
-import de.monticore.lang.sysmlv2.symboltable.adapters.StateUsage2SCStateAdapter;
-import de.monticore.scbasis._symboltable.SCStateSymbol;
+import de.monticore.lang.sysmlv2.symboltable.adapters.StateUsage2AutomatonAdapter;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolTOP;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.symbols.compsymbols._symboltable.PortSymbol;
 import de.monticore.symboltable.IScopeSpanningSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
@@ -33,7 +33,6 @@ import de.monticore.types.check.SymTypeExpressionFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
@@ -247,20 +246,41 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
   }
 
   @Override
-  default List<SCStateSymbol> resolveAdaptedSCStateLocallyMany(
+  default List<ExtendedMildComponentSymbol> resolveAdaptedExtendedMildComponentLocallyMany(
       boolean foundSymbols,
       String name,
       AccessModifier modifier,
-      Predicate<SCStateSymbol> predicate
+      Predicate<ExtendedMildComponentSymbol> predicate
   ) {
-    var adapted = new ArrayList<SCStateSymbol>();
+    var adapted = new ArrayList<ExtendedMildComponentSymbol>();
 
-    var stateUsage = resolveStateUsageLocally(name);
-    if(stateUsage.isPresent()) {
-      adapted.add(new StateUsage2SCStateAdapter(stateUsage.get()));
-    }
+    var partDef = resolvePartDefLocally(name);
+    partDef.ifPresent(part -> adapted.add(new PartDef2ExtendedMildComponentAdapter(part)));
 
     return adapted;
   }
 
+  @Override
+  default List<AutomatonSymbol> resolveAdaptedAutomatonLocallyMany(
+      boolean foundSymbols, String name,
+      AccessModifier modifier,
+      Predicate<AutomatonSymbol> predicate
+  ) {
+    var adapted = new ArrayList<AutomatonSymbol>();
+
+    var partDef = resolvePartDefLocally(name);
+
+    partDef.ifPresent(part -> {
+      var optAut = ((ISysMLv2Scope)part.getSpannedScope())
+          .getLocalStateUsageSymbols()
+          .stream()
+          .filter(StateUsageSymbol::isExhibited)
+          .findFirst()
+          .map(state -> new StateUsage2AutomatonAdapter(part, state));
+
+      optAut.ifPresent(adapted::add);
+    });
+
+    return adapted;
+  }
 }

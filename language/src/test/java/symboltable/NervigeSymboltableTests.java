@@ -1,5 +1,8 @@
 package symboltable;
 
+import de.monticore.lang.automaton._symboltable.AutomatonSymbols2Json;
+import de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbol;
+import de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbolDeSer;
 import de.monticore.lang.componentconnector._symboltable.ComponentConnectorSymbols2Json;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbolDeSer;
@@ -63,16 +66,16 @@ abstract public class NervigeSymboltableTests {
 
   /** Vorläufiger Ablageort für ST-Serialization Geraffel */
   protected void fixSerialization() {
-    MildComponentSymbolDeSer myComponentSymbolDeSer = new MildComponentSymbolDeSer() {
+    ExtendedMildComponentSymbolDeSer myComponentSymbolDeSer = new ExtendedMildComponentSymbolDeSer() {
       ComponentSymbolDeSer delegate = new ComponentSymbolDeSer();
       @Override
-      public String serialize (MildComponentSymbol toSerialize, ComponentConnectorSymbols2Json s2j){
+      public String serialize (ExtendedMildComponentSymbol toSerialize, AutomatonSymbols2Json s2j){
         return delegate.serialize(toSerialize, new CompSymbolsSymbols2Json(s2j.getTraverser(), s2j.getJsonPrinter()));
       }
     };
 
     SysMLv2Mill.globalScope().getSymbolDeSers()
-        .put("de.monticore.lang.componentconnector._symboltable.MildComponentSymbol", myComponentSymbolDeSer);
+        .put("de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbol", myComponentSymbolDeSer);
 
     MildPortSymbolDeSer myPortSymbolDeSer = new MildPortSymbolDeSer() {
       PortSymbolDeSer delegate = new PortSymbolDeSer();
