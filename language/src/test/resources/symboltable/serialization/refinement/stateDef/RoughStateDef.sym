@@ -39,6 +39,7 @@
                 {
                   "kind": "de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol",
                   "name": "behavior",
+                  "exhibited": true,
                   "spannedScope": {
                     "isShadowingScope": true,
                     "symbols": [

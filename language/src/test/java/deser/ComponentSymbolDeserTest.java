@@ -1,5 +1,11 @@
 package deser;
 
+import de.monticore.lang.automaton._symboltable.AutomatonSymbolDeSer;
+import de.monticore.lang.automaton._symboltable.AutomatonSymbols2Json;
+import de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbol;
+import de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbolDeSer;
+import de.monticore.lang.automaton._visitor.AutomatonHandler;
+import de.monticore.lang.automaton._visitor.AutomatonTraverser;
 import de.monticore.lang.componentconnector._symboltable.ComponentConnectorSymbols2Json;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbolDeSer;
@@ -65,7 +71,7 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
     // Serialisierung nach MildComponent
     var mild_st = new SysMLv2Symbols2Json().serialize(s);
     assertThat(mild_st).isEqualTo("{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\",\"symbols\":"
-        + "[{\"kind\":\"de.monticore.lang.componentconnector._symboltable.MildComponentSymbol\",\"name\":\"A\"}]}");
+        + "[{\"kind\":\"de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbol\",\"name\":\"A\"}]}");
   }
 
   // TODO Versuche ab hier die Default-Ser von CompSymbols zu benutzen
@@ -170,26 +176,26 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
     var printer = new JsonPrinter();
 
     // Ohne Inheritance-Traverse ging es vielleicht mit Handler?
-    traverser.setComponentConnectorHandler(new ComponentConnectorHandler() {
-      protected ComponentConnectorTraverser t = traverser;
+    traverser.setAutomatonHandler(new AutomatonHandler() {
+      protected AutomatonTraverser t = traverser;
 
       @Override
-      public ComponentConnectorTraverser getTraverser() {
+      public AutomatonTraverser getTraverser() {
         return t;
       }
 
       @Override
-      public void setTraverser(ComponentConnectorTraverser traverser) {
+      public void setTraverser(AutomatonTraverser traverser) {
         t = traverser;
       }
 
       // Caste und visitiere damit im Super-Type
       @Override
-      public void handle(MildComponentSymbol node) {
+      public void handle(ExtendedMildComponentSymbol node) {
         getTraverser().visit((ComponentSymbol) node);
         // Direkt Traverse, damit Inheritance-Problem nicht wieder zuschlägt
         //ComponentConnectorHandler.super.handle(node);
-        ComponentConnectorHandler.super.traverse(node);
+        AutomatonHandler.super.traverse(node);
         getTraverser().endVisit((ComponentSymbol) node);
       }
     });
@@ -241,16 +247,16 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
     artifact.add(comp);
 
     // Zweiter Versuch von AHe
-    MildComponentSymbolDeSer myTypeSymbolDeSer = new MildComponentSymbolDeSer() {
+    ExtendedMildComponentSymbolDeSer myTypeSymbolDeSer = new ExtendedMildComponentSymbolDeSer() {
       ComponentSymbolDeSer delegate = new ComponentSymbolDeSer();
       @Override
-      public String serialize (MildComponentSymbol toSerialize, ComponentConnectorSymbols2Json s2j){
+      public String serialize (ExtendedMildComponentSymbol toSerialize, AutomatonSymbols2Json s2j){
         return delegate.serialize(toSerialize, new CompSymbolsSymbols2Json(s2j.getTraverser(), s2j.getJsonPrinter()));
       }
     };
 
     SysMLv2Mill.globalScope().getSymbolDeSers()
-        .put("de.monticore.lang.componentconnector._symboltable.MildComponentSymbol", myTypeSymbolDeSer);
+        .put("de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbol", myTypeSymbolDeSer);
 
     // Klappt auch, aber ziemlich Spaghetti
     var st = new SysMLv2Symbols2Json().serialize(artifact);
