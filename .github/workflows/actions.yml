@@ -3,6 +3,6 @@ jobs:
   show_help_text:
     runs-on: ubuntu-latest
     steps:
-      - run: apt update -y && apt install -y openjdk-11-jdk
+      - run: sudo apt update -y && sudo apt install -y openjdk-11-jdk
       - run: java -jar bin/MCSysMLv2.jar -h
       
