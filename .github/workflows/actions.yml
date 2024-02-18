@@ -1,5 +1,6 @@
+on: [push]
 jobs:
-  show help text:
+  show_help_text:
     runs-on: ubuntu-latest
     steps:
       - run: apt update -y && apt install -y openjdk-11-jdk
