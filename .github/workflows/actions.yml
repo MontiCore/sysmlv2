@@ -1,0 +1,7 @@
+jobs:
+  show help text:
+    runs-on: ubuntu-latest
+    steps:
+      - run: apt update -y && apt install -y openjdk-11-jdk
+      - run: java -jar bin/MCSysMLv2.jar -h
+      
