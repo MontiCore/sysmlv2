@@ -1,7 +1,13 @@
 package symboltable;
 
+import de.monticore.expressions.commonexpressions._ast.ASTLogicalNotExpression;
+import de.monticore.lang.automaton._ast.ASTConfiguration;
+import de.monticore.lang.automaton._ast.ASTOutput;
 import de.monticore.lang.automaton._ast.ASTStateSpace;
 import de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbol;
+import de.monticore.lang.sysmlv2._prettyprint.SysMLv2FullPrettyPrinter;
+import de.monticore.lang.sysmlv2._prettyprint.SysMLv2PrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -66,5 +72,77 @@ public class AutomatonSymbolAdapterTest extends NervigeSymboltableTests {
     var state = states.get(0);
     assertThat(state.getBaseName()).isEqualTo("S1");
     assertThat(state.getQName()).isEqualTo("A.S.S1");
+  }
+
+  @Test
+  public void testInitialConfig() throws IOException {
+    var as = process("port def B {\n"
+        + "  in attribute val: boolean;\n"
+        + "}\n"
+        + "\n"
+        + "part def A {\n"
+        + "  port i: B;\n"
+        + "  port o: ~B;\n"
+        + "\n"
+        + "  exhibit state aut {\n"
+        + "    entry action {\n"
+        + "      // Do one with parameter as entry action\n"
+        + "      send 4 to o.val;\n"
+        + "    }\n"
+        + "      then S;\n"
+        + "\n"
+        + "  }\n"
+        + "}");
+
+    var aut = as.resolveAutomaton("A").get();
+
+    var initialConfig = aut.getInitialConfiguration(0);
+
+    var output = initialConfig.getOutput(0);
+
+    var port = output.getPortSymbol();
+    var state = output.getValue();
+
+    assertThat(port.getName()).isEqualTo("o.val");
+    assertThat(new SysMLv2FullPrettyPrinter(new IndentPrinter()).prettyprint(state)).isEqualTo("4");
+  }
+
+  @Test
+  public void testEventTransition() throws IOException {
+    var as = process("port def B {\n"
+        + "  in attribute val: boolean;\n"
+        + "}\n"
+        + "\n"
+        + "part def A {\n"
+        + "  port i: B;\n"
+        + "  port o: ~B;\n"
+        + "\n"
+        + "  exhibit state aut {\n"
+        + "    state S;\n"
+        + "    transition t\n"
+        + "      first S\n"
+        + "      accept i.val\n"
+        + "      if true\n"
+        + "      do action { send !i.val to o.val; }\n"
+        + "      then S;\n"
+        + "  }\n"
+        + "}");
+
+    var aut = as.resolveAutomaton("A").get();
+
+    assertThat(aut.getTickTransitionsList()).isEmpty();
+
+    var evTransitions = aut.getEventTransitionsList();
+    assertThat(evTransitions).isNotEmpty();
+
+    var trans = evTransitions.get(0);
+    assertThat(trans.getPortSymbol().getName()).isEqualTo("i.val");
+
+    ASTConfiguration result = trans.getTransition(0).getResult();
+    assertThat(result.getState().getName()).isEqualTo("S");
+
+    ASTOutput output = result.getOutput(0);
+    assertThat(output.getPortSymbol().getName()).isEqualTo("o.val");
+    assertThat(output.getValue()).isInstanceOf(ASTLogicalNotExpression.class);
   }
 }

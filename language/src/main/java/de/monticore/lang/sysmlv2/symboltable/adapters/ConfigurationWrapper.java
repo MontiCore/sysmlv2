@@ -2,24 +2,25 @@ package de.monticore.lang.sysmlv2.symboltable.adapters;
 
 import de.monticore.ast.Comment;
 import de.monticore.cardinality._symboltable.ICardinalityScope;
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope;
-import de.monticore.lang.automaton._ast.ASTStateSpace;
+import de.monticore.lang.automaton._ast.ASTConfiguration;
+import de.monticore.lang.automaton._ast.ASTOutput;
+import de.monticore.lang.automaton._ast.ASTState;
 import de.monticore.lang.automaton._symboltable.IAutomatonScope;
 import de.monticore.lang.automaton._visitor.AutomatonTraverser;
 import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScope;
-import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
-import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
-import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
+import de.monticore.lang.sysmlactions._ast.ASTActionUsage;
+import de.monticore.lang.sysmlv2.SysMLv2Mill;
+import de.monticore.lang.sysmlv2._prettyprint.SysMLv2FullPrettyPrinter;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.lang.sysmlactions.visitors.SendActionAssignmentsVisitor;
 import de.monticore.literals.mccommonliterals._symboltable.IMCCommonLiteralsScope;
 import de.monticore.literals.mcliteralsbasis._symboltable.IMCLiteralsBasisScope;
 import de.monticore.mcbasics._symboltable.IMCBasicsScope;
-import de.monticore.symbols.basicsymbols._ast.ASTVariable;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.compsymbols._symboltable.ICompSymbolsScope;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedNameBuilder;
 import de.monticore.types.mcbasictypes._symboltable.IMCBasicTypesScope;
 import de.se_rwth.commons.SourcePosition;
 
@@ -28,7 +29,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Optional;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -36,234 +36,82 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class StateSpaceWrapper implements ASTStateSpace {
-  private final StateUsageSymbol adaptee;
-  // In aut check exhibit
-  StateSpaceWrapper(StateUsageSymbol adaptee) {
+public class ConfigurationWrapper implements ASTConfiguration {
+  private final ASTActionUsage adaptee;
+
+  private final ASTState state;
+
+  /** Caching because of internal deriver usage*/
+  private final List<ASTOutput> outputs;
+
+  public ConfigurationWrapper(String state, ASTActionUsage adaptee) {
     this.adaptee = adaptee;
+
+    var traverser = SysMLv2Mill.traverser();
+    var collector = new SendActionAssignmentsVisitor();
+    traverser.add4SysMLActions(collector);
+    if (adaptee != null) {
+      adaptee.accept(traverser);
+    }
+
+    var assignments = collector.getAssignments();
+
+    outputs = assignments
+        .entrySet()
+        .stream()
+        .filter(ass -> getEnclosingScope().resolvePort(ass.getKey().getQName()).isPresent())
+        .map(ass -> new OutputWrapper(getEnclosingScope().resolvePort(ass.getKey().getQName()).get(), ass.getValue()))
+        .collect(Collectors.toList());
+
+    this.state = new StateWrapper(state, assignments);
   }
 
-  public StateUsageSymbol getAdaptee() {
+  public ConfigurationWrapper(ASTExpression stateExpression) {
+    this(stateExpression, null);
+  }
+
+  public ConfigurationWrapper(String state) {
+    this(state, null);
+  }
+
+  public ConfigurationWrapper(ASTExpression state, ASTActionUsage adaptee) {
+    this(new SysMLv2FullPrettyPrinter(new IndentPrinter()).prettyprint(state), adaptee);
+  }
+
+  public ASTActionUsage getAdaptee() {
     return adaptee;
   }
 
   @Override
-  public List<ASTMCQualifiedName> getStatesList() {
-    return getAdaptee()
-        .getSpannedScope()
-        .getLocalStateUsageSymbols()
-        .stream()
-        .map(state ->
-            new ASTMCQualifiedNameBuilder()
-                .setPartsList(List.of(state.getFullName().split("\\."))).build())
-        .collect(Collectors.toList());
-  }
-
-
-  @Override
-  public List<String> getVariablesList() {
-    // TODO fqn name might be necessary.
-    return ((ISysMLv2Scope)getAdaptee().getSpannedScope()).getLocalAttributeUsageSymbols().stream().map(
-        AttributeUsageSymbol::getName).collect(Collectors.toList());
+  public IAutomatonScope getEnclosingScope() {
+    return (ISysMLv2Scope)getAdaptee().getEnclosingScope();
   }
 
   @Override
-  public List<Optional<VariableSymbol>> getVariablesSymbolList() {
-    return getVariablesList().stream().map(variable ->
-            getAdaptee().getSpannedScope().resolveVariableLocally(variable))
-        .collect(Collectors.toList());
+  public ASTState getState() {
+    return state;
+  }
+
+  @Override
+  public List<ASTOutput> getOutputList() {
+    return outputs;
+  }
+
+  @Override
+  public ASTOutput getOutput(int index) {
+    return getOutputList().get(index);
   }
 
   /* #################### BOILERPLATE ######################## */
 
   @Override
+  public void setState(ASTState state) {
+
+  }
+
+  @Override
   public void accept(AutomatonTraverser visitor) {
 
-  }
-
-  @Override
-  public boolean containsVariablesSymbol(Object element) {
-    return false;
-  }
-
-  @Override
-  public boolean containsAllVariablesSymbol(Collection<?> collection) {
-    return false;
-  }
-
-  @Override
-  public boolean isEmptyVariablesSymbol() {
-    return false;
-  }
-
-  @Override
-  public Iterator<Optional<VariableSymbol>> iteratorVariablesSymbol() {
-    return null;
-  }
-
-  @Override
-  public int sizeVariablesSymbol() {
-    return 0;
-  }
-
-  @Override
-  public Optional<VariableSymbol>[] toArrayVariablesSymbol(Optional<VariableSymbol>[] array) {
-    return new Optional[0];
-  }
-
-  @Override
-  public Object[] toArrayVariablesSymbol() {
-    return new Object[0];
-  }
-
-  @Override
-  public Spliterator<Optional<VariableSymbol>> spliteratorVariablesSymbol() {
-    return null;
-  }
-
-  @Override
-  public Stream<Optional<VariableSymbol>> streamVariablesSymbol() {
-    return null;
-  }
-
-  @Override
-  public Stream<Optional<VariableSymbol>> parallelStreamVariablesSymbol() {
-    return null;
-  }
-
-  @Override
-  public Optional<VariableSymbol> getVariablesSymbol(int index) {
-    return Optional.empty();
-  }
-
-  @Override
-  public int indexOfVariablesSymbol(Object element) {
-    return 0;
-  }
-
-  @Override
-  public int lastIndexOfVariablesSymbol(Object element) {
-    return 0;
-  }
-
-  @Override
-  public boolean equalsVariablesSymbol(Object o) {
-    return false;
-  }
-
-  @Override
-  public int hashCodeVariablesSymbol() {
-    return 0;
-  }
-
-  @Override
-  public ListIterator<Optional<VariableSymbol>> listIteratorVariablesSymbol() {
-    return null;
-  }
-
-  @Override
-  public ListIterator<Optional<VariableSymbol>> listIteratorVariablesSymbol(int index) {
-    return null;
-  }
-
-  @Override
-  public List<Optional<VariableSymbol>> subListVariablesSymbol(int start, int end) {
-    return null;
-  }
-
-  @Override
-  public boolean containsVariablesDefinition(Object element) {
-    return false;
-  }
-
-  @Override
-  public boolean containsAllVariablesDefinition(Collection<?> collection) {
-    return false;
-  }
-
-  @Override
-  public boolean isEmptyVariablesDefinition() {
-    return false;
-  }
-
-  @Override
-  public Iterator<Optional<ASTVariable>> iteratorVariablesDefinition() {
-    return null;
-  }
-
-  @Override
-  public int sizeVariablesDefinition() {
-    return 0;
-  }
-
-  @Override
-  public Optional<ASTVariable>[] toArrayVariablesDefinition(Optional<ASTVariable>[] array) {
-    return new Optional[0];
-  }
-
-  @Override
-  public Object[] toArrayVariablesDefinition() {
-    return new Object[0];
-  }
-
-  @Override
-  public Spliterator<Optional<ASTVariable>> spliteratorVariablesDefinition() {
-    return null;
-  }
-
-  @Override
-  public Stream<Optional<ASTVariable>> streamVariablesDefinition() {
-    return null;
-  }
-
-  @Override
-  public Stream<Optional<ASTVariable>> parallelStreamVariablesDefinition() {
-    return null;
-  }
-
-  @Override
-  public Optional<ASTVariable> getVariablesDefinition(int index) {
-    return Optional.empty();
-  }
-
-  @Override
-  public int indexOfVariablesDefinition(Object element) {
-    return 0;
-  }
-
-  @Override
-  public int lastIndexOfVariablesDefinition(Object element) {
-    return 0;
-  }
-
-  @Override
-  public boolean equalsVariablesDefinition(Object o) {
-    return false;
-  }
-
-  @Override
-  public int hashCodeVariablesDefinition() {
-    return 0;
-  }
-
-  @Override
-  public ListIterator<Optional<ASTVariable>> listIteratorVariablesDefinition() {
-    return null;
-  }
-
-  @Override
-  public ListIterator<Optional<ASTVariable>> listIteratorVariablesDefinition(int index) {
-    return null;
-  }
-
-  @Override
-  public List<Optional<ASTVariable>> subListVariablesDefinition(int start, int end) {
-    return null;
-  }
-
-  @Override
-  public List<Optional<ASTVariable>> getVariablesDefinitionList() {
-    return null;
   }
 
   @Override
@@ -297,7 +145,7 @@ public class StateSpaceWrapper implements ASTStateSpace {
   }
 
   @Override
-  public ASTStateSpace deepClone() {
+  public ASTConfiguration deepClone() {
     return null;
   }
 
@@ -682,338 +530,163 @@ public class StateSpaceWrapper implements ASTStateSpace {
   }
 
   @Override
-  public boolean containsStates(Object element) {
+  public boolean containsOutput(Object element) {
     return false;
   }
 
   @Override
-  public boolean containsAllStates(Collection<?> collection) {
+  public boolean containsAllOutputs(Collection<?> collection) {
     return false;
   }
 
   @Override
-  public boolean isEmptyStates() {
+  public boolean isEmptyOutputs() {
     return false;
   }
 
   @Override
-  public Iterator<ASTMCQualifiedName> iteratorStates() {
+  public Iterator<ASTOutput> iteratorOutputs() {
     return null;
   }
 
   @Override
-  public int sizeStates() {
+  public int sizeOutputs() {
     return 0;
   }
 
   @Override
-  public ASTMCQualifiedName[] toArrayStates(ASTMCQualifiedName[] array) {
-    return new ASTMCQualifiedName[0];
+  public ASTOutput[] toArrayOutputs(ASTOutput[] array) {
+    return new ASTOutput[0];
   }
 
   @Override
-  public Object[] toArrayStates() {
+  public Object[] toArrayOutputs() {
     return new Object[0];
   }
 
   @Override
-  public Spliterator<ASTMCQualifiedName> spliteratorStates() {
+  public Spliterator<ASTOutput> spliteratorOutputs() {
     return null;
   }
 
   @Override
-  public Stream<ASTMCQualifiedName> streamStates() {
+  public Stream<ASTOutput> streamOutputs() {
     return null;
   }
 
   @Override
-  public Stream<ASTMCQualifiedName> parallelStreamStates() {
+  public Stream<ASTOutput> parallelStreamOutputs() {
     return null;
   }
 
   @Override
-  public ASTMCQualifiedName getStates(int index) {
-    return null;
-  }
-
-  @Override
-  public int indexOfStates(Object element) {
+  public int indexOfOutput(Object element) {
     return 0;
   }
 
   @Override
-  public int lastIndexOfStates(Object element) {
+  public int lastIndexOfOutput(Object element) {
     return 0;
   }
 
   @Override
-  public boolean equalsStates(Object o) {
+  public boolean equalsOutputs(Object o) {
     return false;
   }
 
   @Override
-  public int hashCodeStates() {
+  public int hashCodeOutputs() {
     return 0;
   }
 
   @Override
-  public ListIterator<ASTMCQualifiedName> listIteratorStates() {
+  public ListIterator<ASTOutput> listIteratorOutputs() {
     return null;
   }
 
   @Override
-  public ListIterator<ASTMCQualifiedName> listIteratorStates(int index) {
+  public ListIterator<ASTOutput> listIteratorOutputs(int index) {
     return null;
   }
 
   @Override
-  public List<ASTMCQualifiedName> subListStates(int start, int end) {
+  public List<ASTOutput> subListOutputs(int start, int end) {
     return null;
   }
 
   @Override
-  public void clearStates() {
+  public void clearOutputs() {
 
   }
 
   @Override
-  public boolean addStates(ASTMCQualifiedName element) {
+  public boolean addOutput(ASTOutput element) {
     return false;
   }
 
   @Override
-  public boolean addAllStates(Collection<? extends ASTMCQualifiedName> collection) {
+  public boolean addAllOutputs(Collection<? extends ASTOutput> collection) {
     return false;
   }
 
   @Override
-  public boolean removeStates(Object element) {
+  public boolean removeOutput(Object element) {
     return false;
   }
 
   @Override
-  public boolean removeAllStates(Collection<?> collection) {
+  public boolean removeAllOutputs(Collection<?> collection) {
     return false;
   }
 
   @Override
-  public boolean retainAllStates(Collection<?> collection) {
+  public boolean retainAllOutputs(Collection<?> collection) {
     return false;
   }
 
   @Override
-  public boolean removeIfStates(Predicate<? super ASTMCQualifiedName> filter) {
+  public boolean removeIfOutput(Predicate<? super ASTOutput> filter) {
     return false;
   }
 
   @Override
-  public void forEachStates(Consumer<? super ASTMCQualifiedName> action) {
+  public void forEachOutputs(Consumer<? super ASTOutput> action) {
 
   }
 
   @Override
-  public void addStates(int index, ASTMCQualifiedName element) {
+  public void addOutput(int index, ASTOutput element) {
 
   }
 
   @Override
-  public boolean addAllStates(int index, Collection<? extends ASTMCQualifiedName> collection) {
+  public boolean addAllOutputs(int index, Collection<? extends ASTOutput> collection) {
     return false;
   }
 
   @Override
-  public ASTMCQualifiedName removeStates(int index) {
+  public ASTOutput removeOutput(int index) {
     return null;
   }
 
   @Override
-  public ASTMCQualifiedName setStates(int index, ASTMCQualifiedName element) {
+  public ASTOutput setOutput(int index, ASTOutput element) {
     return null;
   }
 
   @Override
-  public void replaceAllStates(UnaryOperator<ASTMCQualifiedName> operator) {
+  public void replaceAllOutputs(UnaryOperator<ASTOutput> operator) {
 
   }
 
   @Override
-  public void sortStates(Comparator<? super ASTMCQualifiedName> comparator) {
+  public void sortOutputs(Comparator<? super ASTOutput> comparator) {
 
   }
 
   @Override
-  public void setStatesList(List<ASTMCQualifiedName> states) {
+  public void setOutputList(List<ASTOutput> outputs) {
 
-  }
-
-  @Override
-  public boolean containsVariables(Object element) {
-    return false;
-  }
-
-  @Override
-  public boolean containsAllVariables(Collection<?> collection) {
-    return false;
-  }
-
-  @Override
-  public boolean isEmptyVariables() {
-    return false;
-  }
-
-  @Override
-  public Iterator<String> iteratorVariables() {
-    return null;
-  }
-
-  @Override
-  public int sizeVariables() {
-    return 0;
-  }
-
-  @Override
-  public String[] toArrayVariables(String[] array) {
-    return new String[0];
-  }
-
-  @Override
-  public Object[] toArrayVariables() {
-    return new Object[0];
-  }
-
-  @Override
-  public Spliterator<String> spliteratorVariables() {
-    return null;
-  }
-
-  @Override
-  public Stream<String> streamVariables() {
-    return null;
-  }
-
-  @Override
-  public Stream<String> parallelStreamVariables() {
-    return null;
-  }
-
-  @Override
-  public String getVariables(int index) {
-    return null;
-  }
-
-  @Override
-  public int indexOfVariables(Object element) {
-    return 0;
-  }
-
-  @Override
-  public int lastIndexOfVariables(Object element) {
-    return 0;
-  }
-
-  @Override
-  public boolean equalsVariables(Object o) {
-    return false;
-  }
-
-  @Override
-  public int hashCodeVariables() {
-    return 0;
-  }
-
-  @Override
-  public ListIterator<String> listIteratorVariables() {
-    return null;
-  }
-
-  @Override
-  public ListIterator<String> listIteratorVariables(int index) {
-    return null;
-  }
-
-  @Override
-  public List<String> subListVariables(int start, int end) {
-    return null;
-  }
-
-  @Override
-  public void clearVariables() {
-
-  }
-
-  @Override
-  public boolean addVariables(String element) {
-    return false;
-  }
-
-  @Override
-  public boolean addAllVariables(Collection<? extends String> collection) {
-    return false;
-  }
-
-  @Override
-  public boolean removeVariables(Object element) {
-    return false;
-  }
-
-  @Override
-  public boolean removeAllVariables(Collection<?> collection) {
-    return false;
-  }
-
-  @Override
-  public boolean retainAllVariables(Collection<?> collection) {
-    return false;
-  }
-
-  @Override
-  public boolean removeIfVariables(Predicate<? super String> filter) {
-    return false;
-  }
-
-  @Override
-  public void forEachVariables(Consumer<? super String> action) {
-
-  }
-
-  @Override
-  public void addVariables(int index, String element) {
-
-  }
-
-  @Override
-  public boolean addAllVariables(int index, Collection<? extends String> collection) {
-    return false;
-  }
-
-  @Override
-  public String removeVariables(int index) {
-    return null;
-  }
-
-  @Override
-  public String setVariables(int index, String element) {
-    return null;
-  }
-
-  @Override
-  public void replaceAllVariables(UnaryOperator<String> operator) {
-
-  }
-
-  @Override
-  public void sortVariables(Comparator<? super String> comparator) {
-
-  }
-
-  @Override
-  public void setVariablesList(List<String> variables) {
-
-  }
-
-  @Override
-  public IAutomatonScope getEnclosingScope() {
-    return null;
   }
 
   @Override

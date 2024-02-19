@@ -20,9 +20,21 @@ import java.util.Optional;
 public class PartDef2ExtendedMildComponentAdapter extends ExtendedMildComponentSymbol {
   private final PartDef2ComponentAdapter delegate;
 
+  /** An automaton is cached because we use in subsequent adapters SysML specific operations (i.e. deriver) that are
+   * only reliable after Mill.init() and before another language's Mill.init().
+   **/
+  private final Optional<AutomatonSymbol> automaton;
+
   public PartDef2ExtendedMildComponentAdapter(PartDefSymbol adaptee) {
     super(adaptee.getName());
-    this.delegate = new PartDef2ComponentAdapter(adaptee);
+    delegate = new PartDef2ComponentAdapter(adaptee);
+
+    automaton = ((ISysMLv2Scope)getAdaptee().getSpannedScope())
+            .getLocalStateUsageSymbols()
+            .stream()
+            .filter(StateUsageSymbol::isExhibited)
+            .findFirst()
+            .map(state -> new StateUsage2AutomatonAdapter(getAdaptee(), state));
   }
 
   public PartDef2ComponentAdapter getDelegate() {
@@ -35,12 +47,7 @@ public class PartDef2ExtendedMildComponentAdapter extends ExtendedMildComponentS
 
   @Override
   public Optional<AutomatonSymbol> getAutomaton() {
-    return ((ISysMLv2Scope)getAdaptee().getSpannedScope())
-        .getLocalStateUsageSymbols()
-        .stream()
-        .filter(StateUsageSymbol::isExhibited)
-        .findFirst()
-        .map(state -> new StateUsage2AutomatonAdapter(getAdaptee(), state));
+    return automaton;
   }
 
   @Override

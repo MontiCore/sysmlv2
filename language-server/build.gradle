@@ -31,7 +31,6 @@ dependencies {
   implementation "org.jgrapht:jgrapht-core:1.3.1"
   implementation "de.monticore:mc-assemblies:0.0.6"
   implementation "de.monticore.lang:ocl:7.0.0" // MPf: Ganz komische Fehler wegen "*OCL*", diese Zeile hatte Alex drin
-  implementation "de.monticore.lang:statecharts:$mc_version"
 
   // MCLSG
   implementation "de.monticore.language-server:monticore-language-server-runtime:$mclsg_version"
