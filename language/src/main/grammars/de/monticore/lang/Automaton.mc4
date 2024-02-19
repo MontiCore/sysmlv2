@@ -14,7 +14,7 @@ component grammar Automaton extends ComponentConnector {
 
   symbolrule Automaton =
     stateSpace: StateSpace
-    initialConfiguration: Configuration+
+    initialConfiguration: Configuration*
     eventTransitions: EventTransition*
     tickTransitions: Transition*
   ;
@@ -23,7 +23,7 @@ component grammar Automaton extends ComponentConnector {
 
   interface Configuration = State Output* ;
 
-  interface State = Name VariableValue ;
+  interface State = Name VariableValue* ;
 
   interface VariableValue = variable:Name@Variable value:Expression ;
 
