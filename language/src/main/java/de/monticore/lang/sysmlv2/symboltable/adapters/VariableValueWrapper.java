@@ -9,6 +9,7 @@ import de.monticore.lang.automaton._symboltable.IAutomatonScope;
 import de.monticore.lang.automaton._visitor.AutomatonTraverser;
 import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScope;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
+import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.literals.mccommonliterals._symboltable.IMCCommonLiteralsScope;
 import de.monticore.literals.mcliteralsbasis._symboltable.IMCLiteralsBasisScope;
 import de.monticore.mcbasics._symboltable.IMCBasicsScope;
@@ -54,16 +55,16 @@ public class VariableValueWrapper implements ASTVariableValue {
     return variable;
   }
 
+  @Override
+  public IAutomatonScope getEnclosingScope() {
+    return (ISysMLv2Scope) getValue().getEnclosingScope();
+  }
+
   /* #################### BOILERPLATE ######################## */
 
   @Override
   public void setValue(ASTExpression value) {
 
-  }
-
-  @Override
-  public IAutomatonScope getEnclosingScope() {
-    return null;
   }
 
   @Override

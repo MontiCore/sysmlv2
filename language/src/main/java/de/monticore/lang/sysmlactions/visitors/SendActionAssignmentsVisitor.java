@@ -7,6 +7,7 @@ import de.monticore.lang.sysmlactions._visitor.SysMLActionsVisitor2;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -16,7 +17,7 @@ import java.util.Map;
 public class SendActionAssignmentsVisitor implements SysMLActionsVisitor2 {
 
   /** Returns Pairs of ["<port-name>", "<output-expression>"] for each assigned port. Does not include "silent" ports. */
-  private final Map<ASTMCQualifiedName, ASTExpression> assignments  = new HashMap<>();
+  private final Map<ASTMCQualifiedName, ASTExpression> assignments  = new LinkedHashMap<>();
 
   public Map<ASTMCQualifiedName, ASTExpression> getAssignments() {
     return assignments;

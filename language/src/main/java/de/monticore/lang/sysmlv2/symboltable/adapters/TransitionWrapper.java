@@ -3,6 +3,7 @@ package de.monticore.lang.sysmlv2.symboltable.adapters;
 import de.monticore.ast.Comment;
 import de.monticore.cardinality._symboltable.ICardinalityScope;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpressionBuilder;
 import de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope;
 import de.monticore.lang.automaton._ast.ASTConfiguration;
 import de.monticore.lang.automaton._ast.ASTTransition;
@@ -50,9 +51,14 @@ public class TransitionWrapper implements ASTTransition {
       guard = adaptee.getGuard();
     }
     else {
-      var trueExp = new ASTBooleanLiteralBuilder().setSource(ASTConstantsMCCommonLiterals.TRUE).build();
+      var trueExp = new ASTLiteralExpressionBuilder()
+          .setLiteral(new ASTBooleanLiteralBuilder()
+              .setSource(ASTConstantsMCCommonLiterals.TRUE)
+              .build())
+          .build();
+
       trueExp.setEnclosingScope(adaptee.getEnclosingScope());
-      guard = (ASTExpression) trueExp;
+      guard = trueExp;
     }
 
     documentation = "line " + adaptee.get_SourcePositionStart().getLine() + " to " + adaptee.get_SourcePositionEnd().getLine();
