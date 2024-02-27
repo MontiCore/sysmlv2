@@ -15,9 +15,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class StateUsage2AutomatonAdapter extends AutomatonSymbol {
@@ -52,29 +50,39 @@ public class StateUsage2AutomatonAdapter extends AutomatonSymbol {
         }
       }
 
-      Map<String,List<ImmutablePair<ASTSysMLTransition, ASTTransition>>> transitions = ast.getSysMLElementList()
-          .stream()
-          .filter(elem -> elem instanceof ASTSysMLTransition)
-          .map(trans -> new ImmutablePair<ASTSysMLTransition, ASTTransition>(
-              (ASTSysMLTransition) trans,
-              new TransitionWrapper((ASTSysMLTransition) trans))
-          )
-          .collect(Collectors.groupingBy(transPair -> getTrigger(transPair.getLeft())));
+      var eventTrans = new LinkedHashMap<String,List<ASTTransition>>();
+      var tickTrans = new ArrayList<ASTTransition>();
 
-      eventTransitions = transitions
+      for (var elem : ast.getSysMLElementList()) {
+        if (elem instanceof ASTSysMLTransition) {
+          var transition = (ASTSysMLTransition) elem;
+          var trigger = getTrigger(transition);
+
+          if (trigger.equals("Tick")) {
+            tickTrans.add(new TransitionWrapper(transition));
+          }
+          else if (eventTrans.containsKey(trigger)) {
+            eventTrans.get(trigger).add(new TransitionWrapper(transition));
+          }
+          else {
+            var transitionList = new ArrayList<ASTTransition>();
+            transitionList.add(new TransitionWrapper(transition));
+
+            eventTrans.put(trigger, transitionList);
+          }
+        }
+      }
+
+      eventTransitions = eventTrans
           .entrySet()
           .stream()
-          .filter(entry -> !entry.getKey().equals("Tick"))
           .map(entry -> new EventTransitionWrapper(
               entry.getKey(),
-              entry.getValue().stream().map(ImmutablePair::getRight).collect(Collectors.toList()))
-          )
+              entry.getValue()
+          ))
           .collect(Collectors.toList());
 
-      tickTransitions = transitions.getOrDefault("Tick", List.of())
-          .stream()
-          .map(ImmutablePair::getRight)
-          .collect(Collectors.toList());
+      tickTransitions = tickTrans;
     }
   }
 
