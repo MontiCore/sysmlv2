@@ -134,6 +134,11 @@ exemplary usage:
 A `code generation` and `advanced consistency checks` are currently in 
 work, but the not yet available.
 
+An update of the embedding of the complete parser into the [SPES 
+Systems Engineering Methodology](https://spesml.github.io/index.html/), 
+which acts as a plug-in for Cameo / MagicDraw is currently also 
+planned. 
+
 ## Further Information
 
 * [Project root: MontiCore @github](https://github.com/MontiCore/monticore)
