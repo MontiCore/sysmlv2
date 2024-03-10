@@ -1,21 +1,119 @@
 <!-- (c) https://github.com/MontiCore/monticore -->
 
-# SysML v2 in MontiCore
+# SysML v2 Parser defined using MontiCore
+
+[SysML V2](https://www.omgsysml.org/SysML-2.htm) is about to finish its 
+standardization process. Compared to it's previous version, it has a 
+lot of new capabilities to describe behavior, structure, interactions, 
+and other relevant aspects of systems. 
+[Here](https://www.omgsysml.org/index.htm) a detailed description of 
+the SysML language and capabilities can be found. 
+  
+One of the interesting new capabilities is the exchange of models 
+between tools using a really human readable textual form of the SysML 
+language in the spirit of a modern programming language (even though it 
+has a number of special constructs that resemble modelling concepts). 
+
+``` 
+standard library package SampledFunctions {
+
+	private import Base::Anything;
+	
+    attribute def SamplePair :> KeyValuePair {
+		doc
+		/*
+		 * SamplePair is a key-value pair of a domain-value and a 
+         * range-value, used as ...
+		 */
+	
+        attribute domainValue :>> key;
+        attribute rangeValue :>> val;
+    }
+``` 
+
+This textual form will play a major role in the exchange of models 
+between tools thus allowing to build toolchains, as well as in the 
+versioning of models, e.g. in github, and also in the efficient 
+definition of models by people who prepare textual notations.
+
+It is therefore highly relevant to have consistent parsing mechanisms 
+available. The [SysML v2 
+Pilot-Implementation](https://github.com/Systems-Modeling/SysML-v2-Pilot-Implementation) 
+contains e.g. a parser for this textual notation.
+
+We know from the definition of programming languages, that it is, 
+however, helpful to provide a second source parser, such that parsing 
+results can be compared and therefore compilers, lints, checkers of 
+context conditions and other advanced tooling, receive the level of 
+quality desired for industrial use. 
+
+## Capabilities of this Parser for SysML V.2 
+
+Because MontiCore provides modern parsing technology we have therefore 
+implemented a SysML V2 parser based on MontiCore. It is available in 
+this repository under the [MontiCore relaxed 
+licensing}(https://github.com/MontiCore/monticore/blob/master/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL.md) 
+(Level-2 is based on BSD-3-Clause). 
+
+This parser provides a number of advantages 
+ 1. it uses modular language composition (i.e. it is itself defined using
+ a number of pre-existing language components, whose quality and functionality
+ already has been hardened).
+ 1. the parser comes with lots of infrastructure for defining
+ and exchanging symbols on model level, because SysML introduces
+ quite a number of new kinds of symbols, e.g. for states, activities, blocks,
+ etc. 
+ 1. more infrastructure exists to manage well-formedness conditions, 
+ even complex ones, to early detect errors, incompleteness, inconsistencies, etc.
+
+Especially the symbol management infrastructure, which was carried over 
+by the MontiCore development team from compiler technologies to the new 
+kinds of symbols a modern modelling language typically has provides 
+helpful advantages. This allows to decouple the symbol management in 
+the models from the mapping of these symbols to code, which might be 
+different, dependent on the technology setting. For example a state 
+`Off` might become an enum constant `MyAutomaton.Off`, an integer value 
+`Off=7`, a subclass `StateOff` in the state pattern, or map to an  
+method API like `isOff()`, `setOff()`. MontiCore's symbol management 
+care about `Off` as state and checks consistency already on model 
+level. 
 
 ## Project Structure
-* [**bin**](bin) contains the executable parser
-* [**examples**](examples) contains exemplary SysML v2 models from the 
-[SysML Submission Team (SST)](https://github.com/Systems-Modeling)
 
-## Tool Download
+This project currently provides 
+ * the parser, 
+ * a pretty printing facility, and 
+ * produces the symbol table of the given artifact. 
+
+The context conditions are definitely not yet complete, because to some 
+extent the context conditions have still to be refined. Especially the 
+correct use of expressions and their typing, which is one of the larger 
+parts of context conditions in programming languages, will be 
+something, we will further explore. 
+ 
+
+## Project Structure
+
+* [**bin**](bin) contains the executable parser
+* [**examples**](examples) contains exemplary SysML v2 models copied from the 
+[SysML Submission Team (SST)](https://github.com/Systems-Modeling). 
+All of these examples can be parsed by both parsers. 
+
+We wellcome the submission of further examples for quality checks.
+
+## Tool Download and Use
+
 * [**Download SysML v2 Tool**](http://www.monticore.de/download/MCSysMLv2.jar)
 
 Alternatively, the tool can be found in the `bin`-folder.
 
 ##### Prerequisites
+
 To run the tool, it is required to install a Java 11 JRE.
 
+
 ## Tool Parameters
+
 The [SysML v2 tool](bin/MCSysMLv2.jar) offers options for processing SysML v2
 models. It provides through the CLI as follows:
 
@@ -41,12 +139,14 @@ exemplary usage:
   java -jar MCSysMLv2.jar -i Car.sysml -pp
 ``` 
 
+A `code generation` is currently in work, but the not yet available.
+
 ## Further Information
 
 * [Project root: MontiCore @github](https://github.com/MontiCore/monticore)
 * [MontiCore documentation](http://www.monticore.de/)
-* [**List of languages**](https://github.com/MontiCore/monticore/blob/opendev/docs/Languages.md)
+* [**List of MontiCore languages**](https://github.com/MontiCore/monticore/blob/opendev/docs/Languages.md)
 * [**MontiCore Core Grammar Library**](https://github.com/MontiCore/monticore/blob/opendev/monticore-grammar/src/main/grammars/de/monticore/Grammars.md)
-* [Best Practices](https://github.com/MontiCore/monticore/blob/opendev/docs/BestPractices.md)
+* [MontiCore' Language Best Practices](https://github.com/MontiCore/monticore/blob/opendev/docs/BestPractices.md)
 * [Publications about MBSE and MontiCore](https://www.se-rwth.de/publications/)
 * [Licence definition](https://github.com/MontiCore/monticore/blob/master/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL.md)
