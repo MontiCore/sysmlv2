@@ -15,20 +15,12 @@ language in the spirit of a modern programming language (even though it
 has a number of special constructs that resemble modelling concepts). 
 
 ``` 
-standard library package SampledFunctions {
-
-	private import Base::Anything;
-	
-    attribute def SamplePair :> KeyValuePair {
-		doc
-		/*
-		 * SamplePair is a key-value pair of a domain-value and a 
-         * range-value, used as ...
-		 */
-	
-        attribute domainValue :>> key;
-        attribute rangeValue :>> val;
-    }
+standard library package 'Vehicles' {        // a SysML block diagram
+  private import ScalarValues::*; 
+  block Vehicle; 
+  block Truck is Vehicle; 
+  value type Torque is ISQ::TorqueValue; 
+}
 ``` 
 
 This textual form will play a major role in the exchange of models 
@@ -73,7 +65,7 @@ helpful advantages. This allows to decouple the symbol management in
 the models from the mapping of these symbols to code, which might be 
 different, dependent on the technology setting. For example a state 
 `Off` might become an enum constant `MyAutomaton.Off`, an integer value 
-`Off=7`, a subclass `StateOff` in the state pattern, or map to an  
+`int Off=7`, a subclass `StateOff` in the state pattern, or map to a  
 method API like `isOff()`, `setOff()`. MontiCore's symbol management 
 care about `Off` as state and checks consistency already on model 
 level. 
@@ -139,7 +131,8 @@ exemplary usage:
   java -jar MCSysMLv2.jar -i Car.sysml -pp
 ``` 
 
-A `code generation` is currently in work, but the not yet available.
+A `code generation` and `advanced consistency checks` are currently in 
+work, but the not yet available.
 
 ## Further Information
 
