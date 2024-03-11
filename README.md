@@ -3,7 +3,7 @@
 # SysML v2 Parser defined using MontiCore
 
 [SysML v2](https://www.omgsysml.org/SysML-2.htm) is about to finish its 
-standardization process. Compared to it's previous version, it has a 
+standardization process. Compared to its previous version, it has a 
 lot of new capabilities to describe behavior, structure, interactions, 
 and other relevant aspects of systems. 
 [Here](https://www.omgsysml.org/index.htm) a detailed description of 
@@ -15,29 +15,31 @@ language in the spirit of a modern programming language (even though it
 has a number of special constructs that resemble modelling concepts). 
 
 ``` 
-standard library package 'Vehicles' {        // a SysML block diagram
-  private import ScalarValues::*; 
-  block Vehicle; 
-  block Truck is Vehicle; 
-  value type Torque is ISQ::TorqueValue; 
+standard library package 'Vehicles' {
+  import ISQ::TorqueValue;
+  import ScalarValues::*;
+  part def Automobile;
+  alias Car for Automobile;
+  alias Torque for ISQ::TorqueValue;
 }
 ``` 
 
 This textual form will play a major role in the exchange of models 
 between tools thus allowing to build toolchains, as well as in the 
-versioning of models, e.g. in github, and also in the efficient 
+versioning of models, e.g., in Github, and also in the efficient 
 definition of models by people who prepare textual notations.
 
 It is therefore highly relevant to have consistent parsing mechanisms 
 available. The [SysML v2 
 Pilot-Implementation](https://github.com/Systems-Modeling/SysML-v2-Pilot-Implementation) 
-contains e.g. a parser for this textual notation.
+contains a parser for this textual notation.
 
 We know from the definition of programming languages, that it is, 
 however, helpful to provide a second source parser, such that parsing 
-results can be compared and therefore compilers, lints, checkers of 
+results can be compared and therefore compilers, linters, checkers of 
 context conditions and other advanced tooling, receive the level of 
 quality desired for industrial use. 
+
 
 ## Capabilities of this Parser for SysML v2 
 
@@ -53,22 +55,23 @@ This parser provides a number of advantages
  already has been hardened).
  1. the parser comes with lots of infrastructure for defining
  and exchanging symbols on model level, because SysML introduces
- quite a number of new kinds of symbols, e.g. for states, activities, blocks,
+ quite a number of new kinds of symbols, e.g. for states, actions, parts,
  etc. 
  1. more infrastructure exists to manage well-formedness conditions, 
- even complex ones, to early detect errors, incompleteness, inconsistencies, etc.
+ even complex ones, to detect errors, incompleteness, inconsistencies, etc.
 
 Especially the symbol management infrastructure, which was carried over 
 by the MontiCore development team from compiler technologies to the new 
-kinds of symbols a modern modelling language typically has provides 
+kinds of symbols a modern modelling language typically has, provides 
 helpful advantages. This allows to decouple the symbol management in 
 the models from the mapping of these symbols to code, which might be 
 different, dependent on the technology setting. For example a state 
 `Off` might become an enum constant `MyAutomaton.Off`, an integer value 
 `int Off=7`, a subclass `StateOff` in the state pattern, or map to a  
 method API like `isOff()`, `setOff()`. MontiCore's symbol management 
-care about `Off` as state and checks consistency already on model 
+takes care about `Off` as state and checks consistency already on model 
 level. 
+
 
 ## Project Structure
 
@@ -93,11 +96,13 @@ All of these examples can be parsed by both parsers.
 
 We wellcome the submission of further examples for quality checks.
 
+
 ## Tool Download and Use
 
 * [**Download SysML v2 Tool**](http://www.monticore.de/download/MCSysMLv2.jar)
 
 Alternatively, the tool can be found in the `bin`-folder.
+
 
 ##### Prerequisites
 
@@ -138,6 +143,7 @@ An update of the embedding of the complete parser into the [SPES
 Systems Engineering Methodology](https://spesml.github.io/index.html/), 
 which acts as a plug-in for Cameo / MagicDraw is currently also 
 planned. 
+
 
 ## Further Information
 
