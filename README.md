@@ -2,7 +2,7 @@
 
 # SysML v2 Parser defined using MontiCore
 
-[SysML V2](https://www.omgsysml.org/SysML-2.htm) is about to finish its 
+[SysML v2](https://www.omgsysml.org/SysML-2.htm) is about to finish its 
 standardization process. Compared to it's previous version, it has a 
 lot of new capabilities to describe behavior, structure, interactions, 
 and other relevant aspects of systems. 
@@ -39,10 +39,10 @@ results can be compared and therefore compilers, lints, checkers of
 context conditions and other advanced tooling, receive the level of 
 quality desired for industrial use. 
 
-## Capabilities of this Parser for SysML V.2 
+## Capabilities of this Parser for SysML v2 
 
 Because MontiCore provides modern parsing technology we have therefore 
-implemented a SysML V2 parser based on MontiCore. It is available in 
+implemented a SysML v2 parser based on MontiCore. It is available in 
 this repository under the [MontiCore relaxed 
 licensing}(https://github.com/MontiCore/monticore/blob/master/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL.md) 
 (Level-2 is based on BSD-3-Clause). 
