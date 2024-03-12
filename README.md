@@ -76,17 +76,17 @@ level.
 ## Future
 
 This project follows several purposes: One main purpose is to provide a 
-second SysML V2 parser 
+second SysML v2 parser 
     for comparison and potential quality check with the 
     parser given in the [SysML v2 
     Pilot-Implementation](https://github.com/Systems-Modeling/SysML-v2-Pilot-Implementation). 
 
 Furthermore, we are interested to extend and adapt
- * the frontend, which are the language capabilities, 
- * the analytical capabilities, which includes advanced context conditions,
+ * the frontend, i.e., the language capabilities, 
+ * the analytical capabilities, i.e., advanced context conditions,
    consistency and completeness checks, up to high-level verification 
    capabilities using frormal methods, and
- * the generative backend, which are the capabilities to produce 
+ * the generative backend, i.e., the capabilities to produce 
  simulations, and real code.
 
 For this purposes the MontiCore infrastructure is very helpful, as it 
@@ -98,7 +98,7 @@ capabilities of a language without invalidating (1) existing models and
 (2) generative and an analytical functionality that has only been 
 defined for the older language.  This is why context conditions and 
 generation functionalities can also be defined in a modular way 
-(actually using various design patterns) being rather easily 
+(using various design patterns) being rather easily 
 extendable. 
 
 
