@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2;
 
+import de.monticore.lang.componentconnector.SerializationUtil;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintDefCoCo;
 import de.monticore.lang.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTSysMLPackageCoCo;
@@ -53,6 +54,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -220,7 +222,15 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
   public Options addAdditionalOptions(Options options) {
     options.addOption(Option.builder("ex")
         .longOpt("extended")
-        .desc("Runs additional checks not pertaining to the official language specification")
+        .desc("Runs additional checks not pertaining to the official language specification.")
+        .build());
+
+    options.addOption(Option.builder("cc")
+        .longOpt("compcon")
+        .desc("Serializes the symbol table of the given artifact using component-connector symbols.")
+        .hasArg(true)
+        .optionalArg(false)
+        .argName("output file")
         .build());
     return options;
   }
@@ -291,6 +301,20 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
 
         if (cmd.hasOption("symboltable")) {
           Log.warn("0xA0003 Not implemented yet.");
+        }
+        if (cmd.hasOption("compcon")) {
+          // Setup the serialization to produce base symbols
+          SerializationUtil.setupComponentConnectorSerialization();
+
+          // Gather PartDefs into a new Scope
+          var artifact = SysMLv2Mill.artifactScope();
+          var extractor = new SerializationUtil.PartDefExtractor(artifact);
+          var traverser = getTraverser();
+          traverser.add4SysMLParts(extractor);
+          asts.stream().forEach(s -> s.accept(traverser));
+
+          // Store to file
+          storeSymbols(artifact, cmd.getOptionValue("compcon"));
         }
         if (cmd.hasOption("report")) {
           Log.warn("0xA0004 Not implemented yet.");
