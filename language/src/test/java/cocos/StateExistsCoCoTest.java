@@ -61,7 +61,7 @@ public class StateExistsCoCoTest {
     checker.addCoCo(new StateExistsCoCo());
     checker.checkAll(ast.get());
     assertThat(Log.getFindings().stream().map(Finding::getMsg))
-        .contains("Source state is not defined", "Target state is not defined");
+        .contains("0x10029 Source state is not defined", "0x10030 Target state is not defined");
   }
 }
 

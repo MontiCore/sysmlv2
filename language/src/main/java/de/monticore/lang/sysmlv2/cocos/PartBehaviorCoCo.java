@@ -29,10 +29,10 @@ public class PartBehaviorCoCo implements SysMLPartsASTPartDefCoCo {
     int decompositionAvailable = node.getSysMLElements(ASTPartUsage.class).size() > 0 ? 1 : 0;
 
     if((constraintAvailable + automatonAvailable + decompositionAvailable) == 0) {
-      Log.warn("0xA70003 Part " + node.getName() + " has no explicit behavior!");
+      Log.warn("0xFF0003 Part " + node.getName() + " has no explicit behavior!");
     }
     if((constraintAvailable + automatonAvailable + decompositionAvailable) > 1) {
-      Log.warn("0xA70004 Part " + node.getName() + " must contain exactly one "
+      Log.warn("0xFF0004 Part " + node.getName() + " must contain exactly one "
           + "behavior specification (constraint, automaton or composition) but has " +
           (constraintAvailable + automatonAvailable + decompositionAvailable));
     }

@@ -21,18 +21,18 @@ public class TypeCheckTransitionGuards implements SysMLStatesASTSysMLTransitionC
       try {
         TypeCheckResult type = deriver.deriveType(expr);
         if(!type.isPresentResult() || type.getResult().getTypeInfo() == null) {
-          Log.error("Failed to derive a type!",
+          Log.error("0x80004 Failed to derive a type!",
               expr.get_SourcePositionStart(),
               expr.get_SourcePositionEnd());
         }
         else if(!type.getResult().printFullName().equals("boolean")) {
-          Log.error("The expression type is '" + type.getResult().printFullName() + "' but should be boolean!",
+          Log.error("0x80005 The expression type is '" + type.getResult().printFullName() + "' but should be boolean!",
               expr.get_SourcePositionStart(),
               expr.get_SourcePositionEnd());
         }
       }
       catch (Exception e) {
-        Log.error(e.getClass().getSimpleName() + " while type checking!",
+        Log.error("0x80006 " + e.getClass().getSimpleName() + " while type checking!",
             expr.get_SourcePositionStart(),
             expr.get_SourcePositionEnd());
       }

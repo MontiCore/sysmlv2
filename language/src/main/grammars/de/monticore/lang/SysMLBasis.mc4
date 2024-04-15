@@ -72,7 +72,7 @@ component grammar SysMLBasis
         if(isPresentSysMLCardinality()) {
           return getSysMLCardinality().getCardinality();
         }
-        Log.error("0xMPf005 get for Cardinality can't return a value. Attribute is empty.");
+        Log.error("0x10005 get for Cardinality can't return a value. Attribute is empty.");
         // Normally this statement is not reachable
         throw new IllegalStateException();
       }

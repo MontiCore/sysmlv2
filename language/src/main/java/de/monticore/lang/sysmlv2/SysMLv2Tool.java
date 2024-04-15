@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2;
 
+import de.monticore.lang.componentconnector.SerializationUtil;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintDefCoCo;
 import de.monticore.lang.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTSysMLPackageCoCo;
@@ -38,16 +39,23 @@ import de.monticore.lang.sysmlv2.cocos.WarnNonExhibited;
 import de.monticore.lang.sysmlv2.symboltable.completers.*;
 import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.lang.sysmlv2.types.SysMLSynthesizer;
-import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCompleter;
+import de.monticore.ocl.oclexpressions.symboltable.OCLExpressionsSymbolTableCompleter;
+import de.monticore.ocl.types3.OCLSymTypeRelations;
+import de.monticore.ocl.types3.util.OCLCollectionTypeRelations;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FilenameUtils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class SysMLv2Tool extends SysMLv2ToolTOP {
@@ -60,6 +68,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     SysMLv2Mill.addStringType();
     SysMLv2Mill.addCollectionTypes();
     SysMLv2Mill.addStreamType();
+    OCLSymTypeRelations.init();
   }
 
   /**
@@ -172,6 +181,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     traverser.add4SysMLParts(new RequirementClassificationCompleter());
     traverser.add4SysMLParts(new DirectRefinementCompleter());
     traverser.add4SysMLParts(new CausalityCompleter());
+    traverser.add4SysMLStates(new StateExhibitionCompleter());
 
     // gleiches Spiel wie oben: Alles besuchen verlangt zwei Calls
     if(node.getEnclosingScope() != null) {
@@ -197,7 +207,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
   public void finalizeSymbolTable(ASTSysMLModel node) {
     var traverser = SysMLv2Mill.traverser();
     // null parameters since we don't really understand any of those (yet)
-    var oclCompleter = new OCLExpressionsSymbolTableCompleter(null, null);
+    var oclCompleter = new OCLExpressionsSymbolTableCompleter();
     // TODO The "true" here assumes, that OCL-Expr. are only ever used in history-oriented constraints
     oclCompleter.setDeriver(new SysMLDeriver(true));
     oclCompleter.setSynthesizer(new SysMLSynthesizer());
@@ -207,6 +217,22 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
       node.getEnclosingScope().accept(traverser);
     }
     node.accept(traverser);
+  }
+
+  public Options addAdditionalOptions(Options options) {
+    options.addOption(Option.builder("ex")
+        .longOpt("extended")
+        .desc("Runs additional checks not pertaining to the official language specification.")
+        .build());
+
+    options.addOption(Option.builder("cc")
+        .longOpt("compcon")
+        .desc("Serializes the symbol table of the given artifact using component-connector symbols.")
+        .hasArg(true)
+        .optionalArg(false)
+        .argName("output file")
+        .build());
+    return options;
   }
 
   // MontiCore generiert hier leider herzlich wenig Sinnvolles
@@ -227,32 +253,76 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
         printVersion();
         return;
       }
-      else if(cmd.hasOption("input")){
-        check(Path.of(cmd.getOptionValue("input")));
-        return;
+      else {
+        // We process input, be it via file/folder (--input) or STDIN
+        List<ASTSysMLModel> asts;
+        if (cmd.hasOption("input")) {
+          var input = Path.of(cmd.getOptionValue("input"));
+          if(Files.isDirectory(input)) {
+            try {
+              asts = Files.walk(input)
+                  .filter(p -> FilenameUtils.getExtension(p.toString()).equals("sysml"))
+                  .map(p -> parse(p.toString()))
+                  .collect(Collectors.toList());
+            }
+            catch (IOException ex) {
+              Log.error("0x00001 Could not read the input directory: " + ex.getMessage());
+              return;
+            }
+          }
+          else {
+            asts = List.of(parse(cmd.getOptionValue("input")));
+          }
+        }
+        else {
+          var modelReader = new BufferedReader(new InputStreamReader(System.in));
+          try {
+            asts = List.of(SysMLv2Mill.parser().parse(modelReader).get());
+          }
+          catch (IOException ex) {
+            Log.error("0x00002 Could not read standard input: " + ex.getMessage());
+            return;
+          }
+        }
+
+        asts.forEach(it -> createSymbolTable(it));
+        asts.forEach(it -> completeSymbolTable(it));
+        asts.forEach(it -> finalizeSymbolTable(it));
+
+        asts.forEach(it -> runDefaultCoCos(it));
+        if (cmd.hasOption("extended")) {
+          asts.forEach(it -> runAdditionalCoCos(it));
+        }
+
+        if (cmd.hasOption("prettyprint")) {
+          String target = cmd.getOptionValue("prettyprint");
+          asts.forEach(it -> prettyPrint(it, target));
+        }
+
+        if (cmd.hasOption("symboltable")) {
+          Log.warn("0xA0003 Not implemented yet.");
+        }
+        if (cmd.hasOption("compcon")) {
+          // Setup the serialization to produce base symbols
+          SerializationUtil.setupComponentConnectorSerialization();
+
+          // Gather PartDefs into a new Scope
+          var artifact = SysMLv2Mill.artifactScope();
+          var extractor = new SerializationUtil.PartDefExtractor(artifact);
+          var traverser = getTraverser();
+          traverser.add4SysMLParts(extractor);
+          asts.stream().forEach(s -> s.accept(traverser));
+
+          // Store to file
+          storeSymbols(artifact, cmd.getOptionValue("compcon"));
+        }
+        if (cmd.hasOption("report")) {
+          Log.warn("0xA0004 Not implemented yet.");
+        }
       }
-
-    } catch (org.apache.commons.cli.ParseException e) {
+    }
+    catch (org.apache.commons.cli.ParseException e) {
       Log.error("0xA5C06x33289 Could not process SysMLv2Tool parameters: " + e.getMessage());
-    }
-  }
-
-  public void check(Path models) {
-    try {
-      var asts = Files.walk(models)
-          .filter(p -> FilenameUtils.getExtension(p.toString()).equals("sysml"))
-          .map(p -> parse(p.toString()))
-          .collect(Collectors.toList());
-
-      asts.forEach(it -> createSymbolTable(it));
-      asts.forEach(it -> completeSymbolTable(it));
-      asts.forEach(it -> finalizeSymbolTable(it));
-
-      asts.forEach(it -> runDefaultCoCos(it));
-      asts.forEach(it -> runAdditionalCoCos(it));
-    }
-    catch (IOException ex) {
-      Log.error("Could not read the input directory: " + ex.getMessage());
     }
   }
 

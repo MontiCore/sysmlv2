@@ -125,7 +125,7 @@ public class MildComponentSymbolDeSer extends MildComponentSymbolDeSerTOP{
 
   @Override protected List<ASTConnector> deserializeConnectors(JsonObject symbolJson) {
     // Wird nicht implementiert
-    Log.error("Attempted to deserialize connectors, but connectors are never serialized to begin with.");
+    Log.error("0xD0001 Attempted to deserialize connectors, but connectors are never serialized to begin with.");
     return null;
   }
 

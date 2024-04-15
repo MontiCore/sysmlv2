@@ -54,19 +54,19 @@ public class SysMLExressionsDeriver extends AbstractDeriveFromExpression impleme
     var start = node.get_SourcePositionStart();
     var end = node.get_SourcePositionEnd();
     if(!lhs.isPresentResult()) {
-      Log.error("LHS could not be calculated", start, end);
+      Log.error("0x81002 LHS could not be calculated", start, end);
       typeCheckResult.setResult(SymTypeExpressionFactory.createObscureType());
     }
     else if(!rhs.isPresentResult()) {
-      Log.error("RHS could not be calculated", start, end);
+      Log.error("0x81003 RHS could not be calculated", start, end);
       typeCheckResult.setResult(SymTypeExpressionFactory.createObscureType());
     }
     else if(!lhs.getResult().getTypeInfo().getFullName().equals("Set")) {
-      Log.error("LHS was expected to be a set, but was " + lhs.getResult().printFullName(), start, end);
+      Log.error("0x81004 LHS was expected to be a set, but was " + lhs.getResult().printFullName(), start, end);
       typeCheckResult.setResult(SymTypeExpressionFactory.createObscureType());
     }
     else if(!rhs.getResult().getTypeInfo().getFullName().equals("Set")) {
-      Log.error("RHS was expected to be a set, but was " + lhs.getResult().printFullName(), start, end);
+      Log.error("0x81005 RHS was expected to be a set, but was " + lhs.getResult().printFullName(), start, end);
       typeCheckResult.setResult(SymTypeExpressionFactory.createObscureType());
     }
     else {
@@ -87,19 +87,19 @@ public class SysMLExressionsDeriver extends AbstractDeriveFromExpression impleme
     var start = node.get_SourcePositionStart();
     var end = node.get_SourcePositionEnd();
     if(!lhs.isPresentResult()) {
-      Log.error("LHS could not be calculated", start, end);
+      Log.error("0x81006 LHS could not be calculated", start, end);
       typeCheckResult.setResult(SymTypeExpressionFactory.createObscureType());
     }
     else if(!rhs.isPresentResult()) {
-      Log.error("RHS could not be calculated", start, end);
+      Log.error("0x81007 RHS could not be calculated", start, end);
       typeCheckResult.setResult(SymTypeExpressionFactory.createObscureType());
     }
     else if(!rhs.getResult().getTypeInfo().getFullName().equals("Set")) {
-      Log.error("RHS was expected to be a set, but was " + lhs.getResult().printFullName(), start, end);
+      Log.error("0x81008 RHS was expected to be a set, but was " + lhs.getResult().printFullName(), start, end);
       typeCheckResult.setResult(SymTypeExpressionFactory.createObscureType());
     }
     if(!((SymTypeOfGenerics)rhs.getResult()).getArgument(0).deepEquals(lhs.getResult())) {
-      Log.error("LHS was expected to be compatible with elements of RHS, but was " + lhs.getResult().printFullName(),
+      Log.error("0x81009 LHS was expected to be compatible with elements of RHS, but was " + lhs.getResult().printFullName(),
           start, end);
       typeCheckResult.setResult(SymTypeExpressionFactory.createObscureType());
     }

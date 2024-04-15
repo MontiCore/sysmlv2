@@ -43,7 +43,7 @@ public class PartUsage2SubcomponentAdapter extends MildInstanceSymbol {
       var compSymbol = new PartDef2ComponentAdapter(adaptee.getPartDef().get());
       return new KindOfComponent(compSymbol);
     }
-    Log.error("0xMPf002 No type could be determined", getSourcePosition());
+    Log.error("0x10002 No type could be determined", getSourcePosition());
     return null;
   }
 

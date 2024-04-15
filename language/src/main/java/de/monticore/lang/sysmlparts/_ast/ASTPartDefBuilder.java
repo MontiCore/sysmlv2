@@ -2,6 +2,8 @@ package de.monticore.lang.sysmlparts._ast;
 
 import de.monticore.ast.Comment;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpressionBuilder;
+import de.monticore.lang.sysmlbasis._ast.ASTDefaultValueBuilder;
+import de.monticore.lang.sysmlbasis._ast.ASTModifierBuilder;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLFeatureDirection;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsageBuilder;
@@ -168,12 +170,14 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
         .build();
 
     var constraint = new ASTConstraintUsageBuilder()
+        .setModifier(new ASTModifierBuilder().build())
         .setName(name)
         .setRequire(true)
         .setExpression(expr)
         .build();
 
     var newRequirement = new ASTRequirementUsageBuilder()
+        .setModifier(new ASTModifierBuilder().build())
         .setName(name)
         .addSysMLElement(constraint)
         .setSatisfy(true).build();
@@ -197,9 +201,11 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
                 .setDefaultValue(SysMLv2Mill.defaultValueBuilder().build())
                 .build())
             .build())
-        .addSysMLElement(SysMLv2Mill.sysMLSuccessionBuilder().setTgt(
-            SysMLv2Mill.nameExpressionBuilder().setName("Init").build()
-        ).build())
+        .addSysMLElement(
+            SysMLv2Mill.sysMLSuccessionBuilder()
+                .setTgt(SysMLv2Mill.nameExpressionBuilder().setName("Init").build())
+                .setModifier(SysMLv2Mill.modifierBuilder().build())
+                .build())
         .addSysMLElement(SysMLv2Mill.stateUsageBuilder()
             .setName("Init")
             .setModifier(SysMLv2Mill.modifierBuilder().build())
@@ -294,6 +300,7 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
     var usageType = new ASTMCQualifiedTypeBuilder().setMCQualifiedName(partDefQName).build();
     this.addSysMLElement(SysMLv2Mill.partUsageBuilder()
         .setModifier(SysMLv2Mill.modifierBuilder().build())
+        .setDefaultValue(new ASTDefaultValueBuilder().build())
         .setName(usageName)
         .addSpecialization(SysMLv2Mill.sysMLTypingBuilder().addSuperTypes(usageType).build())
         .build());

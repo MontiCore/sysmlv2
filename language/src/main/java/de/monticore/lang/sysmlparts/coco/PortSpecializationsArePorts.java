@@ -30,7 +30,7 @@ public class PortSpecializationsArePorts
     Stream.concat(node.getSymbol().getTypesList().stream(), node.getSymbol().getConjugatedTypesList().stream())
         .filter(t -> !(t.getTypeInfo() instanceof PortDef2TypeSymbolAdapter))
         .forEach(t -> Log.error(
-            "0xMPf001 " + t.print() + ": Specializations of port usages must be port usages or definitions.",
+            "0x10018 " + t.print() + ": Specializations of port usages must be port usages or definitions.",
             node.get_SourcePositionStart(), node.get_SourcePositionEnd()));
   }
 

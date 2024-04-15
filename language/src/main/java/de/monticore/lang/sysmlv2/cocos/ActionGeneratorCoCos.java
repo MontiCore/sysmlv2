@@ -39,7 +39,7 @@ public class ActionGeneratorCoCos implements SysMLActionsASTActionDefCoCo, SysML
         }
       }
       if(firstCount != 1) {
-        Log.error("ActionUsage " + node.getName() + " has " + firstCount + " \"first\" usage, but needs exactly 1.");
+        Log.error("0x10019 ActionUsage " + node.getName() + " has " + firstCount + " \"first\" usage, but needs exactly 1.");
       }
     }
   }

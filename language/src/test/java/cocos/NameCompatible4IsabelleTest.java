@@ -100,8 +100,7 @@ public class NameCompatible4IsabelleTest {
     checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new NameCompatible4Isabelle());
     checker.checkAll(ast.get());
 
-    assertFalse(Log.getFindings().isEmpty());
-    assertThat(Log.getFindings().stream().filter(it -> it.isError()).map(it -> it.getMsg()))
-        .contains("This name is not Isabelle compatible");
+    assertThat(Log.getFindings()).isNotEmpty();
+    assertThat(Log.getFindings()).allMatch(f -> f.getMsg().contains("0xFF005"));
   }
 }

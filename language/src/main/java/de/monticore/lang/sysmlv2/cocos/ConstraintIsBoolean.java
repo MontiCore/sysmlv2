@@ -24,16 +24,16 @@ public class ConstraintIsBoolean implements SysMLConstraintsASTConstraintUsageCo
       if(!type.isPresentResult() || type.getResult().getTypeInfo() == null) {
         var start = node.get_SourcePositionStart();
         var end = constraintEnd(start);
-        Log.error("Failed to derive a type!", start, end);
+        Log.error("0x80001 Failed to derive a type!", start, end);
       }
       else if(!type.getResult().printFullName().equals("boolean")) {
-        Log.error("The expression type is '" + type.getResult().printFullName() + "' but should be boolean!", expr.get_SourcePositionStart(), expr.get_SourcePositionEnd());
+        Log.error("0x80002 The expression type is '" + type.getResult().printFullName() + "' but should be boolean!", expr.get_SourcePositionStart(), expr.get_SourcePositionEnd());
       }
     }
     catch (Exception e) {
       var start = node.get_SourcePositionStart();
       var end = constraintEnd(start);
-      Log.error(e.getClass().getSimpleName() + " while type checking!", start, end);
+      Log.error("0x80003 " + e.getClass().getSimpleName() + " while type checking!", start, end);
     }
   }
 

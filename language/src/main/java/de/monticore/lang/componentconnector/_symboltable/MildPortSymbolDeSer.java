@@ -12,7 +12,7 @@ import java.util.Optional;
 public class MildPortSymbolDeSer extends MildPortSymbolDeSerTOP {
   @Override protected void serializeCardinality(ASTCardinality cardinality, ComponentConnectorSymbols2Json s2j) {
     // TODO
-    Log.error("Implement me");
+    Log.error("0xTODO3 Implement me");
   }
 
   @Override
@@ -28,7 +28,7 @@ public class MildPortSymbolDeSer extends MildPortSymbolDeSerTOP {
   @Override
   protected ASTCardinality deserializeCardinality(JsonObject symbolJson) {
     // TODO
-    Log.error("Implement me");
+    Log.error("0xTODO4 Implement me");
     return null;
   }
 
