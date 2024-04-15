@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class AttributeDef2TypeSymbolAdapter extends OOTypeSymbol {
   protected AttributeDefSymbol adaptee;
 
-  public AttributeDef2TypeSymbolAdapter(AttributeDefSymbol adaptee){
+  public AttributeDef2TypeSymbolAdapter(AttributeDefSymbol adaptee) {
     super(Preconditions.checkNotNull(adaptee.getName()));
     this.adaptee = adaptee;
   }
@@ -74,7 +74,8 @@ public class AttributeDef2TypeSymbolAdapter extends OOTypeSymbol {
 
   // TODO needed?
   public AttributeDef2TypeSymbolAdapter deepClone() {
-    AttributeDef2TypeSymbolAdapter clone = new AttributeDef2TypeSymbolAdapter(this.getAdaptee());
+    AttributeDef2TypeSymbolAdapter clone = new AttributeDef2TypeSymbolAdapter(
+        this.getAdaptee());
     clone.setAccessModifier(this.getAccessModifier());
     clone.setEnclosingScope(this.getEnclosingScope());
     clone.setFullName(this.getFullName());

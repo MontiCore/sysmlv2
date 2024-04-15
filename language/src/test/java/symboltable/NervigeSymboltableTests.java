@@ -3,6 +3,7 @@ package symboltable;
 import de.monticore.lang.automaton._symboltable.AutomatonSymbols2Json;
 import de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbol;
 import de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbolDeSer;
+import de.monticore.lang.componentconnector.SerializationUtil;
 import de.monticore.lang.componentconnector._symboltable.ComponentConnectorSymbols2Json;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbolDeSer;
@@ -33,7 +34,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
 
-abstract public class NervigeSymboltableTests {
+abstract public class NervigeSymboltableTests extends SerializationUtil {
 
   protected static SysMLv2Tool tool;
 
@@ -62,58 +63,6 @@ abstract public class NervigeSymboltableTests {
     tool.completeSymbolTable(ast);
     tool.finalizeSymbolTable(ast);
     return as;
-  }
-
-  /** Vorläufiger Ablageort für ST-Serialization Geraffel */
-  protected void fixSerialization() {
-    ExtendedMildComponentSymbolDeSer myComponentSymbolDeSer = new ExtendedMildComponentSymbolDeSer() {
-      ComponentSymbolDeSer delegate = new ComponentSymbolDeSer();
-      @Override
-      public String serialize (ExtendedMildComponentSymbol toSerialize, AutomatonSymbols2Json s2j){
-        return delegate.serialize(toSerialize, new CompSymbolsSymbols2Json(s2j.getTraverser(), s2j.getJsonPrinter()));
-      }
-    };
-
-    SysMLv2Mill.globalScope().getSymbolDeSers()
-        .put("de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbol", myComponentSymbolDeSer);
-
-    MildPortSymbolDeSer myPortSymbolDeSer = new MildPortSymbolDeSer() {
-      PortSymbolDeSer delegate = new PortSymbolDeSer();
-      @Override
-      public String serialize (MildPortSymbol toSerialize, ComponentConnectorSymbols2Json s2j){
-        return delegate.serialize(toSerialize, new CompSymbolsSymbols2Json(s2j.getTraverser(), s2j.getJsonPrinter()));
-      }
-    };
-
-    SysMLv2Mill.globalScope().getSymbolDeSers()
-        .put("de.monticore.lang.componentconnector._symboltable.MildPortSymbol", myPortSymbolDeSer);
-
-    // Den Teil verstehe ich nicht wirklich - wieso hat DS einen "FullCompKindExprDeSer" erfunden?
-    // Ohne kann der SubcomponentSymbolDeSer seinen Job nicht erledigen. Man würde zwar erwarten, dass der korrekt
-    // konfiguriert würde, aber... just MontiCore things.
-    var fullCompKindDeSer = new FullCompKindExprDeSer() {
-      private KindOfComponentDeSer delegate = new KindOfComponentDeSer();
-      @Override
-      public String serializeAsJson(@NonNull CompKindExpression toSerialize) {
-        return delegate.serializeAsJson((KindOfComponent) toSerialize);
-      }
-      @Override
-      public CompKindExpression deserialize(@NonNull JsonElement serialized) {
-        return delegate.deserialize((JsonObject) serialized);
-      }
-    };
-
-    MildInstanceSymbolDeSer mySubcomponentSymbolDeSer = new MildInstanceSymbolDeSer() {
-      SubcomponentSymbolDeSer delegate = new SubcomponentSymbolDeSer(fullCompKindDeSer);
-      @Override
-      public String serialize (MildInstanceSymbol toSerialize, ComponentConnectorSymbols2Json s2j){
-        return delegate.serialize(toSerialize, new CompSymbolsSymbols2Json(s2j.getTraverser(), s2j.getJsonPrinter()));
-      }
-    };
-
-    SysMLv2Mill.globalScope().getSymbolDeSers()
-        .put("de.monticore.lang.componentconnector._symboltable.MildInstanceSymbol", mySubcomponentSymbolDeSer);
-
   }
 
 }

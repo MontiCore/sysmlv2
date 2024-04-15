@@ -1,16 +1,10 @@
 package deser;
 
-import de.monticore.lang.automaton._symboltable.AutomatonSymbolDeSer;
 import de.monticore.lang.automaton._symboltable.AutomatonSymbols2Json;
 import de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbol;
 import de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbolDeSer;
 import de.monticore.lang.automaton._visitor.AutomatonHandler;
 import de.monticore.lang.automaton._visitor.AutomatonTraverser;
-import de.monticore.lang.componentconnector._symboltable.ComponentConnectorSymbols2Json;
-import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
-import de.monticore.lang.componentconnector._symboltable.MildComponentSymbolDeSer;
-import de.monticore.lang.componentconnector._visitor.ComponentConnectorHandler;
-import de.monticore.lang.componentconnector._visitor.ComponentConnectorTraverser;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
 import de.monticore.mcbasics._symboltable.MCBasicsDeSer;
@@ -22,10 +16,7 @@ import de.monticore.symbols.compsymbols._symboltable.CompSymbolsSymbols2Json;
 import de.monticore.symbols.compsymbols._symboltable.ComponentSymbol;
 import de.monticore.symbols.compsymbols._symboltable.ComponentSymbolDeSer;
 import de.monticore.symboltable.serialization.JsonPrinter;
-import de.se_rwth.commons.logging.LogStub;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import symboltable.NervigeSymboltableTests;
 
@@ -34,19 +25,15 @@ import java.io.IOException;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 /**
- * Diese Tests dokumentieren die Odyssee um adaptierte SysML-Symbole nach CompSymbols zu serialisieren. Die
- * Motivation ist, dass es externen (i.e., nicht direkt in Kenntnis der SysML-Interna) Sprachen und Werkzeugen
- * ermöglicht werden soll Referenzen auf SysML-Elemente aus dem Dunstkreis des Systems Engineering (Components &
- * Ports) zu prüfen.
- *
- * Idee:
- * $> echo "export generic ST to out.json"
- * $> java -jar sysml.jar -i Model.sysml --symboltable out.json --generic
- * $> echo "external tool can check references or maybe find templates describing how to reference components/ports
- * $> java -jar montiarc.jar -s out.json -i OtherModel.arc
- *
- * Die @Disbled'ten Tests sind gescheiterte Versuche. Die letzte beiden sind die möglichen Lösungen, wobei die letzte
- * die einzige vertretbare Implementierung ist.
+ * Diese Tests dokumentieren die Odyssee um adaptierte SysML-Symbole nach
+ * CompSymbols zu serialisieren. Die Motivation ist, dass es externen (i.e.,
+ * nicht direkt in Kenntnis der SysML-Interna) Sprachen und Werkzeugen
+ * ermöglicht werden soll Referenzen auf SysML-Elemente aus dem Dunstkreis des
+ * Systems Engineering (Components & Ports) zu prüfen.
+ * <p>
+ * Die @Disbled'ten Tests sind gescheiterte Versuche. Die letzte beiden sind die
+ * möglichen Lösungen, wobei die letzte die einzige vertretbare Implementierung
+ * ist.
  */
 public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
 
@@ -54,9 +41,12 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
   public void forSysml() throws IOException {
     var as = process("part def A;");
     var st = new SysMLv2Symbols2Json().serialize(as);
-    assertThat(st).isEqualTo("{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\",\"symbols\":"
-        + "[{\"kind\":\"de.monticore.lang.sysmlparts._symboltable.PartDefSymbol\",\"name\":\"A\","
-        + "\"requirementType\":\"UNKNOWN\"}]}");
+    assertThat(st).isEqualTo(
+        "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
+            + "\"symbols\":"
+            + "[{\"kind\":\"de.monticore.lang.sysmlparts._symboltable"
+            + ".PartDefSymbol\",\"name\":\"A\","
+            + "\"requirementType\":\"UNKNOWN\"}]}");
   }
 
   @Test
@@ -70,8 +60,11 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
 
     // Serialisierung nach MildComponent
     var mild_st = new SysMLv2Symbols2Json().serialize(s);
-    assertThat(mild_st).isEqualTo("{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\",\"symbols\":"
-        + "[{\"kind\":\"de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbol\",\"name\":\"A\"}]}");
+    assertThat(mild_st).isEqualTo(
+        "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
+            + "\"symbols\":"
+            + "[{\"kind\":\"de.monticore.lang.automaton._symboltable"
+            + ".ExtendedMildComponentSymbol\",\"name\":\"A\"}]}");
   }
 
   // TODO Versuche ab hier die Default-Ser von CompSymbols zu benutzen
@@ -84,10 +77,14 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
     var artifact = SysMLv2Mill.artifactScope();
     artifact.add(comp);
 
-    // Hier kommt nichts an, weil die Symbole in ihrem wahren Typen - MildComponentSymbol - besucht werden.
+    // Hier kommt nichts an, weil die Symbole in ihrem wahren Typen -
+    // MildComponentSymbol - besucht werden.
     var st = new CompSymbolsSymbols2Json().serialize(artifact);
-    assertThat(st).isEqualTo("{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\",\"symbols\":"
-        + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable.ComponentSymbol\",\"name\":\"A\"}]}");
+    assertThat(st).isEqualTo(
+        "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
+            + "\"symbols\":"
+            + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable"
+            + ".ComponentSymbol\",\"name\":\"A\"}]}");
   }
 
   @Disabled
@@ -99,22 +96,29 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
     var artifact = SysMLv2Mill.artifactScope();
     artifact.add(comp);
 
-    // Deswegen nehme ich einen Inheritance Traverser und "nur" die nötigsten Visitoren
+    // Deswegen nehme ich einen Inheritance Traverser und "nur" die nötigsten
+    // Visitoren
     var traverser = SysMLv2Mill.inheritanceTraverser();
     var printer = new JsonPrinter();
 
-    var compSymbolsSymbols2Json = new CompSymbolsSymbols2Json(traverser, printer);
+    var compSymbolsSymbols2Json = new CompSymbolsSymbols2Json(traverser,
+        printer);
     traverser.add4CompSymbols(compSymbolsSymbols2Json);
 
-    var basicSymbolsSymbols2Json = new BasicSymbolsSymbols2Json(traverser, printer);
+    var basicSymbolsSymbols2Json = new BasicSymbolsSymbols2Json(traverser,
+        printer);
     traverser.add4BasicSymbols(basicSymbolsSymbols2Json);
 
     var mcBasicsSymbols2Json = new MCBasicsSymbols2Json(traverser, printer);
     traverser.add4MCBasics(mcBasicsSymbols2Json);
 
-    var st = new SysMLv2Symbols2Json(traverser, printer).serialize(artifact); // <--- Hier knallts
-    assertThat(st).isEqualTo("{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\",\"symbols\":"
-        + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable.ComponentSymbol\",\"name\":\"A\"}]}");
+    var st = new SysMLv2Symbols2Json(traverser, printer).serialize(
+        artifact); // <--- Hier knallts
+    assertThat(st).isEqualTo(
+        "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
+            + "\"symbols\":"
+            + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable"
+            + ".ComponentSymbol\",\"name\":\"A\"}]}");
   }
 
   @Disabled
@@ -130,7 +134,8 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
     var printer = new JsonPrinter();
 
     // Workaround von @AHe: scopeDeSer setzen
-    var compSymbolsSymbols2Json = new CompSymbolsSymbols2Json(traverser, printer){
+    var compSymbolsSymbols2Json = new CompSymbolsSymbols2Json(traverser,
+        printer) {
       @Override
       public void init() {
         super.init();
@@ -139,7 +144,8 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
     };
     traverser.add4CompSymbols(compSymbolsSymbols2Json);
 
-    var basicSymbolsSymbols2Json = new BasicSymbolsSymbols2Json(traverser, printer) {
+    var basicSymbolsSymbols2Json = new BasicSymbolsSymbols2Json(traverser,
+        printer) {
       @Override
       public void init() {
         super.init();
@@ -157,10 +163,14 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
     };
     traverser.add4MCBasics(mcBasicsSymbols2Json);
 
-    // Hier sind für jeden Visitor ein Scope zuviel drin und kein Artifact, wie AHe selber bemerkt
+    // Hier sind für jeden Visitor ein Scope zuviel drin und kein Artifact,
+    // wie AHe selber bemerkt
     var st = new SysMLv2Symbols2Json(traverser, printer).serialize(artifact);
-    assertThat(st).isEqualTo("{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\",\"symbols\":"
-        + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable.ComponentSymbol\",\"name\":\"A\"}]}");
+    assertThat(st).isEqualTo(
+        "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
+            + "\"symbols\":"
+            + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable"
+            + ".ComponentSymbol\",\"name\":\"A\"}]}");
   }
 
   @Test
@@ -205,7 +215,8 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
     traverser.add4SysMLv2(sysMLv2Symbols2Json);
 
     // Workaround von @AHe wie bisher
-    var compSymbolsSymbols2Json = new CompSymbolsSymbols2Json(traverser, printer){
+    var compSymbolsSymbols2Json = new CompSymbolsSymbols2Json(traverser,
+        printer) {
       @Override
       public void init() {
         super.init();
@@ -214,7 +225,8 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
     };
     traverser.add4CompSymbols(compSymbolsSymbols2Json);
 
-    var basicSymbolsSymbols2Json = new BasicSymbolsSymbols2Json(traverser, printer) {
+    var basicSymbolsSymbols2Json = new BasicSymbolsSymbols2Json(traverser,
+        printer) {
       @Override
       public void init() {
         super.init();
@@ -233,9 +245,13 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
     traverser.add4MCBasics(mcBasicsSymbols2Json);
 
     // Das klappt! Ist nur sehr viel repetitives Setup
-    var st = new SysMLv2Symbols2Json(traverser, printer).serialize(artifact); // <--- Hier knallts
-    assertThat(st).isEqualTo("{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\",\"symbols\":"
-        + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable.ComponentSymbol\",\"name\":\"A\"}]}");
+    var st = new SysMLv2Symbols2Json(traverser, printer).serialize(
+        artifact); // <--- Hier knallts
+    assertThat(st).isEqualTo(
+        "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
+            + "\"symbols\":"
+            + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable"
+            + ".ComponentSymbol\",\"name\":\"A\"}]}");
   }
 
   @Test
@@ -247,20 +263,31 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
     artifact.add(comp);
 
     // Zweiter Versuch von AHe
-    ExtendedMildComponentSymbolDeSer myTypeSymbolDeSer = new ExtendedMildComponentSymbolDeSer() {
-      ComponentSymbolDeSer delegate = new ComponentSymbolDeSer();
-      @Override
-      public String serialize (ExtendedMildComponentSymbol toSerialize, AutomatonSymbols2Json s2j){
-        return delegate.serialize(toSerialize, new CompSymbolsSymbols2Json(s2j.getTraverser(), s2j.getJsonPrinter()));
-      }
-    };
+    ExtendedMildComponentSymbolDeSer myTypeSymbolDeSer =
+        new ExtendedMildComponentSymbolDeSer() {
+          ComponentSymbolDeSer delegate = new ComponentSymbolDeSer();
+
+          @Override
+          public String serialize(ExtendedMildComponentSymbol toSerialize,
+                                  AutomatonSymbols2Json s2j) {
+            return delegate.serialize(toSerialize,
+                new CompSymbolsSymbols2Json(s2j.getTraverser(),
+                    s2j.getJsonPrinter()));
+          }
+        };
 
     SysMLv2Mill.globalScope().getSymbolDeSers()
-        .put("de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbol", myTypeSymbolDeSer);
+        .put(
+            "de.monticore.lang.automaton._symboltable"
+                + ".ExtendedMildComponentSymbol",
+            myTypeSymbolDeSer);
 
     // Klappt auch, aber ziemlich Spaghetti
     var st = new SysMLv2Symbols2Json().serialize(artifact);
-    assertThat(st).isEqualTo("{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\",\"symbols\":"
-        + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable.ComponentSymbol\",\"name\":\"A\"}]}");
+    assertThat(st).isEqualTo(
+        "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
+            + "\"symbols\":"
+            + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable"
+            + ".ComponentSymbol\",\"name\":\"A\"}]}");
   }
 }
