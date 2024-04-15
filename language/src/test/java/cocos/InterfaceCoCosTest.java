@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package cocos;
 
-import de.monticore.lang.sysmlinterfaces._cocos.SysMLInterfacesASTInterfaceDefCoCo;
+import de.monticore.lang.sysmlconnections._cocos.SysMLConnectionsASTInterfaceDefCoCo;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
@@ -45,7 +45,7 @@ public class InterfaceCoCosTest {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String("interface def A; interface def B: A;").get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLInterfacesASTInterfaceDefCoCo) new InterfaceSupertypes());
+      checker.addCoCo((SysMLConnectionsASTInterfaceDefCoCo) new InterfaceSupertypes());
       checker.checkAll(ast);
       assertTrue(Log.getFindings().isEmpty());
     }
@@ -55,7 +55,7 @@ public class InterfaceCoCosTest {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String("interface def B: A;").get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLInterfacesASTInterfaceDefCoCo) new InterfaceSupertypes());
+      checker.addCoCo((SysMLConnectionsASTInterfaceDefCoCo) new InterfaceSupertypes());
       Log.enableFailQuick(false);
       checker.checkAll(ast);
       assertFalse(Log.getFindings().isEmpty());

@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import de.monticore.lang.sysmlparts._symboltable.EnumDefSymbol;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.lang.sysmlv2.symboltable.adapters.EnumUsage2FieldSymbolAdapter;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
@@ -58,7 +59,9 @@ public class EnumDef2TypeSymbolAdapter extends OOTypeSymbol {
     catch(NullPointerException ex) {
       return Lists.newArrayList();
     }
-    return getSpannedScope().getLocalFieldSymbols();
+    return ((ISysMLv2Scope)getSpannedScope()).getLocalEnumUsageSymbols().stream()
+        .map(s -> new EnumUsage2FieldSymbolAdapter(s, this))
+        .collect(Collectors.toList());
   }
 
   @Override

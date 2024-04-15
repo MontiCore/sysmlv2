@@ -5,27 +5,33 @@ import de.monticore.cardinality._ast.ASTCardinality;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlbasis._cocos.SysMLBasisASTSpecializationCoCo;
+import de.monticore.lang.sysmlbasis._cocos.SysMLBasisASTSysMLTypingCoCo;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
 
-public class OneCardinality implements SysMLBasisASTSpecializationCoCo {
+public class OneCardinality implements SysMLBasisASTSysMLTypingCoCo {
   @Override
-  public void check (ASTSpecialization node) {
-    if (node instanceof ASTSysMLTyping && ((ASTSysMLTyping) node).isPresentCardinality()) {
-      ASTCardinality Cardinality =
-          Optional.of(((ASTSysMLTyping) node).getCardinality()).get();
-      boolean multipleCardinalities =
-          (Cardinality.getLowerBound() != Cardinality.getUpperBound())
-              && (Cardinality.getLowerBound() < Cardinality.getUpperBound());
+  public void check (ASTSysMLTyping node) {
+    if (node.isPresentCardinality()) {
+      var card = node.getCardinality();
 
-      if((Cardinality.getLowerBound() > Cardinality.getUpperBound()) && !Cardinality.isNoUpperLimit()) {
-        Log.error("0x10024 invalid Cardinalities", node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+      // [*]
+      if(card.isMany()) {
+        Log.warn("0x10030 Cardiniality will be ignored in verification");
       }
-
-      if(multipleCardinalities || Cardinality.isMany() || Cardinality.isNoUpperLimit()) {
-        Log.warn("0xFF008 SysML-Transformer will ignore multiple Cardinalities",
-            node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+      // [n..*]
+      else if(card.isNoUpperLimit()) {
+        Log.warn("0x10031 Cardiniality will be ignored in verification");
+      }
+      // [n..m]
+      else if(card.isPresentLowerBoundLit() && card.isPresentUpperBoundLit()) {
+        if(card.getUpperBound() < card.getLowerBound()) {
+          Log.error("0x10032 Upper bound is below lower bound");
+        }
+        else if(card.getUpperBound() != card.getLowerBound()) {
+          Log.warn("0x10033 Cardiniality will be ignored in verification");
+        }
       }
     }
   }

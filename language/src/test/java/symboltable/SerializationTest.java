@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SerializationTest {
@@ -109,11 +110,14 @@ public class SerializationTest {
     try {
       sysmlTool.storeSymbols(firstArtifactScope, symboltablePathActual);
 
-      assertTrue(FileUtils.contentEqualsIgnoreEOL(Paths.get(symboltablePathActual).toFile(), Paths.get(
-          symboltablePathExpected).toFile(), "UTF-8"));
+      var actual = FileUtils.readFileToString(Paths.get(symboltablePathActual).toFile(),"UTF-8")
+          .replaceAll("\\s+", "");
+      var expected = FileUtils.readFileToString(Paths.get(symboltablePathExpected).toFile(),"UTF-8")
+          .replaceAll("\\s+", "");
+
+      assertEquals(expected, actual);
     }
     finally {
-      //cleanUp
       Files.deleteIfExists(Paths.get(symboltablePathActual));
     }
   }

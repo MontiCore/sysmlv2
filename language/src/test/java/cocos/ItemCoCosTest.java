@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package cocos;
 
-import de.monticore.lang.sysmlitems._cocos.SysMLItemsASTItemDefCoCo;
+import de.monticore.lang.sysmloccurrences._cocos.SysMLOccurrencesASTItemDefCoCo;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
@@ -45,7 +45,7 @@ public class ItemCoCosTest {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String("item def A; item def B: A;").get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLItemsASTItemDefCoCo) new ItemsSupertypes());
+      checker.addCoCo((SysMLOccurrencesASTItemDefCoCo) new ItemsSupertypes());
       checker.checkAll(ast);
       assertTrue(Log.getFindings().isEmpty());
     }
@@ -55,7 +55,7 @@ public class ItemCoCosTest {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String("item def B: A;").get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLItemsASTItemDefCoCo) new ItemsSupertypes());
+      checker.addCoCo((SysMLOccurrencesASTItemDefCoCo) new ItemsSupertypes());
       Log.enableFailQuick(false);
       checker.checkAll(ast);
       assertFalse(Log.getFindings().isEmpty());

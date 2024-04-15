@@ -2,10 +2,10 @@
 package Inverter {
 
   port def BoolInPort {
-    in value bIn : Boolean;
+    in value bIn : boolean;
   }
 
-  part def Side(initialSide: Boolean) {
+  part def Side(initialSide: boolean) {
     port switch:      BooleanInPort;
     port status:      StatusInPort;
     port disturbance: BooleanInPort;
@@ -21,7 +21,7 @@ package Inverter {
 
 
   state def AutomatonInverter_1
-    (in variableIn : Boolean, out variableOut : Boolean){
+    (in variableIn : boolean, out variableOut : boolean){
 
       entry; then StateInitial;
 
@@ -38,12 +38,12 @@ package Inverter {
 
 
   // ---------------------------  AD  ---------------------------
- state def vald(in variableI: Boolean);
+ state def vald(in variableI: boolean);
 
 }
 
 package inverter {
 	port def BoolOutPort {
-    in value bOut : Boolean;
+    in value bOut : boolean;
   }
 }

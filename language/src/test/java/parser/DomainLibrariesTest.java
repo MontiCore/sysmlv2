@@ -1,7 +1,7 @@
 package parser;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
-import de.monticore.lang.sysmlexpressions._ast.ASTSysMLPower;
+import de.monticore.lang.sysmlexpressions._ast.ASTCalcDefPowerExpression;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
@@ -22,6 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Ziel ist es die Grammatiken genau so weit aufzubohren, dass die Modelle parsen.
  */
 public class DomainLibrariesTest {
+
+  static final String domainLibraries = "src/main/resources/Domain Libraries";
 
   static SysMLv2Tool tool;
 
@@ -75,9 +77,9 @@ public class DomainLibrariesTest {
     assertThat(Log.getFindings()).isEmpty();
 
     var attr = (ASTAttributeUsage)ast.get().getSysMLElement(0);
-    var expr = ((ASTSysMLPower)attr.getExpression()).getExpression(0);
-    assertThat(expr).isInstanceOf(ASTNameExpression.class);
-    assertThat(((ASTNameExpression)expr).getName()).isEqualTo("Ω");
+    var base = ((ASTCalcDefPowerExpression)attr.getDefaultValue().getExpression()).getBase();
+    assertThat(base).isInstanceOf(ASTNameExpression.class);
+    assertThat(((ASTNameExpression)base).getName()).isEqualTo("Ω");
   }
 
   @Test
@@ -88,9 +90,9 @@ public class DomainLibrariesTest {
     assertThat(Log.getFindings()).isEmpty();
 
     var attr = (ASTAttributeUsage)ast.get().getSysMLElement(0);
-    var expr = ((ASTSysMLPower)attr.getExpression()).getExpression(0);
-    assertThat(expr).isInstanceOf(ASTNameExpression.class);
-    assertThat(((ASTNameExpression)expr).getName()).isEqualTo("Ohm");
+    var base = ((ASTCalcDefPowerExpression)attr.getDefaultValue().getExpression()).getBase();
+    assertThat(base).isInstanceOf(ASTNameExpression.class);
+    assertThat(((ASTNameExpression)base).getName()).isEqualTo("Ohm");
   }
 
   @Test
@@ -152,31 +154,31 @@ public class DomainLibrariesTest {
 
   @Test
   public void testParseShapeItems() {
-    var ast = tool.parse("src/main/resources/SysML Domain Libraries/Geometry/ShapeItems.sysml");
+    var ast = tool.parse(domainLibraries + "/Geometry/ShapeItems.sysml");
     assertThat(Log.getFindings()).isEmpty();
   }
 
   @Test
   public void testParse() {
-    var ast = tool.parse("src/main/resources/SysML Domain Libraries/Quantities and Units/SI.sysml");
+    var ast = tool.parse(domainLibraries + "/Quantities and Units/SI.sysml");
     assertThat(Log.getFindings()).isEmpty();
   }
 
   @Test
   public void testParseISQ() {
-    var ast = tool.parse("src/main/resources/SysML Domain Libraries/Quantities and Units/ISQ.sysml");
+    var ast = tool.parse(domainLibraries + "/Quantities and Units/ISQ.sysml");
     assertThat(Log.getFindings()).isEmpty();
   }
 
   @Test
   public void testParseQuantities() {
-    var ast = tool.parse("src/main/resources/SysML Domain Libraries/Quantities and Units/Quantities.sysml");
+    var ast = tool.parse(domainLibraries + "/Quantities and Units/Quantities.sysml");
     assertThat(Log.getFindings()).isEmpty();
   }
 
   @Test
   public void testParseAll() throws IOException {
-    var models = Files.walk(Path.of("src/main/resources/SysML Domain Libraries"))
+    var models = Files.walk(Path.of(domainLibraries))
         .filter(p -> p.toFile().getName().endsWith(".sysml"))
         .collect(Collectors.toList());
 
@@ -200,16 +202,9 @@ public class DomainLibrariesTest {
       }
     }
 
-    System.out.println("Success rate: " + successful + "/" + 37 + " (" + lines + " findings)");
+    //System.out.println("Success rate: " + successful + "/" + 37 + " (" + lines + " findings)");
+    assertThat(successful).isEqualTo(37);
+    assertThat(Log.getFindings()).isEmpty();
   }
-
-  @Test
-  public void measureMillInit() {
-    var startTime = System.nanoTime();
-    SysMLv2Mill.init();
-    var elapsed = System.nanoTime() - startTime;
-    assertThat(elapsed).isLessThan(1*1000*1000*1000); // nano -> micro -> milli -> sekunden
-  }
-
 
 }

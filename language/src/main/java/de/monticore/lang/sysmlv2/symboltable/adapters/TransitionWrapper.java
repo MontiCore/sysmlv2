@@ -45,7 +45,7 @@ public class TransitionWrapper implements ASTTransition {
   TransitionWrapper(ASTSysMLTransition adaptee) {
     this.adaptee = adaptee;
 
-    start = new ASTMCQualifiedNameBuilder().setPartsList(List.of(adaptee.getSrc())).build();
+    start = new ASTMCQualifiedNameBuilder().setPartsList(List.of(adaptee.getSrc().getQName())).build();
 
     if(adaptee.isPresentGuard()) {
       guard = adaptee.getGuard();
@@ -64,10 +64,10 @@ public class TransitionWrapper implements ASTTransition {
     documentation = "line " + adaptee.get_SourcePositionStart().getLine() + " to " + adaptee.get_SourcePositionEnd().getLine();
 
     if (adaptee.isPresentDoAction()) {
-      result = new ConfigurationWrapper(adaptee.getTgt(), adaptee.getDoAction().getActionUsage());
+      result = new ConfigurationWrapper(adaptee.getSuccessionThen().getMCQualifiedName().getQName(), adaptee.getDoAction());
     }
     else {
-      result = new ConfigurationWrapper(adaptee.getTgt());
+      result = new ConfigurationWrapper(adaptee.getSuccessionThen().getMCQualifiedName().getQName());
     }
   }
 

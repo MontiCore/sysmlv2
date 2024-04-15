@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlparts.coco;
 
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLFeatureDirection;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortDef;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
@@ -21,14 +20,9 @@ public class PortDefNeedsDirection implements SysMLPartsASTPortDefCoCo {
     for (var attr: ast.getSysMLElementList().stream()
         .filter(e -> e instanceof ASTAttributeUsage)
         .map(e -> (ASTAttributeUsage)e)
-        .filter(e -> !(e.isPresentSysMLFeatureDirection())).collect(Collectors.toList()))
+        .collect(Collectors.toList()))
     {
-      if(!attr.isPresentSysMLFeatureDirection()) {
-        Log.warn("Attributes of port definitions without directions are ignored",
-            attr.get_SourcePositionStart(),
-            attr.get_SourcePositionEnd());
-      }
-      else if(attr.getSysMLFeatureDirection() == ASTSysMLFeatureDirection.INOUT) {
+      if(attr.getSymbol().isOut() && attr.getSymbol().isIn()) {
         // MontiBelle could support this in the future
         Log.warn("Attributes of port definitions with direction inout are ignored",
             attr.get_SourcePositionStart(),

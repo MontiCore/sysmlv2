@@ -4,29 +4,126 @@ package de.monticore.lang;
 component grammar SysMLConnections
     extends de.monticore.lang.SysMLBasis {
 
-  Flow implements SysMLElement =
-    "flow" ("of" flowtype:MCQualifiedName)? "from"? source:MCQualifiedName "to" target:MCQualifiedName ";" ;
+  /**
+   * The declaration of a message may also optionally include an explicit
+   * specification of the name, type (definition) and/or multiplicity of the payload of the message.
+   * The payload name is followed by the keyword defined by (or the symbol :), but this keyword (or the symbol) is
+   * omitted if the name is omitted.
+   */
+  FlowPayload =
+    (Name SysMLCardinality? Specialization* | MCType SysMLCardinality?) DefaultValue? ;
 
+  FlowUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* "succession"? "flow"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    ("of" FlowPayload)?
+     "from"? source:Endpoint
+     "to" target:Endpoint
+     ("{"
+        SysMLElement*
+      "}" | ";") ;
+
+  // explizites bind durch keyword
   Bind implements SysMLElement =
-    ("binding" SysMLIdentifier? Name? SysMLCardinality? )?
-    "bind" source:MCQualifiedName SysMLCardinality? "=" target:MCQualifiedName SysMLCardinality? ";" ;
-    // explizites bind durch keyword
+    Modifier UserDefinedKeyword* "binding"?
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "bind" source:Endpoint "=" target:Endpoint
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
 
-  Message implements SysMLElement =
-    "message" ("of" flowtype:MCQualifiedName)? "from"? source:MCQualifiedName "to" target:MCQualifiedName ";" ;
+  MessageUsage implements OccurrenceUsageElement =
+    Modifier UserDefinedKeyword* "message"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    ("of" FlowPayload)?
+    ("from"? source:Endpoint
+     "to" target:Endpoint)? DefaultValue?
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
 
-  symbol scope (shadowing) ConnectionDef implements SysMLType =
-    Modifier "connection" "def" SysMLIdentifier? Name Specialization*
+  symbol scope ConnectionDef implements SysMLType =
+    Modifier UserDefinedKeyword* "connection" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
 
   // Aus Kompatibilitätsgründen ist der Name hier nicht "ConnectionUsage". Genau genommen ist ein einfaches
   // "connect" der Sonderfall, nicht andersrum.
-  symbol scope (shadowing) ConnectionUsageProper implements SysMLElement =
-    Modifier "connection" SysMLIdentifier? Name Specialization*
+  symbol scope ConnectionUsageProper implements SysMLElement =
+    Modifier UserDefinedKeyword* "connection"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
+
+  /* ===================================================================================================================
+   * An interface definition is a kind of connection definition (see7.13) whose ends are restricted to be port
+   * definitions. An interface usage is a kind of connection that is usage of an interface definition. The ends of an
+   * interface usage are restricted to be port usages.
+   * ================================================================================================================ */
+
+  symbol scope InterfaceDef implements SysMLType =
+    Modifier UserDefinedKeyword* "interface" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  symbol scope InterfaceUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* "interface"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    ("connect"? (
+      (src:Endpoint "to" tgt:Endpoint) |
+      ("(" (SysMLParameter || ",")* ")")
+    ))?
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  symbol scope FlowDef implements SysMLType =
+    Modifier UserDefinedKeyword* "flow" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+
+  /* ===================================================================================================================
+   * Allocations
+   * ================================================================================================================ */
+
+  symbol scope AllocationDef implements SysMLType =
+    Modifier UserDefinedKeyword* "allocation" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  symbol scope AllocationUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* "allocation"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  AllocationUsageTo extends AllocationUsage =
+    Modifier UserDefinedKeyword* "allocation"?
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "allocate" source:Endpoint
+    "to" target:Endpoint
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  AllocationUsageParam extends AllocationUsageTo =
+    Modifier UserDefinedKeyword* "allocation"?
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "allocate" "(" source:Endpoint "," target:Endpoint ")"
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
 
 }

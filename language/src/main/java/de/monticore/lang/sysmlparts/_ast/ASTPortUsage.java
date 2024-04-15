@@ -1,7 +1,6 @@
 package de.monticore.lang.sysmlparts._ast;
 
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLFeatureDirection;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -86,40 +85,51 @@ public class ASTPortUsage extends ASTPortUsageTOP {
     return t1.equals(t2);
   }
 
+  public enum Direction {
+    IN, OUT, INOUT;
+  }
 
   /**
    * Estimates the direction of a port based on the directions of the underlying attributes.
-   * @return {@link ASTSysMLFeatureDirection#IN} if all attributes are in, {@link ASTSysMLFeatureDirection#OUT} if all
-   * attributes are out, {@link ASTSysMLFeatureDirection#INOUT} otherwise.
+   * @return {@link Direction#IN} if all attributes are in, {@link Direction#OUT} if all
+   * attributes are out, {@link Direction#INOUT} otherwise.
    */
-  public ASTSysMLFeatureDirection estimatePortDirection(){
-    if (this.isPresentSysMLFeatureDirection()) {
-      return this.getSysMLFeatureDirection();
-    }
-
+  public Direction estimatePortDirection() {
     var conjugatedPortDefs = this.getPortDefs(true);
     var unconjugatedPortDefs = this.getPortDefs(false);
 
     long in = Stream.concat(
-            conjugatedPortDefs.stream().flatMap(p -> p.getSysMLElementList().stream())
-                .filter(a ->  a instanceof ASTAttributeUsage && ((ASTAttributeUsage) a).getSysMLFeatureDirection() == ASTSysMLFeatureDirection.OUT),
-            unconjugatedPortDefs.stream().flatMap(p -> p.getSysMLElementList().stream())
-                .filter(a ->  a instanceof ASTAttributeUsage && ((ASTAttributeUsage) a).getSysMLFeatureDirection() == ASTSysMLFeatureDirection.IN))
-        .count();
+        conjugatedPortDefs.stream()
+            .flatMap(p -> p.getSysMLElementList().stream())
+            .filter(a ->  a instanceof ASTAttributeUsage)
+            .map(a -> (ASTAttributeUsage)a)
+            .filter(a -> a.getSymbol().isOut()),
+        unconjugatedPortDefs.stream()
+            .flatMap(p -> p.getSysMLElementList().stream())
+            .filter(a ->  a instanceof ASTAttributeUsage)
+            .map(a -> (ASTAttributeUsage)a)
+            .filter(a -> a.getSymbol().isIn())
+        ).count();
 
     long out = Stream.concat(
-            conjugatedPortDefs.stream().flatMap(p -> p.getSysMLElementList().stream())
-                .filter(a ->  a instanceof ASTAttributeUsage && ((ASTAttributeUsage) a).getSysMLFeatureDirection() == ASTSysMLFeatureDirection.IN),
-            unconjugatedPortDefs.stream().flatMap(p -> p.getSysMLElementList().stream())
-                .filter(a ->  a instanceof ASTAttributeUsage && ((ASTAttributeUsage) a).getSysMLFeatureDirection() == ASTSysMLFeatureDirection.OUT))
-        .count();
+        conjugatedPortDefs.stream()
+            .flatMap(p -> p.getSysMLElementList().stream())
+            .filter(a ->  a instanceof ASTAttributeUsage)
+            .map(a -> (ASTAttributeUsage)a)
+            .filter(a -> a.getSymbol().isIn()),
+        unconjugatedPortDefs.stream()
+            .flatMap(p -> p.getSysMLElementList().stream())
+            .filter(a ->  a instanceof ASTAttributeUsage)
+            .map(a -> (ASTAttributeUsage)a)
+            .filter(a -> a.getSymbol().isOut())
+    ).count();
 
     if (in > 0 && out == 0){
-      return ASTSysMLFeatureDirection.IN;
+      return Direction.IN;
     } else if (out > 0 && in == 0){
-      return ASTSysMLFeatureDirection.OUT;
+      return Direction.OUT;
     } else {
-      return ASTSysMLFeatureDirection.INOUT;
+      return Direction.INOUT;
     }
   }
 }

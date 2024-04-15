@@ -1,15 +1,33 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
-component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiterals,          // SignedLiteral
-                                           de.monticore.expressions.CommonExpressions,
-                                           de.monticore.expressions.AssignmentExpressions,
-                                           de.monticore.expressions.StreamExpressions,
-                                           de.monticore.ocl.OCLExpressions,
-                                           de.monticore.ocl.SetExpressions,
-                                           de.monticore.types.MCBasicTypes,                 // MCType
-                                           SysMLBasis
+component grammar SysMLExpressions
+    extends de.monticore.literals.MCCommonLiterals,          // SignedLiteral
+            de.monticore.types.MCBasicTypes,                 // MCType
+            de.monticore.expressions.CommonExpressions,      // FieldAccessExpression
+            de.monticore.ocl.OCLExpressions,                 // ExistsExpression
+            de.monticore.ocl.SetExpressions,                 // UnionExpression
+            SysMLBasis
 {
+
+  /**
+   * "exists" is not a reserved keyword in SysML and used in the Systems Library. Use "key" to make it a local
+   * keyword.
+   */
+  @Override
+  ExistsExpression implements Expression <90> =
+    key("exists") (InDeclaration || ",")+ ":" Expression ;
+
+  /**
+   * "union" is not a reserved keyword in SysML and used in the Systems Library. Use "key" to make it a local
+   * keyword.
+   */
+  @Override
+  UnionExpression implements Expression <180> =
+    left:Expression
+    operator:key("union")
+    right:Expression;
+
   /**
    * Extends the usual FieldAccessExpression by introducing a SysML specific
    * notation of writing qualified names.
@@ -23,7 +41,8 @@ component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiteral
   SysMLFieldAccessExpression extends FieldAccessExpression implements Expression <290> =
     Expression "::" Name;
 
-  SysMLInstantiation implements Expression = key("new") {noSpace(2)}? MCType Arguments;
+  SysMLInstantiation implements Expression <235> =
+    key("new") {noSpace(2)}? MCType Arguments;
 
   /**
    * Infinity literal can be negative, but...
@@ -82,7 +101,7 @@ component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiteral
 
   // aka "filter". inner muss boolsch sein.
   SysMLSelectExpression implements Expression =
-    Expression ".?{" "in" Name SysMLTyping? ";" inner:Expression "}" ;
+    Expression ".?{" "in" Name Specialization? ";" inner:Expression "}" ;
 
   // aka "chaining functions".
   /**
@@ -94,8 +113,12 @@ component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiteral
   SysMLFunctionOperationExpression implements Expression =
     Expression "->" Name ("(" (SysMLParameter || ",")* ")")? ("{" SysMLElement* inner:Expression "}")? ;
 
-  // Unsicher ob das irgendwo clasht
-  SysMLPower implements Expression = Expression "^" Expression ;
+  // Eigentlich ist "^" der Name einer CalcDef aus den Domain Libraries
+  CalcDefPowerExpression implements Expression =
+    base:Expression "^" exponent:Expression ;
+
+  PowerExpression implements Expression =
+    base:Expression "**" exponent:Expression ;
 
   /* Aus MCJavaLiterals.mc4#L173 kopiert */
   ScientificENotatationLiteral implements NumericLiteral <100> =
@@ -133,16 +156,21 @@ component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiteral
   ConditionalAndExpression implements Expression <120>, InfixExpression =
     left:Expression operator:"and" right:Expression;
 
-  // Keine Ahnung wie man das besser macht, statt nervigen Fehlermeldungen kommt aber bei MC nix brauchbares
   ConditionalAndExpression2 implements Expression <120>, InfixExpression =
     left:Expression operator:"&" right:Expression;
 
   ConditionalOrExpression implements Expression <117>, InfixExpression =
     left:Expression operator:"or" right:Expression;
 
+  ConditionalOrExpression2 implements Expression <117>, InfixExpression =
+    left:Expression operator:"|" right:Expression;
+
   ConditionalNotExpression implements Expression <190> =
     "not" Expression;
 
+  // Precedence just above and (120), but below not (190) and below add, mult, equals (130), etc.
+  XorExpression implements Expression <123>, InfixExpression =
+    left:Expression operator:"xor" right:Expression;
 
   // Ist eigentlich KerML. Benutzt um "myStateUsage:MyStateDef" zur Meta-Klasse "Usage" zu casten
   /**
@@ -150,18 +178,41 @@ component grammar SysMLExpressions extends de.monticore.literals.MCCommonLiteral
    * used to cast a type element referenced as its first operand to the actual reflective metadata definition (or KerML
    * metaclass) value for the type
    */
-  KerMLMetaCast implements Expression =
+  KerMLMetaCastExpression implements Expression =
     MCQualifiedName "meta" MCType ;
 
-  SysMLCast implements Expression =
+  SysMLCastExpression implements Expression =
     Expression "as" MCType ;
 
   TernaryExpression implements Expression =
     "if" condition:Expression "?" if:Expression "else" else:Expression ;
 
-  // exists ist in der SysMLv2 ein Name wie jeder andere auch...
-  @Override
-  ExistsExpression implements Expression <90> =
-    key("exists") (InDeclaration || ",")+ ":" Expression ;
+  KerMLIsTypeExpression implements Expression =
+    Expression "istype" MCType ;
 
+  // Implicitly referencing "this"
+  KerMLIsTypeSelfExpression implements Expression =
+    "istype" MCType ;
+
+  KerMLHasTypeExpression implements Expression =
+    Expression ("hastype" | "@") MCType ;
+
+  // Implicitly referencing "this"
+  KerMLHasTypeSelfExpression implements Expression =
+    ("hastype" | "@") MCType ;
+
+  /**
+   * The extent operator all is syntactically similar to a unary operator, but, instead of an
+   * expression as its operand, it takes a type name. An extent expression evaluates to a sequence of all
+   * instances of the named type.
+   */
+  KerMLExtentExpression implements Expression =
+    "all" MCType ;
+
+  /**
+   * Cover for "attribute whatever = ( //* ... * / );"
+   * The comments will be filtered out at the lexer level (see above, "skip").
+   */
+  SysMLEmptyExpression implements Expression =
+    "(" ")" ;
 }

@@ -3,44 +3,56 @@ package de.monticore.lang;
 
 component grammar SysMLStates extends SysMLActions {
 
-  symbol scope (shadowing) StateDef implements SysMLType =
-    Modifier "state" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+  symbol scope StateDef implements SysMLType =
+    Modifier UserDefinedKeyword* "state" "def" Name SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
-      EntryAction?
-      DoAction?
-      ExitAction?
+      (EntryAction | DoAction | ExitAction | SysMLElement)*
+    "}" | ";") ;
+
+  symbol scope StateUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* exhibited:["exhibit"]? "state" Name?
+    SysMLCardinality? Specialization*
+    ("(" (SysMLParameter || ",")* ")")? paralled:["parallel"]? DefaultValue?
+    ("{"
+      (EntryAction | DoAction | ExitAction | SysMLElement)*
+    "}" | ";") ;
+
+  ExhibitedStateReference implements SysMLElement =
+    UserDefinedKeyword* "exhibit" MCQualifiedName?
+    SysMLCardinality? Specialization*
+    ("{"
       SysMLElement*
     "}" | ";") ;
 
-  symbol scope (shadowing) StateUsage implements SysMLElement =
-    Modifier exhibited:["exhibit"]? "state" Name Specialization* ("(" (SysMLParameter || ",")* ")")? paralled:["parallel"]? DefaultValue
-    ("{"
-      EntryAction?
-      DoAction?
-      ExitAction?
-      SysMLElement*
-    "}" | ";") ;
+  symbolrule StateUsage =
+    exhibited: boolean
+  ;
 
-    symbolrule StateUsage =
-      exhibited: boolean
-    ;
-
-  // TODO Überlegen, ob nicht doch durch Grammatik enforcen, dass Transitionen nur in States vorkommen
   symbol SysMLTransition implements SysMLElement =
     ("transition" Name?)?
-    ("first" src:Name@StateUsage)?
+    ("first" src:MCQualifiedName)?
     (InlineAcceptActionUsage)?
     ("if" guard:Expression)?
-    (DoAction)?
-    "then" tgt:Name@StateUsage ";" ;
+    ("do" doAction:InlineActionUsage)?
+    "then" SuccessionThen ;
 
-  /**
-   * Offizielle Dokumentation erlaubt ActionUsage, referenz auf ActionUsage oder leeres Argument
-   */
-  EntryAction = "entry" (ActionUsage | action:Name@ActionUsage ";" | ";");
+  EntryAction =
+    "entry" ( ";" |
+              ActionUsage |
+              MCQualifiedName
+              ("{"
+                 SysMLElement*
+               "}" | ";")
+            ) ;
 
-  DoAction = "do" (ActionUsage | action:Name@ActionUsage ";" | ";");
+  DoAction =
+    "do" ( ActionUsage |
+           MCQualifiedName
+           ("{"
+               SysMLElement*
+            "}" | ";")
+         ) ;
 
-  ExitAction = "exit" (ActionUsage | action:Name@ActionUsage ";" | ";");
+  ExitAction = "exit" ( ActionUsage | action:Name@ActionUsage ";") ;
 
 }

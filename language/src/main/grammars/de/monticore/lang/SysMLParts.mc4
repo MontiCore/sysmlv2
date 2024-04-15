@@ -7,7 +7,8 @@ component grammar SysMLParts extends SysMLBasis {
    * Causality indication: "instant" = weak causal, "delayed" = strong causal. Defaults to "delayed".
    * TODO Überdenken, wie man das nicht überall erlaubt (Grammar vs. CoCo)
    */
-  SysMLCausality implements SysMLElement = "timing" (["instant"] | ["delayed"]) ";" ;
+  SysMLCausality implements SysMLElement =
+    "timing" (["instant"] | ["delayed"]) ";" ;
 
   /*
    * ##################################################################
@@ -15,8 +16,9 @@ component grammar SysMLParts extends SysMLBasis {
    * ##################################################################
    */
 
-  symbol scope (shadowing) PartDef implements SysMLType =
-    Modifier "part" "def" Name Specialization*
+  symbol scope PartDef implements SysMLType =
+    Modifier UserDefinedKeyword* "part" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
@@ -28,25 +30,38 @@ component grammar SysMLParts extends SysMLBasis {
       requirementType:SysMLReqType;
 
   symbol scope AttributeDef implements SysMLType =
-    Modifier "attribute" "def" Name Specialization*
+    Modifier UserDefinedKeyword* "attribute" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
 
   symbol scope EnumDef implements SysMLType =
-    Modifier "enum" "def" Name Specialization*
+    Modifier UserDefinedKeyword* "enum" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
-      SysMLEnumConstant*
+      (SysMLElement | AnonEnumUsage)*
     "}" | ";") ;
 
-  // TODO Was genau darf in den Body?
-  SysMLEnumConstant implements Field = "enum"? Name ("=" Expression)?
+  symbol EnumUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* "enum"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
       SysMLElement*
     "}" | ";") ;
 
-  symbol scope (shadowing) PortDef implements SysMLType =
-    Modifier "port" "def" Name Specialization*
+  /**
+   * "=10;" is a valid element in the body of an enum def that specializes some other def
+   */
+  AnonEnumUsage =
+    Specialization* DefaultValue
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  symbol scope PortDef implements SysMLType =
+    Modifier UserDefinedKeyword* "port" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
@@ -57,9 +72,9 @@ component grammar SysMLParts extends SysMLBasis {
    * ##################################################################
    */
 
-  symbol scope (shadowing) PartUsage implements SysMLElement =
-    SysMLFeatureDirection? Modifier "part" SysMLIdentifier? Name
-    SysMLCardinality? Specialization* ("=" Expression)? DefaultValue
+  symbol scope PartUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* "part" SysMLIdentifier? Name?
+    SysMLCardinality? Specialization* DefaultValue?
     ("{"
       SysMLElement*
     "}" | ";") ;
@@ -86,25 +101,18 @@ component grammar SysMLParts extends SysMLBasis {
         return Optional.empty();
       } ;
 
-  // Der Name kann weggelassen werden wenn "attribute" angegeben ist
-  // Die Kardinalität kann vor den Spezialisierungen stehen (aber es kann nur eine geben)
   symbol AttributeUsage implements SysMLElement =
-      SysMLFeatureDirection? Modifier ("attribute" SysMLIdentifier? Name? | SysMLIdentifier? Name )
-      SysMLCardinality? Specialization* ("=" Expression)? DefaultValue
-      ("{"
-        SysMLElement*
-      "}" | ";");
-
-  // Man kann den Namen weglassen wenn es eine Specialisation gibt
-  AnonymousAttributeUsage extends AttributeUsage =
-      SysMLFeatureDirection? Modifier SysMLIdentifier? Specialization+ ("=" Expression)? DefaultValue
+      Modifier UserDefinedKeyword* "attribute"
+      SysMLIdentifier? Name? SysMLCardinality?
+      Specialization* DefaultValue?
       ("{"
         SysMLElement*
       "}" | ";");
 
   symbolrule AttributeUsage =
       types:de.monticore.types.check.SymTypeExpression*
-      direction:de.monticore.lang.SysMLBasis.SysMLFeatureDirection ;
+      in:boolean
+      out:boolean ;
 
   astrule AttributeUsage =
       method public Optional<de.monticore.cardinality._ast.ASTCardinality> getCardinality() {
@@ -128,8 +136,12 @@ component grammar SysMLParts extends SysMLBasis {
    * integrate with the existing artifacts (i.e., theories containing specific channel names) only by referencing the
    * symboltable (and not needing to re-processes the original models).
    */
-  symbol scope (shadowing) PortUsage implements SysMLElement =
-      SysMLFeatureDirection? Modifier "port" Name Specialization* DefaultValue";" ;
+  symbol scope PortUsage implements SysMLElement =
+      Modifier UserDefinedKeyword* "port"
+      SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
+      ("{"
+         SysMLElement*
+       "}" | ";");
 
   symbolrule PortUsage =
       types:de.monticore.types.check.SymTypeExpression*
@@ -148,10 +160,13 @@ component grammar SysMLParts extends SysMLBasis {
       return Optional.empty();
     } ;
 
-  ConnectionUsage implements SysMLElement =
-    ("connection" SysMLIdentifier? Name? Specialization*)?
-    "connect" src:MCQualifiedName SysMLCardinality?
-    "to" tgt:MCQualifiedName SysMLCardinality?
+  symbol ConnectionUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* "connection"?
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "connect" (
+      (src:Endpoint "to" tgt:Endpoint) |
+      ("(" (SysMLParameter || ",")* ")")
+    )
     ("{"
        SysMLElement*
      "}" | ";") ;

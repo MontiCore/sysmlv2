@@ -5,16 +5,30 @@ component grammar SysMLConstraints
     extends SysMLBasis,
             SysMLActions {
 
-  symbol scope (shadowing) ConstraintDef implements SysMLType =
-    "constraint" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+  symbol scope ConstraintDef implements SysMLType =
+    Modifier UserDefinedKeyword* "constraint" "def" Name SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
       SysMLElement* // TODO Auf AttributeUsages beschränken in finale (nicht component) SysMLv2-Sprache
       Expression?
     "}" | ";") ;
 
-  symbol scope (shadowing) ConstraintUsage implements SysMLElement =
-    Modifier ((["require"] | ["assume"] | ["assert"]) "constraint"? | "constraint")
-    Name? Specialization* ("(" (SysMLParameter || ",")* ")")?
+  symbol scope ConstraintUsage implements SysMLElement =
+    Modifier (
+      (["require"] | ["assume"] | ["assert"]) ["not"]? UserDefinedKeyword* "constraint"? |
+      UserDefinedKeyword* "constraint"
+    )
+    Name? SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      SysMLElement*
+      Expression?
+    "}" | ";") ;
+
+  ConstraintReference implements SysMLElement =
+    (
+      (["require"] | ["assume"] | ["assert"]) UserDefinedKeyword* "constraint"? |
+      UserDefinedKeyword* "constraint"
+    )
+    MCQualifiedName? SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
       SysMLElement*
       Expression?

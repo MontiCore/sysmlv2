@@ -4,7 +4,7 @@ package inverter {
   // ---------------------------  BDD  ---------------------------
 
   state def AutomatonInverter23
-    (in variableIn : Boolean, out variableOut : Boolean){
+    (in variableIn : boolean, out variableOut : boolean){
 
       entry; then StateInitial;
 

@@ -5,16 +5,38 @@ package de.monticore.lang;
  * Basis für die einzelnen SysML-Teilgrammatiken (ich weigere mich noch sie "Teilsprachen" zu nennen).
  */
 component grammar SysMLBasis
-    extends de.monticore.literals.MCCommonLiterals,     // SingleCharacter
-            de.monticore.expressions.ExpressionsBasis,  // Expression
+    extends de.monticore.expressions.ExpressionsBasis,  // Expression
             de.monticore.types.MCBasicTypes,            // MCQualifiedName, MCType
-            de.monticore.symbols.OOSymbols,             // OOTypes
+            de.monticore.symbols.OOSymbols,             // OOTypes, Field
             de.monticore.Cardinality,                   // Cardinality
             de.monticore.UMLModifier                    // Modifier
 {
 
   KerMLCardinality extends Cardinality =
-    "[" lower:Expression ( ".." upper:Expression )? "]" ;
+    "["
+    ( many:["*"]
+      {
+        _builder.setLowerBound(0);_builder.setUpperBound(0);
+      } |
+      lowerBoundLit:NatLiteral
+      {
+        _builder.setLowerBound(_builder.getLowerBoundLit().getValue());
+        _builder.setUpperBound(_builder.getLowerBound());
+      } |
+      lowerExpr:Expression
+    )
+    ( ".." (
+      upperBoundLit:NatLiteral
+      {
+        _builder.setUpperBound(_builder.getUpperBoundLit().getValue());
+      } |
+      noUpperLimit:["*"]
+      {
+        _builder.setUpperBound(0);
+      } |
+      upperExpr:Expression
+    ) )?
+    "]" ;
 
   /*
    * ##################################################################
@@ -40,26 +62,24 @@ component grammar SysMLBasis
 
   // Specialization ist spezifisch für Definitions
   SysMLSpecialization implements Specialization =
-      (":>" | "specializes") superTypes:(MCType || ",")+;
+      (":>" | "specializes") superTypes:(MCType || ",")+ SysMLCardinality?;
 
   // Subsetting ist spezifisch für Usages
   SysMLSubsetting implements Specialization =
-      (":>" | "subsets") superTypes:(MCType || ",")+;
+      (":>" | "subsets") superTypes:(MCType || ",")+ SysMLCardinality?;
 
   SysMLRedefinition implements Specialization =
       (":>>" | "redefines") superTypes:(MCType || ",")+ SysMLCardinality?;
 
-  // TODO Nur bei Event Occurences
   /**
    * [An event occurence] is related to another occurrence usage,
    * representing the occurring event, by a reference subsetting relationship, which is a special kind of subsetting
    * relationship specified using the keyword references or the symbol ::>.
    */
   SysMLReference implements Specialization =
-      ("::>" | "references") superTypes:(MCType || ",")+;
+      ("::>" | "references") superTypes:(MCType || ",")+ SysMLCardinality?;
 
   /**
-   * TODO Conjugated nur bei Port Usages!
    * Cardinality bei mehreren Typen macht wenig Sinn, aber die Grammatik und damit der AST werden sehr kompliziert, wenn
    * man versucht alle Eventualitäten durch die Grammatik abzudecken.
    */
@@ -91,19 +111,21 @@ component grammar SysMLBasis
    */
 
   /**
-   * Die Default-Richtung eines Elements ist "in".
-   * Return darf nur in Calculations verwendet werden um das "out" zu markieren.
-   */
-  enum SysMLFeatureDirection = "in" | "out" | "inout" | "return" ;
-
-  /**
    * Parameters
-   * TODO "stream" überall ausser AdvRequirements verbieten? Gibts eine bessere Lösung?
    */
   SysMLParameter implements Field =
-    ["stream"]? SysMLFeatureDirection? Name Specialization* ("=" binding:Expression)? DefaultValue;
+    Modifier UserDefinedKeyword* ["stream"]? Name SysMLCardinality? Specialization* ("=" binding:Expression)? DefaultValue?;
 
-  DefaultValue = ("default" default:Expression)?;
+  /**
+   * A fixed, bound feature value relationship is declared using the symbol = followed by a representation of the value
+   * expression. A fixed, initial feature value relationship is declared as above but using the symbol := instead of =.
+   * A default feature value relationship is declared similarly to the above, but with the keyword default preceding the
+   * symbol = or :=, depending on whether it is bound or initial. However, for a default, bound feature value, the symbol
+   * = may be elided.
+   */
+  DefaultValue =
+    [default1:"default"]? ([binding:"="] | [initial:":="]) Expression |
+    [default2:"default"]                                   Expression ;
 
   /*
    * ##################################################################
@@ -111,15 +133,31 @@ component grammar SysMLBasis
    * ##################################################################
    */
 
-  SysMLQualifiedName extends MCQualifiedName = parts:(Name || "::")+;
+  SysMLQualifiedName extends MCQualifiedName =
+    Name (("::" | ".") Name)* ;
+
+  astrule SysMLQualifiedName =
+    method public List<String> getPartsList() {
+      return getNameList();
+    }
+    method public String getBaseName() {
+      return getPartsList().get(getPartsList().size()-1);
+    } ;
+
+  token MultilineNote =
+     "//*" .*? "*/"  : -> skip
+     {storeComment();};
 
   token SysMLComment =
     'c''o''m''m''e''n''t' (WS* Name)? (WS* 'a''b''o''u''t' WS* Name)? WS* ML_COMMENT : -> skip
     {storeComment();} ;
 
   token SysMLDoc =
-    'd''o''c' WS* ML_COMMENT : -> skip
+    'd''o''c' WS* Name? WS* ML_COMMENT : -> skip
     {storeComment();} ;
+
+  TextualRepresentation implements SysMLElement =
+    ("rep" Name)? "language" String ;
 
   /** Alles ausser Anführungszeichen */
   fragment token Anything
@@ -127,7 +165,55 @@ component grammar SysMLBasis
 
   SysMLIdentifier = "<" Name ">" ;
 
-  // Zusätzliche Modifier: "ref", "end"
+  /**
+   * P.27 of 2a-OMG_Systems_Modeling_Language.PDF (though only in relation to *packages*):
+   * "The visibility of the membership can be specified by placing one of the keywords public,
+   *  protected or private before the public element declaration. If the membership is public (the default), then it is
+   *  visible outside of the namespace. If it is private, then it is not visible."
+   * P.29 of 2a-OMG_Systems_Modeling_Language.PDF (now relating to *imports*):
+   * "The visibility of an import can be specified by placing the keyword public or private before the import
+   *  declaration. If the import is public (the default), then all the imported memberships become public for the
+   *  importing namespace. If import is private, then the imported memberships become private relative to the
+   *  importing namespace"
+   * Nowhere is the use of visibility keywords such as public, private, protected explicitly documented for any other
+   * elements. There exists however examples of showing its use on attributes and calculations. We therefore assume
+   * these modifiers to be applicable to all elements of the SysML.
+   * P.43 of 2a-OMG_Systems_Modeling_Language.PDF:
+   * "There are a number of additional properties of a usage that can be flagged by adding specific keywords to its
+   *  declaration. If present these are always specified in the following order, before the kind keyword in the usage
+   *  declaration.
+   *  1. in, out, inout
+   *  2. abstract
+   *  3. readonly
+   *  4. derived
+   *  5. end
+   *  6. ref"
+   * It is unclear if an how these modifiers relate to the visibility modifiers above. Their order differs from the
+   * specification in at least two official examples (ItemTest.sysml and PartTest.sysml). We therefore implement all
+   * these modifiers as one group and do not enforce any ordering.
+   * P.119 of 2a-OMG_Systems_Modeling_Language.PDF (relating to *calculations*):
+   * "A calculation definition or usage is declared as an action definition or usage (see 7.16.2), but using the keyword
+   *  calc instead of action. As for an action definition or usage, directed usages declared in the body of a calculation
+   *  definition or usage are consider to be parameters. In addition, the result parameter for a calculation definition or
+   *  usage can be declared as an out parameter using the keyword return instead of out"
+   * Examples show further use of "return" in analysis cases, verification cases, and functions. Seeing as it is an
+   * alternative keyword to "out", we decided to implement it as a modifier.
+   * P.56&57 of 2a-OMG_Systems_Modeling_Language.PDF (once relating to timeslice/snapshot, once relating to individual):
+   * "An occurrence usage (of any kind) can be declared as a <X> using the keyword <X>, placed immediately before the
+   *  kind keyword of the declaration (after any of the other usage property keywords described in 7.6.3)."
+   * Section 7.6.3 describes on P.43 (see above) more Modifiers. We therefore chose to implement all three keywords as
+   * Modifiers.
+   * P.57 of 2a-OMG_Systems_Modeling_Language.PDF:
+   * "An event occurrence usage is declared like an occurrence usage, as described in 7.9.2, 7.9.3, and 7.9.4, but using the
+   *  kind keyword event occurrence instead of just occurrence."
+   * While it seemingly only applies to "real occurences", re-implementing it for anonymous references seems tedious
+   * compared to simply declaring it as Modifier.
+   * P.48 of 2a-OMG_Systems_Modeling_Language.PDF:
+   * "A definition or usage is specified as a variation by placing the keyword variation before its kind keyword. A
+   *  variation is always abstract, so the abstract keyword is not used on a variation."
+   * Since "abstract" is already mentioned, we chose to implement this as a Modifier
+   * Lastly, we add all remaining modifiers previously known from the UML: final, local, static.
+   */
   @Override
   Modifier =
       Stereotype?
@@ -140,8 +226,66 @@ component grammar SysMLBasis
         | ["derived"]      | [derived:"/"]
         | ["readonly"]     | [readonly:"?"]
         | ["static"]
-        | ["ref"]
+        | ["in"] | ["out"] | ["inout"]        // default direction is "in"
         | ["end"]
+        | ["ref"]
+        | ["return"]                          // only in calculation, analysis, verification, function
+        | ["timeslice"]                       // only in occurrences
+        | ["snapshot"]                        // only in occurrences
+        | ["individual"]                      // only in occurrences
+        | ["event"]                           // only in occurrences
+        | ["variation"]
+        | ["variant"]
       )*;
+
+  UserDefinedKeyword =
+    {noSpace(2);} "#" MCQualifiedName ;
+
+  /**
+   * Anonyme Usage, deren "Typ" im Sinne der SysML (also Beispielsweise "attribute" oder "part") sich erst durch
+   * die Spezialisationen (Typisierungen) ergibt.
+   */
+  symbol scope AnonymousUsage implements SysMLElement =
+      Modifier UserDefinedKeyword* SysMLIdentifier? Name? SysMLCardinality?
+      Specialization+ DefaultValue?
+      ("{"
+        SysMLElement*
+      "}" | ";");
+
+  symbolrule AnonymousUsage =
+      types:de.monticore.types.check.SymTypeExpression*
+      in:boolean
+      out:boolean ;
+
+  symbol scope AnonymousReference implements SysMLElement =
+       Modifier UserDefinedKeyword* SysMLIdentifier? src:MCQualifiedName SysMLCardinality?
+       Specialization* DefaultValue?
+       ("{"
+          SysMLElement*
+        "}" | ";");
+
+  symbolrule AnonymousReference =
+      types:de.monticore.types.check.SymTypeExpression*
+      in:boolean
+      out:boolean ;
+
+  /**
+   * Occurrence usages can be used in successions.
+   * Example: "first send a to b if b then perform myAction;"
+   */
+  interface OccurrenceUsageElement extends SysMLElement;
+
+  // Inline-Variante für das "first" vor dem "then"
+  interface IInlineOccurrenceUsage ;
+
+  Dependency implements SysMLElement =
+    Modifier UserDefinedKeyword* "dependency" (Name? "from")? (MCQualifiedName || ",")+ "to" (MCQualifiedName || ",")+
+    ("{"
+       SysMLElement*
+     "}" | ";");
+
+  // Used regularly in successions
+  Endpoint =
+    MCQualifiedName SysMLCardinality? Specialization* ;
 
 }

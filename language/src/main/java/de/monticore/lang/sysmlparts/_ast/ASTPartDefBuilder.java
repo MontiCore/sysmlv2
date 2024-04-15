@@ -4,7 +4,6 @@ import de.monticore.ast.Comment;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpressionBuilder;
 import de.monticore.lang.sysmlbasis._ast.ASTDefaultValueBuilder;
 import de.monticore.lang.sysmlbasis._ast.ASTModifierBuilder;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLFeatureDirection;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsageBuilder;
 import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
@@ -12,7 +11,6 @@ import de.monticore.lang.sysmlrequirements._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlrequirements._ast.ASTRequirementUsageBuilder;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
-import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.literals.mccommonliterals._ast.ASTBooleanLiteralBuilder;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedTypeBuilder;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -26,7 +24,6 @@ import java.util.stream.Collectors;
 
 
 public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
-
 
   private final Optional<ASTPartDef> originalReference;
 
@@ -194,7 +191,7 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
     var newStateUsage = SysMLv2Mill.stateUsageBuilder()
         .setName(name)
         .setDefaultValue(SysMLv2Mill.defaultValueBuilder().build())
-        .setEntryAction(SysMLv2Mill.entryActionBuilder()
+        .setEntryAction(0, SysMLv2Mill.entryActionBuilder()
             .setActionUsage(SysMLv2Mill.actionUsageBuilder()
                 .setName("Entry")
                 .setModifier(SysMLv2Mill.modifierBuilder().build())
@@ -203,7 +200,11 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
             .build())
         .addSysMLElement(
             SysMLv2Mill.sysMLSuccessionBuilder()
-                .setTgt(SysMLv2Mill.nameExpressionBuilder().setName("Init").build())
+                .setSuccessionThen(
+                    SysMLv2Mill.successionThenBuilder().setMCQualifiedName(
+                        SysMLv2Mill.mCQualifiedNameBuilder().setParts(0, "Init").build()
+                    ).build()
+                )
                 .setModifier(SysMLv2Mill.modifierBuilder().build())
                 .build())
         .addSysMLElement(SysMLv2Mill.stateUsageBuilder()
@@ -248,19 +249,27 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
     // We don't calculate connection usages for now but later this is the place to add a calculated mapping.
 
     var referenceInputs = originalReference.get().getSysMLElements(ASTPortUsage.class).stream()
-        .filter(p -> p.estimatePortDirection() == ASTSysMLFeatureDirection.IN)
+        .filter(p -> p.estimatePortDirection() == ASTPortUsage.Direction.IN)
         .collect(Collectors.toList());
 
     for (ASTPortUsage input : referenceInputs){
-      var sourceQNameBuilder = SysMLv2Mill.mCQualifiedNameBuilder();
-      sourceQNameBuilder.addParts(input.getName());
-
-      var targetQNameBuilder = SysMLv2Mill.mCQualifiedNameBuilder();
-      targetQNameBuilder.addParts("/* TODO: add target */");
-
       var connectionUsage = SysMLv2Mill.connectionUsageBuilder()
-          .setSrc(sourceQNameBuilder.build())
-          .setTgt(targetQNameBuilder.build())
+          .setSrc(
+              SysMLv2Mill.endpointBuilder()
+                  .setMCQualifiedName(
+                      SysMLv2Mill.mCQualifiedNameBuilder()
+                          .addParts(input.getName())
+                          .build())
+                  .build()
+              )
+          .setTgt(
+              SysMLv2Mill.endpointBuilder()
+                  .setMCQualifiedName(
+                      SysMLv2Mill.mCQualifiedNameBuilder()
+                          .addParts("/* TODO: add target */")
+                          .build())
+                  .build()
+          )
           .build();
 
       this.getSysMLElementList().add(connectionUsage);
@@ -268,20 +277,27 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
 
 
     var referenceOutputs = originalReference.get().getSysMLElements(ASTPortUsage.class).stream()
-        .filter(p -> p.estimatePortDirection() == ASTSysMLFeatureDirection.OUT)
+        .filter(p -> p.estimatePortDirection() == ASTPortUsage.Direction.OUT)
         .collect(Collectors.toList());
 
     for (ASTPortUsage output : referenceOutputs){
-      var sourceQNameBuilder = SysMLv2Mill.mCQualifiedNameBuilder();
-      sourceQNameBuilder.addParts("/* TODO: add source */");
-
-
-      var targetQNameBuilder = SysMLv2Mill.mCQualifiedNameBuilder();
-      targetQNameBuilder.addParts(output.getName());
-
       var connectionUsage = SysMLv2Mill.connectionUsageBuilder()
-          .setSrc(sourceQNameBuilder.build())
-          .setTgt(targetQNameBuilder.build())
+          .setSrc(
+              SysMLv2Mill.endpointBuilder()
+                  .setMCQualifiedName(
+                      SysMLv2Mill.mCQualifiedNameBuilder()
+                          .addParts("/* TODO: add source */")
+                          .build()
+                  )
+                  .build())
+          .setTgt(
+              SysMLv2Mill.endpointBuilder()
+                  .setMCQualifiedName(
+                      SysMLv2Mill.mCQualifiedNameBuilder()
+                          .addParts(output.getName())
+                          .build()
+                  )
+                  .build())
           .build();
 
       this.getSysMLElementList().add(connectionUsage);

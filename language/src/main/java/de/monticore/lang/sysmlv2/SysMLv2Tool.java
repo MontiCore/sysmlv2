@@ -10,6 +10,7 @@ import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
 import de.monticore.lang.sysmlparts.coco.PortDefHasOneType;
 import de.monticore.lang.sysmlparts.coco.PortDefNeedsDirection;
+import de.monticore.lang.sysmlparts.symboltable.completers.ConvertEnumUsagesToFields;
 import de.monticore.lang.sysmlrequirements._cocos.SysMLRequirementsASTRequirementDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateUsageCoCo;
@@ -28,8 +29,6 @@ import de.monticore.lang.sysmlv2.cocos.PortDefinitionExistsCoCo;
 import de.monticore.lang.sysmlv2.cocos.RefinementCyclic;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
-import de.monticore.lang.sysmlv2.cocos.RefinementChainCheck;
-import de.monticore.lang.sysmlv2.cocos.RefinementInterfaceNotMatching;
 import de.monticore.lang.sysmlv2.cocos.SendActionTypeCheck;
 import de.monticore.lang.sysmlv2.cocos.SpecializationExists;
 import de.monticore.lang.sysmlv2.cocos.PartBehaviorCoCo;
@@ -41,7 +40,6 @@ import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.lang.sysmlv2.types.SysMLSynthesizer;
 import de.monticore.ocl.oclexpressions.symboltable.OCLExpressionsSymbolTableCompleter;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
-import de.monticore.ocl.types3.util.OCLCollectionTypeRelations;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -156,6 +154,9 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     // Phase 1
     SysMLv2Traverser traverser = SysMLv2Mill.inheritanceTraverser();
     traverser.add4SysMLBasis(new SpecializationCompleter());
+    traverser.add4SysMLBasis(new DirectionCompleter());
+    traverser.add4SysMLParts(new DirectionCompleter());
+    traverser.add4SysMLParts(new ConvertEnumUsagesToFields());
 
     // Aus mir unerklärlichen Gründen ist die Traversierung so implementiert, dass nur das SpannedScope des jeweiligen
     // AST-Knoten visitiert wird. Wenn wir hier also das ASTSysMLModel reinstecken (was kein Scope spannt (wieso eigtl.
@@ -173,7 +174,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     // Phase 2: Sets types for usages and declarations (let-in, quantifiers) in expressions.
     // Based on types of specializations completed in phase 1.
     traverser = SysMLv2Mill.traverser();
-    TypesAndDirectionCompleter completer = new TypesAndDirectionCompleter();
+    TypesCompleter completer = new TypesCompleter();
     traverser.add4SysMLBasis(completer);
     traverser.add4SysMLParts(completer);
     traverser.add4SysMLRequirements(completer);

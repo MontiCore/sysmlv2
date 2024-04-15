@@ -37,10 +37,9 @@ public class StateUsage2AutomatonAdapter extends AutomatonSymbol {
       var ast = adaptee.getAstNode();
 
       if(ast.isPresentEntryAction() && ast.getSysMLElement(0) instanceof ASTSysMLSuccession) {
-
-
         var entry = ast.getEntryAction();
-        var initialState = ((ASTSysMLSuccession) ast.getSysMLElement(0)).getTgt();
+        var initialState =
+            ((ASTSysMLSuccession) ast.getSysMLElement(0)).getSuccessionThen().getMCQualifiedName().getQName();
 
         if(entry.isPresentActionUsage()) {
           initialConfiguration.add(new ConfigurationWrapper(initialState, entry.getActionUsage()));
@@ -113,6 +112,7 @@ public class StateUsage2AutomatonAdapter extends AutomatonSymbol {
     //TODO nochmal richtig machen
     var trigger = transition.getInlineAcceptActionUsage();
 
-    return String.join(".", ((ASTMCQualifiedType)trigger.getPayloadType()).getMCQualifiedName().getPartsList());
+    return String.join(".",
+        ((ASTMCQualifiedType)trigger.getPayload().getPayloadType()).getMCQualifiedName().getPartsList());
   }
 }

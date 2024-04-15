@@ -11,7 +11,6 @@
             "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
             "name": "BooleanInput",
             "spannedScope": {
-              "isShadowingScope": true,
               "symbols": [
                 {
                   "kind": "de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol",
@@ -22,7 +21,7 @@
                       "primitiveName": "boolean"
                     }
                   ],
-                  "direction": "IN"
+                  "in": true
                 }
               ]
             }
@@ -31,7 +30,6 @@
             "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
             "name": "BooleanOutput",
             "spannedScope": {
-              "isShadowingScope": true,
               "symbols": [
                 {
                   "kind": "de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol",
@@ -42,7 +40,7 @@
                       "primitiveName": "boolean"
                     }
                   ],
-                  "direction": "OUT"
+                  "out": true
                 }
               ]
             }

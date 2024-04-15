@@ -69,7 +69,9 @@ dependencies {
 /* ========================== Tasks =========================== */
 /* ============================================================ */
 
-task generate {}
+task generate() {
+    group = "mc"
+}
 
 fileTree(grammarDir).matching { include '**/*.mc4' }.each { g ->
   def taskname = "generateGrammar${g.getName().substring(0,g.getName().lastIndexOf('.'))}"
