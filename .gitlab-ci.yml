@@ -2,6 +2,7 @@
 stages:
   - gradle
   - plugin
+  - mirror
 
 cache:
   paths:
