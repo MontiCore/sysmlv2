@@ -21,7 +21,6 @@ public class PortDefHasOneType implements SysMLPartsASTPortDefCoCo {
     for (var attr: ast.getSysMLElementList().stream()
         .filter(e -> e instanceof ASTAttributeUsage)
         .map(e -> (ASTAttributeUsage)e)
-        .filter(e -> (e.isPresentSysMLFeatureDirection()))
         .collect(Collectors.toList()))
     {
       if (attr.getSpecializationList().stream().noneMatch(s -> s instanceof ASTSysMLTyping)) {

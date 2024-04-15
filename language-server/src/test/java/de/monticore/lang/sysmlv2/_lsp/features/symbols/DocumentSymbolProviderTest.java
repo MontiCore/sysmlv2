@@ -24,9 +24,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Testet hauptsächlich für die SysML-Structure-View die korrekte Verfügbarkeit und Typisierung der Symbole.
- *
- * @author Adrian Costin Marin
- * @author Mathias Pfeiffer (mpfeiffer@se-rwth.de)
  */
 public class DocumentSymbolProviderTest {
 
@@ -80,19 +77,20 @@ public class DocumentSymbolProviderTest {
    */
   @RepeatedTest(5)
   public void testConcurrentRequests() {
-    Slf4jLog.init();
-    MCPath modelPath = new MCPath(Paths.get("src/test/resources/documentSymbols/concurrent"));
+    //Slf4jLog.init();
+    var resources = Paths.get("src/test/resources/documentSymbols/concurrent");
+
+    MCPath modelPath = new MCPath(resources);
     SysMLv2LanguageServer server = new SysMLv2LanguageServer(modelPath);
     server.getIndexingManager().indexAllFilesInPath();
 
-    final Path path1 = Paths.get("src/test/resources/documentSymbols/concurrent/Model1.sysml");
-    final Path path2 = Paths.get("src/test/resources/documentSymbols/concurrent/Model2.sysml");
-    final Path path3 = Paths.get("src/test/resources/documentSymbols/concurrent/Model3.sysml");
-
-    List<Path> pathsList = List.of(path1, path2, path3);
+    List<Path> models = List.of(
+        resources.resolve("Model1.sysml"),
+        resources.resolve("Model2.sysml"),
+        resources.resolve("Model3.sysml"));
 
     // emulate async documentSymbol calls
-    List<CompletableFuture<List<Either<SymbolInformation, DocumentSymbol>>>> concurrentTaskList = pathsList
+    List<CompletableFuture<List<Either<SymbolInformation, DocumentSymbol>>>> concurrentTaskList = models
         .parallelStream()
         .map(it -> new DocumentSymbolParams(new TextDocumentIdentifier(it.toUri().toString())))
         .map(docItem -> server.getTextDocumentService().documentSymbol(docItem))
@@ -110,7 +108,7 @@ public class DocumentSymbolProviderTest {
           return List.of(Either.<SymbolInformation, DocumentSymbol>forRight(new DocumentSymbol()));
         }).collect(Collectors.toList());
 
-    List<List<Either<SymbolInformation, DocumentSymbol>>> resultSynchronousSymbols = pathsList
+    List<List<Either<SymbolInformation, DocumentSymbol>>> resultSynchronousSymbols = models
         .stream()
         .map(it -> new DocumentSymbolParams(new TextDocumentIdentifier(it.toUri().toString())))
         .map(docItem -> server.getTextDocumentService().documentSymbol(docItem))

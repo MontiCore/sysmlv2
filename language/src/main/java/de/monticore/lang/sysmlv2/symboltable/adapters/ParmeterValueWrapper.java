@@ -44,7 +44,7 @@ public class ParmeterValueWrapper implements ASTParameterValue {
     this.adaptee = adaptee;
     this.container = container;
     if(adaptee.isPresentAstNode()) {
-      this.value = adaptee.getAstNode().getExpression();
+      this.value = adaptee.getAstNode().getDefaultValue().getExpression();
     }
     else {
       Log.warn("0x10013 Attribute usage \"" + adaptee.getName() + "\" has no AST",

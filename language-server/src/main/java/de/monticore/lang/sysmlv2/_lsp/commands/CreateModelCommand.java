@@ -5,7 +5,7 @@ import de.monticore.lang.sysmlparts._ast.ASTEnumDefBuilder;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartDefBuilder;
 import de.monticore.lang.sysmlparts._ast.ASTPortDefBuilder;
-import de.monticore.lang.sysmlparts._ast.ASTSysMLEnumConstantBuilder;
+import de.monticore.lang.sysmlparts._ast.ASTEnumUsageBuilder;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModelBuilder;
 import de.monticore.lang.sysmlv2._lsp.SysMLv2LanguageServer;
@@ -70,8 +70,8 @@ public class CreateModelCommand extends Command<Boolean> {
       } else if (modelType.equalsIgnoreCase("Enum Definition")) {
         var enumDef = new ASTEnumDefBuilder()
               .setName(modelName)
-              .addSysMLEnumConstant(new ASTSysMLEnumConstantBuilder().setName("A").build())
-              .addSysMLEnumConstant(new ASTSysMLEnumConstantBuilder().setName("B").build())
+              .addSysMLElement(new ASTEnumUsageBuilder().setName("A").build())
+              .addSysMLElement(new ASTEnumUsageBuilder().setName("B").build())
               .build();
 
         model.addSysMLElement(enumDef);

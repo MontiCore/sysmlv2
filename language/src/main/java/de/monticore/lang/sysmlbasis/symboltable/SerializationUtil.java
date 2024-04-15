@@ -4,7 +4,12 @@ import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.json.JsonElement;
 import de.monticore.symboltable.serialization.json.JsonObject;
-import de.monticore.types.check.*;
+import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypeExpressionDeSer;
+import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.check.SymTypeOfGenericsDeSer;
+import de.monticore.types.check.SymTypeOfObjectDeSer;
+import de.monticore.types.check.SymTypePrimitiveDeSer;
 
 import java.util.ArrayList;
 import java.util.List;

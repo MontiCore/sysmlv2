@@ -11,6 +11,8 @@ import de.monticore.lang.automaton._symboltable.IAutomatonScope;
 import de.monticore.lang.automaton._visitor.AutomatonTraverser;
 import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScope;
 import de.monticore.lang.sysmlactions._ast.ASTActionUsage;
+import de.monticore.lang.sysmlactions._ast.ASTSysMLActionsNode;
+import de.monticore.lang.sysmlactions._symboltable.ISysMLActionsScope;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._prettyprint.SysMLv2FullPrettyPrinter;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
@@ -37,15 +39,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ConfigurationWrapper implements ASTConfiguration {
-  private final ASTActionUsage adaptee;
+  private final ISysMLv2Scope enclosingScope;
 
   private final ASTState state;
 
   /** Caching because of internal deriver usage*/
   private final List<ASTOutput> outputs;
 
-  public ConfigurationWrapper(String state, ASTActionUsage adaptee) {
-    this.adaptee = adaptee;
+  public ConfigurationWrapper(String state, ASTSysMLActionsNode adaptee) {
+    this.enclosingScope = (ISysMLv2Scope) adaptee.getEnclosingScope();
 
     var traverser = SysMLv2Mill.traverser();
     var collector = new SendActionAssignmentsVisitor();
@@ -78,13 +80,9 @@ public class ConfigurationWrapper implements ASTConfiguration {
     this(new SysMLv2FullPrettyPrinter(new IndentPrinter()).prettyprint(state), adaptee);
   }
 
-  public ASTActionUsage getAdaptee() {
-    return adaptee;
-  }
-
   @Override
   public IAutomatonScope getEnclosingScope() {
-    return (ISysMLv2Scope)getAdaptee().getEnclosingScope();
+    return enclosingScope;
   }
 
   @Override

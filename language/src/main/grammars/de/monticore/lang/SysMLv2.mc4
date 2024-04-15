@@ -8,14 +8,15 @@ grammar SysMLv2 extends SysMLExpressions,
                         SysMLStates,
                         SysMLConstraints,
                         SysMLRequirements,
-                        SysMLAdvRequirements,
                         SysMLConnections,
-                        SysMLInterfaces,
-                        SysMLItems,
                         SysMLOccurrences,
+                        SysMLViews,
+                        SysMLCases,
                         ComponentConnector,
                         de.monticore.types.MCSimpleGenericTypes,
-                        Automaton
+                        Automaton,
+                        de.monticore.expressions.AssignmentExpressions,
+                        de.monticore.expressions.StreamExpressions
 {
 
   start SysMLModel ;
@@ -36,5 +37,29 @@ grammar SysMLv2 extends SysMLExpressions,
         setText(getText().substring(1, getText().length() - 1));
     } ;
 
+  // Do not include "//*" since its considered a "MultilineNote"
+  @Override
+  token SL_COMMENT =
+    "//" (~'*') (~('\n' | '\r'))* : ->skip
+    {storeComment();};
+
+  FractalLiteral implements NumericLiteral =
+    { noSpace(2) }? "." post:Digits;
+
+  /**
+   * A user-defined keyword for semantic metadata may also be used to declare a definition or usage without
+   * using any language-defined keyword.
+   */
+  symbol scope UserDefinedDefinition implements SysMLType =
+    Modifier UserDefinedKeyword+ "def" Name SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  symbol scope UserDefinedUsage implements SysMLElement =
+    Modifier UserDefinedKeyword+ Name SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
 
 }

@@ -1,10 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.cocos;
 
-import de.monticore.lang.sysmlitems._ast.ASTItemDef;
-import de.monticore.lang.sysmlitems._ast.ASTItemUsage;
-import de.monticore.lang.sysmlitems._cocos.SysMLItemsASTItemDefCoCo;
-import de.monticore.lang.sysmlitems._cocos.SysMLItemsASTItemUsageCoCo;
+import de.monticore.lang.sysmloccurrences._ast.ASTItemDef;
+import de.monticore.lang.sysmloccurrences._ast.ASTItemUsage;
+import de.monticore.lang.sysmloccurrences._cocos.SysMLOccurrencesASTItemDefCoCo;
+import de.monticore.lang.sysmloccurrences._cocos.SysMLOccurrencesASTItemUsageCoCo;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 // TODO Muss mit SpecialiationExists zusammenspielen, also darf der nicht anschlagen, wenn garkein Type existiert,
 // sondern nur, wenn zwar einer existiert, es aber keine ItemsDef/ItemsUsage ist
-public class ItemsSupertypes implements SysMLItemsASTItemDefCoCo, SysMLItemsASTItemUsageCoCo {
+public class ItemsSupertypes implements SysMLOccurrencesASTItemDefCoCo, SysMLOccurrencesASTItemUsageCoCo {
 
   private String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));

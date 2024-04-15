@@ -6,7 +6,7 @@ import de.se_rwth.commons.logging.Log;
 
 public class ASTKerMLCardinality extends ASTKerMLCardinalityTOP {
 
-  public int getLowerBound() {
+  /*public int getLowerBound() {
     if(getLower() instanceof ASTLiteralExpression) {
       if(((ASTLiteralExpression) getLower()).getLiteral() instanceof ASTNatLiteral) {
         ASTNatLiteral v = (ASTNatLiteral) ((ASTLiteralExpression) getLower()).getLiteral();
@@ -31,6 +31,6 @@ public class ASTKerMLCardinality extends ASTKerMLCardinalityTOP {
     }
     Log.error("0xA0002 KerML cardinality cannot produce a value for upper bound");
     return -1;
-  }
+  }*/
 
 }

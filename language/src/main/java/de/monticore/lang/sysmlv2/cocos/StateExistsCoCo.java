@@ -10,8 +10,8 @@ public class StateExistsCoCo implements SysMLStatesASTSysMLTransitionCoCo {
   @Override
   public void check (ASTSysMLTransition node){
     ISysMLStatesScope scope = node.getEnclosingScope();
-    boolean isSrcPresent = scope.resolveStateUsage(node.getSrc()).isPresent();
-    boolean isTgtPresent = scope.resolveStateUsage(node.getTgt()).isPresent();
+    boolean isSrcPresent = scope.resolveStateUsage(node.getSrc().getQName()).isPresent();
+    boolean isTgtPresent = scope.resolveStateUsage(node.getSuccessionThen().getMCQualifiedName().getQName()).isPresent();
 
     if(!isSrcPresent){
       Log.error("0x10029 Source state is not defined", node.get_SourcePositionStart(), node.get_SourcePositionEnd());

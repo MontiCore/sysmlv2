@@ -42,11 +42,12 @@ import java.util.stream.Stream;
 public class ConnectorWrapper implements ASTConnector {
 
   protected ASTMCQualifiedName source;
+
   protected ASTMCQualifiedName target;
 
   public ConnectorWrapper(ASTConnectionUsage adaptee) {
-    source = adaptee.getSrc();
-    target = adaptee.getTgt();
+    source = adaptee.getSrc().getMCQualifiedName();
+    target = adaptee.getTgt().getMCQualifiedName();
   }
 
   protected ConnectorWrapper(ASTMCQualifiedName source, ASTMCQualifiedName target, String name) {
@@ -62,9 +63,10 @@ public class ConnectorWrapper implements ASTConnector {
 
   public static List<ConnectorWrapper> build(ASTConnectionUsage connection) {
     // Qualified -> "part.port"
-    if(connection.getSrc().isQualified()) {
+    if(connection.getSrc().getMCQualifiedName().isQualified()) {
       // Name of part usage  is the one before last
-      var partUsageName = connection.getSrc().getParts(connection.getSrc().sizeParts()-2);
+      var partUsageName = connection.getSrc().getMCQualifiedName().getParts(
+          connection.getSrc().getMCQualifiedName().sizeParts() - 2);
       var partUsage = connection.getEnclosingScope().resolvePartUsage(partUsageName);
       if(!partUsage.isPresent()) {
         Log.warn("0x10009 Could not resolve part usage \"" + partUsageName + "\"",
@@ -81,7 +83,7 @@ public class ConnectorWrapper implements ASTConnector {
         }
         else {
           // Name of port is the last one
-          var portName = connection.getSrc().getBaseName();
+          var portName = connection.getSrc().getMCQualifiedName().getBaseName();
           var srcPort = partUsage.get().getPartDef().get().getSpannedScope().resolvePortUsage(portName);
           if(!srcPort.isPresent()) {
             Log.warn("0x10012 Could not resolve port \"" + portName
@@ -99,12 +101,13 @@ public class ConnectorWrapper implements ASTConnector {
                 .filter(SymTypeExpression::hasTypeInfo)
                 .map(SymTypeExpression::getTypeInfo)
                 .map(TypeSymbolTOP::getSpannedScope)
-                .flatMap(scope -> ((ISysMLv2Scope)scope).getLocalAttributeUsageSymbols().stream())
+                .flatMap(scope -> ((ISysMLv2Scope) scope).getLocalAttributeUsageSymbols().stream())
                 .collect(Collectors.toList());
 
             // Now we simply append the attribute names to the name of the src
             return attributes.stream()
-                .map(a -> new ConnectorWrapper(connection.getSrc(), connection.getTgt(), a.getName()))
+                .map(a -> new ConnectorWrapper(connection.getSrc().getMCQualifiedName(),
+                    connection.getTgt().getMCQualifiedName(), a.getName()))
                 .collect(Collectors.toList());
           }
         }
@@ -112,7 +115,7 @@ public class ConnectorWrapper implements ASTConnector {
     }
     else {
       // Not qualified -> "port"
-      var srcName = connection.getSrc().getQName();
+      var srcName = connection.getSrc().getMCQualifiedName().getQName();
       var srcPort = connection.getEnclosingScope().resolvePortUsage(srcName);
 
       // All attributes across all super types
@@ -123,12 +126,13 @@ public class ConnectorWrapper implements ASTConnector {
           .filter(SymTypeExpression::hasTypeInfo)
           .map(SymTypeExpression::getTypeInfo)
           .map(TypeSymbolTOP::getSpannedScope)
-          .flatMap(scope -> ((ISysMLv2Scope)scope).getLocalAttributeUsageSymbols().stream())
+          .flatMap(scope -> ((ISysMLv2Scope) scope).getLocalAttributeUsageSymbols().stream())
           .collect(Collectors.toList());
 
       // Now we simply append the attribute names to the name of the src
       return attributes.stream()
-          .map(a -> new ConnectorWrapper(connection.getSrc(), connection.getTgt(), a.getName()))
+          .map(a -> new ConnectorWrapper(connection.getSrc().getMCQualifiedName(),
+              connection.getTgt().getMCQualifiedName(), a.getName()))
           .collect(Collectors.toList());
     }
   }

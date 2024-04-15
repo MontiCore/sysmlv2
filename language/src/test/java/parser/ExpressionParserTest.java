@@ -65,8 +65,8 @@ public class ExpressionParserTest {
   public void testInstantiation(String expr) throws IOException {
     var ast = parser.parse_StringExpression(expr);
 
-    assertThat(ast).isPresent();
     assertThat(Log.getFindings()).isEmpty();
+    assertThat(ast).isPresent();
     assertThat(ast.get()).isInstanceOf(ASTSysMLInstantiation.class);
   }
 

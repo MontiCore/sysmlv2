@@ -3,22 +3,54 @@ package de.monticore.lang;
 
 component grammar SysMLOccurrences extends SysMLBasis {
 
-  symbol scope (shadowing) OccurenceUsage implements SysMLElement =
-    Modifier ["event"]? "occurrence" SysMLIdentifier? Name SysMLCardinality? Specialization*
+  symbol scope OccurrenceDef implements SysMLType =
+    Modifier UserDefinedKeyword* "occurrence" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
 
-  /**
-   * An event occurrence usage may also be declared using just the keyword event instead of event occurrence. In
-   * this case, the declaration does not include either a name or a short name. Instead, the referenced event occurrence of
-   * the event occurrence usage is identified by giving a qualified name or feature chain immediately after the event
-   * keyword.
-   */
-  EventOccurrenceUsage implements SysMLElement =
-    Modifier "event" MCQualifiedName SysMLCardinality?
+  InlineOccurrenceUsage implements IInlineOccurrenceUsage =
+    UserDefinedKeyword* "occurrence" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    DefaultValue?
+    ("{"
+      SysMLElement*
+    "}")? ;
+
+  symbol scope OccurrenceUsage implements OccurrenceUsageElement =
+    Modifier UserDefinedKeyword* "occurrence" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    DefaultValue?
     ("{"
       SysMLElement*
     "}" | ";") ;
+
+  // IndividualUsages are parsed as AnonymousReferences with Modifier UserDefinedKeyword* "individual"
+  symbol scope IndividualDef implements SysMLType =
+    Modifier UserDefinedKeyword* "individual" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  /** ==================================================================================================================
+   * An item definition is a kind of occurrence definition (see 7.9) that defines a class of identifiable objects that may be
+   * acted on over time, but which do not necessarily perform actions themselves. An item usage is a usage of one or
+   * more item definitions.
+   * ================================================================================================================ */
+
+  symbol scope ItemDef implements SysMLType =
+    Modifier UserDefinedKeyword* "item" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  symbol scope ItemUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* "item" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    ("(" (SysMLParameter || ",")* ")")? DefaultValue?
+    ("{"
+      SysMLElement*
+     "}" | ";")? ;
 
 }
