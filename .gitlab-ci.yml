@@ -1,20 +1,18 @@
 # (c) https://github.com/MontiCore/monticore
 stages:
   - gradle
-  - docker
   - plugin
-
-before_script:
-  - chmod +x gradlew
-  - export GRADLE_USER_HOME=`pwd`/.gradle
-  # TODO: use image with jdk 11 and node 16
-  - curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
-  - apt-get install -y nodejs
 
 cache:
   paths:
     - ".gradle/wrapper"
     - ".gradle/caches"
+
+before_script:
+  - chmod +x gradlew
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+  - curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+  - apt-get install -y nodejs
 
 build:
   stage: gradle
@@ -31,10 +29,6 @@ build:
     - master
     - /^release/.*$/
 
-# Gradle publish and additional raw binary upload of the built language server plugin for VSCode. Only on master and
-# release branches.
-# TODO Das "latest" ist sowieso etwas unglücklich und sollte irgendwann verschwinden.
-# TODO publish scheint nicht das gleiche wie build zu tun
 deploy:
   stage: gradle
   image: openjdk:11-jdk
@@ -54,25 +48,6 @@ deploy:
     - master
     - /^release/.*$/
 
-# Uses the artifacts from the build jobs, see https://docs.gitlab.com/ee/ci/yaml/#dependencies:
-# > "If you do not use dependencies, all artifacts from previous stages are passed to each job."
-deploy docker:
-  stage: docker
-  image: docker:19.03.8
-  services:
-    - docker:18-dind
-  before_script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-  script:
-    - VERSION=`cat language/target/version`
-    - docker build -t $CI_REGISTRY_IMAGE/language4verification-cli:$VERSION ./language
-    - docker push $CI_REGISTRY_IMAGE/language4verification-cli:$VERSION
-  tags:
-    - shell
-  only:
-    - master
-    - /^release/.*$/
-
 build:extension:
   stage: plugin
   image: node:latest
@@ -87,3 +62,44 @@ build:extension:
   artifacts:
     paths:
       - visualization-plugin/vis.vsix
+
+# Mirrors this repository's `dev` and `master` branches to GitHub.
+# The mirror will always be at either HEAD or HEAD+1 (depending on whether cleanup is necessary).
+# For more information, visit: https://git.rwth-aachen.de/se/infrastructure/github-mirror-tools
+# (Available internally only)
+githubmirror:
+  # We need a JDK 17+ image for this job since the link checker requires Java 17.
+  image: eclipse-temurin:17-jdk-alpine
+  stage: mirror
+  variables:
+    # The repository is edited during this job. To make sure that no changes persist, we instruct GitLab to always
+    # create a fresh clone of the repository instead of caching it and attempting to remove any changes.
+    #
+    # See https://docs.gitlab.com/ee/ci/runners/configure_runners.html#git-strategy
+    GIT_STRATEGY: clone
+  dependencies: []
+  before_script:
+    - 'apk --no-cache add curl git openssh-client'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SE_CIBUILD_SSH_PRIV_KEY")
+    - echo "$SE_CIBUILD_SSH_PRIV_KEY" | tr -d '\r' | ssh-add -
+    - git config --global user.email "noreply-ci@se-rwth.de"
+    - git config --global user.name "MontiCore Mirroring Bot"
+    - git checkout "$CI_COMMIT_REF_NAME" # GitLab checks out a commit in detached HEAD mode by default, but we want to commit to the branch and push.
+    - mkdir -p ~/.ssh
+    - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  script:
+    - 'curl --location --header "PRIVATE-TOKEN: $secibuildinfstrtoken" "https://git.rwth-aachen.de/api/v4/projects/se%2Finfrastructure%2Fgithub-mirror-tools/repository/files/mirror.sh/raw" --output mirror.sh'
+    - sh mirror.sh
+    - rm mirror.sh
+    - 'curl --location --header "PRIVATE-TOKEN: $secibuildinfstrtoken" "https://git.rwth-aachen.de/api/v4/projects/se%2Finfrastructure%2Fmdlinkchecker/jobs/artifacts/master/raw/target/libs/MDLinkCheckerCLI.jar?job=build" --output MDLinkChecker.jar'
+    - 'java -jar MDLinkChecker.jar -t "$secibuildtoken" -r . -p -c -i'
+    - 'rm MDLinkChecker.jar'
+    - git add --all
+    # We'll simply ignore failures during commit because there is a chance that no files were changed. In this case the
+    # remote will be on the same commit as the upstream repository.
+    - (git commit -m "[Mirror] Replace all internal links and references") || true
+    - git remote add github git@github.com:MontiCore/sysmlv2.git
+    - git push github $CI_COMMIT_BRANCH --force
+  only:
+    - master
