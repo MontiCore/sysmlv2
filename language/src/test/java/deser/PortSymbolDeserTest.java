@@ -18,7 +18,7 @@ public class PortSymbolDeserTest extends NervigeSymboltableTests {
   @Test
   public void testPorts() throws IOException {
     var as = process("part def A { port b: B; } port def B { in attribute b: boolean; }");
-    fixSerialization();
+    setupComponentConnectorSerialization();
 
     var comp = as.resolveComponent("A").get();
     var artifact = SysMLv2Mill.artifactScope();
@@ -36,7 +36,7 @@ public class PortSymbolDeserTest extends NervigeSymboltableTests {
   @Test
   public void testConjugatedPorts() throws IOException {
     var as = process("part def A { port b: ~B; } port def B { in attribute b: boolean; }");
-    fixSerialization();
+    setupComponentConnectorSerialization();
 
     var comp = as.resolveComponent("A").get();
     var artifact = SysMLv2Mill.artifactScope();

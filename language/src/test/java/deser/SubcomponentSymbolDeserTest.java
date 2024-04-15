@@ -17,7 +17,7 @@ public class SubcomponentSymbolDeserTest extends NervigeSymboltableTests {
   @Test
   public void testSubcomponent() throws IOException {
     var as = process("part def B; part def A { part b: B; }");
-    fixSerialization();
+    setupComponentConnectorSerialization();
 
     var comp = as.resolveComponent("A").get();
     var artifact = SysMLv2Mill.artifactScope();
