@@ -4,14 +4,15 @@ package de.monticore.lang;
 import de.monticore.symbols.BasicSymbols.*;
 
 /**
- * Definiert Erweiterungen für MontiCore's CompSymbols, die aus Anforderungen der MontiBelle-Gruppe und spezifisch
- * der Transformation von Component-Connector-Modellen nach Isabelle hervor gehen. Die Ergebnisse werden bis 31.08.2023
- * konsolidiert und ggfs. nach MontiCore übertragen.
+ * Definiert Erweiterungen für MontiCore's CompSymbols, die aus Anforderunge
+ * der MontiBelle-Gruppe und spezifisch der Transformation von Component-
+ * Connector-Modellen nach Isabelle hervor gehen.
  *
  * Hinweise:
- * - Die Namensgebung durch Präfix "Mild" ist eine Altlast aus der MontiBelle-Transformation und wird entfernt
- * - Symbol-Vererbung ist unseres Wissens nach in MontiCore verpönt. Wir benutzen sie nur, bis die Ergebnisse
- *   konsolidiert und übertragen wurden.
+ * - Die Namensgebung durch Präfix "Mild" ist eine Altlast aus der MontiBelle-
+ *   Transformation und wird zeitnah entfernt
+ * - Symbol-Vererbung ist unseres Wissens nach in MontiCore verpönt. Wir
+ *   benutzen sie nur, bis die Ergebnisse konsolidiert und übertragen wurden.
  */
 component grammar ComponentConnector
   extends de.monticore.types.MCBasicTypes,
@@ -19,58 +20,59 @@ component grammar ComponentConnector
           de.monticore.symbols.CompSymbols,
           de.monticore.Cardinality
 {
-  /* TODO concrete symbols implementing other interface symbols is problematic and should not happen.
-      In our case we require additional symbolrules for transformation that are not present in CompSymbols.
-      - Overriding the interface is not possible (0xA4007)
-      Potential solution: We define our own component interface symbols with extension to be later migrated to MontiCore
-                          - con: no traversal is generated for the ASTs (neither in traverser nor in handler)
-   */
 
   /**
-   * Wir definieren im Folgenden Erweiterungen für ComponentSymbols durch Symbol Rules.
-   * Techn. Hinweis: "scope" wird von Component vererbt.
+   * Erweiterungen für ComponentSymbols durch Symbol Rules.
    */
   interface symbol MildComponent extends Component = Name ;
 
   /**
-   * Connectors sind keine Symbole, beinhalten aber essentielle Informationen für Component-Connector-Netzwerke. Wir
-   * definieren deswegen das Interface und fordern, dass ComponentSymbols eine Liste von Connectors bereit halten.
-   * Unsere Java-Implementation sieht vor, dass die Connectors aus dem AST der jeweiligen konkreten Sprache (SysML oder
-   * MontiArc) abgeleitet werden.
+   * Connectors sind keine Symbole, beinhalten aber essentielle Informationen
+   * für Component-Connector-Netzwerke. Wir definieren deswegen das Interface
+   * und fordern, dass ComponentSymbols eine Liste von Connectors bereit halten.
+   * Unsere Java-Implementation sieht vor, dass die Connectors aus dem AST der
+   * jeweiligen konkreten Sprache (zB. SysML oder MontiArc) abgeleitet werden.
    */
-  interface Connector = source:MCQualifiedName target:MCQualifiedName ; // TODO vielleicht nur Name?
+  interface Connector = source:MCQualifiedName target:MCQualifiedName ;
 
   /**
    * Wir fügen hinzu:
-   * - Verfeinerung. Alternative Implementation unter Verwendung der existierenden "superTypes" mit vererbter
-   *                 CompKindExpression wurde verworfen, da unserer Meinung nach die Semantik durch Syntax und
-   *                 explizit in der Grammatik erkennbar sein sollte.
-   * - Connectors.   Sind essesntielle Information für die Komposition. Subkomponenten können als Symbole im Scope
-   *                 schwimmen. Connectors nicht.
-   * - Parameter.    Die MontiCore-Implementierung der CompSymbols versteckt diese in Java-Klassen. Wir machen sie nur
-   *                 explizit.
+   * - Verfeinerung. Alternative Implementation unter Verwendung der
+   *                 existierenden "superTypes" mit vererbter CompKindExpression
+   *                 wurde verworfen, da unserer Meinung nach die Semantik durch
+   *                 Syntax und explizit in der Grammatik erkennbar sein sollte.
+   * - Connectors.   Sind essesntielle Information für die Komposition.
+   *                 Subkomponenten können als Symbole im Scope schwimmen.
+   *                 Connectors nicht.
+   * - Parameter.    Die MontiCore-Implementierung der CompSymbols versteckt
+   *                 diese in Java-Klassen. Wir machen sie nurexplizit.
    */
   symbolrule MildComponent =
     connectors: Connector*
   ;
 
   /**
-   * Wir definieren im Folgenden Erweiterungen für PortSymbols durch Symbol Rules.
+   * Erweiterungen für PortSymbols durch Symbol Rules.
    */
   interface symbol MildPort extends Port = Name;
 
   /**
    * Wir fügen hinzu:
-   * - Cardinalities. Eine Alternative Implementierung durch Auflösen der Kardinalitäten wäre sehr komplex, da
-   *                  Expressions umgeschrieben werden müssten ("forall i in {1,2,3}. myport[i].nth(7) > 5" müsste vmtl.
-   *                  zu "forall ch in {channel_1, channel_2,...}. nth(7, ch) > 5" transformiert werden).
+   * - Cardinalities. Eine Alternative Implementierung durch Auflösen der
+   *                  Kardinalitäten wäre sehr komplex, da Expressions
+   *                  umgeschrieben werden müssten:
+   *                  "forall i in {1,2,3}. myport[i].nth(7) > 5"
+   *                  müsste vmtl. zu:
+   *                  "forall ch in {channel_1, channel_2,...}. nth(7, ch) > 5"
+   *                  transformiert werden).
    */
   symbolrule MildPort =
     cardinality: Cardinality
   ;
 
   /**
-   * Spezifikationen sind eine abstrakte (nicht implementierbare) Variante um Verhalten anzugeben.
+   * Spezifikationen sind eine abstrakte (nicht implementierbare) Variante um
+   * Verhalten anzugeben.
    */
   interface symbol MildSpecification = Name ;
 
@@ -80,20 +82,22 @@ component grammar ComponentConnector
   ;
 
   /**
-   * Wir definieren im Folgenden Erweiterungen für SubcomponentSymbols durch Symbol Rules.
+   * Erweiterungen für SubcomponentSymbols durch Symbol Rules.
    */
   interface symbol MildInstance extends Subcomponent = Name ;
 
   /**
-   * Parameter werden instanziiert und mit Werten belegt. Dabei können diese Werte natürlich symbolischer Natur sein
-   * (zB. ein weitergereichter Parameter der Vater-Komponente).
-   * Techn. Hinweis: Die Werte sollten idealerweise Expression sein. Siehe Kommentar bei MildSpecification.
+   * Parameter werden instanziiert und mit Werten belegt. Dabei können diese
+   * Werte natürlich symbolischer Natur sein (zB. ein weitergereichter Parameter
+   * der Vater-Komponente). Techn. Hinweis: Die Werte sollten idealerweise
+   * Expression sein. Siehe Kommentar bei MildSpecification.
    */
   interface ParameterValue = variable:Name@Variable value:Expression ;
 
   /**
    * Wir fügen hinzu:
-   * - ParameterValues. Wir konnten diese noch nicht in MontiCore's Implementierung finden.
+   * - ParameterValues. Wir konnten diese noch nicht in MontiCore's
+   *                    Implementierung finden.
    */
   symbolrule MildInstance =
     parameterValues:ParameterValue*

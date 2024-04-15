@@ -42,8 +42,6 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
    * <br>
    * Wird für den TypeCheck benötigt, da wir in der Grammatik uns dafür entschieden haben, die SysML-Konzepte nicht von
    * Type, Field, etc. abzuleiten. Das ist konsistent mit den Empfehlungen aus dem MC-Buch.
-   *
-   * @author: Marc Schmidt, Mathias Pfeiffer
    */
   @Override
   default List<VariableSymbol> resolveAdaptedVariableLocallyMany(
@@ -128,8 +126,6 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
    * Adaptiert SysML Definitions (PortDefs, PartDefs, StateDef) zu Types. Dient dazu, dass man an verschiedenen Stellen
    * nach "Type" resolven kann (scope.resolveType('MyPortDef') zB.) und ein (adaptiertes) Type-Symbol findet. Eingesetzt
    * für TypeCheck.
-   *
-   * @author Marc Schmidt
    */
   @Override
   default List<TypeSymbol> resolveAdaptedTypeLocallyMany(

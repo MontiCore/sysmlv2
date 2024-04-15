@@ -25,17 +25,23 @@ import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.cocos.AssignActionTypeCheck;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
 import de.monticore.lang.sysmlv2.cocos.FlowCheckCoCo;
-import de.monticore.lang.sysmlv2.cocos.PortDefinitionExistsCoCo;
-import de.monticore.lang.sysmlv2.cocos.RefinementCyclic;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
+import de.monticore.lang.sysmlv2.cocos.PartBehaviorCoCo;
+import de.monticore.lang.sysmlv2.cocos.PortDefinitionExistsCoCo;
+import de.monticore.lang.sysmlv2.cocos.RefinementCyclic;
 import de.monticore.lang.sysmlv2.cocos.SendActionTypeCheck;
 import de.monticore.lang.sysmlv2.cocos.SpecializationExists;
-import de.monticore.lang.sysmlv2.cocos.PartBehaviorCoCo;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.TypeCheckTransitionGuards;
 import de.monticore.lang.sysmlv2.cocos.WarnNonExhibited;
-import de.monticore.lang.sysmlv2.symboltable.completers.*;
+import de.monticore.lang.sysmlv2.symboltable.completers.CausalityCompleter;
+import de.monticore.lang.sysmlv2.symboltable.completers.DirectRefinementCompleter;
+import de.monticore.lang.sysmlv2.symboltable.completers.DirectionCompleter;
+import de.monticore.lang.sysmlv2.symboltable.completers.RequirementClassificationCompleter;
+import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
+import de.monticore.lang.sysmlv2.symboltable.completers.StateExhibitionCompleter;
+import de.monticore.lang.sysmlv2.symboltable.completers.TypesCompleter;
 import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.lang.sysmlv2.types.SysMLSynthesizer;
 import de.monticore.ocl.oclexpressions.symboltable.OCLExpressionsSymbolTableCompleter;
@@ -52,7 +58,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,8 +78,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
    * Official Language Implementation CoCos
    */
   @Override
-  public  void runDefaultCoCos(ASTSysMLModel ast)
-  {
+  public void runDefaultCoCos(ASTSysMLModel ast) {
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
@@ -87,11 +91,11 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
   }
 
   /**
-   * Formal Verification-Specific Language Implementation CoCos
+   * CoCos assuring models are fit for semantic analysis using MontiBelle
    */
   @Override
-  public  void runAdditionalCoCos (de.monticore.lang.sysmlv2._ast.ASTSysMLModel ast)
-  {
+  public void runAdditionalCoCos(
+      de.monticore.lang.sysmlv2._ast.ASTSysMLModel ast) {
     var checker = new SysMLv2CoCoChecker();
 
     // Not-supported language elements
@@ -99,13 +103,11 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new NoDoActions());
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new NoDoActions());
 
-    // Errors regarding correctness of models, i.e., following "the MontiBelle approach"
+    // Restrictions on language Elements
     checker.addCoCo(new OneCardinality());
     checker.addCoCo(new PortDefHasOneType());
     checker.addCoCo(new PortDefNeedsDirection());
-    //checker.addCoCo(new RefinementChainCheck()); TODO does not work without AST
     checker.addCoCo(new RefinementCyclic());
-    //checker.addCoCo(new RefinementInterfaceNotMatching()); TODO does not work without AST
 
     // Additional warnings, things might be ignored
     checker.addCoCo(new WarnNonExhibited());
@@ -114,11 +116,16 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTPartDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTPortDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLConstraintsASTConstraintDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLActionsASTActionDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLRequirementsASTRequirementDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLImportsAndPackagesASTSysMLPackageCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo(
+        (SysMLConstraintsASTConstraintDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo(
+        (SysMLActionsASTActionDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo(
+        (SysMLRequirementsASTRequirementDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo(
+        (SysMLImportsAndPackagesASTSysMLPackageCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo(
+        (SysMLPartsASTAttributeDefCoCo) new NameCompatible4Isabelle());
 
     //SpesML CoCos
     checker.addCoCo(new FlowCheckCoCo());
@@ -141,7 +148,8 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
   }
 
   public ISysMLv2ArtifactScope loadSymbols(String symbolPath) {
-    SysMLv2Symbols2Json symbols2Json = new de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json();
+    SysMLv2Symbols2Json symbols2Json =
+        new de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json();
     var artifactScope = symbols2Json.load(symbolPath);
 
     getGlobalScope().addSubScope(artifactScope);
@@ -158,21 +166,14 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     traverser.add4SysMLParts(new DirectionCompleter());
     traverser.add4SysMLParts(new ConvertEnumUsagesToFields());
 
-    // Aus mir unerklärlichen Gründen ist die Traversierung so implementiert, dass nur das SpannedScope des jeweiligen
-    // AST-Knoten visitiert wird. Wenn wir hier also das ASTSysMLModel reinstecken (was kein Scope spannt (wieso eigtl.
-    // nicht?)), dann werden die Elements visitiert/traversiert. Beim traverisieren wird dann auch das gespannte Scope
-    // (zB. das Scope einer PortDef) visitiert. Das ArtifactScope steht in dieser Hierarchie aber über dem ASTSysMLModel
-    // und man muss hier allen Ernstes einmal RAUF navigieren und dann den Traverser loslassen.
-    if(node.getEnclosingScope() != null) {
+    // Visiting artifact scope _and_ the AST requires two calls
+    if (node.getEnclosingScope() != null) {
       node.getEnclosingScope().accept(traverser);
     }
-    // Und dann wird nicht das Scope traversiert um die darin gefindlichen Symbole und daranhängende AST-Knoten zu
-    // besuchen, sondern es wird nichts getan. Der Default-Traverser geht nämlich davon aus, dass man sich am AST
-    // entlang hangelt.
     node.accept(traverser);
 
-    // Phase 2: Sets types for usages and declarations (let-in, quantifiers) in expressions.
-    // Based on types of specializations completed in phase 1.
+    // Phase 2: Sets types for usages and declarations (let-in, quantifiers) in
+    // expressions. Based on types of specializations completed in phase 1.
     traverser = SysMLv2Mill.traverser();
     TypesCompleter completer = new TypesCompleter();
     traverser.add4SysMLBasis(completer);
@@ -184,73 +185,69 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     traverser.add4SysMLParts(new CausalityCompleter());
     traverser.add4SysMLStates(new StateExhibitionCompleter());
 
-    // gleiches Spiel wie oben: Alles besuchen verlangt zwei Calls
-    if(node.getEnclosingScope() != null) {
+    // Visiting artifact scope _and_ the AST requires two calls
+    if (node.getEnclosingScope() != null) {
       node.getEnclosingScope().accept(traverser);
     }
     node.accept(traverser);
   }
 
   /**
-   * Da der OCL-Completer davon ausgeht, dass alle anderen Symbole vorhanden sind, muss dieser in einer Extra-Etappe
-   * laufen. Die Vervollständigung beschäftigt sich mit Let-ins und Quantifizierten Variablen.
-   *
+   * Da der OCL-Completer davon ausgeht, dass alle anderen Symbole vorhanden
+   * sind, muss dieser in einer Extra-Etappe laufen. Die Vervollständigung
+   * beschäftigt sich mit Let-ins und Quantifizierten Variablen.
+   * <p>
    * Beispiel: "forall v in input.data.values(): ..."
-   *
-   * Dabei versucht der Completer das Feld (den Kanal) "data" in "input" (Port) zu finden. Dieses Feld wird als Variable
-   * adaptiert von unserem SysMLv2Scope geliefert. Allerdings klappt das nur, wenn das Attribut seinen Typen bereits
-   * kennt. Da dieses aber auch im Completer gesetzt wird, können wir die Reihenfolge nicht garantieren.
-   *
-   * TODO Ich habe den Eindruck, dass es in MontiCore das Konzept eines "Surrogates" gibt. Allerdings habe ich nicht den
-   *   Eindruck, dass die OCL-Completer damit umgehen könnte. Ausserdem: Wieso ist der OCL-Completer dermassen
-   *   übergriffig?
+   * <p>
+   * Dabei versucht der Completer das Feld (den Kanal) "data" in "input" (Port)
+   * zu finden. Dieses Feld wird als Variable adaptiert von unserem SysMLv2Scope
+   * geliefert. Allerdings klappt das nur, wenn das Attribut seinen Typen
+   * bereits kennt. Da dieses aber auch im Completer gesetzt wird, können wir
+   * die Reihenfolge nicht garantieren.
+   * <p>
    */
   public void finalizeSymbolTable(ASTSysMLModel node) {
     var traverser = SysMLv2Mill.traverser();
-    // null parameters since we don't really understand any of those (yet)
     var oclCompleter = new OCLExpressionsSymbolTableCompleter();
-    // TODO The "true" here assumes, that OCL-Expr. are only ever used in history-oriented constraints
+    // The "true" here assumes, that OCL-Expr. are only ever used in
+    // history-oriented constraints
     oclCompleter.setDeriver(new SysMLDeriver(true));
     oclCompleter.setSynthesizer(new SysMLSynthesizer());
     traverser.add4OCLExpressions(oclCompleter);
-    // gleiches Spiel wie oben: Alles besuchen verlangt zwei Calls
-    if(node.getEnclosingScope() != null) {
+
+    // Visiting artifact scope _and_ the AST requires two calls
+    if (node.getEnclosingScope() != null) {
       node.getEnclosingScope().accept(traverser);
     }
     node.accept(traverser);
   }
 
   public Options addAdditionalOptions(Options options) {
-    options.addOption(Option.builder("ex")
-        .longOpt("extended")
-        .desc("Runs additional checks not pertaining to the official language specification.")
-        .build());
+    options.addOption(Option.builder("ex").longOpt("extended").desc(
+        "Runs additional checks assuring models are fit for semantic "
+            + "analysis using MontiBelle").build());
 
-    options.addOption(Option.builder("cc")
-        .longOpt("compcon")
-        .desc("Serializes the symbol table of the given artifact using component-connector symbols.")
-        .hasArg(true)
-        .optionalArg(false)
-        .argName("output file")
-        .build());
+    options.addOption(Option.builder("cc").longOpt("compcon").desc(
+        "Serializes the symbol table of the given artifact using "
+            + "component-connector symbols.").hasArg(true).optionalArg(
+        false).argName("output file").build());
     return options;
   }
 
-  // MontiCore generiert hier leider herzlich wenig Sinnvolles
   @Override
-  public  void run (String[] args) {
+  public void run(String[] args) {
     init();
     Options options = initOptions();
 
-    try{
+    try {
       CommandLineParser cliparser = new org.apache.commons.cli.DefaultParser();
-      CommandLine cmd = cliparser.parse(options,args);
+      CommandLine cmd = cliparser.parse(options, args);
 
-      if(cmd.hasOption("help")){
+      if (cmd.hasOption("help")) {
         printHelp(options);
         return;
       }
-      else if(cmd.hasOption("version")){
+      else if (cmd.hasOption("version")) {
         printVersion();
         return;
       }
@@ -259,15 +256,16 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
         List<ASTSysMLModel> asts;
         if (cmd.hasOption("input")) {
           var input = Path.of(cmd.getOptionValue("input"));
-          if(Files.isDirectory(input)) {
+          if (Files.isDirectory(input)) {
             try {
-              asts = Files.walk(input)
-                  .filter(p -> FilenameUtils.getExtension(p.toString()).equals("sysml"))
-                  .map(p -> parse(p.toString()))
-                  .collect(Collectors.toList());
+              asts = Files.walk(input).filter(
+                  p -> FilenameUtils.getExtension(p.toString()).equals(
+                      "sysml")).map(p -> parse(p.toString())).collect(
+                  Collectors.toList());
             }
             catch (IOException ex) {
-              Log.error("0x00001 Could not read the input directory: " + ex.getMessage());
+              Log.error("0x00001 Could not read the input directory: "
+                  + ex.getMessage());
               return;
             }
           }
@@ -276,12 +274,14 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
           }
         }
         else {
-          var modelReader = new BufferedReader(new InputStreamReader(System.in));
+          var modelReader = new BufferedReader(
+              new InputStreamReader(System.in));
           try {
             asts = List.of(SysMLv2Mill.parser().parse(modelReader).get());
           }
           catch (IOException ex) {
-            Log.error("0x00002 Could not read standard input: " + ex.getMessage());
+            Log.error(
+                "0x00002 Could not read standard input: " + ex.getMessage());
             return;
           }
         }
@@ -323,7 +323,8 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
       }
     }
     catch (org.apache.commons.cli.ParseException e) {
-      Log.error("0xA5C06x33289 Could not process SysMLv2Tool parameters: " + e.getMessage());
+      Log.error("0xA5C06x33289 Could not process SysMLv2Tool parameters: "
+          + e.getMessage());
     }
   }
 

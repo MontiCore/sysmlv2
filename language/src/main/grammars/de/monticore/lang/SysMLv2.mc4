@@ -47,8 +47,8 @@ grammar SysMLv2 extends SysMLExpressions,
     { noSpace(2) }? "." post:Digits;
 
   /**
-   * A user-defined keyword for semantic metadata may also be used to declare a definition or usage without
-   * using any language-defined keyword.
+   * A user-defined keyword for semantic metadata may also be used to declare a
+   * definition or usage without using any language-defined keyword.
    */
   symbol scope UserDefinedDefinition implements SysMLType =
     Modifier UserDefinedKeyword+ "def" Name SysMLCardinality? Specialization*

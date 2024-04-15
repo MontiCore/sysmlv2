@@ -1,23 +1,18 @@
-/target/
+# Ignore build output and temp files
 target/
-target
-.project
-.settings
-.classpath
 out/
-bin/*
-
-# Ignore Macintosh Desktop Service Stores
-.DS_Store
+bin/
+.project/
+.settings/
+.classpath/
+.gradle/
 
 # Ignore Intellij files
 *.iml
 .idea
 
+# Ignore Macintosh Desktop Service Stores
+.DS_Store
+
 # Ignore log file
 *.log
-.gradle
-
-# Nervige Sysml-Submission-Team Sachen
-.meta.json
-.project.json

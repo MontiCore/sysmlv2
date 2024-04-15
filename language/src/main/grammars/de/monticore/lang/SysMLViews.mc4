@@ -3,9 +3,9 @@ package de.monticore.lang;
 
 component grammar SysMLViews extends SysMLBasis, SysMLRequirements {
 
-  /** ==================================================================================================================
+  /** ==========================================================================
    * Viewpoints
-   * ================================================================================================================ */
+   * ======================================================================== */
 
   symbol scope ViewpointDef implements SysMLType =
     Modifier UserDefinedKeyword* "viewpoint" "def"
@@ -15,27 +15,29 @@ component grammar SysMLViews extends SysMLBasis, SysMLRequirements {
     "}" | ";") ;
 
   symbol scope ViewpointUsage implements SysMLElement =
-    Modifier UserDefinedKeyword* "viewpoint" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    Modifier UserDefinedKeyword* "viewpoint"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
 
-  /** ==================================================================================================================
+  /** ==========================================================================
    * Views
-   * ================================================================================================================ */
+   * ======================================================================== */
 
   symbol scope ViewDef implements SysMLType =
     Modifier UserDefinedKeyword* "view" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
-      (RenderingReference | SysMLElement)*
-    "}" | ";") ;
+        (RenderingReference | SysMLElement)*
+     "}" | ";") ;
 
   symbol scope ViewUsage implements SysMLElement =
-    Modifier UserDefinedKeyword* "view" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    Modifier UserDefinedKeyword* "view"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("{"
-      (RenderingReference | SysMLElement)*
-    "}" | ";") ;
+        (RenderingReference | SysMLElement)*
+     "}" | ";") ;
 
   RenderingReference =
     "render" MCQualifiedName
@@ -51,9 +53,9 @@ component grammar SysMLViews extends SysMLBasis, SysMLRequirements {
         SysMLElement*
      "}" | ";") ;
 
-  /** ==================================================================================================================
+  /** ==========================================================================
    * Renderings
-   * ================================================================================================================ */
+   * ======================================================================== */
 
   symbol scope RenderingDef implements SysMLType =
     Modifier UserDefinedKeyword* "rendering" "def"
@@ -63,8 +65,8 @@ component grammar SysMLViews extends SysMLBasis, SysMLRequirements {
     "}" | ";") ;
 
   symbol scope RenderingUsage implements SysMLElement =
-    Modifier UserDefinedKeyword* ["render"]? "rendering" SysMLIdentifier? Name?
-    SysMLCardinality? Specialization* DefaultValue?
+    Modifier UserDefinedKeyword* ["render"]? "rendering"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
       SysMLElement*
     "}" | ";") ;
