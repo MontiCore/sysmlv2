@@ -115,26 +115,37 @@ correct use of expressions and their typing, which is one of the larger
 parts of context conditions in programming languages, will be
 something, we will further explore.
 
-## Project Structure
+* [**language**](language) contains the sources to the language
+  implementation, including the parser
+* [**language-server**](language-server) A [language server][3]
+  implementation for SysML v2 in MontiCore, generated via the MontiCore Language
+  Server Generator (MCLSG). Enables the following editor features:
+  - Syntax highlighting
 
-* [**bin**](bin) contains the executable parser
-* [**examples**](examples) contains exemplary SysML v2 models copied from the
-  [SysML Submission Team (SST)](https://github.com/Systems-Modeling).
-  All of these examples can be parsed by both parsers.
+  ![](doc/highlighting.png)
+  - In-place error reporting
 
-We wellcome the submission of further examples for quality checks.
+  ![](doc/errors.png)
+  - In-place suggestions for auto-completion and error-correction
+
+  ![](doc/completion.png)
+* [**visualization**](visualization) The [official pilot implementation for
+  visualization][2] wrapped as a gradle project
+* [**visualization-plugin**](visualization-plugin) The official pilot implementation for
+  visualization wrapped in a VSCode plugin
+
+Tests for the parser contain exemplary SysML v2 models from the [SysML
+Submission Team (SST)](https://github.com/Systems-Modeling):
+* [Systems Library](language/src/main/resources/Systems%20Library)
+* [Domain Libraries](language/src/main/resources/Domain%20Libraries)
+* [Example, Training, and Validation Models](language/src/test/resources/official)
+
+All of these examples can be parsed by both parsers. We welcome the submission
+of further examples for quality checks.
 
 ## Tool Download and Use
 
 * [**Download SysML v2 Tool**](http://www.monticore.de/download/MCSysMLv2.jar)
-
-Alternatively, the tool can be found in the `bin`-folder.
-
-##### Prerequisites
-
-To run the tool, it is required to install a Java 11 JRE.
-
-## Tool Parameters
 
 The [SysML v2 tool](bin/MCSysMLv2.jar) offers options for processing SysML v2
 models. It provides through the CLI as follows:
@@ -143,22 +154,22 @@ models. It provides through the CLI as follows:
 
 where the arguments are:
 
-| Option                   | Explanation                                                                  |
-|--------------------------|------------------------------------------------------------------------------|
-| -ex,--extended           | Runs additional checks not pertaining to the official language specification |
-| -h,--help                | Prints this help dialog
-| -i,--input <file>        | Reads the source file (mandatory) and parses the contents
-| -path <arg>              | Sets the artifact path for imported symbols, space separated.
-| -pp,--prettyprint <file> | Prints the AST to stdout or the specified file (optional)
-| -r,--report <dir>        | Prints reports of the artifact to the specified directory.
-| -s,--symboltable <file>  | Serialized the Symbol table of the given artifact.
-| -v,--version             | Prints version information
+| Option                   | Explanation                                                                                |
+|--------------------------|--------------------------------------------------------------------------------------------|
+| -ex,--extended           | Runs additional checks assuring models are fit for semantic analysis using [MontiBelle][1] |
+| -h,--help                | Prints this help dialog                                                                    |
+| -i,--input <file>        | Reads the source file (mandatory) and parses the contents                                  |
+| -path <arg>              | Sets the artifact path for imported symbols, space separated.                              |
+| -pp,--prettyprint <file> | Prints the AST to stdout or the specified file (optional)                                  |
+| -r,--report <dir>        | Prints reports of the artifact to the specified directory.                                 |
+| -s,--symboltable <file>  | Serialized the Symbol table of the given artifact.                                         |
+| -v,--version             | Prints version information                                                                 |
 
 exemplary usage:
 
 ```
-  java -jar MCSysMLv2.jar -h
-  java -jar MCSysMLv2.jar -i Car.sysml -pp
+java -jar MCSysMLv2.jar -h
+java -jar MCSysMLv2.jar -i Car.sysml -pp
 ```
 
 A `code generation` and `advanced consistency checks` are currently in
@@ -168,6 +179,37 @@ An update of the embedding of the complete parser into the [SPES
 Systems Engineering Methodology](https://spesml.github.io/index.html/),
 which acts as a plug-in for Cameo / MagicDraw is currently also
 planned.
+
+##### Prerequisites
+
+To run the tool, it is required to install a Java 11 JRE.
+
+## Building the Tool from the Sources (if desired)
+
+As alternative to a download, it is possible to build an executable JAR of the
+tool from the source files located in GitHub. In order to build an executable
+Jar of the tool with Bash from the source files available in GitHub, execute the
+following commands.
+
+First, clone the repository:
+```
+git clone https://github.com/MontiCore/sysmlv2.git
+```
+
+Change the directory to the root directory of the cloned sources:
+```
+cd sysmlv2
+```
+
+Then build the source files with gradle. To this effect, execute the following
+two command:
+
+```
+./gradlew build
+```
+
+Congratulations! The executable JAR file MCCD.jar is now in the directory
+language/target/libs.
 
 ## Further Information
 
@@ -180,3 +222,7 @@ planned.
 * [MontiCore' Language Best Practices](https://github.com/MontiCore/monticore/blob/opendev/docs/BestPractices.md)
 * [Publications about MBSE and MontiCore](https://www.se-rwth.de/publications/)
 * [Licence definition](https://github.com/MontiCore/monticore/blob/master/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL.md)
+
+[1]: https://www.se-rwth.de/projects/#MontiBelle
+[2]: https://github.com/Systems-Modeling/SysML-v2-Pilot-Implementation/tree/master/org.omg.sysml.interactive
+[3]: https://microsoft.github.io/language-server-protocol/
