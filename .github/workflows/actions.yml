@@ -7,4 +7,4 @@ jobs:
         with:
           lfs: 'true'
       - run: sudo apt update -y && sudo apt install -y openjdk-11-jdk
-      - run: ./gradlew build
+      - run: ./gradlew :language:build

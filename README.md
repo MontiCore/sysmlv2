@@ -205,11 +205,11 @@ Then build the source files with gradle. To this effect, execute the following
 two command:
 
 ```
-./gradlew build
+./gradlew :language:shadowJar
 ```
 
-Congratulations! The executable JAR file MCCD.jar is now in the directory
-language/target/libs.
+Congratulations! The executable JAR file `language-7.6.2-SNAPSHOT-cli.jar` is
+now in the directory `language/target/libs`.
 
 ## Further Information
 
