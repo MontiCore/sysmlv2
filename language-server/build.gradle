@@ -69,10 +69,11 @@ task editPackageJson() {
   doLast {
     def file = new File("${autoconfigure.mclsg.getFullVscodePluginDir()}/package.json")
     def json = new JsonBuilder(new JsonSlurper().parse(file))
-    json.content.version = "$version"
+    json.content.version = "7.6.1-1"
     json.content.publisher = "MontiBelle"
     json.content.name = "sysmlv2" // No spaces, no capitals
     json.content.icon = "icons/logo.png"
+    json.content.devDependencies.vsce = "^2.15.0"
 
     def iconThemesMap = [
         "id"   : "theme",
