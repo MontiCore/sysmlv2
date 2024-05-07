@@ -145,7 +145,7 @@ of further examples for quality checks.
 
 ## Tool Download and Use
 
-* [**Download SysML v2 Tool**](http://www.monticore.de/download/MCSysMLv2.jar)
+* [**Download SysML v2 Tool**](https://www.monticore.de/download/MCSysMLv2.jar)
 
 The [SysML v2 tool](bin/MCSysMLv2.jar) offers options for processing SysML v2
 models. It provides through the CLI as follows:
