@@ -231,6 +231,10 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
         "Serializes the symbol table of the given artifact using "
             + "component-connector symbols.").hasArg(true).optionalArg(
         false).argName("output file").build());
+    options.addOption(Option.builder("nc").longOpt("nococo").desc(
+        "Only parse the file, dont check cocos").build());
+
+
     return options;
   }
 
@@ -290,10 +294,15 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
         asts.forEach(it -> completeSymbolTable(it));
         asts.forEach(it -> finalizeSymbolTable(it));
 
-        asts.forEach(it -> runDefaultCoCos(it));
-        if (cmd.hasOption("extended")) {
-          asts.forEach(it -> runAdditionalCoCos(it));
+        if (!cmd.hasOption("nococo")) {
+          asts.forEach(it -> runDefaultCoCos(it));
+          if (cmd.hasOption("extended")) {
+            asts.forEach(it -> runAdditionalCoCos(it));
+          }
+
         }
+
+
 
         if (cmd.hasOption("prettyprint")) {
           String target = cmd.getOptionValue("prettyprint");
