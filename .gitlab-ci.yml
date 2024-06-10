@@ -3,6 +3,7 @@ stages:
   - gradle
   - docker
   - plugin
+  - deploy
 
 before_script:
   - chmod +x gradlew
@@ -18,7 +19,7 @@ cache:
 
 build:
   stage: gradle
-  image: openjdk:11-jdk
+  image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:7.4.2-jdk11
   script:
     - "./gradlew build -PgithubUser=$githubUser -PgithubToken=$githubToken $GRADLE_OPT $ARGS1"
   artifacts:
@@ -37,7 +38,7 @@ build:
 # TODO publish scheint nicht das gleiche wie build zu tun
 deploy:
   stage: gradle
-  image: openjdk:11-jdk
+  image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:7.4.2-jdk11
   script:
     - "./gradlew build publish -PgithubUser=$githubUser -PgithubToken=$githubToken -PnexusPassword=$pass -PnexusUser=$user --refresh-dependencies $GRADLE_OPT $ARGS2"
     - export VERSION=$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')
@@ -87,3 +88,12 @@ build:extension:
   artifacts:
     paths:
       - visualization-plugin/vis.vsix
+
+release:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - 'release-cli create --name "$CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG --assets-link "{\"name\":\"sysmlv2-vscode-plugin-${CI_COMMIT_TAG}\", \"url\":\"${PACKAGE_REGISTRY_URL}/${CI_COMMIT_TAG}/sysmlv2-vscode-plugin-${CI_COMMIT_TAG}.vsix\"}"'
+
