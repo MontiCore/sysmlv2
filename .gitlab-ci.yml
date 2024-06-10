@@ -5,13 +5,6 @@ stages:
   - plugin
   - deploy
 
-before_script:
-  - chmod +x gradlew
-  - export GRADLE_USER_HOME=`pwd`/.gradle
-  # TODO: use image with jdk 11 and node 16
-  - curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
-  - apt-get install -y nodejs
-
 cache:
   paths:
     - ".gradle/wrapper"
@@ -21,6 +14,11 @@ build:
   stage: gradle
   image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:7.4.2-jdk11
   script:
+    - chmod +x gradlew
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    # TODO: use image with jdk 11 and node 16
+    - curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+    - apt-get install -y nodejs
     - "./gradlew build -PgithubUser=$githubUser -PgithubToken=$githubToken $GRADLE_OPT $ARGS1"
   artifacts:
     paths:
@@ -36,10 +34,15 @@ build:
 # release branches.
 # TODO Das "latest" ist sowieso etwas unglücklich und sollte irgendwann verschwinden.
 # TODO publish scheint nicht das gleiche wie build zu tun
-deploy:
+publish:
   stage: gradle
   image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:7.4.2-jdk11
   script:
+    - chmod +x gradlew
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    # TODO: use image with jdk 11 and node 16
+    - curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+    - apt-get install -y nodejs
     - "./gradlew build publish -PgithubUser=$githubUser -PgithubToken=$githubToken -PnexusPassword=$pass -PnexusUser=$user --refresh-dependencies $GRADLE_OPT $ARGS2"
     - export VERSION=$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file language-server/target/generated-sources/SysMLv2/plugins/sysmlv2-vscode-plugin/sysmlv2-${VERSION}.vsix "https://git.rwth-aachen.de/api/v4/projects/37093/packages/generic/sysmlv2-vscode-plugin/${VERSION}/sysmlv2-vscode-plugin-${VERSION}.vsix"'
@@ -95,5 +98,5 @@ release:
   rules:
     - if: $CI_COMMIT_TAG
   script:
-    - 'release-cli create --name "$CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG --assets-link "{\"name\":\"sysmlv2-vscode-plugin-${CI_COMMIT_TAG}\", \"url\":\"${PACKAGE_REGISTRY_URL}/${CI_COMMIT_TAG}/sysmlv2-vscode-plugin-${CI_COMMIT_TAG}.vsix\"}"'
+    - 'release-cli create --name "$CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG --assets-link "{\"name\":\"sysmlv2-vscode-plugin-${CI_COMMIT_TAG}\", \"url\":\"${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/sysmlv2-vscode-plugin/${CI_COMMIT_TAG}/sysmlv2-vscode-plugin-${CI_COMMIT_TAG}.vsix\"}"'
 
