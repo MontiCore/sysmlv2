@@ -253,8 +253,141 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     options.addOption(Option.builder("log").longOpt("log_parser_results").desc(
         "Print which models were parsable in the case of iterating a "
             + "directory.").build());
+    options.addOption(Option.builder("ia").longOpt("interactive").desc(
+        "Print which models were parsable in the case of iterating a "
+            + "directory.").build());
 
     return options;
+  }
+
+  private void runwrap(CommandLine cmd, Options options) {
+
+    if (cmd.hasOption("help")) {
+      printHelp(options);
+      return;
+    }
+    else if (cmd.hasOption("version")) {
+      printVersion();
+      return;
+    }
+    else {
+      // We process input, be it via file/folder (--input) or STDIN
+      List<ASTSysMLModel> asts;
+      if (cmd.hasOption("input")) {
+        var input = Path.of(cmd.getOptionValue("input"));
+        if (Files.isDirectory(input)) {
+
+          // New Option to print parser results to cmd line in case of
+          // directory walking
+          if (cmd.hasOption("log_parser_results")) {
+            // parsed asts
+            asts = new ArrayList<>();
+            // store success
+            List<Boolean> successes = new ArrayList<>();
+
+            try {
+
+              List<Path> files = Files.walk(input).filter(
+                  p -> FilenameUtils.getExtension(p.toString()).equals(
+                      "sysml")).collect(
+                  Collectors.toList());
+
+              for (Path file : files) {
+
+                Log.clearFindings();
+                asts.add(parse(file.toString()));
+                if (Log.getFindings().size() > 0) {
+                  successes.add(false);
+                }
+                else {
+                  successes.add(true);
+                }
+              }
+              for (int i = 0; i < successes.size(); i++) {
+                String template = "[PARSER_LOG]%s::%b";
+
+                System.out.println(
+                    String.format(template, files.get(i).toString(),
+                        successes.get(i)));
+              }
+
+            }
+            catch (IOException ex) {
+              Log.error("0x00001 Could not read the input directory: "
+                  + ex.getMessage());
+              return;
+            }
+          }
+          else {
+            try {
+              asts = Files.walk(input).filter(
+                  p -> FilenameUtils.getExtension(p.toString()).equals(
+                      "sysml")).map(p -> parse(p.toString())).collect(
+                  Collectors.toList());
+            }
+            catch (IOException ex) {
+              Log.error("0x00001 Could not read the input directory: "
+                  + ex.getMessage());
+              return;
+            }
+          }
+        }
+        else {
+          asts = List.of(parse(cmd.getOptionValue("input")));
+        }
+      }
+      else {
+        var modelReader = new BufferedReader(
+            new InputStreamReader(System.in));
+        try {
+          asts = List.of(SysMLv2Mill.parser().parse(modelReader).get());
+        }
+        catch (IOException ex) {
+          Log.error(
+              "0x00002 Could not read standard input: " + ex.getMessage());
+          return;
+        }
+      }
+
+      asts.forEach(it -> createSymbolTable(it));
+      asts.forEach(it -> completeSymbolTable(it));
+      asts.forEach(it -> finalizeSymbolTable(it));
+
+      if (!cmd.hasOption("nococo")) {
+        asts.forEach(it -> runDefaultCoCos(it));
+        if (cmd.hasOption("extended")) {
+          asts.forEach(it -> runAdditionalCoCos(it));
+        }
+
+      }
+
+      if (cmd.hasOption("prettyprint")) {
+        String target = cmd.getOptionValue("prettyprint");
+        asts.forEach(it -> prettyPrint(it, target));
+      }
+
+      if (cmd.hasOption("symboltable")) {
+        Log.warn("0xA0003 Not implemented yet.");
+      }
+      if (cmd.hasOption("compcon")) {
+        // Setup the serialization to produce base symbols
+        SerializationUtil.setupComponentConnectorSerialization();
+
+        // Gather PartDefs into a new Scope
+        var artifact = SysMLv2Mill.artifactScope();
+        var extractor = new SerializationUtil.PartDefExtractor(artifact);
+        var traverser = getTraverser();
+        traverser.add4SysMLParts(extractor);
+        asts.stream().forEach(s -> s.accept(traverser));
+
+        // Store to file
+        storeSymbols(artifact, cmd.getOptionValue("compcon"));
+      }
+      if (cmd.hasOption("report")) {
+        Log.warn("0xA0004 Not implemented yet.");
+      }
+    }
+
   }
 
   @Override
@@ -266,136 +399,39 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
       CommandLineParser cliparser = new org.apache.commons.cli.DefaultParser();
       CommandLine cmd = cliparser.parse(options, args);
 
-      if (cmd.hasOption("help")) {
-        printHelp(options);
-        return;
-      }
-      else if (cmd.hasOption("version")) {
-        printVersion();
-        return;
-      }
-      else {
-        // We process input, be it via file/folder (--input) or STDIN
-        List<ASTSysMLModel> asts;
-        if (cmd.hasOption("input")) {
-          var input = Path.of(cmd.getOptionValue("input"));
-          if (Files.isDirectory(input)) {
-
-            // New Option to print parser results to cmd line in case of
-              // directory walking
-            if (cmd.hasOption("log_parser_results")) {
-              // parsed asts
-              asts = new ArrayList<>();
-              // store success
-              List<Boolean> successes = new ArrayList<>();
-
-              try {
-
-                List<Path> files = Files.walk(input).filter(
-                    p -> FilenameUtils.getExtension(p.toString()).equals(
-                        "sysml")).collect(
-                    Collectors.toList());
-
-                for (Path file : files) {
-
-                  Log.clearFindings();
-                  asts.add(parse(file.toString()));
-                  if (Log.getFindings().size() > 0) {
-                    successes.add(false);
-                  }
-                  else {
-                    successes.add(true);
-                  }
-                }
-                for (int i = 0; i < successes.size(); i++) {
-                  String template = "[PARSER_LOG]%s::%b";
-
-                  System.out.println(
-                      String.format(template, files.get(i).toString(),
-                          successes.get(i)));
-                }
-
-              }
-              catch (IOException ex) {
-                Log.error("0x00001 Could not read the input directory: "
-                    + ex.getMessage());
-                return;
-              }
-            }
-            else {
-              try {
-                asts = Files.walk(input).filter(
-                    p -> FilenameUtils.getExtension(p.toString()).equals(
-                        "sysml")).map(p -> parse(p.toString())).collect(
-                    Collectors.toList());
-              }
-              catch (IOException ex) {
-                Log.error("0x00001 Could not read the input directory: "
-                    + ex.getMessage());
-                return;
-              }
-            }
-          }
-          else {
-            asts = List.of(parse(cmd.getOptionValue("input")));
-          }
-        }
-        else {
-          var modelReader = new BufferedReader(
-              new InputStreamReader(System.in));
+      if (cmd.hasOption("interactive")) {
+        BufferedReader br = new BufferedReader(
+            new InputStreamReader(System.in));
+        String inp="";
+        while (true) {
+          runwrap(cmd, options);
+          System.out.println("Run again?");
           try {
-            asts = List.of(SysMLv2Mill.parser().parse(modelReader).get());
+            inp = br.readLine();
           }
           catch (IOException ex) {
-            Log.error(
-                "0x00002 Could not read standard input: " + ex.getMessage());
-            return;
+            System.exit(-1);
+          }
+          if (inp.charAt(0) == 'y' || inp.charAt(0) == 'Y') {
+            System.out.println("Ok, running again :)");
+            runwrap(cmd,options);
+          }
+          else {
+            System.exit(0);
           }
         }
 
-        asts.forEach(it -> createSymbolTable(it));
-        asts.forEach(it -> completeSymbolTable(it));
-        asts.forEach(it -> finalizeSymbolTable(it));
-
-        if (!cmd.hasOption("nococo")) {
-          asts.forEach(it -> runDefaultCoCos(it));
-          if (cmd.hasOption("extended")) {
-            asts.forEach(it -> runAdditionalCoCos(it));
-          }
-
-        }
-
-        if (cmd.hasOption("prettyprint")) {
-          String target = cmd.getOptionValue("prettyprint");
-          asts.forEach(it -> prettyPrint(it, target));
-        }
-
-        if (cmd.hasOption("symboltable")) {
-          Log.warn("0xA0003 Not implemented yet.");
-        }
-        if (cmd.hasOption("compcon")) {
-          // Setup the serialization to produce base symbols
-          SerializationUtil.setupComponentConnectorSerialization();
-
-          // Gather PartDefs into a new Scope
-          var artifact = SysMLv2Mill.artifactScope();
-          var extractor = new SerializationUtil.PartDefExtractor(artifact);
-          var traverser = getTraverser();
-          traverser.add4SysMLParts(extractor);
-          asts.stream().forEach(s -> s.accept(traverser));
-
-          // Store to file
-          storeSymbols(artifact, cmd.getOptionValue("compcon"));
-        }
-        if (cmd.hasOption("report")) {
-          Log.warn("0xA0004 Not implemented yet.");
-        }
+      }
+      else {
+        runwrap(cmd, options);
       }
     }
-    catch (org.apache.commons.cli.ParseException e) {
+
+    catch (
+
+        org.apache.commons.cli.ParseException e) {
       Log.error("0xA5C06x33289 Could not process SysMLv2Tool parameters: "
           + e.getMessage());
     }
   }
-
 }
