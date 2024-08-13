@@ -16,8 +16,8 @@ build:
   script:
     - chmod +x gradlew
     - export GRADLE_USER_HOME=`pwd`/.gradle
-    # TODO: use image with jdk 11 and node 16
-    - curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+    # TODO: use image with jdk 11 and node 18
+    - curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
     - apt-get install -y nodejs
     - "./gradlew build -PgithubUser=$githubUser -PgithubToken=$githubToken $GRADLE_OPT $ARGS1"
   artifacts:
@@ -40,8 +40,8 @@ publish:
   script:
     - chmod +x gradlew
     - export GRADLE_USER_HOME=`pwd`/.gradle
-    # TODO: use image with jdk 11 and node 16
-    - curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+    # TODO: use image with jdk 11 and node 18
+    - curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
     - apt-get install -y nodejs
     - "./gradlew build publish -PgithubUser=$githubUser -PgithubToken=$githubToken -PnexusPassword=$pass -PnexusUser=$user --refresh-dependencies $GRADLE_OPT $ARGS2"
     - export VERSION=$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')
