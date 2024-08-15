@@ -6,6 +6,7 @@ import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildPortSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
+import de.monticore.lang.sysmloccurrences.symboltable.adapters.ItemDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeDef2TypeSymbolAdapter;
@@ -165,6 +166,12 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     var enumDef = resolveEnumDefLocally(name);
     if(enumDef.isPresent()) {
       adapted.add(new EnumDef2TypeSymbolAdapter(enumDef.get()));
+    }
+
+    // ItemDef zu Types
+    var itemDef = resolveItemDefLocally(name);
+    if (itemDef.isPresent()) {
+      adapted.add(new ItemDef2TypeSymbolAdapter(itemDef.get()));
     }
 
     return adapted;
