@@ -149,7 +149,10 @@ component grammar SysMLBasis
      {storeComment();};
 
   token SysMLComment =
-    'c''o''m''m''e''n''t' (WS* Name)? (WS* 'a''b''o''u''t' WS* Name)? WS* ML_COMMENT : -> skip
+    'c''o''m''m''e''n''t' (WS* Name)?
+    (WS* 'a''b''o''u''t' WS* Name)?
+    (WS* 'l''o''c''a''l''e' WS* '"' Name '"')?
+    WS* ML_COMMENT : -> skip
     {storeComment();} ;
 
   token SysMLDoc =
