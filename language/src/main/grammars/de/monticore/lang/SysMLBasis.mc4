@@ -149,14 +149,19 @@ component grammar SysMLBasis
      {storeComment();};
 
   token SysMLComment =
-    'c''o''m''m''e''n''t' (WS* Name)?
-    (WS* 'a''b''o''u''t' WS* Name)?
-    (WS* 'l''o''c''a''l''e' WS* '"' Name '"')?
+    ( 'c''o''m''m''e''n''t' (WS* Name)?
+      (WS* 'a''b''o''u''t' WS* Name)?
+      (WS* 'l''o''c''a''l''e' WS* '"' Name '"')?
+    |
+      WS* 'l''o''c''a''l''e' WS* '"' Name '"'
+    )
     WS* ML_COMMENT : -> skip
     {storeComment();} ;
 
   token SysMLDoc =
-    'd''o''c' WS* Name? WS* ML_COMMENT : -> skip
+    'd''o''c' (WS* Name)?
+    (WS* 'l''o''c''a''l''e' WS* '"' Name '"')?
+    WS* ML_COMMENT : -> skip
     {storeComment();} ;
 
   TextualRepresentation implements SysMLElement =
