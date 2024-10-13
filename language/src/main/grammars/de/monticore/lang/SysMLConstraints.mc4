@@ -1,9 +1,13 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
-component grammar SysMLConstraints
-    extends SysMLBasis,
-            SysMLActions {
+component grammar SysMLConstraints extends SysMLBasis {
+
+  /*
+   * ##################################################################
+   * Constraints
+   * ##################################################################
+   */
 
   symbol scope (shadowing) ConstraintDef implements SysMLType =
     "constraint" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
@@ -20,4 +24,48 @@ component grammar SysMLConstraints
       Expression?
     "}" | ";") ;
 
+  /*
+   * ##################################################################
+   * Requirements
+   * ##################################################################
+   */
+
+  symbol scope (shadowing) RequirementDef implements SysMLType  =
+      Modifier "requirement" "def" SysMLIdentifier? Name? Specialization* ("(" (SysMLParameter || ",")* ")")?
+      ("{"
+        RequirementSubject?
+        SysMLElement*
+      "}" | ";") ;
+
+  symbol scope (shadowing) RequirementUsage implements SysMLElement =
+      Modifier ["satisfy"]? "requirement" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+      ("(" (SysMLParameter || ",")* ")")?
+      ("{"
+        RequirementSubject?
+        SysMLElement*
+      "}" | ";") ;
+
+  symbol RequirementSubject =
+      "subject" Name Specialization*
+      ("{"
+        SysMLElement*
+      "}" | ";") ;
+
+  symbolrule RequirementSubject =
+      types:de.monticore.types.check.SymTypeExpression* ;
+
+  RequirementSatisfaction implements SysMLElement =
+      "satisfy" req:MCQualifiedName "by" subject:MCQualifiedName ";" ;
+
+  symbol scope (shadowing) AnalysisDef implements SysMLType =
+      Modifier "analysis" "def" SysMLIdentifier? Name? Specialization*
+      ("{"
+        (RequirementSubject | AnalysisObjective | SysMLElement)*
+      "}" | ";") ;
+
+  symbol AnalysisObjective =
+      "objective" Name Specialization*
+      ("{"
+        SysMLElement*
+      "}" | ";") ;
 }

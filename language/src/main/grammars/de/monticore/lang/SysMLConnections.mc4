@@ -4,8 +4,29 @@ package de.monticore.lang;
 component grammar SysMLConnections
     extends de.monticore.lang.SysMLBasis {
 
+  /*
+   * ##################################################################
+   * Interfaces
+   * ##################################################################
+   */
+
+  symbol scope InterfaceDef implements SysMLType =
+    "interface" "def" Name Specialization* ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      ("end" src:MCQualifiedName Specialization* ";"| SysMLElement)*
+    "}" | ";") ;//TODO end definieren für interface
+
+  symbol scope InterfaceUsage implements SysMLElement =
+    "interface" (Name? Specialization* "connect" )? source:MCQualifiedName "to" target:MCQualifiedName ";" ;
+
   Flow implements SysMLElement =
     "flow" ("of" flowtype:MCQualifiedName)? "from"? source:MCQualifiedName "to" target:MCQualifiedName ";" ;
+
+  /*
+   * ##################################################################
+   * Connections
+   * ##################################################################
+   */
 
   Bind implements SysMLElement =
     ("binding" SysMLIdentifier? Name? SysMLCardinality? )?

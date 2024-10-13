@@ -1,11 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.cocos;
 
-import de.monticore.lang.sysmlinterfaces._ast.ASTInterfaceDef;
-import de.monticore.lang.sysmlinterfaces._ast.ASTInterfaceUsage;
-import de.monticore.lang.sysmlinterfaces._cocos.SysMLInterfacesASTInterfaceDefCoCo;
-import de.monticore.lang.sysmlinterfaces._cocos.SysMLInterfacesASTInterfaceUsageCoCo;
-import de.monticore.lang.sysmlinterfaces._cocos.SysMLInterfacesASTInterfaceDefCoCo;
+import de.monticore.lang.sysmlconnections._ast.ASTInterfaceDef;
+import de.monticore.lang.sysmlconnections._ast.ASTInterfaceUsage;
+import de.monticore.lang.sysmlconnections._cocos.SysMLConnectionsASTInterfaceDefCoCo;
+import de.monticore.lang.sysmlconnections._cocos.SysMLConnectionsASTInterfaceUsageCoCo;
+import de.monticore.lang.sysmlconnections._cocos.SysMLConnectionsASTInterfaceDefCoCo;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 // TODO Muss mit SpecialiationExists zusammenspielen, also darf der nicht anschlagen, wenn garkein Type existiert,
 // sondern nur, wenn zwar einer existiert, es aber keine InterfaceDef/InterfaceUsage ist
-public class InterfaceSupertypes implements SysMLInterfacesASTInterfaceDefCoCo, SysMLInterfacesASTInterfaceUsageCoCo {
+public class InterfaceSupertypes implements SysMLConnectionsASTInterfaceDefCoCo, SysMLConnectionsASTInterfaceUsageCoCo {
 
   private String printName(ASTMCType type) {
     return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));

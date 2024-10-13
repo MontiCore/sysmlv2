@@ -13,9 +13,9 @@ import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
-import de.monticore.lang.sysmlrequirements._ast.ASTRequirementSubject;
-import de.monticore.lang.sysmlrequirements._symboltable.RequirementSubjectSymbol;
-import de.monticore.lang.sysmlrequirements._visitor.SysMLRequirementsVisitor2;
+import de.monticore.lang.sysmlconstraints._ast.ASTRequirementSubject;
+import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
+import de.monticore.lang.sysmlconstraints._visitor.SysMLConstraintsVisitor2;
 import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
@@ -28,7 +28,7 @@ import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TypesAndDirectionCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2, SysMLRequirementsVisitor2
+public class TypesAndDirectionCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2, SysMLConstraintsVisitor2
 {
 
   /**

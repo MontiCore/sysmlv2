@@ -11,7 +11,7 @@ import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
 import de.monticore.lang.sysmlparts.coco.PortDefHasOneType;
 import de.monticore.lang.sysmlparts.coco.PortDefNeedsDirection;
-import de.monticore.lang.sysmlrequirements._cocos.SysMLRequirementsASTRequirementDefCoCo;
+import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTRequirementDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateUsageCoCo;
 import de.monticore.lang.sysmlstates.cocos.NoDoActions;
@@ -117,7 +117,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLPartsASTPortDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLConstraintsASTConstraintDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLActionsASTActionDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLRequirementsASTRequirementDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLConstraintsASTRequirementDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLImportsAndPackagesASTSysMLPackageCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new NameCompatible4Isabelle());
 
@@ -175,7 +175,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     TypesAndDirectionCompleter completer = new TypesAndDirectionCompleter();
     traverser.add4SysMLBasis(completer);
     traverser.add4SysMLParts(completer);
-    traverser.add4SysMLRequirements(completer);
+    traverser.add4SysMLConstraints(completer);
 
     traverser.add4SysMLParts(new RequirementClassificationCompleter());
     traverser.add4SysMLParts(new DirectRefinementCompleter());
