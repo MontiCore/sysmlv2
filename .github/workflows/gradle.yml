@@ -1,0 +1,52 @@
+# (c) https://github.com/MontiCore/monticore
+name: Gradle
+
+
+concurrency: # run this test workflow only once per "branch"
+  group: ${{ github.repository }}-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push: # run this test pipeline on every push
+  pull_request: # and pull request
+  repository_dispatch: # and on request of upstream projects
+    types: [ trigger_after_upstream_deploy ]
+
+
+env:
+  GRADLE_VERSION: 7.4 # Gradle version used
+  GRADLE_CLI_OPTS: "-Pci --build-cache " # CLI options passed to Gradle
+
+permissions:
+  contents: read # This action may run somewhat unsafe code
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v3
+      - name: Gradle build
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: ${{env.GRADLE_VERSION}}
+          arguments: :language:build ${{env.GRADLE_CLI_OPTS}}
+
+  deploy:
+    permissions:
+      packages: write
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/dev'
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v3
+      - name: Gradle publish
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: ${{env.GRADLE_VERSION}}
+          arguments: :language:publish ${{env.GRADLE_CLI_OPTS}} -PmavenPassword=${{ secrets.SE_NEXUS_PASSWORD }} -PmavenUser=${{ secrets.SE_NEXUS_USER }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
