@@ -9,8 +9,8 @@ import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartUsageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortUsageCoCo;
-import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
-import de.monticore.prettyprint.IndentPrinter;
+//import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
+//import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 
@@ -22,7 +22,7 @@ public class PartsSupertypes implements SysMLPartsASTPartDefCoCo, SysMLPartsASTP
     SysMLPartsASTPortUsageCoCo {
 
   private String printName(ASTMCType type) {
-    return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+    return type.printType();
   }
 
   /**

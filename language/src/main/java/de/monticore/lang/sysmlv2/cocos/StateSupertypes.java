@@ -5,8 +5,7 @@ import de.monticore.lang.sysmlstates._ast.ASTStateDef;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateUsageCoCo;
-import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
-import de.monticore.prettyprint.IndentPrinter;
+//import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
 public class StateSupertypes implements SysMLStatesASTStateDefCoCo, SysMLStatesASTStateUsageCoCo {
 
   private String printName(ASTMCType type) {
-    return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+    return type.printType();
   }
 
   /**

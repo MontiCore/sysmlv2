@@ -5,8 +5,8 @@ import de.monticore.lang.sysmlactions._ast.ASTActionDef;
 import de.monticore.lang.sysmlactions._ast.ASTActionUsage;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionUsageCoCo;
-import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
-import de.monticore.prettyprint.IndentPrinter;
+//import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
+//import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class ActionSupertypes implements SysMLActionsASTActionDefCoCo, SysMLActionsASTActionUsageCoCo {
 
   private String printName(ASTMCType type) {
-    return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+    return type.printType();
   }
 
   /**

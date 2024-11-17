@@ -40,8 +40,7 @@ public class ASTPartDef extends ASTPartDefTOP {
       if(spec instanceof ASTSysMLRefinement) {
         for(ASTMCType superType: spec.getSuperTypesList()) {
           String superTypeName = superType.printType(
-              new de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter(
-                  new de.monticore.prettyprint.IndentPrinter()));
+          );
           Optional<PartDefSymbol> refinementDef =
               this.getEnclosingScope().resolvePartDef(superTypeName);
           // Defensive programming, let CoCos handle errors

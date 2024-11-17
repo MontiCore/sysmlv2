@@ -3,11 +3,7 @@ package de.monticore.lang.sysmlv2.symboltable.completers;
 
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._visitor.SysMLBasisVisitor2;
-import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
-import de.monticore.types.mccollectiontypes._ast.ASTMCListType;
-import de.monticore.types.mccollectiontypes._ast.ASTMCMapType;
 import de.se_rwth.commons.logging.Log;
 
 public class SpecializationCompleter implements SysMLBasisVisitor2 {
@@ -20,7 +16,7 @@ public class SpecializationCompleter implements SysMLBasisVisitor2 {
         typeName = ((ASTMCGenericType) s).printWithoutTypeArguments();
       }
       else {
-        typeName = s.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+        typeName = s.printType();
       }
 
       var typeSymbol = node.getEnclosingScope().resolveType(typeName);
