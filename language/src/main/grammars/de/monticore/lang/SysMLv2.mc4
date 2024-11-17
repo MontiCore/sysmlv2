@@ -40,8 +40,7 @@ grammar SysMLv2 extends SysMLExpressions,
   // Do not include "//*" since its considered a "MultilineNote"
   @Override
   token SL_COMMENT =
-    "//" (~'*') (~('\n' | '\r'))* : ->skip
-    {storeComment();};
+    "//" (~'*') (~('\n' | '\r'))* : ->channel(HIDDEN);
 
   FractalLiteral implements NumericLiteral =
     { noSpace(2) }? "." post:Digits;
