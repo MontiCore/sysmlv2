@@ -24,7 +24,7 @@ def grammarDir = "src/main/grammars"
 def grammar_classifier = "grammars"
 
 def commons_cli_version = "1.4"
-def antlr_version = '4.12.0'
+def antlr_version = '4.7.1'
 def commons_lang_version = "3.11"
 
 /* ============================================================ */
@@ -115,11 +115,11 @@ test {
   exclude '**/SerializationTest.class'
   exclude '**/ComponentSymbolDeserTest.class'
   exclude '**/ParameterDeserTest.class'
-  exclude '**/ExpressionParserTest.class'
+  //exclude '**/ExpressionParserTest.class'
   exclude '**/PortSymbolDeserTest.class'
   exclude '**/SubcomponentSymbolDeserTest.class'
   exclude '**/OfficialParserTest.class'
-  exclude '**/SymbolTableCompletionTest.class'
+//  exclude '**/SymbolTableCompletionTest.class'
 }
 
 
