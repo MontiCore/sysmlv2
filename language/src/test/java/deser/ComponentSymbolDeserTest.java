@@ -52,7 +52,7 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
   }
 
   @Test
-  public void forMilds() throws IOException {
+  public void forMild() throws IOException {
     var as = process("part def A;");
 
     // Setup eines Scopes aus MildComponentSymbols
