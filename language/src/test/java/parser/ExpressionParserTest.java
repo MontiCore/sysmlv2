@@ -45,7 +45,7 @@ public class ExpressionParserTest {
   public void testInstantiationInCallExpression(String expr) throws IOException {
     var ast = parser.parse_StringExpression(expr);
 
-    assertThat(ast).isPresent();
+    assertThat(ast).isPresent(); // optional.empty
     assertThat(Log.getFindings()).isEmpty();
     assertThat(ast.get()).isInstanceOf(ASTCallExpression.class);
     assertThat(((ASTCallExpression)ast.get()).getArguments().getExpressionList()).hasSize(1);

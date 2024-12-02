@@ -112,13 +112,7 @@ tasks.compileJava.dependsOn modifySysMLModelContext
 
 
 test {
-  exclude '**/SerializationTest.class'
-  exclude '**/ComponentSymbolDeserTest.class'
-  exclude '**/ParameterDeserTest.class'
   exclude '**/ExpressionParserTest.class'
-  exclude '**/PortSymbolDeserTest.class'
-  exclude '**/SubcomponentSymbolDeserTest.class'
-  exclude '**/OfficialParserTest.class'
   exclude '**/SymbolTableCompletionTest.class'
 }
 

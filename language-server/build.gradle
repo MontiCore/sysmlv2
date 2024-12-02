@@ -99,7 +99,7 @@ task copyFileIcons(type: Copy) {
 
 test {
   exclude '**/ReconfigureModelLocationTest.class'
-  exclude '**/DocumentSymbolProviderTest.class'// This will exclude 'SomeTest' from being run
+  exclude '**/DocumentSymbolProviderTest.class'
 }
 
 

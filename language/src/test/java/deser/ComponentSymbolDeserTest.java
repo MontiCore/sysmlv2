@@ -41,16 +41,18 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
   public void forSysml() throws IOException {
     var as = process("part def A;");
     var st = new SysMLv2Symbols2Json().serialize(as);
+
     assertThat(st).isEqualTo(
         "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
             + "\"symbols\":"
             + "[{\"kind\":\"de.monticore.lang.sysmlparts._symboltable"
             + ".PartDefSymbol\",\"name\":\"A\","
+            + "\"fullName\":\"A\","   // new 770
             + "\"requirementType\":\"UNKNOWN\"}]}");
   }
 
   @Test
-  public void forMild() throws IOException {
+  public void forMilds() throws IOException {
     var as = process("part def A;");
 
     // Setup eines Scopes aus MildComponentSymbols
@@ -60,11 +62,18 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
 
     // Serialisierung nach MildComponent
     var mild_st = new SysMLv2Symbols2Json().serialize(s);
-    assertThat(mild_st).isEqualTo(
-        "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
-            + "\"symbols\":"
-            + "[{\"kind\":\"de.monticore.lang.automaton._symboltable"
-            + ".ExtendedMildComponentSymbol\",\"name\":\"A\"}]}");
+
+    // Add other necessary visitors
+
+
+    var expected ="{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
+        + "\"symbols\":"
+        + "[{\"kind\":\"de.monticore.lang.automaton._symboltable"
+        + ".ExtendedMildComponentSymbol\",\"name\":\"A\","
+        + "\"fullName\":\"A\""   // new 770
+        + "}]}";
+    assertThat(mild_st).isEqualTo(expected);
+
   }
 
   // TODO Versuche ab hier die Default-Ser von CompSymbols zu benutzen

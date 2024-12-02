@@ -24,13 +24,14 @@ public class ParameterDeserTest extends NervigeSymboltableTests {
     artifact.add(comp);
 
     var st = new SysMLv2Symbols2Json().serialize(artifact);
+    System.out.println(st);
     assertThat(st).isEqualTo(
         "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
                 + "\"symbols\":[{\"kind\":\"de.monticore.symbols.compsymbols"
                 + "._symboltable.ComponentSymbol\",\"name\":\"A\","
                 + "\"parameters\":[{\"kind\":\"de.monticore.symbols"
                 + ".basicsymbols._symboltable.VariableSymbol\","
-                + "\"name\":\"p\",\"type\":{\"kind\":\"de.monticore.types"
+                + "\"name\":\"p\",\"fullName\":\"A.p\",\"type\":{\"kind\":\"de.monticore.types" // added "fullName":"A.p"
                 + ".check.SymTypePrimitive\","
                 + "\"primitiveName\":\"int\"}}]}]}");
   }
