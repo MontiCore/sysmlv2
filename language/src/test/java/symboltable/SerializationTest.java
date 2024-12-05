@@ -182,7 +182,7 @@ public class SerializationTest {
       assertTrue(FileUtils.contentEqualsIgnoreEOL(Paths.get(symboltablePathActual).toFile(), Paths.get(
           symboltablePathExpected).toFile(), "UTF-8"));
     }
-    finally {g
+    finally {
       //cleanUp
       Files.deleteIfExists(Paths.get(symboltablePathActual));
     }
