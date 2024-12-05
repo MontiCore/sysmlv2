@@ -52,7 +52,7 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2, S
             res = SymTypeExpressionFactory.createTypeExpression((TypeSymbol) mcType.getDefiningSymbol().get());
           }
           else if(mcType.getDefiningSymbol().isEmpty()) {
-            Log.warn("Defining symbol for " + mcType + " was not set.");
+            Log.warn("Defining symbol for " + mcType.printType() + " was not set.");
           }
           else if(!(mcType.getDefiningSymbol().get() instanceof TypeSymbol)) {
             Log.warn("Defining symbol for " + mcType + " is not a TypeSymbol");
