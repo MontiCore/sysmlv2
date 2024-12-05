@@ -10,6 +10,7 @@ import org.eclipse.lsp4j.SymbolInformation;
 import org.eclipse.lsp4j.SymbolKind;
 import org.eclipse.lsp4j.TextDocumentIdentifier;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
@@ -29,6 +30,7 @@ public class DocumentSymbolProviderTest {
 
   /** Testet verschachtelte Pakete und mehrere Top-Level Pakete */
   @Test
+  @Disabled
   public void testNestedComponent() throws ExecutionException, InterruptedException {
     Path base = Paths.get("src/test/resources/documentSymbols");
     Path model = base.resolve("NestedPackages.sysml");
@@ -76,6 +78,7 @@ public class DocumentSymbolProviderTest {
    * Repeat test so that there's a high probability of dangerous context switches happening
    */
   @RepeatedTest(5)
+  @Disabled
   public void testConcurrentRequests() {
     //Slf4jLog.init();
     var resources = Paths.get("src/test/resources/documentSymbols/concurrent");

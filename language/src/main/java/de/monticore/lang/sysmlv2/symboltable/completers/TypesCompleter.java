@@ -45,7 +45,7 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2, S
             // We still have to print when the type is generic because the defining symbol does not give info about the
             // instantiation with type arguments
             res = SymTypeExpressionFactory.createTypeExpression(
-                String.valueOf(mcType),
+                mcType.printType(),
                 (IBasicSymbolsScope) mcType.getEnclosingScope());
           }
           else if(mcType.getDefiningSymbol().isPresent() && mcType.getDefiningSymbol().get() instanceof TypeSymbol) {

@@ -97,13 +97,6 @@ task copyFileIcons(type: Copy) {
   into autoconfigure.mclsg.getFullVscodePluginDir()
 }
 
-test {
-  exclude '**/ReconfigureModelLocationTest.class'
-  exclude '**/DocumentSymbolProviderTest.class'
-}
-
-
-
 publishing {
   publications {
     mavenJava(MavenPublication) {

@@ -41,13 +41,12 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
   public void forSysml() throws IOException {
     var as = process("part def A;");
     var st = new SysMLv2Symbols2Json().serialize(as);
-
     assertThat(st).isEqualTo(
         "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
             + "\"symbols\":"
             + "[{\"kind\":\"de.monticore.lang.sysmlparts._symboltable"
             + ".PartDefSymbol\",\"name\":\"A\","
-            + "\"fullName\":\"A\","   // new 770
+            + "\"fullName\":\"A\","
             + "\"requirementType\":\"UNKNOWN\"}]}");
   }
 
@@ -62,18 +61,13 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
 
     // Serialisierung nach MildComponent
     var mild_st = new SysMLv2Symbols2Json().serialize(s);
-
-    // Add other necessary visitors
-
-
     var expected ="{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
         + "\"symbols\":"
         + "[{\"kind\":\"de.monticore.lang.automaton._symboltable"
         + ".ExtendedMildComponentSymbol\",\"name\":\"A\","
-        + "\"fullName\":\"A\""   // new 770
+        + "\"fullName\":\"A\""
         + "}]}";
     assertThat(mild_st).isEqualTo(expected);
-
   }
 
   // TODO Versuche ab hier die Default-Ser von CompSymbols zu benutzen

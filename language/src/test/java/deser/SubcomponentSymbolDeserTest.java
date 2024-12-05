@@ -29,7 +29,7 @@ public class SubcomponentSymbolDeserTest extends NervigeSymboltableTests {
             + "\"symbols\":[{\"kind\":\"de.monticore.symbols.compsymbols"
             + "._symboltable.ComponentSymbol\",\"name\":\"A\","
             + "\"subcomponents\":[{\"kind\":\"de.monticore.symbols"
-            + ".compsymbols._symboltable.SubcomponentSymbol\",\"name\":\"b\",\"fullName\":\"A.b\"," //added "fullName":"A.b"
+            + ".compsymbols._symboltable.SubcomponentSymbol\",\"name\":\"b\",\"fullName\":\"A.b\","
             + "\"type\":{\"kind\":\"de.monticore.types.check"
             + ".KindOfComponent\",\"componentName\":\"B\"}}]}]}");
   }

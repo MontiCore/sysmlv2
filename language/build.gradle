@@ -110,17 +110,6 @@ task modifySysMLModelContext {
 modifySysMLModelContext.dependsOn generate
 tasks.compileJava.dependsOn modifySysMLModelContext
 
-
-test {
-  exclude '**/ExpressionParserTest.class'
-  exclude '**/SymbolTableCompletionTest.class'
-}
-
-
-
-
-
-
 // Fixes issue with java plugin in projects without resources
 compileTestJava.doFirst { mkdir sourceSets.main.output.resourcesDir }
 

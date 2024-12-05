@@ -32,7 +32,7 @@ public class PortSymbolDeserTest extends NervigeSymboltableTests {
             + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable"
             + ".ComponentSymbol\",\"name\":\"A\",\"ports\":"
             + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable"
-            + ".PortSymbol\",\"name\":\"b.b\",\"fullName\":\"A.b.b\",\"type\":" //added "fullName":"A.b.b"
+            + ".PortSymbol\",\"name\":\"b.b\",\"fullName\":\"A.b.b\",\"type\":"
             + "{\"kind\":\"de.monticore.types.check.SymTypePrimitive\","
             + "\"primitiveName\":\"boolean\"},\"incoming\":true,"
             + "\"timing\":\"timed\",\"stronglyCausal\":true}]}]}");

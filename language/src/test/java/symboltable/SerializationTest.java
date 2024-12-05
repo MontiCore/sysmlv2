@@ -184,7 +184,7 @@ public class SerializationTest {
     }
     finally {
       //cleanUp
-      Files.deleteIfExists(Paths.get(symboltablePathActual));
+      //Files.deleteIfExists(Paths.get(symboltablePathActual));
     }
   }
 
