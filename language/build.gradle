@@ -87,9 +87,6 @@ fileTree(grammarDir).matching { include '**/*.mc4' }.each { g ->
 
 compileJava.dependsOn generate
 
-//in 7.7.0-SNAPSHOT one line of code in method SysMLModelContext() is not generated, and lead to error
-
-
 // Fixes issue with java plugin in projects without resources
 compileTestJava.doFirst { mkdir sourceSets.main.output.resourcesDir }
 

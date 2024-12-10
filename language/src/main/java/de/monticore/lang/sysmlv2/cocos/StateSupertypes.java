@@ -5,7 +5,6 @@ import de.monticore.lang.sysmlstates._ast.ASTStateDef;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateUsageCoCo;
-//import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 

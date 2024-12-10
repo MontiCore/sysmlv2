@@ -24,7 +24,6 @@ public class ParameterDeserTest extends NervigeSymboltableTests {
     artifact.add(comp);
 
     var st = new SysMLv2Symbols2Json().serialize(artifact);
-    System.out.println(st);
     assertThat(st).isEqualTo(
         "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
                 + "\"symbols\":[{\"kind\":\"de.monticore.symbols.compsymbols"
