@@ -55,7 +55,7 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2, S
             Log.warn("Defining symbol for " + mcType.printType() + " was not set.");
           }
           else if(!(mcType.getDefiningSymbol().get() instanceof TypeSymbol)) {
-            Log.warn("Defining symbol for " + mcType + " is not a TypeSymbol");
+            Log.warn("Defining symbol for " + mcType.printType() + " is not a TypeSymbol");
           }
 
           if(res != null) {
