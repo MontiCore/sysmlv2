@@ -30,7 +30,7 @@ public class ParameterDeserTest extends NervigeSymboltableTests {
                 + "._symboltable.ComponentSymbol\",\"name\":\"A\","
                 + "\"parameters\":[{\"kind\":\"de.monticore.symbols"
                 + ".basicsymbols._symboltable.VariableSymbol\","
-                + "\"name\":\"p\",\"type\":{\"kind\":\"de.monticore.types"
+                + "\"name\":\"p\",\"fullName\":\"A.p\",\"type\":{\"kind\":\"de.monticore.types"
                 + ".check.SymTypePrimitive\","
                 + "\"primitiveName\":\"int\"}}]}]}");
   }

@@ -5,17 +5,20 @@
     {
       "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
       "name": "RoughPartDef",
+      "fullName":"RoughPartDef",
       "spannedScope": {
         "symbols": [
           {
             "kind": "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol",
             "name": "B",
+            "fullName":"RoughPartDef.B",
             "requirementType": "HLR",
             "spannedScope": {
               "symbols": [
                 {
                   "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
                   "name": "input",
+                  "fullName":"RoughPartDef.B.input",
                   "types": [
                     {
                       "kind": "de.monticore.types.check.SymTypeOfObject",
@@ -27,6 +30,7 @@
                 {
                   "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
                   "name": "output",
+                  "fullName":"RoughPartDef.B.output",
                   "types": [
                     {
                       "kind": "de.monticore.types.check.SymTypeOfObject",
@@ -37,7 +41,8 @@
                 },
                 {
                   "kind": "de.monticore.lang.sysmlconstraints._symboltable.ConstraintUsageSymbol",
-                  "name": "SomeName"
+                  "name": "SomeName",
+                  "fullName":"RoughPartDef.B.SomeName"
                 }
               ]
             }
@@ -45,11 +50,13 @@
           {
             "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
             "name": "BooleanInput",
+            "fullName":"RoughPartDef.BooleanInput",
             "spannedScope": {
               "symbols": [
                 {
                   "kind": "de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol",
                   "name": "val",
+                  "fullName":"RoughPartDef.BooleanInput.val",
                   "types": [
                     {
                       "kind": "de.monticore.types.check.SymTypePrimitive",
@@ -64,11 +71,13 @@
           {
             "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
             "name": "BooleanOutput",
+            "fullName":"RoughPartDef.BooleanOutput",
             "spannedScope": {
               "symbols": [
                 {
                   "kind": "de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol",
                   "name": "val",
+                  "fullName":"RoughPartDef.BooleanOutput.val",
                   "types": [
                     {
                       "kind": "de.monticore.types.check.SymTypePrimitive",

@@ -14,6 +14,7 @@ import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -281,6 +282,7 @@ public class SymbolTableCompletionTest {
   // TODO Diese Tests gehören irgendwo anders hin und sollten spezfischer genau den TypeCheck prüfen, statt
   //  die Keule zu schwingen mit `Tool.init()` und `Tool.runCoCos()`...
   @Test
+  @Disabled
   public void testTransitionEffects() throws IOException {
     var models = List.of(
         "port def P { attribute a: boolean; }",

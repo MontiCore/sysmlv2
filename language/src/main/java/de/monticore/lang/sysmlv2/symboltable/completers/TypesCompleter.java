@@ -15,8 +15,6 @@ import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 import de.monticore.lang.sysmlrequirements._ast.ASTRequirementSubject;
 import de.monticore.lang.sysmlrequirements._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlrequirements._visitor.SysMLRequirementsVisitor2;
-import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
@@ -47,17 +45,17 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2, S
             // We still have to print when the type is generic because the defining symbol does not give info about the
             // instantiation with type arguments
             res = SymTypeExpressionFactory.createTypeExpression(
-                mcType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())),
+                mcType.printType(),
                 (IBasicSymbolsScope) mcType.getEnclosingScope());
           }
           else if(mcType.getDefiningSymbol().isPresent() && mcType.getDefiningSymbol().get() instanceof TypeSymbol) {
             res = SymTypeExpressionFactory.createTypeExpression((TypeSymbol) mcType.getDefiningSymbol().get());
           }
           else if(mcType.getDefiningSymbol().isEmpty()) {
-            Log.warn("Defining symbol for " + mcType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())) + " was not set.");
+            Log.warn("Defining symbol for " + mcType.printType() + " was not set.");
           }
           else if(!(mcType.getDefiningSymbol().get() instanceof TypeSymbol)) {
-            Log.warn("Defining symbol for " + mcType.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter())) + " is not a TypeSymbol");
+            Log.warn("Defining symbol for " + mcType.printType() + " is not a TypeSymbol");
           }
 
           if(res != null) {

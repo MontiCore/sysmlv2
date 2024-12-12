@@ -5,17 +5,20 @@
     {
       "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
       "name": "RoughStateDef",
+      "fullName":"RoughStateDef",
       "spannedScope": {
         "symbols": [
           {
             "kind": "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol",
             "name": "UnfairMedium",
+            "fullName":"RoughStateDef.UnfairMedium",
             "requirementType": "LLR",
             "spannedScope": {
               "symbols": [
                 {
                   "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
                   "name": "i1",
+                  "fullName":"RoughStateDef.UnfairMedium.i1",
                   "types": [
                     {
                       "kind": "de.monticore.types.check.SymTypeOfObject",
@@ -27,6 +30,7 @@
                 {
                   "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
                   "name": "o1",
+                  "fullName":"RoughStateDef.UnfairMedium.o1",
                   "types": [
                     {
                       "kind": "de.monticore.types.check.SymTypeOfObject",
@@ -38,20 +42,24 @@
                 {
                   "kind": "de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol",
                   "name": "behavior",
+                  "fullName":"RoughStateDef.UnfairMedium.behavior",
                   "exhibited": true,
                   "spannedScope": {
                     "symbols": [
                       {
                         "kind": "de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol",
-                        "name": "State"
+                        "name": "State",
+                        "fullName":"RoughStateDef.UnfairMedium.behavior.State"
                       },
                       {
                         "kind": "de.monticore.lang.sysmlstates._symboltable.SysMLTransitionSymbol",
-                        "name": "Name1"
+                        "name": "Name1",
+                        "fullName":"RoughStateDef.UnfairMedium.behavior.Name1"
                       },
                       {
                         "kind": "de.monticore.lang.sysmlstates._symboltable.SysMLTransitionSymbol",
-                        "name": "Name2"
+                        "name": "Name2",
+                        "fullName":"RoughStateDef.UnfairMedium.behavior.Name2"
                       }
                     ]
                   }
@@ -62,11 +70,13 @@
           {
             "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
             "name": "Input",
+            "fullName":"RoughStateDef.Input",
             "spannedScope": {
               "symbols": [
                 {
                   "kind": "de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol",
                   "name": "val",
+                  "fullName":"RoughStateDef.Input.val",
                   "types": [
                     {
                       "kind": "de.monticore.types.check.SymTypePrimitive",
@@ -81,11 +91,13 @@
           {
             "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
             "name": "Output",
+            "fullName":"RoughStateDef.Output",
             "spannedScope": {
               "symbols": [
                 {
                   "kind": "de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol",
                   "name": "val",
+                  "fullName":"RoughStateDef.Output.val",
                   "types": [
                     {
                       "kind": "de.monticore.types.check.SymTypePrimitive",

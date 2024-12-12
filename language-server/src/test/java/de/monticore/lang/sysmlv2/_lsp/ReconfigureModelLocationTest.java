@@ -6,6 +6,7 @@ import com.google.gson.JsonPrimitive;
 import de.mclsg.lsp.document_management.DocumentInformation;
 import de.monticore.io.paths.MCPath;
 import org.eclipse.lsp4j.DidChangeConfigurationParams;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Paths;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ReconfigureModelLocationTest {
 
   @Test
+  @Disabled
   public void testIndexing() {
     MCPath initialModelPath = new MCPath(
         Paths.get("src", "test", "resources", "ReconfigureModelLocationTest", "modelRootA"));

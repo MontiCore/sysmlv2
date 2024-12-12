@@ -5,8 +5,6 @@ import de.monticore.lang.sysmloccurrences._ast.ASTItemDef;
 import de.monticore.lang.sysmloccurrences._ast.ASTItemUsage;
 import de.monticore.lang.sysmloccurrences._cocos.SysMLOccurrencesASTItemDefCoCo;
 import de.monticore.lang.sysmloccurrences._cocos.SysMLOccurrencesASTItemUsageCoCo;
-import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 
@@ -17,7 +15,7 @@ import java.util.stream.Collectors;
 public class ItemsSupertypes implements SysMLOccurrencesASTItemDefCoCo, SysMLOccurrencesASTItemUsageCoCo {
 
   private String printName(ASTMCType type) {
-    return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+    return type.printType();
   }
 
   /**

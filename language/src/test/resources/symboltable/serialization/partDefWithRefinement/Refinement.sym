@@ -5,16 +5,19 @@
     {
       "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
       "name": "Refinement",
+      "fullName": "Refinement",
       "spannedScope": {
         "symbols": [
           {
             "kind": "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol",
             "name": "UnfairMedium",
+            "fullName": "Refinement.UnfairMedium",
             "requirementType": "UNKNOWN"
           },
           {
             "kind": "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol",
             "name": "FairMedium",
+            "fullName": "Refinement.FairMedium",
             "directRefinements": [
               {
                 "kind": "de.monticore.types.check.SymTypeOfObject",
@@ -26,6 +29,7 @@
           {
             "kind": "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol",
             "name": "PerfectMedium",
+            "fullName": "Refinement.PerfectMedium",
             "directRefinements": [
               {
                 "kind": "de.monticore.types.check.SymTypeOfObject",

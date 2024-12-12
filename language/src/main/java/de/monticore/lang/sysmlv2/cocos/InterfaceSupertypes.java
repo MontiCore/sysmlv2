@@ -5,8 +5,6 @@ import de.monticore.lang.sysmlconnections._ast.ASTInterfaceDef;
 import de.monticore.lang.sysmlconnections._ast.ASTInterfaceUsage;
 import de.monticore.lang.sysmlconnections._cocos.SysMLConnectionsASTInterfaceDefCoCo;
 import de.monticore.lang.sysmlconnections._cocos.SysMLConnectionsASTInterfaceUsageCoCo;
-import de.monticore.lang.sysmlv2.types.SysMLBasisTypesFullPrettyPrinter;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 
@@ -17,7 +15,7 @@ import java.util.stream.Collectors;
 public class InterfaceSupertypes implements SysMLConnectionsASTInterfaceDefCoCo, SysMLConnectionsASTInterfaceUsageCoCo {
 
   private String printName(ASTMCType type) {
-    return type.printType(new SysMLBasisTypesFullPrettyPrinter(new IndentPrinter()));
+    return type.printType();
   }
 
   /**
