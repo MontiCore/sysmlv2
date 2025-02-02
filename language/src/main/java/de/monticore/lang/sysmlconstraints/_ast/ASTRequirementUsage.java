@@ -1,4 +1,4 @@
-package de.monticore.lang.sysmlrequirements._ast;
+package de.monticore.lang.sysmlconstraints._ast;
 
 public class ASTRequirementUsage extends ASTRequirementUsageTOP {
 
