@@ -6,16 +6,17 @@ component grammar SysMLConstraints
             SysMLActions {
 
   symbol scope ConstraintDef implements SysMLType =
-    Modifier UserDefinedKeyword* "constraint" "def" Name SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
+    Modifier UserDefinedKeyword* "constraint" "def"
+    Name SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
-      SysMLElement* // TODO Auf AttributeUsages beschränken in finale (nicht component) SysMLv2-Sprache
+      SysMLElement*
       Expression?
     "}" | ";") ;
 
   symbol scope ConstraintUsage implements SysMLElement =
     Modifier (
-      (["require"] | ["assume"] | ["assert"]) ["not"]? UserDefinedKeyword* "constraint"? |
-      UserDefinedKeyword* "constraint"
+      (["require"] | ["assume"] | ["assert"]) ["not"]? UserDefinedKeyword* "constraint"?
+      | UserDefinedKeyword* "constraint"
     )
     Name? SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
@@ -25,13 +26,107 @@ component grammar SysMLConstraints
 
   ConstraintReference implements SysMLElement =
     (
-      (["require"] | ["assume"] | ["assert"]) UserDefinedKeyword* "constraint"? |
-      UserDefinedKeyword* "constraint"
+      (["require"] | ["assume"] | ["assert"]) UserDefinedKeyword* "constraint"?
+      | UserDefinedKeyword* "constraint"
     )
-    MCQualifiedName? SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
+    MCQualifiedName? SysMLCardinality? Specialization*
+    ("(" (SysMLParameter || ",")* ")")?
     ("{"
       SysMLElement*
       Expression?
     "}" | ";") ;
+
+  symbol scope RequirementDef implements SysMLType  =
+      Modifier UserDefinedKeyword* "requirement" "def"
+      SysMLIdentifier? Name SysMLCardinality? Specialization*
+      ("(" (SysMLParameter || ",")* ")")?
+      ("{"
+        SysMLElement*
+      "}" | ";") ;
+
+  // Satisfy Requirement Usages are ConstraintUsages and as such can be
+  // required/assumed/asserted
+  symbol scope RequirementUsage implements SysMLElement =
+      Modifier (["require"] | ["assume"] | ["assert"])? UserDefinedKeyword*
+      ["verify"]? ["not"]? ["satisfy"]? "requirement"
+      SysMLIdentifier? Name? SysMLCardinality? Specialization*
+      DefaultValue?
+      ("by" subject:MCQualifiedName)?
+      ("(" (SysMLParameter || ",")* ")")?
+      ("{"
+         SysMLElement*
+      "}" | ";") ;
+
+  symbol RequirementSubject implements SysMLElement =
+      "subject" Name? SysMLCardinality? Specialization* DefaultValue?
+      ("{"
+        SysMLElement*
+      "}" | ";") ;
+
+  symbolrule RequirementSubject =
+      types:de.monticore.types.check.SymTypeExpression* ;
+
+  RequirementActor extends RequirementSubject =
+      "actor" Name? SysMLCardinality? Specialization* DefaultValue?
+      ("{"
+        SysMLElement*
+      "}" | ";") ;
+
+  RequirementStakeholder extends RequirementSubject =
+      "stakeholder" Name? SysMLCardinality? Specialization* DefaultValue?
+      ("{"
+        SysMLElement*
+      "}" | ";") ;
+
+
+  /**
+   * A satisfy requirement usage may also be declared using just the keyword
+   * "satisfy" instead of "satisfy requirement". In this case, the declaration
+   * does not include either a name or short name for the satisfy requirement
+   * usage. Instead, the requirement to be satisfied is identified by giving a
+   * qualified name or feature chain immediately after the satisfy keyword, and
+   * it is then related to the satisfy requirement usage by a reference
+   * subsetting relationship
+   */
+  RequirementSatisfaction implements SysMLElement =
+      (["require"] | ["assume"] | ["assert"])? UserDefinedKeyword*
+      ["not"]? "satisfy"
+      req:MCQualifiedName ("by" subject:MCQualifiedName)?
+      ("{"
+          SysMLElement*
+       "}" | ";") ;
+
+  /**
+   * As for an assumed or required constraint, the keyword verify can be used
+   * rather than verify requirement to declare a verified requirement using
+   * reference subsetting.
+   */
+  RequirementVerification implements SysMLElement =
+      "verify" req:MCQualifiedName SysMLCardinality? Specialization*
+      ("{"
+          SysMLElement*
+       "}" | ";") ;
+
+  symbol scope ConcernDef implements SysMLType  =
+      Modifier UserDefinedKeyword* "concern" "def"
+      SysMLIdentifier? Name SysMLCardinality? Specialization*
+      ("(" (SysMLParameter || ",")* ")")?
+      ("{"
+        SysMLElement*
+      "}" | ";") ;
+
+  symbol scope ConcernUsage implements SysMLElement =
+      Modifier UserDefinedKeyword* ["frame"]? "concern"
+      SysMLIdentifier? Name? SysMLCardinality? Specialization*
+      ("(" (SysMLParameter || ",")* ")")?
+      ("{"
+        SysMLElement*
+      "}" | ";") ;
+
+  ConcernReference implements SysMLElement =
+      "frame" MCQualifiedName
+      ("{"
+        SysMLElement*
+      "}" | ";") ;
 
 }

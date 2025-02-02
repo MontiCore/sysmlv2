@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.lang.sysmlrequirements._symboltable;
+package de.monticore.lang.sysmlconstraints._symboltable;
 
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.SymTypeExpression;
@@ -9,7 +9,7 @@ import java.util.List;
 
 public class RequirementSubjectSymbolDeSer extends RequirementSubjectSymbolDeSerTOP {
   @Override
-  protected void serializeTypes(List<SymTypeExpression> types, SysMLRequirementsSymbols2Json s2j) {
+  protected void serializeTypes(List<SymTypeExpression> types, SysMLConstraintsSymbols2Json s2j) {
     SymTypeExpressionDeSer.serializeMember(s2j.getJsonPrinter(), "types", types);
   }
 

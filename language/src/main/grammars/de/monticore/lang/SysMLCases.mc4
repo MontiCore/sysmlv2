@@ -1,21 +1,22 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
-component grammar SysMLCases extends SysMLBasis, SysMLRequirements {
+component grammar SysMLCases extends SysMLBasis {
 
   /*
-   * The body of a calculation definition or usage is like the body of an action definition or usage, with the
-   * optional addition of the declaration of a result expression at the end, using the expression sublanguage. The
-   * result of the result expression is implicitly bound to the result parameter of the containing
-   * calculation definition or usage.
+   * The body of a calculation definition or usage is like the body of an action
+   * definition or usage, with the optional addition of the declaration of a
+   * result expression at the end, using the expression sublanguage. The result
+   * of the result expression is implicitly bound to the result parameter of the
+   * containing calculation definition or usage.
    * Calculations are part of a hierarchy in SysMLv2, namely:
    * - Calculations
    *   - Cases
    *     - Analysis Cases
    *     - Verification Cases
    *     - Use Cases
-   * While Constraints (and their heirs, Requirements) are very similar in this regard (i.e., having an Expression),
-   * they are not explicitly related.
+   * While Constraints (and their heirs, Requirements) are very similar in this
+   * regard (i.e., having an Expression), they are not explicitly related.
    */
 
   symbol scope AnalysisDef implements SysMLType =
@@ -65,25 +66,29 @@ component grammar SysMLCases extends SysMLBasis, SysMLRequirements {
       "}" | ";") ;
 
   InlineUseCaseUsage implements IInlineOccurrenceUsage =
-      UserDefinedKeyword* "use" "case" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+      UserDefinedKeyword* "use" "case"
+      SysMLIdentifier? Name? SysMLCardinality? Specialization*
       ("{"
         (AnalysisObjective | SysMLElement)*
         Expression?
       "}")? ;
 
   symbol scope UseCaseUsage implements OccurrenceUsageElement =
-      Modifier UserDefinedKeyword* "use" "case" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+      Modifier UserDefinedKeyword* "use" "case"
+      SysMLIdentifier? Name? SysMLCardinality? Specialization*
       ("{"
         (AnalysisObjective | SysMLElement)*
         Expression?
       "}" | ";") ;
 
   /**
-   * An include use case usage is a kind of perform action usage (see 7.16.6) for which the
-   * action usage is a use case usage, known as the included use case.
+   * An include use case usage is a kind of perform action usage (see 7.16.6)
+   * for which the action usage is a use case usage, known as the included use
+   * case.
    */
   IncludedUseCaseUsage extends UseCaseUsage =
-      Modifier UserDefinedKeyword* "include" ("use" "case")? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+      Modifier UserDefinedKeyword* "include" ("use" "case")?
+      SysMLIdentifier? Name? SysMLCardinality? Specialization*
       ("{"
         (AnalysisObjective | SysMLElement)*
         Expression?
@@ -98,7 +103,8 @@ component grammar SysMLCases extends SysMLBasis, SysMLRequirements {
       "}" | ";") ;
 
   symbol scope CaseUsage implements SysMLElement =
-      Modifier UserDefinedKeyword* "case" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+      Modifier UserDefinedKeyword* "case"
+      SysMLIdentifier? Name? SysMLCardinality? Specialization*
       ("{"
         (AnalysisObjective | SysMLElement)*
         Expression?
