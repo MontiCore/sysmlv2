@@ -39,7 +39,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if:
-      contains('master', 'release', github.ref)
+      contains('
+        master
+        release
+      ', github.ref)
     steps:
       - name: Checkout project sources
         uses: actions/checkout@v3
