@@ -32,7 +32,7 @@ jobs:
         with:
           gradle-version: ${{env.GRADLE_VERSION}}
           arguments: build ${{env.GRADLE_CLI_OPTS}}
-            -PgithubUser=${{GITHUB_ACTOR}}
+            -PgithubUser=${{env.GITHUB_ACTOR}}
             -PgithubToken=${{secrets.GITHUB_TOKEN}}
 
   deploy:
@@ -57,5 +57,5 @@ jobs:
           arguments: publish ${{env.GRADLE_CLI_OPTS}}
             -PmavenUser=${{secrets.SE_NEXUS_USER}}
             -PmavenPassword=${{secrets.SE_NEXUS_PASSWORD}}
-            -PgithubUser=${{GITHUB_ACTOR}}
+            -PgithubUser=${{env.GITHUB_ACTOR}}
             -PgithubToken=${{secrets.GITHUB_TOKEN}}
