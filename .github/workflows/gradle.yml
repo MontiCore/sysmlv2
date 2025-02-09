@@ -41,10 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if:
-      contains('
-        master
-        release
-      ', github.ref)
+      github.ref == 'master' || startsWith(github.ref, 'release')
     steps:
       - name: Checkout project sources
         uses: actions/checkout@v3
