@@ -19,10 +19,10 @@ repositories {
   maven {
     name "Official SysMLv2 Github Package Registry"
     url sysmlGithub
-    /*credentials {
+    credentials {
       username = githubUser
       password = githubToken
-    }*/
+    }
   }
 }
 
