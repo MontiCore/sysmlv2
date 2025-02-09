@@ -31,22 +31,26 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: ${{env.GRADLE_VERSION}}
-          arguments: :language:build ${{env.GRADLE_CLI_OPTS}}
+          arguments: build ${{env.GRADLE_CLI_OPTS}}
 
   deploy:
     permissions:
       packages: write
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/master'
+    if:
+      contains('master', 'release', github.ref)
     steps:
       - name: Checkout project sources
         uses: actions/checkout@v3
+      - run: curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+      - run: apt-get install -y nodejs
       - name: Gradle publish
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: ${{env.GRADLE_VERSION}}
-          arguments: :language:publish ${{env.GRADLE_CLI_OPTS}} -PmavenPassword=${{ secrets.SE_NEXUS_PASSWORD }} -PmavenUser=${{ secrets.SE_NEXUS_USER }}
+          arguments: publish ${{env.GRADLE_CLI_OPTS}}
+            -PmavenPassword=${{ secrets.SE_NEXUS_PASSWORD }}
+            -PmavenUser=${{ secrets.SE_NEXUS_USER }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-

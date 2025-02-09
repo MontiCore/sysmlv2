@@ -133,18 +133,6 @@ publishing {
       from components.java
     }
   }
-  // and where to upload them
-  repositories.maven {
-    name = "Gitlab"
-    url = sysmlGitlab
-    credentials(HttpHeaderCredentials) {
-      name = "Job-Token"
-      value = System.getenv("CI_JOB_TOKEN")
-    }
-    authentication {
-      header(HttpHeaderAuthentication)
-    }
-  }
   repositories.maven {
     name = "Nexus"
     credentials.username nexusUser
