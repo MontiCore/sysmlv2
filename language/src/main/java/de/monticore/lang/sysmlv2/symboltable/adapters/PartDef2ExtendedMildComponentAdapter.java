@@ -65,8 +65,8 @@ public class PartDef2ExtendedMildComponentAdapter extends ExtendedMildComponentS
   }
 
   @Override
-  public List<VariableSymbol> getParameters(){
-    return getDelegate().getParameters();
+  public List<VariableSymbol> getParameterList(){
+    return getDelegate().getParameterList();
   }
 
   @Override
