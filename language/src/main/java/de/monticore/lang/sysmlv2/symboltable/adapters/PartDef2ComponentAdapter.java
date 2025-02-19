@@ -51,7 +51,7 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
   }
 
   @Override
-  public List<VariableSymbol> getParameters() {
+  public List<VariableSymbol> getParameterList() {
     return getAdaptee().getSpannedScope().getLocalAttributeUsageSymbols().stream()
         .filter(a -> a.isPresentAstNode())
         .filter(a -> a.getAstNode().getModifier().isFinal())

@@ -27,15 +27,33 @@ public class PortSymbolDeserTest extends NervigeSymboltableTests {
 
     var st = new SysMLv2Symbols2Json().serialize(artifact);
     assertThat(st).isEqualTo(
-        "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
-            + "\"symbols\":"
-            + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable"
-            + ".ComponentSymbol\",\"name\":\"A\",\"ports\":"
-            + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable"
-            + ".PortSymbol\",\"name\":\"b.b\",\"fullName\":\"A.b.b\",\"type\":"
-            + "{\"kind\":\"de.monticore.types.check.SymTypePrimitive\","
-            + "\"primitiveName\":\"boolean\"},\"incoming\":true,"
-            + "\"timing\":\"timed\",\"stronglyCausal\":true}]}]}");
+        "{"
+            + "\"generated-using\":\"www.MontiCore.de technology\","
+            + "\"name\":\"A\","
+            + "\"symbols\":["
+            + "{"
+            + "\"kind\":\"de.monticore.symbols.compsymbols._symboltable.ComponentSymbol\","
+            + "\"name\":\"A\","
+            + "\"fullName\":\"A\","
+            + "\"spannedScope\":{"
+            + "\"symbols\":["
+            + "{"
+            + "\"kind\":\"de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol\","
+            + "\"name\":\"b\","
+            + "\"fullName\":\"A.b\","
+            + "\"types\":["
+            + "{"
+            + "\"kind\":\"de.monticore.types.check.SymTypeOfObject\","
+            + "\"objName\":\"B\""
+            + "}"
+            + "],"
+            + "\"strong\":true"
+            + "}"
+            + "]"
+            + "}"
+            + "}"
+            + "]"
+            + "}");
   }
 
   @Disabled

@@ -254,7 +254,7 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
         "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
             + "\"symbols\":"
             + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable"
-            + ".ComponentSymbol\",\"name\":\"A\"}]}");
+            + ".ComponentSymbol\",\"name\":\"A\",\"fullName\":\"A\"}]}");
   }
 
   @Test
@@ -291,6 +291,6 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
         "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
             + "\"symbols\":"
             + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable"
-            + ".ComponentSymbol\",\"name\":\"A\"}]}");
+            + ".ComponentSymbol\",\"name\":\"A\",\"fullName\":\"A\"}]}");
   }
 }
