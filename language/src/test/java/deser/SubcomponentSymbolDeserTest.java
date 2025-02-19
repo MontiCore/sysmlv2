@@ -25,13 +25,32 @@ public class SubcomponentSymbolDeserTest extends NervigeSymboltableTests {
 
     var st = new SysMLv2Symbols2Json().serialize(artifact);
     assertThat(st).isEqualTo(
-        "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
-            + "\"symbols\":[{\"kind\":\"de.monticore.symbols.compsymbols"
-            + "._symboltable.ComponentSymbol\",\"name\":\"A\","
-            + "\"subcomponents\":[{\"kind\":\"de.monticore.symbols"
-            + ".compsymbols._symboltable.SubcomponentSymbol\",\"name\":\"b\",\"fullName\":\"A.b\","
-            + "\"type\":{\"kind\":\"de.monticore.types.check"
-            + ".KindOfComponent\",\"componentName\":\"B\"}}]}]}");
+        "{"
+            + "\"generated-using\":\"www.MontiCore.de technology\","
+            + "\"name\":\"A\","
+            + "\"symbols\":["
+            + "{"
+            + "\"kind\":\"de.monticore.symbols.compsymbols._symboltable.ComponentSymbol\","
+            + "\"name\":\"A\","
+            + "\"fullName\":\"A\","
+            + "\"spannedScope\":{"
+            + "\"symbols\":["
+            + "{"
+            + "\"kind\":\"de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol\","
+            + "\"name\":\"b\","
+            + "\"fullName\":\"A.b\","
+            + "\"types\":["
+            + "{"
+            + "\"kind\":\"de.monticore.types.check.SymTypeOfObject\","
+            + "\"objName\":\"B\""
+            + "}"
+            + "]"
+            + "}"
+            + "]"
+            + "}"
+            + "}"
+            + "]"
+            + "}");
   }
 
 }
