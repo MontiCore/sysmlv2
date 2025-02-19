@@ -33,14 +33,10 @@ public class SymbolTableCompletionTest {
 
   private SysMLv2Tool tool;
 
-  @BeforeAll
-  public static void setup() {
-    LogStub.init();
-    SysMLv2Mill.init();
-  }
-
   @BeforeEach
   public void init() {
+    LogStub.init();
+    SysMLv2Mill.init();
     tool = new SysMLv2Tool();
     tool.init();
     parser = SysMLv2Mill.parser();
