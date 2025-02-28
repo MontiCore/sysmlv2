@@ -44,9 +44,9 @@ jobs:
       github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release')
     steps:
       - name: Checkout project sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - run: curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-      - run: apt-get install -y nodejs
+      - run: sudo apt-get install -y nodejs
       - name: Gradle publish
         uses: gradle/actions/setup-gradle@v3
         with:
