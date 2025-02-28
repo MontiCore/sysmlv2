@@ -66,14 +66,19 @@ public class ExtendedMildComponentSymbolDeSer extends ExtendedMildComponentSymbo
     s2j.getJsonPrinter().endArray();
   }
 
-  @Override protected List<CompKindExpression> deserializeRefinements(JsonObject symbolJson) {
+  @Override protected List<CompKindExpression> deserializeRefinements(IAutomatonScope scope, JsonObject symbolJson) {
     List<JsonElement> refinements = symbolJson.getArrayMemberOpt(ComponentSymbolDeSer.REFINEMENTS).orElseGet(Collections::emptyList);
     List<CompKindExpression> result = new ArrayList<>(refinements.size());
 
     for (JsonElement refinement : refinements) {
-      result.add(deSer.deserialize((JsonObject) refinement));
+      result.add(deSer.deserialize(scope, (JsonObject) refinement));
     }
     return result;
+  }
+
+  @Override
+  protected List<CompKindExpression> deserializeRefinements(JsonObject symbolJson) {
+    return List.of();
   }
 
   @Override protected List<ASTConnector> deserializeConnectors(JsonObject symbolJson) {
@@ -106,13 +111,18 @@ public class ExtendedMildComponentSymbolDeSer extends ExtendedMildComponentSymbo
   }
 
   @Override
-  protected List<CompKindExpression> deserializeSuperComponents(JsonObject symbolJson) {
+  protected List<CompKindExpression> deserializeSuperComponents(IAutomatonScope scope, JsonObject symbolJson) {
     List<JsonElement> superComponents = symbolJson.getArrayMemberOpt(ComponentSymbolDeSer.SUPER).orElseGet(Collections::emptyList);
     List<CompKindExpression> result = new ArrayList<>(superComponents.size());
 
     for (JsonElement superComponent : superComponents) {
-      result.add(deSer.deserialize((JsonObject) superComponent));
+      result.add(deSer.deserialize(scope, (JsonObject) superComponent));
     }
     return result;
+  }
+
+  @Override
+  protected List<CompKindExpression> deserializeSuperComponents(JsonObject symbolJson) {
+    throw new UnsupportedOperationException();
   }
 }

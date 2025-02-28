@@ -16,6 +16,7 @@ import de.monticore.symbols.basicsymbols._symboltable.BasicSymbolsSymbols2Json;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbolDeSer;
 import de.monticore.symbols.compsymbols._symboltable.CompSymbolsSymbols2Json;
 import de.monticore.symbols.compsymbols._symboltable.ComponentSymbolDeSer;
+import de.monticore.symbols.compsymbols._symboltable.ICompSymbolsScope;
 import de.monticore.symbols.compsymbols._symboltable.PortSymbolDeSer;
 import de.monticore.symbols.compsymbols._symboltable.SubcomponentSymbolDeSer;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
@@ -84,8 +85,8 @@ public class SerializationUtil {
       }
 
       @Override
-      public CompKindExpression deserialize(@NonNull JsonElement serialized) {
-        return delegate.deserialize((JsonObject) serialized);
+      public CompKindExpression deserialize(@NonNull ICompSymbolsScope scope, @NonNull JsonElement serialized) {
+        return delegate.deserialize(scope, (JsonObject) serialized);
       }
     };
 
