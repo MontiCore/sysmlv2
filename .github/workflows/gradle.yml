@@ -57,5 +57,6 @@ jobs:
           -PmavenUser=${{ secrets.SE_NEXUS_USER }}
           -PgithubUser=${{env.GITHUB_ACTOR}}
           -PgithubToken=${{secrets.GITHUB_TOKEN}}
+          --debug
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
