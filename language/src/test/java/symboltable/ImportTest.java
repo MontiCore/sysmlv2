@@ -24,7 +24,7 @@ class ImportTest {
     tool.finalizeSymbolTable(ast.get());
 
     // Kann ich von e aus das c finden?
-    var e = ast.get().getEnclosingScope().resolvePartUsage("e");
+    var e = ast.get().getEnclosingScope().resolvePartUsage("d.e");
     assertThat(e).isPresent();
     var c = e.get().getEnclosingScope().resolvePartUsage("c");
     assertThat(c).isPresent();
