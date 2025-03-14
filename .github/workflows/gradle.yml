@@ -53,10 +53,9 @@ jobs:
           gradle-version: ${{env.GRADLE_VERSION}}
       - name: Gradle Publish
         run: gradle publish ${{env.GRADLE_CLI_OPTS}}
-          -PmavenPassword=${{ secrets.SE_NEXUS_PASSWORD }}
-          -PmavenUser=${{ secrets.SE_NEXUS_USER }}
+          -PnexusPassword=${{ secrets.SE_NEXUS_PASSWORD }}
+          -PnexusUser=${{ secrets.SE_NEXUS_USER }}
           -PgithubUser=${{env.GITHUB_ACTOR}}
           -PgithubToken=${{secrets.GITHUB_TOKEN}}
-          --debug
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
