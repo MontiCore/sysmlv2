@@ -41,8 +41,8 @@ public class SerializationUtil {
     };
 
     SysMLv2Mill.globalScope().getSymbolDeSers().put(
-        "de.monticore.lang.automaton._symboltable"
-            + ".ExtendedMildComponentSymbol", myComponentSymbolDeSer);
+        "de.monticore.lang.componentconnector._symboltable"
+            + ".MildComponentSymbol", myComponentSymbolDeSer);
 
     MildPortSymbolDeSer myPortSymbolDeSer = new MildPortSymbolDeSer() {
       PortSymbolDeSer delegate = new PortSymbolDeSer();
