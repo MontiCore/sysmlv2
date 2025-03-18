@@ -6,7 +6,6 @@
 
 plugins {
   id "monticore" version "$mc_version"
-  id "com.github.johnrengelman.shadow" version "6.1.0"
   id "io.github.themrmilchmann.ecj" version "0.2.0"
 }
 
@@ -14,7 +13,7 @@ plugins {
 /* ========================= Project ========================== */
 /* ============================================================ */
 
-description = 'SysML_v2_official'
+description = 'Component Connector Language'
 
 /* ============================================================ */
 /* ========================= Versions ========================= */
@@ -55,17 +54,13 @@ test {
 
 dependencies {
   grammar "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
-  grammar "de.monticore.lang:ocl:$mc_version:grammars"
-
-  grammar(project(":cc"))
-  implementation(project(":cc"))
-
+  //grammar "de.monticore.lang:ocl:$mc_version:grammars"
   implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
   implementation "org.apache.commons:commons-lang3:$commons_lang_version"
   implementation "org.antlr:antlr4-runtime:$antlr_version"
   implementation "de.monticore:monticore-runtime:$mc_version"
   implementation "de.monticore:monticore-grammar:$mc_version"
-  implementation "de.monticore.lang:ocl:$mc_version"
+  //implementation "de.monticore.lang:ocl:$mc_version"
   implementation "commons-cli:commons-cli:$commons_cli_version"
 }
 
@@ -74,7 +69,7 @@ dependencies {
 /* ============================================================ */
 
 task generate() {
-    group = "mc"
+  group = "mc"
 }
 
 fileTree(grammarDir).matching { include '**/*.mc4' }.each { g ->
@@ -105,15 +100,6 @@ tasks.withType(JavaCompile) {
   options.deprecation false
   options.warnings = false
   options.headerOutputDirectory.convention(null)
-}
-
-// all in one cli-jar
-shadowJar {
-  manifest {
-    attributes "Main-Class": " de.monticore.lang.sysmlv2.SysMLv2Tool"
-  }
-  archiveClassifier = 'cli'
-  minimize()
 }
 
 java {

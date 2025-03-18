@@ -7,12 +7,6 @@ import de.monticore.symbols.BasicSymbols.*;
  * Definiert Erweiterungen für MontiCore's CompSymbols, die aus Anforderunge
  * der MontiBelle-Gruppe und spezifisch der Transformation von Component-
  * Connector-Modellen nach Isabelle hervor gehen.
- *
- * Hinweise:
- * - Die Namensgebung durch Präfix "Mild" ist eine Altlast aus der MontiBelle-
- *   Transformation und wird zeitnah entfernt
- * - Symbol-Vererbung ist unseres Wissens nach in MontiCore verpönt. Wir
- *   benutzen sie nur, bis die Ergebnisse konsolidiert und übertragen wurden.
  */
 component grammar ComponentConnector
   extends de.monticore.types.MCBasicTypes,
@@ -37,15 +31,9 @@ component grammar ComponentConnector
 
   /**
    * Wir fügen hinzu:
-   * - Verfeinerung. Alternative Implementation unter Verwendung der
-   *                 existierenden "superTypes" mit vererbter CompKindExpression
-   *                 wurde verworfen, da unserer Meinung nach die Semantik durch
-   *                 Syntax und explizit in der Grammatik erkennbar sein sollte.
    * - Connectors.   Sind essesntielle Information für die Komposition.
    *                 Subkomponenten können als Symbole im Scope schwimmen.
    *                 Connectors nicht.
-   * - Parameter.    Die MontiCore-Implementierung der CompSymbols versteckt
-   *                 diese in Java-Klassen. Wir machen sie nurexplizit.
    */
   symbolrule MildComponent =
     connectors: Connector*
@@ -89,8 +77,7 @@ component grammar ComponentConnector
   /**
    * Parameter werden instanziiert und mit Werten belegt. Dabei können diese
    * Werte natürlich symbolischer Natur sein (zB. ein weitergereichter Parameter
-   * der Vater-Komponente). Techn. Hinweis: Die Werte sollten idealerweise
-   * Expression sein. Siehe Kommentar bei MildSpecification.
+   * der Vater-Komponente).
    */
   interface ParameterValue = variable:Name@Variable value:Expression ;
 
@@ -102,5 +89,46 @@ component grammar ComponentConnector
   symbolrule MildInstance =
     parameterValues:ParameterValue*
   ;
+
+  /**
+   * Event-Automaten erlauben das spezifizieren mithilfe Zustandbasierter,
+   * induktiver Verhaltensmodelle.
+   */
+  interface symbol Automaton = Name ;
+
+  /**
+   * Event-Automaten bestehen aus Zustandsraum, initialer Konfiguration (Zustand
+   * und Ausgabe), Transitionen (für Events und für den Fortschritt der Zeit).
+   */
+  symbolrule Automaton =
+    stateSpace: StateSpace
+    initialConfiguration: Configuration*
+    eventTransitions: EventTransition*
+    tickTransitions: Transition*
+  ;
+
+  interface StateSpace =
+    states:MCQualifiedName* variables:Name@Variable* ;
+
+  interface Configuration =
+    State Output* ;
+
+  interface State =
+    Name VariableValue* ;
+
+  interface VariableValue =
+    variable:Name@Variable value:Expression ;
+
+  interface Output =
+    port:Name@Port value:Expression ["comprehension"]? ["listValue"]? ;
+
+  interface EventTransition =
+    port:Name@Port Transition* ;
+
+  interface Transition =
+    start:MCQualifiedName
+    guard:Expression
+    result:Configuration
+    documentation:String;
 
 }
