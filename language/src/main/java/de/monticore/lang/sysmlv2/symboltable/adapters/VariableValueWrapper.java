@@ -4,10 +4,9 @@ import de.monticore.ast.Comment;
 import de.monticore.cardinality._symboltable.ICardinalityScope;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope;
-import de.monticore.lang.automaton._ast.ASTVariableValue;
-import de.monticore.lang.automaton._symboltable.IAutomatonScope;
-import de.monticore.lang.automaton._visitor.AutomatonTraverser;
+import de.monticore.lang.componentconnector._ast.ASTVariableValue;
 import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScope;
+import de.monticore.lang.componentconnector._visitor.ComponentConnectorTraverser;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.literals.mccommonliterals._symboltable.IMCCommonLiteralsScope;
@@ -56,7 +55,7 @@ public class VariableValueWrapper implements ASTVariableValue {
   }
 
   @Override
-  public IAutomatonScope getEnclosingScope() {
+  public IComponentConnectorScope getEnclosingScope() {
     return (ISysMLv2Scope) getValue().getEnclosingScope();
   }
 
@@ -64,11 +63,6 @@ public class VariableValueWrapper implements ASTVariableValue {
 
   @Override
   public void setValue(ASTExpression value) {
-
-  }
-
-  @Override
-  public void setEnclosingScope(IAutomatonScope enclosingScope) {
 
   }
 
@@ -553,7 +547,7 @@ public class VariableValueWrapper implements ASTVariableValue {
   }
 
   @Override
-  public void accept(AutomatonTraverser visitor) {
+  public void accept(ComponentConnectorTraverser visitor) {
 
   }
 }

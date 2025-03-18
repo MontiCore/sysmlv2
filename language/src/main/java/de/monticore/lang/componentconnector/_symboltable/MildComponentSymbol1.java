@@ -1,16 +1,14 @@
 package de.monticore.lang.componentconnector._symboltable;
 
-import de.monticore.lang.componentconnector._symboltable.MildComponentSymbolTOP;
-import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Constraint2SpecificationAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Requirement2SpecificationAdapter;
 
 import java.util.Optional;
 
-public class MildComponentSymbol extends MildComponentSymbolTOP {
+public class MildComponentSymbol1 extends MildComponentSymbolTOP {
 
-  public MildComponentSymbol(String name) {
+  public MildComponentSymbol1(String name) {
     super(name);
   }
 

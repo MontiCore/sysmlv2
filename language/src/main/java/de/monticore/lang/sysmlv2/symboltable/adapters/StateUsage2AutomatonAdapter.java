@@ -1,11 +1,10 @@
 package de.monticore.lang.sysmlv2.symboltable.adapters;
 
-import de.monticore.lang.automaton._ast.ASTConfiguration;
-import de.monticore.lang.automaton._ast.ASTEventTransition;
-import de.monticore.lang.automaton._ast.ASTStateSpace;
-import de.monticore.lang.automaton._ast.ASTTransition;
-import de.monticore.lang.automaton._symboltable.AutomatonSymbol;
-import de.monticore.lang.automaton._symboltable.IAutomatonScope;
+import de.monticore.lang.componentconnector._ast.ASTConfiguration;
+import de.monticore.lang.componentconnector._ast.ASTEventTransition;
+import de.monticore.lang.componentconnector._ast.ASTStateSpace;
+import de.monticore.lang.componentconnector._ast.ASTTransition;
+import de.monticore.lang.componentconnector._symboltable.AutomatonSymbol;
 import de.monticore.lang.sysmlactions._ast.ASTSysMLSuccession;
 import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;

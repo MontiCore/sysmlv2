@@ -1,7 +1,6 @@
 package de.monticore.lang.sysmlv2._symboltable;
 
-import de.monticore.lang.automaton._symboltable.AutomatonSymbol;
-import de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbol;
+import de.monticore.lang.componentconnector._symboltable.AutomatonSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildPortSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol;
@@ -249,21 +248,6 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
   }
 
   @Override
-  default List<ExtendedMildComponentSymbol> resolveAdaptedExtendedMildComponentLocallyMany(
-      boolean foundSymbols,
-      String name,
-      AccessModifier modifier,
-      Predicate<ExtendedMildComponentSymbol> predicate
-  ) {
-    var adapted = new ArrayList<ExtendedMildComponentSymbol>();
-
-    var partDef = resolvePartDefLocally(name);
-    partDef.ifPresent(part -> adapted.add(new PartDef2ExtendedMildComponentAdapter(part)));
-
-    return adapted;
-  }
-
-  @Override
   default List<AutomatonSymbol> resolveAdaptedAutomatonLocallyMany(
       boolean foundSymbols, String name,
       AccessModifier modifier,
@@ -281,6 +265,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
           .findFirst()
           .map(state -> new StateUsage2AutomatonAdapter(part, state));
 
+      if(optAut.isPresent()) {
+        adapted.add(optAut.get());
+      }
       optAut.ifPresent(adapted::add);
     });
 
