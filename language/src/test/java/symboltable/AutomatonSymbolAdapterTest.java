@@ -1,12 +1,11 @@
 package symboltable;
 
 import de.monticore.expressions.commonexpressions._ast.ASTLogicalNotExpression;
-import de.monticore.lang.automaton._ast.ASTConfiguration;
-import de.monticore.lang.automaton._ast.ASTOutput;
-import de.monticore.lang.automaton._ast.ASTStateSpace;
-import de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbol;
+import de.monticore.lang.componentconnector._ast.ASTConfiguration;
+import de.monticore.lang.componentconnector._ast.ASTOutput;
+import de.monticore.lang.componentconnector._ast.ASTStateSpace;
+import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.sysmlv2._prettyprint.SysMLv2FullPrettyPrinter;
-import de.monticore.lang.sysmlv2._prettyprint.SysMLv2PrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import org.junit.jupiter.api.Test;
 
@@ -23,13 +22,12 @@ public class AutomatonSymbolAdapterTest extends NervigeSymboltableTests {
 
     var component = as.resolveComponent("A");
     assertThat(component).isPresent();
-    assertThat(component.get()).isInstanceOf(ExtendedMildComponentSymbol.class);
+    assertThat(component.get()).isInstanceOf(MildComponentSymbol.class);
 
-    assertTrue(((ExtendedMildComponentSymbol)component.get()).isStateBased());
-    var optAut = ((ExtendedMildComponentSymbol)component.get()).getAutomaton();
-    assertThat(optAut).isPresent();
+    assertTrue(((MildComponentSymbol)component.get()).isStateBased());
 
-    var aut = optAut.get();
+    var aut = ((MildComponentSymbol)component.get()).getAutomaton();
+    assertThat(aut).isNotNull();
     assertThat(aut.getName()).isEqualTo("A");
 
     var autFromResolve = as.resolveAutomaton("A");

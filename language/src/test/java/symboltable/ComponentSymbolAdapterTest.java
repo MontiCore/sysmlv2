@@ -1,21 +1,14 @@
 package symboltable;
 
-import de.monticore.expressions.assignmentexpressions._ast.ASTAssignmentExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.lang.componentconnector._symboltable.MildInstanceSymbol;
-import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
-import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
-import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.literals.mccommonliterals._ast.ASTBooleanLiteral;
 import de.monticore.literals.mccommonliterals._ast.ASTNatLiteral;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.compsymbols._symboltable.Timing;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
-import org.assertj.core.api.Condition;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -89,7 +82,7 @@ public class ComponentSymbolAdapterTest extends NervigeSymboltableTests {
     var spec = component.getSpannedScope().resolveMildSpecification("B");
     assertThat(spec).isPresent();
 
-    assertThat(component.getSpecification()).isPresent();
+    assertThat(component.isHistoryBased());
     assertThat(component.getSpecification()).isEqualTo(spec);
   }
 
@@ -102,10 +95,10 @@ public class ComponentSymbolAdapterTest extends NervigeSymboltableTests {
     var spec = component.getSpannedScope().resolveMildSpecification("B");
     assertThat(spec).isPresent();
 
-    assertThat(component.getSpecification()).isPresent();
-    assertThat(component.getSpecification()).isEqualTo(spec);
+    assertThat(component.isHistoryBased());
+    assertThat(component.getSpecification()).isEqualTo(spec.get());
 
-    var specification = component.getSpecification().get();
+    var specification = component.getSpecification();
 
     // Scope ist nötigt um die Expressions (predicates) zu verstehen
     assertThat(specification.getEnclosingScope()).isNotNull();
