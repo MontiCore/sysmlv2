@@ -13,7 +13,6 @@ grammar SysMLv2 extends SysMLExpressions,
                         SysMLCases,
                         ComponentConnector,
                         de.monticore.types.MCSimpleGenericTypes,
-                        Automaton,
                         de.monticore.expressions.AssignmentExpressions,
                         de.monticore.expressions.StreamExpressions
 {

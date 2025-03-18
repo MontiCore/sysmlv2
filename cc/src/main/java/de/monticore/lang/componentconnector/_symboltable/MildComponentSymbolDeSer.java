@@ -1,8 +1,9 @@
-package de.monticore.lang.automaton._symboltable;
+package de.monticore.lang.componentconnector._symboltable;
 
 import de.monticore.lang.componentconnector._ast.ASTConnector;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.compsymbols.CompSymbolsMill;
+import de.monticore.symbols.compsymbols._symboltable.CompSymbolsSymbols2Json;
 import de.monticore.symbols.compsymbols._symboltable.ComponentSymbolDeSer;
 import de.monticore.symboltable.serialization.ISymbolDeSer;
 import de.monticore.symboltable.serialization.JsonDeSers;
@@ -20,19 +21,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** Copied from ComponentSymbolDeSer */
-public class ExtendedMildComponentSymbolDeSer extends ExtendedMildComponentSymbolDeSerTOP {
+/* TODO CompSymbols DeSer hard-codes serialization of params, ports, typevars in
+ * sub-scope. This functionality is not regenerated here and should be copy
+ * pasted until we can use only CompSymbols for trafo.
+ */
+public class MildComponentSymbolDeSer extends MildComponentSymbolDeSerTOP{
 
+  // can't use SubcomponentSymbolDeSer or FullCompKindExprDeSer directly
   private final KindOfComponentDeSer deSer = new KindOfComponentDeSer();
 
   @Override
-  protected void deserializeAddons(ExtendedMildComponentSymbol symbol, JsonObject symbolJson) {
+  protected void deserializeAddons(MildComponentSymbol symbol, JsonObject symbolJson) {
     symbol.getParameterList().forEach(symbol.getSpannedScope()::add);
   }
 
   @Override
   protected void serializeRefinements(List<CompKindExpression> refinements,
-                                      AutomatonSymbols2Json s2j) {
+                                                ComponentConnectorSymbols2Json s2j) {
     s2j.getJsonPrinter().beginArray(ComponentSymbolDeSer.REFINEMENTS);
     for (CompKindExpression superComponent : refinements) {
       s2j.getJsonPrinter().addToArray(JsonElementFactory
@@ -42,12 +47,12 @@ public class ExtendedMildComponentSymbolDeSer extends ExtendedMildComponentSymbo
   }
 
   @Override
-  protected void serializeConnectors(List<ASTConnector> connectors, AutomatonSymbols2Json s2j) {
+  protected void serializeConnectors(List<ASTConnector> connectors, ComponentConnectorSymbols2Json s2j) {
     // Wird nicht implementiert
   }
 
   @Override
-  protected void serializeParameter(List<VariableSymbol> parameter, AutomatonSymbols2Json s2j) {
+  protected void serializeParameter(List<VariableSymbol> parameter, ComponentConnectorSymbols2Json s2j) {
     JsonPrinter printer = s2j.getJsonPrinter();
 
     printer.beginArray(ComponentSymbolDeSer.PARAMETERS);
@@ -57,7 +62,7 @@ public class ExtendedMildComponentSymbolDeSer extends ExtendedMildComponentSymbo
 
   @Override
   protected void serializeSuperComponents(@NonNull List<CompKindExpression> superComponents,
-                                          @NonNull AutomatonSymbols2Json s2j) {
+                                          @NonNull ComponentConnectorSymbols2Json s2j) {
     s2j.getJsonPrinter().beginArray(ComponentSymbolDeSer.SUPER);
     for (CompKindExpression superComponent : superComponents) {
       s2j.getJsonPrinter().addToArray(JsonElementFactory
@@ -66,7 +71,7 @@ public class ExtendedMildComponentSymbolDeSer extends ExtendedMildComponentSymbo
     s2j.getJsonPrinter().endArray();
   }
 
-  @Override protected List<CompKindExpression> deserializeRefinements(IAutomatonScope scope, JsonObject symbolJson) {
+  @Override protected List<CompKindExpression> deserializeRefinements(IComponentConnectorScope scope, JsonObject symbolJson) {
     List<JsonElement> refinements = symbolJson.getArrayMemberOpt(ComponentSymbolDeSer.REFINEMENTS).orElseGet(Collections::emptyList);
     List<CompKindExpression> result = new ArrayList<>(refinements.size());
 
@@ -78,7 +83,7 @@ public class ExtendedMildComponentSymbolDeSer extends ExtendedMildComponentSymbo
 
   @Override
   protected List<CompKindExpression> deserializeRefinements(JsonObject symbolJson) {
-    return List.of();
+    throw new UnsupportedOperationException();
   }
 
   @Override protected List<ASTConnector> deserializeConnectors(JsonObject symbolJson) {
@@ -110,8 +115,9 @@ public class ExtendedMildComponentSymbolDeSer extends ExtendedMildComponentSymbo
     return parameterResult;
   }
 
+
   @Override
-  protected List<CompKindExpression> deserializeSuperComponents(IAutomatonScope scope, JsonObject symbolJson) {
+  protected List<CompKindExpression> deserializeSuperComponents(IComponentConnectorScope scope, JsonObject symbolJson) {
     List<JsonElement> superComponents = symbolJson.getArrayMemberOpt(ComponentSymbolDeSer.SUPER).orElseGet(Collections::emptyList);
     List<CompKindExpression> result = new ArrayList<>(superComponents.size());
 
