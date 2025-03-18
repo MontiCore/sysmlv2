@@ -1,7 +1,6 @@
 package de.monticore.lang.sysmlv2.symboltable.adapters;
 
-import de.monticore.lang.automaton._symboltable.AutomatonSymbol;
-import de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbol;
+import de.monticore.lang.componentconnector._symboltable.AutomatonSymbol;
 import de.monticore.lang.componentconnector._ast.ASTConnector;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
@@ -17,7 +16,7 @@ import javax.swing.plaf.nimbus.State;
 import java.util.List;
 import java.util.Optional;
 
-public class PartDef2ExtendedMildComponentAdapter extends ExtendedMildComponentSymbol {
+public class PartDef2ExtendedMildComponentAdapter extends MildComponentSymbol {
   private final PartDef2ComponentAdapter delegate;
 
   /** An automaton is cached because we use in subsequent adapters SysML specific operations (i.e. deriver) that are
@@ -46,8 +45,8 @@ public class PartDef2ExtendedMildComponentAdapter extends ExtendedMildComponentS
   }
 
   @Override
-  public Optional<AutomatonSymbol> getAutomaton() {
-    return automaton;
+  public AutomatonSymbol getAutomaton() {
+    return automaton.get();
   }
 
   @Override

@@ -1,8 +1,5 @@
 package de.monticore.lang.componentconnector;
 
-import de.monticore.lang.automaton._symboltable.AutomatonSymbols2Json;
-import de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbol;
-import de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbolDeSer;
 import de.monticore.lang.componentconnector._symboltable.*;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
@@ -30,13 +27,13 @@ public class SerializationUtil {
    * This is done for cross-compatibility between tools.
    */
   public static void setupComponentConnectorSerialization() {
-    ExtendedMildComponentSymbolDeSer myComponentSymbolDeSer =
-        new ExtendedMildComponentSymbolDeSer() {
+    MildComponentSymbolDeSer myComponentSymbolDeSer =
+        new MildComponentSymbolDeSer() {
       ComponentSymbolDeSer delegate = new ComponentSymbolDeSer();
 
       @Override
-      public String serialize(ExtendedMildComponentSymbol toSerialize,
-                              AutomatonSymbols2Json s2j) {
+      public String serialize(MildComponentSymbol toSerialize,
+                              ComponentConnectorSymbols2Json s2j) {
         return delegate.serialize(toSerialize,
             new CompSymbolsSymbols2Json(s2j.getTraverser(),
                 s2j.getJsonPrinter()));
