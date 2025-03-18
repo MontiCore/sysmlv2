@@ -1,10 +1,10 @@
 package deser;
 
-import de.monticore.lang.automaton._symboltable.AutomatonSymbols2Json;
-import de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbol;
-import de.monticore.lang.automaton._symboltable.ExtendedMildComponentSymbolDeSer;
-import de.monticore.lang.automaton._visitor.AutomatonHandler;
-import de.monticore.lang.automaton._visitor.AutomatonTraverser;
+import de.monticore.lang.componentconnector._symboltable.ComponentConnectorSymbols2Json;
+import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
+import de.monticore.lang.componentconnector._symboltable.MildComponentSymbolDeSer;
+import de.monticore.lang.componentconnector._visitor.ComponentConnectorHandler;
+import de.monticore.lang.componentconnector._visitor.ComponentConnectorTraverser;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
 import de.monticore.mcbasics._symboltable.MCBasicsDeSer;
@@ -189,26 +189,26 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
     var printer = new JsonPrinter();
 
     // Ohne Inheritance-Traverse ging es vielleicht mit Handler?
-    traverser.setAutomatonHandler(new AutomatonHandler() {
-      protected AutomatonTraverser t = traverser;
+    traverser.setComponentConnectorHandler(new ComponentConnectorHandler() {
+      protected ComponentConnectorTraverser t = traverser;
 
       @Override
-      public AutomatonTraverser getTraverser() {
+      public ComponentConnectorTraverser getTraverser() {
         return t;
       }
 
       @Override
-      public void setTraverser(AutomatonTraverser traverser) {
+      public void setTraverser(ComponentConnectorTraverser traverser) {
         t = traverser;
       }
 
       // Caste und visitiere damit im Super-Type
       @Override
-      public void handle(ExtendedMildComponentSymbol node) {
+      public void handle(MildComponentSymbol node) {
         getTraverser().visit((ComponentSymbol) node);
         // Direkt Traverse, damit Inheritance-Problem nicht wieder zuschlägt
         //ComponentConnectorHandler.super.handle(node);
-        AutomatonHandler.super.traverse(node);
+        ComponentConnectorHandler.super.traverse(node);
         getTraverser().endVisit((ComponentSymbol) node);
       }
     });
@@ -266,13 +266,13 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
     artifact.add(comp);
 
     // Zweiter Versuch von AHe
-    ExtendedMildComponentSymbolDeSer myTypeSymbolDeSer =
-        new ExtendedMildComponentSymbolDeSer() {
+    MildComponentSymbolDeSer myTypeSymbolDeSer =
+        new MildComponentSymbolDeSer() {
           ComponentSymbolDeSer delegate = new ComponentSymbolDeSer();
 
           @Override
-          public String serialize(ExtendedMildComponentSymbol toSerialize,
-                                  AutomatonSymbols2Json s2j) {
+          public String serialize(MildComponentSymbol toSerialize,
+                                  ComponentConnectorSymbols2Json s2j) {
             return delegate.serialize(toSerialize,
                 new CompSymbolsSymbols2Json(s2j.getTraverser(),
                     s2j.getJsonPrinter()));
