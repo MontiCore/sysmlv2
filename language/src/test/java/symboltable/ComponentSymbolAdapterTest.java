@@ -83,7 +83,7 @@ public class ComponentSymbolAdapterTest extends NervigeSymboltableTests {
     assertThat(spec).isPresent();
 
     assertThat(component.isHistoryBased());
-    assertThat(component.getSpecification()).isEqualTo(spec);
+    assertThat(component.getSpecification()).isEqualTo(spec.get());
   }
 
   /** Long version using (pot. multiple) grouped constraints in a requirement */

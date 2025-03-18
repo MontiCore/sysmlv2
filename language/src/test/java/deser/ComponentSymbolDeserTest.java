@@ -63,8 +63,8 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
     var mild_st = new SysMLv2Symbols2Json().serialize(s);
     var expected ="{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
         + "\"symbols\":"
-        + "[{\"kind\":\"de.monticore.lang.automaton._symboltable"
-        + ".ExtendedMildComponentSymbol\",\"name\":\"A\","
+        + "[{\"kind\":\"de.monticore.lang.componentconnector._symboltable"
+        + ".MildComponentSymbol\",\"name\":\"A\","
         + "\"fullName\":\"A\""
         + "}]}";
     assertThat(mild_st).isEqualTo(expected);
@@ -281,8 +281,8 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
 
     SysMLv2Mill.globalScope().getSymbolDeSers()
         .put(
-            "de.monticore.lang.automaton._symboltable"
-                + ".ExtendedMildComponentSymbol",
+            "de.monticore.lang.componentconnector._symboltable"
+                + ".MildComponentSymbol",
             myTypeSymbolDeSer);
 
     // Klappt auch, aber ziemlich Spaghetti
