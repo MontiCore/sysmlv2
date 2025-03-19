@@ -21,6 +21,7 @@ dependencies {
     }
   }
 
+  implementation(project(":cc"))
   implementation(project(":language"))
 
   // Dependencies marked as "runtime" in the language's build script. Need to re-specify them here!
