@@ -70,7 +70,7 @@ dependencies {
 /* ============================================================ */
 
 task generate() {
-    group = "mc"
+  group = "mc"
 }
 
 fileTree(grammarDir).matching { include '**/*.mc4' }.each { g ->
@@ -132,15 +132,6 @@ publishing {
     mavenJava(MavenPublication) {
       from components.java
     }
-  }
-  // and where to upload them
-  repositories.maven {
-    name = "Nexus"
-    credentials.username nexusUser
-    credentials.password nexusPassword
-    def releasesRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/"
-    def snapshotsRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/"
-    url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
   }
   repositories.maven {
     name = "Nexus"
