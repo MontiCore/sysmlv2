@@ -11,6 +11,7 @@ import de.monticore.lang.automaton._symboltable.IAutomatonScope;
 import de.monticore.lang.automaton._visitor.AutomatonTraverser;
 import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScope;
 import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
+import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.literals.mccommonliterals._ast.ASTBooleanLiteralBuilder;
 import de.monticore.literals.mccommonliterals._ast.ASTConstantsMCCommonLiterals;
 import de.monticore.literals.mccommonliterals._symboltable.IMCCommonLiteralsScope;
@@ -64,10 +65,14 @@ public class TransitionWrapper implements ASTTransition {
     documentation = "line " + adaptee.get_SourcePositionStart().getLine() + " to " + adaptee.get_SourcePositionEnd().getLine();
 
     if (adaptee.isPresentDoAction()) {
-      result = new ConfigurationWrapper(adaptee.getSuccessionThen().getMCQualifiedName().getQName(), adaptee.getDoAction());
+      result = new ConfigurationWrapper(
+          adaptee.getSuccessionThen().getMCQualifiedName().getQName(),
+          adaptee.getDoAction());
     }
     else {
-      result = new ConfigurationWrapper(adaptee.getSuccessionThen().getMCQualifiedName().getQName());
+      result = new ConfigurationWrapper(
+          adaptee.getSuccessionThen().getMCQualifiedName().getQName(),
+          (ISysMLv2Scope) adaptee.getEnclosingScope());
     }
   }
 

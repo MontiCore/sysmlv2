@@ -38,8 +38,11 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+
 public class ConfigurationWrapper implements ASTConfiguration {
-  private final ISysMLv2Scope enclosingScope;
+  private final IAutomatonScope enclosingScope;
 
   private final ASTState state;
 
@@ -47,18 +50,15 @@ public class ConfigurationWrapper implements ASTConfiguration {
   private final List<ASTOutput> outputs;
 
   public ConfigurationWrapper(String state, ASTSysMLActionsNode adaptee) {
-    this.enclosingScope = (ISysMLv2Scope) adaptee.getEnclosingScope();
+    this.enclosingScope = (IAutomatonScope) adaptee.getEnclosingScope();
 
     var traverser = SysMLv2Mill.traverser();
     var collector = new SendActionAssignmentsVisitor();
     traverser.add4SysMLActions(collector);
-    if (adaptee != null) {
-      adaptee.accept(traverser);
-    }
-
+    adaptee.accept(traverser);
     var assignments = collector.getAssignments();
 
-    outputs = assignments
+    this.outputs = assignments
         .entrySet()
         .stream()
         .filter(ass -> getEnclosingScope().resolvePort(ass.getKey().getQName()).isPresent())
@@ -68,16 +68,26 @@ public class ConfigurationWrapper implements ASTConfiguration {
     this.state = new StateWrapper(state, assignments);
   }
 
-  public ConfigurationWrapper(ASTExpression stateExpression) {
-    this(stateExpression, null);
+  public ConfigurationWrapper(
+      String state,
+      IAutomatonScope enclosingScope)
+  {
+    this.enclosingScope = enclosingScope;
+    this.outputs = emptyList();
+    this.state = new StateWrapper(state, emptyMap());
   }
 
-  public ConfigurationWrapper(String state) {
-    this(state, null);
+  public ConfigurationWrapper(
+      ASTExpression state,
+      IAutomatonScope enclosingScope)
+  {
+    this(new SysMLv2FullPrettyPrinter(new IndentPrinter()).prettyprint(state),
+        enclosingScope);
   }
 
   public ConfigurationWrapper(ASTExpression state, ASTActionUsage adaptee) {
-    this(new SysMLv2FullPrettyPrinter(new IndentPrinter()).prettyprint(state), adaptee);
+    this(new SysMLv2FullPrettyPrinter(new IndentPrinter()).prettyprint(state),
+        adaptee);
   }
 
   @Override

@@ -38,14 +38,17 @@ public class StateUsage2AutomatonAdapter extends AutomatonSymbol {
 
       if(ast.isPresentEntryAction() && ast.getSysMLElement(0) instanceof ASTSysMLSuccession) {
         var entry = ast.getEntryAction();
-        var initialState =
-            ((ASTSysMLSuccession) ast.getSysMLElement(0)).getSuccessionThen().getMCQualifiedName().getQName();
+        var initialState = ((ASTSysMLSuccession) ast.getSysMLElement(0))
+            .getSuccessionThen().getMCQualifiedName().getQName();
 
         if(entry.isPresentActionUsage()) {
-          initialConfiguration.add(new ConfigurationWrapper(initialState, entry.getActionUsage()));
+          initialConfiguration.add(
+              new ConfigurationWrapper(initialState, entry.getActionUsage()));
         }
         else {
-          initialConfiguration.add(new ConfigurationWrapper(initialState));
+          initialConfiguration.add(
+              new ConfigurationWrapper(initialState,
+                  (ISysMLv2Scope) entry.getEnclosingScope()));
         }
       }
 
