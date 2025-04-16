@@ -74,27 +74,32 @@ task editPackageJson() {
     json.content.publisher = "MontiBelle"
     json.content.name = "sysmlv2" // No spaces, no capitals
     json.content.icon = "icons/logo.png"
-
-    def iconThemesMap = [
-        "id"   : "theme",
-        "label": "default",
-        "path" : "./icons/themes.json"
+    json.content.homepage = "https://github.com/MontiCore/sysmlv2"
+    json.content.repository = [
+        "type": "git",
+        "url": "https://github.com/MontiCore/sysmlv2"
     ]
-    json.content.contributes.iconThemes = [iconThemesMap]
+
+    json.content.contributes.languages[0].icon = [
+        "light": "icons/logo.png",
+        "dark": "icons/logo.png"
+    ]
+    json.content.contributes.languages[0].configuration = "./language-configuration.json"
 
     file.write(json.toPrettyString())
   }
 }
 
-task copyIcon(type: Copy) {
-  from "$projectDir"
-  include "logo.png"
+task copyReadme(type: Copy) {
+  from "$rootDir"
+  include "README.md"
   into(autoconfigure.mclsg.getFullVscodePluginDir())
 }
 
-task copyFileIcons(type: Copy) {
+task copyFiles(type: Copy) {
   from "$projectDir"
   include "icons/**"
+  include "language-configuration.json"
   into autoconfigure.mclsg.getFullVscodePluginDir()
 }
 
@@ -116,5 +121,5 @@ publishing {
 }
 
 tasks.generateSysMLv2VscodePlugin.finalizedBy editPackageJson
-tasks.generateSysMLv2VscodePlugin.finalizedBy copyIcon
-tasks.generateSysMLv2VscodePlugin.finalizedBy copyFileIcons
+tasks.generateSysMLv2VscodePlugin.finalizedBy copyReadme
+tasks.generateSysMLv2VscodePlugin.finalizedBy copyFiles
