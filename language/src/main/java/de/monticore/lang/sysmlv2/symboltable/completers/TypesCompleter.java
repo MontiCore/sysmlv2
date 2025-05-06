@@ -1,9 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.symboltable.completers;
 
+import de.monticore.lang.sysmlbasis._ast.ASTAnonymousUsage;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLParameter;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol;
 import de.monticore.lang.sysmlbasis._visitor.SysMLBasisVisitor2;
 import de.monticore.lang.sysmlconstraints._ast.ASTRequirementSubject;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
@@ -118,6 +120,15 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
       // type
       List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
 
+      symbol.setTypesList(types);
+    }
+  }
+
+  @Override
+  public void endVisit(ASTAnonymousUsage node) {
+    if(node.isPresentSymbol()){
+      AnonymousUsageSymbol symbol = node.getSymbol();
+      List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
       symbol.setTypesList(types);
     }
   }
