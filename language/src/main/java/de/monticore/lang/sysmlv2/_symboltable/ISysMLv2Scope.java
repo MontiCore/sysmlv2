@@ -5,10 +5,12 @@ import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildPortSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
+import de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol;
 import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.ItemDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
+import de.monticore.lang.sysmlparts.symboltable.adapters.AnonymousUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.EnumDef2TypeSymbolAdapter;
@@ -52,6 +54,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     // We ignore modifiers and predicates for the moment
     var ports = resolvePortUsageLocallyMany(false, name, AccessModifier.ALL_INCLUSION, x -> true);
     var attributes = resolveAttributeUsageLocallyMany(false, name, AccessModifier.ALL_INCLUSION, x -> true);
+    var anonymous = resolveAnonymousUsageLocallyMany(false, name, AccessModifier.ALL_INCLUSION, x -> true);
 
     var adapted = new ArrayList<VariableSymbol>();
     for (PortUsageSymbol portUsage : ports) {
@@ -93,6 +96,20 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
           variable.setType(attributeType);
         }*/
 
+        adapted.add(variable);
+      }
+    }
+
+    for (AnonymousUsageSymbol anonymousUsage : anonymous) {
+      var types = new ArrayList<SymTypeExpression>();
+      types.addAll(anonymousUsage.getTypesList());
+
+      if(types.size() == 1) {
+        var resolved = types.get(0).getTypeInfo();
+
+        // we omit to set the ASTNode
+        var variable = new AnonymousUsage2VariableSymbolAdapter(anonymousUsage);
+        variable.setType(SymTypeExpressionFactory.createTypeObject(resolved));
         adapted.add(variable);
       }
     }
