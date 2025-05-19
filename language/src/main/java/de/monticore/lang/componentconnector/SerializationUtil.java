@@ -11,13 +11,6 @@ import de.monticore.symbols.compsymbols._symboltable.*;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbolDeSer;
 import de.monticore.symbols.oosymbols._symboltable.OOSymbolsSymbols2Json;
-import de.monticore.symboltable.serialization.json.JsonElement;
-import de.monticore.symboltable.serialization.json.JsonObject;
-import de.monticore.types.check.CompKindExpression;
-import de.monticore.types.check.FullCompKindExprDeSer;
-import de.monticore.types.check.KindOfComponent;
-import de.monticore.types.check.KindOfComponentDeSer;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class SerializationUtil {
 
@@ -29,7 +22,7 @@ public class SerializationUtil {
   public static void setupComponentConnectorSerialization() {
     MildComponentSymbolDeSer myComponentSymbolDeSer =
         new MildComponentSymbolDeSer() {
-      ComponentSymbolDeSer delegate = new ComponentSymbolDeSer();
+      ComponentTypeSymbolDeSer delegate = new ComponentTypeSymbolDeSer();
 
       @Override
       public String serialize(MildComponentSymbol toSerialize,
@@ -60,29 +53,9 @@ public class SerializationUtil {
         "de.monticore.lang.componentconnector._symboltable.MildPortSymbol",
         myPortSymbolDeSer);
 
-    // Den Teil verstehe ich nicht wirklich - wieso hat DS einen
-    // "FullCompKindExprDeSer" erfunden?
-    // Ohne kann der SubcomponentSymbolDeSer seinen Job nicht erledigen. Man
-    // würde zwar erwarten, dass der korrekt
-    // konfiguriert würde, aber... just MontiCore things.
-    var fullCompKindDeSer = new FullCompKindExprDeSer() {
-      private KindOfComponentDeSer delegate = new KindOfComponentDeSer();
-
-      @Override
-      public String serializeAsJson(@NonNull CompKindExpression toSerialize) {
-        return delegate.serializeAsJson((KindOfComponent) toSerialize);
-      }
-
-      @Override
-      public CompKindExpression deserialize(@NonNull ICompSymbolsScope scope, @NonNull JsonElement serialized) {
-        return delegate.deserialize(scope, (JsonObject) serialized);
-      }
-    };
-
     MildInstanceSymbolDeSer mySubcomponentSymbolDeSer =
         new MildInstanceSymbolDeSer() {
-      SubcomponentSymbolDeSer delegate = new SubcomponentSymbolDeSer(
-          fullCompKindDeSer);
+      SubcomponentSymbolDeSer delegate = new SubcomponentSymbolDeSer();
 
       @Override
       public String serialize(MildInstanceSymbol toSerialize,
@@ -116,7 +89,7 @@ public class SerializationUtil {
   }
 
   /**
-   * Class extracts PartDefs as ComponentSymbols and adds them to a new scope.
+   * Class extracts PartDefs as ComponentTypeSymbols and adds them to a new scope.
    */
   public static class PartDefExtractor implements SysMLPartsVisitor2 {
     private ISysMLv2Scope artifact;
@@ -129,7 +102,7 @@ public class SerializationUtil {
     public void visit(ASTPartDef node) {
       if (node.getEnclosingScope() instanceof ISysMLv2Scope) {
         var scope = (ISysMLv2Scope) node.getEnclosingScope();
-        var component = scope.resolveComponent(node.getName());
+        var component = scope.resolveComponentType(node.getName());
         if (component.isPresent()) {
           artifact.add(component.get());
         }

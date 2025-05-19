@@ -13,8 +13,8 @@ import de.monticore.symbols.basicsymbols._symboltable.BasicSymbolsDeSer;
 import de.monticore.symbols.basicsymbols._symboltable.BasicSymbolsSymbols2Json;
 import de.monticore.symbols.compsymbols._symboltable.CompSymbolsDeSer;
 import de.monticore.symbols.compsymbols._symboltable.CompSymbolsSymbols2Json;
-import de.monticore.symbols.compsymbols._symboltable.ComponentSymbol;
-import de.monticore.symbols.compsymbols._symboltable.ComponentSymbolDeSer;
+import de.monticore.symbols.compsymbols._symboltable.ComponentTypeSymbol;
+import de.monticore.symbols.compsymbols._symboltable.ComponentTypeSymbolDeSer;
 import de.monticore.symboltable.serialization.JsonPrinter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -55,7 +55,7 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
     var as = process("part def A;");
 
     // Setup eines Scopes aus MildComponentSymbols
-    var comp = as.resolveComponent("A").get();
+    var comp = as.resolveComponentType("A").get();
     var s = SysMLv2Mill.artifactScope();
     s.add(comp);
 
@@ -76,7 +76,7 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
   public void forComponent_Naive() throws IOException {
     var as = process("part def A;");
 
-    var comp = as.resolveComponent("A").get();
+    var comp = as.resolveComponentType("A").get();
     var artifact = SysMLv2Mill.artifactScope();
     artifact.add(comp);
 
@@ -87,7 +87,7 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
         "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
             + "\"symbols\":"
             + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable"
-            + ".ComponentSymbol\",\"name\":\"A\"}]}");
+            + ".ComponentTypeSymbol\",\"name\":\"A\"}]}");
   }
 
   @Disabled
@@ -95,7 +95,7 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
   public void forComponent_NaiveWithInheritance() throws IOException {
     var as = process("part def A;");
 
-    var comp = as.resolveComponent("A").get();
+    var comp = as.resolveComponentType("A").get();
     var artifact = SysMLv2Mill.artifactScope();
     artifact.add(comp);
 
@@ -121,7 +121,7 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
         "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
             + "\"symbols\":"
             + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable"
-            + ".ComponentSymbol\",\"name\":\"A\"}]}");
+            + ".ComponentTypeSymbol\",\"name\":\"A\"}]}");
   }
 
   @Disabled
@@ -129,7 +129,7 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
   public void forComponent_WorkaroundAHe() throws IOException {
     var as = process("part def A;");
 
-    var comp = as.resolveComponent("A").get();
+    var comp = as.resolveComponentType("A").get();
     var artifact = SysMLv2Mill.artifactScope();
     artifact.add(comp);
 
@@ -173,14 +173,14 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
         "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
             + "\"symbols\":"
             + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable"
-            + ".ComponentSymbol\",\"name\":\"A\"}]}");
+            + ".ComponentTypeSymbol\",\"name\":\"A\"}]}");
   }
 
   @Test
   public void forComponent_WorkaroundAHe_WithMPfHandler() throws IOException {
     var as = process("part def A;");
 
-    var comp = as.resolveComponent("A").get();
+    var comp = as.resolveComponentType("A").get();
     var artifact = SysMLv2Mill.artifactScope();
     artifact.add(comp);
 
@@ -205,11 +205,11 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
       // Caste und visitiere damit im Super-Type
       @Override
       public void handle(MildComponentSymbol node) {
-        getTraverser().visit((ComponentSymbol) node);
+        getTraverser().visit((ComponentTypeSymbol) node);
         // Direkt Traverse, damit Inheritance-Problem nicht wieder zuschlägt
         //ComponentConnectorHandler.super.handle(node);
         ComponentConnectorHandler.super.traverse(node);
-        getTraverser().endVisit((ComponentSymbol) node);
+        getTraverser().endVisit((ComponentTypeSymbol) node);
       }
     });
 
@@ -254,21 +254,21 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
         "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
             + "\"symbols\":"
             + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable"
-            + ".ComponentSymbol\",\"name\":\"A\",\"fullName\":\"A\"}]}");
+            + ".ComponentTypeSymbol\",\"name\":\"A\",\"fullName\":\"A\"}]}");
   }
 
   @Test
   public void forComponent_WorkaroundAHe2() throws IOException {
     var as = process("part def A;");
 
-    var comp = as.resolveComponent("A").get();
+    var comp = as.resolveComponentType("A").get();
     var artifact = SysMLv2Mill.artifactScope();
     artifact.add(comp);
 
     // Zweiter Versuch von AHe
     MildComponentSymbolDeSer myTypeSymbolDeSer =
         new MildComponentSymbolDeSer() {
-          ComponentSymbolDeSer delegate = new ComponentSymbolDeSer();
+          ComponentTypeSymbolDeSer delegate = new ComponentTypeSymbolDeSer();
 
           @Override
           public String serialize(MildComponentSymbol toSerialize,
@@ -291,6 +291,6 @@ public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
         "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
             + "\"symbols\":"
             + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable"
-            + ".ComponentSymbol\",\"name\":\"A\",\"fullName\":\"A\"}]}");
+            + ".ComponentTypeSymbol\",\"name\":\"A\",\"fullName\":\"A\"}]}");
   }
 }
