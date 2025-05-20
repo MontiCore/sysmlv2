@@ -8,6 +8,6 @@ part def Inverter {
 
   requirement{
     assert constraint{
-      forall nat k:   i.val == <true>.repeat(k)  implies  o.val == <false>.repeat(k)  }
+      forall nat k:   i.val == <true>.times(k)  implies  o.val == <false>.times(k)  }
   }
 }
