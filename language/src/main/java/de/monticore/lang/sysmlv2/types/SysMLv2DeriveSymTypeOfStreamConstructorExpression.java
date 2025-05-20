@@ -39,10 +39,8 @@ public class SysMLv2DeriveSymTypeOfStreamConstructorExpression extends
     calculateCorrectType(type);
   }
 
-
   protected void calculateCorrectType(SymTypeExpression type) {
-    if (this.isStream) {
-      //case for isStream == true
+
       if (type.getTypeInfo().getName().contains("Stream")) {
         //type is already Stream, set TypeCheckResult
         getTypeCheckResult().setResult(type);
@@ -64,17 +62,5 @@ public class SysMLv2DeriveSymTypeOfStreamConstructorExpression extends
           Log.error("0x81010 Type should be Stream");
         }
       }
-    } else {
-      //case for isStream == false
-      if (!type.getTypeInfo().getName().contains("Stream")) {
-        //type is also not Stream, set TypeCheckResult
-        getTypeCheckResult().setResult(type);
-      } else {
-        //but type is Stream
-        Log.error("0x81001 type should not be Stream");
-      }
-    }
   }
-
-
 }

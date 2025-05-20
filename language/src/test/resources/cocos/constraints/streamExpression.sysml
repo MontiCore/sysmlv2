@@ -6,9 +6,8 @@ part def Inverter {
   port i : Booleans;
   port o : ~Booleans;
 
-
   requirement{
-  assert constraint{
+    assert constraint{
       i.val == <true> implies o.val == <false> }
-}
+  }
 }

@@ -93,7 +93,6 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     spannedScope.add(buildLengthFunction());
     spannedScope.add(buildValuesFunction(typeVar));
 
-
     var res = OOSymbolsMill.oOTypeSymbolBuilder()
         .setName("Stream")
         .setSpannedScope(spannedScope)
@@ -247,8 +246,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         .build();
   }
 
-  protected FunctionSymbol buildRepeatFunction(TypeSymbol streamSymbol,
-                                               TypeVarSymbol typeVar) {
+  protected FunctionSymbol buildRepeatFunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
 
     var parameterList = new BasicSymbolsScope();
 
@@ -260,7 +258,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     var returnType = SymTypeExpressionFactory.createGenerics(streamSymbol, SymTypeExpressionFactory.createTypeVariable(typeVar));
 
     return SysMLv2Mill.functionSymbolBuilder()
-        .setName("repeat")
+        .setName("times")
         .setType(returnType)
         .setSpannedScope(parameterList)
         .build();
