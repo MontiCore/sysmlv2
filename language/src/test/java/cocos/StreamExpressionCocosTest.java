@@ -30,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class StreamExpressionCocosTest {
 
   private static final String MODEL_PATH = "src/test/resources/cocos/constraints";
-
   private SysMLv2Tool tool;
 
   @BeforeAll public static void init() {
@@ -91,7 +90,6 @@ public class StreamExpressionCocosTest {
     assertTrue(Log.getFindings().isEmpty(), () -> Log.getFindings().toString());
   }
 
-
   @Test
   public void test() throws IOException {
     var model = "port def Dummy { constraint c { <true>} }";
@@ -113,5 +111,4 @@ public class StreamExpressionCocosTest {
     System.out.println("Type of true: " + type.getResult().printFullName());
     assertThat(type.getResult().printFullName()).isEqualTo("Stream<boolean>");
   }
-
 }
