@@ -41,11 +41,7 @@ public class SysMLv2DeriveSymTypeOfStreamConstructorExpression extends
 
   protected void calculateCorrectType(SymTypeExpression type) {
 
-      if (type.getTypeInfo().getName().contains("Stream")) {
-        //type is already Stream, set TypeCheckResult
-        getTypeCheckResult().setResult(type);
-      } else {
-        //but 'type' is not Stream, we create type of Stream based on 'type'
+        //'type' is not Stream, we create type of Stream based on 'type'
         // resolve the globally defined generic Stream-type
         var streamType = SysMLv2Mill.globalScope().resolveType("Stream");
         if(streamType.isEmpty()) {
@@ -54,13 +50,7 @@ public class SysMLv2DeriveSymTypeOfStreamConstructorExpression extends
         //type is like boolean, int...
         //type = Stream<type>, create SymTypeOfGenerics Stream<type>
         type = SymTypeExpressionFactory.createGenerics(streamType.get(), type);
-
-        //check whether type is a Stream
-        if (type.getTypeInfo().getName().contains("Stream")) {
-          getTypeCheckResult().setResult(type);
-        } else {
-          Log.error("0x81010 Type should be Stream");
-        }
+        getTypeCheckResult().setResult(type);
       }
   }
 }
