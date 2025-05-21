@@ -20,7 +20,7 @@ public class AutomatonSymbolAdapterTest extends NervigeSymboltableTests {
   public void testAutomaton() throws IOException {
     var as = process("part def A { exhibit state S; }");
 
-    var component = as.resolveComponent("A");
+    var component = as.resolveComponentType("A");
     assertThat(component).isPresent();
     assertThat(component.get()).isInstanceOf(MildComponentSymbol.class);
 

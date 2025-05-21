@@ -19,7 +19,7 @@ public class ParameterDeserTest extends NervigeSymboltableTests {
     var as = process("part def A { final attribute p: int; }");
     setupComponentConnectorSerialization();
 
-    var comp = as.resolveComponent("A").get();
+    var comp = as.resolveComponentType("A").get();
     var artifact = SysMLv2Mill.artifactScope();
     artifact.add(comp);
 
@@ -30,7 +30,7 @@ public class ParameterDeserTest extends NervigeSymboltableTests {
             + "\"name\":\"A\","
             + "\"symbols\":["
             + "{"
-            + "\"kind\":\"de.monticore.symbols.compsymbols._symboltable.ComponentSymbol\","
+            + "\"kind\":\"de.monticore.symbols.compsymbols._symboltable.ComponentTypeSymbol\","
             + "\"name\":\"A\","
             + "\"fullName\":\"A\","
             + "\"parameters\":["

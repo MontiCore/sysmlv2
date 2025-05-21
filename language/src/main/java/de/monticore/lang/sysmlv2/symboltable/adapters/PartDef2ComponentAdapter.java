@@ -12,11 +12,11 @@ import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.symbols.compsymbols._symboltable.ComponentSymbol;
+import de.monticore.symbols.compsymbols._symboltable.ComponentTypeSymbol;
 import de.monticore.symbols.compsymbols._symboltable.PortSymbol;
 import de.monticore.symbols.compsymbols._symboltable.SubcomponentSymbol;
 import de.monticore.types.check.CompKindExpression;
-import de.monticore.types.check.KindOfComponent;
+import de.monticore.types.check.CompKindOfComponentType;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
@@ -109,9 +109,9 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
   public List<CompKindExpression> getRefinementsList() {
     List<CompKindExpression> res = new ArrayList<>();
     for(var partDefSymbol: adaptee.getDirectRefinements()) {
-      var compSymbol = ((ISysMLv2Scope)partDefSymbol.getEnclosingScope()).resolveComponent(partDefSymbol.getName());
+      var compSymbol = ((ISysMLv2Scope)partDefSymbol.getEnclosingScope()).resolveComponentType(partDefSymbol.getName());
       if(compSymbol.isPresent()) {
-        res.add(new KindOfComponent(compSymbol.get()));
+        res.add(new CompKindOfComponentType(compSymbol.get()));
       }
     }
     return res;
@@ -174,8 +174,8 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
 
   @Override
   public boolean equals(Object other) {
-    if(other instanceof ComponentSymbol) {
-      return ((ComponentSymbol)other).getFullName().equals(this.getFullName());
+    if(other instanceof ComponentTypeSymbol) {
+      return ((ComponentTypeSymbol)other).getFullName().equals(this.getFullName());
     }
     return false;
   }
