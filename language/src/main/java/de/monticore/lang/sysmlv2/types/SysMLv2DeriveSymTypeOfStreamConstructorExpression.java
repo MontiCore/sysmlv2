@@ -53,4 +53,3 @@ public class SysMLv2DeriveSymTypeOfStreamConstructorExpression extends
         getTypeCheckResult().setResult(type);
       }
   }
-
