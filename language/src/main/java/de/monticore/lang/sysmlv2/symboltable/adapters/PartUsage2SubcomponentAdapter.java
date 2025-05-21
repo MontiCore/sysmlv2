@@ -6,7 +6,7 @@ import de.monticore.lang.componentconnector._symboltable.MildInstanceSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.types.check.CompKindExpression;
-import de.monticore.types.check.KindOfComponent;
+import de.monticore.types.check.CompKindOfComponentType;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
@@ -39,7 +39,7 @@ public class PartUsage2SubcomponentAdapter extends MildInstanceSymbol {
   public CompKindExpression getType() {
     if(adaptee.getPartDef().isPresent()) {
       var compSymbol = new PartDef2ComponentAdapter(adaptee.getPartDef().get());
-      return new KindOfComponent(compSymbol);
+      return new CompKindOfComponentType(compSymbol);
     }
     Log.error("0x10002 No type could be determined", getSourcePosition());
     return null;

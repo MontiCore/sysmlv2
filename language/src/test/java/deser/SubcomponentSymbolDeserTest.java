@@ -19,7 +19,7 @@ public class SubcomponentSymbolDeserTest extends NervigeSymboltableTests {
     var as = process("part def B; part def A { part b: B; }");
     setupComponentConnectorSerialization();
 
-    var comp = as.resolveComponent("A").get();
+    var comp = as.resolveComponentType("A").get();
     var artifact = SysMLv2Mill.artifactScope();
     artifact.add(comp);
 
@@ -30,7 +30,7 @@ public class SubcomponentSymbolDeserTest extends NervigeSymboltableTests {
             + "\"name\":\"A\","
             + "\"symbols\":["
             + "{"
-            + "\"kind\":\"de.monticore.symbols.compsymbols._symboltable.ComponentSymbol\","
+            + "\"kind\":\"de.monticore.symbols.compsymbols._symboltable.ComponentTypeSymbol\","
             + "\"name\":\"A\","
             + "\"fullName\":\"A\","
             + "\"spannedScope\":{"

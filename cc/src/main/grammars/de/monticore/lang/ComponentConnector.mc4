@@ -4,7 +4,7 @@ package de.monticore.lang;
 import de.monticore.symbols.BasicSymbols.*;
 
 /**
- * Definiert Erweiterungen für MontiCore's CompSymbols, die aus Anforderunge
+ * Definiert Erweiterungen für MontiCore's CompSymbols, die aus Anforderungen
  * der MontiBelle-Gruppe und spezifisch der Transformation von Component-
  * Connector-Modellen nach Isabelle hervor gehen.
  */
@@ -16,14 +16,14 @@ component grammar ComponentConnector
 {
 
   /**
-   * Erweiterungen für ComponentSymbols durch Symbol Rules.
+   * Erweiterungen für ComponentTypeSymbols durch Symbol Rules.
    */
-  interface symbol MildComponent extends Component = Name ;
+  interface symbol MildComponent extends ComponentType = Name ;
 
   /**
    * Connectors sind keine Symbole, beinhalten aber essentielle Informationen
    * für Component-Connector-Netzwerke. Wir definieren deswegen das Interface
-   * und fordern, dass ComponentSymbols eine Liste von Connectors bereit halten.
+   * und fordern, dass ComponentTypeSymbols eine Liste von Connectors bereit halten.
    * Unsere Java-Implementation sieht vor, dass die Connectors aus dem AST der
    * jeweiligen konkreten Sprache (zB. SysML oder MontiArc) abgeleitet werden.
    */
@@ -31,7 +31,7 @@ component grammar ComponentConnector
 
   /**
    * Wir fügen hinzu:
-   * - Connectors.   Sind essesntielle Information für die Komposition.
+   * - Connectors.   Sind essentielle Information für die Komposition.
    *                 Subkomponenten können als Symbole im Scope schwimmen.
    *                 Connectors nicht.
    */
