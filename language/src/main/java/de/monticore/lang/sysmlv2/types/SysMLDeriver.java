@@ -64,6 +64,11 @@ public class SysMLDeriver extends AbstractDerive {
     getTraverser().add4CommonExpressions(forCommonExpr);
     getTraverser().setCommonExpressionsHandler(forCommonExpr);
 
+    SysMLv2DeriveSymTypeOfStreamConstructorExpression forStreamExpr = new SysMLv2DeriveSymTypeOfStreamConstructorExpression(this.isStream);
+    forStreamExpr.setTypeCheckResult(typeCheckResult);
+    getTraverser().add4StreamExpressions(forStreamExpr);
+    getTraverser().setStreamExpressionsHandler(forStreamExpr);
+
     DeriveSymTypeOfSetExpressions deriveSymTypeOfSetExpressions = new DeriveSymTypeOfSetExpressions();
     deriveSymTypeOfSetExpressions.setTypeCheckResult(typeCheckResult);
     getTraverser().add4SetExpressions(deriveSymTypeOfSetExpressions);

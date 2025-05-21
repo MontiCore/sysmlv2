@@ -12,6 +12,7 @@ import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.symbols.oosymbols._symboltable.OOSymbolsScope;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
+import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.SymTypeVariable;
@@ -100,6 +101,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     // Stream muss bereits existieren
     spannedScope.add(buildAtTimeFunction(res, typeVar));
     spannedScope.add(buildMessagesFunction(res, typeVar));
+    spannedScope.add(buildRepeatFunction(res, typeVar));
 
     return res;
   }
@@ -241,6 +243,24 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
             SymTypeExpressionFactory.createTypeVariable(typeVar))
         )
         .setSpannedScope(new BasicSymbolsScope())
+        .build();
+  }
+
+  protected FunctionSymbol buildRepeatFunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
+
+    var parameterList = new BasicSymbolsScope();
+
+    VariableSymbol parameter = SysMLv2Mill.variableSymbolBuilder().setName(
+        "k").setType(buildNatType()).build();
+    parameterList.add(typeVar);
+    parameterList.add(parameter);
+
+    var returnType = SymTypeExpressionFactory.createGenerics(streamSymbol, SymTypeExpressionFactory.createTypeVariable(typeVar));
+
+    return SysMLv2Mill.functionSymbolBuilder()
+        .setName("times")
+        .setType(returnType)
+        .setSpannedScope(parameterList)
         .build();
   }
 
