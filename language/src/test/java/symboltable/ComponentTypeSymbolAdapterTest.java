@@ -16,13 +16,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Testet die Adaptation von SysML <-> ComponentConnector
  */
-public class ComponentSymbolAdapterTest extends NervigeSymboltableTests {
+public class ComponentTypeSymbolAdapterTest extends NervigeSymboltableTests {
 
   @Test
   public void testMildComponent() throws IOException {
     var as = process("part def A;");
 
-    var comp = as.resolveComponent("A");
+    var comp = as.resolveComponentType("A");
     assertThat(comp).isPresent();
 
     var mcomp = as.resolveMildComponent("A");

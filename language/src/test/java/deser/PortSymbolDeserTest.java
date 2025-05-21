@@ -21,7 +21,7 @@ public class PortSymbolDeserTest extends NervigeSymboltableTests {
         "part def A { port b: B; } port def B { in attribute b: boolean; }");
     setupComponentConnectorSerialization();
 
-    var comp = as.resolveComponent("A").get();
+    var comp = as.resolveComponentType("A").get();
     var artifact = SysMLv2Mill.artifactScope();
     artifact.add(comp);
 
@@ -32,7 +32,7 @@ public class PortSymbolDeserTest extends NervigeSymboltableTests {
             + "\"name\":\"A\","
             + "\"symbols\":["
             + "{"
-            + "\"kind\":\"de.monticore.symbols.compsymbols._symboltable.ComponentSymbol\","
+            + "\"kind\":\"de.monticore.symbols.compsymbols._symboltable.ComponentTypeSymbol\","
             + "\"name\":\"A\","
             + "\"fullName\":\"A\","
             + "\"spannedScope\":{"
@@ -63,7 +63,7 @@ public class PortSymbolDeserTest extends NervigeSymboltableTests {
         "part def A { port b: ~B; } port def B { in attribute b: boolean; }");
     setupComponentConnectorSerialization();
 
-    var comp = as.resolveComponent("A").get();
+    var comp = as.resolveComponentType("A").get();
     var artifact = SysMLv2Mill.artifactScope();
     artifact.add(comp);
 
@@ -72,7 +72,7 @@ public class PortSymbolDeserTest extends NervigeSymboltableTests {
         "{\"generated-using\":\"www.MontiCore.de technology\",\"name\":\"A\","
             + "\"symbols\":"
             + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable"
-            + ".ComponentSymbol\",\"name\":\"A\",\"ports\":"
+            + ".ComponentTypeSymbol\",\"name\":\"A\",\"ports\":"
             + "[{\"kind\":\"de.monticore.symbols.compsymbols._symboltable"
             + ".PortSymbol\",\"name\":\"b.b\",\"type\":"
             + "{\"kind\":\"de.monticore.types.check.SymTypePrimitive\","
