@@ -67,8 +67,8 @@ component grammar SysMLActions
     Modifier UserDefinedKeyword* "action"?
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "if" guard:Expression
-    (InlineActionUsage | "{" SysMLElement* "}")
-    ("else" (ActionUsage | "{" SysMLElement* "}"))? ;
+    (InlineActionUsage | "{" ifElems:SysMLElement* "}")
+    ("else" (ActionUsage | "{" elseElems:SysMLElement* "}"))? ;
 
   /** See section 7.16.8 in 2a-OMG_Systems_Modeling_Language.pdf */
   Payload =
@@ -158,7 +158,7 @@ component grammar SysMLActions
 
   symbol scope ForLoopActionUsage extends ActionUsage =
     Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
-    "for" loopVar:Name Specialization* "in" (start:Expression ".." end:Expression | sequence:Expression)
+    "for" loopVar:Name loopSpecs:Specialization* "in" (start:Expression ".." end:Expression | sequence:Expression)
     BodyClause ;
 
   BodyClause =
@@ -212,7 +212,7 @@ component grammar SysMLActions
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("first" SuccessionFirst)?
     (["if"] guard:Expression "then" | ["else"])
-    MCQualifiedName SysMLCardinality? Specialization* ("{" SysMLElement* "}" | ";") ;
+    MCQualifiedName SysMLCardinality? innerSpecs:Specialization* ("{" SysMLElement* "}" | ";") ;
 
   /** ==================================================================================================================
    * Calculations
