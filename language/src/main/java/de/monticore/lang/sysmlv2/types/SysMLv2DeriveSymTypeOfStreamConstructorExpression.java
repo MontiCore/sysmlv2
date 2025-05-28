@@ -12,10 +12,7 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.se_rwth.commons.logging.Log;
 
-public class SysMLv2DeriveSymTypeOfStreamConstructorExpression extends
-    AbstractDeriveFromExpression implements
-    StreamExpressionsVisitor2, StreamExpressionsHandler{
-
+public class SysMLv2DeriveSymTypeOfStreamConstructorExpression extends AbstractDeriveFromExpression implements StreamExpressionsVisitor2, StreamExpressionsHandler{
   protected StreamExpressionsTraverser traverser;
   protected boolean isStream;
 
@@ -40,16 +37,11 @@ public class SysMLv2DeriveSymTypeOfStreamConstructorExpression extends
   }
 
   protected void calculateCorrectType(SymTypeExpression type) {
-
-        //'type' is not Stream, we create type of Stream based on 'type'
-        // resolve the globally defined generic Stream-type
-        var streamType = SysMLv2Mill.globalScope().resolveType("Stream");
-        if(streamType.isEmpty()) {
-          Log.error("Stream not defined in global scope. Initialize it with 'SysMLv2Mill.addStreamType()'!");
-        }
-        //type is like boolean, int...
-        //type = Stream<type>, create SymTypeOfGenerics Stream<type>
-        type = SymTypeExpressionFactory.createGenerics(streamType.get(), type);
-        getTypeCheckResult().setResult(type);
-      }
+    var streamType = SysMLv2Mill.globalScope().resolveType("Stream");
+    if(streamType.isEmpty()) {
+      Log.error("0x81010 Stream not defined in global scope. Initialize it with 'SysMLv2Mill.addStreamType()'!");
+    }
+    type = SymTypeExpressionFactory.createGenerics(streamType.get(), type);
+    getTypeCheckResult().setResult(type);
+    }
   }

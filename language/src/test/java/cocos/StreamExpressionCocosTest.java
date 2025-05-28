@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package cocos;
 
-import de.monticore.expressions.commonexpressions.types3.util.CommonExpressionsLValueRelations;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortDef;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
@@ -11,8 +10,6 @@ import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
 import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
-import de.monticore.types3.Type4Ast;
-import de.monticore.types3.generics.context.InferenceContext4Ast;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,15 +17,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
 import java.io.IOException;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StreamExpressionCocosTest {
-
   private static final String MODEL_PATH = "src/test/resources/cocos/constraints";
   private SysMLv2Tool tool;
 
@@ -51,7 +44,6 @@ public class StreamExpressionCocosTest {
   public void teststreamRepeat(String modelName) throws IOException {
     var optAst = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName);
     assertThat(optAst).isPresent();
-
     ASTSysMLModel ast = optAst.get();
 
     tool.createSymbolTable(ast);
@@ -74,7 +66,6 @@ public class StreamExpressionCocosTest {
   public void testStreamExpression(String modelName) throws IOException {
     var optAst = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName);
     assertThat(optAst).isPresent();
-
     ASTSysMLModel ast = optAst.get();
 
     tool.createSymbolTable(ast);
@@ -103,7 +94,6 @@ public class StreamExpressionCocosTest {
 
     var constraint = (ASTConstraintUsage)((ASTPortDef)ast.get().getSysMLElement(0)).getSysMLElement(0);
     var expr = constraint.getExpression();
-
     var deriver = new SysMLDeriver(true);
     var type = deriver.deriveType(expr);
 
