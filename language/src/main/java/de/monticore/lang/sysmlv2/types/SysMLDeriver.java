@@ -3,13 +3,11 @@ package de.monticore.lang.sysmlv2.types;
 
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.lang.sysmlexpressions.SysMLExpressionsMill;
-import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsTraverser;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLExpressions;
 import de.monticore.ocl.types.check.DeriveSymTypeOfSetExpressions;
 import de.monticore.types.check.AbstractDerive;
-import de.monticore.types.check.DeriveSymTypeOfCommonExpressions;
 import de.monticore.types.check.DeriveSymTypeOfExpression;
 import de.monticore.types.check.DeriveSymTypeOfLiterals;
 import de.monticore.types.check.DeriveSymTypeOfMCCommonLiterals;
@@ -77,6 +75,12 @@ public class SysMLDeriver extends AbstractDerive {
     synthesizeSymTypeFromMCBasicTypes.setTypeCheckResult(typeCheckResult);
     getTraverser().add4MCBasicTypes(synthesizeSymTypeFromMCBasicTypes);
     getTraverser().setMCBasicTypesHandler(synthesizeSymTypeFromMCBasicTypes);
+
+    SysMLDeriveSymTypeOfStreamExpressions sysMLDeriveSymTypeOfStreamExpressions = new SysMLDeriveSymTypeOfStreamExpressions();
+    sysMLDeriveSymTypeOfStreamExpressions.setTypeCheckResult(typeCheckResult);
+    getTraverser().add4StreamExpressions(sysMLDeriveSymTypeOfStreamExpressions);
+    getTraverser().setStreamExpressionsHandler(
+        sysMLDeriveSymTypeOfStreamExpressions);
 
     var synthesizer = new SysMLSynthesizer();
     synthesizer.init(getTraverser());
