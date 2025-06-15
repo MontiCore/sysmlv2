@@ -46,6 +46,8 @@ import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.lang.sysmlv2.types.SysMLSynthesizer;
 import de.monticore.ocl.oclexpressions.symboltable.OCLExpressionsSymbolTableCompleter;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
+import de.monticore.symbols.oosymbols._symboltable.MethodSymbolDeSer;
+import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbolDeSer;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -57,10 +59,13 @@ import org.checkerframework.checker.units.qual.A;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.JarURLConnection;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 public class SysMLv2Tool extends SysMLv2ToolTOP {
@@ -70,6 +75,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     super.init();
     SysMLv2Mill.globalScope().clear();
     SysMLv2Mill.prepareGlobalScope();
+    loadStreamSymbolsFromJar();
   }
 
   @Override
@@ -429,5 +435,37 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
       Log.error("0xA5C06x33289 Could not process SysMLv2Tool parameters: "
           + e.getMessage());
     }
+  }
+
+  public void loadStreamSymbolsFromJar()  {
+    URL streamDefUrl = SysMLv2Tool.class.getClassLoader().getResource("Stream.symtabdefinitionsym");
+
+    if (streamDefUrl == null) {
+      Log.error("0xPA090 Failed to find Stream.symtabdefinitionsym on the classpath.");
+      return;
+    }
+
+    if (!"jar".equals(streamDefUrl.getProtocol())) {
+      Log.error("0xPA091 Expected Stream.symtabdefinitionsym to be loaded from a JAR");
+      return;
+    }
+
+    JarURLConnection conn = null;
+    JarFile jar = null;
+
+    try {
+      conn = (JarURLConnection) streamDefUrl.openConnection();
+      jar = conn.getJarFile();
+    }
+    catch (IOException e) {
+      Log.error("0xPA092 Failed to open symbol definition from JAR URL");
+    }
+
+    Path jarPath = Path.of(jar.getName());
+
+    SysMLv2Mill.globalScope().getSymbolPath().addEntry(jarPath);
+
+    SysMLv2Mill.globalScope().putSymbolDeSer("de.monticore.cdbasis._symboltable.CDTypeSymbol", new OOTypeSymbolDeSer());
+    SysMLv2Mill.globalScope().putSymbolDeSer("de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol", new MethodSymbolDeSer());
   }
 }

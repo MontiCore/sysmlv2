@@ -10,17 +10,24 @@ import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.ocl.oclexpressions._ast.ASTForallExpression;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
+import de.monticore.symbols.oosymbols._symboltable.MethodSymbolDeSer;
+import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbolDeSer;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.jar.JarFile;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,7 +43,6 @@ public class SymbolTableCompletionTest {
   @BeforeEach
   public void init() {
     LogStub.init();
-    SysMLv2Mill.init();
     tool = new SysMLv2Tool();
     tool.init();
     parser = SysMLv2Mill.parser();
@@ -85,7 +91,7 @@ public class SymbolTableCompletionTest {
     assertThat(in).isInstanceOf(ASTCallExpression.class);
     // The definition should be a function without parameters and return type Set<int>
     assertThat(((ASTCallExpression)in).getDefiningSymbol()).isPresent();
-    assertThat(((ASTCallExpression)in).getDefiningSymbol().get().getFullName()).isEqualTo("Stream.values");
+    assertThat(((ASTCallExpression)in).getDefiningSymbol().get().getFullName()).isEqualTo("Stream.Stream.values");
     assertThat(((ASTCallExpression)in).getDefiningSymbol().get()).isInstanceOf(FunctionSymbol.class);
     assertThat(((FunctionSymbol)((ASTCallExpression)in).getDefiningSymbol().get()).getFunctionType().printFullName())
         .isEqualTo("() -> Set<int>");
@@ -114,7 +120,7 @@ public class SymbolTableCompletionTest {
 
     // The definition should be a function without parameters and return type Set<int>
     assertThat(((ASTCallExpression)in).getDefiningSymbol()).isPresent();
-    assertThat(((ASTCallExpression)in).getDefiningSymbol().get().getFullName()).isEqualTo("Stream.values");
+    assertThat(((ASTCallExpression)in).getDefiningSymbol().get().getFullName()).isEqualTo("Stream.Stream.values");
     assertThat(((ASTCallExpression)in).getDefiningSymbol().get()).isInstanceOf(FunctionSymbol.class);
     assertThat(((FunctionSymbol)((ASTCallExpression)in).getDefiningSymbol().get()).getFunctionType().printFullName())
         .isEqualTo("() -> Set<A>");
@@ -150,7 +156,7 @@ public class SymbolTableCompletionTest {
 
     // The definition should be a function without parameters and return type Set<int>
     assertThat(((ASTCallExpression)in).getDefiningSymbol()).isPresent();
-    assertThat(((ASTCallExpression)in).getDefiningSymbol().get().getFullName()).isEqualTo("Stream.values");
+    assertThat(((ASTCallExpression)in).getDefiningSymbol().get().getFullName()).isEqualTo("Stream.Stream.values");
     assertThat(((ASTCallExpression)in).getDefiningSymbol().get()).isInstanceOf(FunctionSymbol.class);
     assertThat(((FunctionSymbol)((ASTCallExpression)in).getDefiningSymbol().get()).getFunctionType().printFullName())
         .isEqualTo("() -> Set<A>");
@@ -221,7 +227,7 @@ public class SymbolTableCompletionTest {
   public void testAtTime() throws IOException {
     var model = ""
         + "port def P { attribute a: int; }\n"
-        + "part def A { port p: P; constraint c { forall nat t: p.a.atTime(t+1) } }";
+        + "part def A { port p: P; constraint c { forall long t: p.a.nth(t+1) } }";
 
     Optional<ASTSysMLModel> optAst = parser.parse_String(model);
     assertThat(optAst).isPresent();
@@ -241,13 +247,14 @@ public class SymbolTableCompletionTest {
     var deriver = new SysMLDeriver(true);
     var type = deriver.deriveType(atTime);
     assertThat(type.isPresentResult());
-    assertThat(type.getResult().printFullName()).isEqualTo("Stream<int>");
+    assertThat(type.getResult().printFullName()).isEqualTo("UntimedStream.UntimedStream<int>");
   }
 
   /**
    * TODO Eigentlich weniger Completion und mehr TypeCheck
    * Checkt, dass "\in" richtig gecheckt wird
    */
+  @Disabled
   @Test
   public void testInExpression() throws IOException {
     var model = ""

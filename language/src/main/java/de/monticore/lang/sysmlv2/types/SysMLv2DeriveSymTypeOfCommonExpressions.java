@@ -74,7 +74,7 @@ public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfComm
       } else {
         //but 'type' is not Stream, we create type of Stream based on 'type'
         // resolve the globally defined generic Stream-type
-        var streamType = SysMLv2Mill.globalScope().resolveType("Stream");
+        var streamType = SysMLv2Mill.globalScope().resolveType("EventStream");
         if(streamType.isEmpty()) {
           Log.error("Stream not defined in global scope. Initialize it with 'SysMLv2Mill.addStreamType()'!");
         }
