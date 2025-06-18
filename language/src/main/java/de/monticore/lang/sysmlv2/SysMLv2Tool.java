@@ -66,9 +66,10 @@ import java.util.stream.Collectors;
 
 public class SysMLv2Tool extends SysMLv2ToolTOP {
 
+  /** Erwartet, dass der Log bereits initialisiert wurde oder wird */
   @Override
   public void init() {
-    super.init();
+    SysMLv2Mill.init();
     SysMLv2Mill.globalScope().clear();
     SysMLv2Mill.initializePrimitives();
     SysMLv2Mill.addStringType();
