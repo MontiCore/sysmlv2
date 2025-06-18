@@ -57,6 +57,7 @@ public class ConstraintCoCoTest {
       "12_valid.sysml", // constraint with parameter
       "13_valid.sysml", // OCL exists expression
       "14_valid.sysml", // StreamConstructor Expression
+      "15_valid.sysml", //Times function for StreamConstructor Expression
   })
   public void testValid(String modelName) throws IOException {
     var optAst = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName);
@@ -91,6 +92,7 @@ public class ConstraintCoCoTest {
       //"12_invalid.sysml", // constraint with parameter
       "13_invalid.sysml", // OCL exists expression
       "14_invalid.sysml", // StreamConstructor Expression
+      "15_invalid.sysml", //Times function for StreamConstructor Expression
   })
   public void testInvalid(String modelName) throws IOException {
     var optAst = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName);
