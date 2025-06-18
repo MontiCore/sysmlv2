@@ -100,6 +100,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     // Stream muss bereits existieren
     spannedScope.add(buildAtTimeFunction(res, typeVar));
     spannedScope.add(buildMessagesFunction(res, typeVar));
+    spannedScope.add(buildTimesFunction(res, typeVar));
 
     return res;
   }
@@ -241,6 +242,23 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
             SymTypeExpressionFactory.createTypeVariable(typeVar))
         )
         .setSpannedScope(new BasicSymbolsScope())
+        .build();
+  }
+
+  protected FunctionSymbol buildTimesFunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
+    var parameterList = new BasicSymbolsScope();
+
+    VariableSymbol parameter = SysMLv2Mill.variableSymbolBuilder().setName(
+        "k").setType(buildNatType()).build();
+    parameterList.add(typeVar);
+    parameterList.add(parameter);
+
+    var returnType = SymTypeExpressionFactory.createGenerics(streamSymbol, SymTypeExpressionFactory.createTypeVariable(typeVar));
+
+    return SysMLv2Mill.functionSymbolBuilder()
+        .setName("times")
+        .setType(returnType)
+        .setSpannedScope(parameterList)
         .build();
   }
 
