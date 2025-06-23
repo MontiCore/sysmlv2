@@ -291,4 +291,34 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         .setSpannedScope(new BasicSymbolsScope())
         .build();
   }
+
+  protected FunctionSymbol buildInfTimesFunction(TypeSymbol streamSymbol) {
+    var parameterList = new BasicSymbolsScope();
+
+    var returnType = SymTypeExpressionFactory.createGenerics(streamSymbol);
+
+    return SysMLv2Mill.functionSymbolBuilder()
+        .setName("inftimes")
+        .setType(returnType)
+        .setSpannedScope(parameterList)
+        .build();
+  }
+
+
+  protected FunctionSymbol buildTakesDunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
+    var parameterList = new BasicSymbolsScope();
+
+    VariableSymbol parameter = SysMLv2Mill.variableSymbolBuilder().setName(
+        "k").setType(buildNatType()).build();
+    parameterList.add(typeVar);
+    parameterList.add(parameter);
+
+    var returnType = SymTypeExpressionFactory.createGenerics(streamSymbol, SymTypeExpressionFactory.createTypeVariable(typeVar));
+
+    return SysMLv2Mill.functionSymbolBuilder()
+        .setName("takes")
+        .setType(returnType)
+        .setSpannedScope(parameterList)
+        .build();
+  }
 }
