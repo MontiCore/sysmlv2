@@ -101,6 +101,8 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     spannedScope.add(buildAtTimeFunction(res, typeVar));
     spannedScope.add(buildMessagesFunction(res, typeVar));
     spannedScope.add(buildTimesFunction(res, typeVar));
+    spannedScope.add(buildInfTimesFunction(res, typeVar));
+    spannedScope.add(buildTakesFunction(res, typeVar));
 
     return res;
   }
@@ -292,31 +294,39 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         .build();
   }
 
-  protected FunctionSymbol buildInfTimesFunction(TypeSymbol streamSymbol) {
+protected FunctionSymbol buildTakesFunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
     var parameterList = new BasicSymbolsScope();
 
-    var returnType = SymTypeExpressionFactory.createGenerics(streamSymbol);
+    VariableSymbol parameter = SysMLv2Mill.variableSymbolBuilder()
+        .setName("k")
+        .setType(buildNatType())
+        .build();
+
+    parameterList.add(typeVar);
+    parameterList.add(parameter);
+
+    var returnType = SymTypeExpressionFactory.createGenerics(
+        streamSymbol,
+        SymTypeExpressionFactory.createTypeVariable(typeVar)
+    );
 
     return SysMLv2Mill.functionSymbolBuilder()
-        .setName("inftimes")
+        .setName("takes")
         .setType(returnType)
         .setSpannedScope(parameterList)
         .build();
   }
-
-
-  protected FunctionSymbol buildTakesDunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
+protected FunctionSymbol buildInfTimesFunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
     var parameterList = new BasicSymbolsScope();
-
-    VariableSymbol parameter = SysMLv2Mill.variableSymbolBuilder().setName(
-        "k").setType(buildNatType()).build();
     parameterList.add(typeVar);
-    parameterList.add(parameter);
 
-    var returnType = SymTypeExpressionFactory.createGenerics(streamSymbol, SymTypeExpressionFactory.createTypeVariable(typeVar));
+    var returnType = SymTypeExpressionFactory.createGenerics(
+        streamSymbol,
+        SymTypeExpressionFactory.createTypeVariable(typeVar)
+    );
 
     return SysMLv2Mill.functionSymbolBuilder()
-        .setName("takes")
+        .setName("infTimes")
         .setType(returnType)
         .setSpannedScope(parameterList)
         .build();

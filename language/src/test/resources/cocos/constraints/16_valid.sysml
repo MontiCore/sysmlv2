@@ -7,6 +7,6 @@ part def Inverter {
   port o: ~Booleans;
 
   assert constraint {
-    forall nat k: <true>.times(k).take(k) == <true>.infTimes().take(k)
+    forall nat k: <true>.times(k).takes(k) == <true>.infTimes().takes(k)
   }
 }
