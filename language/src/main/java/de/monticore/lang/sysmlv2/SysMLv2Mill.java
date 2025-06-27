@@ -316,7 +316,8 @@ protected FunctionSymbol buildTakesFunction(TypeSymbol streamSymbol, TypeVarSymb
         .setSpannedScope(parameterList)
         .build();
   }
-protected FunctionSymbol buildInfTimesFunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
+
+  protected FunctionSymbol buildInfTimesFunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
     var parameterList = new BasicSymbolsScope();
     parameterList.add(typeVar);
 
