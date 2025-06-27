@@ -101,6 +101,8 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     spannedScope.add(buildAtTimeFunction(res, typeVar));
     spannedScope.add(buildMessagesFunction(res, typeVar));
     spannedScope.add(buildTimesFunction(res, typeVar));
+    spannedScope.add(buildInfTimesFunction(res, typeVar));
+    spannedScope.add(buildTakesFunction(res, typeVar));
 
     return res;
   }
@@ -289,6 +291,45 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
             SymTypeExpressionFactory.createTypeVariable(typeVar))
         )
         .setSpannedScope(new BasicSymbolsScope())
+        .build();
+  }
+
+  protected FunctionSymbol buildTakesFunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
+    var parameterList = new BasicSymbolsScope();
+
+    VariableSymbol parameter = SysMLv2Mill.variableSymbolBuilder()
+        .setName("k")
+        .setType(buildNatType())
+        .build();
+
+    parameterList.add(typeVar);
+    parameterList.add(parameter);
+
+    var returnType = SymTypeExpressionFactory.createGenerics(
+        streamSymbol,
+        SymTypeExpressionFactory.createTypeVariable(typeVar)
+    );
+
+    return SysMLv2Mill.functionSymbolBuilder()
+        .setName("takes")
+        .setType(returnType)
+        .setSpannedScope(parameterList)
+        .build();
+  }
+
+  protected FunctionSymbol buildInfTimesFunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
+    var parameterList = new BasicSymbolsScope();
+    parameterList.add(typeVar);
+
+    var returnType = SymTypeExpressionFactory.createGenerics(
+        streamSymbol,
+        SymTypeExpressionFactory.createTypeVariable(typeVar)
+    );
+
+    return SysMLv2Mill.functionSymbolBuilder()
+        .setName("infTimes")
+        .setType(returnType)
+        .setSpannedScope(parameterList)
         .build();
   }
 }
