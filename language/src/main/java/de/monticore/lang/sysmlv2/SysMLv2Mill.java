@@ -294,7 +294,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         .build();
   }
 
-protected FunctionSymbol buildTakesFunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
+  protected FunctionSymbol buildTakesFunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
     var parameterList = new BasicSymbolsScope();
 
     VariableSymbol parameter = SysMLv2Mill.variableSymbolBuilder()
