@@ -69,11 +69,8 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
   public void init() {
     super.init();
     SysMLv2Mill.globalScope().clear();
-    SysMLv2Mill.initializePrimitives();
-    SysMLv2Mill.addStringType();
-    SysMLv2Mill.addCollectionTypes();
-    SysMLv2Mill.addStreamType();
-    OCLSymTypeRelations.init();
+    SysMLv2Mill.prepareGlobalScope();
+
   }
 
   @Override

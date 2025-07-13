@@ -2,6 +2,8 @@
 package de.monticore.lang.sysmlv2;
 
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.monticore.ocl.types3.OCLSymTypeRelations;
+import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.symbols.basicsymbols._symboltable.BasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsGlobalScope;
@@ -19,6 +21,21 @@ import de.monticore.types.check.SymTypeVariable;
 import java.util.Arrays;
 
 public class SysMLv2Mill extends SysMLv2MillTOP {
+
+  /**
+   * Prepares the current global scope, i.e., adds symbols to it. Does not initialize anything else, especially not the
+   * Mill itself. Does not clear the scope beforehand.
+   */
+  public static void prepareGlobalScope() {
+    SysMLv2Mill.initializePrimitives();
+    SysMLv2Mill.addStringType();
+    // Doppelt gemoppelt?
+    MCCollectionSymTypeRelations.init();
+    SysMLv2Mill.addCollectionTypes();
+    SysMLv2Mill.addStreamType();
+    OCLSymTypeRelations.init();
+  }
+
 
   /**
    * BasicSymbolsMill.initializePrimitives plus our own

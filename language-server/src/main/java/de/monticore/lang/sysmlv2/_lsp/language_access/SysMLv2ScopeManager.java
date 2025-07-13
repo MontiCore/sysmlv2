@@ -33,16 +33,12 @@ public class SysMLv2ScopeManager extends SysMLv2ScopeManagerTOP {
 
   @Override
   public void initGlobalScope(MCPath modelPath) {
-    SysMLv2Mill.init();
-    SysMLv2Mill.globalScope().clear();
-    SysMLv2Mill.initializePrimitives();
-    SysMLv2Mill.addStringType();
-    SysMLv2Mill.addCollectionTypes();
-    SysMLv2Mill.addStreamType();
+    // Mill init, clear global scope, set internal reference to this global scope
+    super.initGlobalScope(modelPath);
 
-    SysMLv2GlobalScope globalScope = (SysMLv2GlobalScope) SysMLv2Mill.globalScope();
-    globalScope.setSymbolPath(modelPath);
-    setGlobalScope(globalScope);
+    // Load globally available symbols like int, boolean, List
+    SysMLv2Mill.prepareGlobalScope();
+
   }
 
   @Override
