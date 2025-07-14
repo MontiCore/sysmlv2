@@ -70,7 +70,6 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     super.init();
     SysMLv2Mill.globalScope().clear();
     SysMLv2Mill.prepareGlobalScope();
-
   }
 
   @Override

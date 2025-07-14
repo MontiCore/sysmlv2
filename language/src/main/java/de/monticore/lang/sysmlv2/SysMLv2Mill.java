@@ -36,7 +36,6 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     OCLSymTypeRelations.init();
   }
 
-
   /**
    * BasicSymbolsMill.initializePrimitives plus our own
    */

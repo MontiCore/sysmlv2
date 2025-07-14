@@ -38,7 +38,6 @@ public class SysMLv2ScopeManager extends SysMLv2ScopeManagerTOP {
 
     // Load globally available symbols like int, boolean, List
     SysMLv2Mill.prepareGlobalScope();
-
   }
 
   @Override
