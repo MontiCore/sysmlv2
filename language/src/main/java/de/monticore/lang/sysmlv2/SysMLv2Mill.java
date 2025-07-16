@@ -34,7 +34,6 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     // Doppelt gemoppelt?
     MCCollectionSymTypeRelations.init();
     SysMLv2Mill.addCollectionTypes();
-    SysMLv2Mill.addStreamType();
     OCLSymTypeRelations.init();
   }
 

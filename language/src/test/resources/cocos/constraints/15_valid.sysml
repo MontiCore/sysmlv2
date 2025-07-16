@@ -7,6 +7,6 @@ part def Inverter {
   port o: ~Booleans;
 
   assert constraint {
-    forall nat k: i.val == <true>.times(k) implies o.val == <false>.times(k)
+    forall long k: i.val == <true>.times(k) implies o.val == <false>.times(k)
   }
 }
