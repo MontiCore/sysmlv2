@@ -57,7 +57,7 @@ public class TypeCheck4CardinalExpressionsTest {
     var deriver = new SysMLDeriver();
     var type = deriver.deriveType(expr);
     assertTrue(type.isPresentResult());
-    assertThat(type.getResult().printFullName()).isEqualTo("Stream<boolean>");
+    assertThat(type.getResult().printFullName()).isEqualTo("EventStream.EventStream<boolean>");
   }
 
   @Test

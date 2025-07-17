@@ -97,7 +97,7 @@ public class FieldAccessExpressionInStateUsageTest {
     } else if (astSysmlelement instanceof ASTConstraintUsage) {
       var expr = ((ASTConstraintUsage) astSysmlelement).getExpression();
       var type = deriver.deriveType(expr);
-      assertThat(type.getResult().printFullName()).isEqualTo("Stream<boolean>");
+      assertThat(type.getResult().printFullName()).isEqualTo("EventStream.EventStream<boolean>");
     } else {
       // TODO The test is too complex
       Assertions.fail("ASTSysMLElement should here be ASTStateUsage or ASTConstraintUsage");

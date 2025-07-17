@@ -7,6 +7,6 @@ part def LogicBasedConstraints {
   port myPortDef: Booleans;
 
   constraint constraintName {
-    myPortDef.boolAttr.length() > 1
+    myPortDef.boolAttr.len() > 1
   }
 }

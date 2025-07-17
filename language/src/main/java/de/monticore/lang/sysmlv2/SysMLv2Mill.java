@@ -20,6 +20,8 @@ import de.monticore.types.check.SymTypeVariable;
 
 import java.util.Arrays;
 
+import static de.monticore.symbols.basicsymbols.BasicSymbolsMillTOP.getMill;
+
 public class SysMLv2Mill extends SysMLv2MillTOP {
 
   /**
@@ -32,7 +34,6 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     // Doppelt gemoppelt?
     MCCollectionSymTypeRelations.init();
     SysMLv2Mill.addCollectionTypes();
-    SysMLv2Mill.addStreamType();
     OCLSymTypeRelations.init();
   }
 
@@ -74,6 +75,26 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         .build();
 
     SysMLv2Mill.globalScope().add(type);
+  }
+
+  protected OOTypeSymbol buildOptionalType() {
+    var typeVar = BasicSymbolsMill.typeVarSymbolBuilder().setName("T").build();
+
+    var spannedScope = new OOSymbolsScope();
+    spannedScope.add(typeVar);
+
+    spannedScope.add(
+        SysMLv2Mill.functionSymbolBuilder()
+            .setName("get")
+            .setType(SymTypeExpressionFactory.createTypeVariable(typeVar))
+            .setSpannedScope(new BasicSymbolsScope())
+            .build()
+    );
+
+    return OOSymbolsMill.oOTypeSymbolBuilder()
+        .setName("Optional")
+        .setSpannedScope(spannedScope)
+        .build();
   }
 
   /**
@@ -140,7 +161,8 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     }
 
     if (SysMLv2Mill.globalScope().resolveType("Optional").isEmpty()) {
-      SysMLv2Mill.globalScope().add(buildCollectionType("Optional", "A"));
+     // SysMLv2Mill.globalScope().add(buildCollectionType("Optional", "A"));
+      SysMLv2Mill.globalScope().add(buildOptionalType());
     }
 
     if (SysMLv2Mill.globalScope().resolveType("Set").isEmpty()) {

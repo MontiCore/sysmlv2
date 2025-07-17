@@ -38,7 +38,7 @@ public class NegationTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "port def F { in attribute val: boolean; } part s { port f: F; constraint e { forall nat t: f.val.atTime(t) == !f.val.atTime(t) } }"
+      "port def F { in attribute val: boolean; } part s { port f: F; constraint e { forall long t: f.val.nth(t) == !f.val.nth(t) } }"
   })
   public void testNotBooleanStream(String model) throws IOException {
     var ast = parser.parse_String(model);
@@ -58,7 +58,7 @@ public class NegationTest {
     var rightType = deriver.deriveType(equalsExpr.getRight());
     var leftType = deriver.deriveType(equalsExpr.getLeft());
     assertTrue(rightType.isPresentResult());
-    assertThat(rightType.getResult().printFullName()).isEqualTo("Stream<boolean>");
+    assertThat(rightType.getResult().printFullName()).isEqualTo("UntimedStream.UntimedStream<boolean>");
     assertThat(rightType.getResult().equals(leftType.getResult()));
   }
 

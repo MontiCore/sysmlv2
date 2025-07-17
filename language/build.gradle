@@ -70,6 +70,7 @@ dependencies {
   implementation "org.antlr:antlr4-runtime:$antlr_version"
   implementation "de.monticore:monticore-runtime:$mc_version"
   implementation "de.monticore:monticore-grammar:$mc_version"
+  implementation "de.monticore:stream-symbols:$mc_version"
   implementation "de.monticore.lang:ocl:$mc_version"
   implementation "commons-cli:commons-cli:$commons_cli_version"
 }
