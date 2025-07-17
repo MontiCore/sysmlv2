@@ -59,7 +59,7 @@ public class TypeCheck4StreamConstructorExpressionsTest {
     var deriver = new SysMLDeriver();
     var type = deriver.deriveType(expr);
     assertTrue(type.isPresentResult());
-    assertThat(type.getResult().printFullName()).isEqualTo("Stream<boolean>");
+    assertThat(type.getResult().printFullName()).isEqualTo("Stream.Stream<boolean>");
   }
 
   @ParameterizedTest
@@ -86,6 +86,6 @@ public class TypeCheck4StreamConstructorExpressionsTest {
     var type = deriver.deriveType(expr);
     assertTrue(type.isPresentResult());
     assertFalse(Log.getFindings().isEmpty());
-    assertThat(type.getResult().printFullName()).isEqualTo("Stream<Obscure>");
+    assertThat(type.getResult().printFullName()).isEqualTo("Stream.Stream<Obscure>");
   }
 }

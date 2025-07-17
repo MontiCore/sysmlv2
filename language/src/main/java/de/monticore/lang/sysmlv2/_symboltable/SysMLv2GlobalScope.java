@@ -4,6 +4,7 @@ import com.google.common.io.Files;
 import de.monticore.lang.sysmlv2.symboltable.FieldSymbolDeSer;
 
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Paths;
 
 public class SysMLv2GlobalScope extends SysMLv2GlobalScopeTOP {
@@ -16,6 +17,7 @@ public class SysMLv2GlobalScope extends SysMLv2GlobalScopeTOP {
   public  void loadFileForModelName (String modelName) {
     java.util.Optional<java.net.URL> location = getSymbolPath().find(modelName, getFileExt());
 
+    /*
     try {
       if(location.isPresent()) {
         var potArtScopeName = Files.getNameWithoutExtension(Paths.get(location.get().toURI()).getFileName().toString());
@@ -28,6 +30,13 @@ public class SysMLv2GlobalScope extends SysMLv2GlobalScopeTOP {
       }
     } catch (URISyntaxException e) {
       throw new RuntimeException(e);
+     }*/
+
+    if (location.isPresent() && !this.isFileLoaded((location.get()).toString())) {
+      this.addLoadedFile((location.get()).toString());
+
+      ISysMLv2ArtifactScope as = getSymbols2Json().load(location.get());
+      addSubScope(as);
     }
   }
 
