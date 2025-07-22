@@ -1,7 +1,26 @@
 <!-- (c) https://github.com/MontiCore/monticore -->
-# Language Server - Running with only the Plug-in
+# Language Server
 
 A language server generated with the MCLSG (MontiCore Language Server Generator).
+
+The last known stable version of the language server was in 7.6.1-7. That version of the plugin can be found [here](https://git.rwth-aachen.de/monticore/languages/sysml2/sysml2official/-/packages/9886). (Requires access to the private gitlab project.)
+
+## what should work and what does work
+
+| Method                                                                 | does it work?         | notes                                                                                                                                                    |
+|------------------------------------------------------------------------|-----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Installing the plugin and running it alone                             | yes                   | Works as intended                                                                                                                                        |
+| Running the plugin alone without installing it                         | yes                   | Works as intended                                                                                                                                        |
+| Installing the plugin and running the server seperately                | no                    | Even if set to connect to an already running server the client will always try to start its own server.                                                  |
+| Running the plugin and server seperately without installing the plugin | only with workarounds | The client can be forced to connect to an already running server with an environment variable                                                            |
+| Executing the gradle task 'runSysMLv2VscodePluginAttached'             | no                    | Current theory is that the client is started before the server is ready and then fails to connect properly. (only a guess. further insight is required.) |
+
+## Known Issue
+
+The client always tries to start its own server even when a server is already running, making it impossible to run the server seperately. The plugin provides a setting option that should make the client try to connect to an existing server however this does not work.
+What does work is setting the environment variable 'SYSMLV2_LSP_PORT' to the port on which the server is running. This forces the client to connect however it doesnt provide the flexibility the plugin should normally possess.
+
+# Language Server - Running with only the Plug-in
 
 ## Prerequisites
 
@@ -26,7 +45,7 @@ A language server generated with the MCLSG (MontiCore Language Server Generator)
 
 1. Install [NPM](https://www.npmjs.com/) and add it to `$PATH`.
 2. Generate the VSCode plugin by executing the Gradle-Task 'buildSysmlv2VscodePlugin' in the `other` category. (the gradle Task 'generateSysmlv2VscodePlugin' in the `mc-lsp` category will not work)
-3. (Currently necessary step due to bugged behaviour!) In the file `sysmlv2\language-server\target\generated-sources\SysMLv2\plugins\sysmlv2-vscode-plugin\.vscode\launch.json` add the line `"env": {"SYSMLV2_LSP_PORT": "3000"}`
+3. (This step is only necessary due to a bug.) In the file `sysmlv2\language-server\target\generated-sources\SysMLv2\plugins\sysmlv2-vscode-plugin\.vscode\launch.json` add the line `"env": {"SYSMLV2_LSP_PORT": "3000"}`
 ![](doc/set_ENV.png)
 
 ## Run/Debug
