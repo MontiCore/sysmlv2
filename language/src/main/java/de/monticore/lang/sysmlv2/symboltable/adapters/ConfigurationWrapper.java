@@ -37,6 +37,9 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+
 public class ConfigurationWrapper implements ASTConfiguration {
   private final ISysMLv2Scope enclosingScope;
 
@@ -67,12 +70,13 @@ public class ConfigurationWrapper implements ASTConfiguration {
     this.state = new StateWrapper(state, assignments);
   }
 
-  public ConfigurationWrapper(ASTExpression stateExpression) {
-    this(stateExpression, null);
-  }
-
-  public ConfigurationWrapper(String state) {
-    this(state, null);
+  public ConfigurationWrapper(
+      String state,
+      ISysMLv2Scope enclosingScope)
+  {
+    this.enclosingScope = enclosingScope;
+    this.outputs = emptyList();
+    this.state = new StateWrapper(state, emptyMap());
   }
 
   public ConfigurationWrapper(ASTExpression state, ASTActionUsage adaptee) {
