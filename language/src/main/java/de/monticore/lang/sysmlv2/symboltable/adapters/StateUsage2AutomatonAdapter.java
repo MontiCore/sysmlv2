@@ -44,7 +44,9 @@ public class StateUsage2AutomatonAdapter extends AutomatonSymbol {
           initialConfiguration.add(new ConfigurationWrapper(initialState, entry.getActionUsage()));
         }
         else {
-          initialConfiguration.add(new ConfigurationWrapper(initialState));
+          initialConfiguration.add(
+              new ConfigurationWrapper(initialState,
+                  (ISysMLv2Scope) entry.getEnclosingScope()));
         }
       }
 
