@@ -305,10 +305,308 @@ Jedoch bietet `SymTypeOfGenerics` eine Implementierung die den Ersetzungschritt 
 Dieser wird einmal entlang der aufgespannten Scopes des generischen (Stream) Objektes durchgeführt.
 Wenn eine Typvariable `E` beispielsweise in der Funktion `get(int n): E` durch den konkreten Typen ersetzt wird, kann dies u.a. an falschen Typ-Symbolen liegen die den generische Typen und dessen Funktionen bilden.
 
-### SymboltableCompleter
 
-___TODO___
 
-### Resolven/ adpatieren mit Kontext
 
-___TODO___
+### Type Check von StreamConstructorExpression
+
+Eine StreamConstructorExpression ist eine spitze Klammernotation, die
+eine oder mehrere Expressions enthält – zum Beispiel `<x>`.
+Dabei ist `x` eine innere Expression mit dem Typ `T`.
+Der gesamte Expression `<x>` hat dann den Typ `Stream<T>`.
+
+Zum Beispiel `<true>` ist ein Stream mit genau ein Element
+,nämlich `true`, es hat den Typ `stream<boolean>`.
+
+Um StreamConstructorExpression richtig type checken zu können, wird
+die Methode `endVisit(ASTStreamConstructorExpression expr)` im
+Visitor für Stream Expression überschrieben :
+
+```java
+public class SysMLv2DeriveSymTypeOfStreamConstructorExpression extends AbstractDeriveFromExpression implements StreamExpressionsVisitor2, StreamExpressionsHandler{
+  @Override
+  public void endVisit(ASTStreamConstructorExpression node) {
+    SymTypeExpression type = getTypeCheckResult().getResult();
+    calculateCorrectType(type);
+  }
+
+  protected void calculateCorrectType(SymTypeExpression type) {
+    var streamType = SysMLv2Mill.globalScope().resolveType("Stream");
+    if(streamType.isEmpty()) {
+     Log.error("0x81010 Stream not defined in global scope. Initialize it with 'SysMLv2Mill.addStreamType()'!");
+    }
+    type = SymTypeExpressionFactory.createGenerics(streamType.get(), type);
+    getTypeCheckResult().setResult(type);
+  }
+}
+```
+Der Typ des inneren Expressions `T` wird in einen generischen
+Stream-Typ `Stream<T>` verpackt.
+
+Am Ende registrieren wir diesen Visitor
+`SysMLv2DeriveSymTypeOfStreamConstructorExpression`-Klasse
+beim SysMLDeriver.
+
+#### Behandeln mehrere Elemente im StreamConstructorExpression:
+Im StreamConstructorExpression können mehrere Elemente vorkommen.
+Diese Elemente müssen alle denselben Typ haben.
+Unterschiedliche Typen in einem StreamConstructorExpression sind nicht erlaubt.
+
+
+```java
+@Override
+public void traverse(ASTStreamConstructorExpression node) {
+  getTypeCheckResult().reset();
+  var first = node.getExpressionList().get(0);
+  first.accept(getTraverser());
+  TypeCheckResult fValue = getTypeCheckResult().copy();
+  List<ASTExpression> eList = node.getExpressionList();
+  for (ASTExpression e : eList) {
+    e.accept(getTraverser());
+    TypeCheckResult eValue = getTypeCheckResult().copy();
+    if (!fValue.getResult().deepEquals(eValue.getResult())) {
+      var start = node.get_SourcePositionStart();
+      var end = node.get_SourcePositionEnd();
+      Log.error("Stream Expressions cannot contain multiple types", start, end);
+      getTypeCheckResult().setResult(SymTypeExpressionFactory.createObscureType());
+    }
+  }
+}
+
+@Override
+public void endVisit(ASTStreamConstructorExpression expr) {
+  TypeCheckResult inner = getTypeCheckResult().copy();
+  getTypeCheckResult().setResult(StreamSymTypeFactory.createStream(inner.getResult()));
+}
+```
+In der Methode `traverse(ASTStreamConstructorExpression node)` wird
+zunächst der Typ des ersten Elements-`fValue` in einem Stream bestimmt.
+Anschließend wird überprüft, ob alle übrigen Elemente im Stream
+denselben Typ wie das erste Element haben.
+
+Falls ein Fehler auftritt, wird ein `Obscure` Type zurückgegeben.
+
+### Die`times` Funktion für StreamConstructorExpression
+
+Die `times` Funktion dient dazu, einen Wert, zum Beispiel `true`, mehrfach in
+einem Stream zu wiederholen, zum Beispiel `k`-mal.
+
+Mögliche Syntaxformen dafür sind `<true>^k` oder `<true>.times(k)`, wobei `k` eine natürliche Zahl ist.
+
+Zum Beispiel ergibt der Expression `<true>.times(2)` und `<true>^2` den Stream `<true, true>`.
+
+Die gewünschte Syntax: `<true>^k` kann aber nicht unterstützt werden,
+da der Operator `^` bereits in der  Grammatik `SysMLExpressions.mc4` verwendet wird:
+
+```java
+CalcDefPowerExpression implements Expression =
+base:Expression "^" exponent:Expression ;
+```
+Deshalb kann die `times` Funktion nur in der in der `SysMLv2Mill.java`-Klasse gebaut werden:
+
+
+```java
+protected FunctionSymbol buildTimesFunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
+    var parameterList = new BasicSymbolsScope();
+
+    VariableSymbol parameter = SysMLv2Mill.variableSymbolBuilder().setName(
+        "k").setType(buildNatType()).build();
+    parameterList.add(typeVar);
+    parameterList.add(parameter);
+
+    var returnType = SymTypeExpressionFactory.createGenerics(streamSymbol, SymTypeExpressionFactory.createTypeVariable(typeVar));
+
+    return SysMLv2Mill.functionSymbolBuilder()
+        .setName("times")
+        .setType(returnType)
+        .setSpannedScope(parameterList)
+        .build();
+}
+```
+Die Funktion wird mit dem Namen `"times"` erstellt und erhält
+einen Parameter `k` vom Typ `Nat`.
+
+Der `returnType` verwendet eine Typvariable-`typeVar` (mit dem Type `T`)
+und verpackt diesen in einen Stream mit dem Typ `Stream<T>`.
+
+Mit `var parameterList = new BasicSymbolsScope();` wird
+ein neuer Symbol-Scope erstellt, der die Typvariable Typvariable-`T`
+und Wertparameter-`k` enthält.
+
+Dieser Scope dann wird später mithilfe von `setSpannedScope(...)`
+als lokaler Scope der Funktion-`times` verwendet.
+
+Die Syntax `<true>.times(k)` ist jetzt erlaubt.
+
+### Symbol von Symtabdefinition laden
+
+Zuvor wurde das Symbol `Stream` (inklusive zugehöriger Methoden wie times)
+explizit über `SysMLv2Mill.addStreamType()` zur globalen Scope hinzugefügt.
+
+Jetzt erfolgt die Definition dieser Typinformationen nicht mehr
+manuell, sondern automatisch durch das Laden aus einer
+`Stream.symtabdefinition`([Symtabdefinition](
+https://github.com/MontiCore/monticore/blob/dev/monticore-libraries/stream-symbols/src/main/symtabdefinition/Stream.symtabdefinition)).
+
+
+Das Import der stream-symbols dependency von Monticore in `build.gralde`
+von `language` module ist nötig:
+
+```java
+implementation "de.monticore:stream-symbols:$mc_version"
+```
+
+In der `SysMLv2Tool.java`-Klasse:
+
+```java
+public void loadStreamSymbolsFromJar()  {
+  URL streamDefUrl = SysMLv2Tool.class.getClassLoader().getResource("Stream.symtabdefinitionsym");
+  if (streamDefUrl == null) {
+    Log.error("0xPA090 Failed to find Stream.symtabdefinitionsym on the classpath.");
+    return;
+  }
+  if (!"jar".equals(streamDefUrl.getProtocol())) {
+    Log.error("0xPA091 Expected Stream.symtabdefinitionsym to be loaded from a JAR");
+    return;
+  }
+```
+Die Methode versucht zunächst, die `Stream.symtabdefinitionsym`
+über den Classloader zu finden.
+
+Dann es wird geprüft, ob die Ressource tatsächlich aus einem JAR geladen
+wird.
+
+```java
+  JarURLConnection conn = null;
+  JarFile jar = null;
+
+  try {
+    conn = (JarURLConnection) streamDefUrl.openConnection();
+    jar = conn.getJarFile();
+  }
+  catch (IOException e) {
+    Log.error("0xPA092 Failed to open symbol definition from JAR URL");
+  }
+```
+Mittels JarURLConnection wird versucht, die tatsächliche JAR-Datei
+zu öffnen. Bei Fehlern beim Öffnen wird ein Fehler geloggt.
+
+```java
+  Path jarPath = Path.of(jar.getName());
+
+  SysMLv2Mill.globalScope().getSymbolPath().addEntry(jarPath);
+
+  SysMLv2Mill.globalScope().putSymbolDeSer("de.monticore.cdbasis._symboltable.CDTypeSymbol", new OOTypeSymbolDeSer());
+  SysMLv2Mill.globalScope().putSymbolDeSer("de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol", new MethodSymbolDeSer());
+}
+```
+Der Pfad zur JAR-Datei wird dem Symbolpfad der globalen Scope hinzugefügt.
+
+Zum Schluss werden Deserialisierer für bestimmte Symbolarten registriert.
+
+
+##### Stream wird zu EventStream
+Nach dem Wechsel zu der Benutzung der `.symtabdeifnition`-Dateien,
+gibt es nun nicht mehr nur den allgemeinen Typ `Stream`,
+sondern mehrere spezialisierte Stream-Typen wie `EventStream`,
+`UntimedStream` und weitere.
+
+Ursprünglich wurde in der
+`SysMLv2DeriveSymTypeOfCommonExpressions.java` versucht, direkt `Stream` zu resolven:
+
+```java
+var streamType = SysMLv2Mill.globalScope().resolveType("Stream");
+```
+Das funktioniert technisch weiterhin, weil `Stream` nach wie vor
+im Symboltable definiert ist. In der neuen Version wird aber explizit
+`EventStream` verwendet:
+
+
+```java
+var streamType = SysMLv2Mill.globalScope().resolveType("EventStream");
+```
+
+Obwohl `Stream` weiterhin verfügbar und auflösbar ist,
+es wird in konkreten Anwendungsfällen Methoden  wie
+`nth`, `times` erwatet, die ausschließlich in
+`EventStream<T>` definiert sind.
+
+Das ist ein `EventStream.symtabdefinition`
+([EventStream](https://github.com/MontiCore/monticore/blob/dev/monticore-libraries/stream-symbols/src/main/symtabdefinition/EventStream.symtabdefinition)).
+:
+
+```java
+symtabdefinition EventStream {
+
+class EventStream<T> implements Stream<T> {
+   + UntimedStream<T> nth(long n);
+   + EventStream<T> times(long n);
+...
+}
+
+}
+```
+`EventStream<T>` implementiert das Interface `Stream<T>`.
+Die Methoden wie `nth` und `times` sind an `EventStream<T>` gebunden.
+
+Die Methode `nth` hat ein Argument `n` vom
+Typ `long` und gibt einen Wert vom Typ `UntimedStream<T>` zurück.
+
+##### Effekt
+Die Umstellung von `Stream` auf `EventStream` hat zur Folge, dass
+Methoden wie `times` nun konkreter auf `EventStream<T>`
+statt auf das allgemeinere Interface `Stream<T>` zurückgeführt werden.
+
+Beispiel:
+
+* [ ] Die Expresison `<true>.times(5)` hat jetzt den Typ `EventStream<boolean>`
+  statt wie zuvor `Stream<boolean>`.
+* [ ] Die Expresison `<true>.nth(5)` hat jetzt den Typ `UntimedStream<boolean>`
+  statt wie zuvor `Stream<boolean>`.
+
+##### Anpassungen in `SysMLGlobalScope.java`
+
+Da es erfolgt nicht mehr durch mill klasse
+sondern über .symtabdefinition-Dateien geladen werden, musste die
+SysMLGlobalScope entsprechend angepasst werden. In zuvor implemetierung:
+```java
+  public  void loadFileForModelName (String modelName) {
+  java.util.Optional<java.net.URL> location = getSymbolPath().find(modelName, getFileExt());
+
+  try {
+    if(location.isPresent()) {
+      var potArtScopeName = Files.getNameWithoutExtension(Paths.get(location.get().toURI()).getFileName().toString());
+      ...
+```
+Diese Vorgehensweise funktionierte solange die Dateien direkt im
+Dateisystem lagen.  In diesem Fall akzeptiert `Paths.get(...)` den URI problemlos.
+
+###### Problem bei Ressourcen aus JAR-Dateien
+Nach dem Umstieg auf veröffentlichte Symboltabellen
+im JAR-Format, enthält `location` Werte wie:
+```java
+jar:file:///C... stream-symbols-7.8.0-SNAPSHOT.jar!/Stream.symtabdefinition
+```
+Der Aufruf von `Paths.get(location.get().toURI())` schlägt hier
+jedoch fehl.
+`Paths.get(...)` funktioniert nur mit echten Dateisystempfaden,
+nicht mit Ressourcen innerhalb eines JAR-Archivs.
+
+Da sich die `.symtabdefinition`-Dateien nun innerhalb
+von JAR-Dateien befinden, führt der Versuch, den Pfad auf
+diese Weise zu extrahieren, zu einer
+`FileSystemNotFoundException`.
+
+Deshalb wurde die Pfadverarbeitung angepasst, sodass
+```java
+location.get()).toString())
+```
+verwendet wird, ohne `Paths.get()` zu benutzen.
+
+#### Entsprechende Tests sind erstellt.
+* [1]  [StreamConstructorExpression](https://github.com/MontiCore/sysmlv2/commit/e7e85161b3ea1f7f1a15f53c5154d1e38aef4eb3#diff-835f1b721457a93eaffdf87f0e4f6296e9acc8c1e074ab820f9838c531b2a13aR16)
+* [2] [times Function](https://github.com/MontiCore/sysmlv2/commit/ff62447b2d3008cfbccafbfa000f959548ad3461)
+
+
+
+
