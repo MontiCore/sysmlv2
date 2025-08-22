@@ -42,7 +42,7 @@ publishing {
     }
   }
   repositories.maven {
-    name = "Github Package Registry"
+    name = "Github"
     url = sysmlGitlab
     credentials {
         username = System.getenv("GITHUB_ACTOR")
