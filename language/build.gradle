@@ -133,8 +133,8 @@ publishing {
   }
   // and where to upload them
   repositories.maven {
-    name = "Github"
-    url = sysmlGithub
+    name = "Gitlab"
+    url = sysmlGitlab
     credentials(HttpHeaderCredentials) {
       name = "Job-Token"
       value = System.getenv("CI_JOB_TOKEN")
