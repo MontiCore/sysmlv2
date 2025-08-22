@@ -42,14 +42,11 @@ publishing {
     }
   }
   repositories.maven {
-    name = "Gitlab"
+    name = "Github Package Registry"
     url = sysmlGitlab
-    credentials(HttpHeaderCredentials) {
-      name = "Job-Token"
-      value = System.getenv("CI_JOB_TOKEN")
-    }
-    authentication {
-      header(HttpHeaderAuthentication)
+    credentials {
+        username = System.getenv("GITHUB_ACTOR")
+        password = System.getenv("GITHUB_TOKEN")
     }
   }
 }
