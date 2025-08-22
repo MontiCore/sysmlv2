@@ -42,8 +42,8 @@ publishing {
     }
   }
   repositories.maven {
-    name = "Gitlab"
-    url = sysmlGitlab
+    name = "Github"
+    url = sysmlGithub
     credentials(HttpHeaderCredentials) {
       name = "Job-Token"
       value = System.getenv("CI_JOB_TOKEN")
