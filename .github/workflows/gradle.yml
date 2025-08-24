@@ -52,7 +52,7 @@ jobs:
         with:
           gradle-version: ${{env.GRADLE_VERSION}}
       - name: Gradle Publish
-        run: gradle publish ${{env.GRADLE_CLI_OPTS}}
+        run: gradle build publish ${{env.GRADLE_CLI_OPTS}}
           -PnexusPassword=${{ secrets.SE_NEXUS_PASSWORD }}
           -PnexusUser=${{ secrets.SE_NEXUS_USER }}
           -PgithubUser=${{env.GITHUB_ACTOR}}
