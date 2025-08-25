@@ -97,11 +97,19 @@ task copyFileIcons(type: Copy) {
   into autoconfigure.mclsg.getFullVscodePluginDir()
 }
 
+def vscodePlugin = new File("${autoconfigure.mclsg.getFullVscodePluginDir()}/sysmlv2-${version}.vsix")
+
 publishing {
   publications {
     mavenJava(MavenPublication) {
       artifactId = "language-server"
       from components.java
+
+      artifact(vscodePlugin) {
+        classifier = "vscode"
+        extension = "vsix"
+        builtBy tasks.named("generateSysMLv2VscodePlugin")
+      }
     }
   }
   repositories.maven {
