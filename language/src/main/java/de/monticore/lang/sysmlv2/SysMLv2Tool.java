@@ -138,16 +138,16 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTPartDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTPortDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLConstraintsASTConstraintDefCoCo)
-        new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLActionsASTActionDefCoCo)
-        new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLConstraintsASTRequirementDefCoCo)
-        new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLImportsAndPackagesASTSysMLPackageCoCo)
-        new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLPartsASTAttributeDefCoCo)
-        new NameCompatible4Isabelle());
+    checker.addCoCo(
+        (SysMLConstraintsASTConstraintDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo(
+        (SysMLActionsASTActionDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo(
+        (SysMLConstraintsASTRequirementDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo(
+        (SysMLImportsAndPackagesASTSysMLPackageCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo(
+        (SysMLPartsASTAttributeDefCoCo) new NameCompatible4Isabelle());
 
     // SpesML CoCos
     checker.addCoCo(new FlowCheckCoCo());
@@ -246,22 +246,39 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
   }
 
   public Options addAdditionalOptions(Options options) {
-    options.addOption(Option.builder("ex").longOpt("extended").desc(
-        "Runs additional checks assuring models are fit for semantic "
-            + "analysis using MontiBelle").build());
+    options.addOption(Option
+        .builder("ex")
+        .longOpt("extended")
+        .desc("Run additional checks to assure well-defined semantics")
+        .build());
 
-    options.addOption(Option.builder("cc").longOpt("compcon").desc(
-        "Serializes the symbol table of the given artifact using "
-            + "component-connector symbols.").hasArg(true).optionalArg(
-        false).argName("output file").build());
-    options.addOption(Option.builder("nc").longOpt("nococo").desc(
-        "Only parse the file, dont check cocos").build());
-    options.addOption(Option.builder("log").longOpt("log_parser_results").desc(
-        "Print which models were parsable in the case of iterating a "
-            + "directory.").build());
-    options.addOption(Option.builder("ia").longOpt("interactive").desc(
-        "Print which models were parsable in the case of iterating a "
-            + "directory.").build());
+    options.addOption(Option
+        .builder("cc")
+        .longOpt("compcon")
+        .desc("Serialize the symbol table of the given artifact using "
+            + "component-connector symbols.")
+        .hasArg(true)
+        .optionalArg(false)
+        .argName("output file")
+        .build());
+
+    options.addOption(Option
+        .builder("nc")
+        .longOpt("nococo")
+        .desc("Only parse the file, dont check cocos")
+        .build());
+
+    options.addOption(Option
+        .builder("log")
+        .longOpt("log_parser_results")
+        .desc("When iterating a dir, print successfully parseable models")
+        .build());
+
+    options.addOption(Option
+        .builder("ia")
+        .longOpt("interactive")
+        .desc("When iterating a dir, print which models were parsable")
+        .build());
 
     return options;
   }
@@ -281,7 +298,6 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
       if (cmd.hasOption("input")) {
         var input = Path.of(cmd.getOptionValue("input"));
         if (Files.isDirectory(input)) {
-
           // New Option to print parser results to cmd line in case of
           // directory walking
           if (cmd.hasOption("log_parser_results")) {
@@ -293,8 +309,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
             try {
               List<Path> files = Files.walk(input).filter(
                   p -> FilenameUtils.getExtension(p.toString()).equals(
-                      "sysml")).collect(
-                  Collectors.toList());
+                      "sysml")).collect(Collectors.toList());
 
               for (Path file : files) {
                 Log.clearFindings();
@@ -340,8 +355,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
         }
       }
       else {
-        var modelReader = new BufferedReader(
-            new InputStreamReader(System.in));
+        var modelReader = new BufferedReader(new InputStreamReader(System.in));
         try {
           asts = List.of(SysMLv2Mill.parser().parse(modelReader).get());
         }
@@ -361,7 +375,6 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
         if (cmd.hasOption("extended")) {
           asts.forEach(it -> runAdditionalCoCos(it));
         }
-
       }
 
       if (cmd.hasOption("prettyprint")) {
@@ -417,7 +430,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
           }
           if (inp.charAt(0) == 'y' || inp.charAt(0) == 'Y') {
             System.out.println("Ok, running again :)");
-            runwrap(cmd,options);
+            runwrap(cmd, options);
           }
           else {
             System.exit(0);
@@ -434,16 +447,21 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     }
   }
 
-  public void loadStreamSymbolsFromJar()  {
-    URL streamDefUrl = SysMLv2Tool.class.getClassLoader().getResource("Stream.symtabdefinitionsym");
+  public void loadStreamSymbolsFromJar() {
+    URL streamDefUrl = SysMLv2Tool.class.getClassLoader().getResource(
+        "Stream.symtabdefinitionsym");
 
     if (streamDefUrl == null) {
-      Log.error("0xPA090 Failed to find Stream.symtabdefinitionsym on the classpath.");
+      Log.error(
+          "0xPA090 Failed to find Stream.symtabdefinitionsym on the classpath"
+              + ".");
       return;
     }
 
     if (!"jar".equals(streamDefUrl.getProtocol())) {
-      Log.error("0xPA091 Expected Stream.symtabdefinitionsym to be loaded from a JAR");
+      Log.error(
+          "0xPA091 Expected Stream.symtabdefinitionsym to be loaded from a "
+              + "JAR");
       return;
     }
 
@@ -462,7 +480,11 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
 
     SysMLv2Mill.globalScope().getSymbolPath().addEntry(jarPath);
 
-    SysMLv2Mill.globalScope().putSymbolDeSer("de.monticore.cdbasis._symboltable.CDTypeSymbol", new OOTypeSymbolDeSer());
-    SysMLv2Mill.globalScope().putSymbolDeSer("de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol", new MethodSymbolDeSer());
+    SysMLv2Mill.globalScope().putSymbolDeSer(
+        "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+        new OOTypeSymbolDeSer());
+    SysMLv2Mill.globalScope().putSymbolDeSer(
+        "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+        new MethodSymbolDeSer());
   }
 }
