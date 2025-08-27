@@ -19,6 +19,7 @@ import de.monticore.lang.sysmlstates.cocos.NoDoActions;
 import de.monticore.lang.sysmlstates.cocos.NoExitActions;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
+import de.monticore.lang.sysmlv2._prettyprint.SysMLv2FullPrettyPrinter;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
@@ -47,13 +48,16 @@ import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.lang.sysmlv2.types.SysMLSynthesizer;
 import de.monticore.ocl.oclexpressions.symboltable.OCLExpressionsSymbolTableCompleter;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbolDeSer;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbolDeSer;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FilenameUtils;
 import org.checkerframework.checker.units.qual.A;
 
@@ -81,11 +85,9 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
 
   @Override
   public void prettyPrint(ASTSysMLModel ast, String file) {
-
     if (file == null) {
       // Print to stdout if no path is supplied.
-      de.monticore.lang.sysmlv2._prettyprint.SysMLv2FullPrettyPrinter prettyPrinter = new de.monticore.lang.sysmlv2._prettyprint.SysMLv2FullPrettyPrinter(
-          new de.monticore.prettyprint.IndentPrinter());
+      var prettyPrinter = new SysMLv2FullPrettyPrinter(new IndentPrinter());
       String printed = prettyPrinter.prettyprint(ast);
       System.out.println(printed);
     }
@@ -136,18 +138,18 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTPartDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTPortDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo(
-        (SysMLConstraintsASTConstraintDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo(
-        (SysMLActionsASTActionDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo(
-        (SysMLConstraintsASTRequirementDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo(
-        (SysMLImportsAndPackagesASTSysMLPackageCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo(
-        (SysMLPartsASTAttributeDefCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLConstraintsASTConstraintDefCoCo)
+        new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLActionsASTActionDefCoCo)
+        new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLConstraintsASTRequirementDefCoCo)
+        new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLImportsAndPackagesASTSysMLPackageCoCo)
+        new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLPartsASTAttributeDefCoCo)
+        new NameCompatible4Isabelle());
 
-    //SpesML CoCos
+    // SpesML CoCos
     checker.addCoCo(new FlowCheckCoCo());
     checker.addCoCo(new PortDefinitionExistsCoCo());
     checker.addCoCo(new PartBehaviorCoCo());
@@ -265,7 +267,6 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
   }
 
   private void runwrap(CommandLine cmd, Options options) {
-
     if (cmd.hasOption("help")) {
       printHelp(options);
       return;
@@ -290,14 +291,12 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
             List<Boolean> successes = new ArrayList<>();
 
             try {
-
               List<Path> files = Files.walk(input).filter(
                   p -> FilenameUtils.getExtension(p.toString()).equals(
                       "sysml")).collect(
                   Collectors.toList());
 
               for (Path file : files) {
-
                 Log.clearFindings();
                 asts.add(parse(file.toString()));
                 if (Log.getFindings().size() > 0) {
@@ -400,13 +399,13 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     Options options = initOptions();
 
     try {
-      CommandLineParser cliparser = new org.apache.commons.cli.DefaultParser();
+      CommandLineParser cliparser = new DefaultParser();
       CommandLine cmd = cliparser.parse(options, args);
 
       if (cmd.hasOption("interactive")) {
         BufferedReader br = new BufferedReader(
             new InputStreamReader(System.in));
-        String inp="";
+        String inp = "";
         while (true) {
           runwrap(cmd, options);
           System.out.println("Run again?");
@@ -424,16 +423,12 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
             System.exit(0);
           }
         }
-
       }
       else {
         runwrap(cmd, options);
       }
     }
-
-    catch (
-
-        org.apache.commons.cli.ParseException e) {
+    catch (ParseException e) {
       Log.error("0xA5C06x33289 Could not process SysMLv2Tool parameters: "
           + e.getMessage());
     }
