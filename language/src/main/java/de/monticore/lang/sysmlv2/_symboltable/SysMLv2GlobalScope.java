@@ -32,7 +32,11 @@ public class SysMLv2GlobalScope extends SysMLv2GlobalScopeTOP {
       throw new RuntimeException(e);
      }*/
 
-    if (location.isPresent() && !this.isFileLoaded((location.get()).toString())) {
+    if (
+        location.isPresent() &&
+        !this.isFileLoaded((location.get()).toString()) &&
+        !subScopes.stream().anyMatch(scope -> scope.getName().equals(modelName))
+    ) {
       this.addLoadedFile((location.get()).toString());
 
       ISysMLv2ArtifactScope as = getSymbols2Json().load(location.get());
