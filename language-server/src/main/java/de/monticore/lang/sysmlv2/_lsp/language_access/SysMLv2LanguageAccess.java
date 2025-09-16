@@ -29,11 +29,7 @@ public class SysMLv2LanguageAccess extends SysMLv2LanguageAccessTOP {
 
   @Override
   public void runCoCos(ASTSysMLModel ast) {
-    // TODO "Complete Symbol Table" gehört nicht hierhin, sondern wird von Language gemacht (Interface nutzen!)
-    //traverser.add4SysMLParametrics(new ConstraintDefinitionSymbolTableCompleter());
-    //traverser.add4OCLExpressions(new OCLExpressionsSymbolTableCompleter(null, null));
     ast.accept(traverser);
-
     super.runCoCos(ast);
   }
 
