@@ -4,8 +4,8 @@ package de.monticore.lang;
 component grammar SysMLParts extends SysMLBasis {
 
   /**
-   * Causality indication: "instant" = weak causal, "delayed" = strong causal. Defaults to "delayed".
-   * TODO Überdenken, wie man das nicht überall erlaubt (Grammar vs. CoCo)
+   * Causality indication: "instant" = weak causal, "delayed" = strong causal.
+   * Defaults to "delayed".
    */
   SysMLCausality implements SysMLElement =
     "timing" (["instant"] | ["delayed"]) ";" ;
