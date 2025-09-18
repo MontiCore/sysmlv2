@@ -3,6 +3,7 @@ package de.monticore.lang.sysmlv2.symboltable.adapters;
 import com.google.common.base.Preconditions;
 import de.monticore.lang.componentconnector._ast.ASTConnector;
 import de.monticore.lang.componentconnector._symboltable.AutomatonSymbol;
+import de.monticore.lang.componentconnector._symboltable.EventAutomatonSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol;
 import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
@@ -37,6 +38,8 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
    */
   private final Optional<AutomatonSymbol> automaton;
 
+  private final Optional<EventAutomatonSymbol> eventAutomaton;
+
   public PartDef2ComponentAdapter(PartDefSymbol adaptee) {
     super(Preconditions.checkNotNull(adaptee.getName()));
     this.adaptee = adaptee;
@@ -45,8 +48,17 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
         .getLocalStateUsageSymbols()
         .stream()
         .filter(StateUsageSymbol::isExhibited)
+        .filter(sym -> sym.getUserDefinedKeywordsList().contains("tsyn"))
         .findFirst()
         .map(state -> new StateUsage2AutomatonAdapter(getAdaptee(), state));
+
+    eventAutomaton = ((ISysMLv2Scope)getAdaptee().getSpannedScope())
+        .getLocalStateUsageSymbols()
+        .stream()
+        .filter(StateUsageSymbol::isExhibited)
+        .filter(sym -> !sym.getUserDefinedKeywordsList().contains("tsyn"))
+        .findFirst()
+        .map(state -> new StateUsage2EventAutomatonAdapter(getAdaptee(), state));
   }
 
   public PartDefSymbol getAdaptee() {
@@ -163,13 +175,23 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
   }
 
   @Override
-  public boolean isStateBased() {
+  public boolean isTsynStateBased() {
     return automaton.isPresent();
   }
 
   @Override
   public AutomatonSymbol getAutomaton() {
     return automaton.get();
+  }
+
+  @Override
+  public boolean isEventBased() {
+    return eventAutomaton.isPresent();
+  }
+
+  @Override
+  public EventAutomatonSymbol getEventAutomaton() {
+    return eventAutomaton.get();
   }
 
   @Override

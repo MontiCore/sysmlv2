@@ -8,7 +8,7 @@ import de.monticore.symboltable.serialization.json.JsonObject;
 
 import java.util.List;
 
-public class AutomatonSymbolDeSer extends AutomatonSymbolDeSerTOP {
+public class EventAutomatonSymbolDeSer extends EventAutomatonSymbolDeSerTOP {
   @Override
   protected void serializeStateSpace(
       ASTStateSpace stateSpace,
@@ -26,7 +26,15 @@ public class AutomatonSymbolDeSer extends AutomatonSymbolDeSerTOP {
   }
 
   @Override
-  protected void serializeTransitions(
+  protected void serializeEventTransitions(
+      List<ASTEventTransition> eventTransitions,
+      ComponentConnectorSymbols2Json s2j)
+  {
+    // not implemented
+  }
+
+  @Override
+  protected void serializeTickTransitions(
       List<ASTTransition> tickTransitions,
       ComponentConnectorSymbols2Json s2j)
   {
@@ -44,7 +52,12 @@ public class AutomatonSymbolDeSer extends AutomatonSymbolDeSerTOP {
   }
 
   @Override
-  protected List<ASTTransition> deserializeTransitions(JsonObject symbolJson) {
+  protected List<ASTEventTransition> deserializeEventTransitions(JsonObject symbolJson) {
+    return null;
+  }
+
+  @Override
+  protected List<ASTTransition> deserializeTickTransitions(JsonObject symbolJson) {
     return null;
   }
 }

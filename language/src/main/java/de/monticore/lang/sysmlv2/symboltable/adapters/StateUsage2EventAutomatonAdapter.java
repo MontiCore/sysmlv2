@@ -1,23 +1,21 @@
 package de.monticore.lang.sysmlv2.symboltable.adapters;
 
 import de.monticore.lang.componentconnector._ast.ASTConfiguration;
-import de.monticore.lang.componentconnector._ast.ASTEventTransition;
-import de.monticore.lang.componentconnector._ast.ASTStateSpace;
 import de.monticore.lang.componentconnector._ast.ASTTransition;
-import de.monticore.lang.componentconnector._symboltable.AutomatonSymbol;
+import de.monticore.lang.componentconnector._symboltable.EventAutomatonSymbol;
 import de.monticore.lang.sysmlactions._ast.ASTSysMLSuccession;
 import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
 import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
-public class StateUsage2AutomatonAdapter extends AutomatonSymbol {
+public class StateUsage2EventAutomatonAdapter extends EventAutomatonSymbol {
   private final StateUsageSymbol adaptee;
 
   private final PartDefSymbol container;
@@ -25,10 +23,7 @@ public class StateUsage2AutomatonAdapter extends AutomatonSymbol {
   /** Caching because of internal usage of deriver */
   private final List<ASTConfiguration> initialConfiguration = new ArrayList<>();
 
-  public StateUsage2AutomatonAdapter(
-      PartDefSymbol container,
-      StateUsageSymbol adaptee)
-  {
+  public StateUsage2EventAutomatonAdapter(PartDefSymbol container, StateUsageSymbol adaptee) {
     super(container.getName());
     this.container = container;
     this.adaptee = adaptee;
@@ -38,16 +33,13 @@ public class StateUsage2AutomatonAdapter extends AutomatonSymbol {
     if (adaptee.isPresentAstNode()) {
       var ast = adaptee.getAstNode();
 
-      if(ast.isPresentEntryAction()
-          && ast.getSysMLElement(0) instanceof ASTSysMLSuccession)
-      {
+      if(ast.isPresentEntryAction() && ast.getSysMLElement(0) instanceof ASTSysMLSuccession) {
         var entry = ast.getEntryAction();
-        var initialState = ((ASTSysMLSuccession) ast.getSysMLElement(0))
-            .getSuccessionThen().getMCQualifiedName().getQName();
+        var initialState =
+            ((ASTSysMLSuccession) ast.getSysMLElement(0)).getSuccessionThen().getMCQualifiedName().getQName();
 
         if(entry.isPresentActionUsage()) {
-          initialConfiguration.add(
-              new ConfigurationWrapper(initialState, entry.getActionUsage()));
+          initialConfiguration.add(new ConfigurationWrapper(initialState, entry.getActionUsage()));
         }
         else {
           initialConfiguration.add(
@@ -56,10 +48,39 @@ public class StateUsage2AutomatonAdapter extends AutomatonSymbol {
         }
       }
 
-      transitions = ast.getSysMLElementList().stream()
-          .filter(t -> t instanceof ASTSysMLTransition)
-          .map(t -> new TransitionWrapper((ASTSysMLTransition) t))
+      var eventTrans = new LinkedHashMap<String,List<ASTTransition>>();
+      var tickTrans = new ArrayList<ASTTransition>();
+
+      for (var elem : ast.getSysMLElementList()) {
+        if (elem instanceof ASTSysMLTransition) {
+          var transition = (ASTSysMLTransition) elem;
+          var trigger = getTrigger(transition);
+
+          if (trigger.equals("Tick")) {
+            tickTrans.add(new TransitionWrapper(transition));
+          }
+          else if (eventTrans.containsKey(trigger)) {
+            eventTrans.get(trigger).add(new TransitionWrapper(transition));
+          }
+          else {
+            var transitionList = new ArrayList<ASTTransition>();
+            transitionList.add(new TransitionWrapper(transition));
+
+            eventTrans.put(trigger, transitionList);
+          }
+        }
+      }
+
+      eventTransitions = eventTrans
+          .entrySet()
+          .stream()
+          .map(entry -> new EventTransitionWrapper(
+              entry.getKey(),
+              entry.getValue()
+          ))
           .collect(Collectors.toList());
+
+      tickTransitions = tickTrans;
     }
   }
 
@@ -87,9 +108,10 @@ public class StateUsage2AutomatonAdapter extends AutomatonSymbol {
   }
 
   private String getTrigger(ASTSysMLTransition transition) {
+    //TODO nochmal richtig machen
     var trigger = transition.getInlineAcceptActionUsage();
 
-    return String.join(".", ((ASTMCQualifiedType)trigger.getPayload()
-        .getPayloadType()).getMCQualifiedName().getPartsList());
+    return String.join(".",
+        ((ASTMCQualifiedType)trigger.getPayload().getPayloadType()).getMCQualifiedName().getPartsList());
   }
 }

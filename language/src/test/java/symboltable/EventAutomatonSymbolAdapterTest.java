@@ -14,39 +14,39 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AutomatonSymbolAdapterTest extends NervigeSymboltableTests {
+public class EventAutomatonSymbolAdapterTest extends NervigeSymboltableTests {
 
   @Test
-  public void testAutomaton() throws IOException {
-    var as = process("part def A { #tsyn exhibit state S; }");
+  public void testEventAutomaton() throws IOException {
+    var as = process("part def A { exhibit state S; }");
 
     var component = as.resolveComponentType("A");
     assertThat(component).isPresent();
     assertThat(component.get()).isInstanceOf(MildComponentSymbol.class);
 
-    assertTrue(((MildComponentSymbol)component.get()).isTsynStateBased());
+    assertTrue(((MildComponentSymbol)component.get()).isEventBased());
 
-    var aut = ((MildComponentSymbol)component.get()).getAutomaton();
+    var aut = ((MildComponentSymbol)component.get()).getEventAutomaton();
     assertThat(aut).isNotNull();
     assertThat(aut.getName()).isEqualTo("A");
 
-    var autFromResolve = as.resolveAutomaton("A");
+    var autFromResolve = as.resolveEventAutomaton("A");
     assertThat(autFromResolve).isPresent();
   }
 
   @Test
-  public void testInvalidAutomaton() throws IOException {
-    var as = process("part def A { #tsyn state S; }");
+  public void testInvalidEventAutomaton() throws IOException {
+    var as = process("part def A { state S; }");
 
-    assertThat(as.resolveAutomaton("A")).isNotPresent();
-    assertThat(as.resolveAutomaton("S")).isNotPresent();
+    assertThat(as.resolveEventAutomaton("A")).isNotPresent();
+    assertThat(as.resolveEventAutomaton("S")).isNotPresent();
   }
 
   @Test
   public void testVariables() throws IOException {
-    var as = process("part def A { #tsyn exhibit state S { attribute a: boolean; } }");
+    var as = process("part def A { exhibit state S { attribute a: boolean; } }");
 
-    ASTStateSpace stateSpace = as.resolveAutomaton("A").get().getStateSpace();
+    ASTStateSpace stateSpace = as.resolveEventAutomaton("A").get().getStateSpace();
 
     var variables = stateSpace.getVariablesSymbolList();
     assertThat(variables).isNotEmpty();
@@ -60,9 +60,9 @@ public class AutomatonSymbolAdapterTest extends NervigeSymboltableTests {
 
   @Test
   public void testStates() throws IOException {
-    var as = process("part def A { #tsyn exhibit state S { state S1; } }");
+    var as = process("part def A { exhibit state S { state S1; } }");
 
-    ASTStateSpace stateSpace = as.resolveAutomaton("A").get().getStateSpace();
+    ASTStateSpace stateSpace = as.resolveEventAutomaton("A").get().getStateSpace();
 
     var states = stateSpace.getStatesList();
     assertThat(states).isNotEmpty();
@@ -82,7 +82,7 @@ public class AutomatonSymbolAdapterTest extends NervigeSymboltableTests {
         + "  port i: B;\n"
         + "  port o: ~B;\n"
         + "\n"
-        + "  #tsyn exhibit state aut {\n"
+        + "  exhibit state aut {\n"
         + "    entry action {\n"
         + "      // Do one with parameter as entry action\n"
         + "      send 4 to o.val;\n"
@@ -92,7 +92,7 @@ public class AutomatonSymbolAdapterTest extends NervigeSymboltableTests {
         + "  }\n"
         + "}");
 
-    var aut = as.resolveAutomaton("A").get();
+    var aut = as.resolveEventAutomaton("A").get();
 
     var initialConfig = aut.getInitialConfiguration(0);
 
@@ -106,7 +106,7 @@ public class AutomatonSymbolAdapterTest extends NervigeSymboltableTests {
   }
 
   @Test
-  public void testTransition() throws IOException {
+  public void testEventTransition() throws IOException {
     var as = process("port def B {\n"
         + "  in attribute val: boolean;\n"
         + "}\n"
@@ -115,24 +115,28 @@ public class AutomatonSymbolAdapterTest extends NervigeSymboltableTests {
         + "  port i: B;\n"
         + "  port o: ~B;\n"
         + "\n"
-        + "  #tsyn exhibit state aut {\n"
+        + "  exhibit state aut {\n"
         + "    state S;\n"
         + "    transition t\n"
         + "      first S\n"
+        + "      accept i.val\n"
         + "      if true\n"
         + "      do action { send !i.val to o.val; }\n"
         + "      then S;\n"
         + "  }\n"
         + "}");
 
-    var aut = as.resolveAutomaton("A").get();
+    var aut = as.resolveEventAutomaton("A").get();
 
-    var transitions = aut.getTransitionsList();
-    assertThat(transitions).isNotEmpty();
+    assertThat(aut.getTickTransitionsList()).isEmpty();
 
-    var trans = transitions.get(0);
+    var evTransitions = aut.getEventTransitionsList();
+    assertThat(evTransitions).isNotEmpty();
 
-    ASTConfiguration result = trans.getResult();
+    var trans = evTransitions.get(0);
+    assertThat(trans.getPortSymbol().getName()).isEqualTo("i.val");
+
+    ASTConfiguration result = trans.getTransition(0).getResult();
     assertThat(result.getState().getName()).isEqualTo("S");
 
     ASTOutput output = result.getOutput(0);

@@ -91,20 +91,19 @@ component grammar ComponentConnector
   ;
 
   /**
-   * Event-Automaten erlauben das spezifizieren mithilfe Zustandbasierter,
+   * Automaten erlauben das spezifizieren mithilfe Zustandbasierter,
    * induktiver Verhaltensmodelle.
    */
-  interface symbol Automaton = Name ;
+  interface symbol IAutomaton = Name ;
 
   /**
-   * Event-Automaten bestehen aus Zustandsraum, initialer Konfiguration (Zustand
-   * und Ausgabe), Transitionen (für Events und für den Fortschritt der Zeit).
+   * Automaten bestehen aus Zustandsraum und initialer Konfiguration
+   * (Zustand und Ausgabe). Transitionen hängen vom Verarbeitungsmodell (Event
+   * vs Normal) ab.
    */
-  symbolrule Automaton =
+  symbolrule IAutomaton =
     stateSpace: StateSpace
     initialConfiguration: Configuration*
-    eventTransitions: EventTransition*
-    tickTransitions: Transition*
   ;
 
   interface StateSpace =
@@ -122,6 +121,20 @@ component grammar ComponentConnector
   interface Output =
     port:Name@Port value:Expression ["comprehension"]? ["listValue"]? ;
 
+  /**
+   * Event-Automaten sind Realisierungen von Automaten.
+   */
+  interface symbol EventAutomaton extends IAutomaton = ;
+
+  /**
+   * Event-Automaten unterscheiden zwischen Transitionen für Events und
+   * Transitionen für den Fortschritt der Zeit.
+   */
+  symbolrule EventAutomaton =
+    eventTransitions: EventTransition*
+    tickTransitions: Transition*
+  ;
+
   interface EventTransition =
     port:Name@Port Transition* ;
 
@@ -130,5 +143,17 @@ component grammar ComponentConnector
     guard:Expression
     result:Configuration
     documentation:String;
+
+  /**
+   * "Normale" Automaten sind Realisierungen von Automaten.
+   */
+  interface symbol Automaton extends IAutomaton = ;
+
+  /**
+   * "Normale" Automaten haben syntaktisch gesehen nur "normale" Transitionen.
+   */
+  symbolrule Automaton =
+    transitions: Transition*
+  ;
 
 }

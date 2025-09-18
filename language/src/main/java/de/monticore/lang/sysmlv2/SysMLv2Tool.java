@@ -41,12 +41,11 @@ import de.monticore.lang.sysmlv2.symboltable.completers.DirectRefinementComplete
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectionCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.RequirementClassificationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
-import de.monticore.lang.sysmlv2.symboltable.completers.StateExhibitionCompleter;
+import de.monticore.lang.sysmlv2.symboltable.completers.StateUsageCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.TypesCompleter;
 import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.lang.sysmlv2.types.SysMLSynthesizer;
 import de.monticore.ocl.oclexpressions.symboltable.OCLExpressionsSymbolTableCompleter;
-import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbolDeSer;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbolDeSer;
@@ -58,7 +57,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FilenameUtils;
-import org.checkerframework.checker.units.qual.A;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -204,7 +202,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     traverser.add4SysMLParts(new RequirementClassificationCompleter());
     traverser.add4SysMLParts(new DirectRefinementCompleter());
     traverser.add4SysMLParts(new CausalityCompleter());
-    traverser.add4SysMLStates(new StateExhibitionCompleter());
+    traverser.add4SysMLStates(new StateUsageCompleter());
 
     // Visiting artifact scope _and_ the AST requires two calls
     if (node.getEnclosingScope() != null) {

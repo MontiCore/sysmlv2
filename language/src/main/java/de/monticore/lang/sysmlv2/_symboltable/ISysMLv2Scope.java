@@ -1,6 +1,7 @@
 package de.monticore.lang.sysmlv2._symboltable;
 
 import de.monticore.lang.componentconnector._symboltable.AutomatonSymbol;
+import de.monticore.lang.componentconnector._symboltable.EventAutomatonSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildPortSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol;
@@ -24,6 +25,7 @@ import de.monticore.lang.sysmlv2.symboltable.adapters.Constraint2SpecificationAd
 import de.monticore.lang.sysmlv2.symboltable.adapters.PartDef2ComponentAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Requirement2SpecificationAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.StateUsage2AutomatonAdapter;
+import de.monticore.lang.sysmlv2.symboltable.adapters.StateUsage2EventAutomatonAdapter;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -278,13 +280,41 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
           .getLocalStateUsageSymbols()
           .stream()
           .filter(StateUsageSymbol::isExhibited)
+          .filter(sym -> sym.getUserDefinedKeywordsList().contains("tsyn"))
           .findFirst()
           .map(state -> new StateUsage2AutomatonAdapter(part, state));
 
       if(optAut.isPresent()) {
         adapted.add(optAut.get());
       }
-      optAut.ifPresent(adapted::add);
+    });
+
+    return adapted;
+  }
+
+
+  @Override
+  default List<EventAutomatonSymbol> resolveAdaptedEventAutomatonLocallyMany(
+      boolean foundSymbols, String name,
+      AccessModifier modifier,
+      Predicate<EventAutomatonSymbol> predicate
+  ) {
+    var adapted = new ArrayList<EventAutomatonSymbol>();
+
+    var partDef = resolvePartDefLocally(name);
+
+    partDef.ifPresent(part -> {
+      var optAut = ((ISysMLv2Scope)part.getSpannedScope())
+          .getLocalStateUsageSymbols()
+          .stream()
+          .filter(StateUsageSymbol::isExhibited)
+          .filter(sym -> !sym.getUserDefinedKeywordsList().contains("tsyn"))
+          .findFirst()
+          .map(state -> new StateUsage2EventAutomatonAdapter(part, state));
+
+      if(optAut.isPresent()) {
+        adapted.add(optAut.get());
+      }
     });
 
     return adapted;

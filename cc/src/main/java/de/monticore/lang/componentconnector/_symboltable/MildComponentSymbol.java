@@ -25,12 +25,21 @@ public class MildComponentSymbol extends MildComponentSymbolTOP {
         .findFirst().get();
   }
 
-  public boolean isStateBased() {
+  public boolean isTsynStateBased() {
     return !getSpannedScope().getLocalAutomatonSymbols().isEmpty();
   }
 
   public AutomatonSymbol getAutomaton() {
     return getSpannedScope().getLocalAutomatonSymbols().stream()
+        .findFirst().get();
+  }
+
+  public boolean isEventBased() {
+    return !getSpannedScope().getLocalEventAutomatonSymbols().isEmpty();
+  }
+
+  public EventAutomatonSymbol getEventAutomaton() {
+    return getSpannedScope().getLocalEventAutomatonSymbols().stream()
         .findFirst().get();
   }
 }
