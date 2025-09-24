@@ -44,13 +44,13 @@ public class ASTPortUsage extends ASTPortUsageTOP {
             .collect(Collectors.toList());
   }
 
-  private static boolean match(Collection<ASTSpecialization> s1, Collection<ASTSpecialization> s2){
+  private static boolean match(Collection<ASTSpecialization> s1, Collection<ASTSpecialization> s2) {
     var t1 = new ArrayList<>(s1);
     var t2 = new ArrayList<>(s2);
 
-    for (var t1_ : t1){
+    for (var t1_ : t1) {
       var match = t2.stream().filter(t2_ -> t2_.deepEquals(t1_, false)).findFirst();
-      if (match.isPresent()){
+      if (match.isPresent()) {
         t2.remove(match.get());
       } else {
         return false;
@@ -59,17 +59,17 @@ public class ASTPortUsage extends ASTPortUsageTOP {
     return true;
   }
 
-  private static boolean matchTypes(Collection<ASTSpecialization> s1, Collection<ASTSpecialization> s2){
+  private static boolean matchTypes(Collection<ASTSpecialization> s1, Collection<ASTSpecialization> s2) {
     var t1 = new ArrayList<>(s1);
     var t2 = new ArrayList<>(s2);
 
-    for (var t1_ : t1){
+    for (var t1_ : t1) {
       var match = t2.stream()
           .filter(t2_ -> matchTypes(t1_, t2_))
           .filter(t2_ -> ((ASTSysMLTyping) t1_).isConjugated() == !((ASTSysMLTyping) t2_).isConjugated())
           .findFirst();
 
-      if (match.isPresent()){
+      if (match.isPresent()) {
         t2.remove(match.get());
       } else {
         return false;
@@ -78,7 +78,7 @@ public class ASTPortUsage extends ASTPortUsageTOP {
     return true;
   }
 
-  private static boolean matchTypes(ASTSpecialization s1, ASTSpecialization s2){
+  private static boolean matchTypes(ASTSpecialization s1, ASTSpecialization s2) {
     var t1 = s1.deepClone().getSuperTypesList().stream().map(ASTMCType::printType).collect(Collectors.toList());
     var t2 = s2.deepClone().getSuperTypesList().stream().map(ASTMCType::printType).collect(Collectors.toList());
 
@@ -124,9 +124,9 @@ public class ASTPortUsage extends ASTPortUsageTOP {
             .filter(a -> a.getSymbol().isOut())
     ).count();
 
-    if (in > 0 && out == 0){
+    if (in > 0 && out == 0) {
       return Direction.IN;
-    } else if (out > 0 && in == 0){
+    } else if (out > 0 && in == 0) {
       return Direction.OUT;
     } else {
       return Direction.INOUT;

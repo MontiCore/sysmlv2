@@ -10,7 +10,7 @@ import de.se_rwth.commons.SourcePosition;
 public class PortDef2TypeSymbolAdapter extends TypeSymbol {
   protected PortDefSymbol adaptee;
 
-  public PortDef2TypeSymbolAdapter(PortDefSymbol adaptee){
+  public PortDef2TypeSymbolAdapter(PortDefSymbol adaptee) {
     super(Preconditions.checkNotNull(adaptee.getName()));
     this.adaptee = adaptee;
 }

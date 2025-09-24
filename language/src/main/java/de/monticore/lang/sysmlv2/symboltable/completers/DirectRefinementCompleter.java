@@ -24,11 +24,11 @@ public class DirectRefinementCompleter implements SysMLPartsVisitor2 {
     var validRefinementExpressions = new ArrayList<SymTypeExpression>();
     for (var refinementType : refinementTypes) {
       // Check existince of refinement before actually synthesizing it to avoid FATAL errors thrown by the synthesizer
-     if (refinementType.getDefiningSymbol().isEmpty()){
+     if (refinementType.getDefiningSymbol().isEmpty()) {
        continue;
      }
       var result = syn.synthesizeType(refinementType);
-      if (result.isPresentResult()){
+      if (result.isPresentResult()) {
         validRefinementExpressions.add(result.getResult());
       }
     }

@@ -9,7 +9,7 @@ import de.se_rwth.commons.SourcePosition;
 public class ItemDef2TypeSymbolAdapter extends TypeSymbol {
   protected ItemDefSymbol adaptee;
 
-  public ItemDef2TypeSymbolAdapter(ItemDefSymbol adaptee){
+  public ItemDef2TypeSymbolAdapter(ItemDefSymbol adaptee) {
     super(Preconditions.checkNotNull(adaptee.getName()));
     this.adaptee = adaptee;
   }

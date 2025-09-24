@@ -16,7 +16,7 @@ public class RefinementChainCheck implements SysMLPartsASTPartDefCoCo {
 
   @Override
   public void check(ASTPartDef node) {
-    if (!node.isPresentSymbol()){
+    if (!node.isPresentSymbol()) {
       return;
     }
 
@@ -32,9 +32,9 @@ public class RefinementChainCheck implements SysMLPartsASTPartDefCoCo {
             node.get_SourcePositionStart(), partDefNameEnd);
       }
 
-      if (node.getSysMLElementList().stream().anyMatch(e -> e instanceof ASTConnectionUsage)){
+      if (node.getSysMLElementList().stream().anyMatch(e -> e instanceof ASTConnectionUsage)) {
         // Checks dedicated to basic LLR/Mixed-Compositions
-        if (filterSimilarCompositions(node.getSymbol(), node.getSymbol().getTransitiveRefinements()).isEmpty()){
+        if (filterSimilarCompositions(node.getSymbol(), node.getSymbol().getTransitiveRefinements()).isEmpty()) {
           Log.warn("0x90011 A low level or mixed composition should refine a composition with similiar ConnectionUsages.",
               node.get_SourcePositionStart(),
               partDefNameEnd);
@@ -79,12 +79,12 @@ public class RefinementChainCheck implements SysMLPartsASTPartDefCoCo {
         .map(e -> (ASTConnectionUsage) e)
         .collect(Collectors.toList());
 
-    for (var refinement : symbols){
+    for (var refinement : symbols) {
       var refConnectionUsages = refinement.getAstNode().getSysMLElementList().stream()
           .filter(e -> e instanceof ASTConnectionUsage)
           .collect(Collectors.toList());
 
-      if (connectionUsages.size() == refConnectionUsages.size()){
+      if (connectionUsages.size() == refConnectionUsages.size()) {
         result.add(refinement);
 
       }

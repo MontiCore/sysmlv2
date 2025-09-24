@@ -10,10 +10,10 @@ import de.se_rwth.commons.SourcePosition;
 public class PartDef2TypeSymbolAdapter extends TypeSymbol {
   protected PartDefSymbol adaptee;
 
-  public PartDef2TypeSymbolAdapter(PartDefSymbol adaptee){
+  public PartDef2TypeSymbolAdapter(PartDefSymbol adaptee) {
     super(Preconditions.checkNotNull(adaptee.getName()));
     this.adaptee = adaptee;
-}
+  }
 
   protected PartDefSymbol getAdaptee() {
     return adaptee;

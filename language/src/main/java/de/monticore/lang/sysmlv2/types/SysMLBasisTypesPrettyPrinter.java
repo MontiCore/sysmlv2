@@ -19,7 +19,7 @@ public class SysMLBasisTypesPrettyPrinter implements SysMLBasisVisitor2, SysMLBa
 
   protected IndentPrinter printer;
 
-  public SysMLBasisTypesPrettyPrinter(IndentPrinter printer){
+  public SysMLBasisTypesPrettyPrinter(IndentPrinter printer) {
     this.printer = printer;
   }
 

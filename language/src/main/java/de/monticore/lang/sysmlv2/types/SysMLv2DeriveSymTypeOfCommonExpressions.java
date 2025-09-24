@@ -187,7 +187,7 @@ public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfComm
     } else if (typeVarOpt.isPresent()) {
       //test for type var first
       TypeVarSymbol typeVar = typeVarOpt.get();
-      if(checkModifierType(typeVar)){
+      if(checkModifierType(typeVar)) {
         SymTypeExpression wholeResult = SymTypeExpressionFactory.createTypeVariable(typeVar);
         expr.setDefiningSymbol(typeVar);
         getTypeCheckResult().setType();
@@ -226,7 +226,7 @@ public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfComm
       return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
     } else if (isStream && inner instanceof SymTypeOfGenerics) {
       // An inverted Boolean Stream is still a Boolean Stream
-      if (((SymTypeOfGenerics) inner).getArgumentList().size() == 1){
+      if (((SymTypeOfGenerics) inner).getArgumentList().size() == 1) {
         if (isBoolean(((SymTypeOfGenerics) inner).getArgumentList().get(0))) {
           return inner;
         }

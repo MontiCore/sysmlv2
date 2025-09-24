@@ -22,7 +22,7 @@ public class ASTPartDef extends ASTPartDefTOP {
    * @param type The type of SysML elements to search for.
    * @return List of SysML elements of the given type.
    */
-  public <T extends ASTSysMLElement> List<T> getSysMLElements(Class<T> type){
+  public <T extends ASTSysMLElement> List<T> getSysMLElements(Class<T> type) {
     return this.isEmptySysMLElements() ?
         new ArrayList<>() : this.getSysMLElementList().stream()
         .filter(type::isInstance)
@@ -57,7 +57,7 @@ public class ASTPartDef extends ASTPartDefTOP {
    * Returns the complexity difference between this and one given component.
    * Complexity difference means the number of ports, attributes, parts and connections that are used in the components.
    */
-  public int complexityDifference(ASTPartDef target){
+  public int complexityDifference(ASTPartDef target) {
     int score = 0;
 
     var comp1_ports = this.getSysMLElements(ASTPortUsage.class);
@@ -83,7 +83,7 @@ public class ASTPartDef extends ASTPartDefTOP {
    * Returns the estimated complexity of a composition that is creating using given two components.
    * Calculation is based on {@link #complexityDifference(ASTPartDef)
    */
-  public int compositionComplexity(ASTPartDef comp1, ASTPartDef comp2){
+  public int compositionComplexity(ASTPartDef comp1, ASTPartDef comp2) {
     int score = 0;
 
     score += complexityDifference(comp1);
@@ -98,7 +98,7 @@ public class ASTPartDef extends ASTPartDefTOP {
    * @param type The RequirementType of the decompositions to search for.
    * @return A list of all possible 2-part-decompositions. The list is sorted according to {@link #compositionComplexity(ASTPartDef, ASTPartDef)}
    */
-  public Stream<Pair<ASTPartDef, ASTPartDef>> getDecompositionCandidates(ASTSysMLReqType type){
+  public Stream<Pair<ASTPartDef, ASTPartDef>> getDecompositionCandidates(ASTSysMLReqType type) {
     var decompositions = new HashMap<Pair<ASTPartDef, ASTPartDef>, Map<Pair<ASTPartDef, ASTPartDef>, Map<ASTPortUsage, ASTPortUsage>>>();
     var parts = PartDefSymbol.getAllPartDefs()
         .filter(p -> p.getRequirementType() == type)
@@ -107,7 +107,7 @@ public class ASTPartDef extends ASTPartDefTOP {
         .collect(Collectors.toList());
 
     for (var comp1 : parts) {
-      for (var comp2 : parts){
+      for (var comp2 : parts) {
         // Try to calculate mapping.
         // If that fails with an IllegalStateException, (comp1 o comp2)  is not a valid decomposition of reference.
         try {
@@ -128,7 +128,7 @@ public class ASTPartDef extends ASTPartDefTOP {
    * @throws IllegalStateException If there was no valid decomposition mapping found.
    * @return A decomposition that represents "this".
    */
-  protected Map<Pair<ASTPartDef, ASTPartDef>, Map<ASTPortUsage, ASTPortUsage>> getDecompositionMapping(ASTPartDef comp1, ASTPartDef comp2){
+  protected Map<Pair<ASTPartDef, ASTPartDef>, Map<ASTPortUsage, ASTPortUsage>> getDecompositionMapping(ASTPartDef comp1, ASTPartDef comp2) {
     var mappings = new HashMap<Pair<ASTPartDef, ASTPartDef>, Map<ASTPortUsage, ASTPortUsage>>();
     // We don't really care how to exactly connect the components for now.
     // But this will be the place to do it in future.

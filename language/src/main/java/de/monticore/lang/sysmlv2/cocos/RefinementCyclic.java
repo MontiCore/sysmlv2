@@ -17,7 +17,7 @@ public class RefinementCyclic implements SysMLPartsASTPartDefCoCo {
    */
   @Override
   public void check(ASTPartDef node) {
-    if (node == null || !node.isPresentSymbol()){
+    if (node == null || !node.isPresentSymbol()) {
       return;
     }
     var refiners = node.getSymbol().getTransitiveRefiners();
@@ -30,11 +30,11 @@ public class RefinementCyclic implements SysMLPartsASTPartDefCoCo {
         .findFirst()
         .orElse(node.get_SourcePositionStart());
 
-    if (cyclicRefinements.size() > 0){
+    if (cyclicRefinements.size() > 0) {
       Log.error("0x90030 Cyclic refinement detected: " + node.getName() + " <-> " + String.join(", ", cyclicRefinements), pos);
     }
 
-    if (node.getRefinements().contains(node.getSymbol())){
+    if (node.getRefinements().contains(node.getSymbol())) {
       Log.warn("0x90031 Trivial self-refinement", pos);
     }
   }

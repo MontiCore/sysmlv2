@@ -26,7 +26,7 @@ public class NegationTest {
   private final SysMLv2Tool tool = new SysMLv2Tool();
 
   @BeforeAll
-  public static void init(){
+  public static void init() {
     LogStub.init();
   }
 

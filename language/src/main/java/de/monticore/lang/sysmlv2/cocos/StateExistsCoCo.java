@@ -8,16 +8,16 @@ import de.se_rwth.commons.logging.Log;
 
 public class StateExistsCoCo implements SysMLStatesASTSysMLTransitionCoCo {
   @Override
-  public void check (ASTSysMLTransition node){
+  public void check (ASTSysMLTransition node) {
     ISysMLStatesScope scope = node.getEnclosingScope();
     boolean isSrcPresent = scope.resolveStateUsage(node.getSrc().getQName()).isPresent();
     boolean isTgtPresent = scope.resolveStateUsage(node.getSuccessionThen().getMCQualifiedName().getQName()).isPresent();
 
-    if(!isSrcPresent){
+    if(!isSrcPresent) {
       Log.error("0x10029 Source state is not defined", node.get_SourcePositionStart(), node.get_SourcePositionEnd());
     }
 
-    if(!isTgtPresent){
+    if(!isTgtPresent) {
       Log.error("0x10030 Target state is not defined", node.get_SourcePositionStart(), node.get_SourcePositionEnd());
     }
   }

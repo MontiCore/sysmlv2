@@ -39,9 +39,9 @@ public class PartBehaviorCoCo implements SysMLPartsASTPartDefCoCo {
   }
 
   private boolean checkForConstraintUsageInReqUsage(ASTPartDef node) {
-    for(ASTSysMLElement reqUsage : node.getSysMLElements(ASTRequirementUsage.class)){
-      for(ASTSysMLElement element : ((ASTRequirementUsage) reqUsage).getSysMLElementList()){
-        if(element instanceof ASTConstraintUsage){
+    for(ASTSysMLElement reqUsage : node.getSysMLElements(ASTRequirementUsage.class)) {
+      for(ASTSysMLElement element : ((ASTRequirementUsage) reqUsage).getSysMLElementList()) {
+        if(element instanceof ASTConstraintUsage) {
           return true;
         }
       }

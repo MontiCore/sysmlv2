@@ -10,7 +10,7 @@ import de.se_rwth.commons.SourcePosition;
 public class StateDef2TypeSymbolAdapter extends TypeSymbol {
   protected StateDefSymbol adaptee;
 
-  public StateDef2TypeSymbolAdapter(StateDefSymbol adaptee){
+  public StateDef2TypeSymbolAdapter(StateDefSymbol adaptee) {
     super(Preconditions.checkNotNull(adaptee.getName()));
     this.adaptee = adaptee;
 }

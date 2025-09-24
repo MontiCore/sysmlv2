@@ -115,13 +115,13 @@ public class PortUsageSymbol extends PortUsageSymbolTOP {
   /**
    * @return true if the given ports have the same type and access modifier
    */
-  public boolean matches( PortUsageSymbol port2){
+  public boolean matches( PortUsageSymbol port2) {
     if (this.getAccessModifier() != port2.getAccessModifier() ||
-        this.getTypesList().size() != port2.getTypesList().size()){
+        this.getTypesList().size() != port2.getTypesList().size()) {
       return false;
     }
-    for (int i = 0; i < this.getTypesList().size(); i++){
-      if (!Objects.equals(this.getTypes(i).getTypeInfo().getFullName(), port2.getTypes(i).getTypeInfo().getFullName())){
+    for (int i = 0; i < this.getTypesList().size(); i++) {
+      if (!Objects.equals(this.getTypes(i).getTypeInfo().getFullName(), port2.getTypes(i).getTypeInfo().getFullName())) {
         return false;
       }
     }

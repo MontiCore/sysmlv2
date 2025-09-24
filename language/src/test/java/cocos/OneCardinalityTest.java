@@ -26,13 +26,13 @@ public class OneCardinalityTest {
   private final SysMLv2Tool st = new SysMLv2Tool();
 
   @BeforeAll
-  public static void init(){
+  public static void init() {
     LogStub.init();
     SysMLv2Mill.init();
   }
 
   @BeforeEach
-  public void reset(){
+  public void reset() {
     Log.getFindings().clear();
   }
 

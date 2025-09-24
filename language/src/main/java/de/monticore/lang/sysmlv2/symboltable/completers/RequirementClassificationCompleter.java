@@ -16,12 +16,12 @@ public class RequirementClassificationCompleter implements SysMLPartsVisitor2 {
     node.getSymbol().setRequirementType(type);
   }
 
-  private ASTSysMLReqType mergeClassification(ASTSysMLReqType a, ASTSysMLReqType b){
+  private ASTSysMLReqType mergeClassification(ASTSysMLReqType a, ASTSysMLReqType b) {
     if (a == null && b != null) {
       return b;
-    } else if (a != null && b == null){
+    } else if (a != null && b == null) {
       return a;
-    } else if (a == b){
+    } else if (a == b) {
       return a;
     } else if (a == ASTSysMLReqType.MIXED || b == ASTSysMLReqType.MIXED) {
       return ASTSysMLReqType.MIXED;
@@ -32,9 +32,9 @@ public class RequirementClassificationCompleter implements SysMLPartsVisitor2 {
     }
   }
 
-  private ASTSysMLReqType getReqType(PartDefSymbol symbol){
+  private ASTSysMLReqType getReqType(PartDefSymbol symbol) {
     var res = getReqType(symbol.getSpannedScope());
-    if (res == ASTSysMLReqType.MIXED){
+    if (res == ASTSysMLReqType.MIXED) {
       return res;
     }
 
@@ -50,15 +50,15 @@ public class RequirementClassificationCompleter implements SysMLPartsVisitor2 {
     return res != null ? res : ASTSysMLReqType.UNKNOWN;
   }
 
-  private ASTSysMLReqType getReqType(ISysMLPartsScope scope){
+  private ASTSysMLReqType getReqType(ISysMLPartsScope scope) {
     var llr = false;
     var hlr = false;
 
-    if (scope instanceof ISysMLStatesScope){
+    if (scope instanceof ISysMLStatesScope) {
       llr = ((ISysMLStatesScope) scope).getStateUsageSymbols().size() > 0;
     }
 
-    if (scope instanceof ISysMLConstraintsScope){
+    if (scope instanceof ISysMLConstraintsScope) {
       hlr = ((ISysMLConstraintsScope) scope).getRequirementUsageSymbols().size() > 0;
     }
 

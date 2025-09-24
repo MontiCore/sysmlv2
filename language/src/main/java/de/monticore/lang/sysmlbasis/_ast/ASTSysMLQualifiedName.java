@@ -21,7 +21,7 @@ public class ASTSysMLQualifiedName extends ASTSysMLQualifiedNameTOP {
         this.getPartsList());
   }
 
-  public String toString(){
+  public String toString() {
     return getQName();
   }
 

@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class EnumDef2TypeSymbolAdapter extends OOTypeSymbol {
   protected EnumDefSymbol adaptee;
 
-  public EnumDef2TypeSymbolAdapter(EnumDefSymbol adaptee){
+  public EnumDef2TypeSymbolAdapter(EnumDefSymbol adaptee) {
     super(Preconditions.checkNotNull(adaptee.getName()));
     this.adaptee = adaptee;
   }

@@ -27,23 +27,23 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
 
   private final Optional<ASTPartDef> originalReference;
 
-  public ASTPartDefBuilder(){
+  public ASTPartDefBuilder() {
     super();
     this.originalReference = Optional.empty();
     this.setModifier(SysMLv2Mill.modifierBuilder().build());
   }
 
-  public ASTPartDefBuilder(ASTPartDef referencePartDef){
+  public ASTPartDefBuilder(ASTPartDef referencePartDef) {
     super();
     this.originalReference = Optional.of(referencePartDef);
     this.setName(referencePartDef.getName());
     this.setModifier(referencePartDef.getModifier().deepClone());
 
-    for (var element : referencePartDef.getSysMLElementList()){
+    for (var element : referencePartDef.getSysMLElementList()) {
       this.addSysMLElement(element.deepClone());
     }
 
-    for (var type : referencePartDef.getSpecializationList()){
+    for (var type : referencePartDef.getSpecializationList()) {
       this.addSpecialization(type.deepClone());
     }
 
@@ -61,15 +61,15 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
     }
 
     for (var p : List.copyOf(this.getSysMLElementList())) {
-      if (p instanceof ASTPartUsage){
+      if (p instanceof ASTPartUsage) {
         try {
           var originalPartDefOpt = SysMLv2Mill.globalScope().resolvePartDef(((ASTPartUsage) p).getSpecializationList().get(0).getSuperTypes(0).printType());
-          if (originalPartDefOpt.isEmpty()){
+          if (originalPartDefOpt.isEmpty()) {
             // When we can't find the original symbol. We can also not check for corresponding HLRs.
             continue;
           }
           var originalPartDef = originalPartDefOpt.get();
-          if (originalPartDef.getRequirementType() == targetType){
+          if (originalPartDef.getRequirementType() == targetType) {
             // Nothing to do here.
             continue;
           }
@@ -78,7 +78,7 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
               ? originalPartDef.getTransitiveRefinements()
               : originalPartDef.getTransitiveRefiners();
 
-          if (candidates.isEmpty()){
+          if (candidates.isEmpty()) {
             continue;
           }
 
@@ -93,7 +93,7 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
           var hlrEquivalentQMcType = new ASTMCQualifiedTypeBuilder().setMCQualifiedName(hlrEquivalentQName).build();
 
           ((ASTPartUsage) p).getSpecializationList().get(0).getSuperTypesList().set(0, hlrEquivalentQMcType);
-        } catch (Exception e){
+        } catch (Exception e) {
           // continue
         }
       }
@@ -107,11 +107,11 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
    * @param propertyType The type of SysML elements to remove.
    */
   public ASTPartDefBuilder removeProperties(ASTSysMLReqType propertyType) {
-    if (propertyType == ASTSysMLReqType.LLR || propertyType == ASTSysMLReqType.MIXED){
+    if (propertyType == ASTSysMLReqType.LLR || propertyType == ASTSysMLReqType.MIXED) {
       this.removeIfSysMLElement(e -> e instanceof ASTStateUsage);
     }
 
-    if (propertyType == ASTSysMLReqType.HLR || propertyType == ASTSysMLReqType.MIXED){
+    if (propertyType == ASTSysMLReqType.HLR || propertyType == ASTSysMLReqType.MIXED) {
       this.removeIfSysMLElement(e -> e instanceof ASTRequirementUsage);
       this.removeIfSysMLElement(e -> e instanceof ASTConstraintUsage);
     }
@@ -124,11 +124,11 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
    * @param predicate Die Eigenschaft die getestet werden soll.
    * @param func Die Funktion die ausgeführt werden soll, wenn die Eigenschaft erfüllt ist.
    */
-  public ASTPartDefBuilder ifReference(Predicate<ASTPartDef> predicate, Function<ASTPartDefBuilder, ASTPartDefBuilder> func){
-    if (originalReference.isEmpty()){
+  public ASTPartDefBuilder ifReference(Predicate<ASTPartDef> predicate, Function<ASTPartDefBuilder, ASTPartDefBuilder> func) {
+    if (originalReference.isEmpty()) {
       throw new IllegalStateException("Cannot apply ifReference on a builder that has no reference");
     }
-    if (predicate.test(originalReference.get())){
+    if (predicate.test(originalReference.get())) {
       return func.apply(this);
     } else {
       return this;
@@ -140,7 +140,7 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
    * @param name The name of the port usage.
    * @param type The type of the port usage.
    */
-  public ASTPartDefBuilder addPortUsage(String name, ASTMCType type){
+  public ASTPartDefBuilder addPortUsage(String name, ASTMCType type) {
     var portUsage = SysMLv2Mill.portUsageBuilder()
         .setName(name)
         .addSpecialization(SysMLv2Mill.sysMLTypingBuilder().addSuperTypes(type).build())

@@ -27,7 +27,7 @@ public class PartDefSymbolDeSer extends PartDefSymbolDeSerTOP {
   @Override
   protected ASTSysMLReqType deserializeRequirementType(JsonObject symbolJson) {
     var json = symbolJson.getMember("requirementType");
-    if (!json.isJsonNull() && json.isJsonString()){
+    if (!json.isJsonNull() && json.isJsonString()) {
       return ASTSysMLReqType.valueOf(json.getAsJsonString().getValue());
     }
     return ASTSysMLReqType.UNKNOWN;

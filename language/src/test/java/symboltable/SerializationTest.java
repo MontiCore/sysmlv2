@@ -189,7 +189,7 @@ public class SerializationTest {
   }
 
   @Test
-  public void testRefinmentReferenceDeSerialization(){
+  public void testRefinmentReferenceDeSerialization() {
     var modelReferencePath = BASE + "/partDefWithRefinement/RefinementReference.sysml";
     var symboltablePathExpected = BASE + "/partDefWithRefinement/Refinement.sym";
     var symboltablePathActual = BASE + "/partDefWithRefinement/RefinementActual.sym";

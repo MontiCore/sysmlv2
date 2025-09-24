@@ -39,7 +39,7 @@ public class SpesMLTest {
   }
 
   @BeforeEach
-  public void reset(){
+  public void reset() {
     Log.getFindings().clear();
   }
 

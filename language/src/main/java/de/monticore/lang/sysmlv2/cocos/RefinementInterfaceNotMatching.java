@@ -24,14 +24,14 @@ public class RefinementInterfaceNotMatching implements SysMLPartsASTPartDefCoCo 
         .filter(refinement -> !node.getSymbol().matchesInterfaceOf(refinement))
         .collect(Collectors.toList());
 
-    if (notMatching.size() > 0){
+    if (notMatching.size() > 0) {
       var pos = node.getSpecializationList().stream()
           .filter(s -> s instanceof ASTSysMLRefinement)
           .map(ASTNode::get_SourcePositionStart)
           .findFirst()
           .orElse(node.get_SourcePositionStart());
 
-      for (var refinement : notMatching){
+      for (var refinement : notMatching) {
         Log.error("0x9004 Interface of refinement " + refinement.getName() + " is incompatible.", pos);
       }
     }

@@ -126,7 +126,7 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
 
   @Override
   public void endVisit(ASTAnonymousUsage node) {
-    if(node.isPresentSymbol()){
+    if(node.isPresentSymbol()) {
       AnonymousUsageSymbol symbol = node.getSymbol();
       List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
       symbol.setTypesList(types);
