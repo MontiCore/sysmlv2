@@ -2,20 +2,23 @@
 package de.monticore.lang.sysmlparts.symboltable.adapters;
 
 import com.google.common.base.Preconditions;
-import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
+import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.se_rwth.commons.SourcePosition;
 
-public class PartDef2TypeSymbolAdapter extends TypeSymbol {
-  protected PartDefSymbol adaptee;
+/**
+ * SysML does not properly distinguish between types and instances of types
+ */
+public class PartUsage2TypeSymbolAdapter extends TypeSymbol {
+  protected PartUsageSymbol adaptee;
 
-  public PartDef2TypeSymbolAdapter(PartDefSymbol adaptee) {
+  public PartUsage2TypeSymbolAdapter(PartUsageSymbol adaptee) {
     super(Preconditions.checkNotNull(adaptee.getName()));
     this.adaptee = adaptee;
   }
 
-  protected PartDefSymbol getAdaptee() {
+  protected PartUsageSymbol getAdaptee() {
     return adaptee;
   }
 
@@ -51,8 +54,8 @@ public class PartDef2TypeSymbolAdapter extends TypeSymbol {
     return getAdaptee().getSourcePosition();
   }
 
-  public PartDef2TypeSymbolAdapter deepClone() {
-    PartDef2TypeSymbolAdapter clone = new PartDef2TypeSymbolAdapter(this.getAdaptee());
+  public PartUsage2TypeSymbolAdapter deepClone() {
+    PartUsage2TypeSymbolAdapter clone = new PartUsage2TypeSymbolAdapter(this.getAdaptee());
     clone.setAccessModifier(this.getAccessModifier());
     clone.setEnclosingScope(this.getEnclosingScope());
     clone.setFullName(this.getFullName());
@@ -60,5 +63,9 @@ public class PartDef2TypeSymbolAdapter extends TypeSymbol {
       clone.setAstNode(this.getAstNode());
     }
     return clone;
+  }
+
+  public String getSysMLIndentifier() {
+    return getAdaptee().getSysMLIdentifier();
   }
 }

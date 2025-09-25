@@ -4,14 +4,15 @@ package de.monticore.lang;
 component grammar SysMLStates extends SysMLActions {
 
   symbol scope StateDef implements SysMLType =
-    Modifier UserDefinedKeyword* "state" "def" Name SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
+    Modifier UserDefinedKeyword* "state" "def" SysMLIdentifier? Name
+    SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
       (EntryAction | DoAction | ExitAction | SysMLElement)*
     "}" | ";") ;
 
   symbol scope StateUsage implements SysMLElement =
-    Modifier UserDefinedKeyword* exhibited:["exhibit"]? "state" Name?
-    SysMLCardinality? Specialization*
+    Modifier UserDefinedKeyword* exhibited:["exhibit"]? "state" SysMLIdentifier?
+    Name? SysMLCardinality? Specialization*
     ("(" (SysMLParameter || ",")* ")")? paralled:["parallel"]? DefaultValue?
     ("{"
       (EntryAction | DoAction | ExitAction | SysMLElement)*

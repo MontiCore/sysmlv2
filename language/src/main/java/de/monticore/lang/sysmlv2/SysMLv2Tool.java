@@ -39,6 +39,7 @@ import de.monticore.lang.sysmlv2.cocos.WarnNonExhibited;
 import de.monticore.lang.sysmlv2.symboltable.completers.CausalityCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectRefinementCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectionCompleter;
+import de.monticore.lang.sysmlv2.symboltable.completers.IdentifierCompletion;
 import de.monticore.lang.sysmlv2.symboltable.completers.RequirementClassificationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.StateUsageCompleter;
@@ -101,8 +102,6 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
     checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
-    checker.addCoCo(new SpecializationExists());
-    checker.addCoCo(new ConstraintIsBoolean());
     checker.addCoCo(new TypeCheckTransitionGuards());
     checker.addCoCo(new SendActionTypeCheck());
     checker.addCoCo(new AssignActionTypeCheck());
@@ -116,6 +115,10 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
   public void runAdditionalCoCos(
       de.monticore.lang.sysmlv2._ast.ASTSysMLModel ast) {
     var checker = new SysMLv2CoCoChecker();
+
+    // general
+    checker.addCoCo(new ConstraintIsBoolean());
+    checker.addCoCo(new SpecializationExists());
 
     // Not-supported language elements
     checker.addCoCo(new NoExitActions());
@@ -184,6 +187,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     traverser.add4SysMLBasis(new DirectionCompleter());
     traverser.add4SysMLParts(new DirectionCompleter());
     traverser.add4SysMLParts(new ConvertEnumUsagesToFields());
+    traverser.add4SysMLParts(new IdentifierCompletion());
 
     // Visiting artifact scope _and_ the AST requires two calls
     if (node.getEnclosingScope() != null) {

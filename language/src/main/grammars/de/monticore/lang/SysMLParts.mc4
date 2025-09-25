@@ -87,6 +87,7 @@ component grammar SysMLParts extends SysMLBasis {
    */
   symbolrule PartUsage =
       types:de.monticore.types.check.SymTypeExpression*
+      sysMLIdentifier:Name?
       method public Optional<de.monticore.lang.sysmlparts._symboltable.PartDefSymbol> getPartDef() {
         for (de.monticore.lang.sysmlbasis._ast.ASTSpecialization specialization : this.getAstNode().getSpecializationList()) {
           for (de.monticore.types.mcbasictypes._ast.ASTMCType specializationType : specialization.getSuperTypesList()) {
@@ -101,7 +102,7 @@ component grammar SysMLParts extends SysMLBasis {
         return Optional.empty();
       } ;
 
-  symbol AttributeUsage implements SysMLElement =
+  symbol scope AttributeUsage implements SysMLElement =
       Modifier UserDefinedKeyword* "attribute"
       SysMLIdentifier? Name? SysMLCardinality?
       Specialization* DefaultValue?
