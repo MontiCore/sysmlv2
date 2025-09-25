@@ -207,7 +207,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
     // AttributeUsage zu Types
     var attributeUsage = resolveAttributeUsageLocally(name);
-    if (attributeDef.isPresent()) {
+    if (attributeUsage.isPresent()) {
       adapted.add(new AttributeUsage2TypeSymbolAdapter(attributeUsage.get()));
     }
 
