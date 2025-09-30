@@ -1,9 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2._lsp.features.symbols;
 
-import de.monticore.io.paths.MCPath;
+import de.mclsg.lsp.modelpath.multiproject.ProjectLayoutBuilder;
 import de.monticore.lang.sysmlv2._lsp.SysMLv2LanguageServer;
-import de.se_rwth.commons.logging.Slf4jLog;
 import org.eclipse.lsp4j.DocumentSymbol;
 import org.eclipse.lsp4j.DocumentSymbolParams;
 import org.eclipse.lsp4j.SymbolInformation;
@@ -34,7 +33,7 @@ public class DocumentSymbolProviderTest {
   public void testNestedComponent() throws ExecutionException, InterruptedException {
     Path base = Paths.get("src/test/resources/documentSymbols");
     Path model = base.resolve("NestedPackages.sysml");
-    SysMLv2LanguageServer languageServer = new SysMLv2LanguageServer(new MCPath(base));
+    SysMLv2LanguageServer languageServer = new SysMLv2LanguageServer(new ProjectLayoutBuilder().resources(base).build());
     languageServer.getIndexingManager().indexAllFilesInPath();
 
 
@@ -83,8 +82,7 @@ public class DocumentSymbolProviderTest {
     //Slf4jLog.init();
     var resources = Paths.get("src/test/resources/documentSymbols/concurrent");
 
-    MCPath modelPath = new MCPath(resources);
-    SysMLv2LanguageServer server = new SysMLv2LanguageServer(modelPath);
+    SysMLv2LanguageServer server = new SysMLv2LanguageServer(new ProjectLayoutBuilder().resources(resources).build());
     server.getIndexingManager().indexAllFilesInPath();
 
     List<Path> models = List.of(

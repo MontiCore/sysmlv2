@@ -4,11 +4,11 @@ package de.monticore.lang.sysmlv2._lsp;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import de.mclsg.lsp.document_management.DocumentInformation;
-import de.monticore.io.paths.MCPath;
+import de.mclsg.lsp.modelpath.multiproject.ProjectLayoutBuilder;
 import org.eclipse.lsp4j.DidChangeConfigurationParams;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -18,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ReconfigureModelLocationTest {
 
   @Test
-  @Disabled
   public void testIndexing() {
-    MCPath initialModelPath = new MCPath(
-        Paths.get("src", "test", "resources", "ReconfigureModelLocationTest", "modelRootA"));
-    SysMLv2LanguageServer languageServer = new SysMLv2LanguageServer(initialModelPath);
+    Path initialModelPath = Paths.get("src", "test", "resources",
+        "ReconfigureModelLocationTest", "modelRootA");
+    SysMLv2LanguageServer languageServer = new SysMLv2LanguageServer(
+        new ProjectLayoutBuilder().projectpath(Paths.get(".")).resources(initialModelPath).build());
     languageServer.getIndexingManager().indexAllFilesInPath();
 
     {
