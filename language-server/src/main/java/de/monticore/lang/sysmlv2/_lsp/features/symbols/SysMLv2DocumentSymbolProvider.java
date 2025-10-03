@@ -110,7 +110,7 @@ public class SysMLv2DocumentSymbolProvider extends SysMLv2DocumentSymbolProvider
             symbol.getName(),
             SYMBOLKIND_MAPPER.getOrDefault(symbol.getAstNode().getClass(), SymbolKind.Object),
             new Range(new Position(symbol.getAstNode().get_SourcePositionStart().getLine(),
-                symbol.getAstNode().get_SourcePositionEnd().getColumn()),
+                symbol.getAstNode().get_SourcePositionStart().getColumn()),
                 new Position(symbol.getAstNode().get_SourcePositionEnd().getLine(),
                     symbol.getAstNode().get_SourcePositionEnd().getColumn())
             ),
