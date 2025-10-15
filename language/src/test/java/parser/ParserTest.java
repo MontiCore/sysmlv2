@@ -52,6 +52,7 @@ public class ParserTest {
       "constraints.sysml",
       "requirements.sysml",
       "streams.sysml",
+      "streamsFilter.sysml",
       "refinement.sysml",
       "cardinalities.sysml",
       "connections.sysml",

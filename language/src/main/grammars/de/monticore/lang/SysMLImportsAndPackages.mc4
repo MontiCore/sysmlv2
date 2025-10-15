@@ -37,7 +37,7 @@ component grammar SysMLImportsAndPackages extends SysMLBasis {
    * model-level evaluable expression.
    */
   FilterCondition implements SysMLElement =
-    "filter" Expression ";" ;
+    key("filter") Expression ";" ;
 
   /**
    * Metadata is additional data that can be used to annotate
