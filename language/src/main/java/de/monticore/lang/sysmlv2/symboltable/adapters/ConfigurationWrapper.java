@@ -16,6 +16,7 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._prettyprint.SysMLv2FullPrettyPrinter;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.lang.sysmlactions.visitors.SendActionAssignmentsVisitor;
+import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.literals.mccommonliterals._symboltable.IMCCommonLiteralsScope;
 import de.monticore.literals.mcliteralsbasis._symboltable.IMCLiteralsBasisScope;
 import de.monticore.mcbasics._symboltable.IMCBasicsScope;
@@ -48,7 +49,17 @@ public class ConfigurationWrapper implements ASTConfiguration {
   /** Caching because of internal deriver usage*/
   private final List<ASTOutput> outputs;
 
-  public ConfigurationWrapper(String state, ASTSysMLActionsNode adaptee) {
+  /**
+   *
+   * @param state         Der Zustandsname
+   * @param adaptee       Die Do-Action, aus der SendActions extrahiert werden
+   * @param canSendLists  Ob Automat Listen senden kann (Untimed, Timed, Event)
+   */
+  public ConfigurationWrapper(
+      String state,
+      ASTSysMLActionsNode adaptee,
+      Boolean canSendLists)
+  {
     this.enclosingScope = (ISysMLv2Scope) adaptee.getEnclosingScope();
 
     var traverser = SysMLv2Mill.traverser();
@@ -64,7 +75,25 @@ public class ConfigurationWrapper implements ASTConfiguration {
         .entrySet()
         .stream()
         .filter(ass -> getEnclosingScope().resolvePort(ass.getKey().getQName()).isPresent())
-        .map(ass -> new OutputWrapper(getEnclosingScope().resolvePort(ass.getKey().getQName()).get(), ass.getValue()))
+        .map(ass -> {
+            var value = ass.getValue();
+            var isListValue = false;
+            if(canSendLists) {
+              // Wenn der Automat generell Listen senden kann, zB. eine Event-
+              // Automat, dann wird der Typ des Values angeschaut und
+              // entschieden, ob der Output "isListValue" gesetzt bekommt
+              var typeOfValue = new SysMLDeriver(false)
+                  .deriveType(value).getResult();
+              if(typeOfValue.printFullName().contains("List")) {
+                isListValue = true;
+              }
+            }
+            return new OutputWrapper(
+                getEnclosingScope().resolvePort(ass.getKey().getQName()).get(),
+                value,
+                isListValue);
+          }
+        )
         .collect(Collectors.toList());
 
     this.state = new StateWrapper(state, assignments);
@@ -79,8 +108,8 @@ public class ConfigurationWrapper implements ASTConfiguration {
     this.state = new StateWrapper(state, emptyMap());
   }
 
-  public ConfigurationWrapper(ASTExpression state, ASTActionUsage adaptee) {
-    this(new SysMLv2FullPrettyPrinter(new IndentPrinter()).prettyprint(state), adaptee);
+  public ConfigurationWrapper(ASTExpression state, ASTActionUsage adaptee, Boolean canSendLists) {
+    this(new SysMLv2FullPrettyPrinter(new IndentPrinter()).prettyprint(state), adaptee, canSendLists);
   }
 
   @Override

@@ -47,7 +47,12 @@ public class StateUsage2AutomatonAdapter extends AutomatonSymbol {
 
         if(entry.isPresentActionUsage()) {
           initialConfiguration.add(
-              new ConfigurationWrapper(initialState, entry.getActionUsage()));
+              // Wir gehen aktuell davon aus, dass "Automaton" genau TSYN-Aut.
+              // sind. Nur EventAutomaten können also Listen senden.
+              new ConfigurationWrapper(
+                  initialState,
+                  entry.getActionUsage(),
+                  false));
         }
         else {
           initialConfiguration.add(
@@ -58,7 +63,9 @@ public class StateUsage2AutomatonAdapter extends AutomatonSymbol {
 
       transitions = ast.getSysMLElementList().stream()
           .filter(t -> t instanceof ASTSysMLTransition)
-          .map(t -> new TransitionWrapper((ASTSysMLTransition) t))
+          // Wir gehen davon aus, dass die aktuelle Impl. nur Tsyn- und Event-
+          // automaten kennt. Tsyn kann keine Listen senden, deswegen "false"
+          .map(t -> new TransitionWrapper((ASTSysMLTransition) t, false))
           .collect(Collectors.toList());
     }
   }

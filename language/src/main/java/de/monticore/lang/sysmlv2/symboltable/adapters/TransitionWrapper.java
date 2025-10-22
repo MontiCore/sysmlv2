@@ -42,7 +42,12 @@ public class TransitionWrapper implements ASTTransition {
 
   private final ASTConfiguration result;
 
-  TransitionWrapper(ASTSysMLTransition adaptee) {
+  /**
+   *
+   * @param adaptee      Die SysML-Transtion, die an "Transition" adaptiert wird
+   * @param canSendLists Ob Automat Listen senden kann (Untimed, Timed, Event)
+   */
+  TransitionWrapper(ASTSysMLTransition adaptee, Boolean canSendLists) {
     this.adaptee = adaptee;
 
     start = new ASTMCQualifiedNameBuilder().setPartsList(List.of(adaptee.getSrc().getQName())).build();
@@ -64,10 +69,15 @@ public class TransitionWrapper implements ASTTransition {
     documentation = "line " + adaptee.get_SourcePositionStart().getLine() + " to " + adaptee.get_SourcePositionEnd().getLine();
 
     if (adaptee.isPresentDoAction()) {
-      result = new ConfigurationWrapper(adaptee.getSuccessionThen().getMCQualifiedName().getQName(), adaptee.getDoAction());
+      result = new ConfigurationWrapper(
+          adaptee.getSuccessionThen().getMCQualifiedName().getQName(),
+          adaptee.getDoAction(),
+          canSendLists);
     }
     else {
-      result = new ConfigurationWrapper(adaptee.getSuccessionThen().getMCQualifiedName().getQName(), (ISysMLv2Scope) adaptee.getEnclosingScope());
+      result = new ConfigurationWrapper(
+          adaptee.getSuccessionThen().getMCQualifiedName().getQName(),
+          (ISysMLv2Scope) adaptee.getEnclosingScope());
     }
   }
 

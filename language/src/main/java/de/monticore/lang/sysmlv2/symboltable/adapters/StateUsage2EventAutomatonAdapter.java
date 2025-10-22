@@ -39,7 +39,12 @@ public class StateUsage2EventAutomatonAdapter extends EventAutomatonSymbol {
             ((ASTSysMLSuccession) ast.getSysMLElement(0)).getSuccessionThen().getMCQualifiedName().getQName();
 
         if(entry.isPresentActionUsage()) {
-          initialConfiguration.add(new ConfigurationWrapper(initialState, entry.getActionUsage()));
+          initialConfiguration.add(
+              // Event-Automaten können Listen senden
+              new ConfigurationWrapper(
+                  initialState,
+                  entry.getActionUsage(),
+                  true));
         }
         else {
           initialConfiguration.add(
@@ -56,15 +61,17 @@ public class StateUsage2EventAutomatonAdapter extends EventAutomatonSymbol {
           var transition = (ASTSysMLTransition) elem;
           var trigger = getTrigger(transition);
 
+          // Event-Automaten können Listen als Reaktion auf ein Input-Event
+          // senden, deswegen canSendList = true!
           if (trigger.equals("Tick")) {
-            tickTrans.add(new TransitionWrapper(transition));
+            tickTrans.add(new TransitionWrapper(transition, true));
           }
           else if (eventTrans.containsKey(trigger)) {
-            eventTrans.get(trigger).add(new TransitionWrapper(transition));
+            eventTrans.get(trigger).add(new TransitionWrapper(transition, true));
           }
           else {
             var transitionList = new ArrayList<ASTTransition>();
-            transitionList.add(new TransitionWrapper(transition));
+            transitionList.add(new TransitionWrapper(transition, true));
 
             eventTrans.put(trigger, transitionList);
           }

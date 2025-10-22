@@ -41,14 +41,15 @@ public class OutputWrapper implements ASTOutput {
 
   private Boolean isListValue = null;
 
-  OutputWrapper(PortSymbol port, ASTExpression value) {
+
+  OutputWrapper(PortSymbol port, ASTExpression value,  Boolean isListValue) {
     this.port = port;
     this.value = value;
+    this.isListValue = isListValue;
+  }
 
-    // hacky: isList is only reachable if loaded before transformation time (i.e. before initializing target mill)
-    if (ExpressionsBasisMill.globalScope() instanceof ISysMLv2GlobalScope) {
-      isListValue = new SysMLDeriver(false).deriveType(value).getResult().printFullName().contains("List");
-    }
+  OutputWrapper(PortSymbol port, ASTExpression value) {
+    this(port, value, false);
   }
 
   @Override
