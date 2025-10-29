@@ -1,7 +1,9 @@
 package de.monticore.lang.sysmlv2.types;
 
 import de.monticore.expressions.commonexpressions._ast.ASTArrayAccessExpression;
+import de.monticore.expressions.commonexpressions._ast.ASTEqualsExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
+import de.monticore.expressions.commonexpressions._ast.ASTNotEqualsExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.lang.sysmlparts.symboltable.adapters.PortUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
@@ -243,5 +245,20 @@ public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfComm
       return SymTypeExpressionFactory.createPrimitive("nat");
     }
     return super.calculateArithmeticExpression(left, right, op, pos);
+  }
+
+  @Override
+  public void traverse(ASTEqualsExpression expr) {
+    SymTypeExpression left = acceptThisAndReturnSymTypeExpression(expr.getLeft());
+    SymTypeExpression right = acceptThisAndReturnSymTypeExpression(expr.getRight());
+
+    // Allow equality comparisons even when one side has an obscure type
+    if(!left.isObscureType() && !right.isObscureType()) {
+      this.getTypeCheckResult().reset();
+      this.getTypeCheckResult().setResult(this.calculateEqualsExpression(left, right, expr.get_SourcePositionStart()));
+    } else {
+      this.getTypeCheckResult().reset();
+      this.getTypeCheckResult().setResult(SymTypeExpressionFactory.createPrimitive("boolean"));
+    }
   }
 }

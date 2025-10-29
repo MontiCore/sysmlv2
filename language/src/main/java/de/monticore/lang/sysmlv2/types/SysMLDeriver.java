@@ -52,7 +52,7 @@ public class SysMLDeriver extends AbstractDerive {
     commonLiterals.setTypeCheckResult(typeCheckResult);
     getTraverser().add4MCCommonLiterals(commonLiterals);
 
-    DeriveSymTypeOfExpression forBasisExpr = new DeriveSymTypeOfExpression();
+    SysMLDeriveSymTypeOfExpression forBasisExpr = new SysMLDeriveSymTypeOfExpression();
     forBasisExpr.setTypeCheckResult(typeCheckResult);
     getTraverser().add4ExpressionsBasis(forBasisExpr);
     getTraverser().setExpressionsBasisHandler(forBasisExpr);
