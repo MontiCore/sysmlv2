@@ -156,4 +156,19 @@ component grammar ComponentConnector
     transitions: Transition*
   ;
 
+  /**
+   * Requirements sind logische Ausdrücke über ein Subjekt, i.e., eine
+   * Komponente.
+   */
+  interface symbol Requirement = ;
+
+  symbolrule Requirement =
+    constraint: Expression
+    subjectName: Name
+
+    method public de.monticore.symbols.compsymbols._symboltable.ComponentTypeSymbol getSubject() {
+      return getEnclosingScope().resolveComponentType(this.subjectName).get();
+    }
+  ;
+
 }

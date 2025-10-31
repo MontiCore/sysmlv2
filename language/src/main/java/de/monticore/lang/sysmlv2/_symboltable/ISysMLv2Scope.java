@@ -6,6 +6,7 @@ import de.monticore.lang.componentconnector._symboltable.EventAutomatonSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildPortSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol;
+import de.monticore.lang.componentconnector._symboltable.RequirementSymbol;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol;
 import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
@@ -27,6 +28,7 @@ import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAda
 import de.monticore.lang.sysmlv2.symboltable.adapters.AttributeUsage2PortSymbolAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Constraint2SpecificationAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.PartDef2ComponentAdapter;
+import de.monticore.lang.sysmlv2.symboltable.adapters.Requirement2RequirementAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Requirement2SpecificationAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.StateUsage2AutomatonAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.StateUsage2EventAutomatonAdapter;
@@ -388,6 +390,25 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     }
 
     return getResolvedOrThrowException(resolvedSymbols);
+  }
+
+  @Override
+  default List<RequirementSymbol> resolveAdaptedRequirementLocallyMany(
+      boolean foundSymbols,
+      String name,
+      AccessModifier modifier,
+      Predicate<RequirementSymbol> predicate
+  ) {
+    var adapted = new ArrayList<RequirementSymbol>();
+
+    var req = resolveRequirementUsageLocally(name);
+
+    if(req.isPresent()) {
+      var ccReq = new Requirement2RequirementAdapter(req.get());
+      adapted.add(ccReq);
+    }
+
+    return adapted;
   }
 
 }
