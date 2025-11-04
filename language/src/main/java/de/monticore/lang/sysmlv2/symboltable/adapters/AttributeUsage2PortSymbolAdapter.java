@@ -72,17 +72,12 @@ public class AttributeUsage2PortSymbolAdapter extends MildPortSymbol {
   }
 
   private Timing determineTiming(PortUsageSymbol container) {
-    if (container.getEnclosingScope().isPresentSpanningSymbol()) {
-      var spanningSymbol = container.getEnclosingScope().getSpanningSymbol();
-      var partDef = (PartDefSymbol) spanningSymbol;
-      var scope = (ISysMLv2Scope) partDef.getSpannedScope();
+      var scope = (ISysMLv2Scope) container.getEnclosingScope();
 
       boolean hasTsyn = scope.getLocalStateUsageSymbols().stream()
           .anyMatch(sym -> sym.getUserDefinedKeywordsList().contains("tsyn"));
 
       return hasTsyn ? Timing.TIMED_SYNC : Timing.TIMED;
-    }
-    return Timing.TIMED;
   }
 
   @Override
