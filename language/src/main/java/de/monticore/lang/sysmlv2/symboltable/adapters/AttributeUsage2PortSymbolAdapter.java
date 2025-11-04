@@ -2,7 +2,9 @@ package de.monticore.lang.sysmlv2.symboltable.adapters;
 
 import de.monticore.lang.componentconnector._symboltable.MildPortSymbol;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
+import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
+import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symbols.compsymbols._symboltable.ICompSymbolsScope;
 import de.monticore.symbols.compsymbols._symboltable.Timing;
 import de.monticore.types.check.SymTypeExpressionFactory;
@@ -26,9 +28,7 @@ public class AttributeUsage2PortSymbolAdapter extends MildPortSymbol {
     this.adaptee = adaptee;
     this.incoming = incoming;
     this.outgoing = !this.incoming;
-    // TODO Timing aus Komponente frickeln, in der die PortUsage liegt in deren Definition das Attribut liegt
-    this.timing = Timing.TIMED;
-    // TODO s.o.
+    this.timing = determineTiming(container);
     this.stronglyCausal = container.isStrong();
 
     // Das muss anscheinend gesetzt sein, weil die MC-Interna immer über das Feld herausfinden, ob sie getEnclosingScope
@@ -69,6 +69,15 @@ public class AttributeUsage2PortSymbolAdapter extends MildPortSymbol {
   @Override
   public Timing getTiming() {
     return timing;
+  }
+
+  private Timing determineTiming(PortUsageSymbol container) {
+      var scope = (ISysMLv2Scope) container.getEnclosingScope();
+
+      boolean hasTsyn = scope.getLocalStateUsageSymbols().stream()
+          .anyMatch(sym -> sym.getUserDefinedKeywordsList().contains("tsyn"));
+
+      return hasTsyn ? Timing.TIMED_SYNC : Timing.TIMED;
   }
 
   @Override
