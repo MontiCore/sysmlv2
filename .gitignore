@@ -2,6 +2,7 @@
 target/
 out/
 bin/
+build/
 .project/
 .settings/
 .classpath/
@@ -14,5 +15,5 @@ bin/
 # Ignore Macintosh Desktop Service Stores
 .DS_Store
 
-# Ignore log file
+# Ignore log files
 *.log

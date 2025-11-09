@@ -1,41 +1,43 @@
 /* (c) https://github.com/MontiCore/monticore */
-subprojects {
-  apply plugin: 'java'
-  apply plugin: 'maven-publish'
+plugins {
+  id "java-library"
+  id "de.monticore.generator" version "$mc_version"
+  id "io.github.themrmilchmann.ecj" version "0.2.0"
+  id "maven-publish"
+  id "com.github.johnrengelman.shadow" version "7.1.2"
+  id "jacoco"
+  id "de.se_rwth.codestyle" version "$mc_version"
+}
 
-  group = 'de.monticore.lang.sysml_v2'
+group = "de.monticore"
+description = "sysmlv2"
 
-  // Needs to be after java plugin
-  sourceCompatibility = "11"
-
-  project.buildDir = "target"
-
-  repositories {
-    // SE-Nexus also caches maven central
-    maven {
-      name "SE Nexus"
-      url = publicNexus
-    }
-  }
-
-  // Java JDK Warning
-  if (JavaVersion.current() > sourceCompatibility) {
-    logger.warn("\u001B[33m Warning: You are currently using JDK Version " + JavaVersion.current() + ". " + "Higher JDK versions may cause compatibility problems. JDK 11 is recommended. \u001B[0m")
-  }
-
-  // Use the same testing framework for all modules
-  dependencies {
-    implementation "org.slf4j:slf4j-simple:2.0.0-beta1"
-    // Test annotations, api
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
-    // Parametrized tests
-    testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
-    // Runtime
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
-    // AssertJ fluent assertions "assertThat(subject).has(...).is(...).throws(...)
-    testImplementation "org.assertj:assertj-core:$assertj_version"
+java {
+  // use Java 11 (overriding the locally installed JDK)
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(11)
   }
 }
 
-evaluationDependsOnChildren()
-project(":language-server").tasks.generateSysMLv2LanguageServer.dependsOn project(":language").tasks.grammarsJar
+dependencies {
+  // MontiCore language library (which depends on the runtime)
+  grammar "de.monticore:monticore-grammar:$mc_version"
+
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+  // test fixtures (used to set-up tests)
+  testImplementation testFixtures("de.monticore:monticore-grammar:$mc_version")
+}
+
+repositories {
+  maven {
+    credentials.username nexusUser
+    credentials.password nexusPassword
+    url publicNexus
+  }
+}
+
+test {
+  // Detect junit 5 tests
+  useJUnitPlatform()
+}
