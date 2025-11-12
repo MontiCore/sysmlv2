@@ -52,19 +52,21 @@ jobs:
       - name: Display test execution time
         if: always()
         run: |
-          echo "::group::Test Performance Metrics"
           if [ -f "language/target/test-results/test/TEST-parser.OfficialParserTest.xml" ]; then
-            echo "Extracting test execution time from Gradle test report..."
             TEST_TIME=$(grep -oP 'time="\K[^"]+' language/target/test-results/test/TEST-parser.OfficialParserTest.xml | head -1 || echo "N/A")
             if [ "$TEST_TIME" != "N/A" ]; then
-              echo "Test execution time: ${TEST_TIME} seconds"
+              TOTAL_SECONDS=$(echo "$TEST_TIME" | awk '{printf "%.0f", $1}')
+              MINUTES=$((TOTAL_SECONDS / 60))
+              SECONDS=$((TOTAL_SECONDS % 60))
+              echo "=========================================="
+              echo "Parser Test Execution Time: ${MINUTES}m ${SECONDS}s"
+              echo "=========================================="
             else
               echo "Could not extract test time from report"
             fi
           else
             echo "Test report not found at language/target/test-results/test/TEST-parser.OfficialParserTest.xml"
           fi
-          echo "::endgroup::"
 
   deploy:
     permissions:
