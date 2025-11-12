@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package types3;
 
-import de.monticore.expressions.commonexpressions.types3.CommonExpressionsTypeVisitor;
 import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisTypeVisitor;
 import de.monticore.expressions.streamexpressions.types3.StreamExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
@@ -10,8 +9,8 @@ import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBooleanTC3;
 import de.monticore.lang.sysmlv2.types3.SysMLCommonExpressionsTypeVisitor;
+import de.monticore.lang.sysmlv2.types3.SysMLOCLExpressionsTypeVisitor;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
-import de.monticore.ocl.oclexpressions.types3.OCLExpressionsTypeVisitor;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
 import de.monticore.types3.Type4Ast;
@@ -64,9 +63,10 @@ public class ConstraintCoCoTest {
     typeTraverser.add4SysMLExpressions(forCommon);
     typeTraverser.setSysMLExpressionsHandler(forCommon);
 
-    var forOcl = new OCLExpressionsTypeVisitor();
+    var forOcl = new SysMLOCLExpressionsTypeVisitor();
     forOcl.setType4Ast(type4Ast);
     typeTraverser.add4OCLExpressions(forOcl);
+    typeTraverser.add4SysMLExpressions(forOcl);
 
     var forBasicTypes = new MCBasicTypesTypeVisitor();
     forBasicTypes.setType4Ast(type4Ast);
@@ -80,23 +80,23 @@ public class ConstraintCoCoTest {
   }
 
   @ParameterizedTest(name = "{index} - {0} does pass all checks w/o errors")
-  @ValueSource(strings = { ////"1_valid.sysml",
+  @ValueSource(strings = { "1_valid.sysml",
       // boolean operator with literals
-      ////"2_valid.sysml", // resolve & compare ports
-      ////"3_valid.sysml", // resolve & compare channels
-      ////"4_valid.sysml", // stream snth
+      "2_valid.sysml", // resolve & compare ports
+      "3_valid.sysml", // resolve & compare channels
+      "4_valid.sysml", // stream snth
       "5_valid.sysml", // port::channel-syntax with comparison
       //"6_valid.sysml", // port::channel-syntax with literal
       //"7_valid.sysml", // INF literal
-      ////"8_valid.sysml", // forall construct
-      ////"9_valid.sysml", // constraint with literal
+      "8_valid.sysml", // forall construct
+      "9_valid.sysml", // constraint with literal
       //"10_valid.sysml", // attribute definition without port
-      ////"11_valid.sysml", // stream length
-      ////"12_valid.sysml", // constraint with parameter
+      "11_valid.sysml", // stream length
+      "12_valid.sysml", // constraint with parameter
       "13_valid.sysml", // OCL exists expression
-      ////"14_valid.sysml", // StreamConstructor Expression
-      ////"15_valid.sysml", //Times function for StreamConstructor Expression
-      ////"16_valid.sysml", //Inftimes and takes function
+      "14_valid.sysml", // StreamConstructor Expression
+      "15_valid.sysml", //Times function for StreamConstructor Expression
+      "16_valid.sysml", //Inftimes and takes function
   })
   public void testValid(String modelName) throws IOException {
     var optAst = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName);
