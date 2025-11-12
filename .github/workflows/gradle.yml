@@ -35,6 +35,21 @@ jobs:
             -PgithubUser=${{env.GITHUB_ACTOR}}
             -PgithubToken=${{secrets.GITHUB_TOKEN}}
 
+  parser-performance:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v4
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{env.GRADLE_VERSION}}
+      - name: Run parser test
+        run: gradle :language:test --tests "parser.OfficialParserTest.testParseAll" ${{env.GRADLE_CLI_OPTS}}
+          -PgithubUser=${{env.GITHUB_ACTOR}}
+          -PgithubToken=${{secrets.GITHUB_TOKEN}}
+
   deploy:
     permissions:
       packages: write
