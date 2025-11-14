@@ -18,6 +18,7 @@ import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symboltable.modifiers.BasicAccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
@@ -119,6 +120,8 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
       AttributeUsageSymbol symbol = node.getSymbol();
       // type
       List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
+
+      symbol.setAccessModifier(BasicAccessModifier.ALL_INCLUSION);
 
       symbol.setTypesList(types);
     }
