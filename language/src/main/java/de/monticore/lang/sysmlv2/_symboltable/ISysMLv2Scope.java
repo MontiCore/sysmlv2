@@ -40,6 +40,7 @@ import de.monticore.types.check.SymTypeExpressionFactory;
 import de.se_rwth.commons.Names;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -281,10 +282,12 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     //  nach vollqualifizierten Sachen suchen kann (und vielleicht auch erst
     //  danach schaut, was es war)?
     if (name.contains(".")) {
-      var port = name.split("\\.")[0];
+      var nameParts = name.split("\\.");
+      // usage could be fully qualified
+      var port = String.join(".", Arrays.copyOfRange(nameParts, 0, nameParts.length - 1));
       var portUsage = resolvePortUsageLocally(port);
       if (portUsage.isPresent()) {
-        var attr = name.split("\\.")[1];
+        var attr = nameParts[nameParts.length -1];
         var input = portUsage.get().getInputAttributes().stream().filter(
             a -> a.getName().equals(attr)).findFirst();
         var output = portUsage.get().getOutputAttributes().stream().filter(

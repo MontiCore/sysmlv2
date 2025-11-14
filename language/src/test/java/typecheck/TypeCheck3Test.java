@@ -1,8 +1,10 @@
 package typecheck;
 
+import de.monticore.expressions.commonexpressions._ast.ASTCallExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
 import de.monticore.expressions.commonexpressions.types3.CommonExpressionsTypeVisitor;
+import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisTypeVisitor;
 import de.monticore.expressions.streamexpressions.types3.StreamExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
@@ -31,13 +33,12 @@ public class TypeCheck3Test {
       var type = TypeCheck3.typeOf(node);
 
       // Wie prüfe ich, dass es sich um Aufruf der length-Funktion handelt?
-      if(type.equals("len")) {
+      if(type.print().equals("long")) {
         content = "Übersetzung der length-Funktion";
       }
     }
   }
 
-  @Disabled
   @Test
   void testTypeCheck3() throws IOException {
     /*
@@ -54,6 +55,10 @@ public class TypeCheck3Test {
     var type4Ast = new Type4Ast();
     var typeTraverser = SysMLv2Mill.traverser();
 
+    var forBasis = new ExpressionBasisTypeVisitor();
+    forBasis.setType4Ast(type4Ast);
+    typeTraverser.add4ExpressionsBasis(forBasis);
+
     var forLiterals = new MCCommonLiteralsTypeVisitor();
     forLiterals.setType4Ast(type4Ast);
     typeTraverser.add4MCCommonLiterals(forLiterals);
@@ -61,6 +66,7 @@ public class TypeCheck3Test {
     var forCommon = new CommonExpressionsTypeVisitor();
     forCommon.setType4Ast(type4Ast);
     typeTraverser.add4CommonExpressions(forCommon);
+    typeTraverser.setCommonExpressionsHandler(forCommon);
 
     var forOcl = new OCLExpressionsTypeVisitor();
     forOcl.setType4Ast(type4Ast);
