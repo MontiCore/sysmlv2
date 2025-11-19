@@ -6,16 +6,15 @@ import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTConnectionUsageCoCo;
 import de.monticore.lang.sysmlbasis._ast.ASTEndpoint;
 import de.se_rwth.commons.logging.Log;
 
-public class KBE_CoCo1 implements SysMLPartsASTConnectionUsageCoCo {
+public class KBE_CoCo2 implements SysMLPartsASTConnectionUsageCoCo {
 
   @Override
   public void check(ASTConnectionUsage node) {
-    // CoCo-Regel:
-    // "Outputs von Subkomponenten dürfen nur zu Inputs von Subkomponenten
-    //  oder Outputs der Oberkomponente verbunden werden."
+    // CoCo 2:
+    // "Inputs von Oberkomponenten können nicht zu Outputs von Subkomponenten verbunden werden."
 
     if (!node.isPresentSrc() || !node.isPresentTgt()) {
-      // Wenn eine Seite fehlt, macht die Regel keinen Sinn -> nichts zu prüfen
+      // Ohne vollständige Verbindung macht die Regel keinen Sinn
       return;
     }
 
@@ -25,33 +24,24 @@ public class KBE_CoCo1 implements SysMLPartsASTConnectionUsageCoCo {
     String srcName = endpointName(src);
     String tgtName = endpointName(tgt);
 
-    // --- 1. Regel gilt nur, wenn die Quelle ein Output einer Subkomponente ist ---
+    // Quelle klassifizieren
     boolean srcIsSub    = isSubcomponentEndpoint(srcName);
-    boolean srcIsOutput = isOutputName(srcName);
+    boolean srcIsParent = !srcIsSub;
+    boolean srcIsInput  = isInputName(srcName);
 
-    if (!(srcIsSub && srcIsOutput)) {
-      // Wenn die Quelle kein Subkomponenten-Output ist, greift diese CoCo nicht
-      return;
-    }
-
-    // --- 2. Ziel klassifizieren ---
+    // Ziel klassifizieren
     boolean tgtIsSub    = isSubcomponentEndpoint(tgtName);
-    boolean tgtIsInput  = isInputName(tgtName);
     boolean tgtIsOutput = isOutputName(tgtName);
-    boolean tgtIsParent = !tgtIsSub;
 
-    // Erlaubt:
-    //   a) Sub.Output -> Sub.Input
-    //   b) Sub.Output -> Parent.Output
-    boolean allowed =
-        (tgtIsSub && tgtIsInput) ||
-        (tgtIsParent && tgtIsOutput);
+    // Verbotene Kombination:
+    // Oberkomponenten-Input -> Subkomponenten-Output
+    boolean forbidden = srcIsParent && srcIsInput && tgtIsSub && tgtIsOutput;
 
-    if (!allowed) {
+    if (forbidden) {
       Log.error(
-          "0xKBE01 Illegal connection in ConnectionUsage '" + node.getName()
-              + "': outputs of subcomponents may only be connected to "
-              + "inputs of subcomponents or outputs of the parent component.",
+          "0xKBE02 Illegal connection in ConnectionUsage '" + node.getName()
+              + "': inputs of the parent component must not be connected to "
+              + "outputs of subcomponents.",
           node.get_SourcePositionStart(),
           node.get_SourcePositionEnd()
       );
@@ -66,7 +56,7 @@ public class KBE_CoCo1 implements SysMLPartsASTConnectionUsageCoCo {
     return "";
   }
 
-  /** Heuristik: ein Name mit '.' wird als Subkomponenten-Port interpretiert (z.B. "tele.maniacIn"). */
+  /** Heuristik: ein Name mit '.' wird als Subkomponenten-Port interpretiert (z.B. "tele.maniacOut"). */
   protected boolean isSubcomponentEndpoint(String qname) {
     return qname.contains(".");
   }
@@ -83,4 +73,3 @@ public class KBE_CoCo1 implements SysMLPartsASTConnectionUsageCoCo {
     return lower.endsWith("in") || lower.endsWith("input");
   }
 }
-
