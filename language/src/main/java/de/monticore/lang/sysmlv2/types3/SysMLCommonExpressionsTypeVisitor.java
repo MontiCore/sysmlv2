@@ -26,16 +26,23 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.check.SymTypeOfFunction;
 import de.monticore.types3.util.TypeContextCalculator;
 import de.monticore.types3.util.WithinScopeBasicSymbolsResolver;
 import de.monticore.types3.util.WithinTypeBasicSymbolsResolver;
 import de.se_rwth.commons.logging.Log;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
 
 /*
   Handles the particularities of the sysml regarding streams in expressions.
@@ -98,12 +105,76 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
             f -> true
         );
 
+        /*
+        if (type.isEmpty()) {
+          // are we looking for an implicit field access?
+          // try to find the implicit type
+          var attr = ((ISysMLv2Scope) innerAsExprType.getTypeInfo().getSpannedScope()).getLocalAttributeUsageSymbols();
+          if (attr.size() <= 1) {
+            type = resolveVariablesAndFunctionsWithinType(
+                innerAsExprType,
+                attr.get(0).getName(),
+                modifier,
+                v -> true,
+                f -> true
+            );
+            // real type found. Now you need to reset the inner type
+            // TODO can you set it correctly from the start?
+
+            getType4Ast().setTypeOfExpression(expr.getExpression(), type.get());
+          }
+        }
+*/
+
+        if (type.isEmpty() && innerAsExprType.getTypeInfo().getSpannedScope().getSpanningSymbol() instanceof PortDefSymbol) {
+          // might be an implicit field access
+
+          // 1. check if there is only one accessible attribute
+          // TODO maybe use getallvariables?
+          var attr = ((ISysMLv2Scope) innerAsExprType.getTypeInfo().getSpannedScope()).getLocalAttributeUsageSymbols();
+          // TODO what if <1
+          if (attr.size() == 1) {
+            // 2. find its type, resolve methods
+            var actualType = WithinTypeBasicSymbolsResolver.resolveVariable(
+                innerAsExprType,
+                attr.get(0).getName(),
+                modifier,
+                v -> true);
+
+            if (!isDefinedInStateMachine(expr.getEnclosingScope())) {
+              var streamType = WithinScopeBasicSymbolsResolver.resolveType(
+                  innerAsExprType.getTypeInfo().getEnclosingScope(),
+                  "EventStream");
+              //StreamTimingUtil.mapTimingToStreamType(
+              //  optPort.get().getTiming()));
+
+              if (streamType.isEmpty()) {
+                //Log.error("tried to resolve \"" + name + "\""
+                //        + " given expression of type "
+                //        + innerAsExprType.printFullName()
+                //        + " but no stream symbol could be resolved.",
+                //    expr.get_SourcePositionStart(),
+                //    expr.get_SourcePositionEnd()
+                //);
+              }
+              else {
+                streamType.get().asGenericType().setArgument(0,
+                    actualType.get());
+              }
+
+              return resolveVariablesAndFunctionsWithinType(streamType.get(),
+                  name, modifier, v -> true, f -> true);
+            }
+          }
+        }
+
         //++++++++++ modify start here ++++++++++
         if (type.isPresent() &&
             !type.get().isFunctionType() &&
             !isDefinedInStateMachine(expr.getEnclosingScope())) {
           // We can only identify that we are not in an automata as state machines always define a scope
 
+          // TODO now you resolve for what
           var optPort = ((IComponentConnectorScope) expr.getEnclosingScope()).resolvePort(
               SysMLv2Mill.prettyPrint(expr, false));
 
@@ -129,8 +200,12 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
 
             type = streamType;
           }
+          else {
+            // it is not a C&C port
+          }
         }
         //++++++++++ modify end here ++++++++++
+
 
         // Log remark about access modifier,
         // if access modifier is the reason it has not been resolved
@@ -170,6 +245,82 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
     }
     return type;
   }
+
+  @Override
+  protected Optional<SymTypeExpression> resolveVariablesAndFunctionsWithinType(
+      SymTypeExpression innerAsExprType,
+      String name,
+      AccessModifier modifier,
+      Predicate<VariableSymbol> varPredicate,
+      Predicate<FunctionSymbol> funcPredicate
+  ) {
+    Set<SymTypeExpression> types = new HashSet<>();
+    Optional<SymTypeExpression> variable =
+        WithinTypeBasicSymbolsResolver.resolveVariable(innerAsExprType,
+            name,
+            modifier,
+            varPredicate
+        );
+    if (variable.isPresent()) {
+      types.add(variable.get());
+    }
+
+    Collection<SymTypeOfFunction> functions =
+        WithinTypeBasicSymbolsResolver.resolveFunctions(
+            innerAsExprType,
+            name,
+            modifier,
+            funcPredicate
+        );
+    types.addAll(functions);
+
+    /*
+    if (types.isEmpty() && innerAsExprType.getTypeInfo().getSpannedScope().getSpanningSymbol() instanceof PortDefSymbol) {
+      // might be an implicit field access
+
+      // 1. check if there is only one accessible attribute
+      // TODO maybe use getallvariables?
+      var attr = ((ISysMLv2Scope) innerAsExprType.getTypeInfo().getSpannedScope()).getLocalAttributeUsageSymbols();
+      // TODO what if <1
+      if (attr.size() == 1) {
+        // 2. find its type, resolve methods
+        var actualType = WithinTypeBasicSymbolsResolver.resolveVariable(
+            innerAsExprType,
+            attr.get(0).getName(),
+            modifier,
+            varPredicate);
+
+
+        var streamType = WithinScopeBasicSymbolsResolver.resolveType(
+            innerAsExprType.getTypeInfo().getEnclosingScope(), "EventStream");
+        //StreamTimingUtil.mapTimingToStreamType(
+        //  optPort.get().getTiming()));
+
+        if (streamType.isEmpty()) {
+          //Log.error("tried to resolve \"" + name + "\""
+          //        + " given expression of type "
+          //        + innerAsExprType.printFullName()
+          //        + " but no stream symbol could be resolved.",
+          //    expr.get_SourcePositionStart(),
+          //    expr.get_SourcePositionEnd()
+          //);
+        }
+        else {
+          streamType.get().asGenericType().setArgument(0, actualType.get());
+        }
+
+        return resolveVariablesAndFunctionsWithinType(streamType.get(), name, modifier, varPredicate, funcPredicate);
+      }
+    }
+*/
+    if (types.size() <= 1) {
+      return types.stream().findAny();
+    }
+    else {
+      return Optional.of(SymTypeExpressionFactory.createIntersection(types));
+    }
+  }
+
 
   /*
     This method assumes that a state machine (state def/usage) always defines a scope.
