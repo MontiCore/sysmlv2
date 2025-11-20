@@ -35,16 +35,10 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 /**
- * <p>This test is about TypeCheck.</p>
+ * <p>This test is about TypeCheck3 deriving the types of FieldAccessExpressions in StateUsages.</p>
  *
- * <p>In this test, the expression is calculated by creating SysMLExpressionsDeriver with a boolean parameter.</p>
- *
- * <p>When ASTFieldAccessExpression and ASTOCLArrayQualification are in StateUsage, this parameter
- *  is set to false and we test whether they are not calculated as Stream.</p>
- *
- * <p>For comparison, we set this parameter is set to true (This is the same as creating
- * SysMLExpressionsDeriver without parameter) for ASTFieldAccessExpression in ConstraintUsage,
- * we test whether ASTFieldAccessExpression will still be calculated as Stream.</p>
+ * <p>When ASTFieldAccessExpression and ASTOCLArrayQualification are in StateUsage
+ * we test whether they are not calculated as Stream such as in constraints.</p>
  */
 public class FieldAccessExpressionInStateUsageTest {
 
@@ -99,16 +93,16 @@ public class FieldAccessExpressionInStateUsageTest {
     return Stream.of(
         Arguments.of(
             "port def F { attribute a: boolean; }" +
-                "part def X { port f: F; state s { transition first S if f.a then S; } }"),
+                "part def X { port f: F; state s { transition first S if f then S; } }"),
         Arguments.of(
             "port def F { attribute a: boolean[3]; }" +
-                "part def X { port f: F; state s { transition first S if f.a[1] then S; } }"),
+                "part def X { port f: F; state s { transition first S if f[1] then S; } }"),
         Arguments.of(
             "port def F { attribute a: boolean; } " +
-                "part def X { port f: F[3]; exhibit state s { transition first S if f[1].a then S; } }"),
+                "part def X { port f: F[3]; exhibit state s { transition first S if f[1] then S; } }"),
         Arguments.of(
            "port def F { attribute a: boolean[3]; } " +
-               "part def X { port f: F[3]; exhibit state s { transition first S if f[1].a[1] then S; } }")
+               "part def X { port f: F[3]; exhibit state s { transition first S if f[1][1] then S; } }")
     );
   }
 
