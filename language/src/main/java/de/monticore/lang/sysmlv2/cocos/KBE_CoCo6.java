@@ -3,106 +3,102 @@ package de.monticore.lang.sysmlv2.cocos;
 
 import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTConnectionUsageCoCo;
+import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
+import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
 import de.monticore.lang.sysmlbasis._ast.ASTEndpoint;
 import de.se_rwth.commons.logging.Log;
+
+import java.util.List;
 
 public class KBE_CoCo6 implements SysMLPartsASTConnectionUsageCoCo {
 
   @Override
   public void check(ASTConnectionUsage node) {
-    // Wir brauchen beide Endpunkte
+
     if (!node.isPresentSrc() || !node.isPresentTgt()) {
       return;
     }
 
-    EndpointInfo src = parseEndpoint(node.getSrc());
-    EndpointInfo tgt = parseEndpoint(node.getTgt());
+    ASTEndpoint src = node.getSrc();
+    ASTEndpoint tgt = node.getTgt();
 
-    // Fall 1: src = Parent, tgt = Subkomponente
-    if (!src.isSub && tgt.isSub && isInputName(tgt.portName)) {
-      checkNaming(node, src, tgt);
+    String srcQName = endpointQName(src);
+    String tgtQName = endpointQName(tgt);
+
+    ISysMLPartsScope scope = node.getEnclosingScope();
+
+    PortUsageSymbol srcPort = resolvePort(scope, srcQName);
+    PortUsageSymbol tgtPort = resolvePort(scope, tgtQName);
+
+    if (srcPort == null || tgtPort == null) {
+      return;
     }
-    // Fall 2: src = Subkomponente, tgt = Parent
-    else if (src.isSub && !tgt.isSub && isInputName(src.portName)) {
-      checkNaming(node, tgt, src);
+
+    boolean srcIsSub = isSubcomponentEndpoint(srcQName);
+    boolean tgtIsSub = isSubcomponentEndpoint(tgtQName);
+
+    // Fall 1: Parent (src) -> Sub(Input) (tgt)
+    if (!srcIsSub && tgtIsSub && !tgtPort.getInputAttributes().isEmpty()) {
+      checkParentNameForSubInput(node, srcQName, tgtQName);
     }
-    // alle anderen Kombinationen sind für CoCo 6 irrelevant
+
+    // Fall 2: Sub(Input) (src) -> Parent (tgt)
+    if (srcIsSub && !tgtIsSub && !srcPort.getInputAttributes().isEmpty()) {
+      checkParentNameForSubInput(node, tgtQName, srcQName);
+    }
   }
 
   /**
-   * Prüft, ob der Portname des Oberkomponenten-Ports den Namen der Subkomponente enthält.
-   * parent = Endpunkt im Oberkomponenten-Kontext (kein '.'),
-   * sub    = Endpunkt im Subkomponenten-Kontext (mit '.').
+   * Prüft: Port des Oberkomponenten (parentQName) ist mit einem Input-Port
+   * einer Subkomponente (subQName) verbunden. Dann soll der Parent-Portname
+   * den Subkomponentennamen enthalten.
    */
-  protected void checkNaming(ASTConnectionUsage conn,
-                             EndpointInfo parent,
-                             EndpointInfo sub) {
+  protected void checkParentNameForSubInput(ASTConnectionUsage conn,
+                                            String parentQName,
+                                            String subQName) {
 
-    String parentNameLower = parent.portName.toLowerCase();
-    String subCompLower    = sub.subcomponentName.toLowerCase();
+    String parentPortName = parentQName; // Parent hat keinen Punkt im Namen
+    String subCompName    = subQName.split("\\.")[0];
 
-    if (!parentNameLower.contains(subCompLower)) {
-      // einfacher Vorschlag: subKomponentenName + "_" + alterPortName
-      String suggestion = sub.subcomponentName + "_" + parent.portName;
+    String ppLower = parentPortName.toLowerCase();
+    String subLower = subCompName.toLowerCase();
+
+    if (!ppLower.contains(subLower)) {
+      String suggestion = subCompName + capitalize(parentPortName);
 
       Log.error(
           "0xKBE06 Naming inconsistency in ConnectionUsage '" + conn.getName()
-              + "': parent port '" + parent.portName
-              + "' is directly connected to input port '" + sub.qname
-              + "', but does not contain the subcomponent name '" + sub.subcomponentName
-              + "'. Suggested name: '" + suggestion + "'.",
+              + "': port '" + parentPortName + "' of the parent component is "
+              + "connected to an input port of subcomponent '" + subCompName
+              + "', but does not contain the subcomponent name. "
+              + "For example, you could rename it to '" + suggestion + "'.",
           conn.get_SourcePositionStart(),
           conn.get_SourcePositionEnd()
       );
     }
   }
 
-  /**
-   * Kleine Hilfsklasse für Informationen über einen Endpunkt.
-   */
-  protected static class EndpointInfo {
-    final String qname;             // kompletter Qualified Name
-    final boolean isSub;            // true, wenn "sub.port"
-    final String subcomponentName;  // Name vor dem '.', oder "" wenn isSub == false
-    final String portName;          // Name nach dem letzten '.', oder kompletter Name wenn kein '.'
+  // -------- Hilfsmethoden --------
 
-    EndpointInfo(String qname, boolean isSub, String subcomponentName, String portName) {
-      this.qname = qname;
-      this.isSub = isSub;
-      this.subcomponentName = subcomponentName;
-      this.portName = portName;
-    }
-  }
-
-  /**
-   * Parsed einen ASTEndpoint in eine EndpointInfo-Struktur.
-   */
-  protected EndpointInfo parseEndpoint(ASTEndpoint ep) {
-    String qname = "";
+  protected String endpointQName(ASTEndpoint ep) {
     if (ep.getMCQualifiedName() != null) {
-      qname = ep.getMCQualifiedName().toString();
+      return ep.getMCQualifiedName().toString();
     }
-
-    String subName = "";
-    String portName = qname;
-
-    int dotIdx = qname.indexOf('.');
-    boolean isSub = dotIdx >= 0;
-
-    if (isSub) {
-      subName = qname.substring(0, dotIdx);
-      int lastDot = qname.lastIndexOf('.');
-      portName = qname.substring(lastDot + 1);
-    }
-
-    return new EndpointInfo(qname, isSub, subName, portName);
+    return "";
   }
 
-  /**
-   * Heuristik: typische Input-Namen enden auf "In" oder "input".
-   */
-  protected boolean isInputName(String name) {
-    String lower = name.toLowerCase();
-    return lower.endsWith("in") || lower.endsWith("input");
+  /** Subkomponenten-Port, wenn ein Punkt im Namen vorkommt (z.B. "tele.maniacIn"). */
+  protected boolean isSubcomponentEndpoint(String qname) {
+    return qname.contains(".");
+  }
+
+  /** Port über einfachen Resolver auflösen. */
+  protected PortUsageSymbol resolvePort(ISysMLPartsScope scope, String qname) {
+    return scope.resolvePortUsage(qname).orElse(null);
+  }
+
+  protected String capitalize(String s) {
+    if (s == null || s.isEmpty()) return s;
+    return Character.toUpperCase(s.charAt(0)) + s.substring(1);
   }
 }

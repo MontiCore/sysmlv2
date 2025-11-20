@@ -3,84 +3,108 @@ package de.monticore.lang.sysmlv2.cocos;
 
 import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTConnectionUsageCoCo;
+import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
+import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
 import de.monticore.lang.sysmlbasis._ast.ASTEndpoint;
+import de.monticore.symboltable.modifiers.AccessModifier;
 import de.se_rwth.commons.logging.Log;
+
+import java.util.List;
 
 public class KBE_CoCo1 implements SysMLPartsASTConnectionUsageCoCo {
 
   @Override
   public void check(ASTConnectionUsage node) {
-    // CoCo-Regel:
-    // "Outputs von Subkomponenten dürfen nur zu Inputs von Subkomponenten
-    //  oder Outputs der Oberkomponente verbunden werden."
 
+    // Wenn eine Seite fehlt, kann man nichts Sinnvolles prüfen
     if (!node.isPresentSrc() || !node.isPresentTgt()) {
-      // Wenn eine Seite fehlt, macht die Regel keinen Sinn -> nichts zu prüfen
       return;
     }
 
     ASTEndpoint src = node.getSrc();
     ASTEndpoint tgt = node.getTgt();
 
-    String srcName = endpointName(src);
-    String tgtName = endpointName(tgt);
+    String srcQName = endpointQName(src);
+    String tgtQName = endpointQName(tgt);
 
-    // --- 1. Regel gilt nur, wenn die Quelle ein Output einer Subkomponente ist ---
-    boolean srcIsSub    = isSubcomponentEndpoint(srcName);
-    boolean srcIsOutput = isOutputName(srcName);
+    ISysMLPartsScope scope = node.getEnclosingScope();
 
-    if (!(srcIsSub && srcIsOutput)) {
-      // Wenn die Quelle kein Subkomponenten-Output ist, greift diese CoCo nicht
+    PortUsageSymbol srcPort = resolvePort(scope, srcQName);
+    PortUsageSymbol tgtPort = resolvePort(scope, tgtQName);
+
+    // Wenn ein Port nicht auflösbar ist, kümmern sich andere CoCos darum
+    if (srcPort == null || tgtPort == null) {
       return;
     }
 
-    // --- 2. Ziel klassifizieren ---
-    boolean tgtIsSub    = isSubcomponentEndpoint(tgtName);
-    boolean tgtIsInput  = isInputName(tgtName);
-    boolean tgtIsOutput = isOutputName(tgtName);
+    // --- Quelle klassifizieren ---
+
+    boolean srcIsSub = isSubcomponentEndpoint(srcQName);
+    boolean srcHasOutputPins = !srcPort.getOutputAttributes().isEmpty();
+
+    // Regel gilt nur für: "Outputs von Subkomponenten"
+    if (!(srcIsSub && srcHasOutputPins)) {
+      return;
+    }
+
+    // --- Ziel klassifizieren ---
+
+    boolean tgtIsSub    = isSubcomponentEndpoint(tgtQName);
     boolean tgtIsParent = !tgtIsSub;
 
+    boolean tgtHasInputPins  = !tgtPort.getInputAttributes().isEmpty();
+    boolean tgtHasOutputPins = !tgtPort.getOutputAttributes().isEmpty();
+
     // Erlaubt:
-    //   a) Sub.Output -> Sub.Input
-    //   b) Sub.Output -> Parent.Output
+    //   a) Sub-Port mit Output-Pins -> Sub-Port mit Input-Pins
+    //   b) Sub-Port mit Output-Pins -> Parent-Port mit Output-Pins
     boolean allowed =
-        (tgtIsSub && tgtIsInput) ||
-        (tgtIsParent && tgtIsOutput);
+        (tgtIsSub    && tgtHasInputPins) ||
+        (tgtIsParent && tgtHasOutputPins);
 
     if (!allowed) {
       Log.error(
           "0xKBE01 Illegal connection in ConnectionUsage '" + node.getName()
-              + "': outputs of subcomponents may only be connected to "
-              + "inputs of subcomponents or outputs of the parent component.",
+              + "': ports of subcomponents that have output pins may only be "
+              + "connected to ports of subcomponents that have input pins or "
+              + "to ports of the parent component that have output pins.",
           node.get_SourcePositionStart(),
           node.get_SourcePositionEnd()
       );
     }
   }
 
-  /** Liefert den qualifizierten Namen des Endpunkts als String. */
-  protected String endpointName(ASTEndpoint ep) {
+  // -------- Hilfsmethoden --------
+
+  /** Qualified Name des Endpunkts als String. */
+  protected String endpointQName(ASTEndpoint ep) {
     if (ep.getMCQualifiedName() != null) {
       return ep.getMCQualifiedName().toString();
     }
     return "";
   }
 
-  /** Heuristik: ein Name mit '.' wird als Subkomponenten-Port interpretiert (z.B. "tele.maniacIn"). */
+  /**
+   * Heuristik: ein Name mit '.' steht für einen Port einer Subkomponente,
+   * z.B. "tele.maniacOut". Ohne Punkt = Port der Oberkomponente.
+   */
   protected boolean isSubcomponentEndpoint(String qname) {
     return qname.contains(".");
   }
 
-  /** Heuristik: typische Output-Namen enden auf "Out" oder "output". */
-  protected boolean isOutputName(String name) {
-    String lower = name.toLowerCase();
-    return lower.endsWith("out") || lower.endsWith("output");
-  }
-
-  /** Heuristik: typische Input-Namen enden auf "In" oder "input". */
-  protected boolean isInputName(String name) {
-    String lower = name.toLowerCase();
-    return lower.endsWith("in") || lower.endsWith("input");
+  /** PortUsageSymbol über den qualified Name auflösen. */
+  protected PortUsageSymbol resolvePort(ISysMLPartsScope scope, String qname) {
+    List<PortUsageSymbol> result =
+        scope.resolvePortUsageSubKinds(
+            true,                           // auch in umgebenden Scopes suchen
+            qname,                          // qualified name, z.B. "tele.maniacOut"
+            AccessModifier.ALL_INCLUSION,   // Sichtbarkeiten egal
+            p -> true                       // kein zusätzliches Filter
+        );
+    if (result.isEmpty()) {
+      return null;
+    }
+    // falls mehrere Kandidaten, nimm den ersten – in deinen Modellen sollte es eindeutig sein
+    return result.get(0);
   }
 }
-
