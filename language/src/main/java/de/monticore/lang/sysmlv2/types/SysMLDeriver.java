@@ -13,6 +13,7 @@ import de.monticore.types.check.DeriveSymTypeOfLiterals;
 import de.monticore.types.check.DeriveSymTypeOfMCCommonLiterals;
 import de.monticore.types.check.SynthesizeSymTypeFromMCBasicTypes;
 
+@Deprecated
 public class SysMLDeriver extends AbstractDerive {
   /**
    * <p>{@code isStream} is used to determine whether the type of the expression is calculated as a Stream,

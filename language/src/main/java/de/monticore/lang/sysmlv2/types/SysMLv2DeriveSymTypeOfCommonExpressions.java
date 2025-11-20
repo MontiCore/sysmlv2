@@ -32,6 +32,7 @@ import static de.monticore.types.check.TypeCheck.isLong;
  * <p>In SysMLv2, the expression in StateUsage is not type of Stream.
  * Rewrite method {@link #calculateFieldAccess(ASTFieldAccessExpression, boolean)} for this purpose.</p>
  */
+@Deprecated
 public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfCommonExpressions {
   /**
    * @see SysMLDeriver#isStream
