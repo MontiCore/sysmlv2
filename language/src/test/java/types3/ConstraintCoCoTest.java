@@ -101,6 +101,18 @@ public class ConstraintCoCoTest {
       "14_valid.sysml", // StreamConstructor Expression
       "15_valid.sysml", //Times function for StreamConstructor Expression
       "16_valid.sysml", //Inftimes and takes function
+      "17_valid.sysml", // user defined type
+      "18_valid.sysml",  // user defined type channels
+
+      "implicitFieldAccess/2_valid.sysml", // resolve & compare ports
+      "implicitFieldAccess/4_valid.sysml", // stream snth
+      "implicitFieldAccess/11_valid.sysml", // stream length
+      "implicitFieldAccess/14_valid.sysml", // StreamConstructor Expression
+      "implicitFieldAccess/15_valid.sysml", //Times function for StreamConstructor Expression
+      "implicitFieldAccess/17_valid.sysml", // user defined type
+      "implicitFieldAccess/18_valid.sysml", // user defined type channels
+      "implicitFieldAccess/19_valid.sysml", // interoperability between implicit and explicit
+
   })
   public void testValid(String modelName) throws IOException {
     var optAst = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName);
@@ -137,6 +149,17 @@ public class ConstraintCoCoTest {
       "14_invalid.sysml", // StreamConstructor Expression
       "15_invalid.sysml", //Times function for StreamConstructor Expression
       "16_invalid.sysml", //Inftimes and takes function
+      "17_invalid.sysml", // user defined type
+      "18_invalid.sysml", // user defined type channels
+
+      "implicitFieldAccess/2_invalid.sysml", // resolve & compare ports
+      "implicitFieldAccess/4_invalid.sysml", // stream snth
+      "implicitFieldAccess/11_invalid.sysml", // stream length
+      "implicitFieldAccess/14_invalid.sysml", // StreamConstructor Expression
+      "implicitFieldAccess/15_invalid.sysml", //Times function for StreamConstructor Expression
+      "implicitFieldAccess/17_invalid.sysml", // user defined type
+      "implicitFieldAccess/18_invalid.sysml", // user defined type channels
+      "implicitFieldAccess/19_invalid.sysml", // interoperability between implicit and explicit
   })
   public void testInvalid(String modelName) throws IOException {
     var optAst = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName);
