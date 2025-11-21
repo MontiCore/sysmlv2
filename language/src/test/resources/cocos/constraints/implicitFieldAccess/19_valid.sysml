@@ -7,6 +7,6 @@ part def LogicBasedConstraints {
   port myPortDef: Integers;
 
   constraint constraintName {
-    myPortDef.natAttr.nth(3).nth(3) > 1
+    myPortDef.natAttr.nth(3).nth(3) > myPortDef.nth(3).nth(3)
   }
 }

@@ -1,0 +1,16 @@
+/* (c) https://github.com/MontiCore/monticore */
+attribute def A {
+  attribute a: int;
+}
+port def Integers {
+  out attribute natAttr: A;
+}
+
+part def LogicBasedConstraints {
+  port myPortDef: Integers;
+  // write a test about cardinalities in constraint usages
+  // Make a Bug report with resolving.
+  constraint constraintName {
+    myPortDef.natAttr.nth(3).nth(2) < myPortDef.natAttr.nth(3).nth(3)
+  }
+}

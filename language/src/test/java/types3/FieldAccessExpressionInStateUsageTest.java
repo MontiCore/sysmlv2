@@ -16,6 +16,8 @@ import de.monticore.lang.sysmlv2.types3.SysMLCommonExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.types3.SysMLOCLExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.types3.SysMLWithinScopeBasicSymbolResolver;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
+import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
 import de.monticore.types3.Type4Ast;
 import de.monticore.types3.TypeCheck3;
@@ -34,6 +36,8 @@ import java.io.IOException;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * <p>This test is about TypeCheck3 deriving the types of FieldAccessExpressions in StateUsages.</p>
@@ -162,6 +166,7 @@ public class FieldAccessExpressionInStateUsageTest {
                "part def X { port f: F[3]; exhibit state s { transition first S if f[1][1] then S; } }")
         ,Arguments.of(
             "port def F { attribute a: boolean; attribute b: nat; } part def X { port f: F; constraint e { f } }")
+        // TODO one field access with a stream method
     );
   }
 
@@ -189,5 +194,35 @@ public class FieldAccessExpressionInStateUsageTest {
     else {
       Assertions.fail("ASTSysMLElement should here be ASTStateUsage");
     }
+  }
+
+  @ParameterizedTest
+  @MethodSource({ "createInvalidInputs" })
+  public void testInvalid(String model) throws IOException {
+    var ast = parser.parse_String(model);
+    assertThat(ast).isPresent();
+    var astSysmlmodel = ast.get();
+    SysMLv2Mill.scopesGenitorDelegator().createFromAST(astSysmlmodel);
+    tool.completeSymbolTable(astSysmlmodel);
+    var astPartdef = astSysmlmodel.getSysMLElementList().get(1);
+    var astSysmlelement = ((ASTPartDef) astPartdef).getSysMLElement(1);
+    SymTypeExpression type = SymTypeExpressionFactory.createObscureType();
+
+    Log.enableFailQuick(false);
+
+    if (astSysmlelement instanceof ASTStateUsage) {
+      var astTransition = ((ASTStateUsage) astSysmlelement).getSysMLElement(0);
+      var expr = ((ASTSysMLTransition) astTransition).getGuard();
+      type = TypeCheck3.typeOf(expr);
+    } else if (astSysmlelement instanceof ASTConstraintUsage) {
+      var expr = ((ASTConstraintUsage) astSysmlelement).getExpression();
+      type = TypeCheck3.typeOf(expr);
+    }
+    else {
+      Assertions.fail("ASTSysMLElement should here be ASTStateUsage");
+    }
+
+    assertTrue(!type.isPrimitive() || !type.asPrimitive().getPrimitiveName().equals("boolean"));
+    Log.enableFailQuick(true);
   }
 }
