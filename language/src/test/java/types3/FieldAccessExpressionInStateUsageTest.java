@@ -14,6 +14,7 @@ import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.lang.sysmlv2.types3.SysMLCommonExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.types3.SysMLOCLExpressionsTypeVisitor;
+import de.monticore.lang.sysmlv2.types3.SysMLWithinScopeBasicSymbolResolver;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
 import de.monticore.types3.Type4Ast;
@@ -86,6 +87,8 @@ public class FieldAccessExpressionInStateUsageTest {
     forStreams.setType4Ast(type4Ast);
     typeTraverser.add4StreamExpressions(forStreams);
 
+    SysMLWithinScopeBasicSymbolResolver.init();
+
     new MapBasedTypeCheck3(typeTraverser, type4Ast).setThisAsDelegate();
   }
 
@@ -93,16 +96,72 @@ public class FieldAccessExpressionInStateUsageTest {
     return Stream.of(
         Arguments.of(
             "port def F { attribute a: boolean; }" +
-                "part def X { port f: F; state s { transition first S if f then S; } }"),
-        Arguments.of(
+                "part def X { port f: F; state s { transition first S if f then S; } }")
+        ,Arguments.of(
             "port def F { attribute a: boolean[3]; }" +
-                "part def X { port f: F; state s { transition first S if f[1] then S; } }"),
-        Arguments.of(
+                "part def X { port f: F; state s { transition first S if f[1] then S; } }")
+        ,Arguments.of(
             "port def F { attribute a: boolean; } " +
-                "part def X { port f: F[3]; exhibit state s { transition first S if f[1] then S; } }"),
-        Arguments.of(
+                "part def X { port f: F[3]; exhibit state s { transition first S if f[1] then S; } }")
+        ,Arguments.of(
            "port def F { attribute a: boolean[3]; } " +
                "part def X { port f: F[3]; exhibit state s { transition first S if f[1][1] then S; } }")
+        ,Arguments.of(
+            "port def F { attribute a: boolean; } part def X { port f: F; constraint e { f } }")
+
+
+        ,Arguments.of(
+            "port def F { attribute a: boolean; }" +
+                "part def X { port f: F; state s { transition first S if f.a then S; } }")
+        ,Arguments.of(
+            "port def F { attribute a: boolean[3]; }" +
+                "part def X { port f: F; state s { transition first S if f.a[1] then S; } }")
+        ,Arguments.of(
+            "port def F { attribute a: boolean; } " +
+                "part def X { port f: F[3]; exhibit state s { transition first S if f[1].a then S; } }")
+        ,Arguments.of(
+            "port def F { attribute a: boolean[3]; } " +
+                "part def X { port f: F[3]; exhibit state s { transition first S if f[1].a[1] then S; } }")
+        ,Arguments.of(
+            "port def F { attribute a: boolean; } part def X { port f: F; constraint e { f.a } }")
+        ,Arguments.of(
+            "port def F { attribute a: boolean; } part def X { port f: F[3]; constraint e { f[1].a } }")
+
+        ,Arguments.of(
+            "port def F { attribute a: boolean; attribute b: nat; }" +
+                "part def X { port f: F; state s { transition first S if f.a then S; } }")
+        ,Arguments.of(
+            "port def F { attribute a: boolean[3]; attribute b: nat[3]; }" +
+                "part def X { port f: F; state s { transition first S if f.a[1] then S; } }")
+        ,Arguments.of(
+            "port def F { attribute a: boolean; attribute b: nat; } " +
+                "part def X { port f: F[3]; exhibit state s { transition first S if f[1].a then S; } }")
+        ,Arguments.of(
+            "port def F { attribute a: boolean[3]; attribute b: nat[3]; } " +
+                "part def X { port f: F[3]; exhibit state s { transition first S if f[1].a[1] then S; } }")
+        ,Arguments.of(
+            "port def F { attribute a: boolean; attribute b: nat; } part def X { port f: F; constraint e { f.a } }")
+        ,Arguments.of(
+            "port def F { attribute a: boolean; attribute b: nat; } part def X { port f: F[3]; constraint e { f[1].a } }")
+    );
+  }
+
+  static Stream<Arguments> createInvalidInputs() {
+    return Stream.of(
+        Arguments.of(
+            "port def F { attribute a: boolean; attribute b: nat; }" +
+                "part def X { port f: F; state s { transition first S if f then S; } }")
+        ,Arguments.of(
+            "port def F { attribute a: boolean[3]; attribute b: nat[3]; }" +
+                "part def X { port f: F; state s { transition first S if f[1] then S; } }")
+        ,Arguments.of(
+            "port def F { attribute a: boolean; attribute b: nat; } " +
+                "part def X { port f: F[3]; exhibit state s { transition first S if f[1] then S; } }")
+        ,Arguments.of(
+           "port def F { attribute a: boolean[3]; attribute b: nat[3]; } " +
+               "part def X { port f: F[3]; exhibit state s { transition first S if f[1][1] then S; } }")
+        ,Arguments.of(
+            "port def F { attribute a: boolean; attribute b: nat; } part def X { port f: F; constraint e { f } }")
     );
   }
 
@@ -121,7 +180,13 @@ public class FieldAccessExpressionInStateUsageTest {
       var expr = ((ASTSysMLTransition) astTransition).getGuard();
       var type = TypeCheck3.typeOf(expr);
       assertThat(type.printFullName()).isEqualTo("boolean");
-    } else {
+    } else if (astSysmlelement instanceof ASTConstraintUsage) {
+      var expr = ((ASTConstraintUsage) astSysmlelement).getExpression();
+      var type = TypeCheck3.typeOf(expr);
+      assertThat(type.printFullName()).isEqualTo(
+          "EventStream.EventStream<boolean>");
+    }
+    else {
       Assertions.fail("ASTSysMLElement should here be ASTStateUsage");
     }
   }
