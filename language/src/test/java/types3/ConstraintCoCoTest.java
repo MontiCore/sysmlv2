@@ -1,17 +1,26 @@
 /* (c) https://github.com/MontiCore/monticore */
-package cocos;
+package types3;
 
+import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisTypeVisitor;
+import de.monticore.expressions.streamexpressions.types3.StreamExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
-import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
+import de.monticore.lang.sysmlv2.cocos.ConstraintIsBooleanTC3;
+import de.monticore.lang.sysmlv2.types3.SysMLCommonExpressionsTypeVisitor;
+import de.monticore.lang.sysmlv2.types3.SysMLOCLExpressionsTypeVisitor;
+import de.monticore.lang.sysmlv2.types3.SysMLTypeVisitorOperatorCalculator;
+import de.monticore.lang.sysmlv2.types3.SysMLWithinScopeBasicSymbolResolver;
+import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
-import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
-import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
+import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
+import de.monticore.types3.Type4Ast;
+import de.monticore.types3.streams.StreamSymTypeRelations;
+import de.monticore.types3.util.MapBasedTypeCheck3;
+import de.monticore.types3.util.WithinScopeBasicSymbolsResolver;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,6 +40,7 @@ public class ConstraintCoCoTest {
 
   @BeforeAll public static void init() {
     LogStub.init();
+    OCLSymTypeRelations.init();
     SysMLv2Mill.init();
   }
 
@@ -38,6 +48,43 @@ public class ConstraintCoCoTest {
     Log.getFindings().clear();
     tool = new SysMLv2Tool();
     tool.init();
+
+    var type4Ast = new Type4Ast();
+    var typeTraverser = SysMLv2Mill.traverser();
+
+    var forBasis = new ExpressionBasisTypeVisitor();
+    forBasis.setType4Ast(type4Ast);
+    typeTraverser.add4ExpressionsBasis(forBasis);
+
+    var forLiterals = new MCCommonLiteralsTypeVisitor();
+    forLiterals.setType4Ast(type4Ast);
+    typeTraverser.add4MCCommonLiterals(forLiterals);
+
+    var forCommon = new SysMLCommonExpressionsTypeVisitor();
+    forCommon.setType4Ast(type4Ast);
+    typeTraverser.add4CommonExpressions(forCommon);
+    typeTraverser.setCommonExpressionsHandler(forCommon);
+    typeTraverser.add4SysMLExpressions(forCommon);
+    typeTraverser.setSysMLExpressionsHandler(forCommon);
+
+    var forOcl = new SysMLOCLExpressionsTypeVisitor();
+    forOcl.setType4Ast(type4Ast);
+    typeTraverser.add4OCLExpressions(forOcl);
+    typeTraverser.add4SysMLExpressions(forOcl);
+
+    var forBasicTypes = new MCBasicTypesTypeVisitor();
+    forBasicTypes.setType4Ast(type4Ast);
+    typeTraverser.add4MCBasicTypes(forBasicTypes);
+
+    var forStreams = new StreamExpressionsTypeVisitor();
+    forStreams.setType4Ast(type4Ast);
+    typeTraverser.add4StreamExpressions(forStreams);
+
+    SysMLWithinScopeBasicSymbolResolver.init();
+    SysMLTypeVisitorOperatorCalculator.init();
+    StreamSymTypeRelations.init();
+
+    new MapBasedTypeCheck3(typeTraverser, type4Ast).setThisAsDelegate();
   }
 
   @ParameterizedTest(name = "{index} - {0} does pass all checks w/o errors")
@@ -58,6 +105,18 @@ public class ConstraintCoCoTest {
       "14_valid.sysml", // StreamConstructor Expression
       "15_valid.sysml", //Times function for StreamConstructor Expression
       "16_valid.sysml", //Inftimes and takes function
+      "17_valid.sysml", // user defined type
+      "18_valid.sysml",  // user defined type channels
+
+      "implicitFieldAccess/2_valid.sysml", // resolve & compare ports
+      "implicitFieldAccess/4_valid.sysml", // stream snth
+      "implicitFieldAccess/11_valid.sysml", // stream length
+      "implicitFieldAccess/14_valid.sysml", // StreamConstructor Expression
+      "implicitFieldAccess/15_valid.sysml", //Times function for StreamConstructor Expression
+      "implicitFieldAccess/17_valid.sysml", // user defined type
+      "implicitFieldAccess/18_valid.sysml", // user defined type channels
+      "implicitFieldAccess/19_valid.sysml", // interoperability between implicit and explicit
+
   })
   public void testValid(String modelName) throws IOException {
     var optAst = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName);
@@ -70,7 +129,7 @@ public class ConstraintCoCoTest {
     tool.finalizeSymbolTable(ast);
 
     var checker = new SysMLv2CoCoChecker();
-    checker.addCoCo(new ConstraintIsBoolean());
+    checker.addCoCo(new ConstraintIsBooleanTC3());
     checker.checkAll(ast);
 
     assertTrue(Log.getFindings().isEmpty(), () -> Log.getFindings().toString());
@@ -94,6 +153,17 @@ public class ConstraintCoCoTest {
       "14_invalid.sysml", // StreamConstructor Expression
       "15_invalid.sysml", //Times function for StreamConstructor Expression
       "16_invalid.sysml", //Inftimes and takes function
+      "17_invalid.sysml", // user defined type
+      "18_invalid.sysml", // user defined type channels
+
+      "implicitFieldAccess/2_invalid.sysml", // resolve & compare ports
+      "implicitFieldAccess/4_invalid.sysml", // stream snth
+      "implicitFieldAccess/11_invalid.sysml", // stream length
+      "implicitFieldAccess/14_invalid.sysml", // StreamConstructor Expression
+      "implicitFieldAccess/15_invalid.sysml", //Times function for StreamConstructor Expression
+      "implicitFieldAccess/17_invalid.sysml", // user defined type
+      "implicitFieldAccess/18_invalid.sysml", // user defined type channels
+      "implicitFieldAccess/19_invalid.sysml", // interoperability between implicit and explicit
   })
   public void testInvalid(String modelName) throws IOException {
     var optAst = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName);
@@ -106,7 +176,7 @@ public class ConstraintCoCoTest {
     tool.finalizeSymbolTable(ast);
 
     var checker = new SysMLv2CoCoChecker();
-    checker.addCoCo(new ConstraintIsBoolean());
+    checker.addCoCo(new ConstraintIsBooleanTC3());
     Log.enableFailQuick(false);
     checker.checkAll(ast);
     assertFalse(Log.getFindings().isEmpty());

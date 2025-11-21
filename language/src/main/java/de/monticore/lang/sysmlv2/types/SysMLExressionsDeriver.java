@@ -13,6 +13,7 @@ import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 
+@Deprecated
 public class SysMLExressionsDeriver extends AbstractDeriveFromExpression implements SysMLExpressionsVisitor2,
     SysMLExpressionsHandler {
 
