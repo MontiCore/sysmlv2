@@ -1,9 +1,12 @@
 package de.monticore.lang.sysmlv2.types3;
 
+import de.monticore.expressions.commonexpressions._ast.ASTArrayAccessExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
+import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpressionBuilder;
 import de.monticore.expressions.commonexpressions._symboltable.ICommonExpressionsScope;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTraverser;
 import de.monticore.expressions.commonexpressions.types3.CommonExpressionsTypeVisitor;
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.lang.componentconnector.StreamTimingUtil;
 import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScope;
@@ -29,6 +32,7 @@ import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symbols.compsymbols._symboltable.PortSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
@@ -90,20 +94,40 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
     else {
       SymTypeExpression innerAsExprType =
           getType4Ast().getPartialTypeOfExpr(expr.getExpression());
-      if (WithinTypeBasicSymbolsResolver.canResolveIn(innerAsExprType)) {
-        AccessModifier modifier = innerAsExprType.hasTypeInfo() ?
-            TypeContextCalculator.getAccessModifier(
-                innerAsExprType.getTypeInfo(), expr.getEnclosingScope()
-            ) : AccessModifier.ALL_INCLUSION;
 
+      Optional<PortSymbol> optPort = Optional.empty();
 
-        type = resolveVariablesAndFunctionsWithinType(
-            innerAsExprType,
-            name,
-            modifier,
-            v -> true,
-            f -> true
-        );
+      // TODO what if its an array index. Resolve for the right port.
+      if (expr.getExpression() instanceof ASTArrayAccessExpression) {
+        optPort = ((IComponentConnectorScope) expr.getEnclosingScope()).resolvePort(SysMLv2Mill.prettyPrint(
+            new ASTFieldAccessExpressionBuilder()
+                .setExpression(((ASTArrayAccessExpression)expr.getExpression()).getExpression())
+                .setName(name)
+                .build(),
+            false));
+      } else if (expr.getExpression() instanceof ASTNameExpression) {
+        optPort = ((IComponentConnectorScope) expr.getEnclosingScope()).resolvePort(SysMLv2Mill.prettyPrint(expr, false));
+      }
+
+      // part 1 is ignoring FA for port // part 2 is fallback. ie inner type is a port usage thus type is a port def
+      if (optPort.isEmpty()
+          || innerAsExprType.isArrayType() && innerAsExprType.asArrayType().getArgument().getTypeInfo().getSpannedScope().getSpanningSymbol() instanceof PortDefSymbol
+          || innerAsExprType.getTypeInfo() != null && innerAsExprType.getTypeInfo().getSpannedScope().getSpanningSymbol() instanceof PortDefSymbol) //|| optPortDef.isPresent() && optPortDef.get().getInputAttributes().size() != 1) {
+      {
+        if (WithinTypeBasicSymbolsResolver.canResolveIn(innerAsExprType)) {
+          AccessModifier modifier = innerAsExprType.hasTypeInfo() ?
+              TypeContextCalculator.getAccessModifier(
+                  innerAsExprType.getTypeInfo(), expr.getEnclosingScope()
+              ) :
+              AccessModifier.ALL_INCLUSION;
+
+          type = resolveVariablesAndFunctionsWithinType(
+              innerAsExprType,
+              name,
+              modifier,
+              v -> true,
+              f -> true
+          );
 
         /*
         if (type.isEmpty()) {
@@ -125,7 +149,7 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
           }
         }
 */
-
+/*
         if (type.isEmpty() && innerAsExprType.getTypeInfo().getSpannedScope().getSpanningSymbol() instanceof PortDefSymbol) {
           // might be an implicit field access
 
@@ -167,7 +191,7 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
             }
           }
         }
-
+*/
         //++++++++++ modify start here ++++++++++
         if (type.isPresent() &&
             !type.get().isFunctionType() &&
@@ -175,8 +199,8 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
           // We can only identify that we are not in an automata as state machines always define a scope
 
           // TODO now you resolve for what
-          var optPort = ((IComponentConnectorScope) expr.getEnclosingScope()).resolvePort(
-              SysMLv2Mill.prettyPrint(expr, false));
+          //var optPort = ((IComponentConnectorScope) expr.getEnclosingScope()).resolvePort(
+            //  SysMLv2Mill.prettyPrint(expr, false));
 
           if (optPort.isPresent()) {
             // found a C&C port -> Adjust type to Stream
@@ -207,40 +231,45 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
         //++++++++++ modify end here ++++++++++
 
 
-        // Log remark about access modifier,
-        // if access modifier is the reason it has not been resolved
-        if (type.isEmpty() && !resultsAreOptional) {
-          Optional<SymTypeExpression> potentialResult =
-              resolveVariablesAndFunctionsWithinType(
-                  innerAsExprType,
-                  name,
-                  AccessModifier.ALL_INCLUSION,
-                  v -> true,
-                  f -> true
+          // Log remark about access modifier,
+          // if access modifier is the reason it has not been resolved
+          if (type.isEmpty() && !resultsAreOptional) {
+            Optional<SymTypeExpression> potentialResult =
+                resolveVariablesAndFunctionsWithinType(
+                    innerAsExprType,
+                    name,
+                    AccessModifier.ALL_INCLUSION,
+                    v -> true,
+                    f -> true
+                );
+            if (potentialResult.isPresent()) {
+              Log.warn("tried to resolve \"" + name + "\""
+                      + " given expression of type "
+                      + innerAsExprType.printFullName()
+                      + " and symbols have been found"
+                      + ", but due to the access modifiers (e.g., public)"
+                      + ", nothing could be resolved",
+                  expr.get_SourcePositionStart(),
+                  expr.get_SourcePositionEnd()
               );
-          if (potentialResult.isPresent()) {
-            Log.warn("tried to resolve \"" + name + "\""
-                    + " given expression of type "
-                    + innerAsExprType.printFullName()
-                    + " and symbols have been found"
-                    + ", but due to the access modifiers (e.g., public)"
-                    + ", nothing could be resolved",
-                expr.get_SourcePositionStart(),
-                expr.get_SourcePositionEnd()
-            );
+            }
           }
         }
+        // extension point
+        else {
+          Log.error("0xFDB3A unexpected field access \""
+                  + expr.getName()
+                  + "\" for type "
+                  + innerAsExprType.printFullName(),
+              expr.get_SourcePositionStart(),
+              expr.get_SourcePositionEnd()
+          );
+          type = Optional.empty();
+        }
       }
-      // extension point
       else {
-        Log.error("0xFDB3A unexpected field access \""
-                + expr.getName()
-                + "\" for type "
-                + innerAsExprType.printFullName(),
-            expr.get_SourcePositionStart(),
-            expr.get_SourcePositionEnd()
-        );
-        type = Optional.empty();
+        // TODO invert
+        type = Optional.of(innerAsExprType);
       }
     }
     return type;
