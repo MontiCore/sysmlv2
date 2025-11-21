@@ -1,5 +1,6 @@
 package types3;
 
+import de.monticore.expressions.commonexpressions._ast.ASTEqualsExpression;
 import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisTypeVisitor;
 import de.monticore.expressions.streamexpressions.types3.StreamExpressionsTypeVisitor;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
@@ -7,12 +8,12 @@ import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
-import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.lang.sysmlv2.types3.SysMLCommonExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.types3.SysMLOCLExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.types3.SysMLTypeVisitorOperatorCalculator;
 import de.monticore.lang.sysmlv2.types3.SysMLWithinScopeBasicSymbolResolver;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
+import de.monticore.ocl.oclexpressions._ast.ASTForallExpression;
 import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
 import de.monticore.types3.Type4Ast;
 import de.monticore.types3.TypeCheck3;
@@ -23,7 +24,6 @@ import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -33,7 +33,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FieldAccessExpressionInConstraintUsageTest {
+public class NegationTest {
 
   private final SysMLv2Parser parser = new SysMLv2Parser();
   private final SysMLv2Tool tool = new SysMLv2Tool();
@@ -88,12 +88,9 @@ public class FieldAccessExpressionInConstraintUsageTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "port def F { attribute a: boolean[2]; } part s { port f: F; constraint e { f.a[1] } }",
-      "port def F { attribute a: boolean; } part s { port f: F[1]; constraint e { f[1].a } }",
-
-      "port def F { attribute a: boolean[2]; } part s { port f: F; constraint e { f[1] } }",
-      "port def F { attribute a: boolean; } part s { port f: F[1]; constraint e { f[1] } }"
-  }) public void test4ValidExpr1(String model) throws IOException {
+      "port def F { in attribute val: boolean; } part s { port f: F; constraint e { forall long t: f.val.nth(t) == !f.val.nth(t) } }"
+  })
+  public void testNotBooleanStream(String model) throws IOException {
     var ast = parser.parse_String(model);
     assertThat(ast).isPresent();
     var astSysMLModel = ast.get();
@@ -105,19 +102,21 @@ public class FieldAccessExpressionInConstraintUsageTest {
     var sysmlelements = astSysMLModel.getSysMLElementList();
     var astPartUsage = sysmlelements.get(1);
     var constraintUsage = ((ASTPartUsage) astPartUsage).getSysMLElement(1);
-    var expr = ((ASTConstraintUsage) constraintUsage).getExpression();
-    var type = TypeCheck3.typeOf(expr);
-    assertFalse(type.isObscureType());
-    assertThat(type.printFullName()).isEqualTo("EventStream.EventStream<boolean>");
+    var forAllExpr = (ASTForallExpression)(((ASTConstraintUsage) constraintUsage).getExpression());
+    var equalsExpr = (ASTEqualsExpression) forAllExpr.getExpression();
+    var rightType = TypeCheck3.typeOf(equalsExpr.getRight());
+    var leftType = TypeCheck3.typeOf(equalsExpr.getLeft());
+    assertFalse(rightType.isObscureType());
+    assertThat(rightType.printFullName()).isEqualTo("UntimedStream.UntimedStream<boolean>");
+    assertTrue(rightType.deepEquals(leftType));
   }
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "port def F { attribute a: boolean; } part s { port f: F[2]; constraint e { f.a } }",
-      "port def F { attribute a: boolean; } part s { port f: F[2]; constraint e { f } }"
+      "part s { constraint e { forall nat t: true == !false } }"
   })
-  public void test4InvalidExpr(String model) throws IOException {
-    var ast = parser.parse_String(model);;
+  public void testNotBoolean(String model) throws IOException {
+    var ast = parser.parse_String(model);
     assertThat(ast).isPresent();
     var astSysMLModel = ast.get();
 
@@ -126,14 +125,14 @@ public class FieldAccessExpressionInConstraintUsageTest {
     tool.finalizeSymbolTable(astSysMLModel);
 
     var sysmlelements = astSysMLModel.getSysMLElementList();
-    var astPartUsage = sysmlelements.get(1);
-    var constraintUsage = ((ASTPartUsage) astPartUsage).getSysMLElement(1);
-    var expr = ((ASTConstraintUsage) constraintUsage).getExpression();
-    var type = TypeCheck3.typeOf(expr);
-    assertTrue(type.isObscureType() ||
-        !Log.getFindings().isEmpty() ||
-        !type.printFullName().equals("EventStream.EventStream<boolean>"));
+    var astPartUsage = sysmlelements.get(0);
+    var constraintUsage = ((ASTPartUsage) astPartUsage).getSysMLElement(0);
+    var forAllExpr = (ASTForallExpression)(((ASTConstraintUsage) constraintUsage).getExpression());
+    var equalsExpr = (ASTEqualsExpression) forAllExpr.getExpression();
+    var rightType = TypeCheck3.typeOf(equalsExpr.getRight());
+    var leftType = TypeCheck3.typeOf(equalsExpr.getLeft());
+    assertFalse(rightType.isObscureType());
+    assertThat(rightType.printFullName()).isEqualTo("boolean");
+    assertTrue(rightType.deepEquals(leftType));
   }
 }
-
-

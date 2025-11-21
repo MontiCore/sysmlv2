@@ -3,6 +3,7 @@ package de.monticore.lang.sysmlv2.types3;
 import de.monticore.expressions.commonexpressions._ast.ASTArrayAccessExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpressionBuilder;
+import de.monticore.expressions.commonexpressions._ast.ASTLogicalNotExpression;
 import de.monticore.expressions.commonexpressions._symboltable.ICommonExpressionsScope;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTraverser;
 import de.monticore.expressions.commonexpressions.types3.CommonExpressionsTypeVisitor;
@@ -112,7 +113,7 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
       // part 1 is ignoring FA for port // part 2 is fallback. ie inner type is a port usage thus type is a port def
       if (optPort.isEmpty()
           || innerAsExprType.isArrayType() && innerAsExprType.asArrayType().getArgument().getTypeInfo().getSpannedScope().getSpanningSymbol() instanceof PortDefSymbol
-          || innerAsExprType.getTypeInfo() != null && innerAsExprType.getTypeInfo().getSpannedScope().getSpanningSymbol() instanceof PortDefSymbol) //|| optPortDef.isPresent() && optPortDef.get().getInputAttributes().size() != 1) {
+          || innerAsExprType.hasTypeInfo() && innerAsExprType.getTypeInfo().getSpannedScope().getSpanningSymbol() instanceof PortDefSymbol) //|| optPortDef.isPresent() && optPortDef.get().getInputAttributes().size() != 1) {
       {
         if (WithinTypeBasicSymbolsResolver.canResolveIn(innerAsExprType)) {
           AccessModifier modifier = innerAsExprType.hasTypeInfo() ?

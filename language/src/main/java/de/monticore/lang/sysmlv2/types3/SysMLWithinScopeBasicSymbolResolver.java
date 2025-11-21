@@ -53,8 +53,8 @@ public class SysMLWithinScopeBasicSymbolResolver extends
         resolveVariableWithoutSuperTypes(enclosingScope, name);
 
     if (optVar.isPresent() && enclosingScope instanceof ISysMLv2Scope &&
-        (optVar.get().getTypeInfo() != null ||
-        optVar.get().isArrayType() && optVar.get().asArrayType().getArgument().getTypeInfo() != null)
+        (optVar.get().hasTypeInfo() ||
+        optVar.get().isArrayType() && optVar.get().asArrayType().getArgument().hasTypeInfo())
     ) {
       // found var.
       IBasicSymbolsScope scope;
@@ -89,11 +89,18 @@ public class SysMLWithinScopeBasicSymbolResolver extends
             //);
           }
           else {
-            streamType.get().asGenericType().setArgument(0,
-                actualType.get());
-          }
+            if (actualType.get().isArrayType()) {
+              streamType.get().asGenericType().setArgument(0,
+                  actualType.get().asArrayType().getArgument());
+              actualType.get().asArrayType().setArgument(streamType.get());
+            }
+            else {
+              streamType.get().asGenericType().setArgument(0,
+                  actualType.get());
 
-          actualType = streamType;
+              actualType = streamType;
+              }
+          }
         }
           // if present
         if (optVar.get().isArrayType()) {

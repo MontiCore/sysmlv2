@@ -13,7 +13,9 @@ import de.monticore.lang.sysmlv2.types3.SysMLOCLExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.types3.SysMLTypeVisitorOperatorCalculator;
 import de.monticore.lang.sysmlv2.types3.SysMLWithinScopeBasicSymbolResolver;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
+import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
+import de.monticore.types3.SymTypeRelations;
 import de.monticore.types3.Type4Ast;
 import de.monticore.types3.TypeCheck3;
 import de.monticore.types3.streams.StreamSymTypeRelations;
@@ -22,30 +24,29 @@ import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FieldAccessExpressionInConstraintUsageTest {
+public class StreamConstructorExpressionsTest {
 
   private final SysMLv2Parser parser = new SysMLv2Parser();
   private final SysMLv2Tool tool = new SysMLv2Tool();
 
   @BeforeAll
-  public static void init() {
+  public static void setup() {
     LogStub.init();
+    SysMLv2Mill.init();
   }
 
   @BeforeEach
-  public void reset() {
-    Log.getFindings().clear();
+  public void clear() {
+    Log.clearFindings();
     tool.init();
 
     var type4Ast = new Type4Ast();
@@ -88,14 +89,14 @@ public class FieldAccessExpressionInConstraintUsageTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "port def F { attribute a: boolean[2]; } part s { port f: F; constraint e { f.a[1] } }",
-      "port def F { attribute a: boolean; } part s { port f: F[1]; constraint e { f[1].a } }",
-
-      "port def F { attribute a: boolean[2]; } part s { port f: F; constraint e { f[1] } }",
-      "port def F { attribute a: boolean; } part s { port f: F[1]; constraint e { f[1] } }"
-  }) public void test4ValidExpr1(String model) throws IOException {
+      "port def F { attribute a: boolean; } part s { port f: F; constraint e {<true>} }",
+      "port def F { attribute a: boolean; } part s { port f: F; constraint e {<false, true, true>} }"
+  })
+  public void test4validStream(String model) throws IOException {
     var ast = parser.parse_String(model);
+
     assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
     var astSysMLModel = ast.get();
 
     tool.createSymbolTable(astSysMLModel);
@@ -106,19 +107,20 @@ public class FieldAccessExpressionInConstraintUsageTest {
     var astPartUsage = sysmlelements.get(1);
     var constraintUsage = ((ASTPartUsage) astPartUsage).getSysMLElement(1);
     var expr = ((ASTConstraintUsage) constraintUsage).getExpression();
-    var type = TypeCheck3.typeOf(expr);
-    assertFalse(type.isObscureType());
+    var type = SymTypeRelations.normalize(TypeCheck3.typeOf(expr));
     assertThat(type.printFullName()).isEqualTo("EventStream.EventStream<boolean>");
   }
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "port def F { attribute a: boolean; } part s { port f: F[2]; constraint e { f.a } }",
-      "port def F { attribute a: boolean; } part s { port f: F[2]; constraint e { f } }"
+      "port def F { attribute a: boolean; } part s { port f: F; constraint e {<true, 5>} }",
+      "port def F { attribute a: boolean; } part s { port f: F; constraint e {<false, <true> >} }"
   })
-  public void test4InvalidExpr(String model) throws IOException {
-    var ast = parser.parse_String(model);;
+  public void test4invalidStream(String model) throws IOException {
+    var ast = parser.parse_String(model);
+
     assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
     var astSysMLModel = ast.get();
 
     tool.createSymbolTable(astSysMLModel);
@@ -130,10 +132,11 @@ public class FieldAccessExpressionInConstraintUsageTest {
     var constraintUsage = ((ASTPartUsage) astPartUsage).getSysMLElement(1);
     var expr = ((ASTConstraintUsage) constraintUsage).getExpression();
     var type = TypeCheck3.typeOf(expr);
-    assertTrue(type.isObscureType() ||
-        !Log.getFindings().isEmpty() ||
-        !type.printFullName().equals("EventStream.EventStream<boolean>"));
+
+    // TODO how do we do this for all elements?
+    assertTrue(type.isGenericType() && type.asGenericType().getArgument(0).isUnionType());
+    var args = type.asGenericType().getArgument(0).asUnionType().getUnionizedTypeSet().toArray();
+    assertFalse(SymTypeRelations.isCompatible((SymTypeExpression) args[0], (SymTypeExpression) args[1]));
+    //assertFalse(Log.getFindings().isEmpty());
   }
 }
-
-

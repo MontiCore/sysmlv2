@@ -14,6 +14,7 @@ import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.lang.sysmlv2.types3.SysMLCommonExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.types3.SysMLOCLExpressionsTypeVisitor;
+import de.monticore.lang.sysmlv2.types3.SysMLTypeVisitorOperatorCalculator;
 import de.monticore.lang.sysmlv2.types3.SysMLWithinScopeBasicSymbolResolver;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.types.check.SymTypeExpression;
@@ -21,6 +22,7 @@ import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
 import de.monticore.types3.Type4Ast;
 import de.monticore.types3.TypeCheck3;
+import de.monticore.types3.streams.StreamSymTypeRelations;
 import de.monticore.types3.util.MapBasedTypeCheck3;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
@@ -92,6 +94,8 @@ public class FieldAccessExpressionInStateUsageTest {
     typeTraverser.add4StreamExpressions(forStreams);
 
     SysMLWithinScopeBasicSymbolResolver.init();
+    SysMLTypeVisitorOperatorCalculator.init();
+    StreamSymTypeRelations.init();
 
     new MapBasedTypeCheck3(typeTraverser, type4Ast).setThisAsDelegate();
   }

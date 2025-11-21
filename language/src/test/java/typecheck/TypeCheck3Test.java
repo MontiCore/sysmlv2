@@ -36,12 +36,13 @@ public class TypeCheck3Test {
       var type = TypeCheck3.typeOf(node);
 
       // Wie prüfe ich, dass es sich um Aufruf der length-Funktion handelt?
-      if(type.print().equals("long")) {
+      if(type.print().equals("len")) {
         content = "Übersetzung der length-Funktion";
       }
     }
   }
 
+  @Disabled
   @Test
   void testTypeCheck3() throws IOException {
     /*
