@@ -15,7 +15,6 @@ public class AttributeUsage2VariableSymbolAdapter extends FieldSymbol {
   public AttributeUsage2VariableSymbolAdapter(AttributeUsageSymbol adaptee) {
     super(adaptee.getName());
     this.adaptee = adaptee;
-    this.accessModifier = adaptee.getAccessModifier();
   }
 
   protected AttributeUsageSymbol getAdaptee() {
