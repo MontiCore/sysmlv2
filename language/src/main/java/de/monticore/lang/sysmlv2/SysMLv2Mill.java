@@ -31,10 +31,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
   public static void prepareGlobalScope() {
     SysMLv2Mill.initializePrimitives();
     SysMLv2Mill.addStringType();
-    // Doppelt gemoppelt?
-    MCCollectionSymTypeRelations.init();
     SysMLv2Mill.addCollectionTypes();
-    OCLSymTypeRelations.init();
   }
 
   /**

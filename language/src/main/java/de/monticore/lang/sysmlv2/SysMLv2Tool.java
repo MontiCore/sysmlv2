@@ -24,7 +24,9 @@ import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.cocos.AssignActionTypeCheck;
+import de.monticore.lang.sysmlv2.cocos.AssignActionTypeCheck3;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
+import de.monticore.lang.sysmlv2.cocos.ConstraintIsBooleanTC3;
 import de.monticore.lang.sysmlv2.cocos.FlowCheckCoCo;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
@@ -35,6 +37,7 @@ import de.monticore.lang.sysmlv2.cocos.SendActionTypeCheck;
 import de.monticore.lang.sysmlv2.cocos.SpecializationExists;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.TypeCheckTransitionGuards;
+import de.monticore.lang.sysmlv2.cocos.TypeCheck3TransitionGuards;
 import de.monticore.lang.sysmlv2.cocos.WarnNonExhibited;
 import de.monticore.lang.sysmlv2.symboltable.completers.CausalityCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectRefinementCompleter;
@@ -46,6 +49,7 @@ import de.monticore.lang.sysmlv2.symboltable.completers.StateUsageCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.TypesCompleter;
 import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.lang.sysmlv2.types.SysMLSynthesizer;
+import de.monticore.lang.sysmlv2.types3.SysMLTypeCheck3;
 import de.monticore.ocl.oclexpressions.symboltable.OCLExpressionsSymbolTableCompleter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbolDeSer;
@@ -79,6 +83,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     SysMLv2Mill.globalScope().clear();
     SysMLv2Mill.prepareGlobalScope();
     loadStreamSymbolsFromJar();
+    SysMLTypeCheck3.init();
   }
 
   @Override
@@ -105,6 +110,9 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo(new TypeCheckTransitionGuards());
     checker.addCoCo(new SendActionTypeCheck());
     checker.addCoCo(new AssignActionTypeCheck());
+    // TC3
+    checker.addCoCo(new AssignActionTypeCheck3());
+    checker.addCoCo(new TypeCheck3TransitionGuards());
     checker.checkAll(ast);
   }
 
@@ -118,6 +126,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
 
     // general
     checker.addCoCo(new ConstraintIsBoolean());
+    checker.addCoCo(new ConstraintIsBooleanTC3());
     checker.addCoCo(new SpecializationExists());
 
     // Not-supported language elements

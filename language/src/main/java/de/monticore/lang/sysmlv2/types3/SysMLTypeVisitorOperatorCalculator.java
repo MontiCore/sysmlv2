@@ -4,11 +4,13 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types3.SymTypeRelations;
 import de.monticore.types3.util.TypeVisitorOperatorCalculator;
+import de.se_rwth.commons.logging.Log;
 
 public class SysMLTypeVisitorOperatorCalculator extends
     TypeVisitorOperatorCalculator {
 
   public static void init() {
+    Log.trace("init SysMLTypeVisitorOperatorCalculator", "TypeCheck setup");
     // TODO might be wrong
     setDelegate(new SysMLTypeVisitorOperatorCalculator());
   }
