@@ -5,12 +5,15 @@ import de.monticore.symbols.compsymbols._symboltable.Timing;
 
 public class StreamTimingUtil {
   public static String mapTimingToStreamType(Timing timing) {
-    return switch (timing) {
-      case TIMED -> "EventStream";
-
-      case TIMED_SYNC -> "SyncStream";
-
-      case UNTIMED -> "UntimedStream";
-    };
+    switch (timing) {
+      case TIMED:
+        return "EventStream";
+      case TIMED_SYNC:
+        return "SyncStream";
+      case UNTIMED:
+        return "UntimedStream";
+      default:
+        throw new IllegalArgumentException("Unexpected value: " + timing);
+    }
   }
 }
