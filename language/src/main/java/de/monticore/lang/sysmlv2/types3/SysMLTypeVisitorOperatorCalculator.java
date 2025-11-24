@@ -6,6 +6,7 @@ import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types3.SymTypeRelations;
 import de.monticore.types3.util.TypeVisitorLifting;
 import de.monticore.types3.util.TypeVisitorOperatorCalculator;
+import de.monticore.types3.util.WithinScopeBasicSymbolsResolver;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
@@ -25,7 +26,9 @@ public class SysMLTypeVisitorOperatorCalculator extends
     if (SymTypeRelations.isBoolean(result)) {
       return result;
     }
-    else if (inner.hasTypeInfo() && inner.printFullName().contains("Stream")) {
+    // TODO resolve for Stream and deepEquals
+    else if (inner.hasTypeInfo() && inner.getTypeInfo().isPresentSuperClass() &&
+        inner.getTypeInfo().getSuperClass().print().equals("Stream<T>")) {
       return inner;
     }
 
@@ -33,7 +36,6 @@ public class SysMLTypeVisitorOperatorCalculator extends
   }
 
   public static Optional<SymTypeExpression> conditionalNot(SymTypeExpression inner) {
-    // TODO implement correctly
     return ((SysMLTypeVisitorOperatorCalculator)getDelegate())._conditionalNot(inner);
   }
 

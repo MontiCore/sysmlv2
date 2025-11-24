@@ -28,6 +28,7 @@ public class ConvertEnumUsagesToFields implements SysMLPartsVisitor2 {
               .setAstNodeAbsent()
               .setName(usage.getName())
               .setIsStatic(true)
+              .setIsPublic(true)
               .setType(type)
               .build();
           node.getSpannedScope().add(field);

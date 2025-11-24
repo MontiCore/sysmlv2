@@ -13,6 +13,7 @@ import de.monticore.lang.componentconnector.StreamTimingUtil;
 import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScope;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlexpressions._ast.ASTConditionalNotExpression;
+import de.monticore.lang.sysmlexpressions._ast.ASTInfinity;
 import de.monticore.lang.sysmlexpressions._ast.ASTSysMLFieldAccessExpression;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsHandler;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsTraverser;
@@ -79,6 +80,12 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
         SysMLTypeVisitorOperatorCalculator.conditionalNot(inner), inner
     );
     getType4Ast().setTypeOfExpression(expr, result);
+  }
+
+  @Override
+  public void endVisit(ASTInfinity node) {
+    // backwards compatibility
+    getType4Ast().setTypeOfExpression(node, SymTypeExpressionFactory.createPrimitive("int"));
   }
 
   @Override

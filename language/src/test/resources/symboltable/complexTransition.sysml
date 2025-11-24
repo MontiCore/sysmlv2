@@ -1,7 +1,7 @@
 
 package myPackage {
   enum def MyEnum {
-    A; B;
+    enum A; enum B;
   }
 
   part def MyPartDef {
