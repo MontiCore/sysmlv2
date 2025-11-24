@@ -15,6 +15,8 @@ public class AttributeUsage2VariableSymbolAdapter extends FieldSymbol {
   public AttributeUsage2VariableSymbolAdapter(AttributeUsageSymbol adaptee) {
     super(adaptee.getName());
     this.adaptee = adaptee;
+    // For the time being field is public for TypeCheck compatibility
+    this.setIsPublic(true);
   }
 
   protected AttributeUsageSymbol getAdaptee() {
@@ -51,11 +53,6 @@ public class AttributeUsage2VariableSymbolAdapter extends FieldSymbol {
   @Override
   public SymTypeExpression getType() {
     return getAdaptee().getTypes(0);
-  }
-
-  @Override
-  public AccessModifier getAccessModifier() {
-    return getAdaptee().getAccessModifier();
   }
 
   @Override
