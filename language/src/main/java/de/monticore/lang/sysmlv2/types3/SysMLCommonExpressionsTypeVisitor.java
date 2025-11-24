@@ -12,6 +12,7 @@ import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.lang.componentconnector.StreamTimingUtil;
 import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScope;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
+import de.monticore.lang.sysmlexpressions._ast.ASTConditionalNotExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSysMLFieldAccessExpression;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsHandler;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsTraverser;
@@ -39,6 +40,7 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfFunction;
 import de.monticore.types3.util.TypeContextCalculator;
+import de.monticore.types3.util.TypeVisitorOperatorCalculator;
 import de.monticore.types3.util.WithinScopeBasicSymbolsResolver;
 import de.monticore.types3.util.WithinTypeBasicSymbolsResolver;
 import de.se_rwth.commons.logging.Log;
@@ -66,6 +68,17 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
   @Override
   public void setTraverser(SysMLExpressionsTraverser traverser) {
     this.traverser = traverser;
+  }
+
+  @Override
+  public void endVisit(ASTConditionalNotExpression expr) {
+    SymTypeExpression inner =
+        getType4Ast().getPartialTypeOfExpr(expr.getExpression());
+    SymTypeExpression result = getTypeForPrefixOrLogError(
+        "0xB0165", expr, "not",
+        SysMLTypeVisitorOperatorCalculator.conditionalNot(inner), inner
+    );
+    getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
