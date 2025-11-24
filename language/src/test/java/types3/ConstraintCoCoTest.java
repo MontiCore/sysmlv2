@@ -95,7 +95,7 @@ public class ConstraintCoCoTest {
       "4_valid.sysml", // stream snth
       "5_valid.sysml", // port::channel-syntax with comparison
       //"6_valid.sysml", // port::channel-syntax with literal
-      //"7_valid.sysml", // INF literal
+      "7_valid.sysml", // INF literal
       "8_valid.sysml", // forall construct
       "9_valid.sysml", // constraint with literal
       //"10_valid.sysml", // attribute definition without port

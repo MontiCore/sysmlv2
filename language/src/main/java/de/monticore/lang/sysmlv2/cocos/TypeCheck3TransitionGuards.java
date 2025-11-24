@@ -17,7 +17,7 @@ public class TypeCheck3TransitionGuards implements SysMLStatesASTSysMLTransition
 
       try {
         SymTypeExpression type = TypeCheck3.typeOf(expr);
-        if(!type.isObscureType()) {
+        if(type.isObscureType()) {
           Log.error("0x80004 Failed to derive a type!",
               expr.get_SourcePositionStart(),
               expr.get_SourcePositionEnd());
