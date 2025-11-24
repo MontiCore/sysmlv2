@@ -116,7 +116,7 @@ public class StreamConstructorExpressionsTest {
       "port def F { attribute a: boolean; } part s { port f: F; constraint e {<true, 5>} }",
       "port def F { attribute a: boolean; } part s { port f: F; constraint e {<false, <true> >} }"
   })
-  public void test4invalidStream(String model) throws IOException {
+  public void test4ValidMixedStream(String model) throws IOException {
     var ast = parser.parse_String(model);
 
     assertThat(ast).isPresent();
@@ -133,10 +133,36 @@ public class StreamConstructorExpressionsTest {
     var expr = ((ASTConstraintUsage) constraintUsage).getExpression();
     var type = TypeCheck3.typeOf(expr);
 
-    // TODO how do we do this for all elements?
+    // Streams are based on union types. So the following expressions are correct, albeit innerly incompatible
     assertTrue(type.isGenericType() && type.asGenericType().getArgument(0).isUnionType());
     var args = type.asGenericType().getArgument(0).asUnionType().getUnionizedTypeSet().toArray();
     assertFalse(SymTypeRelations.isCompatible((SymTypeExpression) args[0], (SymTypeExpression) args[1]));
-    //assertFalse(Log.getFindings().isEmpty());
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "port def F { attribute a: boolean; } part s { port f: F; constraint e {<true, 5> == <false>} }",
+      "port def F { attribute a: boolean; } part s { port f: F; constraint e {<false, <true> > == < <true> >} }"
+  })
+  public void test4InvalidStream(String model) throws IOException {
+    var ast = parser.parse_String(model);
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    var astSysMLModel = ast.get();
+
+    tool.createSymbolTable(astSysMLModel);
+    tool.completeSymbolTable(astSysMLModel);
+    tool.finalizeSymbolTable(astSysMLModel);
+
+    var sysmlelements = astSysMLModel.getSysMLElementList();
+    var astPartUsage = sysmlelements.get(1);
+    var constraintUsage = ((ASTPartUsage) astPartUsage).getSysMLElement(1);
+    var expr = ((ASTConstraintUsage) constraintUsage).getExpression();
+    var type = TypeCheck3.typeOf(expr);
+
+    assertTrue(type.isObscureType());
+    assertFalse(Log.getFindings().isEmpty());
   }
 }
