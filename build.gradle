@@ -6,7 +6,7 @@ subprojects {
   group = 'de.monticore.lang.sysml_v2'
 
   // Needs to be after java plugin
-  sourceCompatibility = "17"
+  sourceCompatibility = "11"
 
   project.buildDir = "target"
 
