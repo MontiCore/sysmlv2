@@ -10,6 +10,7 @@ import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBooleanTC3;
 import de.monticore.lang.sysmlv2.types3.SysMLCommonExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.types3.SysMLOCLExpressionsTypeVisitor;
+import de.monticore.lang.sysmlv2.types3.SysMLSymTypeRelations;
 import de.monticore.lang.sysmlv2.types3.SysMLTypeVisitorOperatorCalculator;
 import de.monticore.lang.sysmlv2.types3.SysMLWithinScopeBasicSymbolResolver;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
@@ -83,6 +84,7 @@ public class ConstraintCoCoTest {
     SysMLWithinScopeBasicSymbolResolver.init();
     SysMLTypeVisitorOperatorCalculator.init();
     StreamSymTypeRelations.init();
+    SysMLSymTypeRelations.init();
 
     new MapBasedTypeCheck3(typeTraverser, type4Ast).setThisAsDelegate();
   }
