@@ -6,6 +6,7 @@ import de.monticore.expressions.streamexpressions.types3.StreamExpressionsTypeVi
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
+import de.monticore.ocl.setexpressions.types3.SetExpressionsTypeVisitor;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
@@ -75,6 +76,10 @@ public class SysMLTypeCheck3 extends MapBasedTypeCheck3 {
     var forStreams = new StreamExpressionsTypeVisitor();
     forStreams.setType4Ast(type4Ast);
     typeTraverser.add4StreamExpressions(forStreams);
+
+    var forSets = new SetExpressionsTypeVisitor();
+    forSets.setType4Ast(type4Ast);
+    typeTraverser.add4SetExpressions(forSets);
 
     // MCTypes
 

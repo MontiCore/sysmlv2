@@ -14,6 +14,10 @@ import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScop
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlexpressions._ast.ASTConditionalNotExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTInfinity;
+import de.monticore.lang.sysmlexpressions._ast.ASTSubsetEquationExpression;
+import de.monticore.lang.sysmlexpressions._ast.ASTSubsetExpression;
+import de.monticore.lang.sysmlexpressions._ast.ASTSupersetEquationExpression;
+import de.monticore.lang.sysmlexpressions._ast.ASTSupersetExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSysMLFieldAccessExpression;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsHandler;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsTraverser;
@@ -32,6 +36,8 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.ocl.setexpressions._ast.ASTSetNotInExpression;
+import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -40,7 +46,10 @@ import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfFunction;
+import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
+import de.monticore.types3.SymTypeRelations;
 import de.monticore.types3.util.TypeContextCalculator;
+import de.monticore.types3.util.TypeVisitorLifting;
 import de.monticore.types3.util.TypeVisitorOperatorCalculator;
 import de.monticore.types3.util.WithinScopeBasicSymbolsResolver;
 import de.monticore.types3.util.WithinTypeBasicSymbolsResolver;
@@ -51,6 +60,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+
+import static de.monticore.types.check.SymTypeExpressionFactory.createObscureType;
 
 /*
   Handles the particularities of the sysml regarding streams in expressions.
@@ -371,9 +382,66 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
     }
   }
 
+  @Override
+  public void endVisit(ASTSubsetExpression expr) {
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                this::calculateSubsetExpression)
+            .apply(left, right);
+    getType4Ast().setTypeOfExpression(expr, result);
+  }
+
+  @Override
+  public void endVisit(ASTSubsetEquationExpression expr) {
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                this::calculateSubsetExpression)
+            .apply(left, right);
+    getType4Ast().setTypeOfExpression(expr, result);
+  }
+
+  @Override
+  public void endVisit(ASTSupersetExpression expr) {
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                this::calculateSubsetExpression)
+            .apply(left, right);
+    getType4Ast().setTypeOfExpression(expr, result);
+  }
+
+  @Override
+  public void endVisit(ASTSupersetEquationExpression expr) {
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                this::calculateSubsetExpression)
+            .apply(left, right);
+    getType4Ast().setTypeOfExpression(expr, result);
+  }
+
+  protected SymTypeExpression calculateSubsetExpression(
+      SymTypeExpression left, SymTypeExpression right) {
+
+    if (SymTypeRelations.isCompatible(left, right) && MCCollectionSymTypeRelations.isSet(left)) {
+      return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
+    }
+    return SymTypeExpressionFactory.createObscureType();
+  }
+
 
   /*
-    This method assumes that a state machine (state def/usage) always defines a scope.
+  This method assumes that a state machine (state def/usage) always defines a scope.
    */
   private boolean isDefinedInStateMachine(ICommonExpressionsScope scope) {
     var enclosingScope = (ISysMLv2Scope) scope;
