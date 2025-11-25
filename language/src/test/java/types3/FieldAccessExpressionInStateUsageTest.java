@@ -14,6 +14,7 @@ import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.lang.sysmlv2.types3.SysMLCommonExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.types3.SysMLOCLExpressionsTypeVisitor;
+import de.monticore.lang.sysmlv2.types3.SysMLSymTypeRelations;
 import de.monticore.lang.sysmlv2.types3.SysMLTypeVisitorOperatorCalculator;
 import de.monticore.lang.sysmlv2.types3.SysMLWithinScopeBasicSymbolResolver;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
@@ -96,6 +97,7 @@ public class FieldAccessExpressionInStateUsageTest {
     SysMLWithinScopeBasicSymbolResolver.init();
     SysMLTypeVisitorOperatorCalculator.init();
     StreamSymTypeRelations.init();
+    SysMLSymTypeRelations.init();
 
     new MapBasedTypeCheck3(typeTraverser, type4Ast).setThisAsDelegate();
   }
