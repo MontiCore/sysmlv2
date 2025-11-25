@@ -284,7 +284,7 @@ component grammar SysMLBasis
   interface IInlineOccurrenceUsage ;
 
   Dependency implements SysMLElement =
-    Modifier UserDefinedKeyword* "dependency" (Name? "from")? (MCQualifiedName || ",")+ "to" (MCQualifiedName || ",")+
+    Modifier UserDefinedKeyword* "dependency" (Name? "from")? src:(MCQualifiedName || ",")+ "to" tgt:(MCQualifiedName || ",")+
     ("{"
        SysMLElement*
      "}" | ";");
