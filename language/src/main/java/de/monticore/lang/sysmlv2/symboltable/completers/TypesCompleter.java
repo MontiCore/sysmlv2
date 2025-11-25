@@ -1,16 +1,19 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.symboltable.completers;
 
+import de.monticore.lang.sysmlbasis._ast.ASTAnonymousReference;
 import de.monticore.lang.sysmlbasis._ast.ASTAnonymousUsage;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLParameter;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlbasis._symboltable.AnonymousReferenceSymbol;
 import de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol;
 import de.monticore.lang.sysmlbasis._visitor.SysMLBasisVisitor2;
 import de.monticore.lang.sysmlconstraints._ast.ASTRequirementSubject;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlconstraints._visitor.SysMLConstraintsVisitor2;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
+import de.monticore.lang.sysmlparts._ast.ASTEnumDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
@@ -147,4 +150,12 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
     }
   }
 
+  @Override
+  public void visit(ASTAnonymousReference node) {
+    if(node.isPresentSymbol()) {
+      AnonymousReferenceSymbol symbol = node.getSymbol();
+      List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
+      symbol.setTypesList(types);
+    }
+  }
 }
