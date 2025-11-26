@@ -6,10 +6,10 @@ import de.monticore.expressions.streamexpressions.types3.StreamExpressionsTypeVi
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
-import de.monticore.ocl.setexpressions.types3.SetExpressionsTypeVisitor;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
+import de.monticore.types.mccollectiontypes.types3.MCCollectionTypesTypeVisitor;
 import de.monticore.types3.Type4Ast;
 import de.monticore.types3.TypeCheck3;
 import de.monticore.types3.streams.StreamSymTypeRelations;
@@ -48,7 +48,11 @@ public class SysMLTypeCheck3 extends MapBasedTypeCheck3 {
   protected static void initTC3Delegate() {
     Log.trace("init SysMLTypeCheck3", "TypeCheck setup");
 
-    SysMLv2Traverser typeTraverser = SysMLv2Mill.traverser();
+    // TODO if we use this how many overrides are avoided?
+    // TODO make a test where you do not reset the typecheck and use both writing styles
+    // TODO nat as primitive
+    // TODO bug report surrogates
+    SysMLv2Traverser typeTraverser = SysMLv2Mill.inheritanceTraverser();
     Type4Ast type4Ast = new Type4Ast();
 
     // Expressions
@@ -77,9 +81,10 @@ public class SysMLTypeCheck3 extends MapBasedTypeCheck3 {
     forStreams.setType4Ast(type4Ast);
     typeTraverser.add4StreamExpressions(forStreams);
 
-    var forSets = new SetExpressionsTypeVisitor();
+    var forSets = new SysMLSetExpressionsTypeVisitor();
     forSets.setType4Ast(type4Ast);
     typeTraverser.add4SetExpressions(forSets);
+    typeTraverser.add4SysMLExpressions(forSets);
 
     // MCTypes
 
@@ -87,12 +92,17 @@ public class SysMLTypeCheck3 extends MapBasedTypeCheck3 {
     forBasicTypes.setType4Ast(type4Ast);
     typeTraverser.add4MCBasicTypes(forBasicTypes);
 
+    // TODO are MCSimpleGenerics required?
+    var forCollectionTypes = new MCCollectionTypesTypeVisitor();
+    forCollectionTypes.setType4Ast(type4Ast);
+    typeTraverser.add4MCCollectionTypes(forCollectionTypes);
+
     // create delegate
     SysMLTypeCheck3 sysmlTC3 = new SysMLTypeCheck3(typeTraverser, type4Ast);
     sysmlTC3.setThisAsDelegate();
   }
 
-  protected SysMLTypeCheck3(
+  public SysMLTypeCheck3(
       ITraverser typeTraverser, Type4Ast type4Ast) {
     super(typeTraverser, type4Ast);
   }

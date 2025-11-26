@@ -1,6 +1,7 @@
 package types3;
 
 import de.monticore.expressions.commonexpressions._ast.ASTEqualsExpression;
+import de.monticore.expressions.commonexpressions.types3.util.CommonExpressionsLValueRelations;
 import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisTypeVisitor;
 import de.monticore.expressions.streamexpressions.types3.StreamExpressionsTypeVisitor;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
@@ -10,12 +11,17 @@ import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.monticore.lang.sysmlv2.types3.SysMLCommonExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.types3.SysMLOCLExpressionsTypeVisitor;
+import de.monticore.lang.sysmlv2.types3.SysMLSetExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.types3.SysMLSymTypeRelations;
+import de.monticore.lang.sysmlv2.types3.SysMLTypeCheck3;
 import de.monticore.lang.sysmlv2.types3.SysMLTypeVisitorOperatorCalculator;
 import de.monticore.lang.sysmlv2.types3.SysMLWithinScopeBasicSymbolResolver;
+import de.monticore.lang.sysmlv2.types3.SysMLWithinTypeBasicSymbolResolver;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.ocl.oclexpressions._ast.ASTForallExpression;
 import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
+import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
+import de.monticore.types.mccollectiontypes.types3.MCCollectionTypesTypeVisitor;
 import de.monticore.types3.Type4Ast;
 import de.monticore.types3.TypeCheck3;
 import de.monticore.types3.streams.StreamSymTypeRelations;
@@ -72,20 +78,31 @@ public class NegationTest {
     typeTraverser.add4OCLExpressions(forOcl);
     typeTraverser.add4SysMLExpressions(forOcl);
 
-    var forBasicTypes = new MCBasicTypesTypeVisitor();
-    forBasicTypes.setType4Ast(type4Ast);
-    typeTraverser.add4MCBasicTypes(forBasicTypes);
-
     var forStreams = new StreamExpressionsTypeVisitor();
     forStreams.setType4Ast(type4Ast);
     typeTraverser.add4StreamExpressions(forStreams);
 
+    var forSets = new SysMLSetExpressionsTypeVisitor();
+    forSets.setType4Ast(type4Ast);
+    typeTraverser.add4SetExpressions(forSets);
+
+    var forBasicTypes = new MCBasicTypesTypeVisitor();
+    forBasicTypes.setType4Ast(type4Ast);
+    typeTraverser.add4MCBasicTypes(forBasicTypes);
+
+    var forCollectionTypes = new MCCollectionTypesTypeVisitor();
+    forCollectionTypes.setType4Ast(type4Ast);
+    typeTraverser.add4MCCollectionTypes(forCollectionTypes);
+
+    StreamSymTypeRelations.init();
+    SysMLWithinTypeBasicSymbolResolver.init();
     SysMLWithinScopeBasicSymbolResolver.init();
     SysMLTypeVisitorOperatorCalculator.init();
-    StreamSymTypeRelations.init();
+    CommonExpressionsLValueRelations.init();
+    MCCollectionSymTypeRelations.init();
     SysMLSymTypeRelations.init();
 
-    new MapBasedTypeCheck3(typeTraverser, type4Ast).setThisAsDelegate();
+    new SysMLTypeCheck3(typeTraverser, type4Ast).setThisAsDelegate();
   }
 
   @ParameterizedTest
