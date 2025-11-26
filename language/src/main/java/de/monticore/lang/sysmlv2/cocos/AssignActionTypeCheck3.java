@@ -13,12 +13,13 @@ public class AssignActionTypeCheck3 implements SysMLActionsASTAssignmentActionUs
     // Wir gehen davon aus, dass Send-Actions die Kanäle auf Ports nicht als Strom,
     // sondern Element-Weise (i.e. Event-basiert) verarbeiten
 
-    var type = TypeCheck3.typeOf(node.getValueExpression());
-    if(!type.isObscureType()) {
+    var targetType = TypeCheck3.symTypeFromAST(node.getTarget());
+    var type = TypeCheck3.typeOf(node.getValueExpression(), targetType);
+
+    if (!type.isObscureType()) {
       // Error should already be logged?
     }
     // Vergleich zum Target steht noch aus.
     // TODO Target zur Expression erheben (Grammatik ändenr), Checken, dann vergleichen
   }
-
 }
