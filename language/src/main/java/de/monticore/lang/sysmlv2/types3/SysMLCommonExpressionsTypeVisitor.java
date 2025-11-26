@@ -11,6 +11,7 @@ import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.lang.componentconnector.StreamTimingUtil;
 import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScope;
+import de.monticore.lang.sysmlactions._ast.ASTAssignmentActionUsage;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlexpressions._ast.ASTConditionalNotExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTInfinity;
@@ -19,6 +20,7 @@ import de.monticore.lang.sysmlexpressions._ast.ASTSubsetExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSupersetEquationExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSupersetExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSysMLFieldAccessExpression;
+import de.monticore.lang.sysmlexpressions._ast.ASTSysMLInstantiation;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsHandler;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsTraverser;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsVisitor2;
@@ -46,6 +48,7 @@ import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfFunction;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.types3.SymTypeRelations;
 import de.monticore.types3.util.TypeContextCalculator;
@@ -439,6 +442,11 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
     return SymTypeExpressionFactory.createObscureType();
   }
 
+  @Override
+  public void endVisit(ASTSysMLInstantiation expr) {
+    getType4Ast().setTypeOfExpression(expr, getType4Ast().getPartialTypeOfTypeId(
+        expr.getMCType()));
+  }
 
   /*
   This method assumes that a state machine (state def/usage) always defines a scope.

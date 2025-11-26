@@ -68,7 +68,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
 
     var type = OOSymbolsMill.oOTypeSymbolBuilder()
         .setName("String")
-        .setSpannedScope(new OOSymbolsScope())
+        .setSpannedScope(scope())
         .build();
 
     SysMLv2Mill.globalScope().add(type);
@@ -77,7 +77,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
   protected OOTypeSymbol buildOptionalType() {
     var typeVar = BasicSymbolsMill.typeVarSymbolBuilder().setName("T").build();
 
-    var spannedScope = new OOSymbolsScope();
+    var spannedScope = scope();
     spannedScope.add(typeVar);
 
     spannedScope.add(
@@ -120,7 +120,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
   protected OOTypeSymbol buildStreamType() {
     var typeVar = BasicSymbolsMill.typeVarSymbolBuilder().setName("E").build();
 
-    var spannedScope = new OOSymbolsScope();
+    var spannedScope = scope();
     spannedScope.add(typeVar);
     spannedScope.add(buildSnthFunction(typeVar));
     spannedScope.add(buildLengthFunction());
@@ -172,7 +172,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
   }
 
   protected OOTypeSymbol buildCollectionType(String name, String... typeVars) {
-    var spannedScope = new OOSymbolsScope();
+    var spannedScope = scope();
 
     Arrays
         .stream(typeVars)
