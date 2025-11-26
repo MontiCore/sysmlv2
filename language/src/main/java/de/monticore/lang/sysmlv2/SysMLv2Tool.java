@@ -34,6 +34,7 @@ import de.monticore.lang.sysmlv2.cocos.PartBehaviorCoCo;
 import de.monticore.lang.sysmlv2.cocos.PortDefinitionExistsCoCo;
 import de.monticore.lang.sysmlv2.cocos.RefinementCyclic;
 import de.monticore.lang.sysmlv2.cocos.SendActionTypeCheck;
+import de.monticore.lang.sysmlv2.cocos.SendActionTypeCheck3;
 import de.monticore.lang.sysmlv2.cocos.SpecializationExists;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.TypeCheckTransitionGuards;
@@ -111,6 +112,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo(new SendActionTypeCheck());
     checker.addCoCo(new AssignActionTypeCheck());
     // TC3
+    checker.addCoCo(new SendActionTypeCheck3());
     checker.addCoCo(new AssignActionTypeCheck3());
     checker.addCoCo(new TypeCheck3TransitionGuards());
     checker.checkAll(ast);
