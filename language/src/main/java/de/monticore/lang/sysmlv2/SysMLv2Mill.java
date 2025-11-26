@@ -84,7 +84,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         SysMLv2Mill.functionSymbolBuilder()
             .setName("get")
             .setType(SymTypeExpressionFactory.createTypeVariable(typeVar))
-            .setSpannedScope(new BasicSymbolsScope())
+            .setSpannedScope(scope())
             .build()
     );
 
@@ -197,7 +197,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
   }
 
   protected FunctionSymbol buildSnthFunction(TypeVarSymbol typeVar) {
-    var parameterList = new BasicSymbolsScope();
+    var parameterList = scope();
 
     VariableSymbol parameter = SysMLv2Mill.variableSymbolBuilder().setName(
         "n").setType(buildIntType()).build();
@@ -218,7 +218,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     return SysMLv2Mill.functionSymbolBuilder()
         .setName("length")
         .setType(buildIntType())
-        .setSpannedScope(new BasicSymbolsScope())
+        .setSpannedScope(scope())
         .build();
   }
 
@@ -226,7 +226,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     return SysMLv2Mill.functionSymbolBuilder()
         .setName("count")
         .setType(buildIntType())
-        .setSpannedScope(new BasicSymbolsScope())
+        .setSpannedScope(scope())
         .build();
   }
 
@@ -234,7 +234,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     return SysMLv2Mill.functionSymbolBuilder()
         .setName("head")
         .setType(SymTypeExpressionFactory.createTypeVariable(typeVar))
-        .setSpannedScope(new BasicSymbolsScope())
+        .setSpannedScope(scope())
         .build();
   }
 
@@ -246,13 +246,13 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
             listSymbol,
             SymTypeExpressionFactory.createTypeVariable(typeVar))
         )
-        .setSpannedScope(new BasicSymbolsScope())
+        .setSpannedScope(scope())
         .build();
   }
 
   protected FunctionSymbol buildAppendFunction(TypeSymbol listSymbol,
                                                TypeVarSymbol typeVar) {
-    var scope = new BasicSymbolsScope();
+    var scope = scope();
     scope.add(SysMLv2Mill.variableSymbolBuilder()
         .setName("xs")
         .setType(SymTypeExpressionFactory.createGenerics(
@@ -278,12 +278,12 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
             listSymbol,
             SymTypeExpressionFactory.createTypeVariable(typeVar))
         )
-        .setSpannedScope(new BasicSymbolsScope())
+        .setSpannedScope(scope())
         .build();
   }
 
   protected FunctionSymbol buildTimesFunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
-    var parameterList = new BasicSymbolsScope();
+    var parameterList = scope();
 
     VariableSymbol parameter = SysMLv2Mill.variableSymbolBuilder().setName(
         "k").setType(buildNatType()).build();
@@ -301,7 +301,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
 
   protected FunctionSymbol buildAtTimeFunction(TypeSymbol streamSymbol,
                                                TypeVarSymbol typeVar) {
-    var scope = new BasicSymbolsScope();
+    var scope = scope();
     scope.add(SysMLv2Mill.variableSymbolBuilder()
         .setName("t")
         .setType(buildNatType())
@@ -325,12 +325,12 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
             streamSymbol,
             SymTypeExpressionFactory.createTypeVariable(typeVar))
         )
-        .setSpannedScope(new BasicSymbolsScope())
+        .setSpannedScope(scope())
         .build();
   }
 
   protected FunctionSymbol buildTakesFunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
-    var parameterList = new BasicSymbolsScope();
+    var parameterList = scope();
 
     VariableSymbol parameter = SysMLv2Mill.variableSymbolBuilder()
         .setName("k")
@@ -353,7 +353,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
   }
 
   protected FunctionSymbol buildInfTimesFunction(TypeSymbol streamSymbol, TypeVarSymbol typeVar) {
-    var parameterList = new BasicSymbolsScope();
+    var parameterList = scope();
     parameterList.add(typeVar);
 
     var returnType = SymTypeExpressionFactory.createGenerics(
