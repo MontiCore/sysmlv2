@@ -48,10 +48,6 @@ public class SysMLTypeCheck3 extends MapBasedTypeCheck3 {
   protected static void initTC3Delegate() {
     Log.trace("init SysMLTypeCheck3", "TypeCheck setup");
 
-    // TODO if we use this how many overrides are avoided?
-    // TODO make a test where you do not reset the typecheck and use both writing styles
-    // TODO nat as primitive
-    // TODO bug report surrogates
     SysMLv2Traverser typeTraverser = SysMLv2Mill.inheritanceTraverser();
     Type4Ast type4Ast = new Type4Ast();
 
