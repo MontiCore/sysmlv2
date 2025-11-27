@@ -55,7 +55,12 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
                 (IBasicSymbolsScope) mcType.getEnclosingScope());
           }
           else if(mcType.getDefiningSymbol().isPresent() && mcType.getDefiningSymbol().get() instanceof TypeSymbol) {
-            res = SymTypeExpressionFactory.createTypeExpression((TypeSymbol) mcType.getDefiningSymbol().get());
+            // hacky setup such that nat remains a primitive
+            if (mcType.getDefiningSymbol().get().getName().equals("nat")) {
+              res = SymTypeExpressionFactory.createPrimitive((TypeSymbol) mcType.getDefiningSymbol().get());
+            } else {
+              res = SymTypeExpressionFactory.createTypeExpression((TypeSymbol) mcType.getDefiningSymbol().get());
+            }
           }
           else if(mcType.getDefiningSymbol().isEmpty()) {
             Log.warn("Defining symbol for " + mcType.printType() + " was not set.");

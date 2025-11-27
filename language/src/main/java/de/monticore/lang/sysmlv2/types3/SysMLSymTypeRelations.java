@@ -19,8 +19,8 @@ public abstract class SysMLSymTypeRelations extends OCLSymTypeRelations {
         @Override
         public boolean isIntegralType(SymTypeExpression type) {
           return super.isIntegralType(type) ||
-              type.isObjectType() &&
-                  type.asObjectType().printFullName().equals("nat");
+              type.isPrimitive() &&
+                  type.asPrimitive().getPrimitiveName().equals("nat");
         }
       };
     }
