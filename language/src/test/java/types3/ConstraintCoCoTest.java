@@ -47,8 +47,6 @@ public class ConstraintCoCoTest {
 
   @BeforeAll public static void init() {
     LogStub.init();
-    OCLSymTypeRelations.init();
-    SysMLv2Mill.init();
   }
 
   @BeforeEach public void reset() {
@@ -57,7 +55,7 @@ public class ConstraintCoCoTest {
     tool.init();
 
     var type4Ast = new Type4Ast();
-    var typeTraverser = SysMLv2Mill.traverser();
+    var typeTraverser = SysMLv2Mill.inheritanceTraverser();
 
     var forBasis = new ExpressionBasisTypeVisitor();
     forBasis.setType4Ast(type4Ast);

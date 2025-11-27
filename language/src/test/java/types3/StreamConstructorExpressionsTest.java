@@ -57,7 +57,7 @@ public class StreamConstructorExpressionsTest {
     tool.init();
 
     var type4Ast = new Type4Ast();
-    var typeTraverser = SysMLv2Mill.traverser();
+    var typeTraverser = SysMLv2Mill.inheritanceTraverser();
 
     var forBasis = new ExpressionBasisTypeVisitor();
     forBasis.setType4Ast(type4Ast);

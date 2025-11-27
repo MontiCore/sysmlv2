@@ -104,6 +104,7 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
 
   @Override
   public void endVisit(ASTSysMLFieldAccessExpression node) {
+    // does not work with inheritance traverser because this is the handler and
     endVisit((ASTFieldAccessExpression) node);
   }
 
