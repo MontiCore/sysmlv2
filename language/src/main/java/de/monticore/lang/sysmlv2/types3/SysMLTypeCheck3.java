@@ -25,7 +25,6 @@ public class SysMLTypeCheck3 extends MapBasedTypeCheck3 {
   public static void init() {
     initTC3Delegate();
     StreamSymTypeRelations.init();
-    SysMLWithinTypeBasicSymbolResolver.init();
     SysMLWithinScopeBasicSymbolResolver.init();
     SysMLTypeVisitorOperatorCalculator.init();
     CommonExpressionsLValueRelations.init();
@@ -36,7 +35,6 @@ public class SysMLTypeCheck3 extends MapBasedTypeCheck3 {
   public static void reset() {
     TypeCheck3.resetDelegate();
     StreamSymTypeRelations.reset();
-    SysMLWithinTypeBasicSymbolResolver.reset();
     SysMLWithinScopeBasicSymbolResolver.reset();
     SysMLTypeVisitorOperatorCalculator.reset();
     CommonExpressionsLValueRelations.reset();

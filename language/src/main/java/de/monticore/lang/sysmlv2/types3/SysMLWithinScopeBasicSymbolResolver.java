@@ -1,6 +1,7 @@
 package de.monticore.lang.sysmlv2.types3;
 
 import de.monticore.expressions.commonexpressions._symboltable.ICommonExpressionsScope;
+import de.monticore.lang.componentconnector.StreamTimingUtil;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._symboltable.PortDefSymbol;
@@ -28,6 +29,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Implements the normal and implicit field access modes for the TypeCheck.
+ * We determine the type of the NameExpression according to if it is a port usage,
+ * how many attributes it has and if it is a stream type or not.
+ */
 public class SysMLWithinScopeBasicSymbolResolver extends
     WithinScopeBasicSymbolsResolver {
 
@@ -52,6 +58,8 @@ public class SysMLWithinScopeBasicSymbolResolver extends
     Optional<SymTypeExpression> optVar =
         resolveVariableWithoutSuperTypes(enclosingScope, name);
 
+    //++++++++++ modify start here ++++++++++
+
     if (optVar.isPresent() && enclosingScope instanceof ISysMLv2Scope &&
         (optVar.get().hasTypeInfo() ||
         optVar.get().isArrayType() && optVar.get().asArrayType().getArgument().hasTypeInfo())
@@ -63,43 +71,43 @@ public class SysMLWithinScopeBasicSymbolResolver extends
         scope = typeToLookIn.asArrayType().getArgument().getTypeInfo().getSpannedScope();
         typeToLookIn = typeToLookIn.asArrayType().getArgument();
       }
-      else
+      else {
         scope = optVar.get().getTypeInfo().getSpannedScope();
+      }
 
       var attr = ((ISysMLv2Scope) scope).getLocalAttributeUsageSymbols();
       if (attr.size() == 1 && scope.getSpanningSymbol() instanceof PortDefSymbol) {
+        // its an implicit field access representing a port
         var actualType = WithinTypeBasicSymbolsResolver.resolveVariable(
             typeToLookIn, attr.get(0).getName(), AccessModifier.ALL_INCLUSION,
             v -> true);
 
         if (!isDefinedInStateMachine(enclosingScope)) {
+          // We are in stream mode
+
+          // We have to resolve for port to determine its timing
+          var optPort = ((ISysMLv2Scope) enclosingScope).resolvePort(name + "." + attr.get(0).getName());
+
           var streamType = WithinScopeBasicSymbolsResolver.resolveType(
               enclosingScope,
-              "EventStream");
-          //StreamTimingUtil.mapTimingToStreamType(
-          //  optPort.get().getTiming()));
+              StreamTimingUtil.mapTimingToStreamType(
+                  optPort.get().getTiming()));
 
           if (streamType.isEmpty()) {
-            //Log.error("tried to resolve \"" + name + "\""
-            //        + " given expression of type "
-            //        + innerAsExprType.printFullName()
-            //        + " but no stream symbol could be resolved.",
-            //    expr.get_SourcePositionStart(),
-            //    expr.get_SourcePositionEnd()
-            //);
-          }
-          else {
+            Log.error("0xFDA26 internal error: " +
+                "cannot resolve stream symbol for " + name + ". Were stream symbols loaded? "
+            );
+          } else {
             if (actualType.get().isArrayType()) {
               streamType.get().asGenericType().setArgument(0,
                   actualType.get().asArrayType().getArgument());
               actualType.get().asArrayType().setArgument(streamType.get());
-            }
-            else {
+            } else {
               streamType.get().asGenericType().setArgument(0,
                   actualType.get());
 
               actualType = streamType;
-              }
+            }
           }
         }
           // if present
@@ -111,10 +119,8 @@ public class SysMLWithinScopeBasicSymbolResolver extends
         }
       }
     }
-    // can be that implicit field access )
 
-    // get type of Attr
-
+    //++++++++++ modify end here ++++++++++
 
     List<SymTypeOfFunction> funcs =
         resolveFunctionsWithoutSuperTypes(enclosingScope, name);

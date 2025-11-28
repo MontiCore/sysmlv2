@@ -66,9 +66,15 @@ import java.util.function.Predicate;
 
 import static de.monticore.types.check.SymTypeExpressionFactory.createObscureType;
 
-/*
-  Handles the particularities of the sysml regarding streams in expressions.
-  Ports in specifications have implicit stream types and the type check is not aware.
+/**
+ * Handles the particularities of the sysml regarding streams in expressions.
+ * Ports in specifications have implicit stream types and the type check is not aware.
+ * Also implements the following design decisions using two modes:
+ * Mode 1: TypeCheck interprets an Expression for a port usage as an implicit
+ * field access if there is only one attribute inside. Explicit field accesses
+ * are still supported by ignoring the field access if its type correct.
+ * Mode 2: TypeCheck finds multiple attributes, and thus multiple channels and
+ * reverts to the standard (with streams) TypeCheck without implicit field accesses.
  */
 public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisitor implements
     SysMLExpressionsVisitor2, SysMLExpressionsHandler {
@@ -131,9 +137,11 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
       SymTypeExpression innerAsExprType =
           getType4Ast().getPartialTypeOfExpr(expr.getExpression());
 
+      //++++++++++ modify start here ++++++++++
+
       Optional<PortSymbol> optPort = Optional.empty();
 
-      // TODO what if its an array index. Resolve for the right port.
+      // we determine if the FieldAccess is a C&C port
       if (expr.getExpression() instanceof ASTArrayAccessExpression) {
         optPort = ((IComponentConnectorScope) expr.getEnclosingScope()).resolvePort(SysMLv2Mill.prettyPrint(
             new ASTFieldAccessExpressionBuilder()
@@ -145,11 +153,12 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
         optPort = ((IComponentConnectorScope) expr.getEnclosingScope()).resolvePort(SysMLv2Mill.prettyPrint(expr, false));
       }
 
-      // part 1 is ignoring FA for port // part 2 is fallback. ie inner type is a port usage thus type is a port def
       if (optPort.isEmpty()
           || innerAsExprType.isArrayType() && innerAsExprType.asArrayType().getArgument().getTypeInfo().getSpannedScope().getSpanningSymbol() instanceof PortDefSymbol
-          || innerAsExprType.hasTypeInfo() && innerAsExprType.getTypeInfo().getSpannedScope().getSpanningSymbol() instanceof PortDefSymbol) //|| optPortDef.isPresent() && optPortDef.get().getInputAttributes().size() != 1) {
-      {
+          || innerAsExprType.hasTypeInfo() && innerAsExprType.getTypeInfo().getSpannedScope().getSpanningSymbol() instanceof PortDefSymbol) {
+        //|| optPortDef.isPresent() && optPortDef.get().getInputAttributes().size() != 1) {
+        // Case 1: This is not an implicit field access and the standard mode for FAs is used
+
         if (WithinTypeBasicSymbolsResolver.canResolveIn(innerAsExprType)) {
           AccessModifier modifier = innerAsExprType.hasTypeInfo() ?
               TypeContextCalculator.getAccessModifier(
@@ -165,107 +174,39 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
               f -> true
           );
 
-        /*
-        if (type.isEmpty()) {
-          // are we looking for an implicit field access?
-          // try to find the implicit type
-          var attr = ((ISysMLv2Scope) innerAsExprType.getTypeInfo().getSpannedScope()).getLocalAttributeUsageSymbols();
-          if (attr.size() <= 1) {
-            type = resolveVariablesAndFunctionsWithinType(
-                innerAsExprType,
-                attr.get(0).getName(),
-                modifier,
-                v -> true,
-                f -> true
-            );
-            // real type found. Now you need to reset the inner type
-            // TODO can you set it correctly from the start?
+          if (type.isPresent() &&
+              !type.get().isFunctionType() &&
+              !isDefinedInStateMachine(expr.getEnclosingScope())) {
+            // We can only identify that we are not in an automata as state machines always define a scope
 
-            getType4Ast().setTypeOfExpression(expr.getExpression(), type.get());
-          }
-        }
-*/
-/*
-        if (type.isEmpty() && innerAsExprType.getTypeInfo().getSpannedScope().getSpanningSymbol() instanceof PortDefSymbol) {
-          // might be an implicit field access
-
-          // 1. check if there is only one accessible attribute
-          // TODO maybe use getallvariables?
-          var attr = ((ISysMLv2Scope) innerAsExprType.getTypeInfo().getSpannedScope()).getLocalAttributeUsageSymbols();
-          // TODO what if <1
-          if (attr.size() == 1) {
-            // 2. find its type, resolve methods
-            var actualType = WithinTypeBasicSymbolsResolver.resolveVariable(
-                innerAsExprType,
-                attr.get(0).getName(),
-                modifier,
-                v -> true);
-
-            if (!isDefinedInStateMachine(expr.getEnclosingScope())) {
+            if (optPort.isPresent()) {
+              // found a C&C port -> Adjust type to Stream
               var streamType = WithinScopeBasicSymbolsResolver.resolveType(
-                  innerAsExprType.getTypeInfo().getEnclosingScope(),
-                  "EventStream");
-              //StreamTimingUtil.mapTimingToStreamType(
-              //  optPort.get().getTiming()));
+                  getAsBasicSymbolsScope(expr.getEnclosingScope()),
+                  StreamTimingUtil.mapTimingToStreamType(
+                      optPort.get().getTiming()));
 
               if (streamType.isEmpty()) {
-                //Log.error("tried to resolve \"" + name + "\""
-                //        + " given expression of type "
-                //        + innerAsExprType.printFullName()
-                //        + " but no stream symbol could be resolved.",
-                //    expr.get_SourcePositionStart(),
-                //    expr.get_SourcePositionEnd()
-                //);
+                Log.error("tried to resolve \"" + name + "\""
+                        + " given expression of type "
+                        + innerAsExprType.printFullName()
+                        + " but no stream symbol could be resolved.",
+                    expr.get_SourcePositionStart(),
+                    expr.get_SourcePositionEnd()
+                );
               }
               else {
-                streamType.get().asGenericType().setArgument(0,
-                    actualType.get());
+                streamType.get().asGenericType().setArgument(0, type.get());
               }
 
-              return resolveVariablesAndFunctionsWithinType(streamType.get(),
-                  name, modifier, v -> true, f -> true);
-            }
-          }
-        }
-*/
-        //++++++++++ modify start here ++++++++++
-        if (type.isPresent() &&
-            !type.get().isFunctionType() &&
-            !isDefinedInStateMachine(expr.getEnclosingScope())) {
-          // We can only identify that we are not in an automata as state machines always define a scope
-
-          // TODO now you resolve for what
-          //var optPort = ((IComponentConnectorScope) expr.getEnclosingScope()).resolvePort(
-            //  SysMLv2Mill.prettyPrint(expr, false));
-
-          if (optPort.isPresent()) {
-            // found a C&C port -> Adjust type to Stream
-            var streamType = WithinScopeBasicSymbolsResolver.resolveType(
-                getAsBasicSymbolsScope(expr.getEnclosingScope()),
-                StreamTimingUtil.mapTimingToStreamType(
-                    optPort.get().getTiming()));
-
-            if (streamType.isEmpty()) {
-              Log.error("tried to resolve \"" + name + "\""
-                      + " given expression of type "
-                      + innerAsExprType.printFullName()
-                      + " but no stream symbol could be resolved.",
-                  expr.get_SourcePositionStart(),
-                  expr.get_SourcePositionEnd()
-              );
+              type = streamType;
             }
             else {
-              streamType.get().asGenericType().setArgument(0, type.get());
+              // it is not a C&C port
             }
-
-            type = streamType;
           }
-          else {
-            // it is not a C&C port
-          }
-        }
-        //++++++++++ modify end here ++++++++++
 
+          //++++++++++ modify end here ++++++++++
 
           // Log remark about access modifier,
           // if access modifier is the reason it has not been resolved
@@ -304,86 +245,12 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
         }
       }
       else {
-        // TODO invert
+        // Case 2: this is an explicit FA and the type of the outer FA
+        // is the type of the FA
         type = Optional.of(innerAsExprType);
       }
     }
     return type;
-  }
-
-  @Override
-  protected Optional<SymTypeExpression> resolveVariablesAndFunctionsWithinType(
-      SymTypeExpression innerAsExprType,
-      String name,
-      AccessModifier modifier,
-      Predicate<VariableSymbol> varPredicate,
-      Predicate<FunctionSymbol> funcPredicate
-  ) {
-    Set<SymTypeExpression> types = new HashSet<>();
-    Optional<SymTypeExpression> variable =
-        WithinTypeBasicSymbolsResolver.resolveVariable(innerAsExprType,
-            name,
-            modifier,
-            varPredicate
-        );
-    if (variable.isPresent()) {
-      types.add(variable.get());
-    }
-
-    Collection<SymTypeOfFunction> functions =
-        WithinTypeBasicSymbolsResolver.resolveFunctions(
-            innerAsExprType,
-            name,
-            modifier,
-            funcPredicate
-        );
-    types.addAll(functions);
-
-    /*
-    if (types.isEmpty() && innerAsExprType.getTypeInfo().getSpannedScope().getSpanningSymbol() instanceof PortDefSymbol) {
-      // might be an implicit field access
-
-      // 1. check if there is only one accessible attribute
-      // TODO maybe use getallvariables?
-      var attr = ((ISysMLv2Scope) innerAsExprType.getTypeInfo().getSpannedScope()).getLocalAttributeUsageSymbols();
-      // TODO what if <1
-      if (attr.size() == 1) {
-        // 2. find its type, resolve methods
-        var actualType = WithinTypeBasicSymbolsResolver.resolveVariable(
-            innerAsExprType,
-            attr.get(0).getName(),
-            modifier,
-            varPredicate);
-
-
-        var streamType = WithinScopeBasicSymbolsResolver.resolveType(
-            innerAsExprType.getTypeInfo().getEnclosingScope(), "EventStream");
-        //StreamTimingUtil.mapTimingToStreamType(
-        //  optPort.get().getTiming()));
-
-        if (streamType.isEmpty()) {
-          //Log.error("tried to resolve \"" + name + "\""
-          //        + " given expression of type "
-          //        + innerAsExprType.printFullName()
-          //        + " but no stream symbol could be resolved.",
-          //    expr.get_SourcePositionStart(),
-          //    expr.get_SourcePositionEnd()
-          //);
-        }
-        else {
-          streamType.get().asGenericType().setArgument(0, actualType.get());
-        }
-
-        return resolveVariablesAndFunctionsWithinType(streamType.get(), name, modifier, varPredicate, funcPredicate);
-      }
-    }
-*/
-    if (types.size() <= 1) {
-      return types.stream().findAny();
-    }
-    else {
-      return Optional.of(SymTypeExpressionFactory.createIntersection(types));
-    }
   }
 
   @Override
