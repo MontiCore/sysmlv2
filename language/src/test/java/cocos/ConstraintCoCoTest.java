@@ -31,7 +31,6 @@ public class ConstraintCoCoTest {
 
   @BeforeAll public static void init() {
     LogStub.init();
-    OCLSymTypeRelations.init();
     SysMLv2Mill.init();
   }
 
@@ -49,7 +48,7 @@ public class ConstraintCoCoTest {
       "4_valid.sysml", // stream snth
       "5_valid.sysml", // port::channel-syntax with comparison
       //"6_valid.sysml", // port::channel-syntax with literal
-      //"7_valid.sysml", // INF literal
+      "7_valid.sysml", // INF literal
       "8_valid.sysml", // forall construct
       "9_valid.sysml", // constraint with literal
       //"10_valid.sysml", // attribute definition without port
@@ -58,7 +57,7 @@ public class ConstraintCoCoTest {
       "13_valid.sysml", // OCL exists expression
       "14_valid.sysml", // StreamConstructor Expression
       "15_valid.sysml", //Times function for StreamConstructor Expression
-      "16_valid.sysml", //Inftimes and takes function 
+      "16_valid.sysml", //Inftimes and takes function
   })
   public void testValid(String modelName) throws IOException {
     var optAst = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName);
@@ -94,7 +93,7 @@ public class ConstraintCoCoTest {
       "13_invalid.sysml", // OCL exists expression
       "14_invalid.sysml", // StreamConstructor Expression
       "15_invalid.sysml", //Times function for StreamConstructor Expression
-      "16_invalid.sysml", //Inftimes and takes function 
+      "16_invalid.sysml", //Inftimes and takes function
   })
   public void testInvalid(String modelName) throws IOException {
     var optAst = SysMLv2Mill.parser().parse(MODEL_PATH + "/" + modelName);

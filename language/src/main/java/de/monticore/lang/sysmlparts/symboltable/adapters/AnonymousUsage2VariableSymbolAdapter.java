@@ -14,7 +14,6 @@ public class AnonymousUsage2VariableSymbolAdapter extends FieldSymbol {
   public AnonymousUsage2VariableSymbolAdapter(AnonymousUsageSymbol adaptee) {
     super(adaptee.getName());
     this.adaptee = adaptee;
-    this.accessModifier = adaptee.getAccessModifier();
   }
 
   protected AnonymousUsageSymbol getAdaptee() {

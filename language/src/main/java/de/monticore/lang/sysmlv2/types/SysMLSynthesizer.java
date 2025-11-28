@@ -8,6 +8,7 @@ import de.monticore.types.check.SynthesizeSymTypeFromMCBasicTypes;
 import de.monticore.types.check.SynthesizeSymTypeFromMCCollectionTypes;
 import de.monticore.types.check.SynthesizeSymTypeFromMCSimpleGenericTypes;
 
+@Deprecated
 public class SysMLSynthesizer extends AbstractSynthesize {
 
   public SysMLSynthesizer() {

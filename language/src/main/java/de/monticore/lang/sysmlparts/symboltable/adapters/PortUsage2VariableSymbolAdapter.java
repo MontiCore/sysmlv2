@@ -13,7 +13,6 @@ public class PortUsage2VariableSymbolAdapter extends VariableSymbol {
   public PortUsage2VariableSymbolAdapter(PortUsageSymbol adaptee) {
     super(adaptee.getName());
     this.adaptee = adaptee;
-    this.accessModifier = adaptee.getAccessModifier();
   }
 
   protected PortUsageSymbol getAdaptee() {
