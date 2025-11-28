@@ -36,6 +36,7 @@ import de.monticore.lang.sysmlv2.cocos.RefinementCyclic;
 import de.monticore.lang.sysmlv2.cocos.SendActionTypeCheck;
 import de.monticore.lang.sysmlv2.cocos.SendActionTypeCheck3;
 import de.monticore.lang.sysmlv2.cocos.SpecializationExists;
+import de.monticore.lang.sysmlv2.cocos.SpecializationExistsTC3;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.TypeCheckTransitionGuards;
 import de.monticore.lang.sysmlv2.cocos.TypeCheck3TransitionGuards;
@@ -130,6 +131,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo(new ConstraintIsBoolean());
     checker.addCoCo(new ConstraintIsBooleanTC3());
     checker.addCoCo(new SpecializationExists());
+    checker.addCoCo(new SpecializationExistsTC3());
 
     // Not-supported language elements
     checker.addCoCo(new NoExitActions());

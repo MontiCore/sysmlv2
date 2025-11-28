@@ -84,7 +84,6 @@ public class SysMLTypeCheck3 extends MapBasedTypeCheck3 {
     typeTraverser.add4SysMLExpressions(forSets);
 
     // MCTypes
-
     var forBasicTypes = new MCBasicTypesTypeVisitor();
     forBasicTypes.setType4Ast(type4Ast);
     typeTraverser.add4MCBasicTypes(forBasicTypes);
