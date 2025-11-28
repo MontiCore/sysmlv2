@@ -52,7 +52,6 @@ public class SysMLTypeCheck3 extends MapBasedTypeCheck3 {
     Type4Ast type4Ast = new Type4Ast();
 
     // Expressions
-    // TODO check adapter to mbelle
     // TODO cleanup implementation
     // TODO See if FDr changes in WithinResolver help with integration
     var forBasis = new ExpressionBasisTypeVisitor();

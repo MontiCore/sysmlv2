@@ -11,7 +11,6 @@ import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScop
 import de.monticore.lang.componentconnector._visitor.ComponentConnectorTraverser;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
-import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.literals.mccommonliterals._symboltable.IMCCommonLiteralsScope;
 import de.monticore.literals.mcliteralsbasis._symboltable.IMCLiteralsBasisScope;
 import de.monticore.mcbasics._symboltable.IMCBasicsScope;
