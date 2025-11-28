@@ -17,7 +17,6 @@ import de.monticore.lang.sysmlv2.types3.SysMLSymTypeRelations;
 import de.monticore.lang.sysmlv2.types3.SysMLTypeCheck3;
 import de.monticore.lang.sysmlv2.types3.SysMLTypeVisitorOperatorCalculator;
 import de.monticore.lang.sysmlv2.types3.SysMLWithinScopeBasicSymbolResolver;
-import de.monticore.lang.sysmlv2.types3.SysMLWithinTypeBasicSymbolResolver;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.ocl.oclexpressions._ast.ASTForallExpression;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
@@ -96,7 +95,6 @@ public class NegationTest {
     typeTraverser.add4MCCollectionTypes(forCollectionTypes);
 
     StreamSymTypeRelations.init();
-    SysMLWithinTypeBasicSymbolResolver.init();
     SysMLWithinScopeBasicSymbolResolver.init();
     SysMLTypeVisitorOperatorCalculator.init();
     CommonExpressionsLValueRelations.init();
