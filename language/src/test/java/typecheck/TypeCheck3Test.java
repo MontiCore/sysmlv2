@@ -9,11 +9,11 @@ import de.monticore.expressions.streamexpressions.types3.StreamExpressionsTypeVi
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2.types3.SysMLCommonExpressionsTypeVisitor;
+import de.monticore.lang.sysmlv2.types3.SysMLMCBasicTypesTypeVisitor;
 import de.monticore.lang.sysmlv2.types3.SysMLOCLExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.types3.SysMLWithinScopeBasicSymbolResolver;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.ocl.oclexpressions.types3.OCLExpressionsTypeVisitor;
-import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
 import de.monticore.types3.Type4Ast;
 import de.monticore.types3.TypeCheck3;
 import de.monticore.types3.util.MapBasedTypeCheck3;
@@ -79,9 +79,10 @@ public class TypeCheck3Test {
     typeTraverser.add4OCLExpressions(forOcl);
     typeTraverser.add4SysMLExpressions(forOcl);
 
-    var forBasicTypes = new MCBasicTypesTypeVisitor();
+    var forBasicTypes = new SysMLMCBasicTypesTypeVisitor();
     forBasicTypes.setType4Ast(type4Ast);
     typeTraverser.add4MCBasicTypes(forBasicTypes);
+    typeTraverser.add4SysMLExpressions(forBasicTypes);
 
     var forStreams = new StreamExpressionsTypeVisitor();
     forStreams.setType4Ast(type4Ast);

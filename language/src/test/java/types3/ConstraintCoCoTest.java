@@ -10,6 +10,7 @@ import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBooleanTC3;
 import de.monticore.lang.sysmlv2.types3.SysMLCommonExpressionsTypeVisitor;
+import de.monticore.lang.sysmlv2.types3.SysMLMCBasicTypesTypeVisitor;
 import de.monticore.lang.sysmlv2.types3.SysMLOCLExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.types3.SysMLSetExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.types3.SysMLSymTypeRelations;
@@ -19,7 +20,6 @@ import de.monticore.lang.sysmlv2.types3.SysMLWithinScopeBasicSymbolResolver;
 import de.monticore.lang.sysmlv2.types3.SysMLWithinTypeBasicSymbolResolver;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
-import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionTypesTypeVisitor;
 import de.monticore.types3.Type4Ast;
@@ -85,9 +85,10 @@ public class ConstraintCoCoTest {
     forSets.setType4Ast(type4Ast);
     typeTraverser.add4SetExpressions(forSets);
 
-    var forBasicTypes = new MCBasicTypesTypeVisitor();
+    var forBasicTypes = new SysMLMCBasicTypesTypeVisitor();
     forBasicTypes.setType4Ast(type4Ast);
     typeTraverser.add4MCBasicTypes(forBasicTypes);
+    typeTraverser.add4SysMLExpressions(forBasicTypes);
 
     var forCollectionTypes = new MCCollectionTypesTypeVisitor();
     forCollectionTypes.setType4Ast(type4Ast);

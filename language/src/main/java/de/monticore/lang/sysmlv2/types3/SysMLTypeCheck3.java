@@ -7,7 +7,6 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
-import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionTypesTypeVisitor;
 import de.monticore.types3.Type4Ast;
@@ -84,9 +83,10 @@ public class SysMLTypeCheck3 extends MapBasedTypeCheck3 {
     typeTraverser.add4SysMLExpressions(forSets);
 
     // MCTypes
-    var forBasicTypes = new MCBasicTypesTypeVisitor();
+    var forBasicTypes = new SysMLMCBasicTypesTypeVisitor();
     forBasicTypes.setType4Ast(type4Ast);
     typeTraverser.add4MCBasicTypes(forBasicTypes);
+    typeTraverser.add4SysMLExpressions(forBasicTypes);
 
     // TODO are MCSimpleGenerics required?
     var forCollectionTypes = new MCCollectionTypesTypeVisitor();

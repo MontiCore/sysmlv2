@@ -12,7 +12,6 @@ public class SpecializationExistsTC3 implements SysMLBasisASTSpecializationCoCo 
   @Override
   public void check(ASTSpecialization node) {
     if (node.getEnclosingScope() instanceof ISysMLv2Scope) {
-      var scope = (ISysMLv2Scope)node.getEnclosingScope();
       // We synthesize the SymType from ASTs
       for(var typeAst : node.getSuperTypesList()) {
         // This will throw an 0xA0324 if the type does not exist.
