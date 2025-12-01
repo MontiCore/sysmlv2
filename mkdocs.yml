@@ -1,0 +1,75 @@
+site_name: SysMLv2
+theme:
+  pallete:
+    primary: custom
+    accent: custom
+  name: 'material'
+  custom_dir: docs/overrides
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.footer
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.indexes
+    - toc.follow
+    - content.tabs.link
+    - social
+    - content.code.copy
+    - content.code.annotate
+  logo: assets/images/icon-mono.png
+  favicon: assets/images/icon.png
+  icon:
+    annotation: material/help-circle
+
+site_url: https://monticore.github.io/sysml/
+repo_url: https://github.com/MontiCore/sysmlv2/
+
+copyright: "&copy; https://github.com/MontiCore/monticore"
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/MontiCore/sysmlv2
+    - icon: fontawesome/solid/paper-plane
+      link: mailto:webmaster@se-rwth.de
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - def_list
+  - attr_list
+  - md_in_html
+  - admonition
+  - footnotes
+  - pymdownx.blocks.caption
+  - pymdownx.extra
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - Home: 'index.md'
+  - Getting Started: 
+    - Getting Started: 'GettingStarted/index.md'
+    - Setup: 'GettingStarted/Setup.md'
+    - Tools & Editors: 'GettingStarted/Editor.md'
+    - Hello World!: 'GettingStarted/HelloWorld.md'
+  - Usage:
+    - Usage: 'Usage/index.md'
+    - Errors: 'Usage/error.md'
+  - License: https://monticore.github.io/monticore/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL/

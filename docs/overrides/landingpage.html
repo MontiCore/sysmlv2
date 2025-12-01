@@ -1,0 +1,107 @@
+{% extends "main.html" %}
+
+<!-- Render hero under tabs -->
+{% block tabs %}
+{{ super() }}
+
+<!-- Hero Section -->
+<link rel="stylesheet" href="stylesheets/landingpage.css">
+<section class="hero-section">
+  <div class="hero-container">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          Modeling <span class="hero-title-highlight">Systems</span> with SysML v2
+        </h1>
+
+        <p class="hero-subtitle">
+          A standard compliant SysML v2 parser and model checker with a strong type system and semantic
+          foundation.
+        </p>
+
+        <div class="hero-features">
+          <div class="hero-feature">
+            <svg class="hero-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M9 12l2 2 4-4" />
+              <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
+            </svg>
+            <span>Model validation</span>
+          </div>
+          <div class="hero-feature">
+            <svg class="hero-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M9 12l2 2 4-4" />
+              <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
+            </svg>
+            <span>Simulation Framework</span>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <a href="#more" class="btn btn-primary">
+            Read More
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+          <a href="{{ './Reference' | url }}" class="btn btn-secondary">
+            Reference
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="hero-code-sample">
+          <div class="code-header">
+            <div class="code-dots">
+              <span class="code-dot code-dot-red"></span>
+              <span class="code-dot code-dot-yellow"></span>
+              <span class="code-dot code-dot-green"></span>
+            </div>
+            <div class="code-filename">Door.arc</div>
+          </div>
+          <div class="code-content highlight">
+            <pre><code><span class="kn">package</span><span class="w"> </span><span class="nn">elevator</span><span class="p">;</span>
+
+<span class="kd">component</span> <span class="nc">Door</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">port</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="n">shouldOpen</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nt">automaton</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">initial</span><span class="w"> </span><span class="kd">state</span> <span class="nc">Closed</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">state</span> <span class="nc">Open</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">Closed</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">Open</span><span class="w"> </span><span class="o">[</span><span class="n">shouldOpen</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">true</span><span class="o">]</span><span class="w"> </span><span class="n">shouldOpen</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Door has opened"</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">Open</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">Closed</span><span class="w"> </span><span class="o">[</span><span class="n">shouldOpen</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">false</span><span class="o">]</span><span class="w"> </span><span class="n">shouldOpen</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Door has closed"</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span></code></pre>
+          </div>
+        </div>
+
+        <div class="hero-decorations">
+          <div class="decoration decoration-1"></div>
+          <div class="decoration decoration-2"></div>
+          <div class="decoration decoration-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll-indicator">
+    <a href="#more">
+      <svg width="256" height="75" viewBox="0 0 256 75" style="display: block;">
+        <path style="fill:#ffffff" d="m 0,75.1 v 19 l 256,0 V 75.1 C 191,75.1 178,0 128,0 77,0 64,75.1 0,75.1 Z" />
+        <path d="m 128,40.5 v 17.633752 m 0,0 -8.81688,-8.816876 M 128,58.133752 l 8.81688,-8.816876" stroke="#0067a7"
+          stroke-width="5.87792" stroke-linecap="round" stroke-linejoin="round"
+          style="stroke:#8EBAE5;stroke-opacity:1" />
+      </svg>
+    </a>
+  </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+<img style="width: 100vw;" src="{{ 'assets/images/waves.svg' | url }}" />
+{{ super() }}
+{% endblock %}

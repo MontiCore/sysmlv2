@@ -1,0 +1,103 @@
+html {
+  scroll-behavior: smooth;
+}
+
+:root {
+  --rwth-blau: #00549F;
+  --rwth-blau-50: #8EBAE5;
+  --rwth-blau-10: #E8F1FA;
+  --rwth-magenta: #E30066;
+  --rwth-gelb: #FFED00;
+  --rwth-petrol: #006165;
+  --rwth-tuerkis: #0098A1;
+  --rwth-gruen: #57AB27;
+  --rwth-maigruen: #BDCD00;
+  --rwth-orange: #F6A800;
+  --rwth-rot: #CC071E;
+  --rwth-bordeaux: #A11035;
+  --rwth-violet: #612158;
+  --rwth-lila: #7A6FAC;
+
+  --md-primary-fg-color: var(--rwth-blau);
+  --md-primary-fg-color--light: var(--rwth-blau);
+  --md-primary-fg-color--dark: var(--rwth-blau);
+  --md-accent-fg-color: var(--rwth-blau-50);
+  --md-accent-fg-color--transparent: #00549F25;
+
+  --md-code-hl-color: var(--rwth-blau-50);
+  --md-code-hl-color--light: var(--rwth-blau-50);
+  --md-code-hl-number-color: var(--rwth-rot);
+  --md-code-hl-special-color: var(--rwth-bordeaux);
+  --md-code-hl-function-color: var(--rwth-violet);
+  --md-code-hl-constant-color: var(--rwth-lila);
+  --md-code-hl-keyword-color: var(--rwth-blau);
+  --md-code-hl-string-color: var(--rwth-gruen);
+}
+
+.md-main {
+  overflow-x: hidden;
+}
+
+.md-typeset .admonition.info,
+.md-typeset details.info {
+  border-color: var(--md-accent-fg-color);
+}
+
+.md-typeset .info>.admonition-title,
+.md-typeset .info>summary {
+  background-color: var(--rwth-blau-10);
+}
+
+.md-typeset .info>.admonition-title::before,
+.md-typeset .info>summary::before {
+  background-color: var(--md-accent-fg-color);
+}
+
+.md-header__topic {
+  height: inherit;
+}
+
+@media screen and (min-width:60em) {
+  .md-search__form {
+    border-radius: 500px;
+  }
+}
+
+.full-width {
+  width: 100vw;
+  max-width: 100vw;
+  left: 50%;
+  position: relative;
+  margin-left: -50vw;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  padding: 1.5rem 0.8rem;
+}
+
+.bg-primary {
+  background-color: var(--md-primary-fg-color);
+  color: #fffffff0;
+  --md-default-fg-color--lightest: #ffffff12;
+  --md-admonition-bg-color: #ffffff08;
+  --md-admonition-fg-color: #fffffff0;
+  --md-typeset-a-color: var(--rwth-orange);
+}
+
+.section-card {
+  margin-left: -5%;
+  margin-right: -5%;
+  padding: 5px 5% 1em 5%;
+  border-radius: 20px;
+  background-color: var(--md-primary-fg-color);
+  box-shadow: 10px 10px 10px #5a5a5a22, 0px 0px 10px #5a5a5a22;
+  color: #fffffff0;
+  --md-default-fg-color--lightest: #ffffff12;
+  --md-admonition-bg-color: #ffffff08;
+  --md-admonition-fg-color: #fffffff0;
+  --md-typeset-a-color: var(--rwth-orange);
+}
+
+.section-card a:hover,
+.section-card a:focus {
+  color: var(--rwth-gelb);
+}
