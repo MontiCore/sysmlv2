@@ -1,0 +1,43 @@
+<!-- Render navigation link content -->
+{% macro render_content(nav_item, ref = nav_item) %}
+  <!-- !! Removed icon in navigation content !! -->
+
+  <!-- Navigation link title -->
+  {{ ref.title }}
+{% endmacro %}
+
+<!-- Render navigation item -->
+{% macro render(nav_item, ref = nav_item) %}
+
+  <!-- Determine classes -->
+  {% set class = "md-tabs__item" %}
+  {% if ref.active %}
+    {% set class = class ~ " md-tabs__item--active" %}
+  {% endif %}
+
+  <!-- Navigation item with nested items -->
+  {% if nav_item.children %}
+    {% set first = nav_item.children | first %}
+
+    <!-- Recurse, if the first item has further nested items -->
+    {% if first.children %}
+      {{ render(first, ref) }}
+
+    <!-- Nested navigation item -->
+    {% else %}
+      <li class="{{ class }}">
+        <a href="{{ first.url | url }}" class="md-tabs__link">
+          {{ render_content(first, ref) }}
+        </a>
+      </li>
+    {% endif %}
+
+  <!-- Navigation item -->
+  {% else %}
+    <li class="{{ class }}">
+      <a href="{{ nav_item.url | url }}" class="md-tabs__link">
+        {{ render_content(nav_item) }}
+      </a>
+    </li>
+  {% endif %}
+{% endmacro %}
