@@ -98,7 +98,7 @@ public class SysMLExressionsDeriver extends AbstractDeriveFromExpression impleme
       Log.error("0x81008 RHS was expected to be a set, but was " + lhs.getResult().printFullName(), start, end);
       typeCheckResult.setResult(SymTypeExpressionFactory.createObscureType());
     }
-    if(!((SymTypeOfGenerics)rhs.getResult()).getArgument(0).deepEquals(lhs.getResult())) {
+    if(!((SymTypeOfGenerics)rhs.getResult()).getArgument(0).printFullName().equals(lhs.getResult().printFullName())) {
       Log.error("0x81009 LHS was expected to be compatible with elements of RHS, but was " + lhs.getResult().printFullName(),
           start, end);
       typeCheckResult.setResult(SymTypeExpressionFactory.createObscureType());
