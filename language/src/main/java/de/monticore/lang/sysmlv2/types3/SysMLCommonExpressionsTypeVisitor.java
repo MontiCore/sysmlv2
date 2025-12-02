@@ -67,8 +67,10 @@ import java.util.function.Predicate;
 import static de.monticore.types.check.SymTypeExpressionFactory.createObscureType;
 
 /**
- * Handles the particularities of the sysml regarding streams in expressions.
- * Ports in specifications have implicit stream types and the type check is not aware.
+ * Handles type checking the sysmlv2 standard and the particularities of the spes
+ * language profile regarding streams in expressions.
+ * 1. Ports in specifications have implicit stream types and are injected in the
+ * type check at field access derivation and at name expression derivation.
  * Also implements the following design decisions using two modes:
  * Mode 1: TypeCheck interprets an Expression for a port usage as an implicit
  * field access if there is only one attribute inside. Explicit field accesses
@@ -140,8 +142,6 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
       //++++++++++ modify start here ++++++++++
 
       Optional<PortSymbol> optPort = Optional.empty();
-
-      // we determine if the FieldAccess is a C&C port
       if (expr.getExpression() instanceof ASTArrayAccessExpression) {
         optPort = ((IComponentConnectorScope) expr.getEnclosingScope()).resolvePort(SysMLv2Mill.prettyPrint(
             new ASTFieldAccessExpressionBuilder()
@@ -153,12 +153,24 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
         optPort = ((IComponentConnectorScope) expr.getEnclosingScope()).resolvePort(SysMLv2Mill.prettyPrint(expr, false));
       }
 
-      if (optPort.isEmpty()
-          || innerAsExprType.isArrayType() && innerAsExprType.asArrayType().getArgument().getTypeInfo().getSpannedScope().getSpanningSymbol() instanceof PortDefSymbol
-          || innerAsExprType.hasTypeInfo() && innerAsExprType.getTypeInfo().getSpannedScope().getSpanningSymbol() instanceof PortDefSymbol) {
-        //|| optPortDef.isPresent() && optPortDef.get().getInputAttributes().size() != 1) {
-        // Case 1: This is not an implicit field access and the standard mode for FAs is used
+      var innerTypeIsPortDef =  innerAsExprType.hasTypeInfo() &&
+          innerAsExprType
+              .getTypeInfo()
+              .getSpannedScope()
+              .getSpanningSymbol() instanceof PortDefSymbol
+          || innerAsExprType.isArrayType() &&
+          innerAsExprType
+              .asArrayType()
+              .getArgument()
+              .getTypeInfo()
+              .getSpannedScope()
+              .getSpanningSymbol() instanceof PortDefSymbol;
 
+      // If no C&C port was found OR the inner expression refers to a port definition
+      if (optPort.isEmpty() || innerTypeIsPortDef) {
+
+        // Case 1: This is not an implicit field access, we still have to compute it.
+        // Fall back to the default field access computation
         if (WithinTypeBasicSymbolsResolver.canResolveIn(innerAsExprType)) {
           AccessModifier modifier = innerAsExprType.hasTypeInfo() ?
               TypeContextCalculator.getAccessModifier(
@@ -174,36 +186,32 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
               f -> true
           );
 
+          // We can only check if we are not in an automata as state machines always define a scope
           if (type.isPresent() &&
               !type.get().isFunctionType() &&
-              !isDefinedInStateMachine(expr.getEnclosingScope())) {
-            // We can only identify that we are not in an automata as state machines always define a scope
+              !SysMLWithinScopeBasicSymbolResolver.isDefinedInStateMachine(
+                  getAsBasicSymbolsScope(expr.getEnclosingScope())) &&
+              optPort.isPresent()) {
+            // found a C&C port -> Adjust type to Stream
+            var streamType = WithinScopeBasicSymbolsResolver.resolveType(
+                getAsBasicSymbolsScope(expr.getEnclosingScope()),
+                StreamTimingUtil.mapTimingToStreamType(
+                    optPort.get().getTiming()));
 
-            if (optPort.isPresent()) {
-              // found a C&C port -> Adjust type to Stream
-              var streamType = WithinScopeBasicSymbolsResolver.resolveType(
-                  getAsBasicSymbolsScope(expr.getEnclosingScope()),
-                  StreamTimingUtil.mapTimingToStreamType(
-                      optPort.get().getTiming()));
-
-              if (streamType.isEmpty()) {
-                Log.error("tried to resolve \"" + name + "\""
-                        + " given expression of type "
-                        + innerAsExprType.printFullName()
-                        + " but no stream symbol could be resolved.",
-                    expr.get_SourcePositionStart(),
-                    expr.get_SourcePositionEnd()
-                );
-              }
-              else {
-                streamType.get().asGenericType().setArgument(0, type.get());
-              }
-
-              type = streamType;
+            if (streamType.isEmpty()) {
+              Log.error("tried to resolve \"" + name + "\""
+                      + " given expression of type "
+                      + innerAsExprType.printFullName()
+                      + " but no stream symbol could be resolved.",
+                  expr.get_SourcePositionStart(),
+                  expr.get_SourcePositionEnd()
+              );
             }
             else {
-              // it is not a C&C port
+              streamType.get().asGenericType().setArgument(0, type.get());
             }
+
+            type = streamType;
           }
 
           //++++++++++ modify end here ++++++++++
@@ -245,8 +253,8 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
         }
       }
       else {
-        // Case 2: this is an explicit FA and the type of the outer FA
-        // is the type of the FA
+        // Case 2: this is an explicit FA and the type of the inner expression is forwarded
+        // to the outer expression as it was already computed in a previous step
         type = Optional.of(innerAsExprType);
       }
     }
@@ -314,26 +322,5 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
   public void endVisit(ASTSysMLInstantiation expr) {
     getType4Ast().setTypeOfExpression(expr, getType4Ast().getPartialTypeOfTypeId(
         expr.getMCType()));
-  }
-
-  /*
-  This method assumes that a state machine (state def/usage) always defines a scope.
-   */
-  private boolean isDefinedInStateMachine(ICommonExpressionsScope scope) {
-    var enclosingScope = (ISysMLv2Scope) scope;
-    if (enclosingScope.getAstNode() instanceof ASTStateDef ||
-        enclosingScope.getAstNode() instanceof ASTStateUsage
-    ) {
-      return true;
-    }
-    else if (enclosingScope.getAstNode() instanceof ASTPartDef ||
-        enclosingScope.getAstNode() instanceof ASTPartUsage ||
-        enclosingScope instanceof ISysMLv2ArtifactScope ||
-        enclosingScope instanceof ISysMLv2GlobalScope
-    ) {
-      return false;
-    }
-    else
-      return isDefinedInStateMachine(scope.getEnclosingScope());
   }
 }

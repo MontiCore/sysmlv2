@@ -7,6 +7,7 @@ import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 
+@Deprecated
 public class TypeCheckTransitionGuards implements SysMLStatesASTSysMLTransitionCoCo {
 
   @Override

@@ -293,7 +293,6 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     }
 
     if (delimiter != null) {
-      // Split without regex
       List<String> parts = new ArrayList<>();
       int pos = 0;
       int idx;

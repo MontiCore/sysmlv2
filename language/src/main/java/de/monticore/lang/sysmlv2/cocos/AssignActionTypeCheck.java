@@ -7,6 +7,7 @@ import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTSendActionUsageCoCo;
 import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.types.check.TypeCheck;
 
+@Deprecated
 public class AssignActionTypeCheck implements SysMLActionsASTAssignmentActionUsageCoCo {
 
   @Override

@@ -153,6 +153,7 @@ public class FieldAccessExpressionInStateUsageTest {
         ,Arguments.of(
             "port def F { attribute a: boolean; } part def X { port f: F[3]; constraint e { f[1].a } }")
 
+
         ,Arguments.of(
             "port def F { attribute a: boolean; attribute b: nat; }" +
                 "part def X { port f: F; state s { transition first S if f.a then S; } }")

@@ -10,6 +10,7 @@ import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.SourcePositionBuilder;
 import de.se_rwth.commons.logging.Log;
 
+@Deprecated
 public class ConstraintIsBoolean implements SysMLConstraintsASTConstraintUsageCoCo {
 
   @Override public void check(ASTConstraintUsage node) {

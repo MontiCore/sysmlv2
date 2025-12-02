@@ -38,7 +38,6 @@ public class SysMLWithinScopeBasicSymbolResolver extends
     WithinScopeBasicSymbolsResolver {
 
   public static void init() {
-    // TODO init might be wrong
     WithinScopeBasicSymbolsResolver.setDelegate(new SysMLWithinScopeBasicSymbolResolver());
   }
 
@@ -194,7 +193,7 @@ public class SysMLWithinScopeBasicSymbolResolver extends
     }
   }
 
-  private boolean isDefinedInStateMachine(IBasicSymbolsScope scope) {
+  protected static boolean isDefinedInStateMachine(IBasicSymbolsScope scope) {
     var enclosingScope = (ISysMLv2Scope) scope;
     if (enclosingScope.getAstNode() instanceof ASTStateDef ||
         enclosingScope.getAstNode() instanceof ASTStateUsage

@@ -8,8 +8,6 @@ port def Integers {
 
 part def LogicBasedConstraints {
   port myPortDef: Integers;
-  // write a test about cardinalities in constraint usages
-  // Make a Bug report with resolving.
   constraint constraintName {
     myPortDef.nth(3).nth(2) < myPortDef.nth(3).nth(3)
   }

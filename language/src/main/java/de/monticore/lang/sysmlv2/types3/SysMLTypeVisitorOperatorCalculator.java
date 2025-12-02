@@ -16,7 +16,6 @@ public class SysMLTypeVisitorOperatorCalculator extends
 
   public static void init() {
     Log.trace("init SysMLTypeVisitorOperatorCalculator", "TypeCheck setup");
-    // TODO might be wrong
     setDelegate(new SysMLTypeVisitorOperatorCalculator());
   }
 

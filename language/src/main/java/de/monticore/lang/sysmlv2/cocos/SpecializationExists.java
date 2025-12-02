@@ -7,6 +7,7 @@ import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.lang.sysmlv2.types.SysMLSynthesizer;
 import de.se_rwth.commons.logging.Log;
 
+@Deprecated
 public class SpecializationExists implements SysMLBasisASTSpecializationCoCo {
 
   @Override

@@ -19,5 +19,4 @@ public class SendActionTypeCheck3 implements SysMLActionsASTSendActionUsageCoCo 
     // Vergleich zum Target steht noch aus.
     // TODO Target zur Expression erheben (Grammatik ändenr), Checken, dann vergleichen
   }
-
 }
