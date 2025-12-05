@@ -38,4 +38,3 @@ subprojects {
 }
 
 evaluationDependsOnChildren()
-project(":language-server").tasks.generateSysMLv2LanguageServer.dependsOn project(":language").tasks.grammarsJar
