@@ -1,9 +1,11 @@
-package de.monticore.lang.componentconnector._symboltable;
+package de.monticore.lang.sysmlbasis._symboltable;
 
-import de.monticore.lang.componentconnector._ast.ASTConfiguration;
-import de.monticore.lang.componentconnector._ast.ASTEventTransition;
-import de.monticore.lang.componentconnector._ast.ASTStateSpace;
-import de.monticore.lang.componentconnector._ast.ASTTransition;
+import de.monticore.lang.sysmlbasis._ast.ASTConfiguration;
+import de.monticore.lang.sysmlbasis._ast.ASTEventTransition;
+import de.monticore.lang.sysmlbasis._ast.ASTStateSpace;
+import de.monticore.lang.sysmlbasis._ast.ASTTransition;
+import de.monticore.lang.sysmlbasis._symboltable.AutomatonSymbolDeSerTOP;
+import de.monticore.lang.sysmlbasis._symboltable.SysMLBasisSymbols2Json;
 import de.monticore.symboltable.serialization.json.JsonObject;
 
 import java.util.List;
@@ -12,7 +14,7 @@ public class AutomatonSymbolDeSer extends AutomatonSymbolDeSerTOP {
   @Override
   protected void serializeStateSpace(
       ASTStateSpace stateSpace,
-      ComponentConnectorSymbols2Json s2j)
+      SysMLBasisSymbols2Json s2j)
   {
     // not implemented
   }
@@ -20,7 +22,7 @@ public class AutomatonSymbolDeSer extends AutomatonSymbolDeSerTOP {
   @Override
   protected void serializeInitialConfiguration(
       List<ASTConfiguration> initialConfiguration,
-      ComponentConnectorSymbols2Json s2j)
+      SysMLBasisSymbols2Json s2j)
   {
     // not implemented
   }
@@ -28,7 +30,7 @@ public class AutomatonSymbolDeSer extends AutomatonSymbolDeSerTOP {
   @Override
   protected void serializeTransitions(
       List<ASTTransition> tickTransitions,
-      ComponentConnectorSymbols2Json s2j)
+      SysMLBasisSymbols2Json s2j)
   {
     // not implemented
   }

@@ -1,6 +1,6 @@
-package de.monticore.lang.sysmlparts._symboltable;
+package de.monticore.lang.sysmlbasis._symboltable;
 
-import de.monticore.lang.sysmlparts._ast.ASTSysMLReqType;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLReqType;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionDeSer;
@@ -10,12 +10,12 @@ import java.util.List;
 public class PartDefSymbolDeSer extends PartDefSymbolDeSerTOP {
 
   @Override
-  protected void serializeDirectRefinements(List<SymTypeExpression> refinementFQNs, SysMLPartsSymbols2Json s2j) {
+  protected void serializeDirectRefinements(List<SymTypeExpression> refinementFQNs, SysMLBasisSymbols2Json s2j) {
     SymTypeExpressionDeSer.serializeMember(s2j.getJsonPrinter(), "directRefinements", refinementFQNs);
   }
 
   @Override
-  protected void serializeRequirementType(ASTSysMLReqType requirementType, SysMLPartsSymbols2Json s2j) {
+  protected void serializeRequirementType(ASTSysMLReqType requirementType, SysMLBasisSymbols2Json s2j) {
     s2j.getJsonPrinter().member("requirementType", requirementType.name().toString());
   }
 

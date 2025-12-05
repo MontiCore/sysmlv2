@@ -1,6 +1,9 @@
-package de.monticore.lang.componentconnector._symboltable;
+package de.monticore.lang.sysmlbasis._symboltable;
 
-import de.monticore.lang.componentconnector._ast.ASTConnector;
+import de.monticore.lang.sysmlbasis._ast.ASTConnector;
+import de.monticore.lang.sysmlbasis._symboltable.SysMLBasisSymbols2Json;
+import de.monticore.lang.sysmlbasis._symboltable.ISysMLBasisScope;
+import de.monticore.lang.sysmlbasis._symboltable.MildComponentSymbolDeSerTOP;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.compsymbols.CompSymbolsMill;
 import de.monticore.symbols.compsymbols._symboltable.ComponentTypeSymbolDeSer;
@@ -34,7 +37,7 @@ public class MildComponentSymbolDeSer extends MildComponentSymbolDeSerTOP {
 
   @Override
   protected void serializeRefinements(List<CompKindExpression> refinements,
-                                                ComponentConnectorSymbols2Json s2j) {
+                                                SysMLBasisSymbols2Json s2j) {
     s2j.getJsonPrinter().beginArray(ComponentTypeSymbolDeSer.REFINEMENTS);
     for (CompKindExpression superComponent : refinements) {
       s2j.getJsonPrinter().addToArray(JsonElementFactory
@@ -44,12 +47,12 @@ public class MildComponentSymbolDeSer extends MildComponentSymbolDeSerTOP {
   }
 
   @Override
-  protected void serializeConnectors(List<ASTConnector> connectors, ComponentConnectorSymbols2Json s2j) {
+  protected void serializeConnectors(List<ASTConnector> connectors, SysMLBasisSymbols2Json s2j) {
     // Wird nicht implementiert
   }
 
   @Override
-  protected void serializeParameter(List<VariableSymbol> parameter, ComponentConnectorSymbols2Json s2j) {
+  protected void serializeParameter(List<VariableSymbol> parameter, SysMLBasisSymbols2Json s2j) {
     JsonPrinter printer = s2j.getJsonPrinter();
 
     printer.beginArray(ComponentTypeSymbolDeSer.PARAMETERS);
@@ -59,7 +62,7 @@ public class MildComponentSymbolDeSer extends MildComponentSymbolDeSerTOP {
 
   @Override
   protected void serializeSuperComponents(@NonNull List<CompKindExpression> superComponents,
-                                          @NonNull ComponentConnectorSymbols2Json s2j) {
+                                          @NonNull SysMLBasisSymbols2Json s2j) {
     s2j.getJsonPrinter().beginArray(ComponentTypeSymbolDeSer.SUPER);
     for (CompKindExpression superComponent : superComponents) {
       s2j.getJsonPrinter().addToArray(JsonElementFactory
@@ -68,7 +71,8 @@ public class MildComponentSymbolDeSer extends MildComponentSymbolDeSerTOP {
     s2j.getJsonPrinter().endArray();
   }
 
-  @Override protected List<CompKindExpression> deserializeRefinements(IComponentConnectorScope scope, JsonObject symbolJson) {
+  @Override protected List<CompKindExpression> deserializeRefinements(
+      ISysMLBasisScope scope, JsonObject symbolJson) {
     List<JsonElement> refinements = symbolJson.getArrayMemberOpt(ComponentTypeSymbolDeSer.REFINEMENTS).orElseGet(Collections::emptyList);
     List<CompKindExpression> result = new ArrayList<>(refinements.size());
 
@@ -114,7 +118,7 @@ public class MildComponentSymbolDeSer extends MildComponentSymbolDeSerTOP {
   }
 
   @Override
-  protected List<CompKindExpression> deserializeSuperComponents(IComponentConnectorScope scope, JsonObject symbolJson) {
+  protected List<CompKindExpression> deserializeSuperComponents(ISysMLBasisScope scope, JsonObject symbolJson) {
     List<JsonElement> superComponents = symbolJson.getArrayMemberOpt(ComponentTypeSymbolDeSer.SUPER).orElseGet(Collections::emptyList);
     List<CompKindExpression> result = new ArrayList<>(superComponents.size());
 

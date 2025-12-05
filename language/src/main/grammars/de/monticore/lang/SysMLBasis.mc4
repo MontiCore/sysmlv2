@@ -4,12 +4,20 @@ package de.monticore.lang;
 /**
  * Basis für die einzelnen SysML-Teilgrammatiken (ich weigere mich noch sie "Teilsprachen" zu nennen).
  */
-component grammar SysMLBasis
-    extends de.monticore.expressions.ExpressionsBasis,  // Expression
-            de.monticore.types.MCBasicTypes,            // MCQualifiedName, MCType
-            de.monticore.symbols.OOSymbols,             // OOTypes, Field
-            de.monticore.Cardinality,                   // Cardinality
-            de.monticore.UMLModifier                    // Modifier
+grammar SysMLBasis
+    extends de.monticore.expressions.ExpressionsBasis,       // Expression
+            de.monticore.types.MCBasicTypes,                 // MCQualifiedName, MCType
+            de.monticore.symbols.OOSymbols,                  // OOTypes, Field
+            de.monticore.Cardinality,                        // Cardinality
+            de.monticore.UMLModifier,                        // Modifier
+            de.monticore.literals.MCCommonLiterals,          // From Expressions: SignedLiteral
+            de.monticore.expressions.CommonExpressions,      // FieldAccessExpression
+            de.monticore.ocl.OCLExpressions,                 // ExistsExpression
+            de.monticore.ocl.SetExpressions,                 // UnionExpression
+            de.monticore.symbols.CompSymbols,                // From CC
+            de.monticore.types.MCSimpleGenericTypes,         // From v2
+            de.monticore.expressions.AssignmentExpressions,
+            de.monticore.expressions.StreamExpressions
 {
 
   KerMLCardinality extends Cardinality =
@@ -293,4 +301,1395 @@ component grammar SysMLBasis
   Endpoint =
     MCQualifiedName SysMLCardinality? Specialization* ;
 
+
+// --------ImportsAndPackages.mc4------------------------------------------------------------------------------------------------
+
+  /**
+   * From PrivateImportTest.sysml: "import all" overrides private import.
+   */
+  SysMLImportStatement extends MCImportStatement implements SysMLElement =
+    Modifier UserDefinedKeyword* "import" ["all"]? MCQualifiedName
+    (("::" | ".") (Star:["*"] | Recursive:["**"]))*
+    ("[" filter:Expression "]")?
+    ("as" Name)?
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  SysMLAlias implements SysMLElement =
+    Modifier UserDefinedKeyword* "alias" SysMLIdentifier? Name? "for" MCQualifiedName
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  symbol scope SysMLPackage implements SysMLElement =
+    ["standard"]? ["library"]? "package" SysMLIdentifier? Name?
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  /**
+   * A package may also contain filter conditions that filter the imports for the package. A filter condition is a
+   * Boolean-valued, model-level evaluable expression declared using the keyword filter followed by a Boolean-valued,
+   * model-level evaluable expression. Note that a filter condition in a package will filter all imports of that
+   * package. [Additionally, a] view definition includes filter conditions on what kinds of elements can be included in
+   * a view and identifies a view rendering that determines how the included elements are to be rendered. The filter
+   * conditions are specified in the same way as for packages, by using the keyword filter followed by a Boolean-valued,
+   * model-level evaluable expression.
+   */
+  FilterCondition implements SysMLElement =
+    key("filter") Expression ";" ;
+
+  /**
+   * Metadata is additional data that can be used to annotate
+   * the elements of a model.
+   */
+  SysMLMetaDataDefinition implements SysMLElement =
+    Modifier UserDefinedKeyword* "metadata" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("{"
+        SysMLElement*
+     "}" | ";") ;
+
+  SysMLMetaDataUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* ("metadata" | "@")
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    ("about" about:(MCQualifiedName || ",")+)?
+    ("{"
+        SysMLElement*
+     "}" | ";") ;
+
+
+// ----------------------SysMLActions.mc4-------------------------------------------------------------------------------------
+
+  symbol scope ActionDef implements SysMLType =
+    Modifier UserDefinedKeyword* "action" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  /**
+   * Inline-Usages do not terminate in semicolons or closing brackets and are intended
+   * for use in other constructs such as successions or transitions.
+   */
+  scope InlineActionUsage implements IInlineOccurrenceUsage =
+    Modifier UserDefinedKeyword* "action" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
+    ("{"
+      SysMLElement*
+     "}")? ;
+
+  /**
+   * Because the inline-variant is not a SysMLElement, this inheritance cannot be the
+   * other way around!
+   */
+  symbol ActionUsage implements OccurrenceUsageElement =
+    Modifier UserDefinedKeyword* "action" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
+    ("{"
+      SysMLElement*
+     "}" | ";") ;
+
+  /** ==================================================================================================================
+   * Control Nodes
+   * ================================================================================================================ */
+
+  symbol scope ForkAction extends ActionUsage =
+    Modifier UserDefinedKeyword* "fork" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  symbol scope DecideAction extends ActionUsage =
+    Modifier UserDefinedKeyword* "decide" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  symbol scope JoinAction extends ActionUsage =
+    Modifier UserDefinedKeyword* "join" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  symbol scope MergeAction extends ActionUsage =
+    Modifier UserDefinedKeyword* "merge" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  /** ==================================================================================================================
+   * Special Actions
+   * ================================================================================================================ */
+
+  IfActionUsage implements OccurrenceUsageElement extends ActionUsage =
+    Modifier UserDefinedKeyword* "action"?
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "if" guard:Expression
+    (InlineActionUsage | "{" ifElems:SysMLElement* "}")
+    ("else" (ActionUsage | "{" elseElems:SysMLElement* "}"))? ;
+
+  /** See section 7.16.8 in 2a-OMG_Systems_Modeling_Language.pdf */
+  Payload =
+    (payloadHandle:Name ":")? payloadType:MCType SysMLCardinality? |
+     payloadHandle:Name? "when" changeTrigger:Expression |
+     payloadHandle:Name? "at" timeTrigger:Expression |
+     payloadHandle:Name? "after" relativeTimeTrigger: Expression ;
+
+  scope InlineAcceptActionUsage extends InlineActionUsage =
+    Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "accept" Payload ("via" receiver:MCQualifiedName)?
+    ("{"
+       SysMLElement*
+     "}")? ;
+
+  symbol AcceptActionUsage implements OccurrenceUsageElement extends ActionUsage =
+    Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "accept" Payload ("via" receiver:MCQualifiedName)?
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  scope InlinePerformActionUsage extends InlineActionUsage =
+    Modifier UserDefinedKeyword* "perform" "action"? SysMLIdentifier? Name? SysMLCardinality?
+    Specialization* DefaultValue?
+    ("{"
+       SysMLElement*
+     "}")? ;
+
+  symbol PerformActionUsage implements OccurrenceUsageElement extends ActionUsage =
+    Modifier UserDefinedKeyword* "perform" "action"? SysMLIdentifier? Name? SysMLCardinality?
+    Specialization* DefaultValue?
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  PerformActionReference implements OccurrenceUsageElement extends ActionUsage =
+    Modifier UserDefinedKeyword* "perform" "action"? MCQualifiedName SysMLCardinality? Specialization* DefaultValue?
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  scope InlineAssignmentActionUsage extends InlineActionUsage =
+    Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "assign" target:MCQualifiedName ":=" valueExpression:Expression
+    ("{"
+       SysMLElement*
+     "}")? ;
+
+  AssignmentActionUsage implements OccurrenceUsageElement extends ActionUsage =
+    Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "assign" target:MCQualifiedName ":=" valueExpression:Expression
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  InlineSendActionUsage extends InlineActionUsage =
+    Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "send" payload:Expression
+    ("via" sender:MCQualifiedName)?
+    ("to" target:MCQualifiedName)?
+    ("{"
+       SysMLElement*
+     "}")? ;
+
+  SendActionUsage implements OccurrenceUsageElement extends ActionUsage =
+    Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "send" payload:Expression
+    ("via" sender:MCQualifiedName)?
+    ("to" target:MCQualifiedName)?
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  symbol scope WhileActionUsage extends ActionUsage =
+    Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "while" while:Expression ("(" (SysMLParameter || ",")* ")")?
+    BodyClause ("until" until:Expression ";")? ;
+
+  /**
+   * The keyword loop may be used as a shorthand for while true. This is useful for a while loop that is designed to
+   * be non-terminating or will be terminated with just an until expression.
+   */
+  symbol scope LoopActionUsage extends WhileActionUsage =
+    Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "loop" BodyClause ("until" until:Expression ";")? ;
+
+  symbol scope ForLoopActionUsage extends ActionUsage =
+    Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "for" loopVar:Name loopSpecs:Specialization* "in" (start:Expression ".." end:Expression | sequence:Expression)
+    BodyClause ;
+
+  BodyClause =
+     UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+     "{" SysMLElement* "}";
+
+  /** ==================================================================================================================
+   * Successions
+   * ================================================================================================================ */
+
+  SuccessionFirst =
+    MCQualifiedName SysMLCardinality? Specialization* ("{" SysMLElement* "}")? |
+    IInlineOccurrenceUsage ;
+
+  SuccessionThen =
+    MCQualifiedName SysMLCardinality? Specialization* ("{" SysMLElement* "}" | ";") |
+    SysMLElement ;
+
+  // Base successions according to 7.13.5 (Connections > Successions as Usages)
+  SysMLSuccession implements SysMLElement =
+    Modifier UserDefinedKeyword* "succession"?
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    ("first" SuccessionFirst)?
+     "then" SuccessionThen ;
+
+  /** ==================================================================================================================
+   * Special notation for successions in action bodies, according to 7.16.4
+   * ================================================================================================================ */
+
+  // TBD - for now this is allowed anywhere
+  interface ActionElement extends SysMLElement ;
+
+  /**
+   * The source of a succession may be specified separately from the target by using the keyword first followed by a
+   * qualified name or feature chain for the source action usage
+   */
+  SysMLFirstSuccession implements ActionElement =
+    "first" MCQualifiedName ";" ;
+
+  /**
+   * A succession within the body of an action definition or usage may be given a guard condition. A guard is given as a
+   * Boolean-valued expression preceded by the keyword if. It is placed in the declaration of the succession after the
+   * specification of the source of the succession and before the specification of the target.  Further, the keyword
+   * else may be used in place of a guard expression to indicate a succession to be taken if the guards evaluate to
+   * false on all of an immediately preceding set of conditional successions. However, the target of a conditional
+   * succession must be specified as a qualified name or feature chain and cannot be a full action usage declaration,
+   * even when the shorthand notation is used.
+   */
+  SysMLConditionalSuccession implements ActionElement =
+    Modifier UserDefinedKeyword* "succession"?
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    ("first" SuccessionFirst)?
+    (["if"] guard:Expression "then" | ["else"])
+    MCQualifiedName SysMLCardinality? innerSpecs:Specialization* ("{" SysMLElement* "}" | ";") ;
+
+  /** ==================================================================================================================
+   * Calculations
+   * ================================================================================================================ */
+
+  symbol scope CalcDef implements SysMLType =
+    Modifier UserDefinedKeyword* "calc" "def" Name SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+      Expression?
+    "}" | ";") ;
+
+  symbol CalcUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* "calc" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    DefaultValue?
+    ("{"
+      SysMLElement*
+      Expression?
+    "}" | ";");
+
+// ------------------SysMLConstraints.mc4------------------------------------------------------------------------
+
+  symbol scope ConstraintDef implements SysMLType =
+    Modifier UserDefinedKeyword* "constraint" "def"
+    Name SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      SysMLElement*
+      Expression?
+    "}" | ";") ;
+
+  symbol scope ConstraintUsage implements SysMLElement =
+    Modifier (
+      (["require"] | ["assume"] | ["assert"]) ["not"]? UserDefinedKeyword* "constraint"?
+      | UserDefinedKeyword* "constraint"
+    )
+    Name? SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      SysMLElement*
+      Expression?
+    "}" | ";") ;
+
+  ConstraintReference implements SysMLElement =
+    (
+      (["require"] | ["assume"] | ["assert"]) UserDefinedKeyword* "constraint"?
+      | UserDefinedKeyword* "constraint"
+    )
+    MCQualifiedName? SysMLCardinality? Specialization*
+    ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      SysMLElement*
+      Expression?
+    "}" | ";") ;
+
+  symbol scope RequirementDef implements SysMLType  =
+      Modifier UserDefinedKeyword* "requirement" "def"
+      SysMLIdentifier? Name SysMLCardinality? Specialization*
+      ("(" (SysMLParameter || ",")* ")")?
+      ("{"
+        SysMLElement*
+      "}" | ";") ;
+
+  // Satisfy Requirement Usages are ConstraintUsages and as such can be
+  // required/assumed/asserted
+  symbol scope RequirementUsage implements SysMLElement =
+      Modifier (["require"] | ["assume"] | ["assert"])? UserDefinedKeyword*
+      ["verify"]? ["not"]? ["satisfy"]? "requirement"
+      SysMLIdentifier? Name? SysMLCardinality? Specialization*
+      DefaultValue?
+      ("by" subject:MCQualifiedName)?
+      ("(" (SysMLParameter || ",")* ")")?
+      ("{"
+         SysMLElement*
+      "}" | ";") ;
+
+  symbol RequirementSubject implements SysMLElement =
+      "subject" Name? SysMLCardinality? Specialization* DefaultValue?
+      ("{"
+        SysMLElement*
+      "}" | ";") ;
+
+  symbolrule RequirementSubject =
+      types:de.monticore.types.check.SymTypeExpression* ;
+
+  RequirementActor extends RequirementSubject =
+      "actor" Name? SysMLCardinality? Specialization* DefaultValue?
+      ("{"
+        SysMLElement*
+      "}" | ";") ;
+
+  RequirementStakeholder extends RequirementSubject =
+      "stakeholder" Name? SysMLCardinality? Specialization* DefaultValue?
+      ("{"
+        SysMLElement*
+      "}" | ";") ;
+
+
+  /**
+   * A satisfy requirement usage may also be declared using just the keyword
+   * "satisfy" instead of "satisfy requirement". In this case, the declaration
+   * does not include either a name or short name for the satisfy requirement
+   * usage. Instead, the requirement to be satisfied is identified by giving a
+   * qualified name or feature chain immediately after the satisfy keyword, and
+   * it is then related to the satisfy requirement usage by a reference
+   * subsetting relationship
+   */
+  RequirementSatisfaction implements SysMLElement =
+      (["require"] | ["assume"] | ["assert"])? UserDefinedKeyword*
+      ["not"]? "satisfy"
+      req:MCQualifiedName ("by" subject:MCQualifiedName)?
+      ("{"
+          SysMLElement*
+       "}" | ";") ;
+
+  /**
+   * As for an assumed or required constraint, the keyword verify can be used
+   * rather than verify requirement to declare a verified requirement using
+   * reference subsetting.
+   */
+  RequirementVerification implements SysMLElement =
+      "verify" req:MCQualifiedName SysMLCardinality? Specialization*
+      ("{"
+          SysMLElement*
+       "}" | ";") ;
+
+  symbol scope ConcernDef implements SysMLType  =
+      Modifier UserDefinedKeyword* "concern" "def"
+      SysMLIdentifier? Name SysMLCardinality? Specialization*
+      ("(" (SysMLParameter || ",")* ")")?
+      ("{"
+        SysMLElement*
+      "}" | ";") ;
+
+  symbol scope ConcernUsage implements SysMLElement =
+      Modifier UserDefinedKeyword* ["frame"]? "concern"
+      SysMLIdentifier? Name? SysMLCardinality? Specialization*
+      ("(" (SysMLParameter || ",")* ")")?
+      ("{"
+        SysMLElement*
+      "}" | ";") ;
+
+  ConcernReference implements SysMLElement =
+      "frame" MCQualifiedName
+      ("{"
+        SysMLElement*
+      "}" | ";") ;
+
+//------------------SysMLStates.mc4--------------------------------------------------------------------
+
+  symbol scope StateDef implements SysMLType =
+    Modifier UserDefinedKeyword* "state" "def" SysMLIdentifier? Name
+    SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      (EntryAction | DoAction | ExitAction | SysMLElement)*
+    "}" | ";") ;
+
+  symbol scope StateUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* exhibited:["exhibit"]? "state" SysMLIdentifier?
+    Name? SysMLCardinality? Specialization*
+    ("(" (SysMLParameter || ",")* ")")? paralled:["parallel"]? DefaultValue?
+    ("{"
+      (EntryAction | DoAction | ExitAction | SysMLElement)*
+    "}" | ";") ;
+
+  ExhibitedStateReference implements SysMLElement =
+    UserDefinedKeyword* "exhibit" MCQualifiedName?
+    SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  symbolrule StateUsage =
+    exhibited: boolean
+    userDefinedKeywords: Name*
+  ;
+
+  symbol SysMLTransition implements SysMLElement =
+    ("transition" Name?)?
+    ("first" src:MCQualifiedName)?
+    (InlineAcceptActionUsage)?
+    ("if" guard:Expression)?
+    ("do" doAction:InlineActionUsage)?
+    "then" SuccessionThen ;
+
+  EntryAction =
+    "entry" ( ";" |
+              ActionUsage |
+              MCQualifiedName
+              ("{"
+                 SysMLElement*
+               "}" | ";")
+            ) ;
+
+  DoAction =
+    "do" ( ActionUsage |
+           MCQualifiedName
+           ("{"
+               SysMLElement*
+            "}" | ";")
+         ) ;
+
+  ExitAction = "exit" ( ActionUsage | action:Name@ActionUsage ";") ;
+
+//--------------------------SysMLViews.mc4------------------------------------------------------------
+
+  /** ==========================================================================
+   * Viewpoints
+   * ======================================================================== */
+
+  symbol scope ViewpointDef implements SysMLType =
+    Modifier UserDefinedKeyword* "viewpoint" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  symbol scope ViewpointUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* "viewpoint"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  /** ==========================================================================
+   * Views
+   * ======================================================================== */
+
+  symbol scope ViewDef implements SysMLType =
+    Modifier UserDefinedKeyword* "view" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("{"
+        (RenderingReference | SysMLElement)*
+     "}" | ";") ;
+
+  symbol scope ViewUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* "view"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    ("{"
+        (RenderingReference | SysMLElement)*
+     "}" | ";") ;
+
+  RenderingReference =
+    "render" MCQualifiedName
+    ("{"
+        SysMLElement*
+     "}" | ";") ;
+
+  Expose implements SysMLElement =
+    Modifier UserDefinedKeyword* "expose" MCQualifiedName
+    (("::" | ".") (Star:["*"] | Recursive:["**"]))?
+    ("[" filter:Expression "]")?
+    ("{"
+        SysMLElement*
+     "}" | ";") ;
+
+  /** ==========================================================================
+   * Renderings
+   * ======================================================================== */
+
+  symbol scope RenderingDef implements SysMLType =
+    Modifier UserDefinedKeyword* "rendering" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  symbol scope RenderingUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* ["render"]? "rendering"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+//----------------------------SysMLCases.mc4---------------------------------------------
+
+
+  /*
+   * The body of a calculation definition or usage is like the body of an action
+   * definition or usage, with the optional addition of the declaration of a
+   * result expression at the end, using the expression sublanguage. The result
+   * of the result expression is implicitly bound to the result parameter of the
+   * containing calculation definition or usage.
+   * Calculations are part of a hierarchy in SysMLv2, namely:
+   * - Calculations
+   *   - Cases
+   *     - Analysis Cases
+   *     - Verification Cases
+   *     - Use Cases
+   * While Constraints (and their heirs, Requirements) are very similar in this
+   * regard (i.e., having an Expression), they are not explicitly related.
+   */
+
+  symbol scope AnalysisDef implements SysMLType =
+      Modifier UserDefinedKeyword* "analysis" "def"
+      SysMLIdentifier? Name SysMLCardinality? Specialization*
+      ("{"
+        (AnalysisObjective | SysMLElement)*
+        Expression?
+      "}" | ";") ;
+
+  symbol AnalysisObjective =
+      "objective" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+      ("{"
+        (AnalysisObjective | SysMLElement)*
+      "}" | ";") ;
+
+  symbol scope AnalysisUsage implements SysMLElement =
+      Modifier UserDefinedKeyword* "analysis"
+      SysMLIdentifier? Name? SysMLCardinality? Specialization*
+      ("{"
+        (AnalysisObjective | SysMLElement)*
+        Expression?
+      "}" | ";") ;
+
+  symbol scope VerificationDef implements SysMLType =
+      Modifier UserDefinedKeyword* "verification" "def"
+      SysMLIdentifier? Name SysMLCardinality? Specialization*
+      ("{"
+        (AnalysisObjective | SysMLElement)*
+        Expression?
+      "}" | ";") ;
+
+  symbol scope VerificationUsage implements SysMLElement =
+      Modifier UserDefinedKeyword* "verification"
+      Name? SysMLCardinality? Specialization*
+      ("{"
+        (AnalysisObjective | SysMLElement)*
+        Expression?
+      "}" | ";") ;
+
+  symbol scope UseCaseDef implements SysMLType =
+      Modifier UserDefinedKeyword* "use" "case" "def"
+      SysMLIdentifier? Name SysMLCardinality? Specialization*
+      ("{"
+        (AnalysisObjective | SysMLElement)*
+        Expression?
+      "}" | ";") ;
+
+  InlineUseCaseUsage implements IInlineOccurrenceUsage =
+      UserDefinedKeyword* "use" "case"
+      SysMLIdentifier? Name? SysMLCardinality? Specialization*
+      ("{"
+        (AnalysisObjective | SysMLElement)*
+        Expression?
+      "}")? ;
+
+  symbol scope UseCaseUsage implements OccurrenceUsageElement =
+      Modifier UserDefinedKeyword* "use" "case"
+      SysMLIdentifier? Name? SysMLCardinality? Specialization*
+      ("{"
+        (AnalysisObjective | SysMLElement)*
+        Expression?
+      "}" | ";") ;
+
+  /**
+   * An include use case usage is a kind of perform action usage (see 7.16.6)
+   * for which the action usage is a use case usage, known as the included use
+   * case.
+   */
+  IncludedUseCaseUsage extends UseCaseUsage =
+      Modifier UserDefinedKeyword* "include" ("use" "case")?
+      SysMLIdentifier? Name? SysMLCardinality? Specialization*
+      ("{"
+        (AnalysisObjective | SysMLElement)*
+        Expression?
+      "}" | ";") ;
+
+  symbol scope CaseDef implements SysMLType =
+      Modifier UserDefinedKeyword* "case" "def"
+      SysMLIdentifier? Name SysMLCardinality? Specialization*
+      ("{"
+        (AnalysisObjective | SysMLElement)*
+        Expression?
+      "}" | ";") ;
+
+  symbol scope CaseUsage implements SysMLElement =
+      Modifier UserDefinedKeyword* "case"
+      SysMLIdentifier? Name? SysMLCardinality? Specialization*
+      ("{"
+        (AnalysisObjective | SysMLElement)*
+        Expression?
+      "}" | ";") ;
+
+//------------------------SysMLConnections.mc4--------------------------------------------------
+
+  /**
+   * The declaration of a message may also optionally include an explicit
+   * specification of the name, type (definition) and/or multiplicity of the payload of the message.
+   * The payload name is followed by the keyword defined by (or the symbol :), but this keyword (or the symbol) is
+   * omitted if the name is omitted.
+   */
+  FlowPayload =
+    (Name SysMLCardinality? Specialization* | MCType SysMLCardinality?) DefaultValue? ;
+
+  FlowUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* "succession"? "flow"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    ("of" FlowPayload)?
+     "from"? source:Endpoint
+     "to" target:Endpoint
+     ("{"
+        SysMLElement*
+      "}" | ";") ;
+
+  // explizites bind durch keyword
+  Bind implements SysMLElement =
+    Modifier UserDefinedKeyword* "binding"?
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "bind" source:Endpoint "=" target:Endpoint
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  MessageUsage implements OccurrenceUsageElement =
+    Modifier UserDefinedKeyword* "message"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    ("of" FlowPayload)?
+    ("from"? source:Endpoint
+     "to" target:Endpoint)? DefaultValue?
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  symbol scope ConnectionDef implements SysMLType =
+    Modifier UserDefinedKeyword* "connection" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  // Aus Kompatibilitätsgründen ist der Name hier nicht "ConnectionUsage". Genau genommen ist ein einfaches
+  // "connect" der Sonderfall, nicht andersrum.
+  symbol scope ConnectionUsageProper implements SysMLElement =
+    Modifier UserDefinedKeyword* "connection"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  /* ===================================================================================================================
+   * An interface definition is a kind of connection definition (see7.13) whose ends are restricted to be port
+   * definitions. An interface usage is a kind of connection that is usage of an interface definition. The ends of an
+   * interface usage are restricted to be port usages.
+   * ================================================================================================================ */
+
+  symbol scope InterfaceDef implements SysMLType =
+    Modifier UserDefinedKeyword* "interface" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  symbol scope InterfaceUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* "interface"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    ("connect"? (
+      (src:Endpoint "to" tgt:Endpoint) |
+      ("(" (SysMLParameter || ",")* ")")
+    ))?
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  symbol scope FlowDef implements SysMLType =
+    Modifier UserDefinedKeyword* "flow" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+
+  /* ===================================================================================================================
+   * Allocations
+   * ================================================================================================================ */
+
+  symbol scope AllocationDef implements SysMLType =
+    Modifier UserDefinedKeyword* "allocation" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  symbol scope AllocationUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* "allocation"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  AllocationUsageTo extends AllocationUsage =
+    Modifier UserDefinedKeyword* "allocation"?
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "allocate" source:Endpoint
+    "to" target:Endpoint
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  AllocationUsageParam extends AllocationUsageTo =
+    Modifier UserDefinedKeyword* "allocation"?
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "allocate" "(" source:Endpoint "," target:Endpoint ")"
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+  /**
+   * "exists" is not a reserved keyword in SysML and used in the Systems Library. Use "key" to make it a local
+   * keyword.
+   */
+  @Override
+  ExistsExpression implements Expression <90> =
+    key("exists") (InDeclaration || ",")+ ":" Expression ;
+
+  /**
+   * "union" is not a reserved keyword in SysML and used in the Systems Library. Use "key" to make it a local
+   * keyword.
+   */
+  @Override
+  UnionExpression implements Expression <180> =
+    left:Expression
+    operator:key("union")
+    right:Expression;
+
+  /**
+   * Extends the usual FieldAccessExpression by introducing a SysML specific
+   * notation of writing qualified names.
+   * This is syntactically similar to package names:
+   * So when the language shall also allow QualifiedNames as Expressions,
+   * they might be parsed here. E.g. in "x::y::Person", "x" is
+   * parsed as NameExpression, even though it is a package name.
+   * This is to be resolved via SymbolTable.
+   * When resolved, the AST should be restructured directly after the parsing.
+   */
+  SysMLFieldAccessExpression extends FieldAccessExpression implements Expression <290> =
+    Expression "::" Name;
+
+  SysMLInstantiation implements Expression <235> =
+    "new" {noSpace(2)}? MCType Arguments;
+
+  /**
+   * Infinity literal can be negative, but...
+   * - the second token (after "-") must be "INF" and
+   * - there cannot be any space between "-" and "INF"
+   */
+  Infinity implements Literal, SignedLiteral =
+    {cmpToken(2,"INF") && noSpace(2)}? (negative:["-"]) "INF" | "INF" ;
+
+  // Add "nat" to primitives
+  MCPrimitiveTypeWithNat extends MCPrimitiveType implements MCType =
+     primitive: [ "boolean" | key("byte") | "short" | "int"
+                  | key("long") | "char" |"float" | "double" | key("nat") ];
+
+  /**
+   * This part is a little experiment. Instead of wasting ASCII-characters for mathematical symbols, we use the latex
+   * commands and render them nicely using VSCode's "Prettify Symbols Model" extension.
+   * The priority is copied from the LessEqual-, GreaterEqual-, etc. -Expressions (CommonExpressions).
+   */
+  SubsetEquationExpression implements Expression <150>, InfixExpression =
+    left:Expression operator:"\\subseteq" right:Expression ;
+
+  SubsetExpression implements Expression <150>, InfixExpression =
+    left:Expression operator:"\\subset" right:Expression ;
+
+  SupersetEquationExpression implements Expression <150>, InfixExpression =
+    left:Expression operator:"\\supseteq" right:Expression ;
+
+  SupersetExpression implements Expression <150>, InfixExpression =
+    left:Expression operator:"\\supset" right:Expression ;
+
+  ElementOfExpression implements Expression <150>, InfixExpression =
+    left:Expression operator:"\\in" right:Expression ;
+
+  /**
+   * A sequence expression consists of a list of one or more expressions separated by
+   * comma (,) symbols, optionally terminated by a final comma, all surrounded by parentheses (...). Such an
+   * expression specifies sequential invocations of the sequence concatenation function ',' from the
+   * BaseFunctions library model (see 9.4.2). The default behavior for this Function is given by the
+   * specialization SequenceFunctions::',', which concatenates the sequence of values resulting from
+   * evaluating its two arguments. With this behavior, a sequence expression concatenates, in order, the results
+   * of evaluating all the listed expressions.
+   */
+  SysMLSequenceExpression implements Expression <330> = "(" Expression "," (Expression || ",")+ ")" ;
+
+  /**
+   * A sequence expression with a single constituent expression simply evaluates to the value of the contained
+   * expression, as would be expected for a parenthesized expression. The empty sequence () is not actually a
+   * sequence expression, but, rather, an alternative notation for a null expression (see 7.4.9.4).
+   */
+  SysMLNullLiteral implements Literal = "(" ")" ;
+
+  // aka "map". Die Expression muss eine Collection von SysMLTyping sein.
+  SysMLCollectExpression implements Expression =
+    Expression ".{" "in" Name SysMLTyping? ";" inner:Expression "}" ;
+
+  // aka "filter". inner muss boolsch sein.
+  SysMLSelectExpression implements Expression =
+    Expression ".?{" "in" Name Specialization? ";" inner:Expression "}" ;
+
+  // aka "chaining functions".
+  /**
+   * A function operation expression is a special syntax for an invocation
+   * expression in which the first argument is given before the arrow (->) symbol, which is followed by the
+   * name of the function to be invoked and an argument list for any remaining arguments (see 7.4.9.4). This is
+   * useful for chaining invocations in an effective data flow
+   */
+  SysMLFunctionOperationExpression implements Expression =
+    Expression "->" Name ("(" (SysMLParameter || ",")* ")")? ("{" SysMLElement* inner:Expression "}")? ;
+
+  // Eigentlich ist "^" der Name einer CalcDef aus den Domain Libraries
+  CalcDefPowerExpression implements Expression =
+    base:Expression "^" exponent:Expression ;
+
+  PowerExpression implements Expression =
+    base:Expression "**" exponent:Expression ;
+
+  /* Aus MCJavaLiterals.mc4#L173 kopiert */
+  ScientificENotatationLiteral implements NumericLiteral <100> =
+     source:DecimalFloatingPointLiteral ;
+
+  SysMLEnumerationExpression implements Expression =
+    "(" start:Expression ".." end:Expression ")" ;
+
+  SysMLIndexExpression implements Expression =
+    sequence:Expression "#" "(" index:Expression ")" ;
+
+  /* Hier wurde im Vergleich zu MCJavaLiterals.mc4 leicht modifiziert um Clash mit DoubleLiteral zu vermeiden */
+  token DecimalFloatingPointLiteral
+     =   Digits '.' Digits? ExponentPart
+       |        '.' Digits  ExponentPart
+       | Digits             ExponentPart;
+
+  fragment token ExponentPart
+    = ExponentIndicator SignedInteger;
+
+  fragment token ExponentIndicator
+    = 'e' | 'E';
+
+  fragment token SignedInteger
+    = Sign? Digits;
+
+  fragment token Sign
+    = '+' | '-';
+
+  /*
+   * Nach offizieller Dokumentation:
+   * Anders als "&&" und "||" sind diese Operatoren "conditional" oder "lazy" in dem Sinne, dass die rechte Seite nicht
+   * ausgeführt wird, wenn die linke Seite false evaluiert bzw. andersrum bei "or". Sind also eher Control-Statements.
+   */
+  ConditionalAndExpression implements Expression <120>, InfixExpression =
+    left:Expression operator:"and" right:Expression;
+
+  ConditionalAndExpression2 implements Expression <120>, InfixExpression =
+    left:Expression operator:"&" right:Expression;
+
+  ConditionalOrExpression implements Expression <117>, InfixExpression =
+    left:Expression operator:"or" right:Expression;
+
+  ConditionalOrExpression2 implements Expression <117>, InfixExpression =
+    left:Expression operator:"|" right:Expression;
+
+  ConditionalNotExpression implements Expression <190> =
+    "not" Expression;
+
+  // Precedence just above and (120), but below not (190) and below add, mult, equals (130), etc.
+  XorExpression implements Expression <123>, InfixExpression =
+    left:Expression operator:"xor" right:Expression;
+
+  // Ist eigentlich KerML. Benutzt um "myStateUsage:MyStateDef" zur Meta-Klasse "Usage" zu casten
+  /**
+   * the meta-cast operator meta (see [KerML, 7.4.9.2]) may be
+   * used to cast a type element referenced as its first operand to the actual reflective metadata definition (or KerML
+   * metaclass) value for the type
+   */
+  KerMLMetaCastExpression implements Expression =
+    MCQualifiedName "meta" MCType ;
+
+  SysMLCastExpression implements Expression =
+    Expression "as" MCType ;
+
+  TernaryExpression implements Expression =
+    "if" condition:Expression "?" if:Expression "else" else:Expression ;
+
+  KerMLIsTypeExpression implements Expression =
+    Expression "istype" MCType ;
+
+  // Implicitly referencing "this"
+  KerMLIsTypeSelfExpression implements Expression =
+    "istype" MCType ;
+
+  KerMLHasTypeExpression implements Expression =
+    Expression ("hastype" | "@") MCType ;
+
+  // Implicitly referencing "this"
+  KerMLHasTypeSelfExpression implements Expression =
+    ("hastype" | "@") MCType ;
+
+  /**
+   * The extent operator all is syntactically similar to a unary operator, but, instead of an
+   * expression as its operand, it takes a type name. An extent expression evaluates to a sequence of all
+   * instances of the named type.
+   */
+  KerMLExtentExpression implements Expression =
+    "all" MCType ;
+
+  /**
+   * Cover for "attribute whatever = ( //* ... * / );"
+   * The comments will be filtered out at the lexer level (see above, "skip").
+   */
+  SysMLEmptyExpression implements Expression =
+    "(" ")" ;
+
+//-----------------------SysMLOccurences.mc4-------------------------------------------------------
+
+  symbol scope OccurrenceDef implements SysMLType =
+    Modifier UserDefinedKeyword* "occurrence" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  InlineOccurrenceUsage implements IInlineOccurrenceUsage =
+    UserDefinedKeyword* "occurrence" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    DefaultValue?
+    ("{"
+      SysMLElement*
+    "}")? ;
+
+  symbol scope OccurrenceUsage implements OccurrenceUsageElement =
+    Modifier UserDefinedKeyword* "occurrence" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    DefaultValue?
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  // IndividualUsages are parsed as AnonymousReferences with Modifier UserDefinedKeyword* "individual"
+  symbol scope IndividualDef implements SysMLType =
+    Modifier UserDefinedKeyword* "individual" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  /** ==================================================================================================================
+   * An item definition is a kind of occurrence definition (see 7.9) that defines a class of identifiable objects that may be
+   * acted on over time, but which do not necessarily perform actions themselves. An item usage is a usage of one or
+   * more item definitions.
+   * ================================================================================================================ */
+
+  symbol scope ItemDef implements SysMLType =
+    Modifier UserDefinedKeyword* "item" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  symbol scope ItemUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* "item" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    ("(" (SysMLParameter || ",")* ")")? DefaultValue?
+    ("{"
+      SysMLElement*
+     "}" | ";")? ;
+
+//----------------------------SysMLParts.mc4------------------------------------------------
+
+  /**
+   * Causality indication: "instant" = weak causal, "delayed" = strong causal.
+   * Defaults to "delayed".
+   */
+  SysMLCausality implements SysMLElement =
+    "timing" (["instant"] | ["delayed"]) ";" ;
+
+  /*
+   * ##################################################################
+   * Definitions
+   * ##################################################################
+   */
+
+  symbol scope PartDef implements SysMLType =
+    Modifier UserDefinedKeyword* "part" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+   enum SysMLReqType = "UNKNOWN" | "HLR" | "LLR" | "MIXED" ;
+
+   symbolrule PartDef =
+      directRefinements:de.monticore.types.check.SymTypeExpression*
+      requirementType:SysMLReqType;
+
+  symbol scope AttributeDef implements SysMLType =
+    Modifier UserDefinedKeyword* "attribute" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  symbol scope EnumDef implements SysMLType =
+    Modifier UserDefinedKeyword* "enum" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("{"
+      (SysMLElement | AnonEnumUsage)*
+    "}" | ";") ;
+
+  symbol EnumUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* "enum"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  /**
+   * "=10;" is a valid element in the body of an enum def that specializes some other def
+   */
+  AnonEnumUsage =
+    Specialization* DefaultValue
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  symbol scope PortDef implements SysMLType =
+    Modifier UserDefinedKeyword* "port" "def"
+    SysMLIdentifier? Name SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  /*
+   * ##################################################################
+   * Usages
+   * ##################################################################
+   */
+
+  symbol scope PartUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* "part" SysMLIdentifier? Name?
+    SysMLCardinality? Specialization* DefaultValue?
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  /**
+   * Definitions define a type, usages instantiate it. The SysML is not very clear in this regard and mixes types,
+   * definitions, usages, instances, etc. For our purposes (SpesML, MontiBelle), we need typing.
+   * The "types" are extracted from the Specializations, specifically the SysMLTypings. Extraction is done during symbol
+   * table completion. The SymTypeExpressions only store type expressions, not the actual types or any symbols.
+   */
+  symbolrule PartUsage =
+      types:de.monticore.types.check.SymTypeExpression*
+      sysMLIdentifier:Name?
+      method public Optional<de.monticore.lang.sysmlbasis._symboltable.PartDefSymbol> getPartDef() {
+        for (de.monticore.lang.sysmlbasis._ast.ASTSpecialization specialization : this.getAstNode().getSpecializationList()) {
+          for (de.monticore.types.mcbasictypes._ast.ASTMCType specializationType : specialization.getSuperTypesList()) {
+            var qualified = (de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType) specializationType;
+            var name = qualified.getMCQualifiedName().getQName();
+            var partDef = (Optional<de.monticore.lang.sysmlbasis._symboltable.PartDefSymbol>) this.getEnclosingScope().resolvePartDef(name);
+            if(partDef.isPresent()) {
+              return partDef;
+            }
+          }
+        }
+        return Optional.empty();
+      } ;
+
+  symbol scope AttributeUsage implements SysMLElement =
+      Modifier UserDefinedKeyword* "attribute"
+      SysMLIdentifier? Name? SysMLCardinality?
+      Specialization* DefaultValue?
+      ("{"
+        SysMLElement*
+      "}" | ";");
+
+  symbolrule AttributeUsage =
+      types:de.monticore.types.check.SymTypeExpression*
+      in:boolean
+      out:boolean ;
+
+  astrule AttributeUsage =
+      method public Optional<de.monticore.cardinality._ast.ASTCardinality> getCardinality() {
+        for (de.monticore.lang.sysmlbasis._ast.ASTSpecialization s: this.getSpecializationList()) {
+          if(s instanceof de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) {
+            if(((de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) s).isPresentCardinality()) {
+              return Optional.of(((de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) s).getCardinality());
+            }
+          }
+        }
+        return Optional.empty();
+      } ;
+
+  /**
+   * PortUsage has a shadowing scope to allow instantiating attributes from its definition. This is done to store
+   * additional information resulting from tools processing models. This is a work-in-progress concept as part of
+   * @adrian.costin.marin's master thesis.
+   * Example:
+   * The MontiBelle toolchain will, during its runtime, store generated channel names in modified AttributeUsageSymbols
+   * and add these symbols to the PortUsage's scope. Folling invocations of the toolchain are then able to seamlessly
+   * integrate with the existing artifacts (i.e., theories containing specific channel names) only by referencing the
+   * symboltable (and not needing to re-processes the original models).
+   */
+  symbol scope PortUsage implements SysMLElement =
+      Modifier UserDefinedKeyword* "port"
+      SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
+      ("{"
+         SysMLElement*
+       "}" | ";");
+
+  symbolrule PortUsage =
+      types:de.monticore.types.check.SymTypeExpression*
+      conjugatedTypes:de.monticore.types.check.SymTypeExpression*
+      strong:boolean;
+
+  astrule PortUsage =
+    method public Optional<de.monticore.cardinality._ast.ASTCardinality> getCardinality() {
+      for (de.monticore.lang.sysmlbasis._ast.ASTSpecialization s: this.getSpecializationList()) {
+        if(s instanceof de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) {
+          if(((de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) s).isPresentCardinality()) {
+            return Optional.of(((de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) s).getCardinality());
+          }
+        }
+      }
+      return Optional.empty();
+    } ;
+
+  symbol ConnectionUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* "connection"?
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "connect" (
+      (src:Endpoint "to" tgt:Endpoint) |
+      ("(" (SysMLParameter || ",")* ")")
+    )
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
+//----------------------ComponentConnector.mc4----------------------------------------
+
+  /**
+   * Erweiterungen für ComponentTypeSymbols durch Symbol Rules.
+   */
+  interface symbol MildComponent extends ComponentType = Name ;
+
+  /**
+   * Connectors sind keine Symbole, beinhalten aber essentielle Informationen
+   * für Component-Connector-Netzwerke. Wir definieren deswegen das Interface
+   * und fordern, dass ComponentTypeSymbols eine Liste von Connectors bereit halten.
+   * Unsere Java-Implementation sieht vor, dass die Connectors aus dem AST der
+   * jeweiligen konkreten Sprache (zB. SysML oder MontiArc) abgeleitet werden.
+   */
+  interface Connector = source:MCQualifiedName target:MCQualifiedName ;
+
+  /**
+   * Wir fügen hinzu:
+   * - Connectors.   Sind essentielle Information für die Komposition.
+   *                 Subkomponenten können als Symbole im Scope schwimmen.
+   *                 Connectors nicht.
+   */
+  symbolrule MildComponent =
+    connectors: Connector*
+  ;
+
+  /**
+   * Erweiterungen für PortSymbols durch Symbol Rules.
+   */
+  interface symbol MildPort extends Port = Name;
+
+  /**
+   * Wir fügen hinzu:
+   * - Cardinalities. Eine Alternative Implementierung durch Auflösen der
+   *                  Kardinalitäten wäre sehr komplex, da Expressions
+   *                  umgeschrieben werden müssten:
+   *                  "forall i in {1,2,3}. myport[i].nth(7) > 5"
+   *                  müsste vmtl. zu:
+   *                  "forall ch in {channel_1, channel_2,...}. nth(7, ch) > 5"
+   *                  transformiert werden).
+   */
+  symbolrule MildPort =
+    cardinality: Cardinality
+  ;
+
+  /**
+   * Spezifikationen sind eine abstrakte (nicht implementierbare) Variante um
+   * Verhalten anzugeben.
+   */
+  interface symbol MildSpecification = Name ;
+
+  symbolrule MildSpecification =
+    assumptions:Expression*
+    predicates:Expression*
+  ;
+
+  /**
+   * Erweiterungen für SubcomponentSymbols durch Symbol Rules.
+   */
+  interface symbol MildInstance extends Subcomponent = Name ;
+
+  /**
+   * Parameter werden instanziiert und mit Werten belegt. Dabei können diese
+   * Werte natürlich symbolischer Natur sein (zB. ein weitergereichter Parameter
+   * der Vater-Komponente).
+   */
+  interface ParameterValue = variable:Name@Variable value:Expression ;
+
+  /**
+   * Wir fügen hinzu:
+   * - ParameterValues. Wir konnten diese noch nicht in MontiCore's
+   *                    Implementierung finden.
+   */
+  symbolrule MildInstance =
+    parameterValues:ParameterValue*
+  ;
+
+  /**
+   * Automaten erlauben das spezifizieren mithilfe Zustandbasierter,
+   * induktiver Verhaltensmodelle.
+   */
+  interface symbol IAutomaton = Name ;
+
+  /**
+   * Automaten bestehen aus Zustandsraum und initialer Konfiguration
+   * (Zustand und Ausgabe). Transitionen hängen vom Verarbeitungsmodell (Event
+   * vs Normal) ab.
+   */
+  symbolrule IAutomaton =
+    stateSpace: StateSpace
+    initialConfiguration: Configuration*
+  ;
+
+  interface StateSpace =
+    states:MCQualifiedName* variables:Name@Variable* ;
+
+  interface Configuration =
+    State Output* ;
+
+  interface State =
+    Name VariableValue* ;
+
+  interface VariableValue =
+    variable:Name@Variable value:Expression ;
+
+  interface Output =
+    port:Name@Port value:Expression ["comprehension"]? ["listValue"]? ;
+
+  /**
+   * Event-Automaten sind Realisierungen von Automaten.
+   */
+  interface symbol EventAutomaton extends IAutomaton = ;
+
+  /**
+   * Event-Automaten unterscheiden zwischen Transitionen für Events und
+   * Transitionen für den Fortschritt der Zeit.
+   */
+  symbolrule EventAutomaton =
+    eventTransitions: EventTransition*
+    tickTransitions: Transition*
+  ;
+
+  interface EventTransition =
+    port:Name@Port Transition* ;
+
+  interface Transition =
+    start:MCQualifiedName
+    guard:Expression
+    result:Configuration
+    documentation:String;
+
+  /**
+   * "Normale" Automaten sind Realisierungen von Automaten.
+   */
+  interface symbol Automaton extends IAutomaton = ;
+
+  /**
+   * "Normale" Automaten haben syntaktisch gesehen nur "normale" Transitionen.
+   */
+  symbolrule Automaton =
+    transitions: Transition*
+  ;
+
+//-----------------------SysMLv2.mc4-----------------------------------------------------
+
+  start SysMLModel ;
+
+  SysMLModel = SysMLElement* ;
+
+  // Bug in MontiCore führt dazu, dass es nur hier funktioniert
+  @Override
+  token Char = "doNotParseThisEverAgain";
+
+  @Override
+  token Name =
+    ( ( 'a'..'z' | 'A'..'Z' | '_' | '$' )
+      ( 'a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '$' )* )
+    | ( '\'' Anything* '\'' ) :
+    {
+      if(getText().length() > 0 && getText().charAt(0) == '\'')
+        setText(getText().substring(1, getText().length() - 1));
+    } ;
+
+  // Do not include "//*" since its considered a "MultilineNote"
+  @Override
+  token SL_COMMENT =
+    "//" (~'*') (~('\n' | '\r'))* : ->channel(HIDDEN);
+
+  FractalLiteral implements NumericLiteral =
+    { noSpace(2) }? "." post:Digits;
+
+  /**
+   * A user-defined keyword for semantic metadata may also be used to declare a
+   * definition or usage without using any language-defined keyword.
+   */
+  symbol scope UserDefinedDefinition implements SysMLType =
+    Modifier UserDefinedKeyword+ "def" Name SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
+
+  symbol scope UserDefinedUsage implements SysMLElement =
+    Modifier UserDefinedKeyword+ Name SysMLCardinality? Specialization*
+    ("{"
+      SysMLElement*
+    "}" | ";") ;
 }

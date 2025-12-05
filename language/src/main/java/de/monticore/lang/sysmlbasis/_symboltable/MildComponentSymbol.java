@@ -1,4 +1,9 @@
-package de.monticore.lang.componentconnector._symboltable;
+package de.monticore.lang.sysmlbasis._symboltable;
+
+import de.monticore.lang.sysmlbasis._symboltable.AutomatonSymbol;
+import de.monticore.lang.sysmlbasis._symboltable.EventAutomatonSymbol;
+import de.monticore.lang.sysmlbasis._symboltable.MildComponentSymbolTOP;
+import de.monticore.lang.sysmlbasis._symboltable.MildSpecificationSymbol;
 
 public class MildComponentSymbol extends MildComponentSymbolTOP {
 

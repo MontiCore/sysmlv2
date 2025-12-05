@@ -1,15 +1,17 @@
-package de.monticore.lang.componentconnector._symboltable;
+package de.monticore.lang.sysmlbasis._symboltable;
 
-import de.monticore.lang.componentconnector._ast.ASTConfiguration;
-import de.monticore.lang.componentconnector._ast.ASTStateSpace;
-import de.monticore.lang.componentconnector._ast.ASTTransition;
+import de.monticore.lang.sysmlbasis._ast.ASTConfiguration;
+import de.monticore.lang.sysmlbasis._ast.ASTStateSpace;
+import de.monticore.lang.sysmlbasis._ast.ASTTransition;
+import de.monticore.lang.sysmlbasis._symboltable.SysMLBasisSymbols2Json;
+import de.monticore.lang.sysmlbasis._symboltable.IAutomatonSymbolDeSerTOP;
 import de.monticore.symboltable.serialization.json.JsonObject;
 
 import java.util.List;
 
 /**
  * Tote Klasse, die nur zur Befriedigung von MontiCore existiert. MontiCore
- * sieht in der ComponentConnector-Grammatik nur "interface symbol", kann also
+ * sieht in der SysMLBasis-Grammatik nur "interface symbol", kann also
  * nicht zwischen den "echten Implementierungen" (Automaton, EventAutomaton) und
  * deren abstrakter Ober"klasse" (IAutomaton) unterscheiden. Und deswegen
  * generiert MontiCore für alle drei die DeSers, registriert sie im GlobalScope
@@ -21,7 +23,7 @@ public class IAutomatonSymbolDeSer extends IAutomatonSymbolDeSerTOP {
   @Override
   protected void serializeStateSpace(
       ASTStateSpace stateSpace,
-      ComponentConnectorSymbols2Json s2j)
+      SysMLBasisSymbols2Json s2j)
   {
     // not implemented
   }
@@ -29,7 +31,7 @@ public class IAutomatonSymbolDeSer extends IAutomatonSymbolDeSerTOP {
   @Override
   protected void serializeInitialConfiguration(
       List<ASTConfiguration> initialConfiguration,
-      ComponentConnectorSymbols2Json s2j)
+      SysMLBasisSymbols2Json s2j)
   {
     // not implemented
   }
