@@ -2,7 +2,6 @@ package de.monticore.lang.sysmlv2.cocos;
 
 import de.monticore.lang.sysmlactions._ast.ASTAssignmentActionUsage;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTAssignmentActionUsageCoCo;
-import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.types.check.TypeCheck;
 import de.monticore.types3.TypeCheck3;
 

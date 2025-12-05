@@ -4,7 +4,6 @@ package de.monticore.lang.sysmlv2.cocos;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._cocos.SysMLBasisASTSpecializationCoCo;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
-import de.monticore.lang.sysmlv2.types.SysMLSynthesizer;
 import de.monticore.types3.TypeCheck3;
 
 public class SpecializationExistsTC3 implements SysMLBasisASTSpecializationCoCo {

@@ -2,7 +2,6 @@ package de.monticore.lang.sysmlv2.cocos;
 
 import de.monticore.lang.sysmlactions._ast.ASTSendActionUsage;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTSendActionUsageCoCo;
-import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.types3.TypeCheck3;
 
 public class SendActionTypeCheck3 implements SysMLActionsASTSendActionUsageCoCo {
