@@ -4,7 +4,7 @@ package de.monticore.lang;
 /**
  * Basis für die einzelnen SysML-Teilgrammatiken (ich weigere mich noch sie "Teilsprachen" zu nennen).
  */
-grammar SysMLBasis
+grammar SysMLv2
     extends de.monticore.expressions.ExpressionsBasis,       // Expression
             de.monticore.types.MCBasicTypes,                 // MCQualifiedName, MCType
             de.monticore.symbols.OOSymbols,                  // OOTypes, Field
@@ -1422,12 +1422,12 @@ grammar SysMLBasis
   symbolrule PartUsage =
       types:de.monticore.types.check.SymTypeExpression*
       sysMLIdentifier:Name?
-      method public Optional<de.monticore.lang.sysmlbasis._symboltable.PartDefSymbol> getPartDef() {
-        for (de.monticore.lang.sysmlbasis._ast.ASTSpecialization specialization : this.getAstNode().getSpecializationList()) {
+      method public Optional<de.monticore.lang.sysmlv2._symboltable.PartDefSymbol> getPartDef() {
+        for (de.monticore.lang.sysmlv2._ast.ASTSpecialization specialization : this.getAstNode().getSpecializationList()) {
           for (de.monticore.types.mcbasictypes._ast.ASTMCType specializationType : specialization.getSuperTypesList()) {
             var qualified = (de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType) specializationType;
             var name = qualified.getMCQualifiedName().getQName();
-            var partDef = (Optional<de.monticore.lang.sysmlbasis._symboltable.PartDefSymbol>) this.getEnclosingScope().resolvePartDef(name);
+            var partDef = (Optional<de.monticore.lang.sysmlv2._symboltable.PartDefSymbol>) this.getEnclosingScope().resolvePartDef(name);
             if(partDef.isPresent()) {
               return partDef;
             }
@@ -1451,10 +1451,10 @@ grammar SysMLBasis
 
   astrule AttributeUsage =
       method public Optional<de.monticore.cardinality._ast.ASTCardinality> getCardinality() {
-        for (de.monticore.lang.sysmlbasis._ast.ASTSpecialization s: this.getSpecializationList()) {
-          if(s instanceof de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) {
-            if(((de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) s).isPresentCardinality()) {
-              return Optional.of(((de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) s).getCardinality());
+        for (de.monticore.lang.sysmlv2._ast.ASTSpecialization s: this.getSpecializationList()) {
+          if(s instanceof de.monticore.lang.sysmlv2._ast.ASTSysMLTyping) {
+            if(((de.monticore.lang.sysmlv2._ast.ASTSysMLTyping) s).isPresentCardinality()) {
+              return Optional.of(((de.monticore.lang.sysmlv2._ast.ASTSysMLTyping) s).getCardinality());
             }
           }
         }
@@ -1485,10 +1485,10 @@ grammar SysMLBasis
 
   astrule PortUsage =
     method public Optional<de.monticore.cardinality._ast.ASTCardinality> getCardinality() {
-      for (de.monticore.lang.sysmlbasis._ast.ASTSpecialization s: this.getSpecializationList()) {
-        if(s instanceof de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) {
-          if(((de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) s).isPresentCardinality()) {
-            return Optional.of(((de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping) s).getCardinality());
+      for (de.monticore.lang.sysmlv2._ast.ASTSpecialization s: this.getSpecializationList()) {
+        if(s instanceof de.monticore.lang.sysmlv2._ast.ASTSysMLTyping) {
+          if(((de.monticore.lang.sysmlv2._ast.ASTSysMLTyping) s).isPresentCardinality()) {
+            return Optional.of(((de.monticore.lang.sysmlv2._ast.ASTSysMLTyping) s).getCardinality());
           }
         }
       }

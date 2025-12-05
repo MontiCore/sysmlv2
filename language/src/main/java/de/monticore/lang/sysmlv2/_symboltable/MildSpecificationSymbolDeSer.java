@@ -1,8 +1,8 @@
-package de.monticore.lang.sysmlbasis._symboltable;
+package de.monticore.lang.sysmlv2._symboltable;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.lang.sysmlbasis._symboltable.SysMLBasisSymbols2Json;
-import de.monticore.lang.sysmlbasis._symboltable.MildSpecificationSymbolDeSerTOP;
+import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
+import de.monticore.lang.sysmlv2._symboltable.MildSpecificationSymbolDeSerTOP;
 import de.monticore.symboltable.serialization.json.JsonObject;
 
 import java.util.List;
@@ -14,12 +14,12 @@ import java.util.List;
  */
 public class MildSpecificationSymbolDeSer extends MildSpecificationSymbolDeSerTOP {
   @Override
-  protected void serializeAssumptions(List<ASTExpression> assumptions, SysMLBasisSymbols2Json s2j) {
+  protected void serializeAssumptions(List<ASTExpression> assumptions, SysMLv2Symbols2Json s2j) {
     // Does nothing
   }
 
   @Override
-  protected void serializePredicates(List<ASTExpression> predicates, SysMLBasisSymbols2Json s2j) {
+  protected void serializePredicates(List<ASTExpression> predicates, SysMLv2Symbols2Json s2j) {
     // Does nothing
   }
 

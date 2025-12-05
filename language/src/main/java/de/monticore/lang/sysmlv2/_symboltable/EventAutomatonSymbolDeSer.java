@@ -1,11 +1,11 @@
-package de.monticore.lang.sysmlbasis._symboltable;
+package de.monticore.lang.sysmlv2._symboltable;
 
-import de.monticore.lang.sysmlbasis._ast.ASTConfiguration;
-import de.monticore.lang.sysmlbasis._ast.ASTEventTransition;
-import de.monticore.lang.sysmlbasis._ast.ASTStateSpace;
-import de.monticore.lang.sysmlbasis._ast.ASTTransition;
-import de.monticore.lang.sysmlbasis._symboltable.SysMLBasisSymbols2Json;
-import de.monticore.lang.sysmlbasis._symboltable.EventAutomatonSymbolDeSerTOP;
+import de.monticore.lang.sysmlv2._ast.ASTConfiguration;
+import de.monticore.lang.sysmlv2._ast.ASTEventTransition;
+import de.monticore.lang.sysmlv2._ast.ASTStateSpace;
+import de.monticore.lang.sysmlv2._ast.ASTTransition;
+import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
+import de.monticore.lang.sysmlv2._symboltable.EventAutomatonSymbolDeSerTOP;
 import de.monticore.symboltable.serialization.json.JsonObject;
 
 import java.util.List;
@@ -14,7 +14,7 @@ public class EventAutomatonSymbolDeSer extends EventAutomatonSymbolDeSerTOP {
   @Override
   protected void serializeStateSpace(
       ASTStateSpace stateSpace,
-      SysMLBasisSymbols2Json s2j)
+      SysMLv2Symbols2Json s2j)
   {
     // not implemented
   }
@@ -22,7 +22,7 @@ public class EventAutomatonSymbolDeSer extends EventAutomatonSymbolDeSerTOP {
   @Override
   protected void serializeInitialConfiguration(
       List<ASTConfiguration> initialConfiguration,
-      SysMLBasisSymbols2Json s2j)
+      SysMLv2Symbols2Json s2j)
   {
     // not implemented
   }
@@ -30,7 +30,7 @@ public class EventAutomatonSymbolDeSer extends EventAutomatonSymbolDeSerTOP {
   @Override
   protected void serializeEventTransitions(
       List<ASTEventTransition> eventTransitions,
-      SysMLBasisSymbols2Json s2j)
+      SysMLv2Symbols2Json s2j)
   {
     // not implemented
   }
@@ -38,7 +38,7 @@ public class EventAutomatonSymbolDeSer extends EventAutomatonSymbolDeSerTOP {
   @Override
   protected void serializeTickTransitions(
       List<ASTTransition> tickTransitions,
-      SysMLBasisSymbols2Json s2j)
+      SysMLv2Symbols2Json s2j)
   {
     // not implemented
   }

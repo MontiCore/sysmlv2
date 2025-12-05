@@ -1,8 +1,8 @@
-package de.monticore.lang.sysmlbasis._symboltable;
+package de.monticore.lang.sysmlv2._symboltable;
 
 import de.monticore.cardinality._ast.ASTCardinality;
-import de.monticore.lang.sysmlbasis._symboltable.SysMLBasisSymbols2Json;
-import de.monticore.lang.sysmlbasis._symboltable.MildPortSymbolDeSerTOP;
+import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
+import de.monticore.lang.sysmlv2._symboltable.MildPortSymbolDeSerTOP;
 import de.monticore.symbols.compsymbols._symboltable.Timing;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.SymTypeExpression;
@@ -12,18 +12,18 @@ import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 
 public class MildPortSymbolDeSer extends MildPortSymbolDeSerTOP {
-  @Override protected void serializeCardinality(ASTCardinality cardinality, SysMLBasisSymbols2Json s2j) {
+  @Override protected void serializeCardinality(ASTCardinality cardinality, SysMLv2Symbols2Json s2j) {
     // TODO
     Log.error("0xTODO3 Implement me");
   }
 
   @Override
-  protected void serializeType(SymTypeExpression type, SysMLBasisSymbols2Json s2j) {
+  protected void serializeType(SymTypeExpression type, SysMLv2Symbols2Json s2j) {
     SymTypeExpressionDeSer.serializeMember(s2j.getJsonPrinter(), "type", type);
   }
 
   @Override
-  protected void serializeTiming(Timing timing, SysMLBasisSymbols2Json s2j) {
+  protected void serializeTiming(Timing timing, SysMLv2Symbols2Json s2j) {
     s2j.getJsonPrinter().member("timing", timing.getName());
   }
 

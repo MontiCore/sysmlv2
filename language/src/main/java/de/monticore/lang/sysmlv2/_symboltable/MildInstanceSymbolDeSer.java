@@ -1,8 +1,8 @@
-package de.monticore.lang.sysmlbasis._symboltable;
+package de.monticore.lang.sysmlv2._symboltable;
 
-import de.monticore.lang.sysmlbasis._ast.ASTParameterValue;
-import de.monticore.lang.sysmlbasis._symboltable.SysMLBasisSymbols2Json;
-import de.monticore.lang.sysmlbasis._symboltable.MildInstanceSymbolDeSerTOP;
+import de.monticore.lang.sysmlv2._ast.ASTParameterValue;
+import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
+import de.monticore.lang.sysmlv2._symboltable.MildInstanceSymbolDeSerTOP;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.CompKindExpression;
 import de.monticore.types.check.CompKindExpressionDeSer;
@@ -15,13 +15,13 @@ public class MildInstanceSymbolDeSer extends MildInstanceSymbolDeSerTOP {
 
   @Override protected void serializeParameterValues(
       List<ASTParameterValue> parameterValues,
-      SysMLBasisSymbols2Json s2j)
+      SysMLv2Symbols2Json s2j)
   {
     // TODO
     Log.error("0xTODO0 Implement me");
   }
 
-  @Override protected void serializeType(CompKindExpression type, SysMLBasisSymbols2Json s2j) {
+  @Override protected void serializeType(CompKindExpression type, SysMLv2Symbols2Json s2j) {
     s2j.getJsonPrinter().memberJson("type", deSer.serialize(type));
   }
 
