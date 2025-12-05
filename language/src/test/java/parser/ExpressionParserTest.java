@@ -1,9 +1,9 @@
 package parser;
 
 import de.monticore.expressions.commonexpressions._ast.ASTCallExpression;
-import de.monticore.lang.sysmlexpressions._ast.ASTElementOfExpression;
-import de.monticore.lang.sysmlexpressions._ast.ASTSysMLInstantiation;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
+import de.monticore.lang.sysmlv2._ast.ASTElementOfExpression;
+import de.monticore.lang.sysmlv2._ast.ASTSysMLInstantiation;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;

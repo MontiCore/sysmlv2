@@ -1,10 +1,10 @@
 package parser;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
-import de.monticore.lang.sysmlexpressions._ast.ASTCalcDefPowerExpression;
-import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
+import de.monticore.lang.sysmlv2._ast.ASTAttributeUsage;
+import de.monticore.lang.sysmlv2._ast.ASTCalcDefPowerExpression;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
