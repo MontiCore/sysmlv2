@@ -35,6 +35,39 @@ jobs:
             -PgithubUser=${{env.GITHUB_ACTOR}}
             -PgithubToken=${{secrets.GITHUB_TOKEN}}
 
+  parser-performance:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v4
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{env.GRADLE_VERSION}}
+      - name: Run parser test
+        run: gradle :language:test --tests "parser.OfficialParserTest.testParseAll" ${{env.GRADLE_CLI_OPTS}}
+          -PgithubUser=${{env.GITHUB_ACTOR}}
+          -PgithubToken=${{secrets.GITHUB_TOKEN}}
+      - name: Display test execution time
+        if: always()
+        run: |
+          if [ -f "language/target/test-results/test/TEST-parser.OfficialParserTest.xml" ]; then
+            TEST_TIME=$(grep -oP 'time="\K[^"]+' language/target/test-results/test/TEST-parser.OfficialParserTest.xml | head -1 || echo "N/A")
+            if [ "$TEST_TIME" != "N/A" ]; then
+              TOTAL_SECONDS=$(echo "$TEST_TIME" | awk '{printf "%.0f", $1}')
+              MINUTES=$((TOTAL_SECONDS / 60))
+              SECONDS=$((TOTAL_SECONDS % 60))
+              echo "=========================================="
+              echo "Parser Test Execution Time: ${MINUTES}m ${SECONDS}s"
+              echo "=========================================="
+            else
+              echo "Could not extract test time from report"
+            fi
+          else
+            echo "Test report not found at language/target/test-results/test/TEST-parser.OfficialParserTest.xml"
+          fi
+
   deploy:
     permissions:
       packages: write
