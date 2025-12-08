@@ -1051,37 +1051,7 @@ grammar SysMLv2
        SysMLElement*
      "}" | ";") ;
 
-  /**
-   * "exists" is not a reserved keyword in SysML and used in the Systems Library. Use "key" to make it a local
-   * keyword.
-   */
-  ExistsExpression implements Expression <90> =
-    key("exists") (InDeclaration || ",")+ ":" Expression ;
 
-  /**
-   * "union" is not a reserved keyword in SysML and used in the Systems Library. Use "key" to make it a local
-   * keyword.
-   */
-  UnionExpression implements Expression <180> =
-    left:Expression
-    operator:key("union")
-    right:Expression;
-
-  /**
-   * Extends the usual FieldAccessExpression by introducing a SysML specific
-   * notation of writing qualified names.
-   * This is syntactically similar to package names:
-   * So when the language shall also allow QualifiedNames as Expressions,
-   * they might be parsed here. E.g. in "x::y::Person", "x" is
-   * parsed as NameExpression, even though it is a package name.
-   * This is to be resolved via SymbolTable.
-   * When resolved, the AST should be restructured directly after the parsing.
-   */
-  SysMLFieldAccessExpression extends FieldAccessExpression implements Expression <290> =
-    Expression "::" Name;
-
-  SysMLInstantiation implements Expression <235> =
-    "new" {noSpace(2)}? MCType Arguments;
 
   /**
    * Infinity literal can be negative, but...
@@ -1096,25 +1066,6 @@ grammar SysMLv2
      primitive: [ "boolean" | key("byte") | "short" | "int"
                   | key("long") | "char" |"float" | "double" | key("nat") ];
 
-  /**
-   * This part is a little experiment. Instead of wasting ASCII-characters for mathematical symbols, we use the latex
-   * commands and render them nicely using VSCode's "Prettify Symbols Model" extension.
-   * The priority is copied from the LessEqual-, GreaterEqual-, etc. -Expressions (CommonExpressions).
-   */
-  SubsetEquationExpression implements Expression <150>, InfixExpression =
-    left:Expression operator:"\\subseteq" right:Expression ;
-
-  SubsetExpression implements Expression <150>, InfixExpression =
-    left:Expression operator:"\\subset" right:Expression ;
-
-  SupersetEquationExpression implements Expression <150>, InfixExpression =
-    left:Expression operator:"\\supseteq" right:Expression ;
-
-  SupersetExpression implements Expression <150>, InfixExpression =
-    left:Expression operator:"\\supset" right:Expression ;
-
-  ElementOfExpression implements Expression <150>, InfixExpression =
-    left:Expression operator:"\\in" right:Expression ;
 
   /**
    * A sequence expression consists of a list of one or more expressions separated by
@@ -1127,20 +1078,6 @@ grammar SysMLv2
    */
   SysMLSequenceExpression implements Expression <330> = "(" Expression "," (Expression || ",")+ ")" ;
 
-  /**
-   * A sequence expression with a single constituent expression simply evaluates to the value of the contained
-   * expression, as would be expected for a parenthesized expression. The empty sequence () is not actually a
-   * sequence expression, but, rather, an alternative notation for a null expression (see 7.4.9.4).
-   */
-  SysMLNullLiteral implements Literal = "(" ")" ;
-
-  // aka "map". Die Expression muss eine Collection von SysMLTyping sein.
-  SysMLCollectExpression implements Expression =
-    Expression ".{" "in" Name SysMLTyping? ";" inner:Expression "}" ;
-
-  // aka "filter". inner muss boolsch sein.
-  SysMLSelectExpression implements Expression =
-    Expression ".?{" "in" Name Specialization? ";" inner:Expression "}" ;
 
   // aka "chaining functions".
   /**
@@ -1152,13 +1089,6 @@ grammar SysMLv2
   SysMLFunctionOperationExpression implements Expression =
     Expression "->" Name ("(" (Name || ",")* ")")? ("{" AnonymousReference* inner:Expression "}")? ;
 
-  // Eigentlich ist "^" der Name einer CalcDef aus den Domain Libraries
-  CalcDefPowerExpression implements Expression =
-    base:Expression "^" exponent:Expression ;
-
-  PowerExpression implements Expression =
-    base:Expression "**" exponent:Expression ;
-
 
   SysMLEnumerationExpression implements Expression =
     "(" start:Expression ".." end:Expression ")" ;
@@ -1167,73 +1097,10 @@ grammar SysMLv2
     sequence:Expression "#" "(" index:Expression ")" ;
 
 
-  /*
-   * Nach offizieller Dokumentation:
-   * Anders als "&&" und "||" sind diese Operatoren "conditional" oder "lazy" in dem Sinne, dass die rechte Seite nicht
-   * ausgeführt wird, wenn die linke Seite false evaluiert bzw. andersrum bei "or". Sind also eher Control-Statements.
-   */
-  ConditionalAndExpression implements Expression <120>, InfixExpression =
-    left:Expression operator:"and" right:Expression;
-
-  ConditionalAndExpression2 implements Expression <120>, InfixExpression =
-    left:Expression operator:"&" right:Expression;
 
   ConditionalOrExpression implements Expression <117>, InfixExpression =
     left:Expression operator:"or" right:Expression;
 
-  ConditionalOrExpression2 implements Expression <117>, InfixExpression =
-    left:Expression operator:"|" right:Expression;
-
-  ConditionalNotExpression implements Expression <190> =
-    "not" Expression;
-
-  // Precedence just above and (120), but below not (190) and below add, mult, equals (130), etc.
-  XorExpression implements Expression <123>, InfixExpression =
-    left:Expression operator:"xor" right:Expression;
-
-  // Ist eigentlich KerML. Benutzt um "myStateUsage:MyStateDef" zur Meta-Klasse "Usage" zu casten
-  /**
-   * the meta-cast operator meta (see [KerML, 7.4.9.2]) may be
-   * used to cast a type element referenced as its first operand to the actual reflective metadata definition (or KerML
-   * metaclass) value for the type
-   */
-  KerMLMetaCastExpression implements Expression =
-    MCQualifiedName "meta" MCType ;
-
-  SysMLCastExpression implements Expression =
-    Expression "as" MCType ;
-
-  TernaryExpression implements Expression =
-    "if" condition:Expression "?" if:Expression "else" else:Expression ;
-
-  KerMLIsTypeExpression implements Expression =
-    Expression "istype" MCType ;
-
-  // Implicitly referencing "this"
-  KerMLIsTypeSelfExpression implements Expression =
-    "istype" MCType ;
-
-  KerMLHasTypeExpression implements Expression =
-    Expression ("hastype" | "@") MCType ;
-
-  // Implicitly referencing "this"
-  KerMLHasTypeSelfExpression implements Expression =
-    ("hastype" | "@") MCType ;
-
-  /**
-   * The extent operator all is syntactically similar to a unary operator, but, instead of an
-   * expression as its operand, it takes a type name. An extent expression evaluates to a sequence of all
-   * instances of the named type.
-   */
-  KerMLExtentExpression implements Expression =
-    "all" MCType ;
-
-  /**
-   * Cover for "attribute whatever = ( //* ... * / );"
-   * The comments will be filtered out at the lexer level (see above, "skip").
-   */
-  SysMLEmptyExpression implements Expression =
-    "(" ")" ;
 
 //-----------------------SysMLOccurences.mc4-------------------------------------------------------
 
@@ -1668,14 +1535,8 @@ grammar SysMLv2
   MinusExpression implements Expression <170>, InfixExpression =
     left:Expression operator:"-" right:Expression;
 
-  PrefLessThanExpression implements Expression <150> =
-      operator:"preFL" left:Expression right:Expression;
-
   LessThanExpression implements Expression <150>, InfixExpression =
     left:Expression operator:"<" right:Expression;
-
-  PrefGreaterThanExpression implements Expression <150> =
-        operator:"preFG" left:Expression right:Expression;
 
   GreaterThanExpression implements Expression <150>, InfixExpression =
     left:Expression operator:">" right:Expression;
