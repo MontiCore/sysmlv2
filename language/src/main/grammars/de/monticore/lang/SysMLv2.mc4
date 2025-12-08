@@ -148,29 +148,10 @@ grammar SysMLv2
       return getPartsList().get(getPartsList().size()-1);
     } ;
 
-  token MultilineNote =
-     "//*" .*? "*/"  : -> channel(HIDDEN);
-
-  token SysMLComment =
-    ( 'c''o''m''m''e''n''t' (WS* Name)?
-      (WS* 'a''b''o''u''t' WS* Name)?
-      (WS* 'l''o''c''a''l''e' WS* '"' Name '"')?
-    |
-      WS* 'l''o''c''a''l''e' WS* '"' Name '"'
-    )
-    WS* ML_COMMENT : -> channel(HIDDEN);
-
-  token SysMLDoc =
-    'd''o''c' (WS* Name)?
-    (WS* 'l''o''c''a''l''e' WS* '"' Name '"')?
-    WS* ML_COMMENT : -> channel(HIDDEN) ;
 
   TextualRepresentation implements SysMLElement =
     ("rep" Name)? "language" String ;
 
-  /** Alles ausser Anführungszeichen */
-  fragment token Anything
-      = ~ ('\'') ;
 
   SysMLIdentifier = "<" Name ">" ;
 
@@ -598,13 +579,10 @@ grammar SysMLv2
     "}" | ";") ;
 
   symbol scope ConstraintUsage implements SysMLElement =
-    Modifier (
-      (["require"] | ["assume"] | ["assert"]) ["not"]? UserDefinedKeyword* "constraint"?
-      | UserDefinedKeyword* "constraint"
-    )
-    Name? SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
+     (
+      (["require"] | ["assume"] | ["assert"]) ["not"]?  "constraint"?
+    ) Name?
     ("{"
-      SysMLElement*
       Expression?
     "}" | ";") ;
 
@@ -1172,7 +1150,7 @@ grammar SysMLv2
    * useful for chaining invocations in an effective data flow
    */
   SysMLFunctionOperationExpression implements Expression =
-    Expression "->" Name ("(" (SysMLParameter || ",")* ")")? ("{" SysMLElement* inner:Expression "}")? ;
+    Expression "->" Name ("(" (Name || ",")* ")")? ("{" AnonymousReference* inner:Expression "}")? ;
 
   // Eigentlich ist "^" der Name einer CalcDef aus den Domain Libraries
   CalcDefPowerExpression implements Expression =
@@ -1181,9 +1159,6 @@ grammar SysMLv2
   PowerExpression implements Expression =
     base:Expression "**" exponent:Expression ;
 
-  /* Aus MCJavaLiterals.mc4#L173 kopiert */
-  ScientificENotatationLiteral implements NumericLiteral <100> =
-     source:DecimalFloatingPointLiteral ;
 
   SysMLEnumerationExpression implements Expression =
     "(" start:Expression ".." end:Expression ")" ;
@@ -1191,23 +1166,6 @@ grammar SysMLv2
   SysMLIndexExpression implements Expression =
     sequence:Expression "#" "(" index:Expression ")" ;
 
-  /* Hier wurde im Vergleich zu MCJavaLiterals.mc4 leicht modifiziert um Clash mit DoubleLiteral zu vermeiden */
-  token DecimalFloatingPointLiteral
-     =   Digits '.' Digits? ExponentPart
-       |        '.' Digits  ExponentPart
-       | Digits             ExponentPart;
-
-  fragment token ExponentPart
-    = ExponentIndicator SignedInteger;
-
-  fragment token ExponentIndicator
-    = 'e' | 'E';
-
-  fragment token SignedInteger
-    = Sign? Digits;
-
-  fragment token Sign
-    = '+' | '-';
 
   /*
    * Nach offizieller Dokumentation:
@@ -1645,28 +1603,9 @@ grammar SysMLv2
 
 //-----------------------SysMLv2.mc4-----------------------------------------------------
 
-  start SysMLModel ;
+  start ConstraintUsage ;
 
   SysMLModel = SysMLElement* ;
-
-  // Bug in MontiCore führt dazu, dass es nur hier funktioniert
-  @Override
-  token Char = "doNotParseThisEverAgain";
-
-  @Override
-  token Name =
-    ( ( 'a'..'z' | 'A'..'Z' | '_' | '$' )
-      ( 'a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '$' )* )
-    | ( '\'' Anything* '\'' ) :
-    {
-      if(getText().length() > 0 && getText().charAt(0) == '\'')
-        setText(getText().substring(1, getText().length() - 1));
-    } ;
-
-  // Do not include "//*" since its considered a "MultilineNote"
-  @Override
-  token SL_COMMENT =
-    "//" (~'*') (~('\n' | '\r'))* : ->channel(HIDDEN);
 
   FractalLiteral implements NumericLiteral =
     { noSpace(2) }? "." post:Digits;

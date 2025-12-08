@@ -1,5 +1,6 @@
 package de.monticore.lang.sysmlv2;
 
+import de.monticore.lang.sysmlv2._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 
 import java.nio.file.Paths;
@@ -16,7 +17,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
   }
 
   @Override
-  public ASTSysMLModel parse(String model) {
+  public ASTConstraintUsage parse(String model) {
     var startTime = System.nanoTime();
     var ast = super.parse(model);
     var elapsed = System.nanoTime() - startTime;
