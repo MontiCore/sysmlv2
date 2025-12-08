@@ -11,13 +11,9 @@ grammar SysMLv2
             de.monticore.Cardinality,                        // Cardinality
             de.monticore.UMLModifier,                        // Modifier
             de.monticore.literals.MCCommonLiterals,          // From Expressions: SignedLiteral
-            de.monticore.expressions.CommonExpressions,      // FieldAccessExpression
-            de.monticore.ocl.OCLExpressions,                 // ExistsExpression
-            de.monticore.ocl.SetExpressions,                 // UnionExpression
+            //de.monticore.expressions.CommonExpressions,      // FieldAccessExpression
             de.monticore.symbols.CompSymbols,                // From CC
-            de.monticore.types.MCSimpleGenericTypes,         // From v2
-            de.monticore.expressions.AssignmentExpressions,
-            de.monticore.expressions.StreamExpressions
+            de.monticore.types.MCSimpleGenericTypes         // From v2
 {
 
   KerMLCardinality extends Cardinality =
@@ -1081,7 +1077,6 @@ grammar SysMLv2
    * "exists" is not a reserved keyword in SysML and used in the Systems Library. Use "key" to make it a local
    * keyword.
    */
-  @Override
   ExistsExpression implements Expression <90> =
     key("exists") (InDeclaration || ",")+ ":" Expression ;
 
@@ -1089,7 +1084,6 @@ grammar SysMLv2
    * "union" is not a reserved keyword in SysML and used in the Systems Library. Use "key" to make it a local
    * keyword.
    */
-  @Override
   UnionExpression implements Expression <180> =
     left:Expression
     operator:key("union")
@@ -1692,4 +1686,67 @@ grammar SysMLv2
     ("{"
       SysMLElement*
     "}" | ";") ;
+
+
+
+  // ---------------------------------------------------------------
+  InDeclaration =
+      MCType  (InDeclarationVariable || ",")+
+    | MCType? (InDeclarationVariable || ",")+ ("in" Expression)
+    ;
+
+  /**
+   * ASTInDeclarationVariable defines the name of the variable
+   * used in the InDeclaration nonterminal
+   * ASTInDeclarationVariable also creates VariableSymbols.
+   *
+   * @attribute Name
+   *            name of the variable.
+   *
+   * Variable defines an according symbol.
+   */
+  InDeclarationVariable implements Variable = Name;
+
+
+
+  interface InfixExpression =
+            left:Expression operator:"" right:Expression;
+
+  CallExpression implements Expression <240> =
+    Expression Arguments;
+
+  FieldAccessExpression implements Expression <290> =
+    Expression "." Name;
+
+  MinusPrefixExpression implements Expression <210> =
+    "-" Expression;
+
+  /*=================================================================*/
+
+  PlusExpression implements Expression <170>, InfixExpression =
+    left:Expression operator:"+" right:Expression;
+
+  MinusExpression implements Expression <170>, InfixExpression =
+    left:Expression operator:"-" right:Expression;
+
+  PrefLessThanExpression implements Expression <150> =
+      operator:"preFL" left:Expression right:Expression;
+
+  LessThanExpression implements Expression <150>, InfixExpression =
+    left:Expression operator:"<" right:Expression;
+
+  PrefGreaterThanExpression implements Expression <150> =
+        operator:"preFG" left:Expression right:Expression;
+
+  GreaterThanExpression implements Expression <150>, InfixExpression =
+    left:Expression operator:">" right:Expression;
+
+  ConditionalExpression implements Expression <114> =
+    condition:Expression "?" trueExpression:Expression ":" falseExpression:Expression;
+
+  BracketExpression implements Expression <310>
+    =  "(" Expression ")";
+
+  ArrayAccessExpression implements Expression <250> =
+    Expression "[" indexExpression:Expression "]";
 }

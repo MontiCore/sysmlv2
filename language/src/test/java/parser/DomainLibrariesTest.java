@@ -172,7 +172,7 @@ public class DomainLibrariesTest {
 
   @Test
   public void testParseQuantities() {
-    var ast = tool.parse(domainLibraries + "/Quantities and Units/Quantities.sysml");
+    var ast = tool.parse(domainLibraries + "/Analysis/SampledFunctions.sysml");
     assertThat(Log.getFindings()).isEmpty();
   }
 
