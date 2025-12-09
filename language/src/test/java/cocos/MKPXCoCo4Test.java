@@ -40,7 +40,7 @@ public class MKPXCoCo4Test {
   }
 
   @Nested
-  public class PortExistenceTests {
+  public class MKPXCoCo4Tests {
     @Test
     public void testValid() throws IOException {
       String validModel =
