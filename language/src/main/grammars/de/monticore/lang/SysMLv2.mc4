@@ -12,8 +12,8 @@ grammar SysMLv2
             de.monticore.UMLModifier,                        // Modifier
             de.monticore.literals.MCCommonLiterals,          // From Expressions: SignedLiteral
             //de.monticore.expressions.CommonExpressions,      // FieldAccessExpression
-            de.monticore.symbols.CompSymbols,                // From CC
-            de.monticore.types.MCSimpleGenericTypes         // From v2
+            de.monticore.symbols.CompSymbols                // From CC
+            //de.monticore.types.MCSimpleGenericTypes         // From v2
 {
 
   KerMLCardinality extends Cardinality =
@@ -309,8 +309,6 @@ grammar SysMLv2
    * conditions are specified in the same way as for packages, by using the keyword filter followed by a Boolean-valued,
    * model-level evaluable expression.
    */
-  FilterCondition implements SysMLElement =
-    key("filter") Expression ";" ;
 
   /**
    * Metadata is additional data that can be used to annotate
@@ -1058,8 +1056,8 @@ grammar SysMLv2
 
   // Add "nat" to primitives
   MCPrimitiveTypeWithNat extends MCPrimitiveType implements MCType =
-     primitive: [ "boolean" | key("byte") | "short" | "int"
-                  | key("long") | "char" |"float" | "double" | key("nat") ];
+     primitive: [ "boolean" | "byte" | "short" | "int"
+                  | "long" | "char" |"float" | "double" | "nat" ];
 
 
   /**
