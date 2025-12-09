@@ -578,7 +578,7 @@ grammar SysMLv2
       (["require"] | ["assume"] | ["assert"]) ["not"]?  "constraint"?
     ) Name?
     ("{"
-      Expression?
+      ConditionalOrExpression?
     "}" | ";") ;
 
   ConstraintReference implements SysMLElement =
