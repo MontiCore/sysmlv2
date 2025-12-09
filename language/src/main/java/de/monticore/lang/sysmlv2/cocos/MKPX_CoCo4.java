@@ -55,11 +55,7 @@ public class MKPX_CoCo4 implements SysMLPartsASTConnectionUsageCoCo {
 
       var partDefOpt = partOpt.get().getPartDef();
       if (partDefOpt.isEmpty()) {
-        Log.error(
-            "0xMKPX04 The subcomponent '" + partName + "' does not reference a valid part definition.",
-            conn.get_SourcePositionStart(),
-            conn.get_SourcePositionEnd()
-        );
+        // CoCo3
         return;
       }
 
