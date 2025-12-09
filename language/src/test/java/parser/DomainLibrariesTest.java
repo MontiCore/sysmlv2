@@ -216,8 +216,8 @@ public class DomainLibrariesTest {
     System.err.println("parse " + (System.currentTimeMillis() - now));
     now = System.currentTimeMillis();
     var bv = new SysMLv2ASTBuildVisitor("todo", tokens);
-    prc.accept(bv);
-    System.err.println("createAST " + (System.currentTimeMillis() - now));
+    var ast = prc.accept(bv);
+    System.err.println("createAST " + ast + " " + (System.currentTimeMillis() - now));
   }
 
   @Test

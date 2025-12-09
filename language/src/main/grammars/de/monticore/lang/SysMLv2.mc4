@@ -1082,19 +1082,19 @@ grammar SysMLv2
    * useful for chaining invocations in an effective data flow
    */
   SysMLFunctionOperationExpression implements Expression =
-    SysMLEnumerationExpression "->" Name ("(" (Name || ",")* ")")? ("{" AnonymousReference* inner:Expression "}")? ;
+    SysMLEnumerationExpression "->" Name ("(" (Name || ",")* ")")? ("{" "in" Name ";"  inner:BracketExpression "}")? ;
 
 
   SysMLEnumerationExpression implements Expression =
-    "(" start:Expression ".." end:Expression ")" ;
+    "(" start:LiteralExpression ".." end:MinusExpression ")" ;
 
   SysMLIndexExpression implements Expression =
-    sequence:Expression "#" "(" index:Expression ")" ;
+    sequence:FieldAccessExpression "#" "(" index:NameExpression ")" ;
 
 
 
-  ConditionalOrExpression implements Expression <117>, InfixExpression =
-    left:Expression operator:"or" right:Expression;
+  ConditionalOrExpression implements Expression <117> =
+    left:SysMLFunctionOperationExpression operator:"or" right:SysMLFunctionOperationExpression;
 
 
 //-----------------------SysMLOccurences.mc4-------------------------------------------------------
@@ -1517,7 +1517,7 @@ grammar SysMLv2
     Expression Arguments;
 
   FieldAccessExpression implements Expression <290> =
-    Expression "." Name;
+    NameExpression "." Name;
 
   MinusPrefixExpression implements Expression <210> =
     "-" Expression;
@@ -1527,11 +1527,11 @@ grammar SysMLv2
   PlusExpression implements Expression <170>, InfixExpression =
     left:Expression operator:"+" right:Expression;
 
-  MinusExpression implements Expression <170>, InfixExpression =
-    left:Expression operator:"-" right:Expression;
+  MinusExpression implements Expression <170> =
+    left:NameExpression operator:"-" right:LiteralExpression;
 
-  LessThanExpression implements Expression <150>, InfixExpression =
-    left:Expression operator:"<" right:Expression;
+  LessThanExpression implements Expression <150> =
+    left:SysMLIndexExpression operator:"<" right:SysMLIndexExpression;
 
   GreaterThanExpression implements Expression <150>, InfixExpression =
     left:Expression operator:">" right:Expression;
@@ -1540,7 +1540,7 @@ grammar SysMLv2
     condition:Expression "?" trueExpression:Expression ":" falseExpression:Expression;
 
   BracketExpression implements Expression <310>
-    =  "(" Expression ")";
+    =  "(" LessThanExpression ")";
 
   ArrayAccessExpression implements Expression <250> =
     Expression "[" indexExpression:Expression "]";
