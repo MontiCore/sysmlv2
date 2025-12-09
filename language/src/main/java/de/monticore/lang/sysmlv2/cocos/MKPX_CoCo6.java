@@ -12,9 +12,9 @@ import de.se_rwth.commons.logging.Log;
 import java.util.List;
 
 /**
- * MKPX_CoCo6:
- * Inputs von Oberkomponenten können nur zu Inputs von Subkomponenten oder Outputs der
- * Oberkomponenten verbunden werden.
+ * MKPX_CoCo6 
+ * (alternative Formulierung):
+ * Inputs von Oberkomponenten können nicht zu Outputs von Subkomponenten verbunden werden.
  */
 public class MKPX_CoCo6 implements SysMLPartsASTConnectionUsageCoCo {
 
