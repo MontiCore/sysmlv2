@@ -18,6 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MKPXCoCo6Test {
 
+  private static final String MODEL_PATH = "src/test/resources/parser";
+
+  private SysMLv2Parser parser = SysMLv2Mill.parser();
+
   @BeforeAll
   public static void init() {
     Log.init();
