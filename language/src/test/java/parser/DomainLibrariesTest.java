@@ -5,7 +5,16 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._ast.ASTAttributeUsage;
 //import de.monticore.lang.sysmlv2._ast.ASTCalcDefPowerExpression;
+import de.monticore.lang.sysmlv2._ast.ASTConstraintUsage;
+import de.monticore.lang.sysmlv2._parser.SysMLv2ASTBuildVisitor;
+import de.monticore.lang.sysmlv2._parser.SysMLv2AntlrLexer;
+import de.monticore.lang.sysmlv2._parser.SysMLv2AntlrParser;
 import de.se_rwth.commons.logging.Log;
+import org.antlr.v4.runtime.ConsoleErrorListener;
+import org.antlr.v4.runtime.DiagnosticErrorListener;
+import org.antlr.v4.runtime.atn.ATNSimulator;
+import org.antlr.v4.runtime.atn.ParserATNSimulator;
+import org.antlr.v4.runtime.atn.PredictionMode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -171,9 +181,43 @@ public class DomainLibrariesTest {
   }
 
   @Test
-  public void testParseQuantities() {
-    var ast = tool.parse(domainLibraries + "/Analysis/SampledFunctions.sysml");
+  public void testParseQuantities() throws Exception {
+    long now = System.currentTimeMillis();
+    var x = SysMLv2AntlrParser.ABOUT92611469;
+    System.err.println(System.currentTimeMillis() - now);
+/*    var ast = tool.parse(domainLibraries + "/Analysis/SampledFunctions.sysml");
     assertThat(Log.getFindings()).isEmpty();
+
+    var ast2 = tool.parse(domainLibraries + "/Analysis/SampledFunctions.sysml");
+    assertThat(Log.getFindings()).isEmpty();
+*/
+//    SysMLv2Mill.parser().parse_StringExpression("1+1");
+    System.err.println("parseInit " + (System.currentTimeMillis() - now));
+      now = System.currentTimeMillis();
+
+    String fileName = domainLibraries + "/Analysis/SampledFunctions.sysml";
+    SysMLv2AntlrLexer lexer = new SysMLv2AntlrLexer(org.antlr.v4.runtime.CharStreams.fromFileName(fileName));
+    org.antlr.v4.runtime.CommonTokenStream tokens = new org.antlr.v4.runtime.CommonTokenStream(lexer);
+    SysMLv2AntlrParser parser = new SysMLv2AntlrParser(tokens);
+    lexer.setMCParser(parser);
+    lexer.removeErrorListeners();
+    de.monticore.lang.sysmlv2._ast.ASTConstraintUsage astPV;
+    now = System.currentTimeMillis();
+
+    //ParserATNSimulator.retry_debug=true;
+    parser.removeErrorListeners();
+    parser.addErrorListener(new DiagnosticErrorListener());
+    parser.getInterpreter().setPredictionMode(PredictionMode.LL_EXACT_AMBIG_DETECTION);
+
+    parser.addErrorListener(new ConsoleErrorListener());
+
+    var prc = parser.constraintUsage();
+    //parser.parse(domainLibraries + "/Analysis/SampledFunctions.sysml");
+    System.err.println("parse " + (System.currentTimeMillis() - now));
+    now = System.currentTimeMillis();
+    var bv = new SysMLv2ASTBuildVisitor("todo", tokens);
+    prc.accept(bv);
+    System.err.println("createAST " + (System.currentTimeMillis() - now));
   }
 
   @Test

@@ -4,7 +4,8 @@ public class ASTAnonymousReference extends ASTAnonymousReferenceTOP {
 
   @Override
   public String getName() {
-    return getSrc().getQName();
+    return null; //TODO
+//    return getSrc().getQName();
   }
 
 }

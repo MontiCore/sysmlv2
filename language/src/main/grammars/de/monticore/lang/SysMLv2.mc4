@@ -19,25 +19,16 @@ grammar SysMLv2
   KerMLCardinality extends Cardinality =
     "["
     ( many:["*"]
-      {
-        //_builder.setLowerBound(0);_builder.setUpperBound(0);
-      } |
+        |
       lowerBoundLit:NatLiteral
-      {
-        //_builder.setLowerBound(_builder.getLowerBoundLit().getValue());
-        //_builder.setUpperBound(_builder.getLowerBound());
-      } |
+        |
       lowerExpr:Expression
     )
     ( ".." (
       upperBoundLit:NatLiteral
-      {
-        //_builder.setUpperBound(_builder.getUpperBoundLit().getValue());
-      } |
+        |
       noUpperLimit:["*"]
-      {
-       // _builder.setUpperBound(0);
-      } |
+     |
       upperExpr:Expression
     ) )?
     "]" ;
@@ -138,7 +129,8 @@ grammar SysMLv2
    */
 
   SysMLQualifiedName extends MCQualifiedName =
-    Name (("::" | ".") Name)* ;
+    "nononevernaaaa" Name "x" Name;
+//    Name (("::" | ".") Name)* ;
 
   astrule SysMLQualifiedName =
     method public List<String> getPartsList() {
@@ -248,8 +240,11 @@ grammar SysMLv2
       out:boolean ;
 
   symbol scope AnonymousReference implements SysMLElement =
-       Modifier UserDefinedKeyword* SysMLIdentifier? src:MCQualifiedName SysMLCardinality?
-       Specialization* DefaultValue?
+      // Modifier
+      "in"
+       //UserDefinedKeyword* SysMLIdentifier?
+       src:MCQualifiedName SysMLCardinality?
+       //Specialization* DefaultValue?
        ("{"
           SysMLElement*
         "}" | ";");
@@ -1087,7 +1082,7 @@ grammar SysMLv2
    * useful for chaining invocations in an effective data flow
    */
   SysMLFunctionOperationExpression implements Expression =
-    Expression "->" Name ("(" (Name || ",")* ")")? ("{" AnonymousReference* inner:Expression "}")? ;
+    SysMLEnumerationExpression "->" Name ("(" (Name || ",")* ")")? ("{" AnonymousReference* inner:Expression "}")? ;
 
 
   SysMLEnumerationExpression implements Expression =
