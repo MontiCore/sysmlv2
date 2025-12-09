@@ -1,17 +1,15 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.cocos;
 
-import de.monticore.lang.sysmlbasis._ast.ASTEndpoint;
 import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTConnectionUsageCoCo;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
-import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
-import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
+import de.monticore.lang.sysmlbasis._ast.ASTEndpoint;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.Optional;
+import java.util.List;
 
 /**
  * MKPX_CoCo6:
@@ -26,100 +24,74 @@ public class MKPX_CoCo6 implements SysMLPartsASTConnectionUsageCoCo {
       return; // keine Verbindung
     }
 
+    ASTEndpoint src = node.getSrc();
+    ASTEndpoint tgt = node.getTgt();
+
+    String srcQName = endpointQName(src);
+    String tgtQName = endpointQName(tgt);
+
     ISysMLPartsScope scope = node.getEnclosingScope();
 
-    // Target ist ein Input-Port der Oberkomponente
-    EndpointResolution tgtRes = resolveEndpoint(scope, node.getTgt());
-    if (!tgtRes.isResolved || tgtRes.isSubcomponent) {
-      return; 
-    }
+    PortUsageSymbol srcPort = resolvePort(scope, srcQName);
+    PortUsageSymbol tgtPort = resolvePort(scope, tgtQName);
 
-    if (tgtRes.port == null || tgtRes.port.getInputAttributes().isEmpty()) {
-      return; // Target ist kein Input-Port der Oberkomponente
-    }
-
-    EndpointResolution srcRes = resolveEndpoint(scope, node.getSrc());
-    if (!srcRes.isResolved || srcRes.port == null) {
-      // in MKPX_CoCo4 gemeldet
+    // Wenn ein Port nicht auflösbar ist, kümmern sich andere CoCos darum
+    if (srcPort == null || tgtPort == null) {
       return;
     }
 
-    boolean validTgt;
-    if (srcRes.isSubcomponent) {
-      // muss inputs besitzen
-      validTgt = !srcRes.port.getInputAttributes().isEmpty();
-    } else {
-      // muss outputs besitzen
-      validTgt = !srcRes.port.getOutputAttributes().isEmpty();
-    }
+    // --- Quelle klassifizieren ---
+    boolean srcIsSub = isSubcomponentEndpoint(srcQName);
+    boolean srcHasInputPins = !srcPort.getInputAttributes().isEmpty();
 
-    if (!validTgt) {
+    // --- Ziel klassifizieren ---
+    boolean tgtIsSub = isSubcomponentEndpoint(tgtQName);
+    boolean tgtHasOutputPins = !tgtPort.getOutputAttributes().isEmpty();
+
+    // Verboten: Oberkomponenten-Input -> Subkomponenten-Output
+    boolean forbidden = (!srcIsSub && srcHasInputPins) &&  // Quelle: Input der Oberkomponente
+        (tgtIsSub && tgtHasOutputPins);    // Ziel: Output einer Subkomponente
+
+    if (forbidden) {
       Log.error(
-          "0xMKPX06 Invalid connection direction: An input of the parent component can only be " +
-              "connected to inputs of subcomponents or outputs of the parent component.",
+          "0xMKPX06 Illegal connection: inputs of the parent component must not be " +
+              "connected to outputs of subcomponents.",
           node.get_SourcePositionStart(),
           node.get_SourcePositionEnd()
       );
     }
   }
 
-  /**
-   * Versucht einen Endpunkt aufzulösen und liefert
-   * Typ zurück (Subkomponente oder Oberkomponente)
-   */
-  protected EndpointResolution resolveEndpoint(ISysMLPartsScope scope, ASTEndpoint endpoint) {
-    String qname = endpointQName(endpoint);
-    EndpointResolution res = new EndpointResolution();
+  // -------- Hilfsmethoden --------
 
-    if (qname.isEmpty()) {
-      return res; // unresolved
-    }
-
-    String[] parts = qname.split("\\.");
-    if (parts.length >= 2) {
-      // a.b (qualifiziert) -> Subkomponente
-      res.isSubcomponent = true;
-      String partName = parts[0];
-      String portName = parts[parts.length - 1];
-
-      Optional<PartUsageSymbol> partOpt = scope.resolvePartUsageLocally(partName);
-      if (partOpt.isEmpty()) {
-        return res;
-      }
-      var partDefOpt = partOpt.get().getPartDef();
-      if (partDefOpt.isEmpty()) {
-        return res;
-      }
-      PartDefSymbol partDef = partDefOpt.get();
-      var ports = partDef.getSpannedScope()
-          .resolvePortUsageLocallyMany(false, portName, AccessModifier.ALL_INCLUSION, p -> true);
-      if (ports.size() == 1) {
-        res.port = ports.get(0);
-        res.isResolved = true;
-      }
-      return res;
-    }
-    else {
-      // Oberkomponenten-Port
-      String portName = parts[0];
-      var ports = scope.resolvePortUsageLocallyMany(false, portName, AccessModifier.ALL_INCLUSION, p -> true);
-      if (ports.size() == 1) {
-        res.port = ports.get(0);
-        res.isResolved = true;
-        res.isSubcomponent = false;
-      }
-      return res;
-    }
-  }
-
-  /** Liefert den qualifizierten Namen des Endpunkts als String. */
+  /** Qualified Name des Endpunkts als String. */
   protected String endpointQName(ASTEndpoint ep) {
-    return ep.getMCQualifiedName() != null ? ep.getMCQualifiedName().toString() : "";
+    if (ep.getMCQualifiedName() != null) {
+      return ep.getMCQualifiedName().toString();
+    }
+    return "";
   }
 
-  protected static class EndpointResolution {
-    boolean isResolved = false;
-    boolean isSubcomponent = false;
-    PortUsageSymbol port = null;
+  /**
+   * Heuristik: ein Name mit '.' steht für einen Port einer Subkomponente,
+   * z.B. "a.out". Ohne Punkt = Port der Oberkomponente.
+   */
+  protected boolean isSubcomponentEndpoint(String qname) {
+    return qname.contains(".");
+  }
+
+  /** PortUsageSymbol über den qualified Name auflösen. */
+  protected PortUsageSymbol resolvePort(ISysMLPartsScope scope, String qname) {
+    List<PortUsageSymbol> result =
+        scope.resolvePortUsageSubKinds(
+            true,
+            qname,
+            AccessModifier.ALL_INCLUSION,
+            p -> true
+        );
+    if (result.isEmpty()) {
+      return null;
+    }
+    return result.get(0);
   }
 }
