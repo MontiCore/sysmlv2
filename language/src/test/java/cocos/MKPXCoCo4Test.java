@@ -44,8 +44,8 @@ public class MKPXCoCo4Test {
     @Test
     public void testValid() throws IOException {
       String validModel =
-          "part def A { port p; }"
-        + "part def B { port q: ~; }"
+          "part def A { port p int; }"
+        + "part def B { port q: ~int; }"
         + "part def System {"
         +   "part a: A;"
         +   "part b: B;"
@@ -55,7 +55,7 @@ public class MKPXCoCo4Test {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(validModel).get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new MKPX_CoCo4());
+      checker.addCoCo(new MKPX_CoCo4());
       checker.checkAll(ast);
       assertTrue(Log.getFindings().isEmpty());
     }
@@ -63,8 +63,8 @@ public class MKPXCoCo4Test {
     @Test
     public void testInvalid() throws IOException {
       String invalidModel =
-          "part def A { port p; }"
-        + "part def B { port q: ~; }"
+          "part def A { port p int; }"
+        + "part def B { port q: ~int; }"
         + "part def System {"
         +   "part a: A;"
         +   "part b: B;"
@@ -74,7 +74,7 @@ public class MKPXCoCo4Test {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(invalidModel).get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new MKPX_CoCo4());
+      checker.addCoCo(new MKPX_CoCo4());
       Log.enableFailQuick(false);
       checker.checkAll(ast);
       assertTrue(Log.getFindings().stream()
