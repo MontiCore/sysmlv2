@@ -44,11 +44,12 @@ public class MKPXCoCo5Test {
     @Test
     public void testValid() throws IOException {
       String validModel =
-          "part def A { port out: ~int; }"
-        + "part def B { port in: int; }"
-        + "part def C { port out: ~int; }"
+          "port def IntPort { attribute flow: int; }"
+        + "part def A { port out: ~IntPort; }"
+        + "part def B { port in: IntPort; }"
+        + "part def C { port out: ~IntPort; }"
         + "part def System {"
-        +   "port sysOut: ~int;"
+        +   "port sysOut: ~IntPort;"
         +   "part a: A;"
         +   "part b: B;"
         +   "part c: C;"
@@ -66,8 +67,9 @@ public class MKPXCoCo5Test {
     @Test
     public void testInvalidSubOutToSubOut() throws IOException {
       String invalidModel =
-          "part def A { port out: ~int; }"
-        + "part def B { port out: ~int; }"
+          "port def IntPort { attribute flow: int; }"
+        + "part def A { port out: ~IntPort; }"
+        + "part def B { port out: ~IntPort; }"
         + "part def System {"
         +   "part a: A;"
         +   "part b: B;"
@@ -87,9 +89,10 @@ public class MKPXCoCo5Test {
     @Test
     public void testInvalidSubOutToMainIn() throws IOException {
       String invalidModel =
-          "part def A { port out: ~int; }"
+          "port def IntPort { attribute flow: int; }"
+        + "part def A { port out: ~IntPort; }"
         + "part def System {"
-        +   "port sysIn: int;"
+        +   "port sysIn: IntPort;"
         +   "part a: A;"
         +   "connect a.out to sysIn;"         // (Sub) Output -> (main) Input
         + "}";
