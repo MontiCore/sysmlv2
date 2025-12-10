@@ -52,8 +52,8 @@ public class MKPX_CoCo5 implements SysMLPartsASTConnectionUsageCoCo {
     // --- Ziel klassifizieren ---
 
     boolean tgtIsSub = isSubcomponentEndpoint(tgtQName);
-    boolean tgtHasInputPins = !tgtPort.getInputAttributes().isEmpty();
-    boolean tgtHasOutputPins = !tgtPort.getOutputAttributes().isEmpty();
+    boolean tgtHasInputPins = !tgtPort.getInputAttributes() != null;
+    boolean tgtHasOutputPins = !tgtPort.getOutputAttributes() != null;
 
     // Erlaubt:
     //   a) Sub-Port mit Output-Pins -> Sub-Port mit Input-Pins
@@ -64,7 +64,7 @@ public class MKPX_CoCo5 implements SysMLPartsASTConnectionUsageCoCo {
 
     if (!allowed) {
       Log.error(
-          "0xMKPX05 Illegal connection: outputs of subcomponents may only be " +
+          "0xMKPX05 Illegal connection: outputs of subcomponents can only be " +
               "connected to inputs of subcomponents or outputs of the parent component.",
           node.get_SourcePositionStart(),
           node.get_SourcePositionEnd()
