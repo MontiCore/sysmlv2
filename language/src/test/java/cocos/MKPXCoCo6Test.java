@@ -47,11 +47,12 @@ public class MKPXCoCo6Test {
         + "part def B { port out: int; }"
         + "part def System {"
         +   "port sysIn: ~int;"
+        +   "port sysInAnother: ~int;"
         +   "port sysOut: int;"
         +   "part a: A;"
         +   "part b: B;"
         +   "connect sysIn to a.in;"
-        +   "connect sysIn to sysOut;"
+        +   "connect sysInAnother to sysOut;"
         + "}";
 
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(validModel).get();
