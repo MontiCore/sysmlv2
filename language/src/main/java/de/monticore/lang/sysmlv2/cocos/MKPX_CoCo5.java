@@ -104,10 +104,6 @@ public class MKPX_CoCo5 implements SysMLPartsASTConnectionUsageCoCo {
       return null;
     }
     // falls mehrere Kandidaten, nimm den ersten – in deinen Modellen sollte es eindeutig sein
-    Object first = result.get(0);
-    if (first instanceof PortUsageSymbol) {
-      return (PortUsageSymbol) first;
-    }
-    return null;
+    return result.get(0);;
   }
 }
