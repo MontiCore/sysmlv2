@@ -83,7 +83,7 @@ public class MKPXCoCo5Test {
       assertTrue(Log.getFindings().stream()
               .anyMatch(f -> f.getMsg().contains("0xMKPX05")));
     }
-             
+    */    
 
     @Test
     public void testInvalidSubOutToMainIn() throws IOException {
@@ -104,6 +104,6 @@ public class MKPXCoCo5Test {
       assertTrue(Log.getFindings().stream()
           .anyMatch(f -> f.getMsg().contains("0xMKPX05")));
     }
-    */
+    
   }
 }
