@@ -44,7 +44,7 @@ public class MKPXCoCo4Test {
     @Test
     public void testValid() throws IOException {
       String validModel =
-          "part def A { port p int; }"
+          "part def A { port p: int; }"
         + "part def B { port q: ~int; }"
         + "part def System {"
         +   "part a: A;"
@@ -63,7 +63,7 @@ public class MKPXCoCo4Test {
     @Test
     public void testInvalid() throws IOException {
       String invalidModel =
-          "part def A { port p int; }"
+          "part def A { port p: int; }"
         + "part def B { port q: ~int; }"
         + "part def System {"
         +   "part a: A;"
