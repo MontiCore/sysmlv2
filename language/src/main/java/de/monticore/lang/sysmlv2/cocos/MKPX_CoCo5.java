@@ -52,12 +52,13 @@ public class MKPX_CoCo5 implements SysMLPartsASTConnectionUsageCoCo {
     // --- Ziel klassifizieren ---
 
     boolean tgtIsSub = isSubcomponentEndpoint(tgtQName);
-    boolean tgtHasInputPins = !tgtPort.getInputAttributes() != null;
-    boolean tgtHasOutputPins = !tgtPort.getOutputAttributes() != null;
+    boolean tgtHasInputPins = !tgtPort.getInputAttributes().isEmpty();
+    boolean tgtHasOutputPins = !tgtPort.getOutputAttributes().isEmpty();
 
     // Erlaubt:
-    //   a) Sub-Port mit Output-Pins -> Sub-Port mit Input-Pins
-    //   b) Sub-Port mit Output-Pins -> Parent-Port mit Output-Pins
+    //   a) Sub-Port mit Output-Ports -> Sub-Port mit Input-Ports
+    //   b) Sub-Port mit Output-Ports -> Parent-Port mit Output-Ports
+    // Zurzeit werden Output-Pins geprüft und nihct Ports
     boolean allowed =
         (tgtIsSub && tgtHasInputPins) ||           // Subkomponente mit Inputs
             (!tgtIsSub && tgtHasOutputPins);           // Oberkomponente mit Outputs
@@ -103,6 +104,10 @@ public class MKPX_CoCo5 implements SysMLPartsASTConnectionUsageCoCo {
       return null;
     }
     // falls mehrere Kandidaten, nimm den ersten – in deinen Modellen sollte es eindeutig sein
-    return result.get(0);
+    Object first = result.get(0);
+    if (first instanceof PortUsageSymbol) {
+      return (PortUsageSymbol) first;
+    }
+    return null;
   }
 }
