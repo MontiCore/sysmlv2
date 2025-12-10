@@ -104,6 +104,6 @@ public class MKPX_CoCo5 implements SysMLPartsASTConnectionUsageCoCo {
       return null;
     }
     // falls mehrere Kandidaten, nimm den ersten – in deinen Modellen sollte es eindeutig sein
-    return result.get(0);;
+    return result.get(0);
   }
 }
