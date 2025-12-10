@@ -59,8 +59,7 @@ public class MKPXCoCo5Test {
       var checker = new SysMLv2CoCoChecker();
       checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new MKPX_CoCo5());
       checker.checkAll(ast);
-      assertTrue(Log.getFindings().isEmpty(),
-          "Expected no errors for valid output connections");
+      assertTrue(Log.getFindings().isEmpty());
     }
     /*
     @Test
