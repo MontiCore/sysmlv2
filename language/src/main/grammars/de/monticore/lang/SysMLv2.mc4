@@ -1512,7 +1512,7 @@ grammar SysMLv2
             left:Expression operator:"" right:Expression;
 
   CallExpression   =
-    Expression "(" (Expression || ",")* ")";;
+    Expression "(" (Expression || ",")* ")";
 
   FieldAccessExpression   =
     NameExpression "." Name;
