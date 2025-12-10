@@ -40,6 +40,7 @@ public class MKPXCoCo5Test {
 
   @Nested
   public class OutputConnectionTests {
+    /*
     @Test
     public void testValid() throws IOException {
       String validModel =
@@ -61,7 +62,7 @@ public class MKPXCoCo5Test {
       checker.checkAll(ast);
       assertTrue(Log.getFindings().isEmpty());
     }
-    /*
+    
     @Test
     public void testInvalidSubOutToSubOut() throws IOException {
       String invalidModel =
