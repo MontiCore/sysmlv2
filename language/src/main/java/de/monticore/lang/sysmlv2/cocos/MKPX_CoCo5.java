@@ -12,59 +12,52 @@ import de.se_rwth.commons.logging.Log;
 import java.util.List;
 
 /**
- * MKPX_CoCo5 = KBE_CoCo1
+ * MKPX_CoCo5:Outputs von Subkomponenten können nur zu 
+ * Inputs von Subkomponenten oder Outputs der Oberkomponenten verbunden werden.
  */
 public class MKPX_CoCo5 implements SysMLPartsASTConnectionUsageCoCo {
 
   @Override
   public void check(ASTConnectionUsage node) {
-    // Wenn eine Seite fehlt, kann man nichts Sinnvolles prüfen
-    if (!node.isPresentSrc() || !node.isPresentTgt()) {
+    if (node == null || !node.isPresentSrc() || !node.isPresentTgt()) {
       return;
     }
-
-    ASTEndpoint src = node.getSrc();
-    ASTEndpoint tgt = node.getTgt();
-
-    String srcQName = endpointQName(src);
-    String tgtQName = endpointQName(tgt);
 
     ISysMLPartsScope scope = node.getEnclosingScope();
-
-    PortUsageSymbol srcPort = resolvePort(scope, srcQName);
-    PortUsageSymbol tgtPort = resolvePort(scope, tgtQName);
-
-    // Wenn ein Port nicht auflösbar ist, kümmern sich andere CoCos darum
-    if (srcPort == null || tgtPort == null) {
+    if (scope == null) {
       return;
     }
 
-    // --- Quelle klassifizieren ---
-
-    boolean srcIsSub = isSubcomponentEndpoint(srcQName);
-    boolean srcHasOutputPins = !srcPort.getOutputAttributes().isEmpty();
-
-    // Regel gilt nur für: "Outputs von Subkomponenten"
-    if (!(srcIsSub && srcHasOutputPins)) {
+    EndpointResolution srcRes = resolveEndpoint(scope, node.getSrc());
+    if (!srcRes.isResolved || !srcRes.isSubcomponent || srcRes.port == null) {
       return;
     }
 
-    // --- Ziel klassifizieren ---
+    // Quelle muss Output-Port einer Subkomponente sein
+    if (srcRes.port.getOutputAttributes() == null || 
+        srcRes.port.getOutputAttributes().isEmpty()) {
+      return; // Kein Output-Port
+    }
 
-    boolean tgtIsSub = isSubcomponentEndpoint(tgtQName);
-    boolean tgtHasInputPins = !tgtPort.getInputAttributes().isEmpty();
-    boolean tgtHasOutputPins = !tgtPort.getOutputAttributes().isEmpty();
+    EndpointResolution tgtRes = resolveEndpoint(scope, node.getTgt());
+    if (!tgtRes.isResolved || tgtRes.port == null) {
+      return; // Wird von CoCo4 gemeldet
+    }
 
-    // Erlaubt:
-    //   a) Sub-Port mit Output-Pins -> Sub-Port mit Input-Pins
-    //   b) Sub-Port mit Output-Pins -> Parent-Port mit Output-Pins
-    boolean allowed =
-        (tgtIsSub && tgtHasInputPins) ||           // Subkomponente mit Inputs
-            (!tgtIsSub && tgtHasOutputPins);           // Oberkomponente mit Outputs
+    boolean validTgt;
+    if (tgtRes.isSubcomponent) {
+      // Ziel muss Input-Port einer Subkomponente sein
+      validTgt = tgtRes.port.getInputAttributes() != null && 
+                 !tgtRes.port.getInputAttributes().isEmpty();
+    } else {
+      // Ziel muss Output-Port der Oberkomponente sein  
+      validTgt = tgtRes.port.getOutputAttributes() != null && 
+                 !tgtRes.port.getOutputAttributes().isEmpty();
+    }
 
-    if (!allowed) {
+    if (!validTgt) {
       Log.error(
-          "0xMKPX05 Illegal connection: outputs of subcomponents may only be " +
+          "0xMKPX05 Invalid connection direction: An output of a subcomponent can only be " +
               "connected to inputs of subcomponents or outputs of the parent component.",
           node.get_SourcePositionStart(),
           node.get_SourcePositionEnd()
