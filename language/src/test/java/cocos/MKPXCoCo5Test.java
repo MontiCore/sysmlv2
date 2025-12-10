@@ -45,12 +45,14 @@ public class MKPXCoCo5Test {
       String validModel =
           "part def A { port out: int; }"
         + "part def B { port in: ~int; }"
+        + "part def C { port out: int; }"
         + "part def System {"
         +   "port sysOut: int;"
         +   "part a: A;"
         +   "part b: B;"
+        +   "part c: C;"
         +   "connect a.out to b.in;"          // (Sub) Output -> (Sub) Input
-        +   "connect a.out to sysOut;"        // (Sub) Output -> (main) Output
+        +   "connect c.out to sysOut;"        // (Sub) Output -> (main) Output
         + "}";
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(validModel).get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
