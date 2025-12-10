@@ -43,12 +43,12 @@ public class MKPXCoCo6Test {
     @Test
     public void testValid() throws IOException {
       String validModel =
-          "part def A { port in: ~int; }"
-        + "part def B { port out: int; }"
+          "part def A { port in: int; }"
+        + "part def B { port out: ~int; }"
         + "part def System {"
-        +   "port sysIn: ~int;"
-        +   "port sysInAnother: ~int;"
-        +   "port sysOut: int;"
+        +   "port sysIn: int;"
+        +   "port sysInAnother: int;"
+        +   "port sysOut: ~int;"
         +   "part a: A;"
         +   "part b: B;"
         +   "connect sysIn to a.in;"
@@ -66,9 +66,9 @@ public class MKPXCoCo6Test {
     @Test
     public void testInvalid() throws IOException {
       String invalidModel =
-          "part def A { port out: int; }"
+          "part def A { port out: ~int; }"
         + "part def System {"
-        +   "port sysIn: ~int;"
+        +   "port sysIn: int;"
         +   "part a: A;"
         +   "connect sysIn to a.out;"
         + "}";
