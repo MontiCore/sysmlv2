@@ -40,15 +40,15 @@ public class MKPXCoCo5Test {
 
   @Nested
   public class OutputConnectionTests {
-    /*
+    
     @Test
     public void testValid() throws IOException {
       String validModel =
-          "part def A { port out: int; }"
-        + "part def B { port in: ~int; }"
-        + "part def C { port out: int; }"
+          "part def A { port out: ~int; }"
+        + "part def B { port in: int; }"
+        + "part def C { port out: ~int; }"
         + "part def System {"
-        +   "port sysOut: int;"
+        +   "port sysOut: ~int;"
         +   "part a: A;"
         +   "part b: B;"
         +   "part c: C;"
@@ -62,12 +62,12 @@ public class MKPXCoCo5Test {
       checker.checkAll(ast);
       assertTrue(Log.getFindings().isEmpty());
     }
-    */
+    
     @Test
     public void testInvalidSubOutToSubOut() throws IOException {
       String invalidModel =
-          "part def A { port out: int; }"
-        + "part def B { port out: int; }"
+          "part def A { port out: ~int; }"
+        + "part def B { port out: ~int; }"
         + "part def System {"
         +   "part a: A;"
         +   "part b: B;"
@@ -84,13 +84,12 @@ public class MKPXCoCo5Test {
               .anyMatch(f -> f.getMsg().contains("0xMKPX05")));
     }
         
-    /* 
     @Test
     public void testInvalidSubOutToMainIn() throws IOException {
       String invalidModel =
-          "part def A { port out: int; }"
+          "part def A { port out: ~int; }"
         + "part def System {"
-        +   "port sysIn: ~int;"
+        +   "port sysIn: int;"
         +   "part a: A;"
         +   "connect a.out to sysIn;"         // (Sub) Output -> (main) Input
         + "}";
@@ -104,6 +103,5 @@ public class MKPXCoCo5Test {
       assertTrue(Log.getFindings().stream()
           .anyMatch(f -> f.getMsg().contains("0xMKPX05")));
     }
-    */    
   }
 }
