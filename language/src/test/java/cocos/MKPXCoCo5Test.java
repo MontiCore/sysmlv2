@@ -62,7 +62,7 @@ public class MKPXCoCo5Test {
       checker.checkAll(ast);
       assertTrue(Log.getFindings().isEmpty());
     }
-    
+    */
     @Test
     public void testInvalidSubOutToSubOut() throws IOException {
       String invalidModel =
@@ -83,8 +83,8 @@ public class MKPXCoCo5Test {
       assertTrue(Log.getFindings().stream()
               .anyMatch(f -> f.getMsg().contains("0xMKPX05")));
     }
-    */    
-
+        
+    /* 
     @Test
     public void testInvalidSubOutToMainIn() throws IOException {
       String invalidModel =
@@ -104,6 +104,6 @@ public class MKPXCoCo5Test {
       assertTrue(Log.getFindings().stream()
           .anyMatch(f -> f.getMsg().contains("0xMKPX05")));
     }
-    
+    */    
   }
 }
