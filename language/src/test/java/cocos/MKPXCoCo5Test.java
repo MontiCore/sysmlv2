@@ -40,21 +40,20 @@ public class MKPXCoCo5Test {
 
   @Nested
   public class OutputConnectionTests {
-    
+
     @Test
     public void testValid() throws IOException {
       String validModel =
-          "port def IntPort { attribute flow: int; }"
-        + "part def A { port out: ~IntPort; }"
-        + "part def B { port in: IntPort; }"
-        + "part def C { port out: ~IntPort; }"
+          "part def A { port output: int; }"
+        + "part def B { port input: ~int; }"
+        + "part def C { port output: int; }"
         + "part def System {"
-        +   "port sysOut: ~IntPort;"
+        +   "port sysOutput: int;"
         +   "part a: A;"
         +   "part b: B;"
         +   "part c: C;"
-        +   "connect a.out to b.in;"          // (Sub) Output -> (Sub) Input
-        +   "connect c.out to sysOut;"        // (Sub) Output -> (main) Output
+        +   "connect a.output to b.input;"          // (Sub) Output -> (Sub) Input
+        +   "connect c.output to sysOutput;"        // (Sub) Output -> (main) Output
         + "}";
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(validModel).get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
@@ -63,17 +62,16 @@ public class MKPXCoCo5Test {
       checker.checkAll(ast);
       assertTrue(Log.getFindings().isEmpty());
     }
-    
+
     @Test
     public void testInvalidSubOutToSubOut() throws IOException {
       String invalidModel =
-          "port def IntPort { attribute flow: int; }"
-        + "part def A { port out: ~IntPort; }"
-        + "part def B { port out: ~IntPort; }"
+          "part def A { port output: int; }"
+        + "part def B { port output: int; }"
         + "part def System {"
         +   "part a: A;"
         +   "part b: B;"
-        +   "connect a.out to b.out;"         // (Sub) Output -> (Sub) Output
+        +   "connect a.output to b.output;"         // (Sub) Output -> (Sub) Output
         + "}";
 
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(invalidModel).get();
@@ -85,16 +83,15 @@ public class MKPXCoCo5Test {
       assertTrue(Log.getFindings().stream()
               .anyMatch(f -> f.getMsg().contains("0xMKPX05")));
     }
-        
+
     @Test
     public void testInvalidSubOutToMainIn() throws IOException {
       String invalidModel =
-          "port def IntPort { attribute flow: int; }"
-        + "part def A { port out: ~IntPort; }"
+          "part def A { port output: int; }"
         + "part def System {"
-        +   "port sysIn: IntPort;"
+        +   "port sysInput: ~int;"
         +   "part a: A;"
-        +   "connect a.out to sysIn;"         // (Sub) Output -> (main) Input
+        +   "connect a.output to sysInput;"         // (Sub) Output -> (main) Input
         + "}";
 
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(invalidModel).get();
