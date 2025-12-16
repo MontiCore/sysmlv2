@@ -2,27 +2,16 @@
 plugins {
   id "application"
   id 'de.monticore.language-server' version "$mclsg_version"
+  id 'de.monticore.generator' version "$mc_version" // prepare the grammar configuration
 }
 
 mainClassName = "de.monticore.lang.sysmlv2._lsp.LanguageServerCLI"
 
 dependencies {
   // Language and parent language
-  grammar(project(":language")) {
-    exclude group: 'de.monticore', module: 'monticore-grammar'
-    capabilities {
-      requireCapability("de.monticore.lang.sysml_v2:language-grammars")
-    }
-  }
-  // MPf: Kopiert von MontiArc wegen Dopplung der Grammatik in "normaler" JAR und "-grammars" JAR
-  grammar ("de.monticore:monticore-grammar:$mc_version") {
-    capabilities {
-      requireCapability("de.monticore:monticore-grammar-grammars")
-    }
-  }
+  grammar(project(":language"))
 
   implementation(project(":cc"))
-  implementation(project(":language"))
 
   // Dependencies marked as "runtime" in the language's build script. Need to re-specify them here!
   implementation "de.monticore:monticore-grammar:$mc_version"
@@ -48,8 +37,6 @@ test {
   useJUnitPlatform()
 }
 
-// Remove once MontiCore 7.2 or higher is used
-//System.setProperty("mcLt72workaround", "true");
 
 import de.mclsg.TaskTypes
 import de.mclsg.task.*
@@ -110,7 +97,7 @@ publishing {
     mavenJava(MavenPublication) {
       artifactId = "language-server"
       from components.java
-      
+
       artifact(vscodePlugin) {
         classifier = "vscode"
         extension = "vsix"
