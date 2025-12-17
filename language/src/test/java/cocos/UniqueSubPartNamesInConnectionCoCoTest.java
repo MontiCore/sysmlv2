@@ -7,7 +7,7 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
-import de.monticore.lang.sysmlv2.cocos.MKPX_CoCo3;
+import de.monticore.lang.sysmlv2.cocos.UniqueSubPartNamesInConnectionCoCo;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +19,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MKPXCoCo3Test {
+public class UniqueSubPartNamesInConnectionCoCoTest {
 
   private static final String MODEL_PATH = "src/test/resources/parser";
 
@@ -39,7 +39,7 @@ public class MKPXCoCo3Test {
   }
 
   @Nested
-  public class MKPXCoCo3Tests {
+  public class UniqueSubPartNamesInConnectionCoCoTests {
     @Test
     public void testValid() throws IOException {
       String validModel =
@@ -54,7 +54,7 @@ public class MKPXCoCo3Test {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(validModel).get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new MKPX_CoCo3());
+      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new UniqueSubPartNamesInConnectionCoCo());
       checker.checkAll(ast);
       assertTrue(Log.getFindings().isEmpty());
     }
@@ -72,11 +72,11 @@ public class MKPXCoCo3Test {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(invalidModel).get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new MKPX_CoCo3());
+      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new UniqueSubPartNamesInConnectionCoCo());
       Log.enableFailQuick(false);
       checker.checkAll(ast);
       assertTrue(Log.getFindings().stream()
-              .anyMatch(f -> f.getMsg().contains("0xMKPX03")));
+              .anyMatch(f -> f.getMsg().contains("0x10AA3")));
     }
 
     @Test
@@ -92,11 +92,11 @@ public class MKPXCoCo3Test {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(invalidModel).get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo(new MKPX_CoCo3());
+      checker.addCoCo(new UniqueSubPartNamesInConnectionCoCo());
       Log.enableFailQuick(false);
       checker.checkAll(ast);
       assertTrue(Log.getFindings().stream()
-              .anyMatch(f -> f.getMsg().contains("0xMKPX03")));
+              .anyMatch(f -> f.getMsg().contains("0x10AA3")));
     }
   }
 }
