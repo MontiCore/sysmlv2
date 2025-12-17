@@ -43,15 +43,17 @@ public class MKPXCoCo6Test {
     @Test
     public void testValid() throws IOException {
       String validModel =
-          "part def A { port in: int; }"
-        + "part def B { port out: ~int; }"
+          "port def InPort { in attribute data: int; }"
+        + "port def OutPort { out attribute data: int; }"
+        + "part def A { port input: InPort; }"
+        + "part def B { port output: OutPort; }"
         + "part def System {"
-        +   "port sysIn: int;"
-        +   "port sysInAnother: int;"
-        +   "port sysOut: ~int;"
+        +   "port sysIn: InPort;"
+        +   "port sysInAnother: InPort;"
+        +   "port sysOut: OutPort;"
         +   "part a: A;"
         +   "part b: B;"
-        +   "connect sysIn to a.in;"
+        +   "connect sysIn to a.input;"
         +   "connect sysInAnother to sysOut;"
         + "}";
 
@@ -66,11 +68,13 @@ public class MKPXCoCo6Test {
     @Test
     public void testInvalid() throws IOException {
       String invalidModel =
-          "part def A { port out: ~int; }"
+          "port def InPort { in attribute data: int; }"
+        + "port def OutPort { out attribute data: int; }"
+        + "part def A { port output: OutPort; }"
         + "part def System {"
-        +   "port sysIn: int;"
+        +   "port sysIn: InPort;"
         +   "part a: A;"
-        +   "connect sysIn to a.out;"
+        +   "connect sysIn to a.output;"
         + "}";
 
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(invalidModel).get();
