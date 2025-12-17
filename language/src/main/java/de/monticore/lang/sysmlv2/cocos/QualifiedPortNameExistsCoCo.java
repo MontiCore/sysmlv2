@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * MKPX_CoCo4:
+ * QualifiedPortNameExistsCoCo:
  * In einer Verbindung "connect a.b to c.d" muss jeder verwendete (qualifizierte) Portname existieren.
  */
-public class MKPX_CoCo4 implements SysMLPartsASTConnectionUsageCoCo {
+public class QualifiedPortNameExistsCoCo implements SysMLPartsASTConnectionUsageCoCo {
 
   @Override
   public void check(ASTConnectionUsage node) {
@@ -66,7 +66,7 @@ public class MKPX_CoCo4 implements SysMLPartsASTConnectionUsageCoCo {
 
       if (!portExistsInDef) {
         Log.error(
-            "0xMKPX04 The port '" + portName + "' does not exist in the definition of subcomponent '"
+            "0x10AA4 The port '" + portName + "' does not exist in the definition of subcomponent '"
                 + partName + "'.",
             conn.get_SourcePositionStart(),
             conn.get_SourcePositionEnd()
@@ -80,7 +80,7 @@ public class MKPX_CoCo4 implements SysMLPartsASTConnectionUsageCoCo {
           false, portName, AccessModifier.ALL_INCLUSION, p -> true);
       if (localPorts.isEmpty()) {
         Log.error(
-            "0xMKPX04 The port used in 'connect' '" + portName
+            "0x10AA4 The port used in 'connect' '" + portName
                 + "' does not exist in the parent component.",
             conn.get_SourcePositionStart(),
             conn.get_SourcePositionEnd()

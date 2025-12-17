@@ -8,7 +8,7 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
-import de.monticore.lang.sysmlv2.cocos.MKPX_CoCo4;
+import de.monticore.lang.sysmlv2.cocos.QualifiedPortNameExistsCoCo;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +20,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MKPXCoCo4Test {
+public class QualifiedPortNameExistsCoCoTest {
 
   private static final String MODEL_PATH = "src/test/resources/parser";
 
@@ -40,7 +40,7 @@ public class MKPXCoCo4Test {
   }
 
   @Nested
-  public class MKPXCoCo4Tests {
+  public class QualifiedPortNameExistsCoCoTests {
     @Test
     public void testValid() throws IOException {
       String validModel =
@@ -55,7 +55,7 @@ public class MKPXCoCo4Test {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(validModel).get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo(new MKPX_CoCo4());
+      checker.addCoCo(new QualifiedPortNameExistsCoCo());
       checker.checkAll(ast);
       assertTrue(Log.getFindings().isEmpty());
     }
@@ -74,11 +74,11 @@ public class MKPXCoCo4Test {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(invalidModel).get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo(new MKPX_CoCo4());
+      checker.addCoCo(new QualifiedPortNameExistsCoCo());
       Log.enableFailQuick(false);
       checker.checkAll(ast);
       assertTrue(Log.getFindings().stream()
-              .anyMatch(f -> f.getMsg().contains("0xMKPX04")));
+              .anyMatch(f -> f.getMsg().contains("0x10AA4")));
     }
   }
 }
