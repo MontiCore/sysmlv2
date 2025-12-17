@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * CoCo1: Jeder in "part name:Typ" verwendete Typ muss eine existierende Part-Definition sein.
  */
-public class MKPX_CoCo1 implements SysMLPartsASTPartUsageCoCo {
+public class PartTypeDefinitionExistsCoCo implements SysMLPartsASTPartUsageCoCo {
 
   protected String printPartType(ASTMCType type) {
     return type.printType();
@@ -29,7 +29,7 @@ public class MKPX_CoCo1 implements SysMLPartsASTPartUsageCoCo {
 
     for (var problem : nonExistent) {
       Log.error(
-          "0xMKPX01 The type referenced in a PartUsage \"" + printPartType(problem)
+          "0x10AA1 The type referenced in a PartUsage \"" + printPartType(problem)
               + "\" does not exist as a part definition.",
           node.get_SourcePositionStart(),
           node.get_SourcePositionEnd()

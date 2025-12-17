@@ -6,7 +6,7 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
-import de.monticore.lang.sysmlv2.cocos.MKPX_CoCo1;
+import de.monticore.lang.sysmlv2.cocos.PartTypeDefinitionExistsCoCo;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +18,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MKPXCoCo1Test {
+public class PartTypeDefinitionExistsCoCoTest {
 
   private static final String MODEL_PATH = "src/test/resources/parser";
 
@@ -38,7 +38,7 @@ public class MKPXCoCo1Test {
   }
 
   @Nested
-  public class MKPXCoCo1Tests {
+  public class PartTypeDefinitionExistsCoCoTests {
     @Test
     public void testValid() throws IOException {
       String validModel =
@@ -52,7 +52,7 @@ public class MKPXCoCo1Test {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(validModel).get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLPartsASTPartUsageCoCo) new MKPX_CoCo1());
+      checker.addCoCo((SysMLPartsASTPartUsageCoCo) new PartTypeDefinitionExistsCoCo());
       checker.checkAll(ast);
       assertTrue(Log.getFindings().isEmpty());
     }
@@ -69,11 +69,11 @@ public class MKPXCoCo1Test {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(invalidModel).get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLPartsASTPartUsageCoCo) new MKPX_CoCo1());
+      checker.addCoCo((SysMLPartsASTPartUsageCoCo) new PartTypeDefinitionExistsCoCo());
       Log.enableFailQuick(false);
       checker.checkAll(ast);
       assertTrue(Log.getFindings().stream()
-          .anyMatch(f -> f.getMsg().contains("0xMKPX01")));
+          .anyMatch(f -> f.getMsg().contains("0x10AA1")));
     }
   }
 
