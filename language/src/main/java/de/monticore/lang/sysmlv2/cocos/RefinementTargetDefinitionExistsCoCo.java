@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * CoCo2: Jeder im "part def X refines Name" verwendete Name muss eine existierende Part-Definition sein.
  */
-public class MKPX_CoCo2 implements SysMLPartsASTPartDefCoCo {
+public class RefinementTargetDefinitionExistsCoCo implements SysMLPartsASTPartDefCoCo {
 
   protected String printPartType(ASTMCType type) {
     return type.printType();
@@ -31,7 +31,7 @@ public class MKPX_CoCo2 implements SysMLPartsASTPartDefCoCo {
 
     for (var problem : nonExistent) {
       Log.error(
-          "0xMKPX02 The name used in 'refines' \"" + printPartType(problem)
+          "0x10AA2 The name used in 'refines' \"" + printPartType(problem)
               + "\" does not exist as a part definition.",
           node.get_SourcePositionStart(),
           node.get_SourcePositionEnd()

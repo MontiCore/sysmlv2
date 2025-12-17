@@ -6,7 +6,7 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
-import de.monticore.lang.sysmlv2.cocos.MKPX_CoCo2;
+import de.monticore.lang.sysmlv2.cocos.RefinementTargetDefinitionExistsCoCo;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +18,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MKPXCoCo2Test {
+public class RefinementTargetDefinitionExistsCoCoTest {
 
   private static final String MODEL_PATH = "src/test/resources/parser";
 
@@ -38,7 +38,7 @@ public class MKPXCoCo2Test {
   }
 
   @Nested
-  public class MKPXCoCo2Tests {
+  public class RefinementTargetDefinitionExistsCoCoTests {
     @Test
     public void testValid() throws IOException {
       String validModel =
@@ -48,7 +48,7 @@ public class MKPXCoCo2Test {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(validModel).get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLPartsASTPartDefCoCo) new MKPX_CoCo2());
+      checker.addCoCo((SysMLPartsASTPartDefCoCo) new RefinementTargetDefinitionExistsCoCo());
       checker.checkAll(ast);
       assertTrue(Log.getFindings().isEmpty());
     }
@@ -60,11 +60,11 @@ public class MKPXCoCo2Test {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(invalidModel).get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLPartsASTPartDefCoCo) new MKPX_CoCo2());
+      checker.addCoCo((SysMLPartsASTPartDefCoCo) new RefinementTargetDefinitionExistsCoCo());
       Log.enableFailQuick(false);
       checker.checkAll(ast);
       assertTrue(Log.getFindings().stream()
-          .anyMatch(f -> f.getMsg().contains("0xMKPX02")));
+          .anyMatch(f -> f.getMsg().contains("0x10AA2")));
     }
   }
 
