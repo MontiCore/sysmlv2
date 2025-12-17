@@ -40,6 +40,7 @@ import de.monticore.types.check.SymTypeExpressionFactory;
 import de.se_rwth.commons.Names;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -280,11 +281,33 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     //  Splitten von Namen - oder ob man irgendwie
     //  nach vollqualifizierten Sachen suchen kann (und vielleicht auch erst
     //  danach schaut, was es war)?
+    String delimiter;
     if (name.contains(".")) {
-      var port = name.split("\\.")[0];
+      delimiter = ".";
+    }
+    else if (name.contains("::")) {
+      delimiter = "::";
+    }
+    else {
+      delimiter = null;
+    }
+
+    if (delimiter != null) {
+      List<String> parts = new ArrayList<>();
+      int pos = 0;
+      int idx;
+      while ((idx = name.indexOf(delimiter, pos)) != -1) {
+        parts.add(name.substring(pos, idx));
+        pos = idx + delimiter.length();
+      }
+      parts.add(name.substring(pos));
+      String[] nameParts = parts.toArray(new String[0]);
+
+      // usage could be fully qualified
+      var port = String.join(delimiter, Arrays.copyOfRange(nameParts, 0, nameParts.length - 1));
       var portUsage = resolvePortUsageLocally(port);
       if (portUsage.isPresent()) {
-        var attr = name.split("\\.")[1];
+        var attr = nameParts[nameParts.length -1];
         var input = portUsage.get().getInputAttributes().stream().filter(
             a -> a.getName().equals(attr)).findFirst();
         var output = portUsage.get().getOutputAttributes().stream().filter(

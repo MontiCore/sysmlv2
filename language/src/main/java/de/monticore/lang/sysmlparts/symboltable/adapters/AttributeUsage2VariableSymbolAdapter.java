@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
+import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.SourcePosition;
 
@@ -14,7 +15,8 @@ public class AttributeUsage2VariableSymbolAdapter extends FieldSymbol {
   public AttributeUsage2VariableSymbolAdapter(AttributeUsageSymbol adaptee) {
     super(adaptee.getName());
     this.adaptee = adaptee;
-    this.accessModifier = adaptee.getAccessModifier();
+    // For the time being field is public for TypeCheck compatibility
+    this.setIsPublic(true);
   }
 
   protected AttributeUsageSymbol getAdaptee() {
