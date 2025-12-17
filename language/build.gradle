@@ -5,7 +5,7 @@
 /* ============================================================ */
 
 plugins {
-  id "monticore" version "$mc_version"
+  id "de.monticore.generator" version "$mc_version"
   id "com.github.johnrengelman.shadow" version "7.0.0"
   id "io.github.themrmilchmann.ecj" version "0.2.0"
 }
@@ -20,30 +20,14 @@ description = 'SysML_v2_official'
 /* ========================= Versions ========================= */
 /* ============================================================ */
 
-def grammarDir = "src/main/grammars"
-def grammar_classifier = "grammars"
 
 def commons_cli_version = "1.4"
-def antlr_version = '4.7.1'
 def commons_lang_version = "3.11"
 
 /* ============================================================ */
 /* ======================= Configuration ====================== */
 /* ============================================================ */
 
-// configure non-standard source sets
-sourceSets {
-  main.java.srcDirs += ["$projectDir/target/generated-sources/monticore/sourcecode"]
-
-  grammars {
-    resources {
-      srcDirs(grammarDir)
-      include "**/*.mc4"
-    }
-  }
-}
-
-configurations { grammar }
 
 test {
   useJUnitPlatform()
@@ -54,24 +38,13 @@ test {
 /* ============================================================ */
 
 dependencies {
-  grammar "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
-  grammar "de.monticore.lang:ocl:$mc_version:grammars"
+  // language dependencies
+  grammar "de.monticore.lang:ocl:$mc_version"
+  grammar project(":cc")
 
-  grammar(project(":cc")) {
-    capabilities {
-      requireCapability("de.monticore.lang.sysml_v2:cc-grammars")
-    }
-  }
-
-  implementation(project(":cc"))
-
-  implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
-  implementation "org.apache.commons:commons-lang3:$commons_lang_version"
-  implementation "org.antlr:antlr4-runtime:$antlr_version"
-  implementation "de.monticore:monticore-runtime:$mc_version"
-  implementation "de.monticore:monticore-grammar:$mc_version"
   implementation "de.monticore:stream-symbols:$mc_version"
-  implementation "de.monticore.lang:ocl:$mc_version"
+
+  implementation "org.apache.commons:commons-lang3:$commons_lang_version"
   implementation "commons-cli:commons-cli:$commons_cli_version"
 }
 
@@ -79,23 +52,6 @@ dependencies {
 /* ========================== Tasks =========================== */
 /* ============================================================ */
 
-task generate() {
-    group = "mc"
-}
-
-fileTree(grammarDir).matching { include '**/*.mc4' }.each { g ->
-  def taskname = "generateGrammar${g.getName().substring(0,g.getName().lastIndexOf('.'))}"
-
-  task "$taskname" (type: MCTask) {
-    grammar = g
-    outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
-    def grammarIncludingPackage = file(grammarDir).toURI().relativize(g.toURI()).toString()
-    outputs.upToDateWhen { incCheck(grammarIncludingPackage) }
-  }
-  generate.dependsOn ("$taskname")
-}
-
-compileJava.dependsOn generate
 
 // Fixes issue with java plugin in projects without resources
 compileTestJava.doFirst { mkdir sourceSets.main.output.resourcesDir }
@@ -125,12 +81,8 @@ shadowJar {
 java {
 //  withJavadocJar()
   withSourcesJar()
-  registerFeature('grammars') {
-    usingSourceSet(sourceSets.grammars)
-  }
 }
 
-jar.dependsOn grammarsJar
 
 /* ============================================================ */
 /* ======================= Publishing ========================= */

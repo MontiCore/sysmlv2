@@ -11,6 +11,9 @@ subprojects {
   project.buildDir = "target"
 
   repositories {
+    if(("true").equals(getProperty('useLocalRepo'))){
+      mavenLocal()
+    }
     // SE-Nexus also caches maven central
     maven {
       name "SE Nexus"
