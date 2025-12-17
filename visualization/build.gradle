@@ -14,6 +14,9 @@ dependencies {
 }
 
 repositories {
+  if(("true").equals(getProperty('useLocalRepo'))){
+    mavenLocal()
+  }
   mavenCentral()
   // required for sysml interactive published on GitHub
   maven {

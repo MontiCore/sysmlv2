@@ -4,6 +4,7 @@ import de.monticore.lang.sysmlactions._ast.ASTSendActionUsage;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTSendActionUsageCoCo;
 import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 
+@Deprecated
 public class SendActionTypeCheck implements SysMLActionsASTSendActionUsageCoCo {
 
   @Override
