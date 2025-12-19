@@ -17,6 +17,18 @@ grammar SysML4Verification
             de.monticore.expressions.StreamExpressions,
             de.monticore.UMLModifier
 {
+  // Dubiose Sachen, die ich gerade nicht lösen kann
+
+  // Inline-Variante für das "first" vor dem "then"
+  interface IInlineOccurrenceUsage ;
+
+  /**
+   * Occurrence usages can be used in successions.
+   * Example: "first send a to b if b then perform myAction;"
+   */
+  interface OccurrenceUsageElement extends SysMLElement;
+
+  // Start
   start SysMLModel ;
 
   // SysMLv2 does not adhere to conventions of efficient programming languages
@@ -157,6 +169,29 @@ grammar SysML4Verification
       SysMLElement*
     "}" | ";") ;
 
+  /**
+   * Definitions define a type, usages instantiate it. The SysML is not very clear in this regard and mixes types,
+   * definitions, usages, instances, etc. For our purposes (SpesML, MontiBelle), we need typing.
+   * The "types" are extracted from the Specializations, specifically the SysMLTypings. Extraction is done during symbol
+   * table completion. The SymTypeExpressions only store type expressions, not the actual types or any symbols.
+   */
+  symbolrule PartUsage =
+      types:de.monticore.types.check.SymTypeExpression*
+      sysMLIdentifier:Name?
+      method public Optional<de.monticore.lang.sysmlparts._symboltable.PartDefSymbol> getPartDef() {
+        for (de.monticore.lang.sysmlbasis._ast.ASTSpecialization specialization : this.getAstNode().getSpecializationList()) {
+          for (de.monticore.types.mcbasictypes._ast.ASTMCType specializationType : specialization.getSuperTypesList()) {
+            var qualified = (de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType) specializationType;
+            var name = qualified.getMCQualifiedName().getQName();
+            var partDef = (Optional<de.monticore.lang.sysmlparts._symboltable.PartDefSymbol>) this.getEnclosingScope().resolvePartDef(name);
+            if(partDef.isPresent()) {
+              return partDef;
+            }
+          }
+        }
+        return Optional.empty();
+      } ;
+
   symbol scope PartUsage implements SysMLElement =
     Modifier UserDefinedKeyword* "part" SysMLIdentifier? Name?
     SysMLCardinality? Specialization* DefaultValue?
@@ -178,6 +213,11 @@ grammar SysML4Verification
        SysMLElement*
      "}" | ";");
 
+  symbolrule PortUsage =
+      types:de.monticore.types.check.SymTypeExpression*
+      conjugatedTypes:de.monticore.types.check.SymTypeExpression*
+      strong:boolean;
+
   symbol scope AttributeDef implements SysMLType =
     Modifier UserDefinedKeyword* "attribute" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
@@ -192,6 +232,11 @@ grammar SysML4Verification
     ("{"
       SysMLElement*
     "}" | ";");
+
+  symbolrule AttributeUsage =
+      types:de.monticore.types.check.SymTypeExpression*
+      in:boolean
+      out:boolean ;
 
   symbol scope EnumDef implements SysMLType =
     Modifier UserDefinedKeyword* "enum" "def"
@@ -255,6 +300,11 @@ grammar SysML4Verification
       (EntryAction | DoAction | ExitAction | SysMLElement)*
     "}" | ";") ;
 
+  symbolrule StateUsage =
+    exhibited: boolean
+    userDefinedKeywords: Name*
+  ;
+
   symbol SysMLTransition implements SysMLElement =
     ("transition" Name?)?
     ("first" src:MCQualifiedName)?
@@ -286,7 +336,7 @@ grammar SysML4Verification
    * Inline-Usages do not terminate in semicolons or closing brackets and are intended
    * for use in other constructs such as successions or transitions.
    */
-  scope InlineActionUsage  =
+  scope InlineActionUsage implements IInlineOccurrenceUsage  =
     Modifier UserDefinedKeyword* "action" SysMLIdentifier? Name?
     SysMLCardinality? Specialization* DefaultValue?
     ("{"
@@ -305,7 +355,11 @@ grammar SysML4Verification
     MCQualifiedName SysMLCardinality? Specialization*
     ("{" SysMLElement* "}" | ";") | SysMLElement ;
 
-  symbol ActionUsage =
+  /**
+   * Because the inline-variant is not a SysMLElement, this inheritance cannot be the
+   * other way around!
+   */
+  symbol ActionUsage implements OccurrenceUsageElement =
     Modifier UserDefinedKeyword* "action" SysMLIdentifier? Name?
     SysMLCardinality? Specialization* DefaultValue?
     ("{"

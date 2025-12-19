@@ -1,5 +1,4 @@
-package parser;
-
+import de.monticore.lang.sysml4verification.SysML4VerificationTool;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
@@ -13,15 +12,15 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SystemsLibraryTest {
+public class InverterTest {
 
-  static final String systemsLibrary = "src/main/resources/Systems Library";
+  static final String FOLDER = "src/test/resources/inverter";
 
-  static SysMLv2Tool tool;
+  static SysML4VerificationTool tool;
 
   @BeforeAll
   public static void setup() {
-    tool = new SysMLv2Tool();
+    tool = new SysML4VerificationTool();
   }
 
   @BeforeEach
@@ -32,32 +31,24 @@ public class SystemsLibraryTest {
 
   @Test
   public void testParseAll() throws IOException {
-    var models = Files.walk(Path.of(systemsLibrary))
+    var models = Files.walk(Path.of(FOLDER))
         .filter(p -> p.toFile().getName().endsWith(".sysml"))
         .collect(Collectors.toList());
 
-    assertThat(models).hasSize(20);
-    var successful = 0;
-    var lines = 0;
+    assertThat(models).hasSize(1);
 
     Log.enableFailQuick(false);
     for(var model: models) {
       try {
         var ast = tool.parse(model.toString());
-        if(Log.getFindings().isEmpty()) {
-          successful++;
-        }
       } catch (Exception e) {
         // Erstmal nur messen
       }
       finally {
-        lines += Log.getFindingsCount();
-        Log.clearFindings();
+        //Log.clearFindings();
       }
     }
 
-    //System.out.println("Success rate: " + successful + "/" + 20 + " (" + lines + " findings)");
-    assertThat(successful).isEqualTo(20);
     assertThat(Log.getFindings()).isEmpty();
   }
 
