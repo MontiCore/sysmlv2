@@ -13,6 +13,8 @@ component grammar SysMLConstraints
       Expression?
     "}" | ";") ;
 
+  // SysMLParameter hinzugefügt
+  @Override
   symbol scope ConstraintUsage implements SysMLElement =
     Modifier (
       (["require"] | ["assume"] | ["assert"]) ["not"]? UserDefinedKeyword* "constraint"?
@@ -44,25 +46,6 @@ component grammar SysMLConstraints
         SysMLElement*
       "}" | ";") ;
 
-  // Satisfy Requirement Usages are ConstraintUsages and as such can be
-  // required/assumed/asserted
-  symbol scope RequirementUsage implements SysMLElement =
-      Modifier (["require"] | ["assume"] | ["assert"])? UserDefinedKeyword*
-      ["verify"]? ["not"]? ["satisfy"]? "requirement"
-      SysMLIdentifier? Name? SysMLCardinality? Specialization*
-      DefaultValue?
-      ("by" subject:MCQualifiedName)?
-      ("(" (SysMLParameter || ",")* ")")?
-      ("{"
-         SysMLElement*
-      "}" | ";") ;
-
-  symbol RequirementSubject implements SysMLElement =
-      "subject" Name? SysMLCardinality? Specialization* DefaultValue?
-      ("{"
-        SysMLElement*
-      "}" | ";") ;
-
   symbolrule RequirementSubject =
       types:de.monticore.types.check.SymTypeExpression* ;
 
@@ -77,6 +60,19 @@ component grammar SysMLConstraints
       ("{"
         SysMLElement*
       "}" | ";") ;
+
+  // SysMLParameter hinzugefügt
+  @Override
+  symbol scope RequirementUsage implements SysMLElement =
+    Modifier (["require"] | ["assume"] | ["assert"])? UserDefinedKeyword*
+    ["verify"]? ["not"]? ["satisfy"]? "requirement"
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    DefaultValue?
+    ("by" subject:MCQualifiedName)?
+    ("(" (SysMLParameter || ",")* ")")?
+    ("{"
+       SysMLElement*
+    "}" | ";") ;
 
 
   /**

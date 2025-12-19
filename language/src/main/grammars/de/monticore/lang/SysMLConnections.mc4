@@ -4,6 +4,19 @@ package de.monticore.lang;
 component grammar SysMLConnections
     extends de.monticore.lang.SysMLBasis {
 
+  // SysMLParameter hinzugefügt
+  @Override
+  symbol ConnectionUsage implements SysMLElement =
+    Modifier UserDefinedKeyword* "connection"?
+    SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    "connect" (
+      (src:Endpoint "to" tgt:Endpoint) |
+      ("(" (SysMLParameter || ",")* ")")
+    )
+    ("{"
+       SysMLElement*
+     "}" | ";") ;
+
   /**
    * The declaration of a message may also optionally include an explicit
    * specification of the name, type (definition) and/or multiplicity of the payload of the message.

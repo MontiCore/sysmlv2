@@ -10,19 +10,9 @@ pluginManagement {
 
 rootProject.name = 'sysml_v2'
 
-// The MontiCore-based intermediary language for CC-architectures & stream-based
-// behavior
-include 'cc'
-
 // The MontiCore-based language implementation of textual SysML v2
 include 'language'
 
 // MontiCore-Language-Server-Generator-based language server imlementation
 include 'language-server'
-
-// Wrapper for the Github-publication of the official vizualizer
-include 'visualization'
-
-// Visualization-Plugin for VSCode
-include 'visualization-plugin'
 

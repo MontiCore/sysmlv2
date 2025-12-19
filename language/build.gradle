@@ -57,14 +57,6 @@ dependencies {
   grammar "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
   grammar "de.monticore.lang:ocl:$mc_version:grammars"
 
-  grammar(project(":cc")) {
-    capabilities {
-      requireCapability("de.monticore.lang.sysml_v2:cc-grammars")
-    }
-  }
-
-  implementation(project(":cc"))
-
   implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
   implementation "org.apache.commons:commons-lang3:$commons_lang_version"
   implementation "org.antlr:antlr4-runtime:$antlr_version"

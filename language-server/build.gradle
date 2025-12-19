@@ -21,7 +21,6 @@ dependencies {
     }
   }
 
-  implementation(project(":cc"))
   implementation(project(":language"))
 
   // Dependencies marked as "runtime" in the language's build script. Need to re-specify them here!
@@ -110,7 +109,7 @@ publishing {
     mavenJava(MavenPublication) {
       artifactId = "language-server"
       from components.java
-      
+
       artifact(vscodePlugin) {
         classifier = "vscode"
         extension = "vsix"

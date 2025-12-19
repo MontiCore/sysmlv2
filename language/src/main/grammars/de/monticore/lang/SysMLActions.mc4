@@ -15,6 +15,7 @@ component grammar SysMLActions
    * Inline-Usages do not terminate in semicolons or closing brackets and are intended
    * for use in other constructs such as successions or transitions.
    */
+  @Override // implements hinzugefügt
   scope InlineActionUsage implements IInlineOccurrenceUsage =
     Modifier UserDefinedKeyword* "action" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
@@ -25,6 +26,7 @@ component grammar SysMLActions
    * Because the inline-variant is not a SysMLElement, this inheritance cannot be the
    * other way around!
    */
+  @Override // implements hinzugefügt
   symbol ActionUsage implements OccurrenceUsageElement =
     Modifier UserDefinedKeyword* "action" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
@@ -69,13 +71,6 @@ component grammar SysMLActions
     "if" guard:Expression
     (InlineActionUsage | "{" ifElems:SysMLElement* "}")
     ("else" (ActionUsage | "{" elseElems:SysMLElement* "}"))? ;
-
-  /** See section 7.16.8 in 2a-OMG_Systems_Modeling_Language.pdf */
-  Payload =
-    (payloadHandle:Name ":")? payloadType:MCType SysMLCardinality? |
-     payloadHandle:Name? "when" changeTrigger:Expression |
-     payloadHandle:Name? "at" timeTrigger:Expression |
-     payloadHandle:Name? "after" relativeTimeTrigger: Expression ;
 
   scope InlineAcceptActionUsage extends InlineActionUsage =
     Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
@@ -172,10 +167,6 @@ component grammar SysMLActions
   SuccessionFirst =
     MCQualifiedName SysMLCardinality? Specialization* ("{" SysMLElement* "}")? |
     IInlineOccurrenceUsage ;
-
-  SuccessionThen =
-    MCQualifiedName SysMLCardinality? Specialization* ("{" SysMLElement* "}" | ";") |
-    SysMLElement ;
 
   // Base successions according to 7.13.5 (Connections > Successions as Usages)
   SysMLSuccession implements SysMLElement =

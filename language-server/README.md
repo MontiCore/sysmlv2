@@ -35,7 +35,7 @@ installing our integrated **VSCode Plugin** to get going the fastest:
    view in VSCode
 3. **Done**! Now create or open a text file with the ending `.sysml`:
 
-![showcase](doc/showcase.png)
+![showcase](../doc/showcase.png)
 
 [download]: https://github-registry-files.githubusercontent.com/758456656/1b847700-819d-11f0-8dad-cb32a1bfe312?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250916%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250916T120634Z&X-Amz-Expires=300&X-Amz-Signature=8856e041f06680f48963357fe24467e82f549ab877f3902d9bbe5dc381c649c8&X-Amz-SignedHeaders=host&response-content-disposition=filename%3Dlanguage-server-7.6.1-10-vscode.vsix&response-content-type=application%2Foctet-stream
 
@@ -44,5 +44,5 @@ installing our integrated **VSCode Plugin** to get going the fastest:
 Find [known issues][issues] and more explanations on [how to develop for this
 project **here**][devs].
 
-[issues]: doc/KNOWN_ISSUES.md
-[devs]: doc/FOR_DEVELOPERS.md
+[issues]: ../doc/KNOWN_ISSUES.md
+[devs]: ../doc/FOR_DEVELOPERS.md

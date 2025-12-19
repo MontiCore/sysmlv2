@@ -1,44 +1,159 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
-grammar SysMLv2 extends SysMLExpressions,
-                        SysMLImportsAndPackages,
-                        SysMLActions,
-                        SysMLParts,
-                        SysMLStates,
-                        SysMLConstraints,
-                        SysMLConnections,
-                        SysMLOccurrences,
-                        SysMLViews,
-                        SysMLCases,
-                        ComponentConnector,
-                        de.monticore.types.MCSimpleGenericTypes,
-                        de.monticore.expressions.AssignmentExpressions,
-                        de.monticore.expressions.StreamExpressions
+/**
+ * Full-fledged SysML v2
+ */
+grammar SysMLv2
+    extends SysML4Verification,
+            de.monticore.Cardinality,
+            de.monticore.UMLModifier
 {
 
-  start SysMLModel ;
+  // ###########################################################################
+  // #                     S Y S M L _ B A S I S                               #
+  // ###########################################################################
 
-  SysMLModel = SysMLElement* ;
+  KerMLCardinality extends Cardinality =
+    "["
+    ( many:["*"]
+      {
+        //_builder.setLowerBound(0);_builder.setUpperBound(0);
+      } |
+      lowerBoundLit:NatLiteral
+      {
+        //_builder.setLowerBound(_builder.getLowerBoundLit().getValue());
+        //_builder.setUpperBound(_builder.getLowerBound());
+      } |
+      lowerExpr:Expression
+    )
+    ( ".." (
+      upperBoundLit:NatLiteral
+      {
+        //_builder.setUpperBound(_builder.getUpperBoundLit().getValue());
+      } |
+      noUpperLimit:["*"]
+      {
+       // _builder.setUpperBound(0);
+      } |
+      upperExpr:Expression
+    ) )?
+    "]" ;
 
-  // Bug in MontiCore führt dazu, dass es nur hier funktioniert
-  @Override
-  token Char = "doNotParseThisEverAgain";
+  /*
+   * ##################################################################
+   * SysML Basis Symbole
+   * ##################################################################
+   */
 
-  @Override
-  token Name =
-    ( ( 'a'..'z' | 'A'..'Z' | '_' | '$' )
-      ( 'a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '$' )* )
-    | ( '\'' Anything* '\'' ) :
-    {
-      if(getText().length() > 0 && getText().charAt(0) == '\'')
-        setText(getText().substring(1, getText().length() - 1));
+  /* Adaptierung zwecks Rückwärtskompatibilität auf vorherige Version mit direkter MC-Cardinality */
+  astrule SysMLTyping =
+      method public de.monticore.cardinality._ast.ASTCardinality getCardinality() {
+        if(isPresentSysMLCardinality()) {
+          return getSysMLCardinality().getCardinality();
+        }
+        Log.error("0x10005 get for Cardinality can't return a value. Attribute is empty.");
+        // Normally this statement is not reachable
+        throw new IllegalStateException();
+      }
+      method public boolean isPresentCardinality() {
+        return isPresentSysMLCardinality();
+      } ;
+
+  /** Refinement relates two behaviors and enforces a subset wrt. to FOCUS SPSes */
+  SysMLRefinement implements Specialization =
+       "refines" superTypes:(MCType || ",")+;
+
+  /*
+   * ##################################################################
+   * Häufig vorkommende Konstrukte mit konkr. Syntax
+   * ##################################################################
+   */
+
+  SysMLParameter implements Field =
+    Modifier UserDefinedKeyword* Name SysMLCardinality? Specialization*
+    ("=" binding:Expression)? DefaultValue? ;
+
+  /*
+   * ##################################################################
+   * SysML-Spezifischen Syntax-Erweiterungen
+   * ##################################################################
+   */
+
+  SysMLQualifiedName extends MCQualifiedName =
+    Name (("::" | ".") Name)* ;
+
+  astrule SysMLQualifiedName =
+    method public List<String> getPartsList() {
+      return getNameList();
+    }
+    method public String getBaseName() {
+      return getPartsList().get(getPartsList().size()-1);
     } ;
 
-  // Do not include "//*" since its considered a "MultilineNote"
-  @Override
-  token SL_COMMENT =
-    "//" (~'*') (~('\n' | '\r'))* : ->channel(HIDDEN);
+  token SysMLComment =
+    ( 'c''o''m''m''e''n''t' (WS* Name)?
+      (WS* 'a''b''o''u''t' WS* Name)?
+      (WS* 'l''o''c''a''l''e' WS* '"' Name '"')?
+    |
+      WS* 'l''o''c''a''l''e' WS* '"' Name '"'
+    )
+    WS* ML_COMMENT : -> channel(HIDDEN);
+
+  token SysMLDoc =
+    'd''o''c' (WS* Name)?
+    (WS* 'l''o''c''a''l''e' WS* '"' Name '"')?
+    WS* ML_COMMENT : -> channel(HIDDEN) ;
+
+  TextualRepresentation implements SysMLElement =
+    ("rep" Name)? "language" String ;
+
+  /**
+   * Anonyme Usage, deren "Typ" im Sinne der SysML (also Beispielsweise "attribute" oder "part") sich erst durch
+   * die Spezialisationen (Typisierungen) ergibt.
+   */
+  symbol scope AnonymousUsage implements SysMLElement =
+      Modifier UserDefinedKeyword* SysMLIdentifier? Name? SysMLCardinality?
+      Specialization+ DefaultValue?
+      ("{"
+        SysMLElement*
+      "}" | ";");
+
+  symbolrule AnonymousUsage =
+      types:de.monticore.types.check.SymTypeExpression*
+      in:boolean
+      out:boolean ;
+
+  symbol scope AnonymousReference implements SysMLElement =
+       Modifier UserDefinedKeyword* SysMLIdentifier? src:MCQualifiedName SysMLCardinality?
+       Specialization* DefaultValue?
+       ("{"
+          SysMLElement*
+        "}" | ";");
+
+  symbolrule AnonymousReference =
+      types:de.monticore.types.check.SymTypeExpression*
+      in:boolean
+      out:boolean ;
+
+  /**
+   * Occurrence usages can be used in successions.
+   * Example: "first send a to b if b then perform myAction;"
+   */
+  interface OccurrenceUsageElement extends SysMLElement;
+
+  // Inline-Variante für das "first" vor dem "then"
+  interface IInlineOccurrenceUsage ;
+
+  Dependency implements SysMLElement =
+    Modifier UserDefinedKeyword* "dependency" (Name? "from")? (MCQualifiedName || ",")+ "to" (MCQualifiedName || ",")+
+    ("{"
+       SysMLElement*
+     "}" | ";");
+
+  // ###########################################################################
+  // #                         S Y S M L V 2                                   #
+  // ###########################################################################
 
   FractalLiteral implements NumericLiteral =
     { noSpace(2) }? "." post:Digits;

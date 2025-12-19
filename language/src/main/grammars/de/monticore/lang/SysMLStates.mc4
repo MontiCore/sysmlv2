@@ -10,6 +10,8 @@ component grammar SysMLStates extends SysMLActions {
       (EntryAction | DoAction | ExitAction | SysMLElement)*
     "}" | ";") ;
 
+  // SysMLParameter hinzugefügt
+  @Override
   symbol scope StateUsage implements SysMLElement =
     Modifier UserDefinedKeyword* exhibited:["exhibit"]? "state" SysMLIdentifier?
     Name? SysMLCardinality? Specialization*
@@ -29,32 +31,5 @@ component grammar SysMLStates extends SysMLActions {
     exhibited: boolean
     userDefinedKeywords: Name*
   ;
-
-  symbol SysMLTransition implements SysMLElement =
-    ("transition" Name?)?
-    ("first" src:MCQualifiedName)?
-    (InlineAcceptActionUsage)?
-    ("if" guard:Expression)?
-    ("do" doAction:InlineActionUsage)?
-    "then" SuccessionThen ;
-
-  EntryAction =
-    "entry" ( ";" |
-              ActionUsage |
-              MCQualifiedName
-              ("{"
-                 SysMLElement*
-               "}" | ";")
-            ) ;
-
-  DoAction =
-    "do" ( ActionUsage |
-           MCQualifiedName
-           ("{"
-               SysMLElement*
-            "}" | ";")
-         ) ;
-
-  ExitAction = "exit" ( ActionUsage | action:Name@ActionUsage ";") ;
 
 }

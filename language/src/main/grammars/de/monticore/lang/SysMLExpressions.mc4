@@ -11,16 +11,16 @@ component grammar SysMLExpressions
 {
 
   /**
-   * "exists" is not a reserved keyword in SysML and used in the Systems Library. Use "key" to make it a local
-   * keyword.
+   * "exists" is not a reserved keyword in SysML and used in the Systems
+   * Library. Use "key" to make it a local keyword.
    */
   @Override
   ExistsExpression implements Expression <90> =
     key("exists") (InDeclaration || ",")+ ":" Expression ;
 
   /**
-   * "union" is not a reserved keyword in SysML and used in the Systems Library. Use "key" to make it a local
-   * keyword.
+   * "union" is not a reserved keyword in SysML and used in the Systems Library.
+   * Use "key" to make it a local keyword.
    */
   @Override
   UnionExpression implements Expression <180> =

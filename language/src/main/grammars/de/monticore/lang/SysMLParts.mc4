@@ -3,51 +3,23 @@ package de.monticore.lang;
 
 component grammar SysMLParts extends SysMLBasis {
 
-  /**
-   * Causality indication: "instant" = weak causal, "delayed" = strong causal.
-   * Defaults to "delayed".
-   */
-  SysMLCausality implements SysMLElement =
-    "timing" (["instant"] | ["delayed"]) ";" ;
-
   /*
    * ##################################################################
    * Definitions
    * ##################################################################
    */
 
-  symbol scope PartDef implements SysMLType =
-    Modifier UserDefinedKeyword* "part" "def"
-    SysMLIdentifier? Name SysMLCardinality? Specialization*
-    ("{"
-      SysMLElement*
-    "}" | ";") ;
-
-   enum SysMLReqType = "UNKNOWN" | "HLR" | "LLR" | "MIXED" ;
-
    symbolrule PartDef =
       directRefinements:de.monticore.types.check.SymTypeExpression*
       requirementType:SysMLReqType;
 
-  symbol scope AttributeDef implements SysMLType =
-    Modifier UserDefinedKeyword* "attribute" "def"
-    SysMLIdentifier? Name SysMLCardinality? Specialization*
-    ("{"
-      SysMLElement*
-    "}" | ";") ;
-
+  // AnonEnumUsage hinzugefügt
+  @Override
   symbol scope EnumDef implements SysMLType =
     Modifier UserDefinedKeyword* "enum" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
       (SysMLElement | AnonEnumUsage)*
-    "}" | ";") ;
-
-  symbol EnumUsage implements SysMLElement =
-    Modifier UserDefinedKeyword* "enum"
-    SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
-    ("{"
-      SysMLElement*
     "}" | ";") ;
 
   /**
@@ -59,25 +31,11 @@ component grammar SysMLParts extends SysMLBasis {
       SysMLElement*
     "}" | ";") ;
 
-  symbol scope PortDef implements SysMLType =
-    Modifier UserDefinedKeyword* "port" "def"
-    SysMLIdentifier? Name SysMLCardinality? Specialization*
-    ("{"
-      SysMLElement*
-    "}" | ";") ;
-
   /*
    * ##################################################################
    * Usages
    * ##################################################################
    */
-
-  symbol scope PartUsage implements SysMLElement =
-    Modifier UserDefinedKeyword* "part" SysMLIdentifier? Name?
-    SysMLCardinality? Specialization* DefaultValue?
-    ("{"
-      SysMLElement*
-    "}" | ";") ;
 
   /**
    * Definitions define a type, usages instantiate it. The SysML is not very clear in this regard and mixes types,
@@ -102,14 +60,6 @@ component grammar SysMLParts extends SysMLBasis {
         return Optional.empty();
       } ;
 
-  symbol scope AttributeUsage implements SysMLElement =
-      Modifier UserDefinedKeyword* "attribute"
-      SysMLIdentifier? Name? SysMLCardinality?
-      Specialization* DefaultValue?
-      ("{"
-        SysMLElement*
-      "}" | ";");
-
   symbolrule AttributeUsage =
       types:de.monticore.types.check.SymTypeExpression*
       in:boolean
@@ -127,23 +77,6 @@ component grammar SysMLParts extends SysMLBasis {
         return Optional.empty();
       } ;
 
-  /**
-   * PortUsage has a shadowing scope to allow instantiating attributes from its definition. This is done to store
-   * additional information resulting from tools processing models. This is a work-in-progress concept as part of
-   * @adrian.costin.marin's master thesis.
-   * Example:
-   * The MontiBelle toolchain will, during its runtime, store generated channel names in modified AttributeUsageSymbols
-   * and add these symbols to the PortUsage's scope. Folling invocations of the toolchain are then able to seamlessly
-   * integrate with the existing artifacts (i.e., theories containing specific channel names) only by referencing the
-   * symboltable (and not needing to re-processes the original models).
-   */
-  symbol scope PortUsage implements SysMLElement =
-      Modifier UserDefinedKeyword* "port"
-      SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
-      ("{"
-         SysMLElement*
-       "}" | ";");
-
   symbolrule PortUsage =
       types:de.monticore.types.check.SymTypeExpression*
       conjugatedTypes:de.monticore.types.check.SymTypeExpression*
@@ -160,16 +93,5 @@ component grammar SysMLParts extends SysMLBasis {
       }
       return Optional.empty();
     } ;
-
-  symbol ConnectionUsage implements SysMLElement =
-    Modifier UserDefinedKeyword* "connection"?
-    SysMLIdentifier? Name? SysMLCardinality? Specialization*
-    "connect" (
-      (src:Endpoint "to" tgt:Endpoint) |
-      ("(" (SysMLParameter || ",")* ")")
-    )
-    ("{"
-       SysMLElement*
-     "}" | ";") ;
 
 }
