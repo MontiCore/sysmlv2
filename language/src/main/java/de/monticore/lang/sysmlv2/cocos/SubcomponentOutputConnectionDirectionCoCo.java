@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * MKPX_CoCo5 = KBE_CoCo1
+ * SubcomponentOutputConnectionDirectionCoCo
  * Checks that outputs of subcomponents can only be connected to:
  * 1. Inputs of subcomponents, or
  * 2. Outputs of the parent component.
  */
-public class MKPX_CoCo5 implements SysMLPartsASTConnectionUsageCoCo {
+public class SubcomponentOutputConnectionDirectionCoCo implements SysMLPartsASTConnectionUsageCoCo {
 
   @Override
   public void check(ASTConnectionUsage node) {
@@ -67,14 +67,14 @@ public class MKPX_CoCo5 implements SysMLPartsASTConnectionUsageCoCo {
         (portIsOutput(srcPort) && portIsInput(srcPort)) ||
             (portIsOutput(tgtPort) && portIsInput(tgtPort))
     ) {
-      Log.warn("0xMKPX05 Warning: Connection involves an 'inout' port which may have ambiguous directionality.",
+      Log.warn("0x10AA5 Warning: Connection involves an 'inout' port which may have ambiguous directionality.",
           node.get_SourcePositionStart(),
           node.get_SourcePositionEnd());
     }
 
     if (!allowed) {
       Log.error(
-          "0xMKPX05 Illegal connection: outputs of subcomponents can only be " +
+          "0x10AA5 Illegal connection: outputs of subcomponents can only be " +
               "connected to inputs of subcomponents or outputs of the parent component.",
           node.get_SourcePositionStart(),
           node.get_SourcePositionEnd()
