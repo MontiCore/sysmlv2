@@ -63,7 +63,10 @@ public class MKPX_CoCo5 implements SysMLPartsASTConnectionUsageCoCo {
       // CoCo does not apply
       return;
     }
-    if(portIsOutput(srcPort) && portIsInput(srcPort)) {
+    if(
+        (portIsOutput(srcPort) && portIsInput(srcPort)) ||
+            (portIsOutput(tgtPort) && portIsInput(tgtPort))
+    ) {
       Log.warn("0xMKPX05 Warning: Connection involves an 'inout' port which may have ambiguous directionality.",
           node.get_SourcePositionStart(),
           node.get_SourcePositionEnd());
