@@ -2,12 +2,11 @@
 package cocos;
 
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTConnectionUsageCoCo;
-import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
-import de.monticore.lang.sysmlv2.cocos.MKPX_CoCo6;
+import de.monticore.lang.sysmlv2.cocos.ParentComponentInputConnectionDirectionCoCo;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +18,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MKPXCoCo6Test {
+public class ParentComponentInputConnectionDirectionCoCoTest {
 
   private static final String MODEL_PATH = "src/test/resources/parser";
 
@@ -60,7 +59,7 @@ public class MKPXCoCo6Test {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(validModel).get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new MKPX_CoCo6());
+      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new ParentComponentInputConnectionDirectionCoCo());
       checker.checkAll(ast);
       assertTrue(Log.getFindings().isEmpty());
     }
@@ -80,11 +79,11 @@ public class MKPXCoCo6Test {
       ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(invalidModel).get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new MKPX_CoCo6());
+      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new ParentComponentInputConnectionDirectionCoCo());
       Log.enableFailQuick(false);
       checker.checkAll(ast);
       assertTrue(Log.getFindings().stream()
-              .anyMatch(f -> f.getMsg().contains("0xMKPX06")));
+              .anyMatch(f -> f.getMsg().contains("0x10AA6")));
     }
   }
 }

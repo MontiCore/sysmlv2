@@ -17,12 +17,12 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * MKPX_CoCo6
+ * ParentComponentInputConnectionDirectionCoCo
  * Inputs von Oberkomponenten können nur zu Inputs von Subkomponenten oder Outputs der Oberkomponenten verbunden werden
  * (alternative Formulierung):
  * Inputs von Oberkomponenten können nicht zu Outputs von Subkomponenten verbunden werden.
  */
-public class MKPX_CoCo6 implements SysMLPartsASTConnectionUsageCoCo {
+public class ParentComponentInputConnectionDirectionCoCo implements SysMLPartsASTConnectionUsageCoCo {
 
   @Override
   public void check(ASTConnectionUsage node) {
@@ -70,14 +70,14 @@ public class MKPX_CoCo6 implements SysMLPartsASTConnectionUsageCoCo {
         (portIsOutput(srcPort) && portIsInput(srcPort)) ||
         (portIsOutput(tgtPort) && portIsInput(tgtPort))
     ) {
-      Log.warn("0xMKPX05 Warning: Connection involves an 'inout' port which may have ambiguous directionality.",
+      Log.warn("0x10AA6 Warning: Connection involves an 'inout' port which may have ambiguous directionality.",
           node.get_SourcePositionStart(),
           node.get_SourcePositionEnd());
     }
 
     if (!allowed) {
       Log.error(
-          "0xMKPX06 Illegal connection: inputs of parent components can only be " +
+          "0x10AA6 Illegal connection: inputs of parent components can only be " +
               "connected to inputs of subcomponents or outputs of the parent component.",
           node.get_SourcePositionStart(),
           node.get_SourcePositionEnd()
