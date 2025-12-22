@@ -58,10 +58,15 @@ public class MKPX_CoCo5 implements SysMLPartsASTConnectionUsageCoCo {
     // 2. Parent component with Output ports
     boolean allowed = (tgtIsSub && tgtIsInput) || (!tgtIsSub && tgtIsOutput);
 
-    if(!srcIsSub || portIsInput(srcPort)){
+    if(!srcIsSub || !portIsOutput(srcPort)){
       // Source is neither output nor Subcomponent
       // CoCo does not apply
       return;
+    }
+    if(portIsOutput(srcPort) && portIsInput(srcPort)) {
+      Log.warn("0xMKPX05 Warning: Connection involves an 'inout' port which may have ambiguous directionality.",
+          node.get_SourcePositionStart(),
+          node.get_SourcePositionEnd());
     }
 
     if (!allowed) {
