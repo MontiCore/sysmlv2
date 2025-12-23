@@ -65,6 +65,29 @@ public class SubcomponentOutputConnectionDirectionCoCoTest {
     }
 
     @Test
+    public void testValidConjugatedModel() throws IOException {
+      String validModel =
+          "port def OutPort { out attribute data: int; }"
+              + "part def A { port output: OutPort; }"
+              + "part def B { port input: ~OutPort; }"
+              + "part def C { port output: OutPort; }"
+              + "part def System {"
+              +   "port sysOutput: OutPort;"
+              +   "part a: A;"
+              +   "part b: B;"
+              +   "part c: C;"
+              +   "connect a.output to b.input;"          // (Sub) Output -> (Sub) Input
+              +   "connect c.output to sysOutput;"        // (Sub) Output -> (main) Output
+              + "}";
+      ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(validModel).get();
+      SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
+      var checker = new SysMLv2CoCoChecker();
+      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new SubcomponentOutputConnectionDirectionCoCo());
+      checker.checkAll(ast);
+      assertTrue(Log.getFindings().isEmpty());
+    }
+
+    @Test
     public void testInvalidSubOutToSubOut() throws IOException {
       String invalidModel =
           "port def OutPort { out attribute data: int; }"
@@ -84,6 +107,27 @@ public class SubcomponentOutputConnectionDirectionCoCoTest {
       checker.checkAll(ast);
       assertTrue(Log.getFindings().stream()
               .anyMatch(f -> f.getMsg().contains("0x10AA5")));
+    }
+
+    @Test
+    public void testInvalidSubOutToMainInConjugatedModel() throws IOException {
+      String invalidModel =
+          "port def OutPort { out attribute data: int; }"
+              + "part def A { port output: OutPort; }"
+              + "part def System {"
+              +   "port sysInput: ~OutPort;"
+              +   "part a: A;"
+              +   "connect a.output to sysInput;"         // (Sub) Output -> (main) Input
+              + "}";
+
+      ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(invalidModel).get();
+      SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
+      var checker = new SysMLv2CoCoChecker();
+      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new SubcomponentOutputConnectionDirectionCoCo());
+      Log.enableFailQuick(false);
+      checker.checkAll(ast);
+      assertTrue(Log.getFindings().stream()
+          .anyMatch(f -> f.getMsg().contains("0x10AA5")));
     }
 
     @Test
