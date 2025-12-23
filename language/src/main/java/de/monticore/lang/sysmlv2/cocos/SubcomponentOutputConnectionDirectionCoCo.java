@@ -3,13 +3,9 @@ package de.monticore.lang.sysmlv2.cocos;
 
 import de.monticore.lang.sysmlbasis._ast.ASTModifier;
 import de.monticore.lang.sysmlbasis._ast.ASTEndpoint;
-import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
-import de.monticore.lang.sysmlparts._ast.ASTPortDef;
-import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTConnectionUsageCoCo;
 import de.monticore.lang.sysmlparts._symboltable.*;
 import de.monticore.symboltable.modifiers.AccessModifier;
@@ -184,10 +180,10 @@ public class SubcomponentOutputConnectionDirectionCoCo implements SysMLPartsASTC
   }
 
   protected boolean portIsConjugated(PortUsageSymbol symbol) {
-    ASTPortUsage usageSymbol = symbol.getAstNode();
-    ASTSpecialization specializations = usageSymbol.getSpecialization(0);
-    ASTSysMLTyping sysMLTyping = (ASTSysMLTyping) specializations;
-    boolean isConjugated = sysMLTyping.isConjugated();
-    return isConjugated;
+    return
+        ((ASTSysMLTyping) symbol
+        .getAstNode()
+        .getSpecialization(0))
+        .isConjugated();
   }
 }
