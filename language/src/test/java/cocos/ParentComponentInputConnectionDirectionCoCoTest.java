@@ -65,6 +65,30 @@ public class ParentComponentInputConnectionDirectionCoCoTest {
     }
 
     @Test
+    public void testValidConjugatedModel() throws IOException {
+      String validModel =
+          "port def InPort { in attribute data: int; }"
+              + "part def A { port input: InPort; }"
+              + "part def B { port output: ~InPort; }"
+              + "part def System {"
+              +   "port sysIn: InPort;"
+              +   "port sysInAnother: InPort;"
+              +   "port sysOut: ~InPort;"
+              +   "part a: A;"
+              +   "part b: B;"
+              +   "connect sysIn to a.input;"
+              +   "connect sysInAnother to sysOut;"
+              + "}";
+
+      ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(validModel).get();
+      SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
+      var checker = new SysMLv2CoCoChecker();
+      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new ParentComponentInputConnectionDirectionCoCo());
+      checker.checkAll(ast);
+      assertTrue(Log.getFindings().isEmpty());
+    }
+
+    @Test
     public void testInvalid() throws IOException {
       String invalidModel =
           "port def InPort { in attribute data: int; }"
@@ -84,6 +108,27 @@ public class ParentComponentInputConnectionDirectionCoCoTest {
       checker.checkAll(ast);
       assertTrue(Log.getFindings().stream()
               .anyMatch(f -> f.getMsg().contains("0x10AA6")));
+    }
+
+    @Test
+    public void testInvalidConjugatedModel() throws IOException {
+      String invalidModel =
+          "port def InPort { in attribute data: int; }"
+              + "part def A { port output: ~InPort; }"
+              + "part def System {"
+              +   "port sysIn: InPort;"
+              +   "part a: A;"
+              +   "connect sysIn to a.output;"
+              + "}";
+
+      ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(invalidModel).get();
+      SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
+      var checker = new SysMLv2CoCoChecker();
+      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new ParentComponentInputConnectionDirectionCoCo());
+      Log.enableFailQuick(false);
+      checker.checkAll(ast);
+      assertTrue(Log.getFindings().stream()
+          .anyMatch(f -> f.getMsg().contains("0x10AA6")));
     }
   }
 }
