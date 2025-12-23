@@ -65,8 +65,8 @@ public class SubcomponentOutputConnectionDirectionCoCo implements SysMLPartsASTC
       return;
     }
     if(
-        (portIsOutput(srcPort) && portIsInput(srcPort)) ||
-            (portIsOutput(tgtPort) && portIsInput(tgtPort))
+        (portIsInOutput(srcPort)) ||
+        (portIsInOutput(tgtPort))
     ) {
       Log.warn("0x10AA5 Warning: Connection involves an 'inout' port which may have ambiguous directionality.",
           node.get_SourcePositionStart(),
@@ -177,6 +177,11 @@ public class SubcomponentOutputConnectionDirectionCoCo implements SysMLPartsASTC
     boolean portIsOutAndNotConjugated = mods.isOut() && !portIsConjugated(symbol);
     boolean portIsInAndConjugated = mods.isIn() && portIsConjugated(symbol);
     return (portIsOutAndNotConjugated || portIsInAndConjugated);
+  }
+
+  protected boolean portIsInOutput(PortUsageSymbol symbol) {
+    ASTModifier mods = getModifiersFromPortUsageSymbol(symbol);
+    return mods.isInout();
   }
 
   protected boolean portIsConjugated(PortUsageSymbol symbol) {
