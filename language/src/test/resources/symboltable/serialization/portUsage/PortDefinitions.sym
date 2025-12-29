@@ -9,7 +9,7 @@
       "spannedScope": {
         "symbols": [
           {
-            "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
+            "kind": "de.monticore.lang.sysmlv2._symboltable.PortDefSymbol",
             "name": "BooleanInput",
             "fullName":"PortDefinitions.BooleanInput",
             "spannedScope": {
@@ -30,7 +30,7 @@
             }
           },
           {
-            "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
+            "kind": "de.monticore.lang.sysmlv2._symboltable.PortDefSymbol",
             "name": "BooleanOutput",
             "fullName":"PortDefinitions.BooleanOutput",
             "spannedScope": {

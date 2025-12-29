@@ -1,6 +1,6 @@
 package de.monticore.lang.sysmlv2.symboltable.completers;
 
-import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
+import de.monticore.lang.sysmlv2._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._visitor.SysMLStatesVisitor2;
 
 import java.util.stream.Collectors;

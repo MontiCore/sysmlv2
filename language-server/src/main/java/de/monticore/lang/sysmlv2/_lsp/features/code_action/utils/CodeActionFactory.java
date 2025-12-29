@@ -2,11 +2,11 @@ package de.monticore.lang.sysmlv2._lsp.features.code_action.utils;
 
 import de.mclsg.lsp.document_management.DocumentManager;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
-import de.monticore.lang.sysmlparts._ast.ASTPartDef;
-import de.monticore.lang.sysmlparts._ast.ASTPartDefBuilder;
+import de.monticore.lang.sysmlv2._ast.ASTPartDef;
+import de.monticore.lang.sysml4verification._ast.ASTPartDefBuilder;
 import de.monticore.lang.sysmlparts._ast.ASTSysMLReqType;
-import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
-import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
+import de.monticore.lang.sysml4verification._ast.ASTRequirementUsage;
+import de.monticore.lang.sysmlv2._ast.ASTStateUsage;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModelBuilder;
 import de.monticore.lang.sysmlv2._lsp.language_access.SysMLv2ScopeManager;

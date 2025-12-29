@@ -1,10 +1,10 @@
 package de.monticore.lang.sysmlv2.symboltable.completers;
 
 import de.monticore.lang.sysmlconstraints._symboltable.ISysMLConstraintsScope;
-import de.monticore.lang.sysmlparts._ast.ASTPartDef;
+import de.monticore.lang.sysmlv2._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTSysMLReqType;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
-import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
+import de.monticore.lang.sysml4verification._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 import de.monticore.lang.sysmlstates._symboltable.ISysMLStatesScope;
 

@@ -1,10 +1,9 @@
 package de.monticore.lang.sysmlv2._lsp.features.symbols;
 
-import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
-import de.monticore.lang.sysmlparts._symboltable.PartDefSymbolDeSer;
+import de.monticore.lang.sysml4verification._symboltable.PartDefSymbol;
+import de.monticore.lang.sysmlv2._symboltable.PartDefSymbolDeSer;
 import de.monticore.lang.sysmlparts._symboltable.SysMLPartsSymbols2Json;
 import de.monticore.lang.sysmlv2._lsp.language_access.SysMLv2ScopeManager;
-import de.monticore.lang.sysmlv2.types.SysMLSynthesizer;
 import de.monticore.symboltable.serialization.JsonPrinter;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionDeSer;

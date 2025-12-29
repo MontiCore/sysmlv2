@@ -1,8 +1,8 @@
 package de.monticore.lang.sysmlv2._lsp.commands;
 
-import de.monticore.lang.sysmlparts._ast.ASTPartDefBuilder;
+import de.monticore.lang.sysml4verification._ast.ASTPartDefBuilder;
 import de.monticore.lang.sysmlparts._ast.ASTSysMLReqType;
-import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
+import de.monticore.lang.sysml4verification._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlv2._lsp.SysMLv2LanguageServer;
 import de.monticore.lang.sysmlv2._lsp.features.code_action.utils.CodeActionFactory;
 import de.monticore.lang.sysmlv2._lsp.language_access.SysMLv2ScopeManager;

@@ -2,8 +2,8 @@ package de.monticore.lang.sysmlv2._lsp.features.code_action;
 
 import de.mclsg.lsp.document_management.DocumentInformation;
 import de.mclsg.lsp.document_management.DocumentManager;
-import de.monticore.lang.sysmlparts._ast.ASTPartDef;
-import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
+import de.monticore.lang.sysmlv2._ast.ASTPartDef;
+import de.monticore.lang.sysml4verification._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;

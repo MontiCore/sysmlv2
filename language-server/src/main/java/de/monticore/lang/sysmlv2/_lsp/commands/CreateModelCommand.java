@@ -2,8 +2,8 @@ package de.monticore.lang.sysmlv2._lsp.commands;
 
 import de.monticore.lang.sysmlbasis._ast.ASTModifierBuilder;
 import de.monticore.lang.sysmlparts._ast.ASTEnumDefBuilder;
-import de.monticore.lang.sysmlparts._ast.ASTPartDef;
-import de.monticore.lang.sysmlparts._ast.ASTPartDefBuilder;
+import de.monticore.lang.sysmlv2._ast.ASTPartDef;
+import de.monticore.lang.sysml4verification._ast.ASTPartDefBuilder;
 import de.monticore.lang.sysmlparts._ast.ASTPortDefBuilder;
 import de.monticore.lang.sysmlparts._ast.ASTEnumUsageBuilder;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;

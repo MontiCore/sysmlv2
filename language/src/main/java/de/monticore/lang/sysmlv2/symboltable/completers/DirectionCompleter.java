@@ -1,6 +1,6 @@
 package de.monticore.lang.sysmlv2.symboltable.completers;
 
-import de.monticore.lang.sysmlbasis._ast.ASTAnonymousReference;
+import de.monticore.lang.sysmlv2._ast.ASTAnonymousReference;
 import de.monticore.lang.sysmlbasis._ast.ASTAnonymousUsage;
 import de.monticore.lang.sysmlbasis._ast.ASTModifier;
 import de.monticore.lang.sysmlbasis._visitor.SysMLBasisVisitor2;

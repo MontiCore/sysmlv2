@@ -2,7 +2,7 @@ package de.monticore.lang.sysmlv2._lsp.features.code_action;
 
 import de.mclsg.lsp.document_management.DocumentInformation;
 import de.mclsg.lsp.document_management.DocumentManager;
-import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
+import de.monticore.lang.sysml4verification._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlv2._lsp.features.code_action.utils.DocumentUtils;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import org.eclipse.lsp4j.CodeAction;

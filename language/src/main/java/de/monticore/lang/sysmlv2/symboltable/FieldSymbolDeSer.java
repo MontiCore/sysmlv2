@@ -2,7 +2,6 @@ package de.monticore.lang.sysmlv2.symboltable;
 
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
-import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.json.JsonElement;
 import de.monticore.symboltable.serialization.json.JsonObject;
@@ -10,11 +9,11 @@ import de.monticore.types.check.*;
 
 import java.util.List;
 
-import static de.monticore.lang.sysmlbasis.symboltable.SerializationUtil.deserializeListMember;
+import static de.monticore.lang.sysmlv2.symboltable.SerializationUtil.deserializeListMember;
 
 public class FieldSymbolDeSer extends de.monticore.symbols.oosymbols._symboltable.FieldSymbolDeSer {
   /**
-   * See {@link de.monticore.lang.sysmlbasis.symboltable.SerializationUtil#deserializeListMember}
+   * See {@link SerializationUtil#deserializeListMember}
    */
   @Override
   public SymTypeExpression deserializeType(JsonObject symbolJson) {

@@ -2,20 +2,21 @@
 package de.monticore.lang.sysmlv2;
 
 import de.monticore.lang.componentconnector.SerializationUtil;
+import de.monticore.lang.sysml4verification.PartDefExtractor;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintDefCoCo;
 import de.monticore.lang.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTSysMLPackageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
-import de.monticore.lang.sysmlparts.coco.PortDefHasOneType;
-import de.monticore.lang.sysmlparts.coco.PortDefNeedsDirection;
-import de.monticore.lang.sysmlparts.symboltable.completers.ConvertEnumUsagesToFields;
+import de.monticore.lang.sysmlv2.cocos.PortDefHasOneType;
+import de.monticore.lang.sysmlv2.cocos.PortDefNeedsDirection;
+import de.monticore.lang.sysmlv2.symboltable.completers.ConvertEnumUsagesToFields;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTRequirementDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateUsageCoCo;
-import de.monticore.lang.sysmlstates.cocos.NoDoActions;
-import de.monticore.lang.sysmlstates.cocos.NoExitActions;
+import de.monticore.lang.sysmlv2.cocos.NoDoActions;
+import de.monticore.lang.sysmlv2.cocos.NoExitActions;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._prettyprint.SysMLv2FullPrettyPrinter;
@@ -391,7 +392,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
 
         // Gather PartDefs into a new Scope
         var artifact = SysMLv2Mill.artifactScope();
-        var extractor = new SerializationUtil.PartDefExtractor(artifact);
+        var extractor = new PartDefExtractor(artifact);
         var traverser = getTraverser();
         traverser.add4SysMLParts(extractor);
         asts.stream().forEach(s -> s.accept(traverser));

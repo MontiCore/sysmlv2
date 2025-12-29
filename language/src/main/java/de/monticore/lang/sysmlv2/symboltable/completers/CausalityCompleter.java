@@ -1,9 +1,9 @@
 package de.monticore.lang.sysmlv2.symboltable.completers;
 
-import de.monticore.lang.sysmlparts._ast.ASTPartDef;
-import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
+import de.monticore.lang.sysmlv2._ast.ASTPartDef;
+import de.monticore.lang.sysmlv2._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._ast.ASTSysMLCausality;
-import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
+import de.monticore.lang.sysml4verification._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 
 /**

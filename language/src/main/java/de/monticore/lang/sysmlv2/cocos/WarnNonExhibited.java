@@ -2,8 +2,8 @@
 package de.monticore.lang.sysmlv2.cocos;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.lang.sysmlparts._ast.ASTPartDef;
-import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
+import de.monticore.lang.sysmlv2._ast.ASTPartDef;
+import de.monticore.lang.sysmlv2._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateUsageCoCo;
 import de.se_rwth.commons.logging.Log;
 

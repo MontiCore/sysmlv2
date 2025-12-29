@@ -10,12 +10,12 @@ import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTRequirementD
 import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
 import de.monticore.lang.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTSysMLPackageCoCo;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
-import de.monticore.lang.sysmlparts._ast.ASTPartDef;
+import de.monticore.lang.sysmlv2._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPortDef;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
-import de.monticore.lang.sysmlstates._ast.ASTStateDef;
+import de.monticore.lang.sysmlv2._ast.ASTStateDef;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateDefCoCo;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;

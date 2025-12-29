@@ -3,7 +3,7 @@ package de.monticore.lang.sysmlv2.types;
 import de.monticore.expressions.commonexpressions._ast.ASTArrayAccessExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
-import de.monticore.lang.sysmlparts.symboltable.adapters.PortUsage2VariableSymbolAdapter;
+import de.monticore.lang.sysmlv2.symboltable.adapters.PortUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -24,9 +24,6 @@ import java.util.Optional;
 
 import static de.monticore.types.check.SymTypePrimitive.unbox;
 import static de.monticore.types.check.TypeCheck.isBoolean;
-import static de.monticore.types.check.TypeCheck.isDouble;
-import static de.monticore.types.check.TypeCheck.isFloat;
-import static de.monticore.types.check.TypeCheck.isLong;
 
 /**
  * <p>In SysMLv2, the expression in StateUsage is not type of Stream.

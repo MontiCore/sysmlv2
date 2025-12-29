@@ -15,7 +15,7 @@ import de.monticore.lang.sysmlactions._symboltable.ISysMLActionsScope;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._prettyprint.SysMLv2FullPrettyPrinter;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
-import de.monticore.lang.sysmlactions.visitors.SendActionAssignmentsVisitor;
+import de.monticore.lang.sysmlv2.visitors.SendActionAssignmentsVisitor;
 import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.literals.mccommonliterals._symboltable.IMCCommonLiteralsScope;
 import de.monticore.literals.mcliteralsbasis._symboltable.IMCLiteralsBasisScope;

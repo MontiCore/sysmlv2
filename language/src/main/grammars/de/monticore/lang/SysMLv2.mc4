@@ -5,9 +5,9 @@ package de.monticore.lang;
  * Full-fledged SysML v2
  */
 grammar SysMLv2
-    extends SysML4Verification,
-            de.monticore.Cardinality,
+    extends de.monticore.Cardinality,
             de.monticore.UMLModifier,
+            SysML4Verification,
             de.monticore.literals.MCCommonLiterals,     // SignedLiteral
             de.monticore.types.MCBasicTypes,            // MCType
             de.monticore.expressions.CommonExpressions, // FieldAccessExpression

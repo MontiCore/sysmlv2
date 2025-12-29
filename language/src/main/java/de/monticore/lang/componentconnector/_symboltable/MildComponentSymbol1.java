@@ -13,15 +13,6 @@ public class MildComponentSymbol1 extends MildComponentSymbolTOP {
   }
 
   /**
-   * Aktuell gehen wir davon aus, dass alle Ports die gleiche Kardinalität haben (müssen) und berechnen die
-   * Gesamt-Kausalität aus den Ports. MontiBelle bzw. die Transformation nach Isabelle kann gemischte Kausalität
-   * noch nicht verarbeiten.
-   */
-  public boolean isStrongCausal() {
-    return getAllPorts().stream().anyMatch(p -> p.isStronglyCausal());
-  }
-
-  /**
    * Since we might not know the name of the constraint or requirement, and thus cannot spannedScope.resolve(unknown),
    * this method simply crawls the scope for any matching symbols.
    */

@@ -3,7 +3,7 @@ package de.monticore.lang.sysmlv2.symboltable.adapters;
 import com.google.common.base.Preconditions;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol;
-import de.monticore.lang.sysmlconstraints._symboltable.RequirementUsageSymbol;
+import de.monticore.lang.sysml4verification._symboltable.RequirementUsageSymbol;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.se_rwth.commons.logging.Log;
 

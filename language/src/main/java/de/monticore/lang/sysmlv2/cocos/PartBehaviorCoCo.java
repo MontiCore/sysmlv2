@@ -3,11 +3,11 @@ package de.monticore.lang.sysmlv2.cocos;
 
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
-import de.monticore.lang.sysmlparts._ast.ASTPartDef;
+import de.monticore.lang.sysmlv2._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
-import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
-import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
+import de.monticore.lang.sysml4verification._ast.ASTRequirementUsage;
+import de.monticore.lang.sysmlv2._ast.ASTStateUsage;
 import de.se_rwth.commons.logging.Log;
 
 /**

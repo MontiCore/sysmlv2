@@ -1,13 +1,19 @@
 package de.monticore.lang.componentconnector;
 
-import de.monticore.lang.componentconnector._symboltable.*;
-import de.monticore.lang.sysmlparts._ast.ASTPartDef;
-import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
+import de.monticore.lang.componentconnector._symboltable.ComponentConnectorSymbols2Json;
+import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
+import de.monticore.lang.componentconnector._symboltable.MildComponentSymbolDeSer;
+import de.monticore.lang.componentconnector._symboltable.MildInstanceSymbol;
+import de.monticore.lang.componentconnector._symboltable.MildInstanceSymbolDeSer;
+import de.monticore.lang.componentconnector._symboltable.MildPortSymbol;
+import de.monticore.lang.componentconnector._symboltable.MildPortSymbolDeSer;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
-import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symbols.basicsymbols._symboltable.BasicSymbolsSymbols2Json;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbolDeSer;
-import de.monticore.symbols.compsymbols._symboltable.*;
+import de.monticore.symbols.compsymbols._symboltable.CompSymbolsSymbols2Json;
+import de.monticore.symbols.compsymbols._symboltable.ComponentTypeSymbolDeSer;
+import de.monticore.symbols.compsymbols._symboltable.PortSymbolDeSer;
+import de.monticore.symbols.compsymbols._symboltable.SubcomponentSymbolDeSer;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbolDeSer;
 import de.monticore.symbols.oosymbols._symboltable.OOSymbolsSymbols2Json;
@@ -86,28 +92,6 @@ public class SerializationUtil {
         "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
         myFieldSymbolDeSer);
 
-  }
-
-  /**
-   * Class extracts PartDefs as ComponentTypeSymbols and adds them to a new scope.
-   */
-  public static class PartDefExtractor implements SysMLPartsVisitor2 {
-    private ISysMLv2Scope artifact;
-
-    public PartDefExtractor(ISysMLv2Scope artifact) {
-      this.artifact = artifact;
-    }
-
-    @Override
-    public void visit(ASTPartDef node) {
-      if (node.getEnclosingScope() instanceof ISysMLv2Scope) {
-        var scope = (ISysMLv2Scope) node.getEnclosingScope();
-        var component = scope.resolveComponentType(node.getName());
-        if (component.isPresent()) {
-          artifact.add(component.get());
-        }
-      }
-    }
   }
 
 }

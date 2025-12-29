@@ -17,6 +17,9 @@ grammar SysML4Verification
             de.monticore.expressions.StreamExpressions,
             de.monticore.UMLModifier
 {
+  // There exist two types of behavioral semantics: descriptive and imperative
+  enum SysMLReqType = "UNKNOWN" | "HLR" | "LLR" | "MIXED" ;
+
   // Dubiose Sachen, die ich gerade nicht lösen kann
 
   // Inline-Variante für das "first" vor dem "then"
@@ -178,12 +181,12 @@ grammar SysML4Verification
   symbolrule PartUsage =
       types:de.monticore.types.check.SymTypeExpression*
       sysMLIdentifier:Name?
-      method public Optional<de.monticore.lang.sysmlparts._symboltable.PartDefSymbol> getPartDef() {
+      method public Optional<de.monticore.lang.sysml4verification._symboltable.PartDefSymbol> getPartDef() {
         for (de.monticore.lang.sysmlbasis._ast.ASTSpecialization specialization : this.getAstNode().getSpecializationList()) {
           for (de.monticore.types.mcbasictypes._ast.ASTMCType specializationType : specialization.getSuperTypesList()) {
             var qualified = (de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType) specializationType;
             var name = qualified.getMCQualifiedName().getQName();
-            var partDef = (Optional<de.monticore.lang.sysmlparts._symboltable.PartDefSymbol>) this.getEnclosingScope().resolvePartDef(name);
+            var partDef = (Optional<de.monticore.lang.sysml4verification._symboltable.PartDefSymbol>) this.getEnclosingScope().resolvePartDef(name);
             if(partDef.isPresent()) {
               return partDef;
             }

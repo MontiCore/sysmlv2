@@ -9,14 +9,14 @@
       "spannedScope": {
         "symbols": [
           {
-            "kind": "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol",
+            "kind": "de.monticore.lang.sysml4verification._symboltable.PartDefSymbol",
             "name": "UnfairMedium",
             "fullName":"RoughStateDef.UnfairMedium",
             "requirementType": "LLR",
             "spannedScope": {
               "symbols": [
                 {
-                  "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
+                  "kind": "de.monticore.lang.sysmlv2._symboltable.PortUsageSymbol",
                   "name": "i1",
                   "fullName":"RoughStateDef.UnfairMedium.i1",
                   "types": [
@@ -28,7 +28,7 @@
                   "strong": true
                 },
                 {
-                  "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
+                  "kind": "de.monticore.lang.sysmlv2._symboltable.PortUsageSymbol",
                   "name": "o1",
                   "fullName":"RoughStateDef.UnfairMedium.o1",
                   "types": [
@@ -68,7 +68,7 @@
             }
           },
           {
-            "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
+            "kind": "de.monticore.lang.sysmlv2._symboltable.PortDefSymbol",
             "name": "Input",
             "fullName":"RoughStateDef.Input",
             "spannedScope": {
@@ -89,7 +89,7 @@
             }
           },
           {
-            "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
+            "kind": "de.monticore.lang.sysmlv2._symboltable.PortDefSymbol",
             "name": "Output",
             "fullName":"RoughStateDef.Output",
             "spannedScope": {

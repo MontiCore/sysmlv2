@@ -9,14 +9,14 @@
       "spannedScope": {
         "symbols": [
           {
-            "kind": "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol",
+            "kind": "de.monticore.lang.sysml4verification._symboltable.PartDefSymbol",
             "name": "B",
             "fullName":"RoughPartDef.B",
             "requirementType": "HLR",
             "spannedScope": {
               "symbols": [
                 {
-                  "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
+                  "kind": "de.monticore.lang.sysmlv2._symboltable.PortUsageSymbol",
                   "name": "input",
                   "fullName":"RoughPartDef.B.input",
                   "types": [
@@ -28,7 +28,7 @@
                   "strong": true
                 },
                 {
-                  "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
+                  "kind": "de.monticore.lang.sysmlv2._symboltable.PortUsageSymbol",
                   "name": "output",
                   "fullName":"RoughPartDef.B.output",
                   "types": [
@@ -48,7 +48,7 @@
             }
           },
           {
-            "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
+            "kind": "de.monticore.lang.sysmlv2._symboltable.PortDefSymbol",
             "name": "BooleanInput",
             "fullName":"RoughPartDef.BooleanInput",
             "spannedScope": {
@@ -69,7 +69,7 @@
             }
           },
           {
-            "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
+            "kind": "de.monticore.lang.sysmlv2._symboltable.PortDefSymbol",
             "name": "BooleanOutput",
             "fullName":"RoughPartDef.BooleanOutput",
             "spannedScope": {

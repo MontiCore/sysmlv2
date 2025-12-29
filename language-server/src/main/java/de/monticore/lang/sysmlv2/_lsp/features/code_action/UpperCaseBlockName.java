@@ -8,7 +8,7 @@ import de.monticore.lang.sysmlv2._lsp.LanguageServerCLI;
 
 import de.monticore.lang.sysmlbasis._symboltable.SysMLBasisScope;
 import de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol;
-import de.monticore.lang.sysmlparts._ast.ASTPartDef;
+import de.monticore.lang.sysmlv2._ast.ASTPartDef;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import org.eclipse.lsp4j.*;
 

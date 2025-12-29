@@ -9,13 +9,13 @@
       "spannedScope": {
         "symbols": [
           {
-            "kind": "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol",
+            "kind": "de.monticore.lang.sysml4verification._symboltable.PartDefSymbol",
             "name": "UnfairMedium",
             "fullName": "Refinement.UnfairMedium",
             "requirementType": "UNKNOWN"
           },
           {
-            "kind": "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol",
+            "kind": "de.monticore.lang.sysml4verification._symboltable.PartDefSymbol",
             "name": "FairMedium",
             "fullName": "Refinement.FairMedium",
             "directRefinements": [
@@ -27,7 +27,7 @@
             "requirementType": "UNKNOWN"
           },
           {
-            "kind": "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol",
+            "kind": "de.monticore.lang.sysml4verification._symboltable.PartDefSymbol",
             "name": "PerfectMedium",
             "fullName": "Refinement.PerfectMedium",
             "directRefinements": [

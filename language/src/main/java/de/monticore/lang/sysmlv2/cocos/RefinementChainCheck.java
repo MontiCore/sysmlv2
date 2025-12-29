@@ -1,10 +1,10 @@
 package de.monticore.lang.sysmlv2.cocos;
 
 import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
-import de.monticore.lang.sysmlparts._ast.ASTPartDef;
+import de.monticore.lang.sysmlv2._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTSysMLReqType;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
-import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
+import de.monticore.lang.sysml4verification._symboltable.PartDefSymbol;
 import de.se_rwth.commons.SourcePositionBuilder;
 import de.se_rwth.commons.logging.Log;
 
