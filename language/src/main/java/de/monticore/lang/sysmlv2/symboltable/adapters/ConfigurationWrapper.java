@@ -16,7 +16,6 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._prettyprint.SysMLv2FullPrettyPrinter;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.lang.sysmlactions.visitors.SendActionAssignmentsVisitor;
-import de.monticore.lang.sysmlv2.types.SysMLDeriver;
 import de.monticore.literals.mccommonliterals._symboltable.IMCCommonLiteralsScope;
 import de.monticore.literals.mcliteralsbasis._symboltable.IMCLiteralsBasisScope;
 import de.monticore.mcbasics._symboltable.IMCBasicsScope;
@@ -24,6 +23,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.compsymbols._symboltable.ICompSymbolsScope;
 import de.monticore.types.mcbasictypes._symboltable.IMCBasicTypesScope;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.SourcePosition;
 
 import java.util.Collection;
@@ -82,8 +82,7 @@ public class ConfigurationWrapper implements ASTConfiguration {
               // Wenn der Automat generell Listen senden kann, zB. eine Event-
               // Automat, dann wird der Typ des Values angeschaut und
               // entschieden, ob der Output "isListValue" gesetzt bekommt
-              var typeOfValue = new SysMLDeriver(false)
-                  .deriveType(value).getResult();
+              var typeOfValue = TypeCheck3.typeOf(value);
               if(typeOfValue.printFullName().contains("List")) {
                 isListValue = true;
               }

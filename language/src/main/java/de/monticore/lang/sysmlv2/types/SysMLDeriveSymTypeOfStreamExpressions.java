@@ -13,6 +13,7 @@ import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
 
+@Deprecated
 public class SysMLDeriveSymTypeOfStreamExpressions extends AbstractDeriveFromExpression implements
     StreamExpressionsVisitor2, StreamExpressionsHandler {
 

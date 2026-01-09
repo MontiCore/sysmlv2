@@ -1,0 +1,12 @@
+/* (c) https://github.com/MontiCore/monticore */
+port def Integers {
+  out attribute natAttr: int;
+}
+
+part def LogicBasedConstraints {
+  port myPortDef: Integers;
+
+  constraint constraintName {
+    myPortDef.nth(3).nth(3).natAttr > myPortDef.nth(3).nth(3)
+  }
+}
