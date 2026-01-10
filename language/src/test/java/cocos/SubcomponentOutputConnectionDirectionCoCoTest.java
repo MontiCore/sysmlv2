@@ -1,22 +1,26 @@
 /* (c) https://github.com/MontiCore/monticore */
 package cocos;
 
-import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTConnectionUsageCoCo;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
+import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
+import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
 import de.monticore.lang.sysmlv2.cocos.SubcomponentOutputConnectionDirectionCoCo;
+import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SubcomponentOutputConnectionDirectionCoCoTest {
 
@@ -33,8 +37,9 @@ public class SubcomponentOutputConnectionDirectionCoCoTest {
   @BeforeEach
   public void reset() {
     SysMLv2Mill.globalScope().clear();
-    Log.getFindings().clear();
-    Log.enableFailQuick(true);
+    SysMLv2Mill.initializePrimitives();
+    SysMLv2Mill.addCollectionTypes();
+    Log.clearFindings();
   }
 
   @Nested
@@ -56,12 +61,10 @@ public class SubcomponentOutputConnectionDirectionCoCoTest {
               +   "connect a.output to b.input;"          // (Sub) Output -> (Sub) Input
               +   "connect c.output to sysOutput;"        // (Sub) Output -> (main) Output
               + "}";
-      ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(validModel).get();
-      SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
-      var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new SubcomponentOutputConnectionDirectionCoCo());
-      checker.checkAll(ast);
-      assertTrue(Log.getFindings().isEmpty());
+      var ast = parse(validModel);
+      createSt(ast);
+      var errors = check(ast);
+      assertThat(errors).hasSize(0);
     }
 
     @Test
@@ -79,12 +82,10 @@ public class SubcomponentOutputConnectionDirectionCoCoTest {
               +   "connect a.output to b.input;"          // (Sub) Output -> (Sub) Input
               +   "connect c.output to sysOutput;"        // (Sub) Output -> (main) Output
               + "}";
-      ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(validModel).get();
-      SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
-      var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new SubcomponentOutputConnectionDirectionCoCo());
-      checker.checkAll(ast);
-      assertTrue(Log.getFindings().isEmpty());
+      var ast = parse(validModel);
+      createSt(ast);
+      var errors = check(ast);
+      assertThat(errors).hasSize(0);
     }
 
     @Test
@@ -99,14 +100,11 @@ public class SubcomponentOutputConnectionDirectionCoCoTest {
               +   "connect a.output to b.output;"         // (Sub) Output -> (Sub) Output
               + "}";
 
-      ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(invalidModel).get();
-      SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
-      var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new SubcomponentOutputConnectionDirectionCoCo());
-      Log.enableFailQuick(false);
-      checker.checkAll(ast);
-      assertTrue(Log.getFindings().stream()
-              .anyMatch(f -> f.getMsg().contains("0x10AA5")));
+      var ast = parse(invalidModel);
+      createSt(ast);
+      var errors = check(ast);
+      assertThat(errors).hasSize(1);
+      assertThat(errors.get(0).getMsg()).contains("0x10AA5");
     }
 
     @Test
@@ -120,14 +118,11 @@ public class SubcomponentOutputConnectionDirectionCoCoTest {
               +   "connect a.output to sysInput;"         // (Sub) Output -> (main) Input
               + "}";
 
-      ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(invalidModel).get();
-      SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
-      var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new SubcomponentOutputConnectionDirectionCoCo());
-      Log.enableFailQuick(false);
-      checker.checkAll(ast);
-      assertTrue(Log.getFindings().stream()
-          .anyMatch(f -> f.getMsg().contains("0x10AA5")));
+      var ast = parse(invalidModel);
+      createSt(ast);
+      var errors = check(ast);
+      assertThat(errors).hasSize(1);
+      assertThat(errors.get(0).getMsg()).contains("0x10AA5");
     }
 
     @Test
@@ -142,14 +137,39 @@ public class SubcomponentOutputConnectionDirectionCoCoTest {
               +   "connect a.output to sysInput;"         // (Sub) Output -> (main) Input
               + "}";
 
-      ASTSysMLModel ast = SysMLv2Mill.parser().parse_String(invalidModel).get();
-      SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
+      var ast = parse(invalidModel);
+      createSt(ast);
+      var errors = check(ast);
+      assertThat(errors).hasSize(1);
+      assertThat(errors.get(0).getMsg()).contains("0x10AA5");
+    }
+
+    private ASTSysMLModel parse(String model) throws IOException {
+      var optAst = SysMLv2Mill.parser().parse_String(model);
+      assertThat(optAst).isPresent();
+      return optAst.get();
+    }
+
+    private ISysMLv2ArtifactScope createSt(ASTSysMLModel ast) {
+      var tool = new SysMLv2Tool();
+      var scope = tool.createSymbolTable(ast);
+      tool.completeSymbolTable(ast);
+      return scope;
+    }
+
+    private List<Finding> check(ASTSysMLModel ast) {
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) new SubcomponentOutputConnectionDirectionCoCo());
+      checker.addCoCo(new SubcomponentOutputConnectionDirectionCoCo());
       Log.enableFailQuick(false);
       checker.checkAll(ast);
-      assertTrue(Log.getFindings().stream()
-          .anyMatch(f -> f.getMsg().contains("0x10AA5")));
+      return Log.getFindings().stream().filter(Finding::isError).collect(
+          Collectors.toList());
+    }
+
+    @AfterEach
+    void clearLog() {
+      Log.clearFindings();
+      Log.enableFailQuick(true);
     }
   }
 }
