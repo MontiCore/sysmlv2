@@ -29,7 +29,8 @@ public class RequirementScopeBySubjectsCompleter implements SysMLConstraintsVisi
     if (!subjectSym.isPresent()) {
       // that should better be called in explicit CoCo later, and we just return
       // here
-      Log.error("0x10113 Subject not found.", node.get_SourcePositionStart());
+      Log.warn("0x10113 Subject not found.", node.get_SourcePositionStart());
+      return;
     }
 
     var subjectScope = ((SysMLv2Scope) subjectSym.get().getSpannedScope());
