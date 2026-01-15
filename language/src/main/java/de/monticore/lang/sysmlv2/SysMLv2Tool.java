@@ -41,6 +41,12 @@ import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.TypeCheckTransitionGuards;
 import de.monticore.lang.sysmlv2.cocos.TypeCheck3TransitionGuards;
 import de.monticore.lang.sysmlv2.cocos.WarnNonExhibited;
+import de.monticore.lang.sysmlv2.cocos.PartTypeDefinitionExistsCoCo;
+import de.monticore.lang.sysmlv2.cocos.ParentComponentInputConnectionDirectionCoCo;
+import de.monticore.lang.sysmlv2.cocos.QualifiedPortNameExistsCoCo;
+import de.monticore.lang.sysmlv2.cocos.RefinementTargetDefinitionExistsCoCo;
+import de.monticore.lang.sysmlv2.cocos.SubcomponentOutputConnectionDirectionCoCo;
+import de.monticore.lang.sysmlv2.cocos.UniqueSubPartNamesInConnectionCoCo;
 import de.monticore.lang.sysmlv2.symboltable.completers.CausalityCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectRefinementCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectionCompleter;
@@ -166,6 +172,16 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo(new FlowCheckCoCo());
     checker.addCoCo(new PortDefinitionExistsCoCo());
     checker.addCoCo(new PartBehaviorCoCo());
+
+    // Check Definitions exist
+    checker.addCoCo(new PartTypeDefinitionExistsCoCo()); 
+    checker.addCoCo(new RefinementTargetDefinitionExistsCoCo()); 
+
+    // Connection CoCos
+    checker.addCoCo(new UniqueSubPartNamesInConnectionCoCo()); 
+    checker.addCoCo(new QualifiedPortNameExistsCoCo()); 
+    checker.addCoCo(new SubcomponentOutputConnectionDirectionCoCo()); 
+    checker.addCoCo(new ParentComponentInputConnectionDirectionCoCo()); 
 
     checker.checkAll(ast);
   }
