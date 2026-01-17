@@ -122,6 +122,15 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo(new SendActionTypeCheck3());
     checker.addCoCo(new AssignActionTypeCheck3());
     checker.addCoCo(new TypeCheck3TransitionGuards());
+    // Check Definitions exist
+    checker.addCoCo(new PartTypeDefinitionExistsCoCo());
+    checker.addCoCo(new RefinementTargetDefinitionExistsCoCo());
+    // Connection CoCos
+    checker.addCoCo(new UniqueSubPartNamesInConnectionCoCo());
+    checker.addCoCo(new QualifiedPortNameExistsCoCo());
+    checker.addCoCo(new SubcomponentOutputConnectionDirectionCoCo());
+    checker.addCoCo(new ParentComponentInputConnectionDirectionCoCo());
+    
     checker.checkAll(ast);
   }
 
@@ -172,16 +181,6 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo(new FlowCheckCoCo());
     checker.addCoCo(new PortDefinitionExistsCoCo());
     checker.addCoCo(new PartBehaviorCoCo());
-
-    // Check Definitions exist
-    checker.addCoCo(new PartTypeDefinitionExistsCoCo()); 
-    checker.addCoCo(new RefinementTargetDefinitionExistsCoCo()); 
-
-    // Connection CoCos
-    checker.addCoCo(new UniqueSubPartNamesInConnectionCoCo()); 
-    checker.addCoCo(new QualifiedPortNameExistsCoCo()); 
-    checker.addCoCo(new SubcomponentOutputConnectionDirectionCoCo()); 
-    checker.addCoCo(new ParentComponentInputConnectionDirectionCoCo()); 
 
     checker.checkAll(ast);
   }
