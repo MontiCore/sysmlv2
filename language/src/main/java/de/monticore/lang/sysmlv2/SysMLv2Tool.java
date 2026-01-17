@@ -46,6 +46,7 @@ import de.monticore.lang.sysmlv2.symboltable.completers.DirectRefinementComplete
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectionCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.IdentifierCompletion;
 import de.monticore.lang.sysmlv2.symboltable.completers.RequirementClassificationCompleter;
+import de.monticore.lang.sysmlv2.symboltable.completers.RequirementScopeBySubjectsCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.StateUsageCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.TypesCompleter;
@@ -220,6 +221,9 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     traverser.add4SysMLParts(new DirectRefinementCompleter());
     traverser.add4SysMLParts(new CausalityCompleter());
     traverser.add4SysMLStates(new StateUsageCompleter());
+
+    // expose requirements subjects attr. to requirements scope
+    traverser.add4SysMLConstraints(new RequirementScopeBySubjectsCompleter());
 
     // Visiting artifact scope _and_ the AST requires two calls
     if (node.getEnclosingScope() != null) {
