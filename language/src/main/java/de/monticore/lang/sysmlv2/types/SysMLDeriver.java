@@ -2,6 +2,7 @@
 package de.monticore.lang.sysmlv2.types;
 
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
+import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.lang.sysmlexpressions.SysMLExpressionsMill;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
@@ -11,7 +12,10 @@ import de.monticore.types.check.AbstractDerive;
 import de.monticore.types.check.DeriveSymTypeOfExpression;
 import de.monticore.types.check.DeriveSymTypeOfLiterals;
 import de.monticore.types.check.DeriveSymTypeOfMCCommonLiterals;
+import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SynthesizeSymTypeFromMCBasicTypes;
+
+import java.util.Optional;
 
 @Deprecated
 public class SysMLDeriver extends AbstractDerive {
@@ -53,7 +57,18 @@ public class SysMLDeriver extends AbstractDerive {
     commonLiterals.setTypeCheckResult(typeCheckResult);
     getTraverser().add4MCCommonLiterals(commonLiterals);
 
-    DeriveSymTypeOfExpression forBasisExpr = new DeriveSymTypeOfExpression();
+    DeriveSymTypeOfExpression forBasisExpr = new DeriveSymTypeOfExpression() {
+      @Override
+      public void traverse(ASTNameExpression expr) {
+        Optional<SymTypeExpression> wholeResult = calculateNameExpression(expr);
+        if (wholeResult.isPresent()) {
+          getTypeCheckResult().setResult(wholeResult.get());
+        } else {
+          getTypeCheckResult().reset();
+          getTypeCheckResult().setResult(new SilentObscureType());
+        }
+      }
+    };
     forBasisExpr.setTypeCheckResult(typeCheckResult);
     getTraverser().add4ExpressionsBasis(forBasisExpr);
     getTraverser().setExpressionsBasisHandler(forBasisExpr);
