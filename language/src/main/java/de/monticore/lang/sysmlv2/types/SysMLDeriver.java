@@ -58,20 +58,7 @@ public class SysMLDeriver extends AbstractDerive {
     commonLiterals.setTypeCheckResult(typeCheckResult);
     getTraverser().add4MCCommonLiterals(commonLiterals);
 
-    DeriveSymTypeOfExpression forBasisExpr = new DeriveSymTypeOfExpression() {
-      @Override
-      public void traverse(ASTNameExpression expr) {
-        Optional<SymTypeExpression> wholeResult = calculateNameExpression(expr);
-        if (wholeResult.isPresent()) {
-          getTypeCheckResult().setResult(wholeResult.get());
-        } else {
-          getTypeCheckResult().reset();
-          Log.error("0x80010 Cannot resolve symbol: " + expr.getName(),
-                    expr.get_SourcePositionStart(),
-                    expr.get_SourcePositionEnd());
-        }
-      }
-    };
+    DeriveSymTypeOfExpression forBasisExpr = new DeriveSymTypeOfExpression();
     forBasisExpr.setTypeCheckResult(typeCheckResult);
     getTraverser().add4ExpressionsBasis(forBasisExpr);
     getTraverser().setExpressionsBasisHandler(forBasisExpr);
