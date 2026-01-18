@@ -22,8 +22,7 @@ public class ConstraintIsBoolean implements SysMLConstraintsASTConstraintUsageCo
 
     try {
       TypeCheckResult type = deriver.deriveType(expr);
-      if(!type.isPresentResult() || type.getResult().isObscureType()) {
-      } else if(type.getResult().getTypeInfo() == null) {
+      if(!type.isPresentResult() || type.getResult().getTypeInfo() == null) {
         var start = node.get_SourcePositionStart();
         var end = constraintEnd(start);
         Log.error("0x80001 Failed to derive a type!", start, end);

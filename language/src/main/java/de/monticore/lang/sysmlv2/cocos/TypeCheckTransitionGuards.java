@@ -22,10 +22,9 @@ public class TypeCheckTransitionGuards implements SysMLStatesASTSysMLTransitionC
       try {
         TypeCheckResult type = deriver.deriveType(expr);
         if(!type.isPresentResult() || type.getResult().getTypeInfo() == null) {
-          // NOTE: Kurzfristig deaktiviert, um Symbole wie 'Eps' und 'Tick' zu erlauben
-          // Log.error("0x80004 Failed to derive a type!",
-          //     expr.get_SourcePositionStart(),
-          //     expr.get_SourcePositionEnd());
+          Log.error("0x80004 Failed to derive a type!",
+              expr.get_SourcePositionStart(),
+              expr.get_SourcePositionEnd());
         }
         else if(!type.getResult().printFullName().equals("boolean")) {
           Log.error("0x80005 The expression type is '" + type.getResult().printFullName() + "' but should be boolean!",

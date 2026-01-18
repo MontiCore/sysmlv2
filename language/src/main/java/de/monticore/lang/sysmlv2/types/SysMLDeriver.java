@@ -14,6 +14,7 @@ import de.monticore.types.check.DeriveSymTypeOfLiterals;
 import de.monticore.types.check.DeriveSymTypeOfMCCommonLiterals;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SynthesizeSymTypeFromMCBasicTypes;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
 
@@ -65,7 +66,9 @@ public class SysMLDeriver extends AbstractDerive {
           getTypeCheckResult().setResult(wholeResult.get());
         } else {
           getTypeCheckResult().reset();
-          getTypeCheckResult().setResult(new SilentObscureType());
+          Log.error("0x80010 Cannot resolve symbol: " + expr.getName(),
+                    expr.get_SourcePositionStart(),
+                    expr.get_SourcePositionEnd());
         }
       }
     };
