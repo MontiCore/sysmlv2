@@ -2,7 +2,6 @@
 package de.monticore.lang.sysmlv2.types;
 
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
-import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.lang.sysmlexpressions.SysMLExpressionsMill;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
