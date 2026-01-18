@@ -12,11 +12,7 @@ import de.monticore.types.check.AbstractDerive;
 import de.monticore.types.check.DeriveSymTypeOfExpression;
 import de.monticore.types.check.DeriveSymTypeOfLiterals;
 import de.monticore.types.check.DeriveSymTypeOfMCCommonLiterals;
-import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SynthesizeSymTypeFromMCBasicTypes;
-import de.se_rwth.commons.logging.Log;
-
-import java.util.Optional;
 
 @Deprecated
 public class SysMLDeriver extends AbstractDerive {
