@@ -68,6 +68,29 @@ public class ParentComponentInputConnectionDirectionCoCoTest {
     }
 
     @Test
+    public void testValidSwitchTgtAndSrc() throws IOException {
+      String validModel =
+          "port def InPort { in attribute data: int; }"
+              + "port def OutPort { out attribute data: int; }"
+              + "part def A { port input: InPort; }"
+              + "part def B { port output: OutPort; }"
+              + "part def System {"
+              +   "port sysIn: InPort;"
+              +   "port sysInAnother: InPort;"
+              +   "port sysOut: OutPort;"
+              +   "part a: A;"
+              +   "part b: B;"
+              +   "connect a.input to sysIn;"
+              +   "connect sysOut to sysInAnother;"
+              + "}";
+
+      var ast = parse(validModel);
+      createSt(ast);
+      var errors = check(ast);
+      assertThat(errors).hasSize(0);
+    }
+
+    @Test
     public void testValidConjugatedModel() throws IOException {
       String validModel =
           "port def InPort { in attribute data: int; }"
@@ -117,6 +140,28 @@ public class ParentComponentInputConnectionDirectionCoCoTest {
               +   "port sysIn: InPort;"
               +   "part a: A;"
               +   "connect sysIn to a.output;"
+              + "}";
+
+      var ast = parse(invalidModel);
+      createSt(ast);
+      var errors = check(ast);
+      assertThat(errors).hasSize(1);
+      assertThat(errors.get(0).getMsg()).contains("0x10AA6");
+    }
+
+    @Test
+    public void testInvalidConjugatedModelSwitchTgtAndSrc() throws IOException {
+      /* (Sub) Output -> (main) Input
+       * (also caught by SubcomponentOutputConnectionDirectionCoCo so in the
+       * actual Server one this connection would throw 0x10AA5 and 0x10AA6
+       */
+      String invalidModel =
+          "port def InPort { in attribute data: int; }"
+              + "part def A { port output: ~InPort; }"
+              + "part def System {"
+              +   "port sysIn: InPort;"
+              +   "part a: A;"
+              +   "connect a.output to sysIn;"
               + "}";
 
       var ast = parse(invalidModel);

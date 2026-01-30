@@ -56,17 +56,41 @@ public class ParentComponentInputConnectionDirectionCoCo implements SysMLPartsAS
     // Classify ports
     boolean tgtIsInput = portIsInput(tgtPort);
     boolean tgtIsOutput = portIsOutput(tgtPort);
+    boolean srcIsInput = portIsInput(srcPort);
+    boolean srcIsOutput = portIsOutput(srcPort);
 
     // Allowed connections:
     // 1. Subcomponent with Input ports
     // 2. Parent component with Output ports
-    boolean allowed = (tgtIsSub && tgtIsInput) || (!tgtIsSub && tgtIsOutput);
+    // 3. Connection does not imply flow directions.
+    //    This information must be inferred by port attributes
+    boolean allowed = true;
 
-    if(srcIsSub || !portIsInput(srcPort)){
-      // Source is neither input nor ParentComponent
+    if (!((srcIsInput && !srcIsSub) || (tgtIsInput && !tgtIsSub))) {
+      // Both Endpoints are not a Parent input
       // CoCo does not apply
       return;
+    } else {
+      // At least one endpoint is of the Parent component
+      // Check if the OTHER endpoint satisfies the rule
+
+      // If src is parent input
+      if (srcIsInput && !srcIsSub) {
+        allowed = allowed && (
+            (tgtIsInput && tgtIsSub) ||           // tgt is sub input
+                (tgtIsOutput && !tgtIsSub)        // tgt is parent output
+        );
+      }
+
+      // If tgt is parent input
+      if (tgtIsInput && !tgtIsSub) {
+        allowed = allowed && (
+            (srcIsInput && srcIsSub) ||           // src is sub input
+                (srcIsOutput && !srcIsSub)        // src is parent output
+        );
+      }
     }
+
     if(
         (portIsInOutput(srcPort)) ||
         (portIsInOutput(tgtPort))
