@@ -53,14 +53,28 @@ public class SubcomponentOutputConnectionDirectionCoCo implements SysMLPartsASTC
     // Classify ports
     boolean tgtIsInput = portIsInput(tgtPort);
     boolean tgtIsOutput = portIsOutput(tgtPort);
+    boolean srcIsInput = portIsInput(srcPort);
+    boolean srcIsOutput = portIsOutput(srcPort);
 
     // Allowed connections:
     // 1. Subcomponent with Input ports
     // 2. Parent component with Output ports
-    boolean allowed = (tgtIsSub && tgtIsInput) || (!tgtIsSub && tgtIsOutput);
+    // 3. Connection does not imply flow directions.
+    //    This information must be inferred by port attributes
+    boolean allowed = true;
 
-    if(!srcIsSub || !portIsOutput(srcPort)){
-      // Source is neither output nor Subcomponent
+    // Handle src as sub output
+    if (srcIsOutput && srcIsSub) {
+      allowed = (tgtIsInput && tgtIsSub) || (tgtIsOutput && !tgtIsSub);
+    }
+
+    // Handle tgt as sub output (if not already failed)
+    if (allowed && tgtIsOutput && tgtIsSub) {
+      allowed = (srcIsInput && srcIsSub) || (srcIsOutput && !srcIsSub);
+    }
+
+    if(!((srcIsOutput && srcIsSub) || (tgtIsOutput && tgtIsSub))){
+      // Both Endpoints are not a Subcomponent output
       // CoCo does not apply
       return;
     }
