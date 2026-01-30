@@ -46,7 +46,8 @@ import de.monticore.lang.sysmlv2.cocos.ParentComponentInputConnectionDirectionCo
 import de.monticore.lang.sysmlv2.cocos.QualifiedPortNameExistsCoCo;
 import de.monticore.lang.sysmlv2.cocos.RefinementTargetDefinitionExistsCoCo;
 import de.monticore.lang.sysmlv2.cocos.SubcomponentOutputConnectionDirectionCoCo;
-import de.monticore.lang.sysmlv2.cocos.UniqueSubPartNamesInConnectionCoCo;
+import de.monticore.lang.sysmlv2.cocos.UniqueSubPartNamesInParentCoCo;
+import de.monticore.lang.sysmlv2.cocos.SubPartNamesInConnectionExistCoCo;
 import de.monticore.lang.sysmlv2.symboltable.completers.CausalityCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectRefinementCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectionCompleter;
@@ -126,11 +127,13 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo(new PartTypeDefinitionExistsCoCo());
     checker.addCoCo(new RefinementTargetDefinitionExistsCoCo());
     // Connection CoCos
-    checker.addCoCo(new UniqueSubPartNamesInConnectionCoCo());
+    checker.addCoCo(new SubPartNamesInConnectionExistCoCo());
     checker.addCoCo(new QualifiedPortNameExistsCoCo());
     checker.addCoCo(new SubcomponentOutputConnectionDirectionCoCo());
     checker.addCoCo(new ParentComponentInputConnectionDirectionCoCo());
-    
+    // Check ambiguous names
+    checker.addCoCo(new UniqueSubPartNamesInParentCoCo());
+
     checker.checkAll(ast);
   }
 
