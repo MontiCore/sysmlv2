@@ -7,14 +7,10 @@ import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
-import de.monticore.lang.sysmlv2.cocos.UniqueSubPartNamesInConnectionCoCo;
+import de.monticore.lang.sysmlv2.cocos.UniqueSubPartNamesInParentCoCo;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,7 +18,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UniqueSubPartNamesInConnectionCoCoTest {
+public class UniqueSubPartNamesInParentCoCoTest {
 
   private static final String MODEL_PATH = "src/test/resources/parser";
 
@@ -52,7 +48,6 @@ public class UniqueSubPartNamesInConnectionCoCoTest {
         + "part def System {"
         +   "part a: A;"
         +   "part b: B;"
-        +   "connect a.p to b.q;"
         + "}";
 
       var ast = parse(validModel);
@@ -62,73 +57,20 @@ public class UniqueSubPartNamesInConnectionCoCoTest {
     }
 
     @Test
-    public void testInvalidUndefined() throws IOException {
+    public void testInvalidDoubleDefined() throws IOException {
       String invalidModel =
           "part def A { port p: int; }"
         + "part def B { port q: ~int; }"
         + "part def System {"
         +   "part a: A;"
-        +   "connect a.p to c.q;"
-        + "}";
-
-      var ast = parse(invalidModel);
-      createSt(ast);
-      var errors = check(ast);
-      assertThat(errors).hasSize(1);
-      assertThat(errors.get(0).getMsg()).contains("0x10AA3");
-    }
-
-    @Test
-    public void testInvalidDuplicateName() throws IOException {
-      String invalidModel =
-          "part def A { port p; }"
-        + "part def System {"
-        +   "part a: A;"
-        +   "part a: A;"
-        +   "connect a.p to a.p;"
+        +   "part a: B;"
         + "}";
 
       var ast = parse(invalidModel);
       createSt(ast);
       var errors = check(ast);
       assertThat(errors).hasSize(2);
-      assertThat(errors.get(0).getMsg()).contains("0x10AA3");
-      assertThat(errors.get(1).getMsg()).contains("0x10AA3");
-    }
-
-    @Test
-    public void testInvalidBothUndefined() throws IOException {
-      String invalidModel =
-          "part def A { port p; }"
-              + "part def System {"
-              +   "part a: A;"
-              +   "connect undefined1.p to undefined2.p;"
-              + "}";
-
-      var ast = parse(invalidModel);
-      createSt(ast);
-      var errors = check(ast);
-      assertThat(errors).hasSize(2);
-      assertThat(errors.get(0).getMsg()).contains("0x10AA3");
-      assertThat(errors.get(1).getMsg()).contains("0x10AA3");
-    }
-
-    @Test
-    public void testInvalidUndefinedAndDuplicateName() throws IOException {
-      String invalidModel =
-          "part def A { port p; }"
-              + "part def System {"
-              +   "part duplicate1: A;"
-              +   "part duplicate1: ~A;"
-              +   "connect duplicate1.p to undefined3.p;"
-              + "}";
-
-      var ast = parse(invalidModel);
-      createSt(ast);
-      var errors = check(ast);
-      assertThat(errors).hasSize(2);
-      assertThat(errors.get(0).getMsg()).contains("0x10AA3");
-      assertThat(errors.get(1).getMsg()).contains("0x10AA3");
+      assertThat(errors.get(0).getMsg()).contains("0x10AA7");
     }
 
     private ASTSysMLModel parse(String model) throws IOException {
@@ -146,7 +88,7 @@ public class UniqueSubPartNamesInConnectionCoCoTest {
 
     private List<Finding> check(ASTSysMLModel ast) {
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo(new UniqueSubPartNamesInConnectionCoCo());
+      checker.addCoCo(new UniqueSubPartNamesInParentCoCo());
       Log.enableFailQuick(false);
       checker.checkAll(ast);
       return Log.getFindings().stream().filter(Finding::isError).collect(
