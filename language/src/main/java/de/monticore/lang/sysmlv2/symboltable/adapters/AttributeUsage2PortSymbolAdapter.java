@@ -77,7 +77,11 @@ public class AttributeUsage2PortSymbolAdapter extends MildPortSymbol {
       boolean hasTsyn = scope.getLocalStateUsageSymbols().stream()
           .anyMatch(sym -> sym.getUserDefinedKeywordsList().contains("tsyn"));
 
-      return hasTsyn ? Timing.TIMED_SYNC : Timing.TIMED;
+      if (hasTsyn || !container.isStrong()) {
+          return Timing.TIMED_SYNC;
+      }
+
+      return Timing.TIMED;
   }
 
   @Override

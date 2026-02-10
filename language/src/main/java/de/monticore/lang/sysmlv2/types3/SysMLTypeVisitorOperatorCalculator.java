@@ -20,6 +20,30 @@ public class SysMLTypeVisitorOperatorCalculator extends
   }
 
   @Override
+  protected SymTypeExpression calculateEqualityInequality(
+      SymTypeExpression left, SymTypeExpression right) {
+    var result = super.calculateEqualityInequality(left, right);
+    if (!result.isObscureType()) {
+      return result;
+    }
+
+    if (isStreamType(left) && isStreamType(right)) {
+      return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
+    }
+    return result;
+  }
+
+  protected boolean isStreamType(SymTypeExpression type) {
+    if (!type.hasTypeInfo()) {
+      return false;
+    }
+    String name = type.getTypeInfo().getName();
+    return "Stream".equals(name)
+        || "EventStream".equals(name)
+        || "SyncStream".equals(name);
+  }
+
+  @Override
   protected SymTypeExpression calculateLogicalNot(SymTypeExpression inner) {
     var result = super.calculateLogicalNot(inner);
     if (SymTypeRelations.isBoolean(result)) {
