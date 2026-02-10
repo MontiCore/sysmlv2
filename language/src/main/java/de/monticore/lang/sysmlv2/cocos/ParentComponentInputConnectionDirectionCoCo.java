@@ -19,9 +19,9 @@ import java.util.Optional;
 
 /**
  * ParentComponentInputConnectionDirectionCoCo
- * Inputs von Oberkomponenten können nur zu Inputs von Subkomponenten oder Outputs der Oberkomponenten verbunden werden
- * (alternative Formulierung):
- * Inputs von Oberkomponenten können nicht zu Outputs von Subkomponenten verbunden werden.
+ * Checks that Inputs of the parent component can only be connected to:
+ * 1. Inputs of subcomponents, or
+ * 2. Outputs of the parent component.
  */
 public class ParentComponentInputConnectionDirectionCoCo implements SysMLPartsASTConnectionUsageCoCo {
 
