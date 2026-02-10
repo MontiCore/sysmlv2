@@ -9,6 +9,8 @@ import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol;
 import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
+import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
+import de.monticore.lang.sysmlconstraints.symboltable.adapters.RequirementSubject2VariableSymbolAdapter;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.ItemDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
@@ -68,6 +70,8 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
         AccessModifier.ALL_INCLUSION, x -> true);
     var attributes = resolveAttributeUsageLocallyMany(false, name,
         AccessModifier.ALL_INCLUSION, x -> true);
+    var requirementSubject = resolveRequirementSubjectLocallyMany(false, name,
+        AccessModifier.ALL_INCLUSION, x -> true);
     var anonymous = resolveAnonymousUsageLocallyMany(false, name,
         AccessModifier.ALL_INCLUSION, x -> true);
 
@@ -113,6 +117,17 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
           variable.setType(attributeType);
         }*/
 
+        adapted.add(variable);
+      }
+    }
+
+    for (RequirementSubjectSymbol reqSub : requirementSubject) {
+      var types = reqSub.getTypesList();
+
+      if (types.size() == 1) {
+        var attributeType = types.get(0);
+        var variable = new RequirementSubject2VariableSymbolAdapter(reqSub);
+        variable.setType(attributeType);
         adapted.add(variable);
       }
     }
