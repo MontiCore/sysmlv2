@@ -150,8 +150,8 @@ public class SubcomponentOutputConnectionDirectionCoCoTest {
     @Test
     public void testInvalidSubOutToMainInSwitchSrcAndTgt() throws IOException {
       /* (Sub) Output -> (main) Input
-       * (also caught by ParentComponentInputConnectionDirectionCoCo so in the
-       * actual Server one this connection would throw 0x10AA5 and 0x10AA6
+       * (also caught by ParentComponentInputConnectionDirectionCoCo, so the
+       * connection would throw 0x10AA5 and 0x10AA6 in the actual Server)
        */
       String invalidModel =
           "port def OutPort { out attribute data: int; }"
