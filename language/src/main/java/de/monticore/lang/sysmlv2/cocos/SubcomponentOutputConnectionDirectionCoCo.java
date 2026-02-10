@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * SubcomponentOutputConnectionDirectionCoCo
  * Checks that outputs of subcomponents can only be connected to:
  * 1. Inputs of subcomponents, or
  * 2. Outputs of the parent component.

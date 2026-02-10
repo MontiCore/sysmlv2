@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * ParentComponentInputConnectionDirectionCoCo
  * Checks that Inputs of the parent component can only be connected to:
  * 1. Inputs of subcomponents, or
  * 2. Outputs of the parent component.
