@@ -29,9 +29,11 @@ import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAda
 import de.monticore.lang.sysmlv2.symboltable.adapters.AttributeUsage2PortSymbolAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Constraint2SpecificationAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.PartDef2ComponentAdapter;
+import de.monticore.lang.sysmlv2.symboltable.adapters.Requirement2RequirementCCAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Requirement2SpecificationAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.StateUsage2AutomatonAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.StateUsage2EventAutomatonAdapter;
+import de.monticore.lang.componentconnector._symboltable.RequirementSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -50,6 +52,24 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
+
+  @Override
+  default List<RequirementSymbol> resolveRequirementLocallyMany(
+      boolean foundSymbols,
+      String name, AccessModifier modifier,
+      Predicate<RequirementSymbol> predicate) {
+    var adapted = new ArrayList<RequirementSymbol>();
+
+    var req = resolveRequirementUsageLocally(name);
+
+    if(req.isPresent()) {
+
+      var ccReq = new Requirement2RequirementCCAdapter(req.get().getFullName(), req.get().getAstNode());
+      adapted.add(ccReq);
+    }
+
+    return adapted;
+  }
 
   /**
    * Adaptiert AttributeUsages oder PortUsages zu Variablen.
@@ -208,6 +228,12 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     if (partUsage.isPresent()) {
       adapted.add(new PartUsage2TypeSymbolAdapter(partUsage.get()));
     }
+
+    // RequirementSubjects zu Types
+    /*var requirementSubject = resolveRequirementSubjectLocally(name);
+    if (requirementSubject.isPresent()) {
+      adapted.add(new RequirementSubject2TypeSymbolAdapter(requirementSubject.get()));
+    }*/
 
     // StateDef zu Types
     var stateDef = resolveStateDefLocally(name);
