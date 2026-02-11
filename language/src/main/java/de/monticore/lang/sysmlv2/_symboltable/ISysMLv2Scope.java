@@ -59,12 +59,10 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       String name, AccessModifier modifier,
       Predicate<RequirementSymbol> predicate) {
     var adapted = new ArrayList<RequirementSymbol>();
-
     var req = resolveRequirementUsageLocally(name);
 
     if(req.isPresent()) {
-
-      var ccReq = new Requirement2RequirementCCAdapter(req.get().getFullName(), req.get().getAstNode());
+      var ccReq = new Requirement2RequirementCCAdapter(req.get());
       adapted.add(ccReq);
     }
 
