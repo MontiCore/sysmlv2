@@ -221,12 +221,6 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       adapted.add(new PartUsage2TypeSymbolAdapter(partUsage.get()));
     }
 
-    // RequirementSubjects zu Types
-    /*var requirementSubject = resolveRequirementSubjectLocally(name);
-    if (requirementSubject.isPresent()) {
-      adapted.add(new RequirementSubject2TypeSymbolAdapter(requirementSubject.get()));
-    }*/
-
     // StateDef zu Types
     var stateDef = resolveStateDefLocally(name);
     if (stateDef.isPresent()) {
