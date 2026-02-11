@@ -7,6 +7,7 @@ import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.SourcePosition;
+import de.se_rwth.commons.logging.Log;
 
 public class RequirementSubject2VariableSymbolAdapter extends VariableSymbol {
   protected RequirementSubjectSymbol adaptee;
@@ -22,7 +23,12 @@ public class RequirementSubject2VariableSymbolAdapter extends VariableSymbol {
 
   @Override
   public SymTypeExpression getType() {
-    return this.adaptee.getTypes(0);
+    var types = this.adaptee.getTypesList();
+    if(types.size() != 1) {
+      Log.trace("Experiencing Subj. with > 1 types", getClass().getName());
+      return null;
+    }
+    return types.get(0);
   }
 
   @Override

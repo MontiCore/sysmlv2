@@ -122,14 +122,8 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     }
 
     for (RequirementSubjectSymbol reqSub : requirementSubject) {
-      var types = reqSub.getTypesList();
-
-      if (types.size() == 1) {
-        var attributeType = types.get(0);
-        var variable = new RequirementSubject2VariableSymbolAdapter(reqSub);
-        variable.setType(attributeType);
-        adapted.add(variable);
-      }
+      var variable = new RequirementSubject2VariableSymbolAdapter(reqSub);
+      adapted.add(variable);
     }
 
     for (AnonymousUsageSymbol anonymousUsage : anonymous) {
