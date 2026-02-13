@@ -6,7 +6,7 @@
 
 plugins {
   id "de.monticore.generator" version "$mc_version"
-  id "io.github.themrmilchmann.ecj" version "0.2.0"
+  id "io.github.themrmilchmann.ecj" version "0.2.0" apply(false)
 }
 
 /* ============================================================ */
