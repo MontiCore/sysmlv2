@@ -18,6 +18,7 @@ public class SysMLv2CodeActionProvider extends SysMLv2CodeActionProviderTOP {
                                    AstPrettyPrinter<ASTSysMLModel> astSysMLModelAstPrettyPrinter) {
     super(documentManager, astSysMLModelAstPrettyPrinter);
     coCoCodeActionProviders.add(new UpperCaseBlockName(documentManager));
+    coCoCodeActionProviders.add(new UniqueSubPartName(documentManager));
     coCoCodeActionProviders.add(new MissingRefinement(documentManager));
     coCoCodeActionProviders.add(new MissingRefiner(documentManager));
   }
