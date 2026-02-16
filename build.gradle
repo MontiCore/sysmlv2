@@ -6,7 +6,7 @@ subprojects {
   group = 'de.monticore.lang.sysml_v2'
 
   // Needs to be after java plugin
-  sourceCompatibility = "11"
+  sourceCompatibility = "21"
 
   project.buildDir = "target"
 
@@ -41,4 +41,7 @@ subprojects {
 }
 
 evaluationDependsOnChildren()
-project(":language-server").tasks.generateSysMLv2LanguageServer.dependsOn project(":language").tasks.grammarsJar
+if(("true").equals(getProperty('isPipelineFullBuild'))){
+  project(":language-server").tasks.generateSysMLv2LanguageServer.dependsOn project(":cc").tasks.grammarsJar,
+      project(':cc').tasks.jar, project(":language").tasks.grammarsJar, project(':language').tasks.jar
+}

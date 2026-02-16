@@ -57,6 +57,11 @@ tasks.withType(JavaCompile) {
   options.headerOutputDirectory.convention(null)
 }
 
+// configure ecj for compatibility with Java 21
+ecj {
+  compilerVersion = "3.43.0"
+}
+
 java {
 //  withJavadocJar()
   withSourcesJar()

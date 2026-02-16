@@ -14,7 +14,7 @@ on:
 
 
 env:
-  GRADLE_VERSION: 7.4 # Gradle version used
+  GRADLE_VERSION: 8.14 # Gradle version used
   GRADLE_CLI_OPTS: "-Pci --build-cache " # CLI options passed to Gradle
 
 permissions:
@@ -27,6 +27,11 @@ jobs:
     steps:
       - name: Checkout project sources
         uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
       - name: Gradle build
         uses: gradle/actions/setup-gradle@v3
         with:
@@ -45,6 +50,11 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: ${{env.GRADLE_VERSION}}
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
       - name: Run parser test
         run: gradle :language:test --tests "parser.OfficialParserTest.testParseAll" ${{env.GRADLE_CLI_OPTS}}
           -PgithubUser=${{env.GITHUB_ACTOR}}
@@ -84,6 +94,11 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: ${{env.GRADLE_VERSION}}
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
       - name: Gradle Publish
         run: gradle build publish ${{env.GRADLE_CLI_OPTS}}
           -PnexusPassword=${{ secrets.SE_NEXUS_PASSWORD }}
