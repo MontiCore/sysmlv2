@@ -126,3 +126,7 @@ publishing {
 tasks.generateSysMLv2VscodePlugin.finalizedBy editPackageJson
 tasks.generateSysMLv2VscodePlugin.finalizedBy copyReadme
 tasks.generateSysMLv2VscodePlugin.finalizedBy copyFiles
+
+// gradle 8 requires explicit task dependency declarations
+tasks.packageSysMLv2VscodePlugin.dependsOn copyFiles, copyReadme
+tasks.buildSysMLv2VscodePlugin.dependsOn packageSysMLv2VscodePlugin
