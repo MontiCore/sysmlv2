@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 plugins {
-  id "com.github.johnrengelman.shadow" version "7.0.0"
+  id "com.gradleup.shadow" version "8.3.9"
 }
 
 tasks.build.dependsOn shadowJar
