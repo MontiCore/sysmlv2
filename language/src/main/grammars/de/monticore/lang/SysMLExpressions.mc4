@@ -4,6 +4,7 @@ package de.monticore.lang;
 component grammar SysMLExpressions
     extends de.monticore.literals.MCCommonLiterals,          // SignedLiteral
             de.monticore.types.MCBasicTypes,                 // MCType
+            de.monticore.types.MCStructuralTypes,
             de.monticore.expressions.CommonExpressions,      // FieldAccessExpression
             de.monticore.ocl.OCLExpressions,                 // ExistsExpression
             de.monticore.ocl.SetExpressions,                 // UnionExpression
