@@ -9,6 +9,8 @@ import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol;
 import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
+import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
+import de.monticore.lang.sysmlconstraints.symboltable.adapters.RequirementSubject2VariableSymbolAdapter;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.ItemDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
@@ -27,9 +29,11 @@ import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAda
 import de.monticore.lang.sysmlv2.symboltable.adapters.AttributeUsage2PortSymbolAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Constraint2SpecificationAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.PartDef2ComponentAdapter;
+import de.monticore.lang.sysmlv2.symboltable.adapters.Requirement2RequirementCCAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Requirement2SpecificationAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.StateUsage2AutomatonAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.StateUsage2EventAutomatonAdapter;
+import de.monticore.lang.componentconnector._symboltable.RequirementSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -49,6 +53,22 @@ import java.util.function.Predicate;
 
 public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
+  @Override
+  default List<RequirementSymbol> resolveRequirementLocallyMany(
+      boolean foundSymbols,
+      String name, AccessModifier modifier,
+      Predicate<RequirementSymbol> predicate) {
+    var adapted = new ArrayList<RequirementSymbol>();
+    var req = resolveRequirementUsageLocally(name);
+
+    if(req.isPresent()) {
+      var ccReq = new Requirement2RequirementCCAdapter(req.get());
+      adapted.add(ccReq);
+    }
+
+    return adapted;
+  }
+
   /**
    * Adaptiert AttributeUsages oder PortUsages zu Variablen.
    * <br>
@@ -67,6 +87,8 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     var ports = resolvePortUsageLocallyMany(false, name,
         AccessModifier.ALL_INCLUSION, x -> true);
     var attributes = resolveAttributeUsageLocallyMany(false, name,
+        AccessModifier.ALL_INCLUSION, x -> true);
+    var requirementSubjects = resolveRequirementSubjectLocallyMany(false, name,
         AccessModifier.ALL_INCLUSION, x -> true);
     var anonymous = resolveAnonymousUsageLocallyMany(false, name,
         AccessModifier.ALL_INCLUSION, x -> true);
@@ -115,6 +137,11 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
         adapted.add(variable);
       }
+    }
+
+    for (RequirementSubjectSymbol reqSub : requirementSubjects) {
+      var variable = new RequirementSubject2VariableSymbolAdapter(reqSub);
+      adapted.add(variable);
     }
 
     for (AnonymousUsageSymbol anonymousUsage : anonymous) {

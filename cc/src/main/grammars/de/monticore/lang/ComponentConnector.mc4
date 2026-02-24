@@ -156,4 +156,9 @@ component grammar ComponentConnector
     transitions: Transition*
   ;
 
+  /**
+   * Requirements: Wir berücksichtigen primär die Namen der Requirements
+   */
+   interface symbol Requirement = Name;
+
 }
