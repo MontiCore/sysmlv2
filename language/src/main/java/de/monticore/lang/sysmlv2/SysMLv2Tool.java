@@ -120,8 +120,6 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     // Connection CoCos
     checker.addCoCo(new SubPartNamesInConnectionExistCoCo());
     checker.addCoCo(new QualifiedPortNameExistsCoCo());
-    checker.addCoCo(new SubcomponentOutputConnectionDirectionCoCo());
-    checker.addCoCo(new ParentComponentInputConnectionDirectionCoCo());
     // Check ambiguous names
     checker.addCoCo(new UniqueSubPartNamesInParentCoCo());
 
