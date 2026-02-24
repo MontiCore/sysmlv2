@@ -3,7 +3,7 @@ package cocos;
 
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
-import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
+import de.monticore.lang.sysmlv2.cocos.ConstraintIsBooleanTC3;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ public class RequirementSubjectTest extends NervigeSymboltableTests {
 
   private List<Finding> check(ASTSysMLModel ast) {
     var checker = new SysMLv2CoCoChecker();
-    checker.addCoCo(new ConstraintIsBoolean());
+    checker.addCoCo(new ConstraintIsBooleanTC3());
     Log.enableFailQuick(false);
     checker.checkAll(ast);
     return Log.getFindings().stream().filter(f -> f.isError()).collect(Collectors.toList());

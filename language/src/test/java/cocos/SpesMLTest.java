@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package cocos.spesml;
+package cocos;
 
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;

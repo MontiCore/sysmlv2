@@ -4,6 +4,7 @@ package de.monticore.lang.sysmlv2;
 import de.monticore.lang.componentconnector.SerializationUtil;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintDefCoCo;
+import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTRequirementDefCoCo;
 import de.monticore.lang.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTSysMLPackageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
@@ -11,7 +12,6 @@ import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
 import de.monticore.lang.sysmlparts.coco.PortDefHasOneType;
 import de.monticore.lang.sysmlparts.coco.PortDefNeedsDirection;
 import de.monticore.lang.sysmlparts.symboltable.completers.ConvertEnumUsagesToFields;
-import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTRequirementDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateUsageCoCo;
 import de.monticore.lang.sysmlstates.cocos.NoDoActions;
@@ -23,31 +23,24 @@ import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
-import de.monticore.lang.sysmlv2.cocos.AssignActionTypeCheck;
 import de.monticore.lang.sysmlv2.cocos.AssignActionTypeCheck3;
-import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
-import de.monticore.lang.sysmlv2.cocos.ConstraintIsBooleanTC3;
 import de.monticore.lang.sysmlv2.cocos.FlowCheckCoCo;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
-import de.monticore.lang.sysmlv2.cocos.PartBehaviorCoCo;
-import de.monticore.lang.sysmlv2.cocos.PortDefinitionExistsCoCo;
-import de.monticore.lang.sysmlv2.cocos.RefinementCyclic;
-import de.monticore.lang.sysmlv2.cocos.SendActionTypeCheck;
-import de.monticore.lang.sysmlv2.cocos.SendActionTypeCheck3;
-import de.monticore.lang.sysmlv2.cocos.SpecializationExists;
-import de.monticore.lang.sysmlv2.cocos.SpecializationExistsTC3;
-import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
-import de.monticore.lang.sysmlv2.cocos.TypeCheckTransitionGuards;
-import de.monticore.lang.sysmlv2.cocos.TypeCheck3TransitionGuards;
-import de.monticore.lang.sysmlv2.cocos.WarnNonExhibited;
-import de.monticore.lang.sysmlv2.cocos.PartTypeDefinitionExistsCoCo;
 import de.monticore.lang.sysmlv2.cocos.ParentComponentInputConnectionDirectionCoCo;
+import de.monticore.lang.sysmlv2.cocos.PartBehaviorCoCo;
+import de.monticore.lang.sysmlv2.cocos.PartTypeDefinitionExistsCoCo;
+import de.monticore.lang.sysmlv2.cocos.PortDefinitionExistsCoCo;
 import de.monticore.lang.sysmlv2.cocos.QualifiedPortNameExistsCoCo;
+import de.monticore.lang.sysmlv2.cocos.RefinementCyclic;
 import de.monticore.lang.sysmlv2.cocos.RefinementTargetDefinitionExistsCoCo;
-import de.monticore.lang.sysmlv2.cocos.SubcomponentOutputConnectionDirectionCoCo;
-import de.monticore.lang.sysmlv2.cocos.UniqueSubPartNamesInParentCoCo;
+import de.monticore.lang.sysmlv2.cocos.SendActionTypeCheck3;
+import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.SubPartNamesInConnectionExistCoCo;
+import de.monticore.lang.sysmlv2.cocos.SubcomponentOutputConnectionDirectionCoCo;
+import de.monticore.lang.sysmlv2.cocos.TypeCheck3TransitionGuards;
+import de.monticore.lang.sysmlv2.cocos.UniqueSubPartNamesInParentCoCo;
+import de.monticore.lang.sysmlv2.cocos.WarnNonExhibited;
 import de.monticore.lang.sysmlv2.symboltable.completers.CausalityCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectRefinementCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectionCompleter;
@@ -114,18 +107,16 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
   @Override
   public void runDefaultCoCos(ASTSysMLModel ast) {
     var checker = new SysMLv2CoCoChecker();
-    checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
-    checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
-    checker.addCoCo(new TypeCheckTransitionGuards());
-    checker.addCoCo(new SendActionTypeCheck());
-    checker.addCoCo(new AssignActionTypeCheck());
-    // TC3
+    // Type Check
     checker.addCoCo(new SendActionTypeCheck3());
     checker.addCoCo(new AssignActionTypeCheck3());
     checker.addCoCo(new TypeCheck3TransitionGuards());
-    // Check Definitions exist
+    // Check that Defs exist
     checker.addCoCo(new PartTypeDefinitionExistsCoCo());
     checker.addCoCo(new RefinementTargetDefinitionExistsCoCo());
+    // Check that Defs are of correct type
+    checker.addCoCo((SysMLStatesASTStateDefCoCo) new StateSupertypes());
+    checker.addCoCo((SysMLStatesASTStateUsageCoCo) new StateSupertypes());
     // Connection CoCos
     checker.addCoCo(new SubPartNamesInConnectionExistCoCo());
     checker.addCoCo(new QualifiedPortNameExistsCoCo());
@@ -144,12 +135,6 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
   public void runAdditionalCoCos(
       de.monticore.lang.sysmlv2._ast.ASTSysMLModel ast) {
     var checker = new SysMLv2CoCoChecker();
-
-    // general
-    checker.addCoCo(new ConstraintIsBoolean());
-    checker.addCoCo(new ConstraintIsBooleanTC3());
-    checker.addCoCo(new SpecializationExists());
-    checker.addCoCo(new SpecializationExistsTC3());
 
     // Not-supported language elements
     checker.addCoCo(new NoExitActions());

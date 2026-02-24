@@ -1,4 +1,4 @@
-package types3;
+package typecheck;
 
 import de.monticore.expressions.commonexpressions._ast.ASTEqualsExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
@@ -11,8 +11,6 @@ import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
-import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
-import de.monticore.lang.sysmlv2.cocos.ConstraintIsBooleanTC3;
 import de.monticore.lang.sysmlv2.types3.SysMLCommonExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.types3.SysMLMCBasicTypesTypeVisitor;
 import de.monticore.lang.sysmlv2.types3.SysMLOCLExpressionsTypeVisitor;

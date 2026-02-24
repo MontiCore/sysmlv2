@@ -6,7 +6,7 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
-import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
+import de.monticore.lang.sysmlv2.cocos.ConstraintIsBooleanTC3;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.Assertions;
@@ -45,7 +45,7 @@ public class SymTabTest {
     Assertions.assertTrue(streamSymOpt.isPresent(), "Stream symbol should be resolvable!");
 
     var checker = new SysMLv2CoCoChecker();
-    checker.addCoCo(new ConstraintIsBoolean());
+    checker.addCoCo(new ConstraintIsBooleanTC3());
     checker.checkAll(ast);
     tool.runDefaultCoCos(ast);
     tool.runAdditionalCoCos(ast);
