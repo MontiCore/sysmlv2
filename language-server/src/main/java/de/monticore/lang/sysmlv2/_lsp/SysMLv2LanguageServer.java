@@ -20,17 +20,15 @@ public class SysMLv2LanguageServer extends SysMLv2LanguageServerTOP {
 
   @Override
   public void initialized(InitializedParams params) {
-    if (languageClient != null) {
-      if (options != null) {
-        // Re-resolve layout with correct workspace path
-        ProjectLayout newLayout = new ProjectLayoutBuilder()
-            .projectpath(options.getWorkspacePath())
-            .symbolPath(options.getSymbolPaths())
-            .resources(options.getModelPaths())
-            .build();
+    if (options != null) {
+      // Re-resolve layout with correct workspace path
+      ProjectLayout newLayout = new ProjectLayoutBuilder()
+          .projectpath(options.getWorkspacePath())
+          .symbolPath(options.getSymbolPaths())
+          .resources(options.getModelPaths())
+          .build();
 
-        resetContent(newLayout);
-      }
+      resetContent(newLayout);
     }
     super.initialized(params);
   }
