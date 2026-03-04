@@ -97,6 +97,7 @@ public class TypeCheck3Test {
      */
     assertThat(printer.content).isEqualTo("Übersetzung der length-Funktion");
   }
+
   @Test
   public void testConditionalOr2Type() throws IOException {
     var tool = new SysMLv2Tool();
@@ -111,6 +112,7 @@ public class TypeCheck3Test {
 
     assertThat(Log.getFindings().isEmpty()).isTrue();
     assertThat(type.isPrimitive()).isTrue();
+    assertThat(type.asPrimitive().getPrimitiveName()).isEqualTo("boolean");
   }
 
   @Test
@@ -125,5 +127,6 @@ public class TypeCheck3Test {
 
     assertThat(Log.getFindings().isEmpty()).isTrue();
     assertThat(type.isPrimitive()).isTrue();
+    assertThat(type.asPrimitive().getPrimitiveName()).isEqualTo("boolean");
   }
 }
