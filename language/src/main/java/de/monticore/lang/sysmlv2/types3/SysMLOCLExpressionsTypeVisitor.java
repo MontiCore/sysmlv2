@@ -1,6 +1,7 @@
 package de.monticore.lang.sysmlv2.types3;
 
 import de.monticore.lang.sysmlexpressions._ast.ASTConditionalAndExpression2;
+import de.monticore.lang.sysmlexpressions._ast.ASTConditionalOrExpression2;
 import de.monticore.lang.sysmlexpressions._ast.ASTExistsExpression;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsVisitor2;
 import de.monticore.ocl.oclexpressions.types3.OCLExpressionsTypeVisitor;
@@ -26,12 +27,24 @@ public class SysMLOCLExpressionsTypeVisitor extends OCLExpressionsTypeVisitor im
 
     SymTypeExpression result =
         TypeVisitorLifting.liftDefault(
-                this::calculateAndExpression)
+                this::calculateBooleanBinaryExpression)
             .apply(left, right);
     getType4Ast().setTypeOfExpression(expr, result);
   }
 
-  protected SymTypeExpression calculateAndExpression(
+  @Override
+  public void endVisit(ASTConditionalOrExpression2 expr) {
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                this::calculateBooleanBinaryExpression)
+            .apply(left, right);
+    getType4Ast().setTypeOfExpression(expr, result);
+  }
+
+  protected SymTypeExpression calculateBooleanBinaryExpression(
       SymTypeExpression left, SymTypeExpression right) {
 
     if (SymTypeRelations.isCompatible(left, right)
