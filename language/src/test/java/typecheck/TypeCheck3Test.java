@@ -112,6 +112,7 @@ public class TypeCheck3Test {
 
     assertThat(Log.getFindings().isEmpty()).isTrue();
     assertThat(type.isPrimitive()).isTrue();
+    assertThat(type.asPrimitive().getPrimitiveName()).isEqualTo("boolean");
   }
 
   @Test
@@ -126,6 +127,7 @@ public class TypeCheck3Test {
 
     assertThat(Log.getFindings().isEmpty()).isTrue();
     assertThat(type.isPrimitive()).isTrue();
+    assertThat(type.asPrimitive().getPrimitiveName()).isEqualTo("boolean");
   }
 
 }
