@@ -99,6 +99,38 @@ public class TypeCheck3Test {
   }
 
   @Test
+  public void testConditionalAnd2Type() throws IOException {
+    var tool = new SysMLv2Tool();
+    Log.getFindings().clear();
+    tool.init();
+
+    var astExp = SysMLv2Mill.parser().parse_String("constraint { true & false }").get();
+    tool.createSymbolTable(astExp);
+    tool.completeSymbolTable(astExp);
+
+    SymTypeExpression type = TypeCheck3.typeOf(((ASTConstraintUsage)astExp.getSysMLElement(0)).getExpression());
+
+    assertThat(Log.getFindings().isEmpty()).isTrue();
+    assertThat(type.isPrimitive()).isTrue();
+    assertThat(type.asPrimitive().getPrimitiveName()).isEqualTo("boolean");
+  }
+
+  @Test
+  public void testConditionalAnd2TypeExpressionOnly() throws IOException {
+    var tool = new SysMLv2Tool();
+    Log.getFindings().clear();
+    tool.init();
+
+    var astExp = SysMLv2Mill.parser().parse_StringExpression("true & false").get();
+
+    SymTypeExpression type = TypeCheck3.typeOf(astExp);
+
+    assertThat(Log.getFindings().isEmpty()).isTrue();
+    assertThat(type.isPrimitive()).isTrue();
+    assertThat(type.asPrimitive().getPrimitiveName()).isEqualTo("boolean");
+  }
+
+  @Test
   public void testConditionalOr2Type() throws IOException {
     var tool = new SysMLv2Tool();
     Log.getFindings().clear();
