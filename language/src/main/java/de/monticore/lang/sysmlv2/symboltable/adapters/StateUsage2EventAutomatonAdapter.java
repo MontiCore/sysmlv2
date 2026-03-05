@@ -6,9 +6,11 @@ import de.monticore.lang.componentconnector._symboltable.EventAutomatonSymbol;
 import de.monticore.lang.sysmlactions._ast.ASTSysMLSuccession;
 import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
+import static de.monticore.lang.sysmlv2.symboltable.adapters.StateUsage2AutomatonAdapter.getAcceptTrigger;
 import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -115,10 +117,13 @@ public class StateUsage2EventAutomatonAdapter extends EventAutomatonSymbol {
   }
 
   private String getTrigger(ASTSysMLTransition transition) {
-    //TODO nochmal richtig machen
-    var trigger = transition.getInlineAcceptActionUsage();
-
-    return String.join(".",
-        ((ASTMCQualifiedType)trigger.getPayload().getPayloadType()).getMCQualifiedName().getPartsList());
+    String trigger = getAcceptTrigger(transition);
+    if (trigger.isEmpty()) {
+      Log.error(
+          "0xB0002 Unsupported or missing transition trigger (expected 'accept <port>' or 'accept <handle>: <type> via <port>').",
+          transition.get_SourcePositionStart(),
+          transition.get_SourcePositionEnd());
+    }
+    return trigger;
   }
 }
