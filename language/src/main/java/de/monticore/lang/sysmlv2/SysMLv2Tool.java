@@ -24,6 +24,7 @@ import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.cocos.AssignActionTypeCheck3;
+import de.monticore.lang.sysmlv2.cocos.EventTransitionRequiresAccept;
 import de.monticore.lang.sysmlv2.cocos.FlowCheckCoCo;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
@@ -167,6 +168,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo(new FlowCheckCoCo());
     checker.addCoCo(new PortDefinitionExistsCoCo());
     checker.addCoCo(new PartBehaviorCoCo());
+    checker.addCoCo(new EventTransitionRequiresAccept());
 
     checker.checkAll(ast);
   }
