@@ -143,4 +143,34 @@ public class EventAutomatonSymbolAdapterTest extends NervigeSymboltableTests {
     assertThat(output.getPortSymbol().getName()).isEqualTo("o.val");
     assertThat(output.getValue()).isInstanceOf(ASTLogicalNotExpression.class);
   }
+
+  @Test
+  public void testEventTransition_TypedAcceptViaMapsToPort() throws IOException {
+    var as = process("port def B {\n"
+        + "  in attribute val: boolean;\n"
+        + "}\n"
+        + "\n"
+        + "part def A {\n"
+        + "  port i: B;\n"
+        + "  port o: ~B;\n"
+        + "\n"
+        + "  exhibit state aut {\n"
+        + "    state S;\n"
+        + "    transition t\n"
+        + "      first S\n"
+        + "      accept val: boolean via i\n"
+        + "      if true\n"
+        + "      do action { send !i.val to o.val; }\n"
+        + "      then S;\n"
+        + "  }\n"
+        + "}");
+
+    var aut = as.resolveEventAutomaton("A").get();
+
+    var evTransitions = aut.getEventTransitionsList();
+    assertThat(evTransitions).isNotEmpty();
+
+    var trans = evTransitions.get(0);
+    assertThat(trans.getPortSymbol().getName()).isEqualTo("i.val");
+  }
 }
