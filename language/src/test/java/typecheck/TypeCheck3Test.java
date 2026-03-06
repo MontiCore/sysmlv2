@@ -4,14 +4,17 @@ import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
 import de.monticore.expressions.commonexpressions.types3.CommonExpressionsTypeVisitor;
 import de.monticore.expressions.streamexpressions.types3.StreamExpressionsTypeVisitor;
+import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.ocl.oclexpressions.types3.OCLExpressionsTypeVisitor;
+import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
 import de.monticore.types3.Type4Ast;
 import de.monticore.types3.TypeCheck3;
 import de.monticore.types3.util.MapBasedTypeCheck3;
+import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -95,4 +98,67 @@ public class TypeCheck3Test {
     assertThat(printer.content).isEqualTo("Übersetzung der length-Funktion");
   }
 
+  @Test
+  public void testConditionalAnd2Type() throws IOException {
+    var tool = new SysMLv2Tool();
+    Log.getFindings().clear();
+    tool.init();
+
+    var astExp = SysMLv2Mill.parser().parse_String("constraint { true & false }").get();
+    tool.createSymbolTable(astExp);
+    tool.completeSymbolTable(astExp);
+
+    SymTypeExpression type = TypeCheck3.typeOf(((ASTConstraintUsage)astExp.getSysMLElement(0)).getExpression());
+
+    assertThat(Log.getFindings().isEmpty()).isTrue();
+    assertThat(type.isPrimitive()).isTrue();
+    assertThat(type.asPrimitive().getPrimitiveName()).isEqualTo("boolean");
+  }
+
+  @Test
+  public void testConditionalAnd2TypeExpressionOnly() throws IOException {
+    var tool = new SysMLv2Tool();
+    Log.getFindings().clear();
+    tool.init();
+
+    var astExp = SysMLv2Mill.parser().parse_StringExpression("true & false").get();
+
+    SymTypeExpression type = TypeCheck3.typeOf(astExp);
+
+    assertThat(Log.getFindings().isEmpty()).isTrue();
+    assertThat(type.isPrimitive()).isTrue();
+    assertThat(type.asPrimitive().getPrimitiveName()).isEqualTo("boolean");
+  }
+
+  @Test
+  public void testConditionalOr2Type() throws IOException {
+    var tool = new SysMLv2Tool();
+    Log.getFindings().clear();
+    tool.init();
+
+    var astExp = SysMLv2Mill.parser().parse_String("constraint { true | false }").get();
+    tool.createSymbolTable(astExp);
+    tool.completeSymbolTable(astExp);
+
+    SymTypeExpression type = TypeCheck3.typeOf(((ASTConstraintUsage)astExp.getSysMLElement(0)).getExpression());
+
+    assertThat(Log.getFindings().isEmpty()).isTrue();
+    assertThat(type.isPrimitive()).isTrue();
+    assertThat(type.asPrimitive().getPrimitiveName()).isEqualTo("boolean");
+  }
+
+  @Test
+  public void testConditionalOr2TypeExpressionOnly() throws IOException {
+    var tool = new SysMLv2Tool();
+    Log.getFindings().clear();
+    tool.init();
+
+    var astExp = SysMLv2Mill.parser().parse_StringExpression("true | false").get();
+
+    SymTypeExpression type = TypeCheck3.typeOf(astExp);
+
+    assertThat(Log.getFindings().isEmpty()).isTrue();
+    assertThat(type.isPrimitive()).isTrue();
+    assertThat(type.asPrimitive().getPrimitiveName()).isEqualTo("boolean");
+  }
 }
