@@ -5,6 +5,7 @@ import de.mclsg.lsp.ISymbolUsageResolutionProvider;
 import de.mclsg.lsp.document_management.DocumentManager;
 import de.mclsg.lsp.modelpath.multiproject.ProjectLayoutBuilder;
 import de.monticore.lang.sysmlv2._lsp.language_access.SysMLv2ScopeManager;
+import org.eclipse.lsp4j.InitializedParams;
 import org.eclipse.lsp4j.MessageParams;
 import org.eclipse.lsp4j.MessageType;
 import org.slf4j.Logger;
@@ -16,6 +17,21 @@ import java.io.File;
 public class SysMLv2LanguageServer extends SysMLv2LanguageServerTOP {
 
   private static final Logger logger = LoggerFactory.getLogger(SysMLv2LanguageServer.class);
+
+  @Override
+  public void initialized(InitializedParams params) {
+    if (options != null) {
+      // Re-resolve layout with correct workspace path
+      ProjectLayout newLayout = new ProjectLayoutBuilder()
+          .projectpath(options.getWorkspacePath())
+          .symbolPath(options.getSymbolPaths())
+          .resources(options.getModelPaths())
+          .build();
+
+      resetContent(newLayout);
+    }
+    super.initialized(params);
+  }
 
   /** Convenience: Wir modifizieren aktuell eigentlich nur den ModelPath */
   public SysMLv2LanguageServer(ProjectLayout layout) {
