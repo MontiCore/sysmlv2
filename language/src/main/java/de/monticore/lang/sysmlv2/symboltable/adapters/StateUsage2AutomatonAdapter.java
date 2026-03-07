@@ -11,6 +11,7 @@ import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
 import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
+import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -93,10 +94,30 @@ public class StateUsage2AutomatonAdapter extends AutomatonSymbol {
     return initialConfiguration;
   }
 
-  private String getTrigger(ASTSysMLTransition transition) {
-    var trigger = transition.getInlineAcceptActionUsage();
+  public static String getAcceptTrigger(ASTSysMLTransition transition) {
+    if (transition == null || !transition.isPresentInlineAcceptActionUsage()) {
+      return "";
+    }
+    var accept = transition.getInlineAcceptActionUsage();
+    var payload = accept.getPayload();
+    if (accept.isPresentReceiver() && payload.isPresentPayloadHandle()) {
+      return accept.getReceiver().getQName() + "." + payload.getPayloadHandle();
+    }
+    if (payload.isPresentPayloadType() && payload.getPayloadType() instanceof ASTMCQualifiedType) {
+      return String.join(".", ((ASTMCQualifiedType) payload.getPayloadType())
+          .getMCQualifiedName().getPartsList());
+    }
+    return "";
+  }
 
-    return String.join(".", ((ASTMCQualifiedType)trigger.getPayload()
-        .getPayloadType()).getMCQualifiedName().getPartsList());
+  private String getTrigger(ASTSysMLTransition transition) {
+    String trigger = getAcceptTrigger(transition);
+    if (trigger.isEmpty()) {
+      Log.error(
+          "0xB0003 Missing or unsupported transition trigger (expected an 'accept' clause).",
+          transition.get_SourcePositionStart(),
+          transition.get_SourcePositionEnd());
+    }
+    return trigger;
   }
 }
