@@ -11,6 +11,7 @@ import de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol;
 import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlconstraints.symboltable.adapters.RequirementSubject2VariableSymbolAdapter;
+import de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLMetaDataDefinitionSymbol;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.ItemDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
@@ -28,6 +29,7 @@ import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
 import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.AttributeUsage2PortSymbolAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Constraint2SpecificationAdapter;
+import de.monticore.lang.sysmlv2.symboltable.adapters.MetadataDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.PartDef2ComponentAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Requirement2RequirementCCAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Requirement2SpecificationAdapter;
@@ -249,6 +251,12 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     var itemDef = resolveItemDefLocally(name);
     if (itemDef.isPresent()) {
       adapted.add(new ItemDef2TypeSymbolAdapter(itemDef.get()));
+    }
+
+    // MetadataDef zu Types
+    var metadataDef = resolveSysMLMetaDataDefinitionLocally(name);
+    if (metadataDef.isPresent()) {
+      adapted.add(new MetadataDef2TypeSymbolAdapter(metadataDef.get()));
     }
 
     return adapted;

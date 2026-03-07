@@ -43,7 +43,7 @@ component grammar SysMLImportsAndPackages extends SysMLBasis {
    * Metadata is additional data that can be used to annotate
    * the elements of a model.
    */
-  SysMLMetaDataDefinition implements SysMLElement =
+  symbol scope SysMLMetaDataDefinition implements SysMLType, SysMLElement =
     Modifier UserDefinedKeyword* "metadata" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"

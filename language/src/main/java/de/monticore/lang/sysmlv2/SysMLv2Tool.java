@@ -41,6 +41,7 @@ import de.monticore.lang.sysmlv2.cocos.SubPartNamesInConnectionExistCoCo;
 import de.monticore.lang.sysmlv2.cocos.SubcomponentOutputConnectionDirectionCoCo;
 import de.monticore.lang.sysmlv2.cocos.TypeCheck3TransitionGuards;
 import de.monticore.lang.sysmlv2.cocos.UniqueSubPartNamesInParentCoCo;
+import de.monticore.lang.sysmlv2.cocos.ValidCausalityTimingCoCo;
 import de.monticore.lang.sysmlv2.cocos.WarnNonExhibited;
 import de.monticore.lang.sysmlv2.symboltable.completers.CausalityCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectRefinementCompleter;
@@ -123,6 +124,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo(new QualifiedPortNameExistsCoCo());
     // Check ambiguous names
     checker.addCoCo(new UniqueSubPartNamesInParentCoCo());
+    checker.addCoCo(new ValidCausalityTimingCoCo());
 
     checker.checkAll(ast);
   }
