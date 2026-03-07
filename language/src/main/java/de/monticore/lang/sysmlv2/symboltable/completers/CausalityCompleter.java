@@ -11,6 +11,8 @@ import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
  * anhand der besitzenden (umliegenden) PartDefinition.
  */
 public class CausalityCompleter implements SysMLPartsVisitor2 {
+  protected static final String INSTANT = "instant";
+
   @Override
   public void visit(ASTPortUsage node) {
     if (node.getEnclosingScope().isPresentSpanningSymbol()) {
@@ -18,7 +20,9 @@ public class CausalityCompleter implements SysMLPartsVisitor2 {
       if(enclosingSymbol instanceof PartDefSymbol && enclosingSymbol.isPresentAstNode()) {
         var ast = (ASTPartDef) enclosingSymbol.getAstNode();
         node.getSymbol().setStrong(
-            ast.getSysMLElements(ASTSysMLCausality.class).stream().noneMatch(ASTSysMLCausality::isInstant)
+            ast.getSysMLElements(ASTSysMLCausality.class).stream()
+                .map(ASTSysMLCausality::getTiming)
+                .noneMatch(INSTANT::equals)
         );
       }
     }

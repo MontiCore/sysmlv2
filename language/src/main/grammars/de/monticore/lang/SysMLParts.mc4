@@ -8,7 +8,7 @@ component grammar SysMLParts extends SysMLBasis {
    * Defaults to "delayed".
    */
   SysMLCausality implements SysMLElement =
-    "timing" (["instant"] | ["delayed"]) ";" ;
+    "timing" timing:Name ";" ;
 
   /*
    * ##################################################################
