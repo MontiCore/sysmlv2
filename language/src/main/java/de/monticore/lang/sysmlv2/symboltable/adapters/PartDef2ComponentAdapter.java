@@ -144,6 +144,23 @@ public class PartDef2ComponentAdapter extends MildComponentSymbol {
     }
   }
 
+  @Override
+  public boolean isHistoryBased() {
+    if(!getSpannedScope().getLocalMildSpecificationSymbols().isEmpty()) {
+      return true;
+    }
+    // TODO only "require"
+    else if(!getSpannedScope().getLocalRequirementUsageSymbols().isEmpty()) {
+      return true;
+    }
+    // TODO only "assert"
+    else if(!getSpannedScope().getLocalConstraintUsageSymbols().isEmpty()) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
 
   /**
    * Since we might not know the name of the constraint or requirement, and thus
