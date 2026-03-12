@@ -25,6 +25,7 @@ import de.monticore.symboltable.modifiers.BasicAccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
+import de.monticore.types.mcstructuraltypes._ast.ASTMCTupleType;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
@@ -47,7 +48,17 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
 
         for(var mcType: astTyping.getSuperTypesList()) {
           SymTypeExpression res = null;
-          if(mcType instanceof ASTMCGenericType) {
+          if(mcType instanceof ASTMCTupleType) {
+            var tupleType = (ASTMCTupleType) mcType;
+            List<SymTypeExpression> componentTypes = new ArrayList<>();
+            for(var componentMcType : tupleType.getMCTypeList()) {
+              componentTypes.add(SymTypeExpressionFactory.createTypeExpression(
+                  componentMcType.printType(),
+                  (IBasicSymbolsScope) componentMcType.getEnclosingScope()));
+            }
+            res = SymTypeExpressionFactory.createTuple(componentTypes);
+          }
+          else if(mcType instanceof ASTMCGenericType) {
             // We still have to print when the type is generic because the defining symbol does not give info about the
             // instantiation with type arguments
             res = SymTypeExpressionFactory.createTypeExpression(

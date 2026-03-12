@@ -69,7 +69,7 @@ public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfComm
   protected void calculateFieldAccessAboutPortUsage(SymTypeExpression type) {
     if (this.isStream) {
       //case for isStream == true
-      if (type.getTypeInfo().getName().contains("Stream")) {
+      if (type.hasTypeInfo() && type.getTypeInfo().getName().contains("Stream")) {
         //type is already Stream, set TypeCheckResult
         getTypeCheckResult().setResult(type);
       } else {
