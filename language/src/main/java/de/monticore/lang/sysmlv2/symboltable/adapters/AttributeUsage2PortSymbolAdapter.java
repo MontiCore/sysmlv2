@@ -77,7 +77,8 @@ public class AttributeUsage2PortSymbolAdapter extends MildPortSymbol {
 
       boolean hasTsyn = scope.getLocalStateUsageSymbols().stream()
           .anyMatch(sym -> sym.getUserDefinedKeywordsList().contains("tsyn"))
-          || ((ASTPartDef) scope.getSpanningSymbol().getAstNode())
+          || scope.getSpanningSymbol().isPresentAstNode() &&
+              ((ASTPartDef) scope.getSpanningSymbol().getAstNode())
               .getUserDefinedKeywordList().stream()
               .anyMatch(kw -> kw.getMCQualifiedName().getQName().equals("tsyn"));
 
