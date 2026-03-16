@@ -1,6 +1,7 @@
 package de.monticore.lang.sysmlv2.symboltable.adapters;
 
 import de.monticore.lang.componentconnector._symboltable.MildPortSymbol;
+import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
@@ -75,7 +76,11 @@ public class AttributeUsage2PortSymbolAdapter extends MildPortSymbol {
       var scope = (ISysMLv2Scope) container.getEnclosingScope();
 
       boolean hasTsyn = scope.getLocalStateUsageSymbols().stream()
-          .anyMatch(sym -> sym.getUserDefinedKeywordsList().contains("tsyn"));
+          .anyMatch(sym -> sym.getUserDefinedKeywordsList().contains("tsyn"))
+          || scope.getSpanningSymbol() instanceof PartDefSymbol && scope.getSpanningSymbol().isPresentAstNode() &&
+              ((ASTPartDef) scope.getSpanningSymbol().getAstNode())
+              .getUserDefinedKeywordList().stream()
+              .anyMatch(kw -> kw.getMCQualifiedName().getQName().equals("tsyn"));
 
       return hasTsyn ? Timing.TIMED_SYNC : Timing.TIMED;
   }
