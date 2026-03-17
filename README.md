@@ -147,7 +147,7 @@ of further examples for quality checks.
 
 * [**Download SysML v2 Tool**](https://www.monticore.de/download/MCSysMLv2.jar)
 
-The [SysML v2 tool](bin/MCSysMLv2.jar) offers options for processing SysML v2
+The SysML v2 tool offers options for processing SysML v2
 models. It provides through the CLI as follows:
 
 `java -jar MCSysMLv2.jar [-h] -i <fileName> [-path <p>] [-pp [<file>]] [-s [<file>]]`
@@ -182,7 +182,7 @@ planned.
 
 ##### Prerequisites
 
-To run the tool, it is required to install a Java 11 JRE.
+To run the tool, it is required to install a Java 21 JRE.
 
 ## Building the Tool from the Sources (if desired)
 
@@ -207,9 +207,11 @@ two command:
 ```
 ./gradlew :language:shadowJar
 ```
+Please ensure that you have Java 21 JRE installed and gradle is set up to use it.
 
-Congratulations! The executable JAR file `language-7.6.2-SNAPSHOT-cli.jar` is
+Congratulations! The executable JAR file `language-7.*.*-SNAPSHOT-mc-tool.jar` is
 now in the directory `language/target/libs`.
+
 
 ## Further Information
 
