@@ -79,7 +79,7 @@ shadowJar {
   manifest {
     attributes "Main-Class": " de.monticore.lang.sysmlv2.SysMLv2Tool"
   }
-  archiveClassifier = 'cli'
+  archiveClassifier = 'mc-tool'
   minimize()
 }
 
