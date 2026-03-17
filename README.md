@@ -207,9 +207,11 @@ two command:
 ```
 ./gradlew :language:shadowJar
 ```
+Please ensure that you have java 21 JRE installed and gradle is set up to use it.
 
-Congratulations! The executable JAR file `language-7.6.2-SNAPSHOT-cli.jar` is
+Congratulations! The executable JAR file `language-7.*.*-SNAPSHOT-cli.jar` is
 now in the directory `language/target/libs`.
+
 
 ## Further Information
 
