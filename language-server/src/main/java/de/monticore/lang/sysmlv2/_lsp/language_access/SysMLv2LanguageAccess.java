@@ -17,14 +17,22 @@ public class SysMLv2LanguageAccess extends SysMLv2LanguageAccessTOP {
   /** Convenience */
   public SysMLv2LanguageAccess()
   {
-    super(new DocumentManager(), new SysMLv2ScopeManager());
+    super(new DocumentManager(), new SysMLv2ScopeManager(), "Default");
   }
 
   public SysMLv2LanguageAccess(
       DocumentManager documentManager,
       SysMLv2ScopeManager scopeManager)
   {
-    super(documentManager, scopeManager);
+    super(documentManager, scopeManager, "Default");
+  }
+
+  public SysMLv2LanguageAccess(
+      DocumentManager documentManager,
+      SysMLv2ScopeManager scopeManager,
+      String cocoCheckerMode)
+  {
+    super(documentManager, scopeManager, cocoCheckerMode);
   }
 
   @Override
