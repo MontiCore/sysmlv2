@@ -6,8 +6,9 @@ import de.monticore.lang.sysmlv2._lsp.SysMLv2DocumentInformationFilter;
 import de.se_rwth.commons.logging.Log;
 
 public class SysMLv2LspCoCoRunner extends SysMLv2LspCoCoRunnerTOP {
-  public SysMLv2LspCoCoRunner(DocumentManager documentManager) {
-    super(documentManager);
+
+  public SysMLv2LspCoCoRunner(DocumentManager documentManager, String cocoCheckerMode) {
+    super(documentManager, cocoCheckerMode);
   }
 
   @Override
@@ -17,14 +18,8 @@ public class SysMLv2LspCoCoRunner extends SysMLv2LspCoCoRunnerTOP {
 
   @Override
   public void runAllCoCos(ASTSysMLModel ast){
-    if(System.getenv("SYSML_DEFAULT_COCOS") == null) {
-      tool.runDefaultCoCos(ast);
-    }
-    // Runs additional (verification-specific) CoCos when variable is set.
-    // Defaults to not running them.
-    if(System.getenv("SYSML_ADDITIONAL_COCOS") != null) {
-      tool.runAdditionalCoCos(ast);
-    }
+    super.runAllCoCos(ast);
+    //ignores SYSML_ADDITIONAL_COCOS and SYSML_DEFAULT_COCOS
   }
 
   @Override
