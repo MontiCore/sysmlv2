@@ -17,12 +17,6 @@ public class SysMLv2LspCoCoRunner extends SysMLv2LspCoCoRunnerTOP {
   }
 
   @Override
-  public void runAllCoCos(ASTSysMLModel ast){
-    super.runAllCoCos(ast);
-    //ignores SYSML_ADDITIONAL_COCOS and SYSML_DEFAULT_COCOS
-  }
-
-  @Override
   public void runCoCosForAllDocuments(){
     documentManager.getAllDocumentInformation(new SysMLv2DocumentInformationFilter()).forEach(di -> {
       Log.enableFailQuick(false);
