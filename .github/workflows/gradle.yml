@@ -41,14 +41,13 @@ jobs:
         run: gradle build ${{env.GRADLE_CLI_OPTS}}
             -PgithubUser=${{env.GITHUB_ACTOR}}
             -PgithubToken=${{secrets.GITHUB_TOKEN}}
-      - name: Publish Test Report
-        # Other projects split their deploy (on the main/dev/master branch) and test_branch workflows
-        # we should consider doing something similar here too
-        uses: mikepenz/action-junit-report@a451de5ac1ff45e46508b6150cb4f51a287d0309
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v4
         if: always() # always run even if the previous step fails
         with:
-          commit: ${{github.event.workflow_run.head_sha}}
-          report_paths: '**/target/test-results/test/TEST-*.xml'
+          name: junit-test-results
+          path: '**/target/test-results/test/TEST-*.xml'
+          retention-days: 1
 
   parser-performance:
     runs-on: ubuntu-latest
