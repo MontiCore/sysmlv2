@@ -15,6 +15,7 @@ on:
 
 env:
   GRADLE_VERSION: 8.14 # Gradle version used
+  JAVA_VERSION: 21 # Java version used
   GRADLE_CLI_OPTS: "-Pci --build-cache " # CLI options passed to Gradle
 
 permissions:
@@ -30,15 +31,23 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
           distribution: 'temurin'
-      - name: Gradle build
-        uses: gradle/actions/setup-gradle@v3
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: ${{env.GRADLE_VERSION}}
-          arguments: build ${{env.GRADLE_CLI_OPTS}}
+      - name: Gradle build
+        run: gradle build ${{env.GRADLE_CLI_OPTS}}
             -PgithubUser=${{env.GITHUB_ACTOR}}
             -PgithubToken=${{secrets.GITHUB_TOKEN}}
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v4
+        if: always() # always run even if the previous step fails
+        with:
+          name: junit-test-results
+          path: '**/target/test-results/test/TEST-*.xml'
+          retention-days: 1
 
   parser-performance:
     runs-on: ubuntu-latest
@@ -46,15 +55,15 @@ jobs:
     steps:
       - name: Checkout project sources
         uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: ${{env.GRADLE_VERSION}}
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
       - name: Run parser test
         run: gradle :language:test --tests "parser.OfficialParserTest.testParseAll" ${{env.GRADLE_CLI_OPTS}}
           -PgithubUser=${{env.GITHUB_ACTOR}}
@@ -90,15 +99,15 @@ jobs:
         uses: actions/checkout@v4
       - run: curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
       - run: sudo apt-get install -y nodejs
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: ${{env.GRADLE_VERSION}}
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
       - name: Gradle Publish
         run: gradle build publish ${{env.GRADLE_CLI_OPTS}}
           -PnexusPassword=${{ secrets.SE_NEXUS_PASSWORD }}
