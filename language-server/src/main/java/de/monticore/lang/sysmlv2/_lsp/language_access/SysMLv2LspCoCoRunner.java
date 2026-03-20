@@ -16,16 +16,6 @@ public class SysMLv2LspCoCoRunner extends SysMLv2LspCoCoRunnerTOP {
   }
 
   @Override
-  public void runAllCoCos(ASTSysMLModel ast){
-    tool.runDefaultCoCos(ast);
-    // Runs additional (verification-specific) CoCos when variable is set.
-    // Defaults to not running them.
-    if(System.getenv("SYSML_ADDITIONAL_COCOS") != null) {
-      tool.runAdditionalCoCos(ast);
-    }
-  }
-
-  @Override
   public void runCoCosForAllDocuments(){
     documentManager.getAllDocumentInformation(new SysMLv2DocumentInformationFilter()).forEach(di -> {
       Log.enableFailQuick(false);
