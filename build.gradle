@@ -30,11 +30,11 @@ subprojects {
   dependencies {
     implementation "org.slf4j:slf4j-simple:2.0.0-beta1"
     // Test annotations, api
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+    testImplementation "org.junit.jupiter:junit-jupiter:$junit_version"
     // Parametrized tests
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
     // Runtime
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     // AssertJ fluent assertions "assertThat(subject).has(...).is(...).throws(...)
     testImplementation "org.assertj:assertj-core:$assertj_version"
   }
