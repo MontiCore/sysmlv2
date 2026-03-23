@@ -1,9 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.cocos;
 
-import de.monticore.lang.sysmlbasis._ast.ASTModifier;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
-import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTConnectionUsageCoCo;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
@@ -180,41 +177,15 @@ public class ParentComponentInputConnectionDirectionCoCo implements SysMLPartsAS
     return null;
   }
 
-  /** Extract modifiers from PortUsageSymbol */
-  protected ASTModifier getModifiersFromPortUsageSymbol(PortUsageSymbol symbol) {
-    ASTAttributeUsage portAttributeUsageAST = (ASTAttributeUsage)
-        symbol.getAstNode()
-            .getPortDefs()
-            .get(0)
-            .getSysMLElementList()
-            .get(0);
-    return portAttributeUsageAST.getModifier();
-  }
-
   protected boolean portIsInput(PortUsageSymbol symbol) {
-    ASTModifier mods = getModifiersFromPortUsageSymbol(symbol);
-    boolean portIsInAndNotConjugated = mods.isIn() && !portIsConjugated(symbol);
-    boolean portIsOutAndConjugated = mods.isOut() && portIsConjugated(symbol);
-    return (portIsInAndNotConjugated || portIsOutAndConjugated);
+    return !symbol.getInputAttributes().isEmpty();
   }
 
   protected boolean portIsOutput(PortUsageSymbol symbol) {
-    ASTModifier mods = getModifiersFromPortUsageSymbol(symbol);
-    boolean portIsOutAndNotConjugated = mods.isOut() && !portIsConjugated(symbol);
-    boolean portIsInAndConjugated = mods.isIn() && portIsConjugated(symbol);
-    return (portIsOutAndNotConjugated || portIsInAndConjugated);
+    return !symbol.getOutputAttributes().isEmpty();
   }
 
   protected boolean portIsInOutput(PortUsageSymbol symbol) {
-    ASTModifier mods = getModifiersFromPortUsageSymbol(symbol);
-    return mods.isInout();
-  }
-
-  protected boolean portIsConjugated(PortUsageSymbol symbol) {
-    return
-        ((ASTSysMLTyping) symbol
-            .getAstNode()
-            .getSpecialization(0))
-            .isConjugated();
+    return portIsInput(symbol) && portIsOutput(symbol);
   }
 }
