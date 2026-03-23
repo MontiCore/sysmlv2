@@ -181,6 +181,7 @@ public class ParentComponentInputConnectionDirectionCoCoTest {
       var tool = new SysMLv2Tool();
       var scope = tool.createSymbolTable(ast);
       tool.completeSymbolTable(ast);
+      tool.finalizeSymbolTable(ast);
       return scope;
     }
 
