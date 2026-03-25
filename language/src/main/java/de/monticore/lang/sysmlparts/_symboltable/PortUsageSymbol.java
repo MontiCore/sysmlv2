@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 public class PortUsageSymbol extends PortUsageSymbolTOP {
 
+  private boolean hasCardinality;
+
   public PortUsageSymbol(String name) {
     super(name);
   }
@@ -110,6 +112,14 @@ public class PortUsageSymbol extends PortUsageSymbolTOP {
     );
 
     return res;
+  }
+
+  public boolean hasCardinality() {
+    return this.hasCardinality;
+  }
+
+  public void setHasCardinality(boolean hasCardinality) {
+    this.hasCardinality = hasCardinality;
   }
 
   /**
