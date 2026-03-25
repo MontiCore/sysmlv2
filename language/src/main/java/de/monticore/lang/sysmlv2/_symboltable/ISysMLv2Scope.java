@@ -107,7 +107,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
         // we omit to set the ASTNode
         var variable = new PortUsage2VariableSymbolAdapter(portUsage);
 
-        if (portUsage.getAstNode().getCardinality().isPresent()) {
+        if (portUsage.hasCardinality()) {
           variable.setType(SymTypeExpressionFactory.createTypeArray(resolved, 1,
               SymTypeExpressionFactory.createTypeObject(resolved)));
         }
