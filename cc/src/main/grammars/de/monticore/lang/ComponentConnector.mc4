@@ -159,6 +159,19 @@ component grammar ComponentConnector
   /**
    * Requirements: Wir berücksichtigen primär die Namen der Requirements
    */
-   interface symbol Requirement = Name;
+   interface symbol Requirement =
+     name:Name
+     [isStateInvariant:"invariant"]?
+     subject:MildComponent
+     assumptions:Expression*
+     guarantee:Expression
+   ;
+
+   symbolrule Requirement =
+      stateInvariant: boolean
+      subject:MildComponentSymbol
+      assumptions:Expression*
+      guarantee:Expression
+   ;
 
 }
