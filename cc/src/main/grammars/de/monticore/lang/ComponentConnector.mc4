@@ -168,6 +168,8 @@ component grammar ComponentConnector
    ;
 
    symbolrule Requirement =
+      stateInvariant: boolean
+      subject:MildComponentSymbol
       assumptions:Expression*
       guarantee:Expression
    ;
