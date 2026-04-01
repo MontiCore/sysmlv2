@@ -27,7 +27,7 @@ public class TsynTypeTest {
     SysMLv2Mill.globalScope().clear();
     SysMLv2Mill.initializePrimitives();
     SysMLv2Mill.addCollectionTypes();
-    SysMLv2Mill.addTsynTypes();
+    SysMLv2Mill.addTsynVariables();
     Log.clearFindings();
   }
 
