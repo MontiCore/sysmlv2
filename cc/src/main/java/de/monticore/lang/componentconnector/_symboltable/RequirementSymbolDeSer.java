@@ -8,6 +8,12 @@ import java.util.List;
 public class RequirementSymbolDeSer extends RequirementSymbolDeSerTOP {
 
   @Override
+  protected void serializeSubject(MildComponentSymbol subject,
+                                  ComponentConnectorSymbols2Json s2j) {
+    // not implemented
+  }
+
+  @Override
   protected void serializeAssumptions(List<ASTExpression> assumptions,
                                       ComponentConnectorSymbols2Json s2j) {
     // not implemented
@@ -17,6 +23,12 @@ public class RequirementSymbolDeSer extends RequirementSymbolDeSerTOP {
   protected void serializeGuarantee(ASTExpression guarantee,
                                     ComponentConnectorSymbols2Json s2j) {
     // not implemented
+  }
+
+  @Override
+  protected MildComponentSymbol deserializeSubject(JsonObject symbolJson) {
+    // not implemented
+    return null;
   }
 
   @Override
