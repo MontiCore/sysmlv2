@@ -12,6 +12,7 @@ import de.monticore.lang.sysmlparts.coco.PortDefHasOneType;
 import de.monticore.lang.sysmlparts.coco.PortDefNeedsDirection;
 import de.monticore.lang.sysmlparts.symboltable.completers.ConvertEnumUsagesToFields;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTRequirementDefCoCo;
+import de.monticore.lang.sysmlparts.symboltable.completers.SysMLPartsCompleter;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateUsageCoCo;
 import de.monticore.lang.sysmlstates.cocos.NoDoActions;
@@ -200,6 +201,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     traverser.add4SysMLBasis(new DirectionCompleter());
     traverser.add4SysMLParts(new DirectionCompleter());
     traverser.add4SysMLParts(new ConvertEnumUsagesToFields());
+    traverser.add4SysMLParts(new SysMLPartsCompleter());
     traverser.add4SysMLParts(new IdentifierCompletion());
 
     // Visiting artifact scope _and_ the AST requires two calls
