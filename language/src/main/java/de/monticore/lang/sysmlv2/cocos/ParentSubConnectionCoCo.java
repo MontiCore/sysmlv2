@@ -28,14 +28,14 @@ public class ParentSubConnectionCoCo implements SysMLPartsASTConnectionUsageCoCo
     ASTEndpoint src = node.getSrc();
     ASTEndpoint tgt = node.getTgt();
 
-    String srcQName = endpointQName(src);
-    String tgtQName = endpointQName(tgt);
+    String srcQName = src.getMCQualifiedName().toString();
+    String tgtQName = tgt.getMCQualifiedName().toString();
 
     ISysMLPartsScope scope = node.getEnclosingScope();
 
     // Determine if endpoints reference subcomponents
-    boolean tgtIsSub = isSubcomponentEndpoint(tgtQName);
-    boolean srcIsSub = isSubcomponentEndpoint(srcQName);
+    boolean tgtIsSub = isSubcomp(tgtQName);
+    boolean srcIsSub = isSubcomp(srcQName);
 
     // Resolve port symbols
     PortUsageSymbol tgtPort = resolvePortSymbol(scope, tgtQName, tgtIsSub);
@@ -63,48 +63,63 @@ public class ParentSubConnectionCoCo implements SysMLPartsASTConnectionUsageCoCo
         ||(srcIsInput && srcIsSub && tgtIsOutput && !tgtIsSub);
     boolean parOutToParOut = (srcIsOutput && !srcIsSub && tgtIsOutput && !tgtIsSub);
     boolean subInTosubIn = (srcIsInput && srcIsSub && tgtIsInput && tgtIsSub);
+    boolean parInToParIn = !srcIsSub && !tgtIsSub &&  srcIsInput && tgtIsInput;
+    boolean subOutToSubOut = srcIsSub && tgtIsSub && srcIsOutput && tgtIsOutput;
+    boolean subOutToParIn = (srcIsSub && srcIsOutput && !tgtIsSub && tgtIsInput)
+        || (tgtIsSub && tgtIsOutput && !srcIsSub && srcIsInput);
     if (parOutToParOut) {
       Log.error(
           "0x10AB0 Illegal connection: A parent output port was " +
-              "connected to a parent ouptu port. ",
-          node.get_SourcePositionStart(),
-          node.get_SourcePositionEnd()
+              "connected to a parent output port. ",
+          node.get_SourcePositionStart(),node.get_SourcePositionEnd()
       );
     }
     if (parOutToSubIn) {
       Log.error(
           "0x10AB1 Illegal connection: A parent output port was " +
               "connected to an input port of its subcomponent. ",
-          node.get_SourcePositionStart(),
-          node.get_SourcePositionEnd()
+          node.get_SourcePositionStart(),node.get_SourcePositionEnd()
       );
     }
     if (subInTosubIn) {
-      Log.error(
-          "0x10AB2 Illegal connection: A subcomponent input port was " +
+      Log.error("0x10AB2 Illegal connection: A subcomponent input port was " +
               "connected to a subcomponent input port. ",
-          node.get_SourcePositionStart(),
-          node.get_SourcePositionEnd()
+          node.get_SourcePositionStart(),node.get_SourcePositionEnd()
       );
+    }
+    if (parInToParIn) {
+      Log.error("0x10AB3 Illegal connection: A parent input port was " +
+              "connected to a parent input port. ",
+          node.get_SourcePositionStart(), node.get_SourcePositionEnd()
+      );
+    }
+    if (subOutToParIn) {
+      Log.error("0x10AB4 Illegal connection: A subcomponent output port was " +
+              "connected to a parent input port. ",
+          node.get_SourcePositionStart(),node.get_SourcePositionEnd()
+      );
+    }
+    if (subOutToSubOut) {
+      Log.error("0x10AB5 Illegal connection: A subcomponent output port was " +
+              "connected to a subcomponent output port. ",
+          node.get_SourcePositionStart(),node.get_SourcePositionEnd()
+      );
+    }
+    if((portIsInOutput(srcPort)) ||(portIsInOutput(tgtPort))
+    ) {
+      Log.warn("0x10AA6 Warning: Connection involves an 'inout' port which may have ambiguous directionality.",
+          node.get_SourcePositionStart(),node.get_SourcePositionEnd());
     }
 
   }
 
   // -------- Hilfsmethoden --------
 
-  /** Qualified Name des Endpunkts als String. */
-  protected String endpointQName(ASTEndpoint ep) {
-    if (ep.getMCQualifiedName() != null) {
-      return ep.getMCQualifiedName().toString();
-    }
-    return "";
-  }
-
   /**
    * Heuristik: ein Name mit '.' steht für einen Port einer Subkomponente,
    * z.B. "a.out". Ohne Punkt = Port der Oberkomponente.
    */
-  protected boolean isSubcomponentEndpoint(String qname) {
+  protected boolean isSubcomp(String qname) {
     return qname.contains(".");
   }
 
@@ -138,6 +153,7 @@ public class ParentSubConnectionCoCo implements SysMLPartsASTConnectionUsageCoCo
   protected PortUsageSymbol resolvePortOfSubPart(ISysMLPartsScope scope,
                                                  String qname) {
     // Split "a.out" into part "a" and port "out"
+
     int lastDot = qname.lastIndexOf('.');
     if (lastDot == -1) {
       return null;
@@ -161,41 +177,15 @@ public class ParentSubConnectionCoCo implements SysMLPartsASTConnectionUsageCoCo
     return null;
   }
 
-  /** Extract modifiers from PortUsageSymbol */
-  protected ASTModifier getModifiersFromPortUsageSymbol(PortUsageSymbol symbol) {
-    ASTAttributeUsage portAttributeUsageAST = (ASTAttributeUsage)
-        symbol.getAstNode()
-            .getPortDefs()
-            .get(0)
-            .getSysMLElementList()
-            .get(0);
-    return portAttributeUsageAST.getModifier();
-  }
 
   protected boolean portIsInput(PortUsageSymbol symbol) {
-    ASTModifier mods = getModifiersFromPortUsageSymbol(symbol);
-    boolean portIsInAndNotConjugated = mods.isIn() && !portIsConjugated(symbol);
-    boolean portIsOutAndConjugated = mods.isOut() && portIsConjugated(symbol);
-    return (portIsInAndNotConjugated || portIsOutAndConjugated);
+    return !symbol.getInputAttributes().isEmpty();
   }
-
   protected boolean portIsOutput(PortUsageSymbol symbol) {
-    ASTModifier mods = getModifiersFromPortUsageSymbol(symbol);
-    boolean portIsOutAndNotConjugated = mods.isOut() && !portIsConjugated(symbol);
-    boolean portIsInAndConjugated = mods.isIn() && portIsConjugated(symbol);
-    return (portIsOutAndNotConjugated || portIsInAndConjugated);
+    return !symbol.getOutputAttributes().isEmpty();
   }
-
   protected boolean portIsInOutput(PortUsageSymbol symbol) {
-    ASTModifier mods = getModifiersFromPortUsageSymbol(symbol);
-    return mods.isInout();
+    return portIsInput(symbol) && portIsOutput(symbol);
   }
 
-  protected boolean portIsConjugated(PortUsageSymbol symbol) {
-    return
-        ((ASTSysMLTyping) symbol
-            .getAstNode()
-            .getSpecialization(0))
-            .isConjugated();
-  }
 }
