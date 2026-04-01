@@ -32,7 +32,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     SysMLv2Mill.initializePrimitives();
     SysMLv2Mill.addStringType();
     SysMLv2Mill.addCollectionTypes();
-    SysMLv2Mill.addTsynTypes();
+    SysMLv2Mill.addTsynVariables();
   }
 
   /**
@@ -172,17 +172,17 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     }
   }
 
-  public static void addTsynTypes() {
-    getMill()._addTsynTypes();
+  public static void addTsynVariables() {
+    getMill()._addTsynVariables();
   }
 
-  protected void _addTsynTypes() {
-    if (SysMLv2Mill.globalScope().resolveType("Eps").isEmpty()) {
-      var eps = typeSymbolBuilder()
+  protected void _addTsynVariables() {
+    if (SysMLv2Mill.globalScope().resolveVariable("Eps").isEmpty()) {
+      var eps = variableSymbolBuilder()
           .setName("Eps")
           .setEnclosingScope(globalScope())
           .setFullName("Eps")
-          .setSpannedScope(scope())
+          .setType(SymTypeExpressionFactory.createTopType())
           .setAccessModifier(AccessModifier.ALL_INCLUSION)
           .build();
       SysMLv2Mill.globalScope().add(eps);
