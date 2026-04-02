@@ -182,6 +182,9 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
           .setName("Eps")
           .setEnclosingScope(globalScope())
           .setFullName("Eps")
+          // createTopType wird verwendet, da TopType ein übergeordneter Typ
+          // aller anderen Typen ist. Dadurch schlägt TypeCheck3TransitionGuards
+          // nicht bei Guards wie 'if input.val == Eps' fehl
           .setType(SymTypeExpressionFactory.createTopType())
           .setAccessModifier(AccessModifier.ALL_INCLUSION)
           .build();
