@@ -110,10 +110,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
   @Override
   public void runDefaultCoCos(ASTSysMLModel ast) {
     var checker = new SysMLv2CoCoChecker();
-    // Type Check
-    checker.addCoCo(new SendActionTypeCheck3());
-    checker.addCoCo(new AssignActionTypeCheck3());
-    checker.addCoCo(new TypeCheck3TransitionGuards());
+
     // Check that Defs exist
     checker.addCoCo(new PartTypeDefinitionExistsCoCo());
     checker.addCoCo(new RefinementTargetDefinitionExistsCoCo());
