@@ -7,7 +7,8 @@ import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
-import de.monticore.lang.sysmlv2.cocos.ParentComponentInputConnectionDirectionCoCo;
+import de.monticore.lang.sysmlv2.cocos.ParentSubConnectionCoCo;
+import de.monticore.lang.sysmlv2.cocos.PortDefinitionExistsCoCo;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.AfterEach;
@@ -128,7 +129,7 @@ public class ParentComponentInputConnectionDirectionCoCoTest {
       createSt(ast);
       var errors = check(ast);
       assertThat(errors).hasSize(1);
-      assertThat(errors.get(0).getMsg()).contains("0x10AA6");
+      assertThat(errors.get(0).getMsg()).contains("0x10AB4");
     }
 
     @Test
@@ -146,7 +147,7 @@ public class ParentComponentInputConnectionDirectionCoCoTest {
       createSt(ast);
       var errors = check(ast);
       assertThat(errors).hasSize(1);
-      assertThat(errors.get(0).getMsg()).contains("0x10AA6");
+      assertThat(errors.get(0).getMsg()).contains("0x10AB4");
     }
 
     @Test
@@ -168,7 +169,7 @@ public class ParentComponentInputConnectionDirectionCoCoTest {
       createSt(ast);
       var errors = check(ast);
       assertThat(errors).hasSize(1);
-      assertThat(errors.get(0).getMsg()).contains("0x10AA6");
+      assertThat(errors.get(0).getMsg()).contains("0x10AB4");
     }
 
     private ASTSysMLModel parse(String model) throws IOException {
@@ -186,7 +187,8 @@ public class ParentComponentInputConnectionDirectionCoCoTest {
 
     private List<Finding> check(ASTSysMLModel ast) {
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo(new ParentComponentInputConnectionDirectionCoCo());
+      checker.addCoCo(new ParentSubConnectionCoCo());
+      checker.addCoCo(new PortDefinitionExistsCoCo());
       Log.enableFailQuick(false);
       checker.checkAll(ast);
       return Log.getFindings().stream().filter(Finding::isError).collect(
