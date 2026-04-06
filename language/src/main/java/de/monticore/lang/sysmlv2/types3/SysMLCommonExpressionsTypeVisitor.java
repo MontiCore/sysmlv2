@@ -21,6 +21,7 @@ import de.monticore.lang.sysmlexpressions._ast.ASTSupersetEquationExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSupersetExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSysMLFieldAccessExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSysMLInstantiation;
+import de.monticore.lang.sysmlexpressions._ast.ASTSysMLSequenceExpression;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsHandler;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsTraverser;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsVisitor2;
@@ -322,5 +323,14 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
   public void endVisit(ASTSysMLInstantiation expr) {
     getType4Ast().setTypeOfExpression(expr, getType4Ast().getPartialTypeOfTypeId(
         expr.getMCType()));
+  }
+
+  @Override
+  public void endVisit(ASTSysMLSequenceExpression expr) {
+    var elementTypes = expr.getExpressionList().stream()
+        .map(e -> getType4Ast().getPartialTypeOfExpr(e))
+        .collect(java.util.stream.Collectors.toList());
+
+      getType4Ast().setTypeOfExpression(expr, SymTypeExpressionFactory.createTuple(elementTypes));
   }
 }
