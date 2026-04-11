@@ -23,15 +23,19 @@ public class RefinementCyclic implements SysMLPartsASTPartDefCoCo {
     var refiners = node.getSymbol().getTransitiveRefiners();
     var refinements = node.getSymbol().getTransitiveRefinements();
 
-    var cyclicRefinements = refiners.stream().filter(refinements::contains).map(SysMLTypeSymbol::getName).collect(Collectors.toList());
-    var pos = node.getSpecializationList().stream()
-        .filter(s -> s instanceof ASTSysMLRefinement)
-        .map(ASTNode::get_SourcePositionStart)
-        .findFirst()
-        .orElse(node.get_SourcePositionStart());
+    var cyclicRefinements = refiners.stream().filter(refinements::contains)
+        .map(SysMLTypeSymbol::getName)
+        .collect(Collectors.toList());
+    var pos = node.get_SourcePositionStart();
 
     if (cyclicRefinements.size() > 0) {
-      Log.error("0x90030 Cyclic refinement detected: " + node.getName() + " <-> " + String.join(", ", cyclicRefinements), pos);
+      Log.error(
+          "0x90030 Cyclic refinement detected: "
+              + node.getName()
+              + " <-> "
+              + String.join(", ", cyclicRefinements),
+          pos
+      );
     }
 
     if (node.getRefinements().contains(node.getSymbol())) {

@@ -1,7 +1,5 @@
 package de.monticore.lang.sysmlv2.cocos;
 
-import de.monticore.ast.ASTNode;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLRefinement;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
 import de.se_rwth.commons.logging.Log;
@@ -25,14 +23,14 @@ public class RefinementInterfaceNotMatching implements SysMLPartsASTPartDefCoCo 
         .collect(Collectors.toList());
 
     if (notMatching.size() > 0) {
-      var pos = node.getSpecializationList().stream()
-          .filter(s -> s instanceof ASTSysMLRefinement)
-          .map(ASTNode::get_SourcePositionStart)
-          .findFirst()
-          .orElse(node.get_SourcePositionStart());
-
       for (var refinement : notMatching) {
-        Log.error("0x9004 Interface of refinement " + refinement.getName() + " is incompatible.", pos);
+        Log.error(
+            "0x9004 Interface of refinement "
+                + refinement.getName()
+                + " is incompatible.",
+            node.get_SourcePositionStart(),
+            node.get_SourcePositionEnd()
+        );
       }
     }
   }

@@ -5,7 +5,6 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
-import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
 import de.monticore.lang.sysmlv2.cocos.RefinementTargetDefinitionExistsCoCo;
 import de.se_rwth.commons.logging.Finding;
@@ -23,11 +22,6 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class RefinementTargetDefinitionExistsCoCoTest {
-
-  private static final String MODEL_PATH = "src/test/resources/parser";
-
-  private SysMLv2Parser parser = SysMLv2Mill.parser();
-
   @BeforeAll
   public static void init() {
     Log.init();
@@ -46,8 +40,7 @@ public class RefinementTargetDefinitionExistsCoCoTest {
   public class RefinementTargetDefinitionExistsCoCoTests {
     @Test
     public void testValid() throws IOException {
-      String validModel =
-            "part def BasePart;"
+      String validModel = "part def BasePart;"
           + "part def Refining refines BasePart;";
 
       var ast = parse(validModel);
@@ -59,6 +52,29 @@ public class RefinementTargetDefinitionExistsCoCoTest {
     @Test
     public void testInvalid() throws IOException {
       String invalidModel = "part def Refining refines UndefinedBasePart;";
+
+      var ast = parse(invalidModel);
+      createSt(ast);
+      var errors = check(ast);
+      assertThat(errors).hasSize(1);
+      assertThat(errors.get(0).getMsg()).contains("0x10AA2");
+    }
+
+    @Test
+    public void testValidDependencyTarget() throws IOException {
+      String validModel = "part def BasePart;"
+          + "part def Refining2 { #refinement dependency to BasePart; }";
+
+      var ast = parse(validModel);
+      createSt(ast);
+      var errors = check(ast);
+      assertThat(errors).hasSize(0);
+    }
+
+    @Test
+    public void testInvalidDependencyTarget() throws IOException {
+      String invalidModel =
+          "part def Refining2 { #refinement dependency to UndefinedBasePart; }";
 
       var ast = parse(invalidModel);
       createSt(ast);

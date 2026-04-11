@@ -47,4 +47,24 @@ public class ASTPartDefTest {
     assertThat(C.getRefinements().get(1)).isEqualTo(B.getSymbol());
   }
 
+  @Test
+  public void test_getRefinements_dependencyBased() throws IOException {
+    Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse_String(
+        "part def A; part def C; "
+            + "part def D { #refinement dependency to A; "
+            + "#refinement dependency to C; }");
+    assertThat(ast).isPresent();
+
+    SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast.get());
+
+    ASTPartDef A = (ASTPartDef) ast.get().getSysMLElement(0);
+    ASTPartDef C = (ASTPartDef) ast.get().getSysMLElement(1);
+    ASTPartDef D = (ASTPartDef) ast.get().getSysMLElement(2);
+
+    // Dependency-based refinement
+    assertThat(D.getRefinements()).hasSize(2);
+    assertThat(D.getRefinements().get(0)).isEqualTo(A.getSymbol());
+    assertThat(D.getRefinements().get(1)).isEqualTo(C.getSymbol());
+  }
+
 }
