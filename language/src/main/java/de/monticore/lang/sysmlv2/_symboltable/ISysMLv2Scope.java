@@ -12,6 +12,7 @@ import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlconstraints.symboltable.adapters.RequirementSubject2VariableSymbolAdapter;
 import de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLMetaDataDefinitionSymbol;
+import de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.ItemDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
@@ -54,6 +55,52 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
+
+  @Override
+  default List<TypeSymbol> continueTypeWithEnclosingScope(
+    boolean foundSymbols,
+    String name,
+    AccessModifier modifier,
+    Predicate<TypeSymbol> predicate
+  ) {
+    final LinkedHashSet<TypeSymbol> result = new LinkedHashSet<>();
+
+    if (
+      checkIfContinueWithEnclosingScope(foundSymbols)
+      && getEnclosingScope() != null
+    ) {
+
+      Set<String> potentialNames = calcQNamesForEnclosingScope(name);
+
+      for (String potentialName : potentialNames) {
+        result.addAll(getEnclosingScope().resolveTypeMany(
+          foundSymbols,
+          potentialName,
+          modifier,
+          predicate)
+        );
+      }
+    }
+
+    return new ArrayList<>(result);
+  }
+
+
+  default Set<String> calcQNamesForEnclosingScope(String name) {
+    Set<String> potentialSymbolNames = new LinkedHashSet<>();
+    potentialSymbolNames.add(name);
+
+    if (
+      this.isPresentSpanningSymbol()
+      && this.getSpanningSymbol() instanceof SysMLPackageSymbol
+    ) {
+      potentialSymbolNames.add(this.getSpanningSymbol().getName() + "." + name);
+    }
+
+    //import Statements are not considered in local Scopes
+
+    return potentialSymbolNames;
+  }
 
   @Override
   default List<RequirementSymbol> resolveRequirementLocallyMany(
