@@ -1,5 +1,6 @@
 package de.monticore.lang.sysmlparts._symboltable;
 
+import de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import java.util.*;
 import java.util.function.Predicate;
