@@ -56,6 +56,27 @@ import java.util.function.Predicate;
 
 public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
+  /**
+   * In SysML, namespaces live inside SysML models (keyword "package") and
+   * there can be multiple namespaces in a single model. This is sometimes
+   * referred to as "first class support" of namespaces. In Java-like
+   * programming languages, the namespace of an artifact is handled implicitly
+   * through the file system path (in conjunction with a package declaration
+   * for easier inside-out-resolving). Blocks, methods, or classes are not
+   * considered full namespaces (resolving "bar" from within a class "Foo"
+   * does not yield the potential qualified name "Foo.bar" at the global scope).
+   * MontiCore's default resolve-mechanism is built to behave Java-like, i.e.,
+   * it assumes that namespaces exist only at the file level and only package
+   * declarations matter for the calculation of potential names. Therefore, the
+   * logic of looking for all potential qualified names is only executed when
+   * leaving the artifact scope and does not account for any scope names passed
+   * on the way up.
+   * This override changes this. It explicitly adds one new potential name to
+   * the list of potential names every time a package is passed while continuing
+   * with the enclosing scope. Assume we look for "bar", we pass "package Foo",
+   * then the list of potential names we are resolving for is now
+   * ["bar", "Foo.bar"].
+   */
   @Override
   default List<TypeSymbol> continueTypeWithEnclosingScope(
     boolean foundSymbols,
