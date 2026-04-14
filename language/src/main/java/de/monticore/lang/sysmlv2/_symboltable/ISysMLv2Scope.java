@@ -71,11 +71,22 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
    * logic of looking for all potential qualified names is only executed when
    * leaving the artifact scope and does not account for any scope names passed
    * on the way up.
+   * <br>
    * This override changes this. It explicitly adds one new potential name to
    * the list of potential names every time a package is passed while continuing
    * with the enclosing scope. Assume we look for "bar", we pass "package Foo",
    * then the list of potential names we are resolving for is now
    * ["bar", "Foo.bar"].
+   * <br>
+   * <b>Notice</b>: SysML comes with a large number of keywords
+   * (e.g., occurrence, item, attribute, part) that have no or very little
+   * meaning wrt. to symbol resolution. In MontiCore, we already established the
+   * basic set of symbols (aptly named "BasicSymbols"), namely Types, Variables,
+   * and Functions. To avoid re-implementing resolving functionality for all
+   * keywords, we use symbol adapters from SysML definitions to MontiCore types,
+   * SysML usages to MontiCore variables, and SysML constraints (including
+   * calc defs) to MontiCore functions. This method here handles resolving of
+   * MontiCore types, i.e., SysML definitions.
    */
   @Override
   default List<TypeSymbol> continueTypeWithEnclosingScope(
