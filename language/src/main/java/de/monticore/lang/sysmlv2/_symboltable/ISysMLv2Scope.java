@@ -96,7 +96,6 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     Predicate<TypeSymbol> predicate
   ) {
     final LinkedHashSet<TypeSymbol> result = new LinkedHashSet<>();
-
     if (
       checkIfContinueWithEnclosingScope(foundSymbols)
       && getEnclosingScope() != null
@@ -105,8 +104,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       Set<String> potentialNames = calcQNamesForEnclosingScope(name);
 
       for (String potentialName : potentialNames) {
-        result.addAll(getEnclosingScope().resolveTypeMany(
-          foundSymbols,
+        result.addAll(getEnclosingScope().resolveTypeMany( foundSymbols,
           potentialName,
           modifier,
           predicate)
@@ -117,7 +115,12 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     return new ArrayList<>(result);
   }
 
-
+  /**
+   * This method is essentially copied from artifact scopes. See explanation
+   * on continueTypeWithEnclosingScope(4): MontiCore's symbol resolution is
+   * Java-like out-of-the-box and needs to be extended for SysMLv2's usage
+   * of packages (namespaces) as proper modeling elements.
+   */
   default Set<String> calcQNamesForEnclosingScope(String name) {
     Set<String> potentialSymbolNames = new LinkedHashSet<>();
     potentialSymbolNames.add(name);
@@ -129,7 +132,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       potentialSymbolNames.add(this.getSpanningSymbol().getName() + "." + name);
     }
 
-    //import Statements are not considered in local Scopes
+    // import statements are not yet considered
 
     return potentialSymbolNames;
   }
