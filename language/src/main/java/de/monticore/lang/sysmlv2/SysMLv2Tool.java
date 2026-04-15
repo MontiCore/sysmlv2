@@ -25,11 +25,11 @@ import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.cocos.AssignActionTypeCheck3;
+import de.monticore.lang.sysmlv2.cocos.ConnectedPortsFitCoCo;
 import de.monticore.lang.sysmlv2.cocos.EventTransitionRequiresAccept;
 import de.monticore.lang.sysmlv2.cocos.FlowCheckCoCo;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
-import de.monticore.lang.sysmlv2.cocos.ParentComponentInputConnectionDirectionCoCo;
 import de.monticore.lang.sysmlv2.cocos.PartBehaviorCoCo;
 import de.monticore.lang.sysmlv2.cocos.PartTypeDefinitionExistsCoCo;
 import de.monticore.lang.sysmlv2.cocos.PortDefinitionExistsCoCo;
@@ -39,7 +39,6 @@ import de.monticore.lang.sysmlv2.cocos.RefinementTargetDefinitionExistsCoCo;
 import de.monticore.lang.sysmlv2.cocos.SendActionTypeCheck3;
 import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.SubPartNamesInConnectionExistCoCo;
-import de.monticore.lang.sysmlv2.cocos.SubcomponentOutputConnectionDirectionCoCo;
 import de.monticore.lang.sysmlv2.cocos.TypeCheck3TransitionGuards;
 import de.monticore.lang.sysmlv2.cocos.UniqueSubPartNamesInParentCoCo;
 import de.monticore.lang.sysmlv2.cocos.ValidCausalityTimingCoCo;
@@ -169,6 +168,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo(new PortDefinitionExistsCoCo());
     checker.addCoCo(new PartBehaviorCoCo());
     checker.addCoCo(new EventTransitionRequiresAccept());
+    checker.addCoCo(new ConnectedPortsFitCoCo());
 
     checker.checkAll(ast);
   }
