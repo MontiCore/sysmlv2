@@ -7,7 +7,7 @@ import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.types.SysMLSynthesizer;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.check.TypeCheckResult;
+import de.monticore.types.check.SymTypeExpressionFactory;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -29,25 +29,17 @@ public class DirectRefinementCompleter implements SysMLPartsVisitor2 {
         new ArrayList<SymTypeExpression>()
     );
 
-    var refinementTypes = node.getSpecializationList().stream()
-        .filter(r -> r instanceof ASTSysMLRefinement)
-        .flatMap(r -> r.getSuperTypesList().stream()).collect(Collectors.toList());
-
-    for (var refinementType : refinementTypes) {
-      // Check existence of refinement before actually synthesizing it to avoid
-      // FATAL errors thrown by the synthesizer
-     if (refinementType.getDefiningSymbol().isEmpty()) {
-       continue;
-     }
-      var result = syn.synthesizeType(refinementType);
-      if (result.isPresentResult()) {
-        node.getSymbol().addDirectRefinements(result.getResult());
-      }
-    }
+    node.getRefinements().stream()
+        .map(refinement -> SymTypeExpressionFactory.createTypeObject(
+            refinement.getFullName(),
+            node.getEnclosingScope()
+        ))
+        .forEach(node.getSymbol()::addDirectRefinements);
 
     var specializationTypes = node.getSpecializationList().stream()
         .filter(r -> r instanceof ASTSysMLSpecialization)
-        .flatMap(r -> r.getSuperTypesList().stream()).collect(Collectors.toList());
+        .flatMap(r -> r.getSuperTypesList().stream())
+        .collect(Collectors.toList());
 
     for (var specializationType : specializationTypes) {
       // Check existence of refinement before actually synthesizing it to avoid

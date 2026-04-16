@@ -1,5 +1,6 @@
 package de.monticore.lang.sysmlparts._ast;
 
+import de.monticore.lang.sysmlbasis._ast.ASTDependency;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRefinement;
@@ -30,9 +31,19 @@ public class ASTPartDef extends ASTPartDefTOP {
         .collect(Collectors.toList());
   }
 
+  public List<ASTDependency> getRefinementDependencies() {
+    return getSysMLElements(ASTDependency.class).stream()
+        .filter(ASTDependency::isRefinementDependency)
+        .filter(dependency -> dependency.isEmptySources()
+            || dependency.getSourcesList().stream()
+            .map(Object::toString)
+            .anyMatch(this.getName()::equals))
+        .collect(Collectors.toList());
+  }
+
   /**
-   * Löst die als Specialization verpackten Refinement-Relationen auf. Ist dabei nicht transitiv, sondern rein AST-
-   * orientiert: Wenn etwas nicht explizit im AST steht, wird es auch nicht zurückgegeben.
+   * Löst Refinement-Relationen auf. Ist dabei nicht transitiv, sondern rein AST-orientiert: Wenn etwas nicht explizit
+   * im AST steht, wird es auch nicht zurückgegeben.
    */
   public List<PartDefSymbol> getRefinements() {
     List<PartDefSymbol> refinements = new ArrayList<>();
@@ -50,6 +61,16 @@ public class ASTPartDef extends ASTPartDefTOP {
         }
       }
     }
+
+    for (ASTDependency dependency : getRefinementDependencies()) {
+      dependency.getTargetsList().stream()
+          .map(Object::toString)
+          .map(name -> this.getEnclosingScope().resolvePartDef(name))
+          .filter(Optional::isPresent)
+          .map(Optional::get)
+          .forEach(refinements::add);
+    }
+
     return refinements;
   }
 

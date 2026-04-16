@@ -9,9 +9,10 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
- * CoCo2: Jeder im "part def X refines Name" verwendete Name muss eine existierende Part-Definition sein.
+ * CoCo2: Jeder in einer Refinement-Relation verwendete Name muss eine existierende Part-Definition sein.
  */
 public class RefinementTargetDefinitionExistsCoCo implements SysMLPartsASTPartDefCoCo {
 
@@ -21,17 +22,23 @@ public class RefinementTargetDefinitionExistsCoCo implements SysMLPartsASTPartDe
 
   @Override
   public void check(ASTPartDef node) {
-    var nonExistent = node.streamSpecializations()
+    var nonExistentSpecializations = node.streamSpecializations()
         .filter(s -> s instanceof ASTSysMLRefinement)
         .flatMap(ASTSpecialization::streamSuperTypes)
-        .filter(t ->
-            node.getEnclosingScope().resolvePartDef(printPartType(t)).isEmpty()
-        )
+        .map((ASTMCType t) -> t.printType())
+        .filter(name -> node.getEnclosingScope().resolvePartDef(name).isEmpty());
+
+    var nonExistentDependencies = node.getRefinementDependencies().stream()
+        .flatMap(dep -> dep.getTargetsList().stream())
+        .map(Object::toString)
+        .filter(name -> node.getEnclosingScope().resolvePartDef(name).isEmpty());
+
+    var nonExistent = Stream.concat(nonExistentSpecializations, nonExistentDependencies)
         .collect(Collectors.toList());
 
     for (var problem : nonExistent) {
       Log.error(
-          "0x10AA2 The name used in 'refines' \"" + printPartType(problem)
+          "0x10AA2 The name used in 'refines' \"" + problem
               + "\" does not exist as a part definition.",
           node.get_SourcePositionStart(),
           node.get_SourcePositionEnd()
