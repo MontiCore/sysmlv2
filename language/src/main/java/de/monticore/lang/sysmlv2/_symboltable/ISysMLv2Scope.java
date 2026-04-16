@@ -11,6 +11,8 @@ import de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol;
 import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlconstraints.symboltable.adapters.RequirementSubject2VariableSymbolAdapter;
+import de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLMetaDataDefinitionSymbol;
+import de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.ItemDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
@@ -52,6 +54,87 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
+
+  /**
+   * In SysML, namespaces live inside SysML models (keyword "package") and
+   * there can be multiple namespaces in a single model. This is sometimes
+   * referred to as "first class support" of namespaces. In Java-like
+   * programming languages, the namespace of an artifact is handled implicitly
+   * through the file system path (in conjunction with a package declaration
+   * for easier inside-out-resolving). Blocks, methods, or classes are not
+   * considered full namespaces (resolving "bar" from within a class "Foo"
+   * does not yield the potential qualified name "Foo.bar" at the global scope).
+   * MontiCore's default resolve-mechanism is built to behave Java-like, i.e.,
+   * it assumes that namespaces exist only at the file level and only package
+   * declarations matter for the calculation of potential names. Therefore, the
+   * logic of looking for all potential qualified names is only executed when
+   * leaving the artifact scope and does not account for any scope names passed
+   * on the way up.
+   * <br>
+   * This override changes this. It explicitly adds one new potential name to
+   * the list of potential names every time a package is passed while continuing
+   * with the enclosing scope. Assume we look for "bar", we pass "package Foo",
+   * then the list of potential names we are resolving for is now
+   * ["bar", "Foo.bar"].
+   * <br>
+   * <b>Notice</b>: SysML comes with a large number of keywords
+   * (e.g., occurrence, item, attribute, part) that have no or very little
+   * meaning wrt. to symbol resolution. In MontiCore, we already established the
+   * basic set of symbols (aptly named "BasicSymbols"), namely Types, Variables,
+   * and Functions. To avoid re-implementing resolving functionality for all
+   * keywords, we use symbol adapters from SysML definitions to MontiCore types,
+   * SysML usages to MontiCore variables, and SysML constraints (including
+   * calc defs) to MontiCore functions. This method here handles resolving of
+   * MontiCore types, i.e., SysML definitions.
+   */
+  @Override
+  default List<TypeSymbol> continueTypeWithEnclosingScope(
+    boolean foundSymbols,
+    String name,
+    AccessModifier modifier,
+    Predicate<TypeSymbol> predicate
+  ) {
+    final LinkedHashSet<TypeSymbol> result = new LinkedHashSet<>();
+    if (
+      checkIfContinueWithEnclosingScope(foundSymbols)
+      && getEnclosingScope() != null
+    ) {
+
+      Set<String> potentialNames = calcQNamesForEnclosingScope(name);
+
+      for (String potentialName : potentialNames) {
+        result.addAll(getEnclosingScope().resolveTypeMany( foundSymbols,
+          potentialName,
+          modifier,
+          predicate)
+        );
+      }
+    }
+
+    return new ArrayList<>(result);
+  }
+
+  /**
+   * This method is essentially copied from artifact scopes. See explanation
+   * on continueTypeWithEnclosingScope(4): MontiCore's symbol resolution is
+   * Java-like out-of-the-box and needs to be extended for SysMLv2's usage
+   * of packages (namespaces) as proper modeling elements.
+   */
+  default Set<String> calcQNamesForEnclosingScope(String name) {
+    Set<String> potentialSymbolNames = new LinkedHashSet<>();
+    potentialSymbolNames.add(name);
+
+    if (
+      this.isPresentSpanningSymbol()
+      && this.getSpanningSymbol() instanceof SysMLPackageSymbol
+    ) {
+      potentialSymbolNames.add(this.getSpanningSymbol().getName() + "." + name);
+    }
+
+    // import statements are not yet considered
+
+    return potentialSymbolNames;
+  }
 
   @Override
   default List<RequirementSymbol> resolveRequirementLocallyMany(
