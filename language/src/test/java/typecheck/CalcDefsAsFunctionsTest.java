@@ -6,7 +6,6 @@ import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBooleanTC3;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -18,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * are not meaningful for symbol resolution (and specifically
  * not relevant for type checking).
  */
-@Disabled
 public class CalcDefsAsFunctionsTest {
 
   @Test
