@@ -1,9 +1,15 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.symboltable.completers;
 
+import de.monticore.lang.sysmlactions.SysMLActionsMill;
+import de.monticore.lang.sysmlactions._ast.ASTCalcUsage;
+import de.monticore.lang.sysmlactions._symboltable.CalcUsageSymbol;
+import de.monticore.lang.sysmlactions._visitor.SysMLActionsVisitor2;
+import de.monticore.lang.sysmlbasis.visitors.CalcReturnSpecVisitor;
 import de.monticore.lang.sysmlbasis._ast.ASTAnonymousReference;
 import de.monticore.lang.sysmlbasis._ast.ASTAnonymousUsage;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLParameter;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlbasis._symboltable.AnonymousReferenceSymbol;
@@ -13,7 +19,6 @@ import de.monticore.lang.sysmlconstraints._ast.ASTRequirementSubject;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlconstraints._visitor.SysMLConstraintsVisitor2;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
-import de.monticore.lang.sysmlparts._ast.ASTEnumDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
@@ -32,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
-    SysMLConstraintsVisitor2
+    SysMLConstraintsVisitor2, SysMLActionsVisitor2
 {
 
   /**
@@ -143,6 +148,28 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
       symbol.setAccessModifier(BasicAccessModifier.ALL_INCLUSION);
 
       symbol.setTypesList(types);
+    }
+  }
+
+  @Override
+  public void endVisit(ASTCalcUsage node) {
+    if (node.isPresentSymbol()) {
+      CalcUsageSymbol symbol = node.getSymbol();
+      CalcReturnSpecVisitor visitor = new CalcReturnSpecVisitor();
+      var traverser = SysMLActionsMill.inheritanceTraverser();
+      traverser.add4SysMLBasis(visitor);
+
+      for (ASTSysMLElement elem : node.getSysMLElementList()) {
+        elem.accept(traverser);
+        if (visitor.getSpecializationReturn().isPresent()) {
+          ASTSpecialization spec = visitor.getSpecializationReturn().get();
+
+          List<SymTypeExpression> types = getTypeCompletion(List.of(spec), false);
+          if (!types.isEmpty()) {
+            symbol.setReturnType(types.get(0));
+          }
+        }
+      }
     }
   }
 
