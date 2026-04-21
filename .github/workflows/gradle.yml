@@ -136,6 +136,7 @@ jobs:
           -PnexusUser=${{ secrets.SE_NEXUS_USER }}
           -PgithubUser=${{env.GITHUB_ACTOR}}
           -PgithubToken=${{secrets.GITHUB_TOKEN}}
+          -PisPipelineFullBuild=true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Snapshot Release
@@ -146,7 +147,7 @@ jobs:
           name: "Snapshot Release"
           prerelease: true
           files: |
-            language-server/target/generated-sources/SysMLv2/plugins/sysmlv2-vscode-plugin/sysmlv2-7.9.0-SNAPSHOT.vsix
+            **/*.vsix
           body: |
             Automated Snapshot Release
 
