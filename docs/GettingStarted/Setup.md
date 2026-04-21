@@ -24,4 +24,4 @@ java -jar MCSysMLv2.jar -i Car.sysml -pp
 
 ---
 
-You can find detailed descriptions and available parameters in the [usage](../Usage/index.md) section.
+You can find detailed descriptions and available parameters in the [usage](./Users.md) section.

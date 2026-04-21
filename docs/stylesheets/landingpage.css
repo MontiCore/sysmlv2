@@ -16,10 +16,10 @@
 
 .hero-content {
   display: grid;
-  grid-template-columns: 4fr 3fr;
+  grid-template-columns: 1fr 1fr;
   gap: 3rem;
   align-items: center;
-  max-width: 61rem;
+  max-width: 70rem;
   margin: 0 auto;
   box-sizing: border-box;
 }
@@ -160,7 +160,7 @@
 
 .hero-visual {
   position: relative;
-  width: 140%;
+  width: 100%;
   min-width: 0;
   box-sizing: border-box;
   perspective: 1000px;

@@ -1,4 +1,4 @@
-site_name: SysMLv2
+site_name: SysML v2
 theme:
   pallete:
     primary: custom
@@ -17,8 +17,8 @@ theme:
     - social
     - content.code.copy
     - content.code.annotate
-  logo: assets/images/icon-mono.png
-  favicon: assets/images/icon.png
+  # logo: assets/images/icon-mono.png
+  # favicon: assets/images/icon.png
   icon:
     annotation: material/help-circle
 
@@ -65,11 +65,14 @@ markdown_extensions:
 nav:
   - Home: 'index.md'
   - Getting Started: 
-    - Getting Started: 'GettingStarted/index.md'
-    - Setup: 'GettingStarted/Setup.md'
-    - Tools & Editors: 'GettingStarted/Editor.md'
-    - Hello World!: 'GettingStarted/HelloWorld.md'
-  - Usage:
-    - Usage: 'Usage/index.md'
-    - Errors: 'Usage/error.md'
+    - Overview: 'GettingStarted/index.md'
+    - For Users:
+      - Tool Download & Use: 'GettingStarted/Users.md'
+      - Errors: 'Usage/error.md'
+    - For Developers:
+      - Building from Source: 'GettingStarted/Developers.md'
+      - Setup: 'GettingStarted/Setup.md'
+      - Tools & Editors: 'GettingStarted/Editor.md'
+      - Hello World!: 'GettingStarted/HelloWorld.md'
+  - SpesML: 'SpesML/index.md'
   - License: https://monticore.github.io/monticore/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL/

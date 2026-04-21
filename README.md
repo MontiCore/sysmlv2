@@ -26,7 +26,7 @@ standard library package 'Vehicles' {
 
 This textual form will play a major role in the exchange of models
 between tools thus allowing to build toolchains, as well as in the
-versioning of models, e.g., in Github, and also in the efficient
+versioning of models, e.g., in GitHub, and also in the efficient
 definition of models by people who prepare textual notations.
 
 It is therefore highly relevant to have consistent parsing mechanisms
