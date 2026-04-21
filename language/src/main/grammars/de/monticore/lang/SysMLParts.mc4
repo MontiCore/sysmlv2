@@ -16,7 +16,7 @@ component grammar SysMLParts extends SysMLBasis {
    * ##################################################################
    */
 
-  symbol scope PartDef implements SysMLType =
+  symbol scope PartDef implements SysMLType, SysMLNamespace =
     Modifier UserDefinedKeyword* "part" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
@@ -25,7 +25,8 @@ component grammar SysMLParts extends SysMLBasis {
 
    enum SysMLReqType = "UNKNOWN" | "HLR" | "LLR" | "MIXED" ;
 
-   symbolrule PartDef =
+   symbolrule PartDef implements de.monticore.lang.sysmlbasis.TESTSymbolWithImports =
+      imports:de.monticore.symboltable.ImportStatement*
       directRefinements:de.monticore.types.check.SymTypeExpression*
       requirementType:SysMLReqType;
 

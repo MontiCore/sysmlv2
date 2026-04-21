@@ -173,10 +173,11 @@ public class ImportResolveTest {
    *
    * @throws IOException Mills parser exception, shall not happen
    */
-  @Disabled("WIP")
+  // @Disabled("WIP")
   @Test()
   public void testSysMLScopeImport() throws IOException {
     LogStub.init();
+    LogStub.initDEBUG();
     var tool = new SysMLv2Tool();
     tool.init();
 
@@ -199,7 +200,7 @@ public class ImportResolveTest {
 
     var parentName = parentRef.getNameList().get(0);
 
-    var optParent = ((ISysMLv2Scope) parentRef.getEnclosingScope()).resolvePartDef(parentName);
+    var optParent = ((ISysMLv2Scope) parentRef.getEnclosingScope()).resolveType(parentName);
 
     assertThat(optParent).isPresent(); // check if we did resolve
     assertThat(optParent.get().getFullName()).isEqualTo("Other.Parent");

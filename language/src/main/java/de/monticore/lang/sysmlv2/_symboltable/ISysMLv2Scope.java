@@ -6,12 +6,12 @@ import de.monticore.lang.componentconnector._symboltable.EventAutomatonSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildPortSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol;
+import de.monticore.lang.sysmlbasis.TESTSymbolWithImports;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol;
 import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlconstraints.symboltable.adapters.RequirementSubject2VariableSymbolAdapter;
-import de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLMetaDataDefinitionSymbol;
 import de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.ItemDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
@@ -44,7 +44,7 @@ import de.monticore.symboltable.IScopeSpanningSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
-import de.se_rwth.commons.Names;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +53,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+
+import static de.se_rwth.commons.Names.getSimpleName;
 
 public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
@@ -113,6 +115,69 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     }
 
     return new ArrayList<>(result);
+  }
+
+  @Override
+  default List<TypeSymbol> resolveTypeMany(boolean foundSymbols,
+                                                   String name,
+                                                   AccessModifier modifier,
+                                                   Predicate<TypeSymbol> predicate) {
+    // we are extending the logic of IBasicSymbolsScopeTOP.resolveVariableMany to include imports here
+
+    // skip resolution of the symbol, if the symbol has already been resolved in this scope instance
+    // during the current execution of the resolution algorithm
+    if (isTypeSymbolsAlreadyResolved()) {
+      return new de.monticore.symboltable.SetAsListAdapter<>();
+    }
+
+    // (1) resolve symbol locally. During this, the 'already resolved' flag is set to true,
+    // to prevent resolving cycles caused by cyclic symbol adapters
+    setTypeSymbolsAlreadyResolved(true);
+    final List<de.monticore.symbols.basicsymbols._symboltable.TypeSymbol> resolvedSymbols = this.resolveTypeLocallyMany(foundSymbols, name, modifier, predicate);
+    foundSymbols = foundSymbols | resolvedSymbols.size() > 0;
+    setTypeSymbolsAlreadyResolved(false);
+
+    // (1.1) We are resolving the locally imported symbols here
+    if(((SysMLv2Scope) this).enclosingScope.isPresentSpanningSymbol() &&
+        ((SysMLv2Scope) this).enclosingScope.getSpanningSymbol() instanceof TESTSymbolWithImports) {
+      var enclosingSysMLScope = (TESTSymbolWithImports) ((SysMLv2Scope) this).enclosingScope.getSpanningSymbol();
+      var imports = enclosingSysMLScope.getImportsList();
+      for(var imp : imports) {
+        String potentialName;
+        if (imp.isStar()) {
+          potentialName = imp.getStatement() + "." + name;
+        }
+        else if (getSimpleName(imp.getStatement()).equals(name)) {
+          potentialName = imp.getStatement();
+        } else {
+          // neither star or matching direct import. Skip resolve iteration
+          continue;
+        }
+        final String resolveCall = "resolveMany(\"" + potentialName + "\", \"" + "TypeSymbol"
+            + "\") in scope \"" + (isPresentName() ? getName() : "") + "\"";
+        Log.trace("START " + resolveCall + ". Found #" + resolvedSymbols.size() + " (local + imports)", "");
+        final List<de.monticore.symbols.basicsymbols._symboltable.TypeSymbol> resolvedFromEnclosingByImport = continueTypeWithEnclosingScope(foundSymbols, potentialName, modifier, predicate);
+
+        Log.trace("END " + resolveCall + ". Found #" + resolvedSymbols.size(), "");
+        resolvedSymbols.addAll(resolvedFromEnclosingByImport);
+        foundSymbols = foundSymbols | !resolvedFromEnclosingByImport.isEmpty();
+      }
+    }
+
+    // (2) continue with enclosingScope, if either no symbol has been found yet or this scope is non-shadowing
+    final String resolveCall = "resolveMany(\"" + name + "\", \"" + "TypeSymbol"
+        + "\") in scope \"" + (isPresentName() ? getName() : "") + "\"";
+    Log.trace("START " + resolveCall + ". Found #" + resolvedSymbols.size() + " (local + imports)", "");
+
+    final List<de.monticore.symbols.basicsymbols._symboltable.TypeSymbol> resolvedFromEnclosing = continueTypeWithEnclosingScope(
+        foundSymbols, name, modifier, predicate);
+
+    // (3) unify results
+    resolvedSymbols.addAll(resolvedFromEnclosing);
+    Log.trace("END " + resolveCall + ". Found #" + resolvedSymbols.size(),
+        "");
+
+    return resolvedSymbols;
   }
 
   /**

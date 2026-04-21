@@ -47,6 +47,7 @@ import de.monticore.lang.sysmlv2.symboltable.completers.CausalityCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectRefinementCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectionCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.IdentifierCompletion;
+import de.monticore.lang.sysmlv2.symboltable.completers.ImportCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.RequirementClassificationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.StateUsageCompleter;
@@ -205,6 +206,8 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     traverser.add4SysMLParts(new ConvertEnumUsagesToFields());
     traverser.add4SysMLParts(new SysMLPartsCompleter());
     traverser.add4SysMLParts(new IdentifierCompletion());
+    traverser.add4SysMLBasis(new ImportCompleter());
+    traverser.add4SysMLImportsAndPackages(new ImportCompleter());
 
     // Visiting artifact scope _and_ the AST requires two calls
     if (node.getEnclosingScope() != null) {
