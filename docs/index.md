@@ -7,28 +7,20 @@ hide:
 ---
 <!-- (c) https://github.com/MontiCore/monticore -->
 
+<!--
 <h1 id="more" align="center">
   <picture>
-    <img width="150" src="assets/images/icon.png" alt="SysMLv2">
+    <img width="150" src="assets/images/icon.png" alt="SysML v2">
   </picture>
 </h1>
+-->
 
-# The Systems Modeling Language v2
+# The Systems Modeling Language v2 {: #more }
 
 One of the interesting new capabilities is the exchange of models
 between tools using a really human readable textual form of the SysML
 language in the spirit of a modern programming language (even though it
 has a number of special constructs that resemble modelling concepts).
-
-```sysmlv2
-standard library package 'Vehicles' {
-  import ISQ::TorqueValue;
-  import ScalarValues::*;
-  part def Automobile;
-  alias Car for Automobile;
-  alias Torque for ISQ::TorqueValue;
-}
-```
 
 This textual form will play a major role in the exchange of models
 between tools thus allowing to build toolchains, as well as in the
@@ -54,22 +46,22 @@ quality desired for industrial use.
     ---
 
     Is this your first time using SysML? Set up a project and start modeling.
-    
-    ---
-
-    [:octicons-arrow-right-24: Take the Tour](./GettingStarted/index.md)<br/>
-    [:octicons-arrow-right-24: Installation & Setup](./GettingStarted/Setup.md)
-
--   :material-tools: &nbsp;
-    __Usage__
 
     ---
 
-    Learn how to use the tooling.<br/><br/>
+    [:octicons-arrow-right-24: For Users](./GettingStarted/Users.md)<br/>
+    [:octicons-arrow-right-24: For Developers](./GettingStarted/Developers.md)
+
+-   :material-book-open-variant: &nbsp;
+    __SpesML__
 
     ---
 
-    [:octicons-arrow-right-24: Read more](./Usage/index.md)
+    Learn more about SpesML and the SPES framework.<br/><br/>
+
+    ---
+
+    [:octicons-arrow-right-24: Read more](./SpesML/index.md)
 
 -   :material-license: &nbsp;
     __License__
@@ -100,7 +92,7 @@ Discover Component-Based Modeling
 
 ## Found an issue?
 
-This SysML v2 tooling is actively maintained by the [Chair of Software Engineering](https://www.se-rwth.de/). 
+This SysML v2 tooling is actively maintained by the [Chair of Software Engineering](https://www.se-rwth.de/).
 There are multiple ways in which you can improve it to help you and others who might encounter the same issues in the future.
 
 <div class="grid cards" markdown>
@@ -125,7 +117,7 @@ There are multiple ways in which you can improve it to help you and others who m
 
     ---
 
-    [:octicons-arrow-right-24: Set up your development environment](https://github.com/MontiCore/sysmlv2/blob/dev/README.md)<br/>
+    [:octicons-arrow-right-24: Set up your development environment](./GettingStarted/Developers.md)<br/>
     [:octicons-arrow-right-24: Create a pull request](https://github.com/MontiCore/sysmlv2/pulls)
 </div>
 
@@ -137,7 +129,7 @@ There are multiple ways in which you can improve it to help you and others who m
 
 ## Further Information
 
-Find more information about MontiArc and other projects and publications by the Chair of Software Engineering under the following links:
+Find more information about SysML v2 and other projects and publications by the Chair of Software Engineering under the following links:
 
 * [Setup](./GettingStarted/Setup.md)
 * [Publications](https://www.se-rwth.de/publications/)
