@@ -60,7 +60,7 @@ jobs:
           name: "Snapshot Release"
           prerelease: true
           files: |
-            language-server/target/generated-sources/SysMLv2/plugins/sysmlv2-vscode-plugin/sysmlv2-7.9.0-SNAPSHOT.vsix
+            'language-server/target/generated-sources/SysMLv2/plugins/sysmlv2-vscode-plugin/sysmlv2-*-SNAPSHOT.vsix'
           body: |
             Automated Snapshot Release
 
