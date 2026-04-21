@@ -261,17 +261,38 @@
 
   <!-- Navigation item with nested items -->
   
+    <li class="md-tabs__item">
+      <a href="SpesML/" class="md-tabs__link">
+        
+  <!-- !! Removed icon in navigation content !! -->
+
+  <!-- Navigation link title -->
+  SpesML
+
+      </a>
+    </li>
+  
+
+      
+        
+
+  <!-- Determine classes -->
+  
+  
+
+  <!-- Navigation item with nested items -->
+  
     
 
     <!-- Recurse, if the first item has further nested items -->
     
       <li class="md-tabs__item">
-        <a href="Usage/" class="md-tabs__link">
+        <a href="Reference/" class="md-tabs__link">
           
   <!-- !! Removed icon in navigation content !! -->
 
   <!-- Navigation link title -->
-  Usage
+  Reference
 
         </a>
       </li>
@@ -320,7 +341,7 @@
         </h1>
 
         <p class="hero-subtitle">
-          A standard compliant SysML v2 parser and model checker with a strong type system and semantic
+          A standard compliant SysML v2 parser and model validator with a strong type system and semantic
           foundation.
         </p>
 
@@ -353,10 +374,37 @@
           </a>
         </div>
       </div>
-        <div class="hero-decorations">
-          <div class="decoration decoration-1"></div>
-          <div class="decoration decoration-2"></div>
-          <div class="decoration decoration-3"></div>
+      <div class="hero-visual">
+        <div class="hero-model-container" style="display: flex; gap: 1rem; align-items: stretch; background: rgba(0, 0, 0, 0.4); padding: 1rem; border-radius: 12px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); height: fit-content; align-self: center;">
+          <div style="flex: 1; display: flex; align-items: stretch; justify-content: center; background: white; border-radius: 8px; padding: 0.5rem;">
+            <img src="assets/models/Vehicle2.bmp" alt="Vehicle Model" style="height: 100%; width: auto; object-fit: contain;">
+          </div>
+          <div class="hero-code-sample" style="flex: 1.5; margin: 0; background: rgba(0,0,0,0.6);">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot code-dot-red"></div>
+                <div class="code-dot code-dot-yellow"></div>
+                <div class="code-dot code-dot-green"></div>
+              </div>
+              <span class="code-filename">Vehicle.sysml</span>
+            </div>
+            <div class="code-content" style="color: white; font-size: 0.85rem;">
+<pre style="margin: 0; white-space: pre-wrap;"><code><span style="color: var(--rwth-blau-50)">part def</span> Vehicle {
+  <span style="color: var(--rwth-blau-50)">attribute</span> mass :> ISQ::mass;
+  <span style="color: var(--rwth-blau-50)">attribute</span> dryMass;
+  <span style="color: var(--rwth-blau-50)">attribute</span> cargoMass;
+  <span style="color: var(--rwth-blau-50)">attribute</span> electricalPower;
+
+  <span style="color: var(--rwth-blau-50)">port</span> pwrCmdPort;
+  <span style="color: var(--rwth-blau-50)">port</span> vehicleToRoadPort;
+
+  <span style="color: var(--rwth-blau-50)">perform action</span> providePower;
+  <span style="color: var(--rwth-blau-50)">perform action</span> provideBraking;
+
+  <span style="color: var(--rwth-blau-50)">exhibit</span> vehicleStates;
+}</code></pre>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -521,8 +569,6 @@
       
         
       
-        
-      
     
     
     
@@ -568,6 +614,185 @@
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    For Users
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            For Users
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="GettingStarted/Users/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tool Download & Use
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Usage/error/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Errors
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    For Developers
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            For Developers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="GettingStarted/Developers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Building from Source
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
               
             
               
@@ -645,6 +870,36 @@
     </li>
   
 
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="SpesML/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SpesML
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
     
       
       
@@ -674,16 +929,16 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="Usage/" class="md-nav__link ">
+            <a href="Reference/" class="md-nav__link ">
               
   
   
   <span class="md-ellipsis">
-    Usage
+    Reference
     
   </span>
   
@@ -691,16 +946,16 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
-            Usage
+            Reference
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -713,12 +968,12 @@
   
   
     <li class="md-nav__item">
-      <a href="Usage/error/" class="md-nav__link">
+      <a href="Reference/StreamLibrary/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Errors
+    Stream Library
     
   </span>
   
@@ -847,14 +1102,6 @@
 between tools using a really human readable textual form of the SysML
 language in the spirit of a modern programming language (even though it
 has a number of special constructs that resemble modelling concepts).</p>
-<div class="highlight"><pre><span></span><code>standard library package &#39;Vehicles&#39; {
-  import ISQ::TorqueValue;
-  import ScalarValues::*;
-  part def Automobile;
-  alias Car for Automobile;
-  alias Torque for ISQ::TorqueValue;
-}
-</code></pre></div>
 <p>This textual form will play a major role in the exchange of models
 between tools thus allowing to build toolchains, as well as in the
 versioning of models, e.g., in Github, and also in the efficient
@@ -876,16 +1123,16 @@ quality desired for industrial use.</p>
 <hr />
 <p>Is this your first time using SysML? Set up a project and start modeling.</p>
 <hr />
-<p><a href="GettingStarted/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Take the Tour</a><br/>
-<a href="GettingStarted/Setup/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Installation &amp; Setup</a></p>
+<p><a href="GettingStarted/Users/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> For Users</a><br/>
+<a href="GettingStarted/Developers/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> For Developers</a></p>
 </li>
 <li>
-<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.71 20.29-1.42 1.42a1 1 0 0 1-1.41 0L7 9.85A3.8 3.8 0 0 1 6 10a4 4 0 0 1-3.78-5.3l2.54 2.54.53-.53 1.42-1.42.53-.53L4.7 2.22A4 4 0 0 1 10 6a3.8 3.8 0 0 1-.15 1l11.86 11.88a1 1 0 0 1 0 1.41M2.29 18.88a1 1 0 0 0 0 1.41l1.42 1.42a1 1 0 0 0 1.41 0l5.47-5.46-2.83-2.83M20 2l-4 2v2l-2.17 2.17 2 2L18 8h2l2-4Z"/></svg></span> &nbsp;
-    <strong>Usage</strong></p>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.5c-1.35-.85-3.8-1.5-5.5-1.5-1.65 0-3.35.3-4.75 1.05-.1.05-.15.05-.25.05-.25 0-.5-.25-.5-.5V6c.6-.45 1.25-.75 2-1 1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5.75.25 1.4.55 2 1v14.6c0 .25-.25.5-.5.5-.1 0-.15 0-.25-.05-1.4-.75-3.1-1.05-4.75-1.05-1.7 0-4.15.65-5.5 1.5M12 8v11.5c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5V7c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5m1 3.5c1.11-.68 2.6-1 4.5-1 .91 0 1.76.09 2.5.28V9.23c-.87-.15-1.71-.23-2.5-.23q-2.655 0-4.5.84zm4.5.17c-1.71 0-3.21.26-4.5.79v1.69c1.11-.65 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24v-1.5c-.87-.16-1.71-.23-2.5-.23m2.5 2.9c-.87-.16-1.71-.24-2.5-.24-1.83 0-3.33.27-4.5.8v1.69c1.11-.66 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24z"/></svg></span> &nbsp;
+    <strong>SpesML</strong></p>
 <hr />
-<p>Learn how to use the tooling.<br/><br/></p>
+<p>Learn more about SpesML and the SPES framework.<br/><br/></p>
 <hr />
-<p><a href="Usage/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Read more</a></p>
+<p><a href="SpesML/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Read more</a></p>
 </li>
 <li>
 <p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 10a3.04 3.04 0 0 1 3-3 3.04 3.04 0 0 1 3 3 3.04 3.04 0 0 1-3 3 3.04 3.04 0 0 1-3-3m3 9 4 1v-3.08A7.54 7.54 0 0 1 12 18a7.54 7.54 0 0 1-4-1.08V20m4-16a5.78 5.78 0 0 0-4.24 1.74A5.78 5.78 0 0 0 6 10a5.78 5.78 0 0 0 1.76 4.23A5.78 5.78 0 0 0 12 16a5.78 5.78 0 0 0 4.24-1.77A5.78 5.78 0 0 0 18 10a5.78 5.78 0 0 0-1.76-4.26A5.78 5.78 0 0 0 12 4m8 6a8 8 0 0 1-.57 2.8A7.8 7.8 0 0 1 18 15.28V23l-6-2-6 2v-7.72A7.9 7.9 0 0 1 4 10a7.68 7.68 0 0 1 2.33-5.64A7.73 7.73 0 0 1 12 2a7.73 7.73 0 0 1 5.67 2.36A7.68 7.68 0 0 1 20 10"/></svg></span> &nbsp;
@@ -910,7 +1157,7 @@ quality desired for industrial use.</p>
 </center>
 </div>
 <h2 id="found-an-issue">Found an issue?</h2>
-<p>This SysML v2 tooling is actively maintained by the <a href="https://www.se-rwth.de/">Chair of Software Engineering</a>. 
+<p>This SysML v2 tooling is actively maintained by the <a href="https://www.se-rwth.de/">Chair of Software Engineering</a>.
 There are multiple ways in which you can improve it to help you and others who might encounter the same issues in the future.</p>
 <div class="grid cards">
 <ul>
@@ -928,7 +1175,7 @@ There are multiple ways in which you can improve it to help you and others who m
 <hr />
 <p>Open an issue first and then create a comprehensive and useful pull request</p>
 <hr />
-<p><a href="https://github.com/MontiCore/sysmlv2/blob/dev/README.md"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Set up your development environment</a><br/>
+<p><a href="GettingStarted/Developers/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Set up your development environment</a><br/>
 <a href="https://github.com/MontiCore/sysmlv2/pulls"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Create a pull request</a></p>
 </li>
 </ul>
@@ -942,7 +1189,7 @@ There are multiple ways in which you can improve it to help you and others who m
 </ul>
 </div>
 <h2 id="further-information">Further Information</h2>
-<p>Find more information about MontiArc and other projects and publications by the Chair of Software Engineering under the following links:</p>
+<p>Find more information about SysML v2 and other projects and publications by the Chair of Software Engineering under the following links:</p>
 <ul>
 <li><a href="GettingStarted/Setup/">Setup</a></li>
 <li><a href="https://www.se-rwth.de/publications/">Publications</a></li>
@@ -991,13 +1238,13 @@ There are multiple ways in which you can improve it to help you and others who m
         
         
           
-          <a href="GettingStarted/" class="md-footer__link md-footer__link--next" aria-label="Next: Getting Started">
+          <a href="GettingStarted/" class="md-footer__link md-footer__link--next" aria-label="Next: Overview">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Getting Started
+                Overview
               </div>
             </div>
             <div class="md-footer__button md-icon">

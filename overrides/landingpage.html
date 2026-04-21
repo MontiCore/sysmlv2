@@ -15,7 +15,7 @@
         </h1>
 
         <p class="hero-subtitle">
-          A standard compliant SysML v2 parser and model checker with a strong type system and semantic
+          A standard compliant SysML v2 parser and model validator with a strong type system and semantic
           foundation.
         </p>
 
@@ -48,10 +48,37 @@
           </a>
         </div>
       </div>
-        <div class="hero-decorations">
-          <div class="decoration decoration-1"></div>
-          <div class="decoration decoration-2"></div>
-          <div class="decoration decoration-3"></div>
+      <div class="hero-visual">
+        <div class="hero-model-container" style="display: flex; gap: 1rem; align-items: stretch; background: rgba(0, 0, 0, 0.4); padding: 1rem; border-radius: 12px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); height: fit-content; align-self: center;">
+          <div style="flex: 1; display: flex; align-items: stretch; justify-content: center; background: white; border-radius: 8px; padding: 0.5rem;">
+            <img src="{{ 'assets/models/Vehicle2.bmp' | url }}" alt="Vehicle Model" style="height: 100%; width: auto; object-fit: contain;">
+          </div>
+          <div class="hero-code-sample" style="flex: 1.5; margin: 0; background: rgba(0,0,0,0.6);">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot code-dot-red"></div>
+                <div class="code-dot code-dot-yellow"></div>
+                <div class="code-dot code-dot-green"></div>
+              </div>
+              <span class="code-filename">Vehicle.sysml</span>
+            </div>
+            <div class="code-content" style="color: white; font-size: 0.85rem;">
+<pre style="margin: 0; white-space: pre-wrap;"><code><span style="color: var(--rwth-blau-50)">part def</span> Vehicle {
+  <span style="color: var(--rwth-blau-50)">attribute</span> mass :> ISQ::mass;
+  <span style="color: var(--rwth-blau-50)">attribute</span> dryMass;
+  <span style="color: var(--rwth-blau-50)">attribute</span> cargoMass;
+  <span style="color: var(--rwth-blau-50)">attribute</span> electricalPower;
+
+  <span style="color: var(--rwth-blau-50)">port</span> pwrCmdPort;
+  <span style="color: var(--rwth-blau-50)">port</span> vehicleToRoadPort;
+
+  <span style="color: var(--rwth-blau-50)">perform action</span> providePower;
+  <span style="color: var(--rwth-blau-50)">perform action</span> provideBraking;
+
+  <span style="color: var(--rwth-blau-50)">exhibit</span> vehicleStates;
+}</code></pre>
+            </div>
+          </div>
         </div>
       </div>
     </div>
