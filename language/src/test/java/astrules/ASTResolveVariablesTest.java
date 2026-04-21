@@ -53,7 +53,7 @@ public class ASTResolveVariablesTest {
     var constr = (ASTConstraintUsage) testPackage.getSysMLElement(2);
     var expr = constr.getExpression();
 
-    var variable = ((ISysMLv2Scope)expr.getEnclosingScope()).resolveVariable("a.b");
+    var variable = ((ISysMLv2Scope)expr.getEnclosingScope()).resolveField("a.b");
     assertThat(variable).isPresent();
   }
 }
