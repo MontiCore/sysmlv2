@@ -177,6 +177,7 @@ public class ImportResolveTest {
   @Test()
   public void testSysMLScopeImport() throws IOException {
     LogStub.init();
+    LogStub.initDEBUG();
     var tool = new SysMLv2Tool();
     tool.init();
 
