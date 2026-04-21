@@ -19,7 +19,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 3rem;
   align-items: center;
-  max-width: 80rem;
+  max-width: 70rem;
   margin: 0 auto;
   box-sizing: border-box;
 }
