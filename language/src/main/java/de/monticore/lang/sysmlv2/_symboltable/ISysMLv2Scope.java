@@ -44,11 +44,11 @@ import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.IScopeSpanningSymbol;
+import de.monticore.symboltable.ISymbol;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
-import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,6 +57,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 import static de.se_rwth.commons.Names.getQualifier;
@@ -98,25 +99,73 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
    */
   @Override
   default List<TypeSymbol> continueTypeWithEnclosingScope(
-    boolean foundSymbols,
-    String name,
-    AccessModifier modifier,
-    Predicate<TypeSymbol> predicate
+      boolean foundSymbols,
+      String name,
+      AccessModifier modifier,
+      Predicate<TypeSymbol> predicate
   ) {
-    final LinkedHashSet<TypeSymbol> result = new LinkedHashSet<>();
-    if (
-      checkIfContinueWithEnclosingScope(foundSymbols)
-      && getEnclosingScope() != null
-    ) {
+    return continueWithEnclosingScope(foundSymbols,
+        name,
+        (foundInIteration, qualifiedName) ->
+            getEnclosingScope().resolveTypeMany(foundInIteration, qualifiedName, modifier, predicate));
+  }
+
+  @Override
+  default List<VariableSymbol> continueVariableWithEnclosingScope(
+      boolean foundSymbols,
+      String name,
+      AccessModifier modifier,
+      Predicate<VariableSymbol> predicate
+  ) {
+    return this.continueWithEnclosingScope(foundSymbols,
+        name,
+        (foundInIteration, qualifiedName) ->
+            getEnclosingScope().resolveVariableMany(foundInIteration, qualifiedName, modifier, predicate));
+  }
+
+  @Override
+  default List<FunctionSymbol> continueFunctionWithEnclosingScope(
+      boolean foundSymbols,
+      String name,
+      AccessModifier modifier,
+      Predicate<FunctionSymbol> predicate
+  ) {
+    return continueWithEnclosingScope(foundSymbols,
+        name,
+        (foundInIteration, qualifiedName) ->
+            getEnclosingScope().resolveFunctionMany(foundInIteration, qualifiedName, modifier, predicate));
+  }
+
+  /**
+   * Generic continueWithEnclosing for multiple symbols
+   * @param foundSymbols
+   * @param name
+   * @param resolver the resolveMany call for the specific Type T
+   * @return
+   * @param <T> Symboltype to be processes, also used within resolver
+   */
+  default <T extends ISymbol> List<T> continueWithEnclosingScope(
+      boolean foundSymbols,
+      String name,
+      BiFunction<Boolean, String, List<T>> resolver
+  ) {
+    final LinkedHashSet<T> result = new LinkedHashSet<>();
+    if (checkIfContinueWithEnclosingScope(foundSymbols)
+        && getEnclosingScope() != null) {
 
       var importStatements = new LinkedList<ImportStatement>();
+
+      // collect import statements based on enclosing scopes AST-Imports
       if(getEnclosingScope().isPresentAstNode()) {
         var visitor = new SysMLImportsAndPackagesVisitor2() {
           @Override
           public void visit(ASTSysMLImportStatement node) {
+            // collect imports located directly within the enclosing scope
             if (getEnclosingScope().equals(node.getEnclosingScope())) {
-              importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
-                  node.isStar() || node.isRecursive()));
+              importStatements.add(new ImportStatement(
+                  node.getMCQualifiedName().getQName(),
+                  node.isStar() || node.isRecursive())
+              );
             }
           }
         };
@@ -127,12 +176,12 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
       Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
 
+      // Hier wird die abstrakte Resolver-Funktion genutzt
       for (String potentialName : potentialNames) {
-        result.addAll(getEnclosingScope().resolveTypeMany( foundSymbols,
-          potentialName,
-          modifier,
-          predicate)
-        );
+        // The provided resolver is calling the exact resolveManyTYPE
+        var resolvedFromEnclosing = resolver.apply(foundSymbols, potentialName);
+        foundSymbols = foundSymbols | resolvedFromEnclosing.size() > 0;
+        result.addAll(resolvedFromEnclosing);
       }
     }
 
