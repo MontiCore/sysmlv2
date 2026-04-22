@@ -44,7 +44,6 @@ import de.monticore.lang.sysmlv2.symboltable.completers.CausalityCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectRefinementCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectionCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.IdentifierCompletion;
-import de.monticore.lang.sysmlv2.symboltable.completers.ImportCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.RequirementClassificationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.StateUsageCompleter;
