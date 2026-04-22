@@ -203,8 +203,6 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     traverser.add4SysMLParts(new ConvertEnumUsagesToFields());
     traverser.add4SysMLParts(new SysMLPartsCompleter());
     traverser.add4SysMLParts(new IdentifierCompletion());
-    traverser.add4SysMLBasis(new ImportCompleter());
-    traverser.add4SysMLImportsAndPackages(new ImportCompleter());
 
     // Visiting artifact scope _and_ the AST requires two calls
     if (node.getEnclosingScope() != null) {
