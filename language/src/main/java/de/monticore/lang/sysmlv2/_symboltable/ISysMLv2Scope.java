@@ -115,10 +115,10 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
    */
   @Override
   default List<VariableSymbol> continueVariableWithEnclosingScope(
-      boolean foundSymbols,
-      String name,
-      AccessModifier modifier,
-      Predicate<VariableSymbol> predicate
+    boolean foundSymbols,
+    String name,
+    AccessModifier modifier,
+    Predicate<VariableSymbol> predicate
   ) {
     return this.continueWithEnclosingScope(foundSymbols,
         name,
@@ -131,10 +131,10 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
    */
   @Override
   default List<FunctionSymbol> continueFunctionWithEnclosingScope(
-      boolean foundSymbols,
-      String name,
-      AccessModifier modifier,
-      Predicate<FunctionSymbol> predicate
+    boolean foundSymbols,
+    String name,
+    AccessModifier modifier,
+    Predicate<FunctionSymbol> predicate
   ) {
     return continueWithEnclosingScope(foundSymbols,
         name,
