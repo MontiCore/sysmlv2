@@ -12,7 +12,9 @@ import de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol;
 import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlconstraints.symboltable.adapters.RequirementSubject2VariableSymbolAdapter;
+import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLImportStatement;
 import de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol;
+import de.monticore.lang.sysmlimportsandpackages._visitor.SysMLImportsAndPackagesVisitor2;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.ItemDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
@@ -28,6 +30,7 @@ import de.monticore.lang.sysmlparts.symboltable.adapters.PortDef2TypeSymbolAdapt
 import de.monticore.lang.sysmlparts.symboltable.adapters.PortUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
 import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
+import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.symboltable.adapters.AttributeUsage2PortSymbolAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Constraint2SpecificationAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.MetadataDef2TypeSymbolAdapter;
@@ -41,6 +44,7 @@ import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.IScopeSpanningSymbol;
+import de.monticore.symboltable.ImportStatement;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
@@ -49,6 +53,7 @@ import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -137,31 +142,44 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     foundSymbols = foundSymbols | resolvedSymbols.size() > 0;
     setTypeSymbolsAlreadyResolved(false);
 
-    // (1.1) We are resolving the locally imported symbols here
-    if(((SysMLv2Scope) this).enclosingScope.isPresentSpanningSymbol() &&
-        ((SysMLv2Scope) this).enclosingScope.getSpanningSymbol() instanceof TESTSymbolWithImports) {
-      var enclosingSysMLScope = (TESTSymbolWithImports) ((SysMLv2Scope) this).enclosingScope.getSpanningSymbol();
-      var imports = enclosingSysMLScope.getImportsList();
-      for(var imp : imports) {
-        String potentialName;
-        if (imp.isStar()) {
-          potentialName = imp.getStatement() + "." + name;
+    // (1.1) Resolve through imports of local scope
+    if(this.isPresentAstNode()) {
+      var potentialQNamesByImports = new LinkedList<String>();
+      var currentScope = this;
+      var visitor = new SysMLImportsAndPackagesVisitor2() {
+        @Override
+        public void visit(ASTSysMLImportStatement node) {
+          if (currentScope.equals(node.getEnclosingScope())) {
+            var imp = new ImportStatement(node.getMCQualifiedName().getQName(),
+                node.isStar() || node.isRecursive());
+            if (imp.isStar()) {
+              potentialQNamesByImports.add(imp.getStatement() + "." + name);
+            }
+            else if (getSimpleName(imp.getStatement()).equals(name)) {
+              potentialQNamesByImports.add(imp.getStatement());
+            }
+          }
         }
-        else if (getSimpleName(imp.getStatement()).equals(name)) {
-          potentialName = imp.getStatement();
-        } else {
-          // neither star or matching direct import. Skip resolve iteration
-          continue;
-        }
-        final String resolveCall = "resolveMany(\"" + potentialName + "\", \"" + "TypeSymbol"
-            + "\") in scope \"" + (isPresentName() ? getName() : "") + "\"";
-        Log.trace("START " + resolveCall + ". Found #" + resolvedSymbols.size() + " (local + imports)", "");
-        final List<de.monticore.symbols.basicsymbols._symboltable.TypeSymbol> resolvedFromEnclosingByImport = continueTypeWithEnclosingScope(foundSymbols, potentialName, modifier, predicate);
+      };
+      var traverser = SysMLv2Mill.inheritanceTraverser();
+      traverser.add4SysMLImportsAndPackages(visitor);
+      this.getAstNode().accept(traverser);
 
-        Log.trace("END " + resolveCall + ". Found #" + resolvedSymbols.size(), "");
+      for (var potentialName : potentialQNamesByImports) {
+        final String resolveCall =
+            "resolveMany(\"" + potentialName + "\", \"" + "TypeSymbol"
+                + "\") in scope \"" + (isPresentName() ? getName() : "") + "\"";
+        Log.trace("START " + resolveCall + ". Found #" + resolvedSymbols.size()
+            + " (local or imports)", "");
+        final List<de.monticore.symbols.basicsymbols._symboltable.TypeSymbol> resolvedFromEnclosingByImport = continueTypeWithEnclosingScope(
+            foundSymbols, potentialName, modifier, predicate);
+
+        Log.trace("END " + resolveCall + ". Found #" + resolvedSymbols.size(),
+            "");
         resolvedSymbols.addAll(resolvedFromEnclosingByImport);
-        foundSymbols = foundSymbols | !resolvedFromEnclosingByImport.isEmpty();
       }
+
+      foundSymbols = foundSymbols | !resolvedSymbols.isEmpty();
     }
 
     // (2) continue with enclosingScope, if either no symbol has been found yet or this scope is non-shadowing

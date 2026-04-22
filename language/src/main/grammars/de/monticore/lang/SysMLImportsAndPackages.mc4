@@ -21,15 +21,11 @@ component grammar SysMLImportsAndPackages extends SysMLBasis {
        SysMLElement*
      "}" | ";") ;
 
-  symbol scope SysMLPackage implements SysMLElement, SysMLNamespace =
+  symbol scope SysMLPackage implements SysMLElement =
     ["standard"]? ["library"]? "package" SysMLIdentifier? Name?
     ("{"
        SysMLElement*
      "}" | ";") ;
-
-  symbolrule SysMLPackage implements de.monticore.lang.sysmlbasis.TESTSymbolWithImports =
-    imports:de.monticore.symboltable.ImportStatement*
-  ;
 
   /**
    * A package may also contain filter conditions that filter the imports for the package. A filter condition is a

@@ -11,12 +11,6 @@ import java.util.List;
 public class PartDefSymbolDeSer extends PartDefSymbolDeSerTOP {
 
   @Override
-  protected void serializeImports(List<ImportStatement> imports,
-                                  SysMLPartsSymbols2Json s2j) {
-    //todo
-  }
-
-  @Override
   protected void serializeDirectRefinements(List<SymTypeExpression> refinementFQNs, SysMLPartsSymbols2Json s2j) {
     SymTypeExpressionDeSer.serializeMember(s2j.getJsonPrinter(), "directRefinements", refinementFQNs);
   }
@@ -24,12 +18,6 @@ public class PartDefSymbolDeSer extends PartDefSymbolDeSerTOP {
   @Override
   protected void serializeRequirementType(ASTSysMLReqType requirementType, SysMLPartsSymbols2Json s2j) {
     s2j.getJsonPrinter().member("requirementType", requirementType.name().toString());
-  }
-
-  @Override
-  protected List<ImportStatement> deserializeImports(JsonObject symbolJson) {
-    //todo
-    return List.of();
   }
 
   @Override
