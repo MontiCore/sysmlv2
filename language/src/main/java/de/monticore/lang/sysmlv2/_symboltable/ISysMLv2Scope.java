@@ -6,7 +6,6 @@ import de.monticore.lang.componentconnector._symboltable.EventAutomatonSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildPortSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol;
-import de.monticore.lang.sysmlbasis.TESTSymbolWithImports;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol;
 import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
@@ -108,7 +107,23 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       && getEnclosingScope() != null
     ) {
 
-      Set<String> potentialNames = calcQNamesForEnclosingScope(name);
+      var importStatements = new LinkedList<ImportStatement>();
+      if(getEnclosingScope().isPresentAstNode()) {
+        var visitor = new SysMLImportsAndPackagesVisitor2() {
+          @Override
+          public void visit(ASTSysMLImportStatement node) {
+            if (getEnclosingScope().equals(node.getEnclosingScope())) {
+              importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
+                  node.isStar() || node.isRecursive()));
+            }
+          }
+        };
+        var traverser = SysMLv2Mill.inheritanceTraverser();
+        traverser.add4SysMLImportsAndPackages(visitor);
+        getEnclosingScope().getAstNode().accept(traverser);
+      }
+
+      Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
 
       for (String potentialName : potentialNames) {
         result.addAll(getEnclosingScope().resolveTypeMany( foundSymbols,
@@ -122,91 +137,26 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     return new ArrayList<>(result);
   }
 
-  @Override
-  default List<TypeSymbol> resolveTypeMany(boolean foundSymbols,
-                                                   String name,
-                                                   AccessModifier modifier,
-                                                   Predicate<TypeSymbol> predicate) {
-    // we are extending the logic of IBasicSymbolsScopeTOP.resolveVariableMany to include imports here
-
-    // skip resolution of the symbol, if the symbol has already been resolved in this scope instance
-    // during the current execution of the resolution algorithm
-    if (isTypeSymbolsAlreadyResolved()) {
-      return new de.monticore.symboltable.SetAsListAdapter<>();
-    }
-
-    // (1) resolve symbol locally. During this, the 'already resolved' flag is set to true,
-    // to prevent resolving cycles caused by cyclic symbol adapters
-    setTypeSymbolsAlreadyResolved(true);
-    final List<de.monticore.symbols.basicsymbols._symboltable.TypeSymbol> resolvedSymbols = this.resolveTypeLocallyMany(foundSymbols, name, modifier, predicate);
-    foundSymbols = foundSymbols | resolvedSymbols.size() > 0;
-    setTypeSymbolsAlreadyResolved(false);
-
-    // (1.1) Resolve through imports of local scope
-    if(this.isPresentAstNode()) {
-      var potentialQNamesByImports = new LinkedList<String>();
-      var currentScope = this;
-      var visitor = new SysMLImportsAndPackagesVisitor2() {
-        @Override
-        public void visit(ASTSysMLImportStatement node) {
-          if (currentScope.equals(node.getEnclosingScope())) {
-            var imp = new ImportStatement(node.getMCQualifiedName().getQName(),
-                node.isStar() || node.isRecursive());
-            if (imp.isStar()) {
-              potentialQNamesByImports.add(imp.getStatement() + "." + name);
-            }
-            else if (getSimpleName(imp.getStatement()).equals(name)) {
-              potentialQNamesByImports.add(imp.getStatement());
-            }
-          }
-        }
-      };
-      var traverser = SysMLv2Mill.inheritanceTraverser();
-      traverser.add4SysMLImportsAndPackages(visitor);
-      this.getAstNode().accept(traverser);
-
-      for (var potentialName : potentialQNamesByImports) {
-        final String resolveCall =
-            "resolveMany(\"" + potentialName + "\", \"" + "TypeSymbol"
-                + "\") in scope \"" + (isPresentName() ? getName() : "") + "\"";
-        Log.trace("START " + resolveCall + ". Found #" + resolvedSymbols.size()
-            + " (local or imports)", "");
-        final List<de.monticore.symbols.basicsymbols._symboltable.TypeSymbol> resolvedFromEnclosingByImport = continueTypeWithEnclosingScope(
-            foundSymbols, potentialName, modifier, predicate);
-
-        Log.trace("END " + resolveCall + ". Found #" + resolvedSymbols.size(),
-            "");
-        resolvedSymbols.addAll(resolvedFromEnclosingByImport);
-      }
-
-      foundSymbols = foundSymbols | !resolvedSymbols.isEmpty();
-    }
-
-    // (2) continue with enclosingScope, if either no symbol has been found yet or this scope is non-shadowing
-    final String resolveCall = "resolveMany(\"" + name + "\", \"" + "TypeSymbol"
-        + "\") in scope \"" + (isPresentName() ? getName() : "") + "\"";
-    Log.trace("START " + resolveCall + ". Found #" + resolvedSymbols.size() + " (local + imports)", "");
-
-    final List<de.monticore.symbols.basicsymbols._symboltable.TypeSymbol> resolvedFromEnclosing = continueTypeWithEnclosingScope(
-        foundSymbols, name, modifier, predicate);
-
-    // (3) unify results
-    resolvedSymbols.addAll(resolvedFromEnclosing);
-    Log.trace("END " + resolveCall + ". Found #" + resolvedSymbols.size(),
-        "");
-
-    return resolvedSymbols;
-  }
-
   /**
    * This method is essentially copied from artifact scopes. See explanation
    * on continueTypeWithEnclosingScope(4): MontiCore's symbol resolution is
    * Java-like out-of-the-box and needs to be extended for SysMLv2's usage
    * of packages (namespaces) as proper modeling elements.
    */
-  default Set<String> calcQNamesForEnclosingScope(String name) {
+  default Set<String> calcQNamesForEnclosingScope(String name,
+                                                  List<ImportStatement> importStatements) {
     Set<String> potentialSymbolNames = new LinkedHashSet<>();
     potentialSymbolNames.add(name);
+
+    // qualified names based on the import statements of enclosing scope
+    for (var importStatement : importStatements) {
+      if (importStatement.isStar()) {
+        potentialSymbolNames.add(importStatement.getStatement() + "." + name);
+      }
+      else if (getSimpleName(importStatement.getStatement()).equals(name)) {
+        potentialSymbolNames.add(importStatement.getStatement());
+      }
+    }
 
     if (
       this.isPresentSpanningSymbol()
