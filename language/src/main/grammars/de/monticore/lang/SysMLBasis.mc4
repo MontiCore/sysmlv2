@@ -40,22 +40,6 @@ component grammar SysMLBasis
 
   /*
    * ##################################################################
-   * SysML Namespaces
-   * ##################################################################
-   */
-
-   // SysML Namespace: Artifact, Namespace-body
-   //   or in some special constellations: ConstraintReference, ...
-   interface SysMLNamespace
-     = SysMLElement*;
-
-   // Body block, e.g. namespaces not on the root of a modelfile
-   //  this would be used in resolving and also to store imorts to symbol
-   /** symbol scope SysMLNamespaceBody extends SysMLNamespace =
-     "{" SysMLElement* "}" ; */
-
-  /*
-   * ##################################################################
    * SysML Basis Symbole
    * ##################################################################
    */

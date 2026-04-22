@@ -138,7 +138,6 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
     return new ArrayList<>(result);
   }
-
   /**
    * @see ISysMLv2Scope#continueTypeWithEnclosingScope(boolean, String, AccessModifier, Predicate)
    */
