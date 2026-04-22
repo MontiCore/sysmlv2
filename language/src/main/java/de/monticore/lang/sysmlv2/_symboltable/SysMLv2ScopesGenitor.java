@@ -10,5 +10,8 @@ import java.util.stream.Collectors;
 
 public class SysMLv2ScopesGenitor extends SysMLv2ScopesGenitorTOP {
 
-
+  @Override
+  protected void initArtifactScopeHP1(ISysMLv2ArtifactScope scope) {
+    super.initArtifactScopeHP1(scope);
+  }
 }

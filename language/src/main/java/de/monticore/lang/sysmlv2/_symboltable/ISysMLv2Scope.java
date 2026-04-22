@@ -110,6 +110,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
             getEnclosingScope().resolveTypeMany(foundInIteration, qualifiedName, modifier, predicate));
   }
 
+  /**
+   * @see ISysMLv2Scope#continueTypeWithEnclosingScope
+   */
   @Override
   default List<VariableSymbol> continueVariableWithEnclosingScope(
       boolean foundSymbols,
@@ -123,6 +126,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
             getEnclosingScope().resolveVariableMany(foundInIteration, qualifiedName, modifier, predicate));
   }
 
+  /**
+   * @see ISysMLv2Scope#continueTypeWithEnclosingScope
+   */
   @Override
   default List<FunctionSymbol> continueFunctionWithEnclosingScope(
       boolean foundSymbols,
@@ -137,11 +143,15 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
   }
 
   /**
-   * Generic continueWithEnclosing for multiple symbols
-   * @param foundSymbols
-   * @param name
-   * @param resolver the resolveMany call for the specific Type T
-   * @return
+   * Generic continueWithEnclosing for multiple symbols. The structure is the
+   * same for all resolutions. We Abstract the SymbolType as T and introduce a
+   * Function argument where we will pass the specific Type-Dependent resolve
+   * call.
+   *
+   * @param foundSymbols marker if we have already found matching symbols
+   * @param name The name of the symbol we are searching
+   * @param resolver the resolveManyT call for the specific Type T
+   * @return The List of retrieved symbols
    * @param <T> Symboltype to be processes, also used within resolver
    */
   default <T extends ISymbol> List<T> continueWithEnclosingScope(
@@ -182,97 +192,6 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
         var resolvedFromEnclosing = resolver.apply(foundSymbols, potentialName);
         foundSymbols = foundSymbols | resolvedFromEnclosing.size() > 0;
         result.addAll(resolvedFromEnclosing);
-      }
-    }
-
-    return new ArrayList<>(result);
-  }
-  /**
-   * @see ISysMLv2Scope#continueTypeWithEnclosingScope(boolean, String, AccessModifier, Predicate)
-   */
-  @Override
-  default List<VariableSymbol> continueVariableWithEnclosingScope(
-    boolean foundSymbols,
-    String name,
-    AccessModifier modifier,
-    Predicate<VariableSymbol> predicate
-  ) {
-    final LinkedHashSet<VariableSymbol> result = new LinkedHashSet<>();
-    if (
-      checkIfContinueWithEnclosingScope(foundSymbols)
-      && getEnclosingScope() != null
-    ) {
-
-      var importStatements = new LinkedList<ImportStatement>();
-      if(getEnclosingScope().isPresentAstNode()) {
-        var visitor = new SysMLImportsAndPackagesVisitor2() {
-          @Override
-          public void visit(ASTSysMLImportStatement node) {
-            if (getEnclosingScope().equals(node.getEnclosingScope())) {
-              importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
-                  node.isStar() || node.isRecursive()));
-            }
-          }
-        };
-        var traverser = SysMLv2Mill.inheritanceTraverser();
-        traverser.add4SysMLImportsAndPackages(visitor);
-        getEnclosingScope().getAstNode().accept(traverser);
-      }
-
-      Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
-
-      for (String potentialName : potentialNames) {
-        result.addAll(getEnclosingScope().resolveVariableMany( foundSymbols,
-          potentialName,
-          modifier,
-          predicate)
-        );
-      }
-    }
-
-    return new ArrayList<>(result);
-  }
-
-  /**
-   * @see ISysMLv2Scope#continueTypeWithEnclosingScope(boolean, String, AccessModifier, Predicate)
-   */
-  @Override
-  default List<FunctionSymbol> continueFunctionWithEnclosingScope(
-    boolean foundSymbols,
-    String name,
-    AccessModifier modifier,
-    Predicate<FunctionSymbol> predicate
-  ) {
-    final LinkedHashSet<FunctionSymbol> result = new LinkedHashSet<>();
-    if (
-      checkIfContinueWithEnclosingScope(foundSymbols)
-      && (getEnclosingScope() != null)
-    ) {
-
-      var importStatements = new LinkedList<ImportStatement>();
-      if(getEnclosingScope().isPresentAstNode()) {
-        var visitor = new SysMLImportsAndPackagesVisitor2() {
-          @Override
-          public void visit(ASTSysMLImportStatement node) {
-            if (getEnclosingScope().equals(node.getEnclosingScope())) {
-              importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
-                  node.isStar() || node.isRecursive()));
-            }
-          }
-        };
-        var traverser = SysMLv2Mill.inheritanceTraverser();
-        traverser.add4SysMLImportsAndPackages(visitor);
-        getEnclosingScope().getAstNode().accept(traverser);
-      }
-
-      Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
-
-      for (String potentialName : potentialNames) {
-        result.addAll(getEnclosingScope().resolveFunctionMany( foundSymbols,
-          potentialName,
-          modifier,
-          predicate)
-        );
       }
     }
 
