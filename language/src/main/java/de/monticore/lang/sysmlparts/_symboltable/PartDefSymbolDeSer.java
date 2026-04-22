@@ -1,7 +1,6 @@
 package de.monticore.lang.sysmlparts._symboltable;
 
 import de.monticore.lang.sysmlparts._ast.ASTSysMLReqType;
-import de.monticore.symboltable.ImportStatement;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionDeSer;
