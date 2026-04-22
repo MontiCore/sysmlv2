@@ -99,10 +99,10 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
    */
   @Override
   default List<TypeSymbol> continueTypeWithEnclosingScope(
-      boolean foundSymbols,
-      String name,
-      AccessModifier modifier,
-      Predicate<TypeSymbol> predicate
+    boolean foundSymbols,
+    String name,
+    AccessModifier modifier,
+    Predicate<TypeSymbol> predicate
   ) {
     return continueWithEnclosingScope(foundSymbols,
         name,
