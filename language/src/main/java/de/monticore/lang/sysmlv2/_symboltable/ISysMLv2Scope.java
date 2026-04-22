@@ -98,15 +98,15 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
    */
   @Override
   default List<TypeSymbol> continueTypeWithEnclosingScope(
-      boolean foundSymbols,
-      String name,
-      AccessModifier modifier,
-      Predicate<TypeSymbol> predicate
+    boolean foundSymbols,
+    String name,
+    AccessModifier modifier,
+    Predicate<TypeSymbol> predicate
   ) {
     final LinkedHashSet<TypeSymbol> result = new LinkedHashSet<>();
     if (
-        checkIfContinueWithEnclosingScope(foundSymbols)
-            && getEnclosingScope() != null
+      checkIfContinueWithEnclosingScope(foundSymbols)
+      && getEnclosingScope() != null
     ) {
 
       var importStatements = new LinkedList<ImportStatement>();
@@ -129,9 +129,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
       for (String potentialName : potentialNames) {
         result.addAll(getEnclosingScope().resolveTypeMany( foundSymbols,
-            potentialName,
-            modifier,
-            predicate)
+          potentialName,
+          modifier,
+          predicate)
         );
       }
     }
@@ -144,15 +144,15 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
    */
   @Override
   default List<VariableSymbol> continueVariableWithEnclosingScope(
-      boolean foundSymbols,
-      String name,
-      AccessModifier modifier,
-      Predicate<VariableSymbol> predicate
+    boolean foundSymbols,
+    String name,
+    AccessModifier modifier,
+    Predicate<VariableSymbol> predicate
   ) {
     final LinkedHashSet<VariableSymbol> result = new LinkedHashSet<>();
     if (
-        checkIfContinueWithEnclosingScope(foundSymbols)
-            && getEnclosingScope() != null
+      checkIfContinueWithEnclosingScope(foundSymbols)
+      && getEnclosingScope() != null
     ) {
 
       var importStatements = new LinkedList<ImportStatement>();
@@ -175,9 +175,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
       for (String potentialName : potentialNames) {
         result.addAll(getEnclosingScope().resolveVariableMany( foundSymbols,
-            potentialName,
-            modifier,
-            predicate)
+          potentialName,
+          modifier,
+          predicate)
         );
       }
     }
@@ -190,15 +190,15 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
    */
   @Override
   default List<FunctionSymbol> continueFunctionWithEnclosingScope(
-      boolean foundSymbols,
-      String name,
-      AccessModifier modifier,
-      Predicate<FunctionSymbol> predicate
+    boolean foundSymbols,
+    String name,
+    AccessModifier modifier,
+    Predicate<FunctionSymbol> predicate
   ) {
     final LinkedHashSet<FunctionSymbol> result = new LinkedHashSet<>();
     if (
-        checkIfContinueWithEnclosingScope(foundSymbols)
-            && getEnclosingScope() != null
+      checkIfContinueWithEnclosingScope(foundSymbols)
+      && (getEnclosingScope() != null)
     ) {
 
       var importStatements = new LinkedList<ImportStatement>();
@@ -221,9 +221,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
       for (String potentialName : potentialNames) {
         result.addAll(getEnclosingScope().resolveFunctionMany( foundSymbols,
-            potentialName,
-            modifier,
-            predicate)
+          potentialName,
+          modifier,
+          predicate)
         );
       }
     }
