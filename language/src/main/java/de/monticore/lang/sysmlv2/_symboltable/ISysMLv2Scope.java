@@ -11,8 +11,9 @@ import de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol;
 import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlconstraints.symboltable.adapters.RequirementSubject2VariableSymbolAdapter;
-import de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLMetaDataDefinitionSymbol;
+import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLImportStatement;
 import de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol;
+import de.monticore.lang.sysmlimportsandpackages._visitor.SysMLImportsAndPackagesVisitor2;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.ItemDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
@@ -28,6 +29,7 @@ import de.monticore.lang.sysmlparts.symboltable.adapters.PortDef2TypeSymbolAdapt
 import de.monticore.lang.sysmlparts.symboltable.adapters.PortUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
 import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
+import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.symboltable.adapters.AttributeUsage2PortSymbolAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Constraint2SpecificationAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.MetadataDef2TypeSymbolAdapter;
@@ -41,18 +43,22 @@ import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.IScopeSpanningSymbol;
+import de.monticore.symboltable.ImportStatement;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
-import de.se_rwth.commons.Names;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+
+import static de.se_rwth.commons.Names.getSimpleName;
 
 public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
@@ -101,7 +107,23 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       && getEnclosingScope() != null
     ) {
 
-      Set<String> potentialNames = calcQNamesForEnclosingScope(name);
+      var importStatements = new LinkedList<ImportStatement>();
+      if(getEnclosingScope().isPresentAstNode()) {
+        var visitor = new SysMLImportsAndPackagesVisitor2() {
+          @Override
+          public void visit(ASTSysMLImportStatement node) {
+            if (getEnclosingScope().equals(node.getEnclosingScope())) {
+              importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
+                  node.isStar() || node.isRecursive()));
+            }
+          }
+        };
+        var traverser = SysMLv2Mill.inheritanceTraverser();
+        traverser.add4SysMLImportsAndPackages(visitor);
+        getEnclosingScope().getAstNode().accept(traverser);
+      }
+
+      Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
 
       for (String potentialName : potentialNames) {
         result.addAll(getEnclosingScope().resolveTypeMany( foundSymbols,
@@ -121,9 +143,20 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
    * Java-like out-of-the-box and needs to be extended for SysMLv2's usage
    * of packages (namespaces) as proper modeling elements.
    */
-  default Set<String> calcQNamesForEnclosingScope(String name) {
+  default Set<String> calcQNamesForEnclosingScope(String name,
+                                                  List<ImportStatement> importStatements) {
     Set<String> potentialSymbolNames = new LinkedHashSet<>();
     potentialSymbolNames.add(name);
+
+    // qualified names based on the import statements of enclosing scope
+    for (var importStatement : importStatements) {
+      if (importStatement.isStar()) {
+        potentialSymbolNames.add(importStatement.getStatement() + "." + name);
+      }
+      else if (getSimpleName(importStatement.getStatement()).equals(name)) {
+        potentialSymbolNames.add(importStatement.getStatement());
+      }
+    }
 
     if (
       this.isPresentSpanningSymbol()
