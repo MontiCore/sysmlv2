@@ -38,6 +38,7 @@ import de.monticore.lang.sysmlv2.symboltable.adapters.Requirement2SpecificationA
 import de.monticore.lang.sysmlv2.symboltable.adapters.StateUsage2AutomatonAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.StateUsage2EventAutomatonAdapter;
 import de.monticore.lang.componentconnector._symboltable.RequirementSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -57,6 +58,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import static de.se_rwth.commons.Names.getQualifier;
 import static de.se_rwth.commons.Names.getSimpleName;
 
 public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
@@ -137,6 +139,98 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
   }
 
   /**
+   * @see ISysMLv2Scope#continueTypeWithEnclosingScope(boolean, String, AccessModifier, Predicate)
+   */
+  @Override
+  default List<VariableSymbol> continueVariableWithEnclosingScope(
+    boolean foundSymbols,
+    String name,
+    AccessModifier modifier,
+    Predicate<VariableSymbol> predicate
+  ) {
+    final LinkedHashSet<VariableSymbol> result = new LinkedHashSet<>();
+    if (
+      checkIfContinueWithEnclosingScope(foundSymbols)
+      && getEnclosingScope() != null
+    ) {
+
+      var importStatements = new LinkedList<ImportStatement>();
+      if(getEnclosingScope().isPresentAstNode()) {
+        var visitor = new SysMLImportsAndPackagesVisitor2() {
+          @Override
+          public void visit(ASTSysMLImportStatement node) {
+            if (getEnclosingScope().equals(node.getEnclosingScope())) {
+              importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
+                  node.isStar() || node.isRecursive()));
+            }
+          }
+        };
+        var traverser = SysMLv2Mill.inheritanceTraverser();
+        traverser.add4SysMLImportsAndPackages(visitor);
+        getEnclosingScope().getAstNode().accept(traverser);
+      }
+
+      Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
+
+      for (String potentialName : potentialNames) {
+        result.addAll(getEnclosingScope().resolveVariableMany( foundSymbols,
+          potentialName,
+          modifier,
+          predicate)
+        );
+      }
+    }
+
+    return new ArrayList<>(result);
+  }
+
+  /**
+   * @see ISysMLv2Scope#continueTypeWithEnclosingScope(boolean, String, AccessModifier, Predicate)
+   */
+  @Override
+  default List<FunctionSymbol> continueFunctionWithEnclosingScope(
+    boolean foundSymbols,
+    String name,
+    AccessModifier modifier,
+    Predicate<FunctionSymbol> predicate
+  ) {
+    final LinkedHashSet<FunctionSymbol> result = new LinkedHashSet<>();
+    if (
+      checkIfContinueWithEnclosingScope(foundSymbols)
+      && (getEnclosingScope() != null)
+    ) {
+
+      var importStatements = new LinkedList<ImportStatement>();
+      if(getEnclosingScope().isPresentAstNode()) {
+        var visitor = new SysMLImportsAndPackagesVisitor2() {
+          @Override
+          public void visit(ASTSysMLImportStatement node) {
+            if (getEnclosingScope().equals(node.getEnclosingScope())) {
+              importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
+                  node.isStar() || node.isRecursive()));
+            }
+          }
+        };
+        var traverser = SysMLv2Mill.inheritanceTraverser();
+        traverser.add4SysMLImportsAndPackages(visitor);
+        getEnclosingScope().getAstNode().accept(traverser);
+      }
+
+      Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
+
+      for (String potentialName : potentialNames) {
+        result.addAll(getEnclosingScope().resolveFunctionMany( foundSymbols,
+          potentialName,
+          modifier,
+          predicate)
+        );
+      }
+    }
+
+    return new ArrayList<>(result);
+  }
+
+  /**
    * This method is essentially copied from artifact scopes. See explanation
    * on continueTypeWithEnclosingScope(4): MontiCore's symbol resolution is
    * Java-like out-of-the-box and needs to be extended for SysMLv2's usage
@@ -147,13 +241,18 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     Set<String> potentialSymbolNames = new LinkedHashSet<>();
     potentialSymbolNames.add(name);
 
-    // qualified names based on the import statements of enclosing scope
-    for (var importStatement : importStatements) {
-      if (importStatement.isStar()) {
-        potentialSymbolNames.add(importStatement.getStatement() + "." + name);
-      }
-      else if (getSimpleName(importStatement.getStatement()).equals(name)) {
-        potentialSymbolNames.add(importStatement.getStatement());
+    // if name is already qualified, no further (potential) names exist by imports
+    if (getQualifier(name).isEmpty()) {
+      // qualify names based on the import statements of enclosing scope
+      // 1. qualify star imports by replacing the start with symbolname
+      // 2. qualify direct imports when the name matches
+      for (var importStatement : importStatements) {
+        if (importStatement.isStar()) {
+          potentialSymbolNames.add(importStatement.getStatement() + "." + name);
+        }
+        else if (getSimpleName(importStatement.getStatement()).equals(name)) {
+          potentialSymbolNames.add(importStatement.getStatement());
+        }
       }
     }
 
