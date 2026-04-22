@@ -85,7 +85,7 @@ public class ImportResolveTest {
 
     var parentName = parentRef.getNameList().get(0);
 
-    var optParent = ((ISysMLv2Scope) parentRef.getEnclosingScope()).resolvePartDef(parentName);
+    var optParent = ((ISysMLv2Scope) parentRef.getEnclosingScope()).resolveType(parentName);
 
     assertThat(optParent).isPresent(); // check if we did resolve
     assertThat(optParent.get().getFullName()).isEqualTo("Other.Parent");
@@ -122,7 +122,7 @@ public class ImportResolveTest {
 
     var parentName = parentRef.getNameList().get(0);
 
-    var optParent = ((ISysMLv2Scope) parentRef.getEnclosingScope()).resolvePartDef(parentName);
+    var optParent = ((ISysMLv2Scope) parentRef.getEnclosingScope()).resolveType(parentName);
 
     assertThat(optParent).isPresent(); // check if we did resolve
     assertThat(optParent.get().getFullName()).isEqualTo("Other.Parent");
