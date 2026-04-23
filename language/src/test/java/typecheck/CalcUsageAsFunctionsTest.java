@@ -10,14 +10,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * This class checks the implementation of SysML calc defs
+ * This class checks the implementation of SysML calc usages
  * as MontiCore function symbols. MontiCore establishes the
  * set of basic symbols as types, variables, and functions.
  * This is different from the plethora of SysML keywords that
  * are not meaningful for symbol resolution (and specifically
  * not relevant for type checking).
  */
-public class CalcDefsAsFunctionsTest {
+public class CalcUsageAsFunctionsTest {
 
   @Test
   public void testSimpleModel() throws Exception {
