@@ -8,11 +8,13 @@ theme:
   features:
     - navigation.tabs
     - navigation.sections
+    - navigation.expand
     - navigation.footer
     - navigation.instant
     - navigation.instant.progress
     - navigation.indexes
     - toc.follow
+    - toc.integrate
     - content.tabs.link
     - social
     - content.code.copy
@@ -74,5 +76,9 @@ nav:
       - Setup: 'GettingStarted/Setup.md'
       - Tools & Editors: 'GettingStarted/Editor.md'
       - Hello World!: 'GettingStarted/HelloWorld.md'
-  - SpesML: 'SpesML/index.md'
+  - SpesML:
+    - Overview: 'SpesML/index.md'
+    - Reference: 
+      - Overview: 'Reference/index.md'
+      - Stream Library: 'Reference/StreamLibrary.md'
   - License: https://monticore.github.io/monticore/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL/
