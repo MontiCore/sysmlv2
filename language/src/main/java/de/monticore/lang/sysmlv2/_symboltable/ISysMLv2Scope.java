@@ -54,16 +54,19 @@ import java.util.function.Predicate;
 public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
   @Override
-  default List<RequirementSymbol> resolveRequirementLocallyMany(
+  default List<RequirementSymbol> resolveAdaptedRequirementLocallyMany(
       boolean foundSymbols,
-      String name, AccessModifier modifier,
+      String name,
+      AccessModifier modifier,
       Predicate<RequirementSymbol> predicate) {
     var adapted = new ArrayList<RequirementSymbol>();
-    var req = resolveRequirementUsageLocally(name);
+    var usages = resolveRequirementUsageLocallyMany(foundSymbols, name, modifier, x -> true);
 
-    if(req.isPresent()) {
-      var ccReq = new Requirement2RequirementCCAdapter(req.get());
-      adapted.add(ccReq);
+    for(var req : usages) {
+      var ccAdaptedReq = new Requirement2RequirementCCAdapter(req);
+      if(predicate.test(ccAdaptedReq)) {
+        adapted.add(ccAdaptedReq);
+      }
     }
 
     return adapted;
