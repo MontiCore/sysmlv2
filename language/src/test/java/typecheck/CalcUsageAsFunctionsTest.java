@@ -7,6 +7,7 @@ import de.monticore.lang.sysmlv2.cocos.ConstraintIsBooleanTC3;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -20,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CalcUsageAsFunctionsTest {
 
   @Test
-  public void testSimpleModel() throws Exception {
+  public void testValid() throws Exception {
     LogStub.init();
     Log.clearFindings();
 
@@ -43,5 +44,32 @@ public class CalcUsageAsFunctionsTest {
     checker.checkAll(ast);
 
     assertTrue(Log.getFindings().isEmpty(), ()-> Log.getFindings().toString());
+  }
+
+  @Test
+  void testInvalid() throws Exception {
+    LogStub.init();
+    Log.clearFindings();
+
+    var model = "attribute def Foo { calc bar { return : nat; } } \n" +
+        "attribute f: Foo; \n" +
+        "constraint { f.bar() } \n";
+
+    SysMLv2Tool tool = new SysMLv2Tool();
+    tool.init();
+
+    var parser = SysMLv2Mill.parser();
+    var ast = parser.parse_String(model).get();
+
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new ConstraintIsBooleanTC3());
+    checker.checkAll(ast);
+
+    assertThat(Log.getFindings()).hasSize(1);
+    assertThat(Log.getFindings().get(0).getMsg()).contains("0x80002 The expression type is 'nat' but should be boolean!");
   }
 }

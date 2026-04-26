@@ -1,15 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.symboltable.completers;
 
-import de.monticore.lang.sysmlactions.SysMLActionsMill;
 import de.monticore.lang.sysmlactions._ast.ASTCalcUsage;
 import de.monticore.lang.sysmlactions._symboltable.CalcUsageSymbol;
 import de.monticore.lang.sysmlactions._visitor.SysMLActionsVisitor2;
-import de.monticore.lang.sysmlbasis.visitors.CalcReturnSpecVisitor;
 import de.monticore.lang.sysmlbasis._ast.ASTAnonymousReference;
 import de.monticore.lang.sysmlbasis._ast.ASTAnonymousUsage;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLParameter;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlbasis._symboltable.AnonymousReferenceSymbol;
@@ -24,6 +21,7 @@ import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
+import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symboltable.modifiers.BasicAccessModifier;
@@ -155,20 +153,37 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
   public void endVisit(ASTCalcUsage node) {
     if (node.isPresentSymbol()) {
       CalcUsageSymbol symbol = node.getSymbol();
-      CalcReturnSpecVisitor visitor = new CalcReturnSpecVisitor();
-      var traverser = SysMLActionsMill.inheritanceTraverser();
-      traverser.add4SysMLBasis(visitor);
+      final SymTypeExpression[] returnType = new SymTypeExpression[1];
 
-      for (ASTSysMLElement elem : node.getSysMLElementList()) {
-        elem.accept(traverser);
-        if (visitor.getSpecializationReturn().isPresent()) {
-          ASTSpecialization spec = visitor.getSpecializationReturn().get();
-
-          List<SymTypeExpression> types = getTypeCompletion(List.of(spec), false);
-          if (!types.isEmpty()) {
-            symbol.setReturnType(types.get(0));
+      var traverser = SysMLv2Mill.inheritanceTraverser();
+      traverser.add4SysMLBasis(new SysMLBasisVisitor2() {
+        @Override
+        public void visit(ASTAnonymousUsage retNode) {
+          // Store only the first return type declared directly in  calc usage
+          if (returnType[0] == null
+              && retNode.getModifier().isReturn()
+              && retNode.getEnclosingScope() == node.getSpannedScope()) {
+            List<SymTypeExpression> types = getTypeCompletion(retNode.getSpecializationList(), false);
+            returnType[0] = types.isEmpty() ? SymTypeExpressionFactory.createObscureType() : types.get(0);
           }
         }
+      });
+
+      traverser.add4SysMLParts(new SysMLPartsVisitor2() {
+        @Override
+        public void visit(ASTAttributeUsage retNode) {
+          if (returnType[0] == null
+              && retNode.getModifier().isReturn()
+              && retNode.getEnclosingScope() == node.getSpannedScope()) {
+            List<SymTypeExpression> types = getTypeCompletion(retNode.getSpecializationList(), false);
+            returnType[0] = types.isEmpty() ? SymTypeExpressionFactory.createObscureType() : types.get(0);
+          }
+        }
+      });
+      node.accept(traverser);
+
+      if (returnType[0] != null) {
+        symbol.setReturnType(returnType[0]);
       }
     }
   }
