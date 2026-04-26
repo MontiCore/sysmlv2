@@ -13,7 +13,7 @@ import de.se_rwth.commons.SourcePosition;
  * MontiCore's expression type checker resolves function calls against
  * {@link FunctionSymbol}s from BasicSymbols. SysML calc usages, however, are represented by
  * {@link CalcUsageSymbol}s. This adapter exposes a calc usage as a function symbol so that
- * expressions such as {f.bar()} can be resolved and type-checked using the existing
+ * expressions such as {@code f.bar()} can be resolved and type-checked using the existing
  * function-call infrastructure.
  */
 public class CalcUsage2FunctionSymbolAdapter extends FunctionSymbol {
