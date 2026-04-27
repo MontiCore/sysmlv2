@@ -2,6 +2,7 @@ package symboltable;
 
 import de.monticore.expressions.commonexpressions._ast.ASTCallExpression;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
+import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
@@ -248,6 +249,33 @@ public class SymbolTableCompletionTest {
     var type = deriver.deriveType(atTime);
     assertThat(type.isPresentResult());
     assertThat(type.getResult().printFullName()).isEqualTo("UntimedStream.UntimedStream<int>");
+  }
+
+  @Test
+  public void testImportedScalarValueCompletesAttributeTypes() throws IOException {
+    var model = ""
+        + "private import ScalarValues::Boolean;\n"
+        + "private import ScalarValues::Natural;\n"
+        + "attribute flag: Boolean;\n"
+        + "attribute size: Natural;";
+
+    Optional<ASTSysMLModel> optAst = parser.parse_String(model);
+    assertThat(optAst).isPresent();
+
+    var ast = optAst.get();
+
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+    assertThat(Log.getFindings()).isEmpty();
+
+    var flag = (ASTAttributeUsage) ast.getSysMLElement(2);
+    var size = (ASTAttributeUsage) ast.getSysMLElement(3);
+
+    assertThat(flag.getSymbol().getTypesList()).hasSize(1);
+    assertThat(flag.getSymbol().getTypesList().get(0).printFullName()).isEqualTo("ScalarValues.Boolean");
+    assertThat(size.getSymbol().getTypesList()).hasSize(1);
+    assertThat(size.getSymbol().getTypesList().get(0).printFullName()).isEqualTo("ScalarValues.Natural");
   }
 
   /**
