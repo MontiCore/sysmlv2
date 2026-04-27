@@ -135,7 +135,7 @@ public class SerializationTest {
       String usageSymbol)
   {
     ASTSysMLModel ast = sysmlTool.parse(modelReferencePath);
-    sysmlTool.createSymbolTable(ast);
+    ISysMLv2ArtifactScope artifactScope = sysmlTool.createSymbolTable(ast);
 
     var symbolPath = new MCPath();
     // MCPath entries correspond to the directories that contain symboltables
@@ -149,8 +149,9 @@ public class SerializationTest {
     // check if an additional ArtifactScope was found during completion (Specialization completion uses inter-model resolution)
     Assertions.assertThat(gs.getSubScopes()).size().isGreaterThan(1);
 
-    // check inter-model resolution of fqn from usage package scope.
-    ISysMLv2Scope packageScope = gs.getSubScopes().get(0).getSubScopes().get(0);
+    // check inter-model resolution of fqn from the package scope of the reference artifact.
+    Assertions.assertThat(artifactScope.getSubScopes()).isNotEmpty();
+    ISysMLv2Scope packageScope = artifactScope.getSubScopes().get(0);
     Optional<SysMLTypeSymbol> resolved = packageScope.resolveSysMLType(fqnSymbol);
     assertThat(resolved).isPresent();
 
