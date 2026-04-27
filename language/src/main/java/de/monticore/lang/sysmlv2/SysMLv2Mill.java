@@ -13,12 +13,14 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.symbols.oosymbols._symboltable.OOSymbolsScope;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.SymTypeVariable;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static de.monticore.symbols.basicsymbols.BasicSymbolsMillTOP.getMill;
 
@@ -31,6 +33,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
   public static void prepareGlobalScope() {
     SysMLv2Mill.initializePrimitives();
     SysMLv2Mill.addStringType();
+    SysMLv2Mill.addScalarValueTypes();
     SysMLv2Mill.addCollectionTypes();
     SysMLv2Mill.addTsynVariables();
   }
@@ -61,6 +64,10 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     getMill()._addStringType();
   }
 
+  public static void addScalarValueTypes() {
+    getMill()._addScalarValueTypes();
+  }
+
   protected void _addStringType() {
     // ensures adding the type symbol only once
     if (SysMLv2Mill.globalScope().resolveType("String").isPresent()) {
@@ -73,6 +80,62 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         .build();
 
     SysMLv2Mill.globalScope().add(type);
+  }
+
+  protected void _addScalarValueTypes() {
+    if (SysMLv2Mill.globalScope().resolveSysMLPackage("ScalarValues").isPresent()) {
+      return;
+    }
+
+    var packageScope = SysMLv2Mill.scope();
+    packageScope.setName("ScalarValues");
+    packageScope.setEnclosingScope(SysMLv2Mill.globalScope());
+    var scalarValues = SysMLv2Mill.sysMLPackageSymbolBuilder()
+        .setName("ScalarValues")
+        .setFullName("ScalarValues")
+        .setPackageName("")
+        .setEnclosingScope(SysMLv2Mill.globalScope())
+        .setSpannedScope(packageScope)
+        .build();
+    packageScope.setSpanningSymbol(scalarValues);
+    SysMLv2Mill.globalScope().add(scalarValues);
+
+    var scalarValue = createScalarValueType(packageScope, "ScalarValue");
+    var bool = createScalarValueType(packageScope, "Boolean");
+    var numericalValue = createScalarValueType(packageScope, "NumericalValue");
+    var number = createScalarValueType(packageScope, "Number");
+    var complex = createScalarValueType(packageScope, "Complex");
+    var real = createScalarValueType(packageScope, "Real");
+    var rational = createScalarValueType(packageScope, "Rational");
+    var integer = createScalarValueType(packageScope, "Integer");
+    var natural = createScalarValueType(packageScope, "Natural");
+    var positive = createScalarValueType(packageScope, "Positive");
+
+    setScalarValueSuperTypes(bool, scalarValue);
+    setScalarValueSuperTypes(numericalValue, scalarValue);
+    setScalarValueSuperTypes(number, numericalValue);
+    setScalarValueSuperTypes(complex, number);
+    setScalarValueSuperTypes(real, complex);
+    setScalarValueSuperTypes(rational, real);
+    setScalarValueSuperTypes(integer, rational);
+    setScalarValueSuperTypes(natural, integer);
+    setScalarValueSuperTypes(positive, natural);
+  }
+
+  protected OOTypeSymbol createScalarValueType(ISysMLv2Scope packageScope, String name) {
+    var type = OOSymbolsMill.oOTypeSymbolBuilder()
+        .setName(name)
+        .setFullName("ScalarValues." + name)
+        .setPackageName("ScalarValues")
+        .setEnclosingScope(packageScope)
+        .setSpannedScope(scope())
+        .build();
+    packageScope.add(type);
+    return type;
+  }
+
+  protected void setScalarValueSuperTypes(OOTypeSymbol type, OOTypeSymbol superType) {
+    type.setSuperTypesList(List.of(SymTypeExpressionFactory.createTypeObject(superType)));
   }
 
   protected OOTypeSymbol buildOptionalType() {
