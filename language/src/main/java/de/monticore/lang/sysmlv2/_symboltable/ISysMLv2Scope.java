@@ -22,6 +22,7 @@ import de.monticore.lang.sysmlparts.symboltable.adapters.AnonymousUsage2Variable
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeUsage2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeUsage2VariableSymbolAdapter;
+import de.monticore.lang.sysmlparts.symboltable.adapters.CalcUsage2FunctionSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.EnumDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.PartDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.PartUsage2TypeSymbolAdapter;
@@ -665,4 +666,19 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     return getResolvedOrThrowException(resolvedSymbols);
   }
 
+  @Override
+  default List<FunctionSymbol> resolveAdaptedFunctionLocallyMany(
+      boolean foundSymbols,
+      String name,
+      AccessModifier modifier,
+      Predicate<FunctionSymbol> predicate
+  ) {
+    var adapted = new ArrayList<FunctionSymbol>();
+
+    var calcUsage = resolveCalcUsageLocally(name);
+    if (calcUsage.isPresent()) {
+      adapted.add(new CalcUsage2FunctionSymbolAdapter(calcUsage.get()));
+    }
+    return adapted;
+  }
 }
