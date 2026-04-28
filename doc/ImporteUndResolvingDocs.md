@@ -1,10 +1,9 @@
 # Dokumentation: Import-Mechanismus und Namensauflösung
 In der MontiCore-basierten Implementierung von SysMLv2 ist die effiziente
 Auflösung von Symbolen über Modellgrenzen hinweg entscheidend. Da Modelle in der
-Regel in Pakete unterteilt sind, benötigt der `ArtifactScope` einen Mechanismus,
-um lokale Referenzen auf externe Symbole (Cross-References) korrekt zuzuordnen.
-Dies betrifft in der aktuellen Implementierung so nur Imports auf root-Ebene
-eines Modells. Eine Fortsetzung hierfür folgt.
+Regel in Pakete unterteilt sind, benötigt der `SysML-Scope` einen Mechanismus,
+um lokale Referenzen auf externe Symbole (Cross-References) auch auf Basis der
+im Scope vorhandenen Importen korrekt zuzuordnen.
 
 ## 1. SysMLv2 Import-Typen
 SysMLv2 definiert verschiedene Strategien, um Elemente aus anderen Namensräumen
@@ -43,18 +42,21 @@ Das folgende Diagramm illustriert, welche Elemente je nach Import-Strategie für
 den aktuellen Scope "sichtbar" werden:
 ![SysML-Import-Typen-Visualisiert](sysmlv2-imports.png)
 
-## 3. Technische Umsetzung im ArtifactScope
-Die Namensauflösung basiert auf der Delegation vom lokalen `ArtifactScope` an
-den `GlobalScope`. Der zentrale Mechanismus ist dabei die Generierung von
-Kandidaten-Namen.
+## 3. Technische Umsetzung im SysMLv2-Scope
+Die Namensauflösung basiert auf der Delegation eines SysML-Scopes an seinen
+umschließenden-Scope. Diese delegation erfolgt innerhalb der Funktion
+continueXXXWithEnclosing Scope. Das Import-Unterstützte resolving ist hierbei
+für Variablen, Typen und Funktionen implementiert.
 
 ### Die Methode `continuePartDefWithEnclosingScope`
-Wenn ein Symbol (z. B. eine `PartDef`) lokal nicht gefunden wird, ruft MontiCore
-diese Methode auf. Sie berechnet eine Menge von voll-qualifizierten Namen (FQNs),
-nach denen der `GlobalScope` suchen soll.
+Wenn ein Symbol (Variablen, Typen oder Funktionen) lokal nicht gefunden wird,
+ruft MontiCore diese Methode auf. Sie berechnet eine Menge von voll-qualifizierten
+Namen (FQNs), nach denen im umschließendem Scope gesucht werden. Gesucht wird
+hierbei nach dem Namen selbst, dem Namen innerhalb des aktuellen Pakets,
+und dem Namen in allen spezifizierten Imports
 
 ### Namensqualifizierung mit `calculateQualifiedNames`
-Diese Methode nutzt die im `ArtifactScope` hinterlegten `ImportStatements`.
+Diese Methode nutzt die im `ASTSysMLScope` hinterlegten `SysMLImportStatements`.
 Sie prüft für jeden Import:
 1.  **Bei Wildcards:** Ist der gesuchte Name ein Kind des importierten Pakets? \
     (z.B. `ImportPfad + "." + gesuchterName`)
@@ -73,11 +75,7 @@ for (ImportStatement importStatement : imports) {
 ```
 
 ### SysMLv2ScopesGenitor
-Um die Namensqualizifierung zu ermöglichen, inizialisieren wir die Imports des
-ArtifactsScopes innerhalb des ScopesGenitors. Wir verwenden die Hookpoint
-`initArtifactScopeHP1`, um vor der Genitor-Traversierung des AST sicherzustellen,
-dass der ArtifactScope vollständig konfiguriert ist und Import- Auslösungen
-potentiell verfügbar sind.
+Die Symbole der SysML-Scopes werden aktuell nicht mit den Importen initialisiert.
 
 ## 4. Einschränkungen und Roadmap
 Da `calculateQualifiedNames` in aktuellen MontiCore-Versionen als `@deprecated`
