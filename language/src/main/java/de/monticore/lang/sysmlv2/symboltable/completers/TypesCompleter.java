@@ -2,7 +2,6 @@
 package de.monticore.lang.sysmlv2.symboltable.completers;
 
 import de.monticore.lang.sysmlactions._ast.ASTCalcUsage;
-import de.monticore.lang.sysmlactions._symboltable.CalcUsageSymbol;
 import de.monticore.lang.sysmlactions._visitor.SysMLActionsVisitor2;
 import de.monticore.lang.sysmlbasis._ast.ASTAnonymousReference;
 import de.monticore.lang.sysmlbasis._ast.ASTAnonymousUsage;
@@ -152,17 +151,16 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
   @Override
   public void endVisit(ASTCalcUsage node) {
     if (node.isPresentSymbol()) {
-      CalcUsageSymbol symbol = node.getSymbol();
+      // Use a one-element array because Java does not allow reassigning local variables
+      // from inside anonymous visitor classes
       final SymTypeExpression[] returnType = new SymTypeExpression[1];
+      returnType[0] = SymTypeExpressionFactory.createTopType();
 
       var traverser = SysMLv2Mill.inheritanceTraverser();
       traverser.add4SysMLBasis(new SysMLBasisVisitor2() {
         @Override
         public void visit(ASTAnonymousUsage retNode) {
-          // Store only the first return type declared directly in  calc usage
-          if (returnType[0] == null
-              && retNode.getModifier().isReturn()
-              && retNode.getEnclosingScope() == node.getSpannedScope()) {
+          if (retNode.getModifier().isReturn() && retNode.getEnclosingScope() == node.getSpannedScope()) {
             List<SymTypeExpression> types = getTypeCompletion(retNode.getSpecializationList(), false);
             returnType[0] = types.isEmpty() ? SymTypeExpressionFactory.createObscureType() : types.get(0);
           }
@@ -172,19 +170,14 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
       traverser.add4SysMLParts(new SysMLPartsVisitor2() {
         @Override
         public void visit(ASTAttributeUsage retNode) {
-          if (returnType[0] == null
-              && retNode.getModifier().isReturn()
-              && retNode.getEnclosingScope() == node.getSpannedScope()) {
+          if (retNode.getModifier().isReturn() && retNode.getEnclosingScope() == node.getSpannedScope()) {
             List<SymTypeExpression> types = getTypeCompletion(retNode.getSpecializationList(), false);
             returnType[0] = types.isEmpty() ? SymTypeExpressionFactory.createObscureType() : types.get(0);
           }
         }
       });
       node.accept(traverser);
-
-      if (returnType[0] != null) {
-        symbol.setReturnType(returnType[0]);
-      }
+      node.getSymbol().setReturnType(returnType[0]);
     }
   }
 
