@@ -129,11 +129,13 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
 
       for (String potentialName : potentialNames) {
-        result.addAll(getEnclosingScope().resolveTypeMany( foundSymbols,
-          potentialName,
-          modifier,
-          predicate)
+        var resolvedEnclosing = getEnclosingScope().resolveTypeMany( foundSymbols,
+            potentialName,
+            modifier,
+            predicate
         );
+        result.addAll(resolvedEnclosing);
+        foundSymbols = foundSymbols || !resolvedEnclosing.isEmpty();
       }
     }
 
@@ -175,11 +177,13 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
 
       for (String potentialName : potentialNames) {
-        result.addAll(getEnclosingScope().resolveVariableMany( foundSymbols,
-          potentialName,
-          modifier,
-          predicate)
+        var resolvedEnclosing = getEnclosingScope().resolveVariableMany( foundSymbols,
+            potentialName,
+            modifier,
+            predicate
         );
+        result.addAll(resolvedEnclosing);
+        foundSymbols = foundSymbols || !resolvedEnclosing.isEmpty();
       }
     }
 
@@ -221,11 +225,13 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
 
       for (String potentialName : potentialNames) {
-        result.addAll(getEnclosingScope().resolveFunctionMany( foundSymbols,
-          potentialName,
-          modifier,
-          predicate)
+        var resolvedEnclosing = getEnclosingScope().resolveFunctionMany( foundSymbols,
+            potentialName,
+            modifier,
+            predicate
         );
+        result.addAll(resolvedEnclosing);
+        foundSymbols = foundSymbols || !resolvedEnclosing.isEmpty();
       }
     }
 
