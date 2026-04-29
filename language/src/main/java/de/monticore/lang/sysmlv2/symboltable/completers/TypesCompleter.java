@@ -44,11 +44,11 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
   private List<SymTypeExpression> getTypeCompletion(List<ASTSpecialization> specializationList, boolean conjugated) {
     List<SymTypeExpression> typeExpressions = new ArrayList<>();
 
-    for(var specialization : specializationList) {
+    for(var specialization: specializationList) {
       if(specialization instanceof ASTSysMLTyping && ((ASTSysMLTyping) specialization).isConjugated() == conjugated) {
         var astTyping = (ASTSysMLTyping) specialization;
 
-        for(var mcType : astTyping.getSuperTypesList()) {
+        for(var mcType: astTyping.getSuperTypesList()) {
           SymTypeExpression res = null;
           if(mcType instanceof ASTMCTupleType) {
             var tupleType = (ASTMCTupleType) mcType;
@@ -67,7 +67,7 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
                 mcType.printType(),
                 (IBasicSymbolsScope) mcType.getEnclosingScope());
           }
-          else if (mcType.getDefiningSymbol().isPresent() && mcType.getDefiningSymbol().get() instanceof TypeSymbol) {
+          else if(mcType.getDefiningSymbol().isPresent() && mcType.getDefiningSymbol().get() instanceof TypeSymbol) {
             // hacky setup such that nat remains a primitive
             if (mcType.getDefiningSymbol().get().getName().equals("nat")) {
               res = SymTypeExpressionFactory.createPrimitive((TypeSymbol) mcType.getDefiningSymbol().get());
@@ -78,13 +78,13 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
           else if(mcType.getDefiningSymbol().isEmpty()) {
             Log.warn("Defining symbol for " + mcType.printType() + " was not set.");
           }
-          else if (!(mcType.getDefiningSymbol().get() instanceof TypeSymbol)) {
+          else if(!(mcType.getDefiningSymbol().get() instanceof TypeSymbol)) {
             Log.warn("Defining symbol for " + mcType.printType() + " is not a TypeSymbol");
           }
 
           if(res != null) {
             if(astTyping.isPresentCardinality()) {
-              res = SymTypeExpressionFactory.createTypeArray(res.getTypeInfo(),1, res);
+              res = SymTypeExpressionFactory.createTypeArray(res.getTypeInfo(), 1, res);
             }
             typeExpressions.add(res);
           }
@@ -111,7 +111,7 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
   public void visit(ASTPartUsage node) {
     List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
 
-    if (node.isPresentSymbol()) {
+    if(node.isPresentSymbol()) {
       node.getSymbol().setTypesList(types);
     }
   }
