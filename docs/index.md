@@ -18,7 +18,7 @@ hide:
 # The Systems Modeling Language v2 {: #more }
 
 One of the interesting new capabilities is the exchange of models
-between tools using a really human readable textual form of the SysML
+between tools using a really human-readable textual form of the SysML
 language in the spirit of a modern programming language (even though it
 has a number of special constructs that resemble modelling concepts).
 
@@ -134,5 +134,5 @@ Find more information about SysML v2 and other projects and publications by the 
 * [Setup](./GettingStarted/Setup.md)
 * [Publications](https://www.se-rwth.de/publications/)
 * [SysML v2](https://www.omg.org/sysml/sysmlv2/)
-* [MontiArc](https://github.com/MontiCore/montiarc)
+* [MontiArc](https://monticore.github.io/montiarc/)
 * [License](https://github.com/MontiCore/monticore/blob/HEAD/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL.md)

@@ -6,6 +6,10 @@ bin/
 .settings/
 .classpath/
 .gradle/
+# in gradle 8.14 "build" is currently hardcoded for the problem-reports
+build/
+
+site/
 
 # Ignore Intellij files
 *.iml
