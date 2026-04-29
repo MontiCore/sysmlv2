@@ -30,26 +30,22 @@ import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
 import de.monticore.types.mcstructuraltypes._ast.ASTMCTupleType;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
-    SysMLConstraintsVisitor2, SysMLActionsVisitor2 {
+    SysMLConstraintsVisitor2, SysMLActionsVisitor2
+{
 
   /**
-   * Returns type completion for Usages. Bases on types completed in the
-   * SpecializationCompleter. We solely store the qualified name as
-   * SymTypeExpression using the defining symbol, outside of generic types
-   * (require type printing)
+   * Returns type completion for Usages. Bases on types completed in the SpecializationCompleter. We solely store the
+   * qualified name as SymTypeExpression using the defining symbol, outside of generic types (require type printing)
    */
-  private List<SymTypeExpression> getTypeCompletion(
-      List<ASTSpecialization> specializationList, boolean conjugated) {
+  private List<SymTypeExpression> getTypeCompletion(List<ASTSpecialization> specializationList, boolean conjugated) {
     List<SymTypeExpression> typeExpressions = new ArrayList<>();
 
     for (var specialization : specializationList) {
-      if (specialization instanceof ASTSysMLTyping
-          && ((ASTSysMLTyping) specialization).isConjugated() == conjugated) {
+      if (specialization instanceof ASTSysMLTyping && ((ASTSysMLTyping) specialization).isConjugated() == conjugated) {
         var astTyping = (ASTSysMLTyping) specialization;
 
         for (var mcType : astTyping.getSuperTypesList()) {
@@ -71,31 +67,24 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
                 mcType.printType(),
                 (IBasicSymbolsScope) mcType.getEnclosingScope());
           }
-          else if (mcType.getDefiningSymbol().isPresent()
-              && mcType.getDefiningSymbol().get() instanceof TypeSymbol) {
+          else if (mcType.getDefiningSymbol().isPresent() && mcType.getDefiningSymbol().get() instanceof TypeSymbol) {
             // hacky setup such that nat remains a primitive
             if (mcType.getDefiningSymbol().get().getName().equals("nat")) {
-              res = SymTypeExpressionFactory.createPrimitive(
-                  (TypeSymbol) mcType.getDefiningSymbol().get());
-            }
-            else {
-              res = SymTypeExpressionFactory.createTypeExpression(
-                  (TypeSymbol) mcType.getDefiningSymbol().get());
+              res = SymTypeExpressionFactory.createPrimitive((TypeSymbol) mcType.getDefiningSymbol().get());
+            } else {
+              res = SymTypeExpressionFactory.createTypeExpression((TypeSymbol) mcType.getDefiningSymbol().get());
             }
           }
           else if (mcType.getDefiningSymbol().isEmpty()) {
-            Log.warn(
-                "Defining symbol for " + mcType.printType() + " was not set.");
+            Log.warn("Defining symbol for " + mcType.printType() + " was not set.");
           }
           else if (!(mcType.getDefiningSymbol().get() instanceof TypeSymbol)) {
-            Log.warn("Defining symbol for " + mcType.printType()
-                + " is not a TypeSymbol");
+            Log.warn("Defining symbol for " + mcType.printType() + " is not a TypeSymbol");
           }
 
           if (res != null) {
             if (astTyping.isPresentCardinality()) {
-              res = SymTypeExpressionFactory.createTypeArray(res.getTypeInfo(),
-                  1, res);
+              res = SymTypeExpressionFactory.createTypeArray(res.getTypeInfo(),1, res);
             }
             typeExpressions.add(res);
           }
@@ -107,8 +96,7 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
 
   @Override
   public void visit(ASTSysMLParameter node) {
-    List<SymTypeExpression> types = getTypeCompletion(
-        node.getSpecializationList(), false);
+    List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
 
     if (node.isPresentSymbol() && !types.isEmpty()) {
       node.getSymbol().setType(types.get(0));
@@ -116,14 +104,12 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
   }
 
   /**
-   * Completes the usage symbol with corresponding types used by further
-   * model-processing tools. Type is stored as a SymTypeExpression and
-   * requires a backing Type symbol set by a SpecializationCompleter
+   * Completes the usage symbol with corresponding types used by further model-processing tools. Type is stored as a
+   * SymTypeExpression and requires a backing Type symbol set by a SpecializationCompleter
    */
   @Override
   public void visit(ASTPartUsage node) {
-    List<SymTypeExpression> types = getTypeCompletion(
-        node.getSpecializationList(), false);
+    List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
 
     if (node.isPresentSymbol()) {
       node.getSymbol().setTypesList(types);
@@ -138,10 +124,8 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
     if (node.isPresentSymbol()) {
       PortUsageSymbol symbol = node.getSymbol();
 
-      List<SymTypeExpression> types = getTypeCompletion(
-          node.getSpecializationList(), false);
-      List<SymTypeExpression> conjugatedTypes = getTypeCompletion(
-          node.getSpecializationList(), true);
+      List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
+      List<SymTypeExpression> conjugatedTypes = getTypeCompletion(node.getSpecializationList(), true);
 
       symbol.setTypesList(types);
       symbol.setConjugatedTypesList(conjugatedTypes);
@@ -156,8 +140,7 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
     if (node.isPresentSymbol()) {
       AttributeUsageSymbol symbol = node.getSymbol();
       // type
-      List<SymTypeExpression> types = getTypeCompletion(
-          node.getSpecializationList(), false);
+      List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
 
       symbol.setAccessModifier(BasicAccessModifier.ALL_INCLUSION);
 
