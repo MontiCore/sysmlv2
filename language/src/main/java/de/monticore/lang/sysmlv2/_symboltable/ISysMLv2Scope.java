@@ -22,6 +22,7 @@ import de.monticore.lang.sysmlparts.symboltable.adapters.AnonymousUsage2Variable
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeUsage2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeUsage2VariableSymbolAdapter;
+import de.monticore.lang.sysmlparts.symboltable.adapters.CalcDef2FunctionSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.CalcUsage2FunctionSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.EnumDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.PartDef2TypeSymbolAdapter;
@@ -49,7 +50,6 @@ import de.monticore.symboltable.ImportStatement;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
-import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -689,6 +689,11 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     var calcUsage = resolveCalcUsageLocally(name);
     if (calcUsage.isPresent()) {
       adapted.add(new CalcUsage2FunctionSymbolAdapter(calcUsage.get()));
+    }
+
+    var calcDef = resolveCalcDefLocally(name);
+    if (calcDef.isPresent()) {
+      adapted.add(new CalcDef2FunctionSymbolAdapter(calcDef.get()));
     }
     return adapted;
   }
