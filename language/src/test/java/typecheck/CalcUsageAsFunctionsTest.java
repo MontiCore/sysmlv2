@@ -4,6 +4,7 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBooleanTC3;
+import de.monticore.lang.sysmlv2.cocos.OneDirectReturnInCalcUsageCoCo;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.Test;
@@ -41,6 +42,7 @@ public class CalcUsageAsFunctionsTest {
 
     SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
     checker.addCoCo(new ConstraintIsBooleanTC3());
+    checker.addCoCo(new OneDirectReturnInCalcUsageCoCo());
     checker.checkAll(ast);
 
     assertTrue(Log.getFindings().isEmpty(), ()-> Log.getFindings().toString());
@@ -67,6 +69,7 @@ public class CalcUsageAsFunctionsTest {
 
     SysMLv2CoCoChecker checker = new SysMLv2CoCoChecker();
     checker.addCoCo(new ConstraintIsBooleanTC3());
+    checker.addCoCo(new OneDirectReturnInCalcUsageCoCo());
     checker.checkAll(ast);
 
     assertThat(Log.getFindings()).hasSize(1);
