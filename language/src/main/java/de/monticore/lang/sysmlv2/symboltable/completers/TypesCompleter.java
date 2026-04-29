@@ -44,23 +44,23 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
   private List<SymTypeExpression> getTypeCompletion(List<ASTSpecialization> specializationList, boolean conjugated) {
     List<SymTypeExpression> typeExpressions = new ArrayList<>();
 
-    for (var specialization : specializationList) {
-      if (specialization instanceof ASTSysMLTyping && ((ASTSysMLTyping) specialization).isConjugated() == conjugated) {
+    for(var specialization : specializationList) {
+      if(specialization instanceof ASTSysMLTyping && ((ASTSysMLTyping) specialization).isConjugated() == conjugated) {
         var astTyping = (ASTSysMLTyping) specialization;
 
-        for (var mcType : astTyping.getSuperTypesList()) {
+        for(var mcType : astTyping.getSuperTypesList()) {
           SymTypeExpression res = null;
-          if (mcType instanceof ASTMCTupleType) {
+          if(mcType instanceof ASTMCTupleType) {
             var tupleType = (ASTMCTupleType) mcType;
             List<SymTypeExpression> componentTypes = new ArrayList<>();
-            for (var componentMcType : tupleType.getMCTypeList()) {
+            for(var componentMcType : tupleType.getMCTypeList()) {
               componentTypes.add(SymTypeExpressionFactory.createTypeExpression(
                   componentMcType.printType(),
                   (IBasicSymbolsScope) componentMcType.getEnclosingScope()));
             }
             res = SymTypeExpressionFactory.createTuple(componentTypes);
           }
-          else if (mcType instanceof ASTMCGenericType) {
+          else if(mcType instanceof ASTMCGenericType) {
             // We still have to print when the type is generic because the defining symbol does not give info about the
             // instantiation with type arguments
             res = SymTypeExpressionFactory.createTypeExpression(
@@ -75,15 +75,15 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
               res = SymTypeExpressionFactory.createTypeExpression((TypeSymbol) mcType.getDefiningSymbol().get());
             }
           }
-          else if (mcType.getDefiningSymbol().isEmpty()) {
+          else if(mcType.getDefiningSymbol().isEmpty()) {
             Log.warn("Defining symbol for " + mcType.printType() + " was not set.");
           }
           else if (!(mcType.getDefiningSymbol().get() instanceof TypeSymbol)) {
             Log.warn("Defining symbol for " + mcType.printType() + " is not a TypeSymbol");
           }
 
-          if (res != null) {
-            if (astTyping.isPresentCardinality()) {
+          if(res != null) {
+            if(astTyping.isPresentCardinality()) {
               res = SymTypeExpressionFactory.createTypeArray(res.getTypeInfo(),1, res);
             }
             typeExpressions.add(res);
@@ -98,7 +98,7 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
   public void visit(ASTSysMLParameter node) {
     List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
 
-    if (node.isPresentSymbol() && !types.isEmpty()) {
+    if(node.isPresentSymbol() && !types.isEmpty()) {
       node.getSymbol().setType(types.get(0));
     }
   }
@@ -121,7 +121,7 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
    */
   @Override
   public void visit(ASTPortUsage node) {
-    if (node.isPresentSymbol()) {
+    if(node.isPresentSymbol()) {
       PortUsageSymbol symbol = node.getSymbol();
 
       List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
@@ -137,7 +137,7 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
    */
   @Override
   public void visit(ASTAttributeUsage node) {
-    if (node.isPresentSymbol()) {
+    if(node.isPresentSymbol()) {
       AttributeUsageSymbol symbol = node.getSymbol();
       // type
       List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
