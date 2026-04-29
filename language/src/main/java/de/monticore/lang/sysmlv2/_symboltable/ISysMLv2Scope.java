@@ -129,11 +129,13 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
 
       for (String potentialName : potentialNames) {
-        result.addAll(getEnclosingScope().resolveTypeMany( foundSymbols,
-          potentialName,
-          modifier,
-          predicate)
+        var resolvedEnclosing = getEnclosingScope().resolveTypeMany( foundSymbols,
+            potentialName,
+            modifier,
+            predicate
         );
+        result.addAll(resolvedEnclosing);
+        foundSymbols = foundSymbols || !resolvedEnclosing.isEmpty();
       }
     }
 
@@ -175,11 +177,13 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
 
       for (String potentialName : potentialNames) {
-        result.addAll(getEnclosingScope().resolveVariableMany( foundSymbols,
-          potentialName,
-          modifier,
-          predicate)
+        var resolvedEnclosing = getEnclosingScope().resolveVariableMany( foundSymbols,
+            potentialName,
+            modifier,
+            predicate
         );
+        result.addAll(resolvedEnclosing);
+        foundSymbols = foundSymbols || !resolvedEnclosing.isEmpty();
       }
     }
 
@@ -221,11 +225,13 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
 
       for (String potentialName : potentialNames) {
-        result.addAll(getEnclosingScope().resolveFunctionMany( foundSymbols,
-          potentialName,
-          modifier,
-          predicate)
+        var resolvedEnclosing = getEnclosingScope().resolveFunctionMany( foundSymbols,
+            potentialName,
+            modifier,
+            predicate
         );
+        result.addAll(resolvedEnclosing);
+        foundSymbols = foundSymbols || !resolvedEnclosing.isEmpty();
       }
     }
 
@@ -237,6 +243,11 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
    * on continueTypeWithEnclosingScope(4): MontiCore's symbol resolution is
    * Java-like out-of-the-box and needs to be extended for SysMLv2's usage
    * of packages (namespaces) as proper modeling elements.
+   * Also, the Scopes-Included Imports are used for potential name qualification.
+   * Therefore: 1. Matching, direct Imports are taken as FQNs
+   *            2. Star and recursive Imports do try to resolve the import
+   *               where the wildcard is replaced by the resolved Symbols name.
+   *               Therefore, recursive imports are only supported as star-imports.
    */
   default Set<String> calcQNamesForEnclosingScope(String name,
                                                   List<ImportStatement> importStatements) {
