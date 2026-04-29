@@ -559,20 +559,14 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Tool Download and Use">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
       Prerequisites
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -624,8 +618,6 @@
   
     
     
-      
-        
       
         
       
@@ -733,29 +725,6 @@
   
   <span class="md-ellipsis">
     Tools & Editors
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../HelloWorld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Hello World!
     
   </span>
   
@@ -991,7 +960,7 @@
 <li><a href="https://www.monticore.de/download/MCSysMLv2.jar"><strong>Download SysML v2 Tool</strong></a></li>
 </ul>
 <p>The SysML v2 tool offers options for processing SysML v2 models. It provides through the CLI as follows:</p>
-<p><code>java -jar MCSysMLv2.jar [-h] -i &lt;fileName&gt; [-path &lt;p&gt;] [-pp [&lt;file&gt;]] [-s [&lt;file&gt;]]</code></p>
+<p><code>java -jar MCSysMLv2.jar [-h] -i &amp;lt;fileName&amp;gt; [-path &amp;lt;p&amp;gt;] [-pp [&amp;lt;file&amp;gt;]] [-s [&amp;lt;file&amp;gt;]]</code></p>
 <p>where the arguments are:</p>
 <table>
 <thead>
@@ -1003,30 +972,30 @@
 <tbody>
 <tr>
 <td>-ex,--extended</td>
-<td>Runs additional checks assuring models are fit for semantic analysis using <a href="https://www.se-rwth.de/projects/#MontiBelle">MontiBelle</a></td>
+<td>Runs additional checks assuring the semantic soundness of models according to Spes</td>
 </tr>
 <tr>
 <td>-h,--help</td>
 <td>Prints this help dialog</td>
 </tr>
 <tr>
-<td>-i,--input <file></td>
+<td>-i,--input &lt;file&gt;</td>
 <td>Reads the source file (mandatory) and parses the contents</td>
 </tr>
 <tr>
-<td>-path <arg></td>
+<td>-path &lt;arg&gt;</td>
 <td>Sets the artifact path for imported symbols, space separated.</td>
 </tr>
 <tr>
-<td>-pp,--prettyprint <file></td>
+<td>-pp,--prettyprint &lt;file&gt;</td>
 <td>Prints the AST to stdout or the specified file (optional)</td>
 </tr>
 <tr>
-<td>-r,--report <dir></td>
+<td>-r,--report &lt;dir&gt;</td>
 <td>Prints reports of the artifact to the specified directory.</td>
 </tr>
 <tr>
-<td>-s,--symboltable <file></td>
+<td>-s,--symboltable &lt;file&gt;</td>
 <td>Serialized the Symbol table of the given artifact.</td>
 </tr>
 <tr>
@@ -1039,7 +1008,7 @@
 <div class="highlight"><pre><span></span><code>java<span class="w"> </span>-jar<span class="w"> </span>MCSysMLv2.jar<span class="w"> </span>-h
 java<span class="w"> </span>-jar<span class="w"> </span>MCSysMLv2.jar<span class="w"> </span>-i<span class="w"> </span>Car.sysml<span class="w"> </span>-pp
 </code></pre></div>
-<h5 id="prerequisites">Prerequisites</h5>
+<h2 id="prerequisites">Prerequisites</h2>
 <p>To run the tool, it is required to install a Java 21 JRE.</p>
 
 
