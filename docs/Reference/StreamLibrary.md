@@ -10,11 +10,15 @@ Timing can be specified in multiple ways using user defined keywords:
 
 1. At the interface level over ports:
 
-```#event port x;```
+    ```
+    #event port x;
+    ```
 
 2. On the behavioral level:
 
-```#sync satisfy requirement {...}```
+    ```
+    #sync satisfy requirement {...}
+    ```
 
 !!! warning
     Note that 1. & 2. are **mutually** exclusive.

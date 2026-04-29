@@ -75,7 +75,6 @@ nav:
       - Building from Source: 'GettingStarted/Developers.md'
       - Setup: 'GettingStarted/Setup.md'
       - Tools & Editors: 'GettingStarted/Editor.md'
-      - Hello World!: 'GettingStarted/HelloWorld.md'
   - SpesML:
     - Overview: 'SpesML/index.md'
     - Reference: 
