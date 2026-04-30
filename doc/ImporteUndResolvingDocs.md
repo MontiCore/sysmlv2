@@ -77,7 +77,7 @@ for (ImportStatement importStatement : imports) {
 ### SysMLv2ScopesGenitor
 Die Symbole der SysML-Scopes werden aktuell nicht mit den Importen initialisiert.
 
-## 4. Einschränkungen und Roadmap
+## 4. Einschränkungen
 Da `calculateQualifiedNames` in aktuellen MontiCore-Versionen als `@deprecated`
 markiert ist, sollte langfristig auf eine explizite Qualifizierung während der
 Symbolerstellung im `ScopesGenitor` umgestellt werden.
