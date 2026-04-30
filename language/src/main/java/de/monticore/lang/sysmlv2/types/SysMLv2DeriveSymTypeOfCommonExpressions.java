@@ -78,6 +78,8 @@ public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfComm
         var streamType = SysMLv2Mill.globalScope().resolveType("EventStream");
         if(streamType.isEmpty()) {
           Log.error("Stream not defined in global scope. Initialize it with 'SysMLv2Mill.addStreamType()'!");
+          getTypeCheckResult().setResult(SymTypeExpressionFactory.createObscureType());
+          return;
         }
         if (type instanceof SymTypeArray) {
           //for example, type like boolean[], int[]...
@@ -158,7 +160,8 @@ public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfComm
         //in superclass is: getTypeCheckResult().setResult(type);
         if (expr.getExpression() instanceof ASTNameExpression) {
           //case for expression like f.a,f.a[1]
-          if (((ASTNameExpression) expr.getExpression()).getDefiningSymbol().get() instanceof PortUsage2VariableSymbolAdapter) {
+          var definingSymbol = ((ASTNameExpression) expr.getExpression()).getDefiningSymbol();
+          if (definingSymbol.isPresent() && definingSymbol.get() instanceof PortUsage2VariableSymbolAdapter) {
             calculateFieldAccessAboutPortUsage(type);
           } else {
             //else-case for SuperClass
@@ -169,7 +172,8 @@ public class SysMLv2DeriveSymTypeOfCommonExpressions extends DeriveSymTypeOfComm
           var arrayExpr = expr.getExpression();
           if (((ASTArrayAccessExpression) arrayExpr).getExpression() instanceof ASTNameExpression) {
             var nameExpr = ((ASTArrayAccessExpression) arrayExpr).getExpression();
-            if (((ASTNameExpression) nameExpr).getDefiningSymbol().get() instanceof PortUsage2VariableSymbolAdapter) {
+            var definingSymbol = ((ASTNameExpression) nameExpr).getDefiningSymbol();
+            if (definingSymbol.isPresent() && definingSymbol.get() instanceof PortUsage2VariableSymbolAdapter) {
               calculateFieldAccessAboutPortUsage(type);
             } else {
               //else-case for SuperClass
