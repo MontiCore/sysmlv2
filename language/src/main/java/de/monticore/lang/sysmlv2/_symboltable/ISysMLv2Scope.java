@@ -274,7 +274,6 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       potentialSymbolNames.add(this.getSpanningSymbol().getName() + "." + name);
     }
 
-    // import statements are not yet considered
 
     return potentialSymbolNames;
   }
