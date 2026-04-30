@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.symboltable.completers;
 
+import de.monticore.lang.sysmlactions._ast.ASTCalcDef;
 import de.monticore.lang.sysmlactions._ast.ASTCalcUsage;
 import de.monticore.lang.sysmlactions._visitor.SysMLActionsVisitor2;
 import de.monticore.lang.sysmlbasis._ast.ASTAnonymousReference;
@@ -29,7 +30,6 @@ import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
 import de.monticore.types.mcstructuraltypes._ast.ASTMCTupleType;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,6 +150,39 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
 
   @Override
   public void endVisit(ASTCalcUsage node) {
+    if (node.isPresentSymbol()) {
+      // Use a one-element array because Java does not allow reassigning local variables
+      // from inside anonymous visitor classes
+      final SymTypeExpression[] returnType = new SymTypeExpression[1];
+      returnType[0] = SymTypeExpressionFactory.createTopType();
+
+      var traverser = SysMLv2Mill.inheritanceTraverser();
+      traverser.add4SysMLBasis(new SysMLBasisVisitor2() {
+        @Override
+        public void visit(ASTAnonymousUsage retNode) {
+          if (retNode.getModifier().isReturn() && retNode.getEnclosingScope() == node.getSpannedScope()) {
+            List<SymTypeExpression> types = getTypeCompletion(retNode.getSpecializationList(), false);
+            returnType[0] = types.isEmpty() ? SymTypeExpressionFactory.createObscureType() : types.get(0);
+          }
+        }
+      });
+
+      traverser.add4SysMLParts(new SysMLPartsVisitor2() {
+        @Override
+        public void visit(ASTAttributeUsage retNode) {
+          if (retNode.getModifier().isReturn() && retNode.getEnclosingScope() == node.getSpannedScope()) {
+            List<SymTypeExpression> types = getTypeCompletion(retNode.getSpecializationList(), false);
+            returnType[0] = types.isEmpty() ? SymTypeExpressionFactory.createObscureType() : types.get(0);
+          }
+        }
+      });
+      node.accept(traverser);
+      node.getSymbol().setReturnType(returnType[0]);
+    }
+  }
+
+  @Override
+  public void endVisit(ASTCalcDef node) {
     if (node.isPresentSymbol()) {
       // Use a one-element array because Java does not allow reassigning local variables
       // from inside anonymous visitor classes
