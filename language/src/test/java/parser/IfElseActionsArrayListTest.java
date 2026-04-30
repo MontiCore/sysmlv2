@@ -3,7 +3,6 @@ package parser;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
-
 import org.junit.jupiter.api.Test;
 import de.monticore.lang.sysmlactions._ast.ASTIfActionUsage;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
@@ -28,6 +27,8 @@ public class IfElseActionsArrayListTest {
 
   @Test
   public void parsesIfandElseActionsSeparately() throws IOException {
+
+    SysMLv2Parser parser = SysMLv2Mill.parser();
 
     Optional<ASTSysMLModel> rootOpt = parser.parse("src/test/resources/parser/ifelseactions.sysml");
 
