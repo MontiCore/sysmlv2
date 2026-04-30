@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IfElseActionsArrayListTest {
 
-
   SysMLv2Parser parser = SysMLv2Mill.parser();
   @BeforeAll
   public static void init() {
@@ -31,8 +30,8 @@ public class IfElseActionsArrayListTest {
   @Test
   public void parsesIfandElseActionsSeparately() throws IOException {
 
-    SysMLv2Parser parser = SysMLv2Mill.parser();
 
+    SysMLv2Parser parser = SysMLv2Mill.parser();
 
     Optional<ASTSysMLModel> rootOpt = parser.parse("src/test/resources/parser/ifelseactions.sysml");
 
