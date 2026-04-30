@@ -28,8 +28,6 @@ public class IfElseActionsArrayListTest {
   @Test
   public void parsesIfandElseActionsSeparately() throws IOException {
 
-    SysMLv2Parser parser = SysMLv2Mill.parser();
-
     Optional<ASTSysMLModel> rootOpt = parser.parse("src/test/resources/parser/ifelseactions.sysml");
 
     assertTrue(rootOpt.isPresent(), "Expected model to parse");
