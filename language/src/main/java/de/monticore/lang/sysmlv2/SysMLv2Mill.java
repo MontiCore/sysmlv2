@@ -36,6 +36,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     SysMLv2Mill.addScalarValueTypes();
     SysMLv2Mill.addCollectionTypes();
     SysMLv2Mill.addTsynVariables();
+    SysMLv2Tool.loadStreamSymbolsFromJar();
   }
 
   /**

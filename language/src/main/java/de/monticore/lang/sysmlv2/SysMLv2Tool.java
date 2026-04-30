@@ -462,7 +462,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     }
   }
 
-  public void loadStreamSymbolsFromJar() {
+  public static void loadStreamSymbolsFromJar() {
     URL streamDefUrl = SysMLv2Tool.class.getClassLoader().getResource(
         "Stream.symtabdefinitionsym");
 
