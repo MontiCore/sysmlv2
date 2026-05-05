@@ -88,7 +88,7 @@ public class ExpressionParserTest {
    * wrapped within a Call Expression
    */
   @Test
-  public void testCallFunExpr() throws IOException {
+  public void testSysMLFunctionOperatorExpr() throws IOException {
     var ast = parser.parse_StringExpression("x->excludes(y)");
 
     assertThat(ast).isPresent();
@@ -98,5 +98,19 @@ public class ExpressionParserTest {
     // currently the parameters are separated in an outer CallExpr
     assertThat(ast.get()).isInstanceOf(ASTSysMLFunctionOperationExpression.class);
   }
+
+  @Test
+  public void testSysMLFunctionOperatorExpr2() throws IOException {
+    var ast = parser.parse_StringExpression("x->excludes(y.z)");
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    // We do expect: SysMLFunctionOperatorExpression with an inner
+    //  expression, name and parameters
+    // currently the parameters are separated in an outer CallExpr
+    assertThat(ast.get()).isInstanceOf(ASTSysMLFunctionOperationExpression.class);
+  }
+
+  // ReachableStates(c.behavior, input2.values())->excludes(SecurityGate_LLR.behavior.Bob_Alice_Eve)
 
 }
