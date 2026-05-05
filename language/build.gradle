@@ -46,6 +46,9 @@ dependencies {
 
   implementation "org.apache.commons:commons-lang3:$commons_lang_version"
   implementation "commons-cli:commons-cli:$commons_cli_version"
+
+  def omg_version = "0.18.0"
+  testImplementation(group: "org.omg.sysml", name: "org.omg.sysml.interactive", version: omg_version, classifier: "all")
 }
 
 /* ============================================================ */
