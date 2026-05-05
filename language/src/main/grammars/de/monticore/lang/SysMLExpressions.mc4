@@ -111,7 +111,7 @@ component grammar SysMLExpressions
    * name of the function to be invoked and an argument list for any remaining arguments (see 7.4.9.4). This is
    * useful for chaining invocations in an effective data flow
    */
-  SysMLFunctionOperationExpression implements Expression =
+  SysMLFunctionOperationExpression implements Expression <291> =
     Expression "->" Name ("(" (SysMLParameter || ",")* ")")? ("{" SysMLElement* inner:Expression "}")? ;
 
   // Eigentlich ist "^" der Name einer CalcDef aus den Domain Libraries

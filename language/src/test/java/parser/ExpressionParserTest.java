@@ -2,6 +2,7 @@ package parser;
 
 import de.monticore.expressions.commonexpressions._ast.ASTCallExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTElementOfExpression;
+import de.monticore.lang.sysmlexpressions._ast.ASTSysMLFunctionOperationExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSysMLInstantiation;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
@@ -80,6 +81,22 @@ public class ExpressionParserTest {
     assertThat(ast).isPresent();
     assertThat(Log.getFindings()).isEmpty();
     assertThat(ast.get()).isInstanceOf(ASTElementOfExpression.class);
+  }
+
+  /**
+   * Checks if SysMLFunctionOperatorExpressions are parsed without being
+   * wrapped within a Call Expression
+   */
+  @Test
+  public void testCallFunExpr() throws IOException {
+    var ast = parser.parse_StringExpression("x->excludes(y)");
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    // We do expect: SysMLFunctionOperatorExpression with an inner
+    //  expression, name and parameters
+    // currently the parameters are separated in an outer CallExpr
+    assertThat(ast.get()).isInstanceOf(ASTSysMLFunctionOperationExpression.class);
   }
 
 }
