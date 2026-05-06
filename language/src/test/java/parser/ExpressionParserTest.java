@@ -88,6 +88,22 @@ public class ExpressionParserTest {
    * wrapped within a Call Expression
    */
   @Test
+  public void testSysMLFunctionOperatorExprMinimal() throws IOException {
+    var ast = parser.parse_StringExpression("x->b()");
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    // We do expect: SysMLFunctionOperatorExpression with an inner
+    //  expression, name and parameters
+    // currently the parameters are separated in an outer CallExpr
+    assertThat(ast.get()).isInstanceOf(ASTSysMLFunctionOperationExpression.class);
+  }
+
+  /**
+   * Checks if SysMLFunctionOperatorExpressions are parsed without being
+   * wrapped within a Call Expression
+   */
+  @Test
   public void testSysMLFunctionOperatorExpr() throws IOException {
     var ast = parser.parse_StringExpression("x->excludes(y)");
 
