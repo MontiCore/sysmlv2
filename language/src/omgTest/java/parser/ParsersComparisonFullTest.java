@@ -9,17 +9,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.omg.sysml.interactive.SysMLInteractive;
-import org.omg.sysml.interactive.SysMLInteractiveResult;
+import org.eclipse.xtext.validation.Issue;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ParsersComparisonTest {
-  private static final String MODEL_PATH = "src/test/resources/parser";
+public class ParsersComparisonFullTest {
+  private static final String MODEL_PATH = "src/omgTest/resources/parser";
 
   private SysMLv2Parser parser = SysMLv2Mill.parser();
 
@@ -68,17 +70,19 @@ public class ParsersComparisonTest {
     Path modelPath = Path.of(MODEL_PATH, modelName);
 
     // 1) MontiCore parser (existing behavior)
-    Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse(modelPath.toString());
+    Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse(
+        modelPath.toString()); //wie mache ich hier volle Validierung mit CoCos?
     assertFalse(parser.hasErrors(), "MontiCore parsing should not have failed");
     assertTrue(ast.isPresent(), "MontiCore AST should have been created");
 
     // 2) Official OMG parser
     String input = Files.readString(modelPath);
-    SysMLInteractiveResult result = official.eval(input);
+    official.parse(input);
+    List<Issue> issues = official.validate();
 
-    assertFalse(
-        result.hasErrors(),
-        () -> "Official OMG parser errors for " + modelName + ":\n" + result.formatIssues()
+    assertTrue(
+        issues.isEmpty(),
+        () -> "Official OMG validation issues for " + modelName + ":\n"
     );
   }
 }

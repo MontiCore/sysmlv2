@@ -5,7 +5,7 @@ plugins {
 
 tasks.build.dependsOn shadowJar
 
-def omg_version= '0.18.0'
+def omg_version= project.findProperty("omgVersion")
 
 dependencies {
   implementation group: 'org.omg.sysml', name: 'org.omg.sysml.interactive', version: omg_version, classifier: 'all'
