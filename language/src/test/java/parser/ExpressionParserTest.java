@@ -95,7 +95,6 @@ public class ExpressionParserTest {
     assertThat(Log.getFindings()).isEmpty();
     // We do expect: SysMLFunctionOperatorExpression with an inner
     //  expression, name and parameters
-    // currently the parameters are separated in an outer CallExpr
     assertThat(ast.get()).isInstanceOf(ASTSysMLFunctionOperationExpression.class);
   }
 
@@ -111,7 +110,6 @@ public class ExpressionParserTest {
     assertThat(Log.getFindings()).isEmpty();
     // We do expect: SysMLFunctionOperatorExpression with an inner
     //  expression, name and parameters
-    // currently the parameters are separated in an outer CallExpr
     assertThat(ast.get()).isInstanceOf(ASTSysMLFunctionOperationExpression.class);
   }
 
