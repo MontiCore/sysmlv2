@@ -1,7 +1,7 @@
 package de.monticore.lang.sysmloccurrences.symboltable.adapters;
 
 import com.google.common.base.Preconditions;
-import de.monticore.lang.sysmloccurrences._symboltable.ItemDefSymbol;
+import de.monticore.lang.sysmlparts._symboltable.ItemDefSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.se_rwth.commons.SourcePosition;
