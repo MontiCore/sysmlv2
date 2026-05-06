@@ -33,9 +33,29 @@ test {
   useJUnitPlatform()
 }
 
+def isPipelineFullBuild = (project.findProperty("isPipelineFullBuild")?.toString()?.toBoolean() ?: false)
+println "language:isPipelineFullBuild=" + isPipelineFullBuild
+def omg_version = (project.findProperty("omgVersion") ?: "0.58.0").toString()
+
 /* ============================================================ */
 /* ======================= Dependencies ======================= */
 /* ============================================================ */
+sourceSets {
+  omgTest {
+    java.srcDir("src/omgTest/java")
+    resources.srcDir("src/omgTest/resources")
+
+    // Let omgTest reuse the normal test classpath (JUnit, assertj, etc.)
+    compileClasspath += sourceSets.test.compileClasspath
+    runtimeClasspath += sourceSets.test.runtimeClasspath
+  }
+}
+
+configurations {
+  omgTestImplementation.extendsFrom(testImplementation)
+  omgTestRuntimeOnly.extendsFrom(testRuntimeOnly)
+}
+
 
 dependencies {
   // language dependencies
@@ -47,8 +67,31 @@ dependencies {
   implementation "org.apache.commons:commons-lang3:$commons_lang_version"
   implementation "commons-cli:commons-cli:$commons_cli_version"
 
-  def omg_version = "0.18.0"
-  testImplementation(group: "org.omg.sysml", name: "org.omg.sysml.interactive", version: omg_version, classifier: "all")
+  if (isPipelineFullBuild) {
+    add("omgTestImplementation", [group: "org.omg.sysml", name: "org.omg.sysml.interactive", version: omg_version, classifier: "all"])
+  }
+}
+
+tasks.register("omgTest", Test) {
+  description = "Runs OMG SysML v2 pilot parser compatibility tests (only in full pipeline build)."
+  group = "verification"
+
+  testClassesDirs = sourceSets.omgTest.output.classesDirs
+  classpath = sourceSets.omgTest.runtimeClasspath
+
+  shouldRunAfter(tasks.test)
+  useJUnitPlatform()
+
+  onlyIf { isPipelineFullBuild }
+}
+
+// If you want `./gradlew :language:check` to include it in full builds:
+tasks.named("check") {
+  dependsOn(tasks.named("omgTest"))
+}
+
+tasks.named("processOmgTestResources") {
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 /* ============================================================ */
@@ -112,5 +155,4 @@ publishing {
     url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
   }
 }
-
 defaultTasks('build')
