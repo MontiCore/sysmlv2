@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.cocos;
 
-import de.monticore.lang.sysmlconnections._ast.ASTFlowUsage;
-import de.monticore.lang.sysmlconnections._cocos.SysMLConnectionsASTFlowUsageCoCo;
+import de.monticore.lang.sysmlparts._ast.ASTFlowUsage;
+import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTFlowUsageCoCo;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -10,7 +10,7 @@ import de.se_rwth.commons.logging.Log;
  * Wir (SpesML v2) sehen es so vor, die Verwendung der allgemeinen Konnektoren
  * dem Flow-Konnectoren vorzuziehen.
  */
-public class FlowCheckCoCo implements SysMLConnectionsASTFlowUsageCoCo {
+public class FlowCheckCoCo implements SysMLPartsASTFlowUsageCoCo {
 
   @Override
   public void check(ASTFlowUsage node) {
