@@ -19,15 +19,16 @@ subprojects {
       name "SE Nexus"
       url = publicNexus
     }
-
-    maven {
-      name "Official SysMLv2 Github Package Registry"
-      url sysmlGithub
-      credentials {
-        username = githubUser
-        password = githubToken
-      }
-    }
+   if(isPipelineFullBuild) {
+     maven {
+       name "Official SysMLv2 Github Package Registry"
+       url sysmlGithub
+       credentials {
+         username = githubUser
+         password = githubToken
+       }
+     }
+   }
   }
 
   // Java JDK Warning
