@@ -1,11 +1,8 @@
 package de.monticore.lang.sysmlv2.cocos;
 
-import de.monticore.ast.ASTNode;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLRefinement;
-import de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
-import de.monticore.lang.sysmlv2.SysMLv2Mill;
+import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.stream.Collectors;
@@ -24,7 +21,7 @@ public class RefinementCyclic implements SysMLPartsASTPartDefCoCo {
     var refinements = node.getSymbol().getTransitiveRefinements();
 
     var cyclicRefinements = refiners.stream().filter(refinements::contains)
-        .map(SysMLTypeSymbol::getName)
+        .map(PartDefSymbol::getName)
         .collect(Collectors.toList());
     var pos = node.get_SourcePositionStart();
 
