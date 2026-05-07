@@ -10,6 +10,7 @@ import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -172,6 +173,22 @@ public class ConnectedPortsFitCoCoTest {
     checker.addCoCo(new ConnectedPortsFitCoCo());
     checker.checkAll(ast);
     assertThat(Log.getFindings().get(0).getMsg()).contains("0x10AC4");
+  }
+  @Disabled("Test zeigt dass CoCo verbinden von attributen wie Ports nicht unterstützt")
+  @Test
+  public void testBobHLR() throws IOException{
+    String model = "part def Bob_HLR { " +
+        " port input: boolean;" +
+        " attribute input_attribute: boolean;" +
+        " connect input to input_attribute;}";
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+    var checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new ConnectedPortsFitCoCo());
+    checker.checkAll(ast);
+    assertThat(Log.getFindings()).isEmpty();
   }
 
   @AfterEach
