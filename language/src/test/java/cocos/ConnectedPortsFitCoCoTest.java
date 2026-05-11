@@ -99,7 +99,7 @@ public class ConnectedPortsFitCoCoTest {
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo(new ConnectedPortsFitCoCo());
     checker.checkAll(ast);
-    assertThat(Log.getFindings().get(0).getMsg()).contains("0x10AC1");
+    assertThat(Log.getFindings().get(0).getMsg()).contains("0x10AC0");
   }
 
   @Test
@@ -117,7 +117,7 @@ public class ConnectedPortsFitCoCoTest {
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo(new ConnectedPortsFitCoCo());
     checker.checkAll(ast);
-    assertThat(Log.getFindings().get(0).getMsg()).contains("0x10AC2");
+    assertThat(Log.getFindings().get(0).getMsg()).contains("0x10AC1");
   }
 
   // In Arbeit
@@ -174,7 +174,7 @@ public class ConnectedPortsFitCoCoTest {
     checker.checkAll(ast);
     assertThat(Log.getFindings().get(0).getMsg()).contains("0x10AC4");
   }
-  @Disabled("Test zeigt dass CoCo verbinden von attributen wie Ports nicht unterstützt")
+  //@Disabled("Test zeigt dass CoCo verbinden von attributen wie Ports nicht unterstützt")
   @Test
   public void testBobHLR() throws IOException{
     String model = "part def Bob_HLR { " +
@@ -182,6 +182,37 @@ public class ConnectedPortsFitCoCoTest {
         " attribute input_attribute: boolean;" +
         " connect input to input_attribute;}";
     var ast = SysMLv2Mill.parser().parse_String(model).get();
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+    var checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new ConnectedPortsFitCoCo());
+    checker.checkAll(ast);
+    assertThat(Log.getFindings()).isEmpty();
+  }
+
+  @Test
+  public void testBobHLR2() throws IOException{
+    String model = "part def Bob_HLR {\n"
+        + "  port input: ~boolean;\n"
+        + "  port output: int;\n"
+        + "\n"
+        + "  satisfy requirement MsgProcessing {\n"
+        + "    attribute input_history: Booleans { \n"
+        + "      redefines E: Tuple { \n"
+        + "        redefines fst: Natural; \n"
+        + "        redefines snd: boolean; \n"
+        + "      }\n"
+        + "    }\n"
+        + "    attribute output_history: Booleans { \n"
+        + "      redefines E: Natural;\n"
+        + "    }\n"
+        + "    connect input_history to input;\n"
+        + "    connect output_history to output;\n"
+        + "  }\n"
+        + "}\n";
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+    SysMLv2Mill.globalScope().setSymbolPath(new MCPath(Paths.get(JSON_OUTPUT_DIR)));
     tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
     tool.finalizeSymbolTable(ast);
