@@ -128,20 +128,22 @@ stable. However, when the same files are accessed later through LSP actions like
 server checks the `DocumentManager`, finds no registered scope, and creates a
 *new* `ArtifactScope`. This new scope also adds its symbols to the
 `GlobalScope`. And Because the old symbols were never deleted, the resolver
-now finds two identical matches for the same name, leading to a
-`ResolvedSeveralEntriesForSymbolException: 0xA4095 Found 2 symbols`. The
-`indexing process` and `postprocessing()` can be found in the generated file
-`SysMLv2DocumentInformationProvider.java`.
+now finds two identical matches for the same name, leading to the exception
+`ResolvedSeveralEntriesForSymbolException: 0xA4095 Found 2 symbols`.
 
-### Identification: Breakpoints and Prints
-To identify the issue, check whether the indexing process reaches
-`postprocessing()`. Setting a breakpoint at `postprocessing()` alone is not
-enough, as it can be reached later in a different context (e.g., by `didOpen`).
+> **Note:** The `indexing process` and `postprocessing()` logic is located in the
+> generated file `SysMLv2DocumentInformationProvider.java`.
 
-You should verify that it occurs in the same execution "frame" as the original
-startup indexing. This can be observed by viewing the current stack frame in the
-debugger or by adding print statements to `createAllDocumentInformation` and
-`postprocessing()`.
+### Identification: Breakpoints and Logs
+To identify this issue, verify whether the indexing process successfully reaches
+`postprocessing()` during the initial startup. Setting a breakpoint at
+`postprocessing()` alone is not enough, as it might be triggered later by a
+`didOpen` event after the indexer has already failed.
+
+You should ensure that postprocessing occurs within the **same execution frame**
+as the original startup indexing. This can be verified by inspecting the stack
+frame in the debugger or by adding print statements to
+`createAllDocumentInformation` and `postprocessing()`.
 
 **Helpful Checkpoints:**
 * Are all workspace documents being parsed?
