@@ -1,0 +1,144 @@
+{% extends "main.html" %}
+
+<!-- Render hero under tabs -->
+{% block tabs %}
+{{ super() }}
+
+<!-- Hero Section -->
+<link rel="stylesheet" href="stylesheets/landingpage.css">
+<section class="hero-section">
+  <div class="hero-container">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          A Semantically Well-Founded Full Parser for the <span class="hero-title-highlight">SysML v2</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          A semantically well-founded standard-compliant SysML v2 parser and model validator with a strong type system and semantic
+          foundation.
+        </p>
+
+        <div class="hero-features">
+          <div class="hero-feature">
+            <svg class="hero-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M9 12l2 2 4-4" />
+              <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
+            </svg>
+            <span>Model Validation via Fully Checked Context Conditions</span>
+          </div>
+          <div class="hero-feature">
+            <svg class="hero-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M9 12l2 2 4-4" />
+              <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
+            </svg>
+            <span>SpesML Functional Modeling Profile</span>
+          </div>
+        </div>
+
+        <div class="hero-features" style="margin-top: 2rem;">
+          <h3 style="color: white; margin-bottom: 0.75rem; font-size: 1.1rem; opacity: 0.9;">Coming Soon</h3>
+          <div class="hero-feature">
+            <svg class="hero-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--rwth-blau-50);">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span style="opacity: 0.8;">API Access</span>
+          </div>
+          <div class="hero-feature">
+            <svg class="hero-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--rwth-blau-50);">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span style="opacity: 0.8;">Formal Verification via a Connection to the Theorem Prover Isabelle</span>
+          </div>
+          <div class="hero-feature">
+            <svg class="hero-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--rwth-blau-50);">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span style="opacity: 0.8;">Runtime Verification and Monitoring Capabilities</span>
+          </div>
+          <div class="hero-feature">
+            <svg class="hero-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--rwth-blau-50);">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span style="opacity: 0.8;">Simulation Capabilities</span>
+          </div>
+          <div class="hero-feature">
+            <svg class="hero-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--rwth-blau-50);">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span style="opacity: 0.8;">Advanced Code Generation</span>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <a href="#more" class="btn btn-primary">
+            Read More
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+          <a href="https://github.com/Systems-Modeling/SysML-v2-Release/blob/master/doc/2a-OMG_Systems_Modeling_Language.pdf" class="btn btn-secondary">
+            Reference
+          </a>
+          <a href="{{ './Reference' | url }}" class="btn btn-secondary">
+            SpesML Reference
+          </a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-model-container" style="display: flex; gap: 1rem; align-items: stretch; background: rgba(0, 0, 0, 0.4); padding: 1rem; border-radius: 12px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); height: fit-content; align-self: center;">
+          <div style="flex: 1; display: flex; align-items: stretch; justify-content: center; background: white; border-radius: 8px; padding: 0.5rem;">
+            <img src="{{ 'assets/models/Vehicle.bmp' | url }}" alt="Vehicle Model" style="height: 100%; width: auto; object-fit: contain;">
+          </div>
+          <div class="hero-code-sample" style="flex: 1.5; margin: 0; background: rgba(0,0,0,0.6);">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot code-dot-red"></div>
+                <div class="code-dot code-dot-yellow"></div>
+                <div class="code-dot code-dot-green"></div>
+              </div>
+              <span class="code-filename">Vehicle.sysml</span>
+            </div>
+            <div class="code-content" style="color: white; font-size: 0.85rem; padding-left: 0.4rem;">
+<pre style="margin: 0; white-space: pre-wrap;"><code><span style="color: var(--rwth-blau-50)">part def</span> Vehicle {
+  <span style="color: var(--rwth-blau-50)">attribute</span> mass :> ISQ::mass;
+  <span style="color: var(--rwth-blau-50)">attribute</span> dryMass;
+  <span style="color: var(--rwth-blau-50)">attribute</span> cargoMass;
+  <span style="color: var(--rwth-blau-50)">attribute</span> electricalPower;
+
+  <span style="color: var(--rwth-blau-50)">port</span> pwrCmdPort;
+  <span style="color: var(--rwth-blau-50)">port</span> vehicleToRoadPort;
+
+  <span style="color: var(--rwth-blau-50)">perform action</span> providePower;
+  <span style="color: var(--rwth-blau-50)">perform action</span> provideBraking;
+
+  <span style="color: var(--rwth-blau-50)">exhibit</span> vehicleStates;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll-indicator">
+    <a href="#more">
+      <svg width="256" height="75" viewBox="0 0 256 75" style="display: block;">
+        <path style="fill:#ffffff" d="m 0,75.1 v 19 l 256,0 V 75.1 C 191,75.1 178,0 128,0 77,0 64,75.1 0,75.1 Z" />
+        <path d="m 128,40.5 v 17.633752 m 0,0 -8.81688,-8.816876 M 128,58.133752 l 8.81688,-8.816876" stroke="#0067a7"
+          stroke-width="5.87792" stroke-linecap="round" stroke-linejoin="round"
+          style="stroke:#8EBAE5;stroke-opacity:1" />
+      </svg>
+    </a>
+  </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+<img style="width: 100vw;" src="{{ 'assets/images/waves.svg' | url }}" />
+{{ super() }}
+{% endblock %}
