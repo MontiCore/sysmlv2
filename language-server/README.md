@@ -109,3 +109,54 @@ plugin should normally possess.
 #### Errors
 
 1. When running the Server fails and java throws the exception `Address already in use: NET_Bind` then there is likely already a server running. You can kill it in the task-manager by ending all tasks named `Java(TM) Platform SE`.
+
+## Troubleshooting
+
+### Cause: Crash during the Indexing Process
+When the Language Server starts, the `indexing process` processes all SysML
+documents in the workspace (currently open folder). For the parsed documents,
+resulting symbols and `ArtifactScopes` are created. Only after these objects are
+created is the link between the processed files and the corresponding `ArtifactScopes`
+registered in the `DocumentManager` during `postprocessing()`. If an error interrupts
+indexing before `postprocessing()` is reached, an inconsistent state arises:
+1. The symbols and `ArtifactScopes` already created remain in the `GlobalScope`.
+2. The `DocumentManager` lacks the link to these scopes for the respective file.
+
+Since the server does not crash immediately (`failQuick(false)`), it appears
+stable. However, when the same files are accessed later through LSP actions like
+`didOpen` or `didChange` (which trigger `updateAllDocumentInformation`), the
+server checks the `DocumentManager`, finds no registered scope, and creates a
+*new* `ArtifactScope`. This new scope also adds its symbols to the
+`GlobalScope`. And Because the old symbols were never deleted, the resolver
+now finds two identical matches for the same name, leading to a
+`ResolvedSeveralEntriesForSymbolException: 0xA4095 Found 2 symbols`. The
+`indexing process` and `postprocessing()` can be found in the generated file
+`SysMLv2DocumentInformationProvider.java`.
+
+### Identification: Breakpoints and Prints
+To identify the issue, check whether the indexing process reaches
+`postprocessing()`. Setting a breakpoint at `postprocessing()` alone is not
+enough, as it can be reached later in a different context (e.g., by `didOpen`).
+
+You should verify that it occurs in the same execution "frame" as the original
+startup indexing. This can be observed by viewing the current stack frame in the
+debugger or by adding print statements to `createAllDocumentInformation` and
+`postprocessing()`.
+
+**Helpful Checkpoints:**
+* Are all workspace documents being parsed?
+* Is an `ArtifactScope` being created for each document?
+* Is `postprocessing()` reached in the same frame as the indexer, or only
+  later through `didOpen`, CoCos, etc.?
+* Are different AST elements or `ArtifactScopes` (different ID codes, same
+  source) being created for the same model?
+
+If multiple AST IDs or duplicate symbols appear for the same file, failed
+indexing is likely the cause.
+
+### Solution: Prevent the Crash
+The solution is to prevent the crash during indexing and ensure no unregistered
+intermediate state remains. The fix depends on the specific error. For example,
+if a model requires a data type not loaded in `prepareGlobalScope`, it might
+lead to a `get()` on an `Optional.empty()`. Ensure all required symbols are
+available in the `GlobalScope` before indexing starts.
