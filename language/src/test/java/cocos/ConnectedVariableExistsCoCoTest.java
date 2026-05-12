@@ -64,7 +64,7 @@ public class ConnectedVariableExistsCoCoTest {
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo(new ConnectedVariableExistsCoCo());
     checker.checkAll(ast);
-    assertThat(Log.getFindings().get(0).getMsg()).contains("0x10AD0");
+    assertThat(Log.getFindings().get(0).getMsg()).contains("0x10AD1");
   }
 
   @AfterEach
