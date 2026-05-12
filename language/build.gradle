@@ -87,11 +87,19 @@ tasks.register("omgTest", Test) {
 
 // If you want `./gradlew :language:check` to include it in full builds:
 tasks.named("check") {
-  dependsOn(tasks.named("omgTest"))
+  if (isPipelineFullBuild) {
+    dependsOn(tasks.named("omgTest"))
+  }
 }
 
 tasks.named("processOmgTestResources") {
   duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+  onlyIf { isPipelineFullBuild }
+}
+
+tasks.named("compileOmgTestJava") {
+  onlyIf { isPipelineFullBuild }
 }
 
 /* ============================================================ */
