@@ -73,7 +73,10 @@ public class ParsersComparisonTest {
 
     // 2) Official OMG parser
     String input = Files.readString(modelPath);
-    official.parse(input);
+    assertDoesNotThrow(
+        () -> official.parse(input),
+        () -> "Official OMG parse() failed for " + modelName + " (" + modelPath + ")"
+    );
 
   }
 }
