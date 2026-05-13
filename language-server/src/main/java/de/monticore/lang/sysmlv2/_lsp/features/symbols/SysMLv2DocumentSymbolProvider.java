@@ -6,7 +6,7 @@ import de.mclsg.lsp.document_management.DocumentInformation;
 import de.mclsg.lsp.document_management.DocumentManager;
 import de.mclsg.lsp.features.DocumentSymbolProvider;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintDef;
-import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
+import de.monticore.lang.sysmlparts._ast.ASTSysMLPackage;
 import de.monticore.lang.sysmlparts._ast.ASTEnumDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPortDef;
