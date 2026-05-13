@@ -2,7 +2,6 @@
 package de.monticore.lang;
 
 grammar SysMLv2 extends SysMLExpressions,
-                        SysMLImportsAndPackages,
                         SysMLActions,
                         SysMLParts,
                         SysMLStates,

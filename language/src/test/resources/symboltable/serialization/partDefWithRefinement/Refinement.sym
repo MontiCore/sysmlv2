@@ -3,7 +3,7 @@
   "name": "Refinement",
   "symbols": [
     {
-      "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
+      "kind": "de.monticore.lang.sysmlparts._symboltable.SysMLPackageSymbol",
       "name": "Refinement",
       "fullName": "Refinement",
       "spannedScope": {

@@ -4,7 +4,7 @@ package cocos;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintDefCoCo;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTRequirementDefCoCo;
-import de.monticore.lang.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTSysMLPackageCoCo;
+import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTSysMLPackageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
@@ -65,7 +65,7 @@ public class NameCompatible4IsabelleTest {
     checker.addCoCo((SysMLConstraintsASTConstraintDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLActionsASTActionDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLConstraintsASTRequirementDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLImportsAndPackagesASTSysMLPackageCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLPartsASTSysMLPackageCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new NameCompatible4Isabelle());
     checker.checkAll(ast.get());
     assertTrue(Log.getFindings().isEmpty());
@@ -93,7 +93,7 @@ public class NameCompatible4IsabelleTest {
     checker.addCoCo((SysMLConstraintsASTConstraintDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLActionsASTActionDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLConstraintsASTRequirementDefCoCo) new NameCompatible4Isabelle());
-    checker.addCoCo((SysMLImportsAndPackagesASTSysMLPackageCoCo) new NameCompatible4Isabelle());
+    checker.addCoCo((SysMLPartsASTSysMLPackageCoCo) new NameCompatible4Isabelle());
     checker.addCoCo((SysMLPartsASTAttributeDefCoCo) new NameCompatible4Isabelle());
     checker.checkAll(ast.get());
 

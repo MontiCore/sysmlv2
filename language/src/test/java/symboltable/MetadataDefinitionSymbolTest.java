@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package symboltable;
 
-import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLMetaDataDefinition;
-import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
+import de.monticore.lang.sysmlparts._ast.ASTSysMLMetaDataDefinition;
+import de.monticore.lang.sysmlparts._ast.ASTSysMLPackage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.se_rwth.commons.logging.Log;

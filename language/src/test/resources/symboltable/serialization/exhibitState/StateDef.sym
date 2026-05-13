@@ -3,7 +3,7 @@
   "name": "StateDef",
   "symbols": [
     {
-      "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
+      "kind": "de.monticore.lang.sysmlparts._symboltable.SysMLPackageSymbol",
       "name": "StateDef",
       "fullName":"StateDef",
       "spannedScope": {

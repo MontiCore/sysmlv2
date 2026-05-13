@@ -3,7 +3,7 @@
   "name": "RoughStateDef",
   "symbols": [
     {
-      "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
+      "kind": "de.monticore.lang.sysmlparts._symboltable.SysMLPackageSymbol",
       "name": "RoughStateDef",
       "fullName":"RoughStateDef",
       "spannedScope": {
