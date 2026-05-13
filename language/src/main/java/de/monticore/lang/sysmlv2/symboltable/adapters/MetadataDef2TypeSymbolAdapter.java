@@ -2,7 +2,7 @@
 package de.monticore.lang.sysmlv2.symboltable.adapters;
 
 import com.google.common.base.Preconditions;
-import de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLMetaDataDefinitionSymbol;
+import de.monticore.lang.sysmlparts._symboltable.SysMLMetaDataDefinitionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.se_rwth.commons.SourcePosition;

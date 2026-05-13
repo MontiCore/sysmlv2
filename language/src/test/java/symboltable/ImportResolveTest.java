@@ -1,6 +1,6 @@
 package symboltable;
 
-import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
+import de.monticore.lang.sysmlparts._ast.ASTSysMLPackage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;

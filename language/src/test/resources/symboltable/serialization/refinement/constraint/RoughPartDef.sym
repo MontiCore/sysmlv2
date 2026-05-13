@@ -3,7 +3,7 @@
   "name": "RoughPartDef",
   "symbols": [
     {
-      "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
+      "kind": "de.monticore.lang.sysmlparts._symboltable.SysMLPackageSymbol",
       "name": "RoughPartDef",
       "fullName":"RoughPartDef",
       "spannedScope": {

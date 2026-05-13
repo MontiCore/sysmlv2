@@ -5,10 +5,10 @@ import de.monticore.lang.componentconnector.SerializationUtil;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintDefCoCo;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTRequirementDefCoCo;
-import de.monticore.lang.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTSysMLPackageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
+import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTSysMLPackageCoCo;
 import de.monticore.lang.sysmlparts.coco.PortDefHasOneType;
 import de.monticore.lang.sysmlparts.coco.PortDefNeedsDirection;
 import de.monticore.lang.sysmlparts.symboltable.completers.ConvertEnumUsagesToFields;
@@ -155,7 +155,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo(
         (SysMLConstraintsASTRequirementDefCoCo) new NameCompatible4Isabelle());
     checker.addCoCo(
-        (SysMLImportsAndPackagesASTSysMLPackageCoCo) new NameCompatible4Isabelle());
+        (SysMLPartsASTSysMLPackageCoCo) new NameCompatible4Isabelle());
     checker.addCoCo(
         (SysMLPartsASTAttributeDefCoCo) new NameCompatible4Isabelle());
 

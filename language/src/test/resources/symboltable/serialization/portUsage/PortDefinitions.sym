@@ -3,7 +3,7 @@
   "name": "PortDefinitions",
   "symbols": [
     {
-      "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
+      "kind": "de.monticore.lang.sysmlparts._symboltable.SysMLPackageSymbol",
       "name": "PortDefinitions",
       "fullName":"PortDefinitions",
       "spannedScope": {

@@ -11,13 +11,13 @@ import de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol;
 import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlconstraints.symboltable.adapters.RequirementSubject2VariableSymbolAdapter;
-import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLImportStatement;
-import de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol;
-import de.monticore.lang.sysmlimportsandpackages._visitor.SysMLImportsAndPackagesVisitor2;
+import de.monticore.lang.sysmlparts._ast.ASTSysMLImportStatement;
+import de.monticore.lang.sysmlparts._symboltable.SysMLPackageSymbol;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.ItemDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
+import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AnonymousUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeUsage2TypeSymbolAdapter;
@@ -112,7 +112,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
       var importStatements = new LinkedList<ImportStatement>();
       if(getEnclosingScope().isPresentAstNode()) {
-        var visitor = new SysMLImportsAndPackagesVisitor2() {
+        var visitor = new SysMLPartsVisitor2() {
           @Override
           public void visit(ASTSysMLImportStatement node) {
             if (getEnclosingScope().equals(node.getEnclosingScope())) {
@@ -122,7 +122,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
           }
         };
         var traverser = SysMLv2Mill.inheritanceTraverser();
-        traverser.add4SysMLImportsAndPackages(visitor);
+        traverser.add4SysMLParts(visitor);
         getEnclosingScope().getAstNode().accept(traverser);
       }
 
@@ -160,7 +160,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
       var importStatements = new LinkedList<ImportStatement>();
       if(getEnclosingScope().isPresentAstNode()) {
-        var visitor = new SysMLImportsAndPackagesVisitor2() {
+        var visitor = new SysMLPartsVisitor2() {
           @Override
           public void visit(ASTSysMLImportStatement node) {
             if (getEnclosingScope().equals(node.getEnclosingScope())) {
@@ -170,7 +170,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
           }
         };
         var traverser = SysMLv2Mill.inheritanceTraverser();
-        traverser.add4SysMLImportsAndPackages(visitor);
+        traverser.add4SysMLParts(visitor);
         getEnclosingScope().getAstNode().accept(traverser);
       }
 
@@ -208,7 +208,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
       var importStatements = new LinkedList<ImportStatement>();
       if(getEnclosingScope().isPresentAstNode()) {
-        var visitor = new SysMLImportsAndPackagesVisitor2() {
+        var visitor = new SysMLPartsVisitor2() {
           @Override
           public void visit(ASTSysMLImportStatement node) {
             if (getEnclosingScope().equals(node.getEnclosingScope())) {
@@ -218,7 +218,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
           }
         };
         var traverser = SysMLv2Mill.inheritanceTraverser();
-        traverser.add4SysMLImportsAndPackages(visitor);
+        traverser.add4SysMLParts(visitor);
         getEnclosingScope().getAstNode().accept(traverser);
       }
 
