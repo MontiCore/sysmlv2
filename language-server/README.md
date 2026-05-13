@@ -35,7 +35,7 @@ installing our integrated **VSCode Plugin** to get going the fastest:
    view in VSCode
 3. **Done**! Now create or open a text file with the ending `.sysml`:
 
-![showcase](doc/showcase.png)
+![showcase](../doc/showcase.png)
 
 [download]: https://github-registry-files.githubusercontent.com/758456656/1b847700-819d-11f0-8dad-cb32a1bfe312?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250916%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250916T120634Z&X-Amz-Expires=300&X-Amz-Signature=8856e041f06680f48963357fe24467e82f549ab877f3902d9bbe5dc381c649c8&X-Amz-SignedHeaders=host&response-content-disposition=filename%3Dlanguage-server-7.6.1-10-vscode.vsix&response-content-type=application%2Foctet-stream
 
@@ -44,5 +44,121 @@ installing our integrated **VSCode Plugin** to get going the fastest:
 Find [known issues][issues] and more explanations on [how to develop for this
 project **here**][devs].
 
-[issues]: doc/KNOWN_ISSUES.md
-[devs]: doc/FOR_DEVELOPERS.md
+## Known Issues
+
+| Method                                                                 | does it work?         | notes                                                                                                                                                    |
+|------------------------------------------------------------------------|-----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Installing the plugin and running it alone                             | yes                   | Works as intended                                                                                                                                        |
+| Running the plugin alone without installing it                         | yes                   | Works as intended                                                                                                                                        |
+| Installing the plugin and running the server seperately                | no                    | Even if set to connect to an already running server the client will always try to start its own server.                                                  |
+| Running the plugin and server seperately without installing the plugin | only with workarounds | The client can be forced to connect to an already running server with an environment variable                                                            |
+| Executing the gradle task 'runSysMLv2VscodePluginAttached'             | no                    | Current theory is that the client is started before the server is ready and then fails to connect properly. (only a guess. further insight is required.) |
+
+The client always tries to start its own server even when a server is already
+running, making it impossible to run the server seperately. The plugin provides
+a setting option that should make the client try to connect to an existing
+server however this does not work. What does work is setting the environment
+variable 'SYSMLV2_LSP_PORT' to the port on which the server is running. This
+forces the client to connect however it doesnt provide the flexibility the
+plugin should normally possess.
+
+## For Developers
+
+### Language Server - Running with only the Plug-in
+
+#### Prerequisites
+
+1. Install [NPM](https://www.npmjs.com/) and add it to `$PATH`.
+2. Install the SysMLv2 VSCode plugin
+1. Execute the Gradle-Task 'buildSysmlv2VscodePlugin' in the `other` category. (the gradle Task 'generateSysmlv2VscodePlugin' in the `mc-lsp` category will not work)
+2. Execute the Gradle-Task 'packageSysmlv2VscodePlugin' in the `other` category.
+   ![](doc/generatePlugIn.png)
+3. In the Folder "sysmlv2\language-server\target\generated-sources\SysMLv2\plugins\sysmlv2-vscode-plugin" you should now find a .vsix file.
+4. Install it by opening VS Code, navigating to the extension tab, `Views and further actions` (three dots), and selecting the entry to load the VSIX.
+   ![](doc/install_vsix.png)
+
+#### Run
+
+1. Close VSCode.
+2. Make sure no language server is currently running (to do this in windows open the Task-Manager and terminate all task called `Java(TM) Platform SE` should there be any running).
+3. Now Start VSCode and open a sysml file. After a few seconds the editor should display syntax highlighting.
+
+### Language Server - Running the server and plug-in seperately
+
+#### Prerequisites
+
+1. Install [NPM](https://www.npmjs.com/) and add it to `$PATH`.
+2. Generate the VSCode plugin by executing the Gradle-Task 'buildSysmlv2VscodePlugin' in the `other` category. (the gradle Task 'generateSysmlv2VscodePlugin' in the `mc-lsp` category will not work)
+3. (This step is only necessary due to a bug.) In the file `sysmlv2\language-server\target\generated-sources\SysMLv2\plugins\sysmlv2-vscode-plugin\.vscode\launch.json` add the line `"env": {"SYSMLV2_LSP_PORT": "3000"}`
+   ![](doc/set_ENV.png)
+
+#### Run/Debug
+
+1. Start the [`LanguageServerCLI`](src/main/java/de/monticore/lang/sysmlv2/_lsp/LanguageServerCLI.java) with parameters `--socket -port 3000`.
+* Adapting the run configuration using IntelliJ Idea:
+  * Navigate to the `LanguageServerCLI`, right-click on the main method > "Run.../Debug..."
+  * Stop the running process again
+  * Edit the run configuration ("Run" > "Edit Configurations") that was just created
+  * Add `--socket -port 3000` to the CLI arguments textbox
+  * Apply and run/debug from IntelliJ's main window
+2. Open VSCode and open the folder `sysmlv2\language-server\target\generated-sources\SysMLv2\plugins\sysmlv2-vscode-plugin\`
+3. Run/Debug the Plug-in in VSCode and open a sysml file in the new window opening up.
+4. After a few seconds the editor should display syntax highlighting.
+* If the language server functionality fails, restart and/or reopen the sysml files and check the debugging information of the language server.
+
+#### Errors
+
+1. When running the Server fails and java throws the exception `Address already in use: NET_Bind` then there is likely already a server running. You can kill it in the task-manager by ending all tasks named `Java(TM) Platform SE`.
+
+## Troubleshooting
+
+### Cause: Crash during the Indexing Process
+When the Language Server starts, the `indexing process` processes all SysML
+documents in the workspace (currently open folder). For the parsed documents,
+resulting symbols and `ArtifactScopes` are created. Only after these objects are
+created is the link between the processed files and the corresponding `ArtifactScopes`
+registered in the `DocumentManager` during `postprocessing()`. If an error interrupts
+indexing before `postprocessing()` is reached, an inconsistent state arises:
+1. The symbols and `ArtifactScopes` already created remain in the `GlobalScope`.
+2. The `DocumentManager` lacks the link to these scopes for the respective file.
+
+Since the server does not crash immediately (`failQuick(false)`), it appears
+stable. However, when the same files are accessed later through LSP actions like
+`didOpen` or `didChange` (which trigger `updateAllDocumentInformation`), the
+server checks the `DocumentManager`, finds no registered scope, and creates a
+*new* `ArtifactScope`. This new scope also adds its symbols to the
+`GlobalScope`. And Because the old symbols were never deleted, the resolver
+now finds two identical matches for the same name, leading to the exception
+`ResolvedSeveralEntriesForSymbolException: 0xA4095 Found 2 symbols`.
+
+> **Note:** The `indexing process` and `postprocessing()` logic is located in the
+> generated file `SysMLv2DocumentInformationProvider.java`.
+
+### Identification: Breakpoints and Logs
+To identify this issue, verify whether the indexing process successfully reaches
+`postprocessing()` during the initial startup. Setting a breakpoint at
+`postprocessing()` alone is not enough, as it might be triggered later by a
+`didOpen` event after the indexer has already failed.
+
+You should ensure that postprocessing occurs within the **same execution frame**
+as the original startup indexing. This can be verified by inspecting the stack
+frame in the debugger or by adding print statements to
+`createAllDocumentInformation` and `postprocessing()`.
+
+**Helpful Checkpoints:**
+* Are all workspace documents being parsed?
+* Is an `ArtifactScope` being created for each document?
+* Is `postprocessing()` reached in the same frame as the indexer, or only
+  later through `didOpen`, CoCos, etc.?
+* Are different AST elements or `ArtifactScopes` (different ID codes, same
+  source) being created for the same model?
+
+If multiple AST IDs or duplicate symbols appear for the same file, failed
+indexing is likely the cause.
+
+### Solution: Prevent the Crash
+The solution is to prevent the crash during indexing and ensure no unregistered
+intermediate state remains. The fix depends on the specific error. For example,
+if a model requires a data type not loaded in `prepareGlobalScope`, it might
+lead to a `get()` on an `Optional.empty()`. Ensure all required symbols are
+available in the `GlobalScope` before indexing starts.
