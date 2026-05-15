@@ -53,6 +53,9 @@ component grammar SysMLBasis
   SysMLCardinality =
     Cardinality (["ordered"] | ["nonunique"])* ;
 
+  SysMLCardinalityModifier =
+    (["ordered"] | ["nonunique"])+ ;
+
   /**
    * Common interface for any specialization. According to the official spes, this would include subsetting, typing,
    * etc. Needs MCType instead of MCQualifiedName, because attribute usages (any maybe others) can be typed by MontiCore
@@ -84,7 +87,7 @@ component grammar SysMLBasis
    * man versucht alle Eventualitäten durch die Grammatik abzudecken.
    */
   SysMLTyping implements Specialization =
-       (":" | "defined by") conjugated:["~"]? superTypes:(MCType || ",")+ SysMLCardinality?;
+       (":" | "defined by") conjugated:["~"]? superTypes:(MCType || ",")+ SysMLCardinality? SysMLCardinalityModifier?;
 
   /* Adaptierung zwecks Rückwärtskompatibilität auf vorherige Version mit direkter MC-Cardinality */
   astrule SysMLTyping =
