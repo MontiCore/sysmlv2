@@ -24,6 +24,7 @@ import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
+import de.monticore.lang.sysmlv2.cocos.ConnectedVariableExistsCoCo;
 import de.monticore.lang.sysmlv2.cocos.EventTransitionRequiresAccept;
 import de.monticore.lang.sysmlv2.cocos.FlowCheckCoCo;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
@@ -118,6 +119,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     // Check ambiguous names
     checker.addCoCo(new UniqueSubPartNamesInParentCoCo());
     checker.addCoCo(new ValidCausalityTimingCoCo());
+    checker.addCoCo(new ConnectedVariableExistsCoCo());
 
     checker.checkAll(ast);
   }
