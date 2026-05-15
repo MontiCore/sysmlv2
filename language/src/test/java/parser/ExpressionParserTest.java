@@ -2,6 +2,7 @@ package parser;
 
 import de.monticore.expressions.commonexpressions._ast.ASTCallExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTElementOfExpression;
+import de.monticore.lang.sysmlexpressions._ast.ASTSysMLFunctionOperationExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSysMLInstantiation;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
@@ -82,4 +83,44 @@ public class ExpressionParserTest {
     assertThat(ast.get()).isInstanceOf(ASTElementOfExpression.class);
   }
 
+  /**
+   * Checks if SysMLFunctionOperatorExpressions are parsed without being
+   * wrapped within a Call Expression
+   */
+  @Test
+  public void testSysMLFunctionOperatorExprMinimal() throws IOException {
+    var ast = parser.parse_StringExpression("x->b()");
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    // We do expect: SysMLFunctionOperatorExpression with an inner
+    //  expression, name and parameters
+    assertThat(ast.get()).isInstanceOf(ASTSysMLFunctionOperationExpression.class);
+  }
+
+  /**
+   * Checks if SysMLFunctionOperatorExpressions are parsed without being
+   * wrapped within a Call Expression
+   */
+  @Test
+  public void testSysMLFunctionOperatorExpr() throws IOException {
+    var ast = parser.parse_StringExpression("x->excludes(y)");
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    // We do expect: SysMLFunctionOperatorExpression with an inner
+    //  expression, name and parameters
+    assertThat(ast.get()).isInstanceOf(ASTSysMLFunctionOperationExpression.class);
+  }
+
+  @Test
+  public void testSysMLFunctionOperatorExpr2() throws IOException {
+    var ast = parser.parse_StringExpression("x->excludes(y.z)");
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    // We do expect: SysMLFunctionOperatorExpression with an inner
+    //  expression, name and parameters
+    assertThat(ast.get()).isInstanceOf(ASTSysMLFunctionOperationExpression.class);
+  }
 }

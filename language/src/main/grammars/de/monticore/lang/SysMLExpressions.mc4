@@ -110,9 +110,10 @@ component grammar SysMLExpressions
    * expression in which the first argument is given before the arrow (->) symbol, which is followed by the
    * name of the function to be invoked and an argument list for any remaining arguments (see 7.4.9.4). This is
    * useful for chaining invocations in an effective data flow
+   * Arguments are: Arguments =   "(" (Expression || ",")* ")";
    */
-  SysMLFunctionOperationExpression implements Expression =
-    Expression "->" Name ("(" (SysMLParameter || ",")* ")")? ("{" SysMLElement* inner:Expression "}")? ;
+  SysMLFunctionOperationExpression implements Expression <291> =
+    Expression "->" Name (Arguments)? ("{" SysMLElement* inner:Expression "}")? ;
 
   // Eigentlich ist "^" der Name einer CalcDef aus den Domain Libraries
   CalcDefPowerExpression implements Expression =
