@@ -13,16 +13,17 @@ import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 public class DirectionCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2 {
 
   /**
-   * Returns whether this is an input. Defaults to {@code true} if no direction was explicitly set. The keyword "inout"
-   * yields true.
+   * Returns whether this is an input. Defaults to {@code true} if no direction
+   * was explicitly set. The keyword "inout" yields false (by isOut behavior).
    */
   protected boolean isIn(ASTModifier modifier) {
-    return modifier.isIn() || !modifier.isOut() && !modifier.isReturn();
+    return modifier.isIn() || (!modifier.isOut() && !modifier.isReturn());
   }
 
   /**
-   * Returns whether this is an input. Defaults to {@code false} if no direction was explicitly set. The keyword "inout"
-   * yields true. The keyword "return" is treated as output.
+   * Returns whether this is an output. Defaults to {@code false} if no
+   * direction was explicitly set. The keyword "inout" yields true. The keyword
+   * "return" is treated as output.
    */
   protected boolean isOut(ASTModifier modifier) {
     return modifier.isOut() || modifier.isInout() || modifier.isReturn();
