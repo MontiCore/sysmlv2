@@ -74,6 +74,7 @@ public class ParserTest {
       "a.b \\subset c",
       "a.b \\supseteq c",
       "a.b \\supset c",
+      "a.b \\sqsubseteq c",
   })
   public void testSubsetEq(String model) throws IOException {
     Optional<ASTExpression> ast = SysMLv2Mill.parser().parse_StringExpression(model);

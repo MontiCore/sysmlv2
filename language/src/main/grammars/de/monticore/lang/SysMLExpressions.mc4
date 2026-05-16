@@ -75,6 +75,9 @@ component grammar SysMLExpressions
   SupersetExpression implements Expression <150>, InfixExpression =
     left:Expression operator:"\\supset" right:Expression ;
 
+  SqsubsetExpression implements Expression <150>, InfixExpression =
+    left:Expression operator:"\\sqsubseteq" right:Expression ;
+
   ElementOfExpression implements Expression <150>, InfixExpression =
     left:Expression operator:"\\in" right:Expression ;
 
