@@ -37,6 +37,17 @@ test {
 /* ======================= Dependencies ======================= */
 /* ============================================================ */
 
+if (!isPipelineFullBuild) {
+  sourceSets {
+    test {
+      java {
+        exclude 'parser/ParsersComparisonTest.java'
+        exclude 'parser/ParsersComparisonFullTest.java'
+      }
+    }
+  }
+}
+
 dependencies {
   // language dependencies
   grammar "de.monticore.lang:ocl:$mc_version"
@@ -46,6 +57,10 @@ dependencies {
 
   implementation "org.apache.commons:commons-lang3:$commons_lang_version"
   implementation "commons-cli:commons-cli:$commons_cli_version"
+
+  if (isPipelineFullBuild) {
+    testImplementation group: 'org.omg.sysml', name: 'org.omg.sysml.interactive', version: omg_version, classifier: 'all'
+  }
 }
 
 /* ============================================================ */
@@ -109,5 +124,4 @@ publishing {
     url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
   }
 }
-
 defaultTasks('build')

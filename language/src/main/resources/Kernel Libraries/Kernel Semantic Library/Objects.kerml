@@ -29,7 +29,8 @@ standard library package Objects {
 
 		feature self: Object redefines Occurrence::self;
 		
-		composite subobjects: Object[0..*] subsets objects, suboccurrences {
+		composite feature subobjects: Object[0..*] subsets objects, suboccurrences
+			intersects objects, suboccurrences {
 			doc
 			/*
 			 * The suboccurrences of this Object that are also Objects.
@@ -43,14 +44,16 @@ standard library package Objects {
 			 */
 		}
 		
-		abstract step enactedPerformances: Performance[0..*] subsets involvingPerformances, timeEnclosedOccurrences {
+		abstract step enactedPerformances: Performance[0..*] subsets involvingPerformances, timeEnclosedOccurrences
+			intersects involvingPerformances, timeEnclosedOccurrences {
 			doc
 			/*
 			 * Performances that are enacted by this object.
 			 */
 		}
 		
-		composite step ownedPerformances: Performance[0..*] subsets involvingPerformances, timeEnclosedOccurrences, suboccurrences {
+		composite step ownedPerformances: Performance[0..*] subsets involvingPerformances, timeEnclosedOccurrences, suboccurrences
+			intersects involvingPerformances, timeEnclosedOccurrences, suboccurrences {
 			doc
 			/*
 			 * Performances that are owned by this object.
@@ -72,14 +75,14 @@ standard library package Objects {
 		}
 	}
 	
-	abstract assoc struct LinkObject specializes Link, Object {
+	abstract assoc struct LinkObject specializes Link, Object intersects Link, Object {
 		doc
 		/*
 		 * LinkObject is the most general association structure, being both a Link and an Object.
 		 */
 	}
 	
-	assoc struct BinaryLinkObject specializes BinaryLink, LinkObject {
+	assoc struct BinaryLinkObject specializes BinaryLink, LinkObject intersects BinaryLink, LinkObject {
 		doc
 		/*
 		 * BinaryLinkObject is the most general binary association structure, being both a 
@@ -94,14 +97,15 @@ standard library package Objects {
 		 */
 	}
 	
-	abstract feature linkObjects: LinkObject[0..*] nonunique subsets links, objects {
+	abstract feature linkObjects: LinkObject[0..*] nonunique subsets links, objects intersects links, objects {
 		doc
 		/*
 		 * linkObjects is a specializations of links and objects restricted to type LinkObjects. 
 		 */
 	}
 	
-	abstract feature binaryLinkObjects: BinaryLinkObject[0..*] nonunique subsets binaryLinks, linkObjects {
+	abstract feature binaryLinkObjects: BinaryLinkObject[0..*] nonunique subsets binaryLinks, linkObjects
+		intersects binaryLinks, linkObjects {
 		doc
 		/*
 		 * binaryLinkObjects is a specialization of binaryLinks and linkObjects restricted to 
@@ -161,27 +165,46 @@ standard library package Objects {
 		 * inner space dimension of structured space object is the highest of their cells.
 		 */
 
-		abstract portion feature structuredSpaceObjectCells : StructuredSpaceObject[1..*] subsets Occurrence::spaceSlices
-		  { feature cellOrientation : Integer [0..1];
+        abstract portion feature structuredSpaceObjectCells : StructuredSpaceObject[1..*] subsets Occurrence::spaceSlices { 
+            feature cellOrientation : Integer [0..1];
 		    inv { notEmpty(cellOrientation) implies (cellOrientation >= -1 & cellOrientation <= 1) }
-		  }
+		}
+		
+		comment about StructuredSurface, StructuredCurve, StructuredPoint
+		/*
+		 * The structures StructuredSurface, StructuredCurve and StructuredPoint provide common, necessary redefinitions of
+		 * innerSpaceDimension. They also provide single types for the StructuredSpaceObject features faces, edges and
+		 * vertices, which avoids problems when these features are related by connectors with ends that have owned
+		 * cross features.
+		 */
+		struct StructuredSurface specializes StructuredSpaceObject, Surface {
+            feature redefines StructuredSpaceObject::innerSpaceDimension, Surface::innerSpaceDimension;		    
+		}
+        struct StructuredCurve specializes StructuredSpaceObject, Curve {
+            feature redefines StructuredSpaceObject::innerSpaceDimension, Curve::innerSpaceDimension;         
+        }
+        struct StructuredPoint specializes StructuredSpaceObject, Point {
+            feature redefines StructuredSpaceObject::innerSpaceDimension, Point::innerSpaceDimension;         
+        }
 
-		portion feature faces : Surface[0..*] ordered subsets structuredSpaceObjectCells {
-			feature redefines edges subsets StructuredSpaceObject::edges;
-			feature redefines vertices subsets StructuredSpaceObject::vertices;
+		portion feature faces : StructuredSurface[0..*] ordered subsets structuredSpaceObjectCells {
+		    feature redefines that : StructuredSpaceObject;
+			feature redefines edges subsets that.edges;
+			feature redefines vertices subsets that.vertices;
 			derived feature redefines spaceBoundary; 
 			inv { isEmpty(spaceBoundary) == isEmpty(union(edges, vertices)) }
 			inv { notEmpty(spaceBoundary) implies contains(spaceBoundary.unionsOf, union(edges, vertices)) }
 		}
 
-		portion feature edges : Curve[0..*] ordered subsets structuredSpaceObjectCells {
-			feature redefines vertices subsets StructuredSpaceObject::vertices;
+		portion feature edges : StructuredCurve[0..*] ordered subsets structuredSpaceObjectCells {
+            feature redefines that : StructuredSpaceObject;
+			feature redefines vertices subsets that.vertices;
 			derived feature redefines spaceBoundary;
 			inv { isEmpty(spaceBoundary) == isEmpty(vertices) }
 			inv { notEmpty(spaceBoundary) implies contains(spaceBoundary.unionsOf, vertices) }
 		}
 
-		portion feature vertices : Point[0..*] ordered subsets structuredSpaceObjectCells;
+		portion feature vertices : StructuredPoint[0..*] ordered subsets structuredSpaceObjectCells;
 		
 		derived feature redefines innerSpaceDimension = 
 			if notEmpty(faces) ? 2 else if notEmpty(edges) ? 1 else 0;

@@ -41,6 +41,7 @@ jobs:
         run: gradle build ${{env.GRADLE_CLI_OPTS}}
             -PgithubUser=${{env.GITHUB_ACTOR}}
             -PgithubToken=${{secrets.GITHUB_TOKEN}}
+            -PisPipelineFullBuild=true
       - name: Upload Test Report
         uses: actions/upload-artifact@v4
         if: always() # always run even if the previous step fails
@@ -68,6 +69,7 @@ jobs:
         run: gradle :language:test --tests "parser.OfficialParserTest.testParseAll" ${{env.GRADLE_CLI_OPTS}}
           -PgithubUser=${{env.GITHUB_ACTOR}}
           -PgithubToken=${{secrets.GITHUB_TOKEN}}
+          -PisPipelineFullBuild=true
       - name: Display test execution time
         if: always()
         run: |
@@ -114,5 +116,6 @@ jobs:
           -PnexusUser=${{ secrets.SE_NEXUS_USER }}
           -PgithubUser=${{env.GITHUB_ACTOR}}
           -PgithubToken=${{secrets.GITHUB_TOKEN}}
+          -PisPipelineFullBuild=true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
