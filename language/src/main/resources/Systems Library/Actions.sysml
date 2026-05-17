@@ -27,7 +27,8 @@ standard library package Actions {
 	private import TransitionPerformances::TransitionPerformance;
 	private import TransitionPerformances::NonStateTransitionPerformance;
 	private import Transfers::MessageTransfer;
-	private import Connections::MessageConnection;
+	private import Flows::MessageAction;
+	private import OccurrenceFunctions::destroy;
 	
 	abstract action def Action :> Performance {
 		doc
@@ -59,7 +60,7 @@ standard library package Actions {
 			 * The subperformances of this Action that are Actions. 
 			 */
 		
-			ref occurrence :>> this = (that as Action).this {
+			ref occurrence :>> Action::this, actions::this, subperformances::this = (that as Action).this {
 				doc
 				/*
 				 * The "this" reference of a subaction is always the same as that of
@@ -81,7 +82,14 @@ standard library package Actions {
 			 * The subactions of this Action that are AcceptActions. 
 			 */
 		}
-	
+		
+		abstract action terminateSubactions : TerminateAction[0..*] :> subactions, terminateActions {
+			doc
+			/*
+			 * The subactions of this Action that are TerminateActions.
+			 */
+		}
+		
 		abstract action controls : ControlAction[0..*] :> subactions {
 			doc
 			/*
@@ -136,6 +144,8 @@ standard library package Actions {
 			/*
 			 * The subactions of this Action that are AssignmentActions.
 			 */
+			 
+			 in target;
 		}
 		
 		abstract action ifSubactions : IfThenAction[0..*] :> subactions, ifThenActions {
@@ -181,8 +191,10 @@ standard library package Actions {
 		 * from a designated sender Occurrence with a given payload, optionally to a designated receiver.
 		 */
 	
-		in payload :>> sentItem;
-	    ref sentMessage :>> sentTransfer: MessageTransfer, MessageConnection;
+		in :>> payload [0..*];
+	    ref sentMessage :>> sentTransfer: MessageTransfer, MessageAction {
+	        in :>> MessageTransfer::payload, MessageAction::payload;
+	    }
 	}
 	
 	abstract action sendActions: SendAction[0..*] nonunique :> actions, sendPerformances {
@@ -198,8 +210,10 @@ standard library package Actions {
 		 * An AcceptMessageAction is an Action that identifies an incomingTransferToSelf
 		 * of a designated receiver Occurrence, providing its payload as output.
 		 */
-		inout payload :>> acceptedItem;
-		ref acceptedMessage :>> acceptedTransfer: MessageTransfer, MessageConnection;
+		inout :>> payload;
+		ref acceptedMessage :>> acceptedTransfer: MessageTransfer, MessageAction {
+            in :>> MessageTransfer::payload, MessageAction::payload;
+        }
 	}
 	
 	action def AcceptAction :> AcceptMessageAction {
@@ -221,6 +235,41 @@ standard library package Actions {
 		/*
 		 * acceptActions is the base feature for standalone AcceptActionUsages.
 		 */
+	}
+	
+	abstract action def TerminateAction :> Action {
+		doc
+		/*
+		 * A TerminateAction is an Action that terminates a given Occurrence, meaning 
+		 * that the Occurrence ends during the performance of this Action. TerminateAction
+		 * is the base type for all TerminateActionUsages.
+		 */
+		 
+		in occurrence terminatedOccurrence[1] {
+			doc
+			/*
+			 * The Occurrence to be terminated.
+			 */
+		}
+		
+		action terminateOccurrence : destroy[1] {
+			in occ = terminatedOccurrence;
+		}
+	}
+	
+	abstract action terminateActions : TerminateAction[0..*] nonunique :> actions {
+		doc
+		/*
+		 * terminateActions is the base feature for all TerminateActionUsages.
+		 */
+		 
+		in occurrence terminatedOccurrence default that as Occurrence {
+			doc
+			/*
+			 * The default terminatedOccurrence for a terminateAction is its
+			 * featuring occurrence (which will generally be a containing Action).
+			 */
+		}
 	}
 	
 	abstract action def ControlAction :> Action {
@@ -287,7 +336,9 @@ standard library package Actions {
 		 */
 	
 		in transitionLinkSource : Action :>> TransitionPerformance::transitionLinkSource;
-		ref acceptedMessage : MessageConnection :>> trigger;
+		ref acceptedMessage : MessageTransfer, MessageAction :>> trigger {
+            in :>> MessageTransfer::payload, MessageAction::payload;
+        }
 		
 		ref receiver :>> triggerTarget;
 
@@ -336,7 +387,7 @@ standard library package Actions {
 		 * assignmentActions is the base feature for all AssignmentActionsUsages.
 		 */
 		 
-        in :>> target : Occurrence[1] default that as Occurrence {
+        in target : Occurrence[1] default that as Occurrence {
             doc
             /*
              * The default target for assignmentActions is its featuring instance (if that is 
@@ -352,8 +403,8 @@ standard library package Actions {
 		 * It is the base type for all IfActionUsages.
 		 */
 	
-		in :>> ifTest[1];
-		in action :>> thenClause[0..1];
+		in ifTest[1];
+		in action thenClause[0..1];
 	}
 	
 	action def IfThenElseAction :> IfThenAction, IfThenElsePerformance {
@@ -363,9 +414,9 @@ standard library package Actions {
 		 * It is the base type for all IfActionUsages that have an elseAction.
 		 */
 	
-		in :>> ifTest[1];
-		in action :>> thenClause[0..1];
-		in action :>> elseClause[0..1];
+		in ifTest[1];
+		in action thenClause[0..1];
+		in action elseClause[0..1];
 	}
 	
 	abstract action ifThenActions : IfThenAction[0..*] nonunique :> actions {
@@ -388,6 +439,7 @@ standard library package Actions {
 		 * A LoopAction is the base type for all LoopActionUsages.
 		 */
 	
+        in ref iterator;
 		
 		in action body[0..*] {
 			doc
@@ -404,7 +456,7 @@ standard library package Actions {
 		 * It is the base type for all WhileLoopActionUsages.
 		 */
 	
-		in :>> whileTest default {true} {
+		in whileTest default {true} {
 			doc
 			/*
 			 * A Boolean expression that must be true for the loop to continue.
@@ -413,7 +465,7 @@ standard library package Actions {
 			 */
 		}
 		
-		in action body :>> LoopAction::body, LoopPerformance::body {
+		in action body {
 			doc
 			/*
 			 * The action that is performed while the whileTest is true and the
@@ -421,7 +473,7 @@ standard library package Actions {
 			 */
 		}
 		
-		in :>> untilTest default {false} {
+		in untilTest default {false} {
 			doc
 			/*
 			 * A Boolean expression that must be false for the loop to continue.
@@ -430,12 +482,7 @@ standard library package Actions {
 		}
 	}
 	
-	private abstract action def ForLoopActionBase :> LoopAction {
-		in action body;
-		in ref seq[0..*] ordered nonunique;
-	}
-	
-	action def ForLoopAction :> ForLoopActionBase {
+	action def ForLoopAction :> LoopAction {
 		doc
 		/*
 		 * A ForLoopAction is a LoopAction that iterates over an ordered sequence of values.
@@ -450,14 +497,14 @@ standard library package Actions {
 			 */
 		}
 		
-		in ref :>> seq {
+		in ref seq {
 			doc
 			/*
 			 * The sequence of values over which the loop iterates.
 			 */
 		}
 		
-		in action :>> body {
+		in action body {
 			doc
 			/*
 			 * The action that is performed on each iteration of the loop.

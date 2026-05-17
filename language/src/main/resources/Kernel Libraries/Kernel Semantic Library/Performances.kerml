@@ -10,7 +10,7 @@ standard library package Performances {
 	private import Occurrences::occurrences;
 	private import Occurrences::HappensDuring;
 	private import Objects::Object;
-	private import Objects::BinaryLinkObject;
+	private import Links::BinaryLink;
 	private import Metaobjects::Metaobject;
 	private import Transfers::Transfer;
 	private import Transfers::transfers;
@@ -44,7 +44,8 @@ standard library package Performances {
 		feature redefines isDispatch default true;
   		feature redefines dispatchScope default thisPerformance;
   		
-		step enclosedPerformances: Performance[0..*] subsets performances, timeEnclosedOccurrences {
+		step enclosedPerformances: Performance[0..*] subsets performances, timeEnclosedOccurrences
+			intersects performances, timeEnclosedOccurrences {
 			doc
 			/*
 			 * timeEnclosedOccurrences of this Performance that are also Performances.
@@ -57,9 +58,10 @@ standard library package Performances {
 			 * Defaults to the root of the subperformance composition tree.
 			 */
 		}
-		connector :HappensDuring from self[1] to thisPerformance[1]; 
+		connector :HappensDuring from [1] self to [1] thisPerformance; 
 		
-		composite step subperformances: Performance[0..*] subsets enclosedPerformances, suboccurrences {
+		composite step subperformances: Performance[0..*] subsets enclosedPerformances, suboccurrences
+			intersects enclosedPerformances, suboccurrences {
 			doc
 			/*
 			 * enclosedPerformances that are composite. 
@@ -117,7 +119,8 @@ standard library package Performances {
 		return : ScalarValue[1];
 	}
 	
-	abstract predicate LiteralBooleanEvaluation specializes LiteralEvaluation, BooleanEvaluation {
+	abstract predicate LiteralBooleanEvaluation specializes LiteralEvaluation, BooleanEvaluation
+		intersects LiteralEvaluation, BooleanEvaluation {
 		doc
 		/*
 		 * LiteralBooleanEvaluation is a specialization of LiteralEvaluation for the case of LiteralBooleans.
@@ -163,25 +166,25 @@ standard library package Performances {
 		return : Anything[0..0];
 	}
 
-	assoc all Involves specializes BinaryLinkObject {
+	assoc all InvolvedIn specializes BinaryLink { 
 		doc
 		/*
-		 * Involves asserts that the Behavior carried out by the involvingPerformance involves the
-		 * involvedObject.
+		 * InvolvedIn asserts that the involvedObject is involved in the Behavior carried out by the 
+		 * involvingPerformance.
 		 */
 		 
-		end feature involvingPerformance: Performance[0..*] redefines source subsets involvedObject.involvingPerformances;
-		end feature involvedObject: Object[0..*] redefines target subsets involvingPerformance.involvedObjects;
+		end feature involvedObject: Object redefines source crosses involvingPerformance.involvedObjects;
+		end feature involvingPerformance: Performance redefines target crosses involvedObject.involvingPerformances;
 	}
 	
-	assoc all Performs specializes Involves {
+	assoc all Performs specializes InvolvedIn {
 		doc
 		/*
-		 * Performance asserts that the performer enacts the Behavior carried out by the performance.
+		 * Performs asserts that the performer enacts the Behavior carried out by the performance.
 		 */
 	
-	 	end feature performerObject: Object[0..*] redefines involvedObject subsets performance.performers;
-	 	end feature performance: Performance[0..*] redefines involvingPerformance subsets performerObject.enactedPerformances;
+	 	end feature performerObject: Object redefines involvedObject crosses performance.performers;
+	 	end feature performance: Performance redefines involvingPerformance crosses performerObject.enactedPerformances;
 	 }
 
 	abstract step performances: Performance[0..*] nonunique subsets occurrences {
@@ -196,6 +199,16 @@ standard library package Performances {
 		/*
 		 * evaluations is a specialization of performances for evaluations of Functions.
 		 */
+	}
+	
+	abstract expr constructorEvaluations [0..*] nonunique subsets evaluations  {
+	    doc
+	    /*
+	     * constructorEvaluations is a specialization of evaluations that restricts the multiplicity 
+	     * of its result parameter to 1..1, requiring a constructorEvaluation to result in a single value.
+	     */
+	     
+	     return result [1..1];
 	}
 	
 	abstract expr booleanEvaluations: BooleanEvaluation[0..*] nonunique subsets evaluations {
@@ -241,7 +254,8 @@ standard library package Performances {
 		 */
 	}
 	
-	abstract expr literalBooleanEvaluations: LiteralBooleanEvaluation[0..*] nonunique subsets literalEvaluations, booleanEvaluations {
+	abstract expr literalBooleanEvaluations: LiteralBooleanEvaluation[0..*] nonunique subsets literalEvaluations, booleanEvaluations
+		intersects literalEvaluations, booleanEvaluations {
 		doc
 		/*
 		 * literaBooleanlEvaluations is a specialization of literalEvaluations and booleanEvaluations restricted 
