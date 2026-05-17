@@ -118,22 +118,6 @@ jobs:
           -PgithubUser=${{env.GITHUB_ACTOR}}
           -PgithubToken=${{secrets.GITHUB_TOKEN}}
           -PisPipelineFullBuild=true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Create Snapshot Release
-        if: github.ref == 'refs/heads/master'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: snapshot
-          name: "Snapshot Release"
-          prerelease: true
-          files: |
-            **/*.vsix
-          body: |
-            Automated Snapshot Release
 
-            This release contains the latest development version of the SysML v2 tool and VSCode plugin.
-
-            Built from commit: ${{ github.sha }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

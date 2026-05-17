@@ -37,13 +37,14 @@ test {
 /* ======================= Dependencies ======================= */
 /* ============================================================ */
 
-if (!isPipelineFullBuild) {
-  sourceSets {
-    test {
-      java {
-        exclude 'parser/ParsersComparisonTest.java'
-        exclude 'parser/ParsersComparisonFullTest.java'
-      }
+
+
+sourceSets {
+  test {
+    java {
+      exclude 'parser/ParsersComparisonTest.java'
+      exclude 'parser/ParsersComparisonFullTest.java'
+
     }
   }
 }
