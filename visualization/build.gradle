@@ -16,15 +16,6 @@ repositories {
     mavenLocal()
   }
   mavenCentral()
-  // required for sysml interactive published on GitHub
-  maven {
-    name "Official SysMLv2 Github Package Registry"
-    url sysmlGithub
-    credentials {
-      username = githubUser
-      password = githubToken
-    }
-  }
 }
 
 shadowJar { // all in one jar

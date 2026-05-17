@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Disabled
 public class ParsersComparisonFullTest {
-  private static final String MODEL_PATH = "src/omgTest/resources/parser";
+  private static final String MODEL_PATH = "src/test/resources/parser";
 
   private final SysMLv2Parser parser = SysMLv2Mill.parser();
 
