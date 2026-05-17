@@ -53,6 +53,9 @@ component grammar SysMLBasis
   SysMLCardinality =
     Cardinality (["ordered"] | ["nonunique"])* ;
 
+  SysMLCardinalityModifier =
+    (["ordered"] | ["nonunique"])+ ;
+
   /**
    * Common interface for any specialization. According to the official spes, this would include subsetting, typing,
    * etc. Needs MCType instead of MCQualifiedName, because attribute usages (any maybe others) can be typed by MontiCore
@@ -84,7 +87,7 @@ component grammar SysMLBasis
    * man versucht alle Eventualitäten durch die Grammatik abzudecken.
    */
   SysMLTyping implements Specialization =
-       (":" | "defined by") conjugated:["~"]? superTypes:(MCType || ",")+ SysMLCardinality?;
+       (":" | "defined by") conjugated:["~"]? superTypes:(MCType || ",")+ SysMLCardinality? SysMLCardinalityModifier?;
 
   /* Adaptierung zwecks Rückwärtskompatibilität auf vorherige Version mit direkter MC-Cardinality */
   astrule SysMLTyping =
@@ -224,7 +227,7 @@ component grammar SysMLBasis
       Stereotype?
       (   ["public"]       | [public:"+"]
         | ["private"]      | [private:"-"]
-        | ["protected"]    | [protected:"#"]
+        | ["protected"]    | {!noSpace(2)}? [protected:"#"]
         | ["final"]
         | ["abstract"]
         | ["local"]
@@ -243,8 +246,10 @@ component grammar SysMLBasis
         | ["variant"]
       )*;
 
+  nokeyword "final";
+
   UserDefinedKeyword =
-    {noSpace(2);} "#" MCQualifiedName ;
+    {noSpace(2)}? "#" MCQualifiedName;
 
   /**
    * Anonyme Usage, deren "Typ" im Sinne der SysML (also Beispielsweise "attribute" oder "part") sich erst durch

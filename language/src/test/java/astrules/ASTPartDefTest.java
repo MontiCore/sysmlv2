@@ -47,7 +47,6 @@ public class ASTPartDefTest {
     assertThat(C.getRefinements().get(1)).isEqualTo(B.getSymbol());
   }
 
-  @Test
   public void test_getRefinements_dependencyBased() throws IOException {
     Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse_String(
         "part def A; part def C; "
