@@ -6,7 +6,6 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -48,7 +47,6 @@ public class ASTPartDefTest {
     assertThat(C.getRefinements().get(1)).isEqualTo(B.getSymbol());
   }
 
-  @Disabled
   public void test_getRefinements_dependencyBased() throws IOException {
     Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse_String(
         "part def A; part def C; "
