@@ -1,38 +1,47 @@
-/**
- * This package defines functions on Complex values, including concrete specializations of the 
- * general arithmetic and comparison operations.
- */
-package ComplexFunctions {
-	import ScalarValues::*;
+standard library package ComplexFunctions {
+	doc
+	/*
+	 * This package defines functions on Complex values, including concrete specializations of the 
+	 * general arithmetic and comparison operations.
+	 */
+
+	public import ScalarValues::*;
 		
-	feature i: Complex[1] = Rect(0.0, 1.0);
+	feature i: Complex[1] = rect(0.0, 1.0);
 	
-	function Rect(re: Real[1], im: Real[1]): Complex[1];
-	function Polar(abs: Real[1], arg: Real[1]): Complex[1];
+	function rect { in re: Real[1]; in im: Real[1]; return : Complex[1]; }
+	function polar { in abs: Real[1]; in arg: Real[1]; return : Complex[1]; }
 	
-	function Re(x: Complex[1]): Real[1];
-	function Im(x: Complex[1]): Real[1];
+	function re { in x: Complex[1]; return : Real[1]; }
+	function im { in x: Complex[1]; return : Real[1]; }
 	
-	function Abs specializes NumericalFunctions::Abs (x: Complex[1]): Real[1];
-	function Arg(x: Complex[1]): Real[1];
-	
-	function '+' specializes NumericalFunctions::'+' (x: Complex[1], y: Complex[0..1]): Complex[1];
-	function '-' specializes NumericalFunctions::'-' (x: Complex[1], y: Complex[0..1]): Complex[1];
-	function '*' specializes NumericalFunctions::'*' (x: Complex[1], y: Complex[1]): Complex[1];
-	function '/' specializes NumericalFunctions::'/' (x: Complex[1], y: Complex[1]): Complex[1];
-	function '**' specializes NumericalFunctions::'**' (x: Complex[1], y: Complex[1]): Complex[1];
-	function '^' specializes NumericalFunctions::'^' (x: Complex[1], y: Complex[1]): Complex[1];
-	
-	function '==' specializes DataFunctions::'==' (x: Complex[0..1], y: Complex[0..1]): Boolean[1];
-	
-	function ToString specializes BaseFunctions::ToString (x: Complex[1]): String[1];
-	function ToComplex(x: String[1]): Complex[1];
-	
-	function sum specializes ScalarFunctions::sum (collection: Complex[0..*]): Complex[1] {
-		ScalarFunctions::sum0(collection, Rect(0.0, 0.0))
+	function isZero specializes NumericalFunctions::isZero { in x : Complex[1];
+		return : Boolean[1] = re(x) == 0.0 and im(x) == 0.0;
+	}
+	function isUnit specializes NumericalFunctions::isUnit { in x : Complex[1];
+		return : Boolean[1] = re(x) == 1.0 and im(x) == 0.0;
 	}
 	
-	function product specializes ScalarFunctions::product (collection: Complex[0..*]): Complex[1] {
-		ScalarFunctions::product1(collection, Rect(1.0, 0.0))
+	function abs specializes NumericalFunctions::abs { in x: Complex[1]; return : Real[1]; }
+	function arg { in x: Complex[1]; return : Real[1]; }
+	
+	function '+' specializes NumericalFunctions::'+' { in x: Complex[1]; in y: Complex[0..1]; return : Complex[1]; }
+	function '-' specializes NumericalFunctions::'-' { in x: Complex[1]; in y: Complex[0..1]; return : Complex[1]; }
+	function '*' specializes NumericalFunctions::'*' { in x: Complex[1]; in y: Complex[1]; return : Complex[1]; }
+	function '/' specializes NumericalFunctions::'/' { in x: Complex[1]; in y: Complex[1]; return : Complex[1]; }
+	function '**' specializes NumericalFunctions::'**' { in x: Complex[1]; in y: Complex[1]; return : Complex[1]; }
+	function '^' specializes NumericalFunctions::'^' { in x: Complex[1]; in y: Complex[1]; return : Complex[1]; }
+	
+	function '==' specializes DataFunctions::'==' { in x: Complex[0..1]; in y: Complex[0..1]; return : Boolean[1]; }
+	
+	function ToString specializes BaseFunctions::ToString { in x: Complex[1]; return : String[1]; }
+	function ToComplex { in x: String[1]; return : Complex[1]; }
+	
+	function sum specializes NumericalFunctions::sum { in collection: Complex[0..*];
+		return : Complex[1] default NumericalFunctions::sum0(collection, rect(0.0, 0.0));
+	}
+	
+	function product specializes NumericalFunctions::product { in collection: Complex[0..*];
+		return : Complex[1] default NumericalFunctions::product1(collection, rect(1.0, 0.0));
 	}	
 }

@@ -1,175 +1,293 @@
-/**
- * This package defines classifiers and features that related to the typing of performances and evaluations.
- */
-package Performances {
+standard library package Performances {
+	doc
+	/*
+	 * This package defines classifiers and features that related to the typing of performances and evaluations.
+	 */
+
 	private import Base::Anything;
 	private import Base::things;
 	private import Occurrences::Occurrence;
 	private import Occurrences::occurrences;
+	private import Occurrences::HappensDuring;
 	private import Objects::Object;
-	private import Objects::BinaryLinkObject;
+	private import Links::BinaryLink;
+	private import Metaobjects::Metaobject;
+	private import Transfers::Transfer;
 	private import Transfers::transfers;
+	private import Transfers::TransferBefore;
 	private import Transfers::transfersBefore;
 	private import ScalarValues::*;
+	private import SequenceFunctions::includes;
 	
-	/**
-	 * Performance is the most general class of behavioral Occurrences that may be performed over time.
-	 */
-	abstract behavior Performance specializes Occurrence () {
+	abstract behavior Performance specializes Occurrence disjoint from Object {
+		doc
+		/*
+		 * Performance is the most general class of behavioral Occurrences that may be performed over time.
+		 */
+
 		feature self: Performance redefines Occurrence::self;
 		
-		/**
-		 * Objects that are involved in this Performance.
-		 */
-		feature involvedObjects: Object[0..*];
+		feature involvedObjects: Object[0..*] {
+			doc
+			/*
+			 * Objects that are involved in this Performance.
+			 */
+		}
 		
-		/**
-		 * Objects that enact this Performance.
-		 */
-		feature performers: Object[0..*] subsets involvedObjects;
+		feature performers: Object[0..*] subsets involvedObjects {
+			doc
+			/*
+			 * Objects that enact this Performance.
+			 */
+		}
 		
-		/**
-		 * suboccurrences of this Performance that are also Performances.
-		 */
-		step subperformances: Performance[0..*] subsets performances, suboccurrences;
+		feature redefines isDispatch default true;
+  		feature redefines dispatchScope default thisPerformance;
+  		
+		step enclosedPerformances: Performance[0..*] subsets performances, timeEnclosedOccurrences
+			intersects performances, timeEnclosedOccurrences {
+			doc
+			/*
+			 * timeEnclosedOccurrences of this Performance that are also Performances.
+			 */
+		}
 		
-		/**
-		 * subperformances of this Performance that are Evaluations.
-		 */
-		expr subevaluations: Evaluation[0..*] subsets evaluations, subperformances;
+		feature thisPerformance: Performance [1] default self {
+			doc
+			/*
+			 * Defaults to the root of the subperformance composition tree.
+			 */
+		}
+		connector :HappensDuring from [1] self to [1] thisPerformance; 
 		
-		/**
-		 * subperformances of this performance that are transfers.
-		 */
-		step subtransfers: Transfers::Transfer[0..*] subsets transfers, subperformances;
+		composite step subperformances: Performance[0..*] subsets enclosedPerformances, suboccurrences
+			intersects enclosedPerformances, suboccurrences {
+			doc
+			/*
+			 * enclosedPerformances that are composite. 
+			 */
 		
-		/**
-		 * subtransfers of this performance that are transfers-before.
-		 */	
-		step subtransfersBefore: Transfers::TransferBefore[0..*] subsets transfersBefore, subtransfers;
+			feature redefines this default (that as Performance).this {
+				doc
+				/*
+				 * The default "this" context of a subperformance is the same as that of its owning Performance.
+				 * This means that the context for any Performance that is in a composition tree rooted
+				 * in a Performance that is not itself owned by an Object is the root Performance. If the
+				 * root Performance is an ownedPerformance of an Object, then that Object is the context.
+				 */
+			}
+		
+			feature redefines thisPerformance default (that as Performance).thisPerformance;
+		}		
 	}
 	
-	/**
-	 * Evaluation is the most general class of functions that may be evaluated to compute
-	 * a result.
-	 */
-	abstract function Evaluation specializes Performance () result: Anything[0..*] nonunique;
-	
-	/**
-	 * BooleanEvaluation is a specialization of Evaluation that is the most general class of
-	 * Predicates that may be evaluated to produce a Boolean truth value.
-	 */
-	abstract predicate BooleanEvaluation specializes Evaluation (): Boolean[1];
-	
-	/**
-	 * LiteralEvaluation is a specialization of Evaluation for the case of LiteralExpressions.
-	 */				
-	abstract function LiteralEvaluation specializes Evaluation (): ScalarValue[1];
-	
-	/**
-	 * LiteralBooleanEvaluation is a specialization of LiteralEvaluation for the case of LiteralBooleans.
-	 * It is also a predicate and thus a specialization of BooleanEvaluation. 
-	 */
-	abstract predicate LiteralBooleanEvaluation specializes LiteralEvaluation, BooleanEvaluation (): Boolean[1];
-
-	/**
-	 * LiteralIntegerEvaluation is a specialization of LiteralEvaluation for the case of LiteralIntegers.
-	 */
-	abstract function LiteralIntegerEvaluation specializes LiteralEvaluation (): Integer[1];
-
-	/**
-	 * LiteralRationalEvaluation is a specialization of LiteralEvaluation for the case of LiteralRationals.
-	 * (Note: Return type is Real to allow easy type conformance of LiteralRationals when a Real result is expected.)
-	 */
-	abstract function LiteralRationalEvaluation specializes LiteralEvaluation (): Real[1];
-	
-	/**
-	 * LiteralStringEvaluation is a specialization of LiteralEvaluation for the case of LiteralStrings.
-	 */
-	abstract function LiteralStringEvaluation specializes LiteralEvaluation (): String[1];
-	
-	/**
-	 * NullEvaluation is a specialization of Evaluation for the case of NullExpressions.
-	 */
-	function NullEvaluation specializes Evaluation (): Anything[0..0];
-
-	/** 
-	 * Involves asserts that the Behavior carried out by the involvingPerformance involves the
-	 * involvedObject.
-	 */
-	assoc Involves specializes BinaryLinkObject {
-		end feature involvingPerformance: Performance[0..*] redefines source subsets involvedObject.involvingPerformances;
-		end feature involvedObject: Object[0..*] redefines target subsets involvingPerformance.involvedObjects;
+	abstract function Evaluation specializes Performance {
+		doc
+		/*
+		 * Evaluation is the most general class of functions that may be evaluated to compute
+		 * a result.
+		 */
+	 
+		return result: Anything[0..*] nonunique;
 	}
 	
-	/**
-	 * Performance asserts that the performer enacts the Behavior carried out by the performance.
-	 */
-	 assoc Performs specializes Involves {
-	 	end feature performerObject: Object[0..*] redefines involvedObject subsets performance.performers;
-	 	end feature performance: Performance[0..*] redefines involvingPerformance subsets performerObject.enactedPerformances;
+	abstract predicate BooleanEvaluation specializes Evaluation {
+		doc
+		/*
+		 * BooleanEvaluation is a specialization of Evaluation that is the most general class of
+		 * Predicates that may be evaluated to produce a Boolean truth value.
+		 */
+	 
+		return : Boolean[1];
+	}
+	
+	abstract function MetadataAccessEvaluation specializes Evaluation {
+		doc
+		/*
+		 * MetadataAccessEvaluation is a specialization of Evaluation for the case of MetadataAccessExpressions.
+		 */
+		
+		return : Metaobject[1..*];
+	}
+	
+	abstract function LiteralEvaluation specializes Evaluation {
+		doc
+		/*
+		 * LiteralEvaluation is a specialization of Evaluation for the case of LiteralExpressions.
+		 */
+	 
+		return : ScalarValue[1];
+	}
+	
+	abstract predicate LiteralBooleanEvaluation specializes LiteralEvaluation, BooleanEvaluation
+		intersects LiteralEvaluation, BooleanEvaluation {
+		doc
+		/*
+		 * LiteralBooleanEvaluation is a specialization of LiteralEvaluation for the case of LiteralBooleans.
+		 * It is also a predicate and thus a specialization of BooleanEvaluation. 
+		 */
+	 
+		return : Boolean[1];
+	}
+	abstract function LiteralIntegerEvaluation specializes LiteralEvaluation {
+		doc
+		/*
+		 * LiteralIntegerEvaluation is a specialization of LiteralEvaluation for the case of LiteralIntegers.
+		 */
+	 
+		return : Integer[1];
+	}
+
+	abstract function LiteralRationalEvaluation specializes LiteralEvaluation {
+		doc
+		/*
+		 * LiteralRationalEvaluation is a specialization of LiteralEvaluation for the case of LiteralRationals.
+		 * (Note: Return type is Real to allow easy type conformance of LiteralRationals when a Real result is expected.)
+		 */
+	 
+		return : Real[1];
+	}
+	
+	abstract function LiteralStringEvaluation specializes LiteralEvaluation {
+		doc
+		/*
+		 * LiteralStringEvaluation is a specialization of LiteralEvaluation for the case of LiteralStrings.
+		 */
+	 
+		return : String[1];
+	}
+	
+	function NullEvaluation specializes Evaluation {
+		doc
+		/*
+		 * NullEvaluation is a specialization of Evaluation for the case of NullExpressions.
+		 */
+	 
+		return : Anything[0..0];
+	}
+
+	assoc all InvolvedIn specializes BinaryLink { 
+		doc
+		/*
+		 * InvolvedIn asserts that the involvedObject is involved in the Behavior carried out by the 
+		 * involvingPerformance.
+		 */
+		 
+		end feature involvedObject: Object redefines source crosses involvingPerformance.involvedObjects;
+		end feature involvingPerformance: Performance redefines target crosses involvedObject.involvingPerformances;
+	}
+	
+	assoc all Performs specializes InvolvedIn {
+		doc
+		/*
+		 * Performs asserts that the performer enacts the Behavior carried out by the performance.
+		 */
+	
+	 	end feature performerObject: Object redefines involvedObject crosses performance.performers;
+	 	end feature performance: Performance redefines involvingPerformance crosses performerObject.enactedPerformances;
 	 }
-	
-	/**
-	 * performances is the most general feature for performances of Behaviors.
-	 */
-	abstract step performances: Performance[0..*] nonunique subsets occurrences;
-	
-	/**
-	 * evaluations is a specialization of performances for evaluations of Functions.
-	 */
-	abstract expr evaluations: Evaluation[0..*] nonunique subsets performances;
-	
-	/**
-	 * booleanEvaluations is a specialization of evaluations restricted to type BooleanEvaluation.
-	 */
-	abstract expr booleanEvaluations: BooleanEvaluation[0..*] nonunique subsets evaluations;
-	
-	/**
-	 * trueEvaluations is a subset of booleanEvaluations that result in true. It is the most general
-	 * feature of invariants that are not negated. 
-	 */
-	abstract expr trueEvaluations :> booleanEvaluations {
-		true
+
+	abstract step performances: Performance[0..*] nonunique subsets occurrences {
+		doc
+		/*
+		 * performances is the most general feature for performances of Behaviors.
+		 */
 	}
 	
-	/**
-	 * falseEvaluations is a subset of booleanEvaluations that result in true. It is the most general
-	 * feature of invariants that are negated.
-	 */
-	abstract expr falseEvaluations :> booleanEvaluations {
-		false
+	abstract expr evaluations: Evaluation[0..*] nonunique subsets performances {
+		doc
+		/*
+		 * evaluations is a specialization of performances for evaluations of Functions.
+		 */
 	}
 	
-	/**
-	 * literalEvaluations is a specialization of evaluations restricted to type LiteralEvaluation.
-	 */
-	abstract expr literalEvaluations: LiteralEvaluation[0..*] nonunique subsets evaluations;
+	abstract expr constructorEvaluations [0..*] nonunique subsets evaluations  {
+	    doc
+	    /*
+	     * constructorEvaluations is a specialization of evaluations that restricts the multiplicity 
+	     * of its result parameter to 1..1, requiring a constructorEvaluation to result in a single value.
+	     */
+	     
+	     return result [1..1];
+	}
 	
-	/**
-	 * literaBooleanlEvaluations is a specialization of literalEvaluations and booleanEvaluations restricted 
-	 * to type LiteralBooleanEvaluation.
-	 */
-	abstract expr literalBooleanEvaluations: LiteralBooleanEvaluation[0..*] nonunique subsets literalEvaluations, booleanEvaluations;
+	abstract expr booleanEvaluations: BooleanEvaluation[0..*] nonunique subsets evaluations {
+		doc
+		/*
+		 * booleanEvaluations is a specialization of evaluations restricted to type BooleanEvaluation.
+		 */
+	}
 	
-	/**
-	 * literalEvaluations is a specialization of evaluations restricted to type LiteralEvaluation.
-	 */
-	abstract expr literalIntegerEvaluations: LiteralIntegerEvaluation[0..*] nonunique subsets literalEvaluations;
+	abstract expr trueEvaluations subsets booleanEvaluations {
+		doc
+		/*
+		 * trueEvaluations is a subset of booleanEvaluations that result in true. It is the most general
+		 * feature of invariants that are not negated. 
+		 */
 	
-	/**
-	 * literalRationalEvaluations is a specialization of literalEvaluations restricted to type LiteralRationalEvaluation.
-	 */
-	abstract expr literalRationalEvaluations: LiteralRationalEvaluation[0..*] nonunique subsets literalEvaluations;
+		private feature trueValue = true;
+		binding result = trueValue;
+	}
 	
-	/**
-	 * literalStringEvaluations is a specialization of literalEvaluations restricted to type LiteralStringEvaluation.
-	 */
-	abstract expr literalStringEvaluations: LiteralStringEvaluation[0..*] nonunique subsets literalEvaluations;
+	abstract expr falseEvaluations subsets booleanEvaluations {
+		doc
+		/*
+		 * falseEvaluations is a subset of booleanEvaluations that result in false. It is the most general
+		 * feature of invariants that are negated.
+		 */
 	
-	/**
-	 * nullEvaluations is a specialization of evaluations restricted to type NullEvaluation.
-	 */
-	abstract expr nullEvaluations: NullEvaluation[0..*] nonunique subsets evaluations;
+        private feature falseValue = false;
+        binding result = falseValue;
+	}
 	
+	abstract expr metadataAccessEvaluations: MetadataAccessEvaluation[0..*] nonunique subsets evaluations {
+		doc
+		/*
+		 * metadataAccessEvaluations is a specialization of evaluations restricted to type MetadataAccessEvaluation. 
+		 */
+	}
+	
+	abstract expr literalEvaluations: LiteralEvaluation[0..*] nonunique subsets evaluations {
+		doc
+		/*
+		 * literalEvaluations is a specialization of evaluations restricted to type LiteralEvaluation.
+		 */
+	}
+	
+	abstract expr literalBooleanEvaluations: LiteralBooleanEvaluation[0..*] nonunique subsets literalEvaluations, booleanEvaluations
+		intersects literalEvaluations, booleanEvaluations {
+		doc
+		/*
+		 * literaBooleanlEvaluations is a specialization of literalEvaluations and booleanEvaluations restricted 
+		 * to type LiteralBooleanEvaluation.
+		 */
+	}
+	
+	abstract expr literalIntegerEvaluations: LiteralIntegerEvaluation[0..*] nonunique subsets literalEvaluations {
+		doc
+		/*
+		 * literalEvaluations is a specialization of evaluations restricted to type LiteralEvaluation.
+		 */
+	}
+	
+	abstract expr literalRationalEvaluations: LiteralRationalEvaluation[0..*] nonunique subsets literalEvaluations {
+		doc
+		/*
+		 * literalRationalEvaluations is a specialization of literalEvaluations restricted to type LiteralRationalEvaluation.
+		 */
+	}
+	
+	abstract expr literalStringEvaluations: LiteralStringEvaluation[0..*] nonunique subsets literalEvaluations {
+		doc
+		/*
+		 * literalStringEvaluations is a specialization of literalEvaluations restricted to type LiteralStringEvaluation.
+		 */
+	}
+	
+	abstract expr nullEvaluations: NullEvaluation[0..*] nonunique subsets evaluations {
+		doc
+		/*
+		 * nullEvaluations is a specialization of evaluations restricted to type NullEvaluation.
+		 */
+	}
 }
