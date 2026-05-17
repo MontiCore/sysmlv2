@@ -33,7 +33,7 @@ public class VisualizationTest {
     instance.readAll(libPath, false, ".sysml");
     String inverterContent = Files.readString(Paths.get("src/test/resources/Inverter.sysml"));
 
-    SysMLInteractiveResult rezEval = instance.eval(inverterContent);
+    SysMLInteractiveResult rezEval = instance.process(inverterContent);
     assertThat(rezEval.hasErrors()).isFalse();
 
     Element rezRoot = rezEval.getRootElement();
