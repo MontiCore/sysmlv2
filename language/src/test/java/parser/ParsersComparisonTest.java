@@ -15,10 +15,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ParsersComparisonTest {
-  private static final String MODEL_PATH = "src/omgTest/resources/parser";
+  private static final String MODEL_PATH = "src/test/resources/parser";
 
   private SysMLv2Parser parser = SysMLv2Mill.parser();
 
