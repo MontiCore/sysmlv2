@@ -96,7 +96,7 @@ public class VisualizationCLI {
     String input = Files.readString(modelPath);
 
     // adds resource to index
-    SysMLInteractiveResult result = instance.eval(input);
+    SysMLInteractiveResult result = new SysMLInteractiveResult(new Exception());//instance.eval(input);
     if (result.hasErrors()) {
       Log.error("Could not parse model at " + cmd.getArgs()[0] + "\n"
           + result.formatIssues());
