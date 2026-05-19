@@ -224,7 +224,7 @@ component grammar SysMLBasis
       Stereotype?
       (   ["public"]       | [public:"+"]
         | ["private"]      | [private:"-"]
-        | ["protected"]    | [protected:"#"]
+        | ["protected"]    | {!noSpace(2)}? [protected:"#"]
         | ["final"]
         | ["abstract"]
         | ["local"]
@@ -243,8 +243,10 @@ component grammar SysMLBasis
         | ["variant"]
       )*;
 
+  nokeyword "final";
+
   UserDefinedKeyword =
-    {noSpace(2);} "#" MCQualifiedName ;
+    {noSpace(2)}? "#" MCQualifiedName;
 
   /**
    * Anonyme Usage, deren "Typ" im Sinne der SysML (also Beispielsweise "attribute" oder "part") sich erst durch
