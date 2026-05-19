@@ -80,4 +80,5 @@ nav:
     - Reference: 
       - Overview: 'Reference/index.md'
       - Stream Library: 'Reference/StreamLibrary.md'
+  - Troubleshooting: 'Troubleshooting/index.md'
   - License: https://monticore.github.io/monticore/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL/

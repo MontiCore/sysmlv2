@@ -29,7 +29,7 @@ public class StateSupertypes implements SysMLStatesASTStateDefCoCo, SysMLStatesA
         .collect(Collectors.toList());
 
     for(var problem: nonExistent) {
-      Log.error("0x10031 Could not find state definition \"" + printName(problem) + "\".");
+      Log.error("0x10034 Could not find state definition \"" + printName(problem) + "\".");
     }
   }
 
@@ -45,7 +45,7 @@ public class StateSupertypes implements SysMLStatesASTStateDefCoCo, SysMLStatesA
         .collect(Collectors.toList());
 
     for(var problem: nonExistent) {
-      Log.error("0x10031 Could not find state definition or usage with the name \"" + printName(problem) + "\".");
+      Log.error("0x10035 Could not find state definition or usage with the name \"" + printName(problem) + "\".");
     }
   }
 }
