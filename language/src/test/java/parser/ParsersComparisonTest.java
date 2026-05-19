@@ -73,11 +73,10 @@ public class ParsersComparisonTest {
     assertTrue(ast.isPresent(), "MontiCore AST should have been created");
 
     // 2) Official OMG parser
+    official.next(".sysml");
     String input = Files.readString(modelPath);
-    assertDoesNotThrow(
-        () -> official.parse(input),
-        () -> "Official OMG parse() failed for " + modelName + " (" + modelPath + ")"
-    );
+    official.parse(input);
+    assertTrue(official.getResource().getErrors().isEmpty(), "Omg parser found errors when MC parser did not");
 
   }
 }
