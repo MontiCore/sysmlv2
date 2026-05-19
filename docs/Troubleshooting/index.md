@@ -73,57 +73,148 @@ transition first S then T;
 
 **Fix:** Check the spelling of the part definition you are trying to refine (see **0x10017**).
 
-**0x10AA5**, **0x10AA6**: Illegal connection for subcomponent outputs.
+**0x10AA5**, **0x10AA6**: Illegal connection of (subcomponent) ports.
+**Example**:
 ```sysml
+port def SomePort {
+  in attribute b: Boolean;
+}
+part def SomePart {
+  port i:  SomePort;
+  port o: ~SomePort;
+}
 part def A {
-  port i: SomePort;
+  port i1:  SomePort;
+  port o1: ~SomePort;
 
-  connect i to sub.o;
+  part sub:  SomePart;
+  part sub1: SomePart;
+
+  connect i1 to sub.i;  // 1
+  connect sub.o to o1;  // 2
+  connect i1 to sub.o1; // 3
+
+  connect sub.o -> sub1.i; // 4
+  connect sub.i -> sub1.o; // 5
 }
 ```
-**Fix:** Ensure outputs of subcomponents only connect to inputs of other subcomponents or to outputs of the parent component.
+**Fix:** We consider valid two types of simple connections: connecting subcomponent IO to other subcomponent IO of the opposite direction;
+connecting IO of subcomponents to the IO of the parent component with the same directionm, aka forwarding.
+Connections 1 and 2 are legal forwards. 3 is not. Connection 4 is valid, while 5 is not.
 
-
-**0x10AA6**: Illegal connection for parent component inputs. **Fix:** Ensure inputs of parent components only connect to inputs of subcomponents or outputs of the parent component.
 **0x10AA7**: Subcomponent name is not unique. **Fix:** Give each part usage within a block a unique name.
 
 ### 0x80... and 0x81... Expressions & Type Checking
-* **0x80001**, **0x80004**: Failed to derive a type for an expression (e.g., in constraints or transition guards). **Fix:** Check your expression for syntax errors or unresolved symbols.
-* **0x80002**, **0x80005**: Expression type should be boolean. **Fix:** Ensure your constraint or transition guard evaluates to a true/false condition.
-* **0x81001**: Type should not be a Stream. **Fix:** You are using a stream where a scalar value is expected. Check your stream instantiations.
-* **0x81002** - **0x81009**: Set expression typing errors (LHS/RHS calculation failures, incompatible elements). **Fix:** When using subset or element-of operators, ensure both sides are evaluable, the right side is a Set, and the elements are of compatible types.
-* **0x81010**: Stream not defined in global scope. **Fix:** Ensure the standard library is loaded properly.
+**0x80001**, **0x80002**: Failed to derive a type for an expression in constraints.
+**Example**:
+```sysml
+port def SomePort {
+  in attribute b: Boolean;
+}
+part def A {
+  port i:  SomeBooleanIn;
+  port o: ~SomeBooleanIn;
+
+  constraint c {
+    i.b > o.b
+  }
+}
+```
+
+**Fix:** Check your expression for syntax errors or unresolved symbols. Here, the expressions on the left and right are not of type integer, which `>` requires.
+
+**0x80004**, **0x80005**: Expression type should be boolean.
+**Example**:
+```sysml
+port def SomePort {
+  in attribute b: Integer;
+}
+part def A {
+  port i:  SomeBooleanIn;
+
+  exhibit state s {
+    transition
+    first S
+    if i.b
+    then S;
+  }
+}
+```
+
+**Fix:** Ensure your constraint or transition guard evaluates to a true/false condition. Here the value of the guard is of type Integer.
+
+**0x81001**: You are using a stream where a scalar value is expected.
+**Example**:
+```sysml
+port def SomePort {
+  in attribute b: Boolean;
+}
+part def A {
+  port i:  SomeBooleanIn;
+  port o: ~SomeBooleanIn;
+
+  constraint c {
+    i.b.first();
+  }
+
+  exhibit state s {
+    transition
+    first S
+    if i.b.first()
+    then S;
+  }
+}
+```
+
+**Fix:** in constraints access of a port evaluates stream based, while in transitions it evaluates to the explicit type.
+The expression in `c` is valid as `i.b` evaluates to `EventStream<Boolean>`, while in `s` to `Boolean`,
+making the guard invalid. See [SpesML](../SpesML/index.md).
 
 ### 0x90... Refinements
-* **0x90011**, **0x90021**: Refinement connection topology mismatch. **Fix:** When a component refines another, their internal connection structure (number of connections) should remain similar to ensure structural consistency.
-* **0x90020**, **0x90022**: Missing requirement or composition refinement. **Fix:** Ensure your high-level and low-level requirements and compositions form a continuous refinement chain.
-* **0x90030**: Cyclic refinement detected. **Fix:** Refinements must be acyclic. Remove circular `refines` relationships (e.g., A refines B, and B refines A).
-* **0x90031**: Trivial self-refinement. **Fix:** A component cannot refine itself. Remove the self-referencing `refines` clause.
-* **0x9004**: Incompatible refinement interface. **Fix:** Ensure the ports and their types match exactly between the refined component and the abstract component.
+**0x90030**, **0x90031**: Cyclic specialization detected (e.g., `part def A specializes B;`, and `part def B specializes A;`).
 
-### 0xA... Internal & Evaluation Errors
-* **0xA0001**, **0xA0002**: KerML cardinality cannot produce a value. **Fix:** Ensure cardinalities use simple integer literals.
-* **0xA0171**: Logical NOT (`not` or `!`) operator applied to a non-boolean. **Fix:** Only apply `not` to expressions that resolve to a boolean value.
-* **0xA0321**: Attempted to access methods/attributes on a type variable. **Fix:** Do not use dot notation on generic type variables.
-* **0xA1236**: Ambiguous symbol resolution. **Fix:** A name used in an expression resolves to multiple symbols. Use fully qualified names to resolve the ambiguity.
-* **0xA1303**, **0xA1306**: Type or variable is not accessible. **Fix:** Check the visibility (e.g., `public`, `private`) of the referenced type or variable.
-* **0xA1317**: Cannot find symbol. **Fix:** Ensure the variable, property, or method is declared and imported into the current scope.
+**Fix:** Specialization must be acyclic. Remove circular specialization relationships. This includes trivial specializations.
 
 ### 0xD... Serialization Errors
-* **0xD0001**, **0xD0100**, **0xD0101**: Symbol table serialization errors. **Fix:** This is an internal tool error usually caused by unsupported constructs like mixed causalities or unknown timings in the AST. Ensure your model conforms strictly to supported SysML constructs.
+**0xD0001**, **0xD0100**, **0xD0101**: Symbol table serialization errors.
 
-### 0xPA... Packaging & Environment Errors
-* **0xPA090**, **0xPA091**, **0xPA092**: Missing standard library definitions. **Fix:** The tool failed to find or load the `Stream.symtabdefinition` from its resources. Ensure that the tool is installed correctly and all JAR files are intact.
+**Fix:** This is an internal tool error usually caused by trying to serialize a construct that should not be serialized
+or of unknown timing. Ensure your model conforms strictly to supported SysML constructs.
 
-### 0xFF... Verification & Modeling Guidelines
-* **0xFF001**, **0xFF002**: Action definition named `done`. **Fix:** `done` is a reserved keyword in some contexts. Please rename your action.
-* **0xFF003**, **0xFF004**: `do` actions are not supported. **Fix:** The verification engine does not support `do` actions in states. Use `entry`, `exit`, or external transitions instead.
-* **0xFF005**: Name is not Isabelle compatible. **Fix:** Rename the element using only letters, numbers, and underscores. Ensure it does not start with a number.
-* **0xFF006**: Channels (Ports) need a type. **Fix:** Ensure every attribute within a port definition has a type defined via `:` or `defined by`.
-* **0xFF007**: `exit` actions are not supported. **Fix:** The verification engine does not currently support `exit` actions. Model this behavior using standard transitions instead.
-* **0xFF0001**: Discouraged use of `flow` connections. **Fix:** Use standard `connect` or `connection` statements instead of `flow`.
-* **0xFF0002**: Part must use at least one port. **Fix:** A well-modeled part should communicate with its environment. Add a port to your part definition.
-* **0xFF0003**: Part has no explicit behavior. **Fix:** Add a constraint, a state machine, or subparts to define the behavior of the part.
-* **0xFF0004**: Part has conflicting behaviors. **Fix:** Ensure a part uses exactly one type of behavior specification (constraint, state machine, or composition), not a mixture of them.
+### 0xPA... Packaging Internal Errors
+**0xPA090**, **0xPA091**, **0xPA092**: Missing MontiCore specific standard library definitions. The tool failed to find or
+load the `Stream.symtabdefinition` from its resources.
 
-All other error codes describe internal errors and should be reported as a [bug](https://github.com/MontiCore/sysmlv2/issues).
+**Fix:**  Ensure all MontiCore Gradle dependencies are loaded.
+
+### 0xFF... Modeling Guidelines Errors
+**0xFF003**, **0xFF004**: We do not recommend do actions in states.
+
+**Fix:** Use `entry`, `exit`, or external transitions instead.
+
+**0xFF005**: Name contains not recommended characters.
+
+**Fix:** For use in validation and verification tools, we recommend simple names.
+Rename the element using only letters, numbers, and underscores. Ensure it does not start with a number.
+
+**0xFF006**: Port attribute does not have a type.
+
+**Fix:** Ensure every attribute within a port definition has at least one type defined via `:` or `defined by`.
+
+**0xFF0001**: Discouraged use of flow connections.
+
+**Fix:** Use standard `connect` or `connection` statements instead of `flow`.
+
+**0xFF0002**: Part should use at least one port.
+
+**Fix:** A well-modeled part should communicate with its environment. Add a port to your part definition.
+
+**0xFF0003**: Part has no explicit behavior.
+
+**Fix:** Add a constraint, a state machine, or subparts to define the behavior of the part.
+
+**0xFF0004**: Part has conflicting behaviors.
+
+**Fix:** Ensure a part uses exactly one type of behavior specification (constraint, state machine, or composition), not a mixture of them.
+
+All other error codes describe internal errors and should be described through [issues](https://github.com/MontiCore/sysmlv2/issues) for assistance.
