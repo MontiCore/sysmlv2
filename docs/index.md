@@ -40,12 +40,14 @@ quality desired for industrial use.
 
 # The SpesML v2 Functional Modeling Profile
 
-In complex system and software engineering, specifying functional behavior early in the design process is essential
+In complex systems and software engineering, specifying functional behavior early in the design process is essential
 for ensuring correctness and consistency across development artifacts. However, existing modeling languages,
-including SysML v2, are either too abstract or require committing to implementation details prematurely, limiting
-the ability to capture partial specifications. To overcome these limitations, we build a SysML v2 profile, which embodies
-lessons learned from modeling with the SysML v2 which both restricts the very broad SysML v2 language to a usable,
-semantically well-founded subset of the language, and extends the language with communication history-oriented
+including SysML v2, are often either too abstract or require premature commitment to implementation details,
+limiting the ability to capture partial specifications.
+
+To overcome these limitations, we introduce a SysML v2 profile
+that embodies lessons learned from modeling with SysML v2. This profile restricts the broad SysML v2 language
+to a usable, semantically well-founded subset, while extending it with communication history-oriented
 specification constructs that leverage underspecification.
 
 <div class="grid cards" markdown>
