@@ -523,19 +523,6 @@
         
       
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Home
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
       <a href="." class="md-nav__link md-nav__link--active">
         
   
@@ -547,52 +534,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#get-started-with-sysml-today" class="md-nav__link">
-    <span class="md-ellipsis">
-      Get Started with SysML Today!
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#found-an-issue" class="md-nav__link">
-    <span class="md-ellipsis">
-      Found an issue?
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#further-information" class="md-nav__link">
-    <span class="md-ellipsis">
-      Further Information
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
       
     </li>
   
@@ -675,8 +616,6 @@
       
         
       
-        
-      
     
     
     
@@ -728,29 +667,6 @@
   
   <span class="md-ellipsis">
     Tool Download & Use
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="Usage/error/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Errors
     
   </span>
   
@@ -1145,12 +1061,12 @@
 
 <h1 id="more">The Systems Modeling Language v2</h1>
 <p>One of the interesting new capabilities is the exchange of models
-between tools using a really human-readable textual form of the SysML
+between tools using a human-readable textual form of the SysML
 language in the spirit of a modern programming language (even though it
 has a number of special constructs that resemble modelling concepts).</p>
 <p>This textual form will play a major role in the exchange of models
 between tools thus allowing to build toolchains, as well as in the
-versioning of models, e.g., in Github, and also in the efficient
+versioning of models, e.g., in GitHub, and also in the efficient
 definition of models by people who prepare textual notations.</p>
 <p>It is therefore highly relevant to have consistent parsing mechanisms
 available. The <a href="https://github.com/Systems-Modeling/SysML-v2-Pilot-Implementation">SysML v2
@@ -1161,13 +1077,21 @@ however, helpful to provide a second source parser, such that parsing
 results can be compared and therefore compilers, linters, checkers of
 context conditions and other advanced tooling, receive the level of
 quality desired for industrial use.</p>
+<h1 id="the-spesml-v2-functional-modeling-profile">The SpesML v2 Functional Modeling Profile</h1>
+<p>In complex systems and software engineering, specifying functional behavior early in the design process is essential
+for ensuring correctness and consistency across development artifacts. However, existing modeling languages,
+including SysML v2, are often either too abstract or require premature commitment to implementation details,
+limiting the ability to capture partial specifications. To overcome these limitations, we introduce a SysML v2 profile
+that embodies lessons learned from modeling with SysML v2. This profile restricts the broad SysML v2 language
+to a usable, semantically well-founded subset, while extending it with communication history-oriented
+specification constructs that leverage underspecification.</p>
 <div class="grid cards">
 <ul>
 <li>
 <p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m13.13 22.19-1.63-3.83c1.57-.58 3.04-1.36 4.4-2.27zM5.64 12.5l-3.83-1.63 6.1-2.77C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39S16.66.269 11 5.93c-2.19 2.19-3.5 4.6-4.35 6.71-.28.75-.09 1.57.46 2.13l2.13 2.12c.55.56 1.37.74 2.12.46A19.1 19.1 0 0 0 18.07 13c5.66-5.66 3.54-10.61 3.54-10.61m-7.07 7.07c-.78-.78-.78-2.05 0-2.83s2.05-.78 2.83 0c.77.78.78 2.05 0 2.83s-2.05.78-2.83 0m-5.66 7.07-1.41-1.41zM6.24 22l3.64-3.64c-.34-.09-.67-.24-.97-.45L4.83 22zM2 22h1.41l4.77-4.76-1.42-1.41L2 20.59zm0-2.83 4.09-4.08c-.21-.3-.36-.62-.45-.97L2 17.76z"/></svg></span> &nbsp;
     <strong>Getting Started</strong></p>
 <hr />
-<p>Is this your first time using SysML? Set up a project and start modeling.</p>
+<p>Is this your first time using SysML v2? Set up a project and start modeling.</p>
 <hr />
 <p><a href="GettingStarted/Users/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> For Users</a><br/>
 <a href="GettingStarted/Developers/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> For Developers</a></p>
