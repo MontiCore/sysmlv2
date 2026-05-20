@@ -130,3 +130,5 @@ tasks.generateSysMLv2VscodePlugin.finalizedBy copyFiles
 // gradle 8 requires explicit task dependency declarations
 tasks.packageSysMLv2VscodePlugin.dependsOn copyFiles, copyReadme
 tasks.buildSysMLv2VscodePlugin.dependsOn packageSysMLv2VscodePlugin
+tasks.publishMavenJavaPublicationToGithubRepository.dependsOn packageSysMLv2VscodePlugin
+tasks.publishMavenJavaPublicationToNexusRepository.dependsOn packageSysMLv2VscodePlugin
