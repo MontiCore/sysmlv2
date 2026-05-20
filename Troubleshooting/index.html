@@ -894,15 +894,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#support" class="md-nav__link">
-    <span class="md-ellipsis">
-      Support
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#error-codes" class="md-nav__link">
     <span class="md-ellipsis">
       Error Codes
@@ -923,9 +914,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#0x100050x10032" class="md-nav__link">
+  <a href="#0x10005-0x10032" class="md-nav__link">
     <span class="md-ellipsis">
-      0x10005,0x10032
+      0x10005, 0x10032
     </span>
   </a>
   
@@ -1241,6 +1232,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#support" class="md-nav__link">
+    <span class="md-ellipsis">
+      Support
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1291,26 +1291,20 @@
 
 
 <h1 id="troubleshooting">Troubleshooting</h1>
-<h2 id="support">Support</h2>
-<p>If you encounter any issues or have questions, feel free to reach out.</p>
-<ul>
-<li><strong>GitHub Issues:</strong> <a href="https://github.com/MontiCore/sysmlv2/issues">Report a bug or request a feature</a></li>
-<li><strong>Email:</strong> <a href="mailto:marin@se-rwth.de">marin@se-rwth.de</a></li>
-</ul>
 <h2 id="error-codes">Error Codes</h2>
 <p>Below is a list of error codes you might encounter while modeling using the CLI, along with explanations and suggestions on how to resolve them in your SysML models.</p>
 <h3 id="0x10-model-structure-resolution">0x10... Model Structure &amp; Resolution</h3>
-<h4 id="0x100050x10032"><strong>0x10005</strong>,<strong>0x10032</strong></h4>
+<h4 id="0x10005-0x10032">0x10005, 0x10032</h4>
 <h5 id="explanation">Explanation</h5>
 <p>A cardinality declaration is incomplete or empty.</p>
 <h5 class="skip-from-toc" id="fix">Fix</h5>
 <p>Ensure your cardinalities conform to the format <code>[n..m]</code>,or <code>[m]</code> where <code>n</code> is non-negative and <code>m</code> is non-negative with <code>n &lt;= m</code> or <code>*</code> .</p>
-<h4 id="0x10030-0x10031-0x10033"><strong>0x10030</strong>, <strong>0x10031</strong>, <strong>0x10033</strong></h4>
+<h4 id="0x10030-0x10031-0x10033">0x10030, 0x10031, 0x10033</h4>
 <h5 id="explanation_1">Explanation</h5>
 <p>We deem cardinality ranges like <code>[*]</code>, <code>[n..*]</code>, or <code>[n..m]</code> problematic.</p>
 <h5 class="skip-from-toc" id="fix_1">Fix</h5>
 <p>We recommend using exact scalar cardinalities (e.g., <code>[1]</code>).</p>
-<h4 id="0x10009-0x10010-0x10012-0x10aa3-0x10aa4"><strong>0x10009</strong>, <strong>0x10010</strong>, <strong>0x10012</strong>, <strong>0x10AA3</strong>, <strong>0x10AA4</strong></h4>
+<h4 id="0x10009-0x10010-0x10012-0x10aa3-0x10aa4">0x10009, 0x10010, 0x10012, 0x10AA3, 0x10AA4</h4>
 <h5 id="explanation_2">Explanation</h5>
 <p>Unresolved part usage, part definition, or port usage in a decomposed part def.</p>
 <h5 id="example">Example</h5>
@@ -1322,7 +1316,7 @@ part def A {
 <h5 class="skip-from-toc" id="fix_2">Fix</h5>
 <p>Check the names used in your <code>connect</code> statements to ensure the parts and ports exist and are spelled correctly. <code>somePart1</code> has to be declared as a part usage with a type,
 it has to have a part def and <code>somePort</code> has to be declared in the definition of the part usage.</p>
-<h4 id="0x10017-0x10020"><strong>0x10017</strong>, <strong>0x10020</strong></h4>
+<h4 id="0x10017-0x10020">0x10017, 0x10020</h4>
 <h5 id="explanation_3">Explanation</h5>
 <p>Unresolved Action definition or usage.</p>
 <h5 id="example_1">Example</h5>
@@ -1334,27 +1328,27 @@ action a: A2;
 <h5 class="skip-from-toc" id="fix_3">Fix</h5>
 <p>Verify the spelling of the action and ensure it is defined in the current scope or imported. <code>A</code> and <code>A2</code> here were not defined anywhere in scope.
 Please note that <code>A</code> must be an action def and <code>A2</code> can be both an action def and a usage.</p>
-<h4 id="0x10018"><strong>0x10018</strong></h4>
+<h4 id="0x10018">0x10018</h4>
 <h5 id="explanation_4">Explanation</h5>
 <p>Specializations of port usages must be port usages or definitions.</p>
 <h5 class="skip-from-toc" id="fix_4">Fix</h5>
 <p>Ensure the type assigned to your port is a valid port definition (see <strong>0x10017</strong>).</p>
-<h4 id="0x10021-0x10022"><strong>0x10021</strong>, <strong>0x10022</strong></h4>
+<h4 id="0x10021-0x10022">0x10021, 0x10022</h4>
 <h5 id="explanation_5">Explanation</h5>
 <p>Unresolved Interface definition or usage.</p>
 <h5 class="skip-from-toc" id="fix_5">Fix</h5>
 <p>Verify the spelling and existence of the referenced interface (see <strong>0x10017</strong>).</p>
-<h4 id="0x10023-0x10024"><strong>0x10023</strong>, <strong>0x10024</strong></h4>
+<h4 id="0x10023-0x10024">0x10023, 0x10024</h4>
 <h5 id="explanation_6">Explanation</h5>
 <p>Unresolved Item definition or usage.</p>
 <h5 class="skip-from-toc" id="fix_6">Fix</h5>
 <p>Verify the spelling and existence of the referenced item (see <strong>0x10017</strong>).</p>
-<h4 id="0x10025-0x10026-0x10027-0x10028-0x10aa1"><strong>0x10025</strong>, <strong>0x10026</strong>, <strong>0x10027</strong>, <strong>0x10028</strong>, <strong>0x10AA1</strong></h4>
+<h4 id="0x10025-0x10026-0x10027-0x10028-0x10aa1">0x10025, 0x10026, 0x10027, 0x10028, 0x10AA1</h4>
 <h5 id="explanation_7">Explanation</h5>
 <p>Unresolved Part or Port definition/usage.</p>
 <h5 class="skip-from-toc" id="fix_7">Fix</h5>
 <p>Ensure that the parts and ports you are trying to specialize or type actually exist in the model (see <strong>0x10017</strong>).</p>
-<h4 id="0x10029-0x10030"><strong>0x10029</strong>, <strong>0x10030</strong></h4>
+<h4 id="0x10029-0x10030">0x10029, 0x10030</h4>
 <h5 id="explanation_8">Explanation</h5>
 <p>Source or target state in a transition is not defined.</p>
 <h5 id="example_2">Example</h5>
@@ -1363,17 +1357,17 @@ transition first S then T;
 </code></pre></div>
 <h5 class="skip-from-toc" id="fix_8">Fix</h5>
 <p>Verify that the <code>first</code> and <code>then</code> states <code>S</code> and <code>T</code> are declared in scope. In this case <code>S</code> is declared but <code>T</code> cannot be resolved.</p>
-<h4 id="0x10034-0x10035"><strong>0x10034</strong>, <strong>0x10035</strong></h4>
+<h4 id="0x10034-0x10035">0x10034, 0x10035</h4>
 <h5 id="explanation_9">Explanation</h5>
 <p>Unresolved State definition.</p>
 <h5 class="skip-from-toc" id="fix_9">Fix</h5>
 <p>Check the spelling of state definitions referenced in your models (see <strong>0x10017</strong>).</p>
-<h4 id="0x10aa2"><strong>0x10AA2</strong></h4>
+<h4 id="0x10aa2">0x10AA2</h4>
 <h5 id="explanation_10">Explanation</h5>
 <p>Part def used in <code>refines</code> specializations does not exist (SpesML specific CoCo).</p>
 <h5 class="skip-from-toc" id="fix_10">Fix</h5>
 <p>Check the spelling of the part definition you are trying to refine (see <strong>0x10017</strong>).</p>
-<h4 id="0x10aa5-0x10aa6"><strong>0x10AA5</strong>, <strong>0x10AA6</strong></h4>
+<h4 id="0x10aa5-0x10aa6">0x10AA5, 0x10AA6</h4>
 <h5 id="explanation_11">Explanation</h5>
 <p>Illegal connection of (subcomponent) ports.</p>
 <h5 id="example_3">Example</h5>
@@ -1403,13 +1397,13 @@ part def A {
 <p>We consider valid two types of simple connections: connecting subcomponent IO to other subcomponent IO of the opposite direction;
 connecting IO of subcomponents to the IO of the parent component with the same directionm, aka forwarding.
 Connections 1 and 2 are legal forwards. 3 is not. Connection 4 is valid, while 5 is not.</p>
-<h4 id="0x10aa7"><strong>0x10AA7</strong></h4>
+<h4 id="0x10aa7">0x10AA7</h4>
 <h5 id="explanation_12">Explanation</h5>
 <p>Subcomponent name is not unique.</p>
 <h5 class="skip-from-toc" id="fix_12">Fix</h5>
 <p>Give each part usage within a block a unique name.</p>
 <h3 id="0x80-and-0x81-expressions-type-checking">0x80... and 0x81... Expressions &amp; Type Checking</h3>
-<h4 id="0x80001-0x80002"><strong>0x80001</strong>, <strong>0x80002</strong></h4>
+<h4 id="0x80001-0x80002">0x80001, 0x80002</h4>
 <h5 id="explanation_13">Explanation</h5>
 <p>Failed to derive a type for an expression in constraints.</p>
 <h5 id="example_4">Example</h5>
@@ -1427,7 +1421,7 @@ part def A {
 </code></pre></div>
 <h5 class="skip-from-toc" id="fix_13">Fix</h5>
 <p>Check your expression for syntax errors or unresolved symbols. Here, the expressions on the left and right are not of type integer, which <code>&gt;</code> requires.</p>
-<h4 id="0x80004-0x80005"><strong>0x80004</strong>, <strong>0x80005</strong></h4>
+<h4 id="0x80004-0x80005">0x80004, 0x80005</h4>
 <h5 id="explanation_14">Explanation</h5>
 <p>Expression type should be boolean.</p>
 <h5 id="example_5">Example</h5>
@@ -1447,7 +1441,7 @@ part def A {
 </code></pre></div>
 <h5 class="skip-from-toc" id="fix_14">Fix</h5>
 <p>Ensure your constraint or transition guard evaluates to a true/false condition. Here the value of the guard is of type Integer.</p>
-<h4 id="0x81001"><strong>0x81001</strong></h4>
+<h4 id="0x81001">0x81001</h4>
 <h5 id="explanation_15">Explanation</h5>
 <p>You are using a stream where a scalar value is expected.</p>
 <h5 id="example_6">Example</h5>
@@ -1475,58 +1469,58 @@ part def A {
 The expression in <code>c</code> is valid as <code>i.b</code> evaluates to <code>EventStream&lt;Boolean&gt;</code>, while in <code>s</code> to <code>Boolean</code>,
 making the guard invalid. See <a href="../SpesML/">SpesML</a>.</p>
 <h3 id="0x90-specializations-refinements">0x90... Specializations &amp; Refinements</h3>
-<h4 id="0x90030-0x90031"><strong>0x90030</strong>, <strong>0x90031</strong></h4>
+<h4 id="0x90030-0x90031">0x90030, 0x90031</h4>
 <h5 id="explanation_16">Explanation</h5>
 <p>Cyclic specialization detected (e.g., <code>part def A specializes B;</code>, and <code>part def B specializes A;</code>).</p>
 <h5 class="skip-from-toc" id="fix_16">Fix</h5>
 <p>Specialization must be acyclic. Remove circular specialization relationships. This includes trivial specializations.</p>
 <h3 id="0xd-serialization-errors">0xD... Serialization Errors</h3>
-<h4 id="0xd0001-0xd0100-0xd0101"><strong>0xD0001</strong>, <strong>0xD0100</strong>, <strong>0xD0101</strong></h4>
+<h4 id="0xd0001-0xd0100-0xd0101">0xD0001, 0xD0100, 0xD0101</h4>
 <h5 id="explanation_17">Explanation</h5>
 <p>Symbol table serialization errors.</p>
 <h5 class="skip-from-toc" id="fix_17">Fix</h5>
 <p>This is an internal tool error usually caused by trying to serialize a construct that should not be serialized
 or of unknown timing. Ensure your model conforms strictly to supported SysML constructs.</p>
 <h3 id="0xpa-packaging-internal-errors">0xPA... Packaging Internal Errors</h3>
-<h4 id="0xpa090-0xpa091-0xpa092"><strong>0xPA090</strong>, <strong>0xPA091</strong>, <strong>0xPA092</strong></h4>
+<h4 id="0xpa090-0xpa091-0xpa092">0xPA090, 0xPA091, 0xPA092</h4>
 <h5 id="explanation_18">Explanation</h5>
 <p>Missing MontiCore specific standard library definitions. The tool failed to find or
 load the <code>Stream.symtabdefinition</code> from its resources.</p>
 <h5 class="skip-from-toc" id="fix_18">Fix</h5>
 <p>Ensure all MontiCore Gradle dependencies are loaded.</p>
 <h3 id="0xff-modeling-guidelines-errors">0xFF... Modeling Guidelines Errors</h3>
-<h4 id="0xff003-0xff004"><strong>0xFF003</strong>, <strong>0xFF004</strong></h4>
+<h4 id="0xff003-0xff004">0xFF003, 0xFF004</h4>
 <h5 id="explanation_19">Explanation</h5>
 <p>We do not recommend do actions in states.</p>
 <h5 class="skip-from-toc" id="fix_19">Fix</h5>
 <p>Use <code>entry</code>, <code>exit</code>, or external transitions instead.</p>
-<h4 id="0xff005"><strong>0xFF005</strong></h4>
+<h4 id="0xff005">0xFF005</h4>
 <h5 id="explanation_20">Explanation</h5>
 <p>Name contains not recommended characters.</p>
 <h5 class="skip-from-toc" id="fix_20">Fix</h5>
 <p>For use in validation and verification tools, we recommend simple names.
 Rename the element using only letters, numbers, and underscores. Ensure it does not start with a number.</p>
-<h4 id="0xff006"><strong>0xFF006</strong></h4>
+<h4 id="0xff006">0xFF006</h4>
 <h5 id="explanation_21">Explanation</h5>
 <p>Port attribute does not have a type.</p>
 <h5 class="skip-from-toc" id="fix_21">Fix</h5>
 <p>Ensure every attribute within a port definition has at least one type defined via <code>:</code> or <code>defined by</code>.</p>
-<h4 id="0xff0001"><strong>0xFF0001</strong></h4>
+<h4 id="0xff0001">0xFF0001</h4>
 <h5 id="explanation_22">Explanation</h5>
 <p>Discouraged use of flow connections.</p>
 <h5 class="skip-from-toc" id="fix_22">Fix</h5>
 <p>Use standard <code>connect</code> or <code>connection</code> statements instead of <code>flow</code>.</p>
-<h4 id="0xff0002"><strong>0xFF0002</strong></h4>
+<h4 id="0xff0002">0xFF0002</h4>
 <h5 id="explanation_23">Explanation</h5>
 <p>Part should use at least one port.</p>
 <h5 class="skip-from-toc" id="fix_23">Fix</h5>
 <p>A well-modeled part should communicate with its environment. Add a port to your part definition.</p>
-<h4 id="0xff0003"><strong>0xFF0003</strong></h4>
+<h4 id="0xff0003">0xFF0003</h4>
 <h5 id="explanation_24">Explanation</h5>
 <p>Part has no explicit behavior.</p>
 <h5 class="skip-from-toc" id="fix_24">Fix</h5>
 <p>Add a constraint, a state machine, or subparts to define the behavior of the part.</p>
-<h4 id="0xff0004"><strong>0xFF0004</strong></h4>
+<h4 id="0xff0004">0xFF0004</h4>
 <h5 id="explanation_25">Explanation</h5>
 <p>Part has conflicting behaviors.</p>
 <h5 class="skip-from-toc" id="fix_25">Fix</h5>
@@ -1535,6 +1529,12 @@ Rename the element using only letters, numbers, and underscores. Ensure it does 
 <p class="admonition-title">Info</p>
 <p>All other error codes describe internal errors and should be described through <a href="https://github.com/MontiCore/sysmlv2/issues">issues</a> for assistance.</p>
 </div>
+<h2 id="support">Support</h2>
+<p>If you encounter any issues or have questions, feel free to reach out.</p>
+<ul>
+<li><strong>GitHub Issues:</strong> <a href="https://github.com/MontiCore/sysmlv2/issues">Report a bug or request a feature</a></li>
+<li><strong>Email:</strong> <a href="mailto:marin@se-rwth.de">marin@se-rwth.de</a></li>
+</ul>
 
 
 
