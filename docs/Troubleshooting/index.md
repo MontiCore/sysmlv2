@@ -16,14 +16,14 @@ Below is a list of error codes you might encounter while modeling using the CLI,
 ##### Explanation
 A cardinality declaration is incomplete or empty.
 
-##### Fix
+##### Fix {: .skip-from-toc }
 Ensure your cardinalities conform to the format `[n..m]`,or `[m]` where `n` is non-negative and `m` is non-negative with `n <= m` or `*` .
 
 #### **0x10030**, **0x10031**, **0x10033**
 ##### Explanation
 We deem cardinality ranges like `[*]`, `[n..*]`, or `[n..m]` problematic.
 
-##### Fix
+##### Fix {: .skip-from-toc }
 We recommend using exact scalar cardinalities (e.g., `[1]`).
 
 #### **0x10009**, **0x10010**, **0x10012**, **0x10AA3**, **0x10AA4**
@@ -37,7 +37,7 @@ part def A {
 }
 
 ```
-##### Fix
+##### Fix {: .skip-from-toc }
 Check the names used in your `connect` statements to ensure the parts and ports exist and are spelled correctly. `somePart1` has to be declared as a part usage with a type,
 it has to have a part def and `somePort` has to be declared in the definition of the part usage.
 
@@ -51,7 +51,7 @@ action def A1: A {
 }
 action a: A2;
 ```
-##### Fix
+##### Fix {: .skip-from-toc }
 Verify the spelling of the action and ensure it is defined in the current scope or imported. `A` and `A2` here were not defined anywhere in scope.
 Please note that `A` must be an action def and `A2` can be both an action def and a usage.
 
@@ -59,28 +59,28 @@ Please note that `A` must be an action def and `A2` can be both an action def an
 ##### Explanation
 Specializations of port usages must be port usages or definitions.
 
-##### Fix
+##### Fix {: .skip-from-toc }
 Ensure the type assigned to your port is a valid port definition (see **0x10017**).
 
 #### **0x10021**, **0x10022**
 ##### Explanation
 Unresolved Interface definition or usage.
 
-##### Fix
+##### Fix {: .skip-from-toc }
 Verify the spelling and existence of the referenced interface (see **0x10017**).
 
 #### **0x10023**, **0x10024**
 ##### Explanation
 Unresolved Item definition or usage.
 
-##### Fix
+##### Fix {: .skip-from-toc }
 Verify the spelling and existence of the referenced item (see **0x10017**).
 
 #### **0x10025**, **0x10026**, **0x10027**, **0x10028**, **0x10AA1**
 ##### Explanation
 Unresolved Part or Port definition/usage.
 
-##### Fix
+##### Fix {: .skip-from-toc }
 Ensure that the parts and ports you are trying to specialize or type actually exist in the model (see **0x10017**).
 
 #### **0x10029**, **0x10030**
@@ -91,21 +91,21 @@ Source or target state in a transition is not defined.
 state S;
 transition first S then T;
 ```
-##### Fix
+##### Fix {: .skip-from-toc }
 Verify that the `first` and `then` states `S` and `T` are declared in scope. In this case `S` is declared but `T` cannot be resolved.
 
 #### **0x10034**, **0x10035**
 ##### Explanation
 Unresolved State definition.
 
-##### Fix
+##### Fix {: .skip-from-toc }
 Check the spelling of state definitions referenced in your models (see **0x10017**).
 
 #### **0x10AA2**
 ##### Explanation
 Part def used in `refines` specializations does not exist (SpesML specific CoCo).
 
-##### Fix
+##### Fix {: .skip-from-toc }
 Check the spelling of the part definition you are trying to refine (see **0x10017**).
 
 #### **0x10AA5**, **0x10AA6**
@@ -135,14 +135,15 @@ part def A {
   connect sub.i -> sub1.o; // 5
 }
 ```
-##### Fix
+##### Fix {: .skip-from-toc }
 We consider valid two types of simple connections: connecting subcomponent IO to other subcomponent IO of the opposite direction;
 connecting IO of subcomponents to the IO of the parent component with the same directionm, aka forwarding.
 Connections 1 and 2 are legal forwards. 3 is not. Connection 4 is valid, while 5 is not.
 
 #### **0x10AA7**
 ##### Explanation
-Subcomponent name is not unique. ##### Fix
+Subcomponent name is not unique.
+##### Fix {: .skip-from-toc }
 Give each part usage within a block a unique name.
 
 ### 0x80... and 0x81... Expressions & Type Checking
@@ -164,7 +165,7 @@ part def A {
 }
 ```
 
-##### Fix
+##### Fix {: .skip-from-toc }
 Check your expression for syntax errors or unresolved symbols. Here, the expressions on the left and right are not of type integer, which `>` requires.
 
 #### **0x80004**, **0x80005**
@@ -187,7 +188,7 @@ part def A {
 }
 ```
 
-##### Fix
+##### Fix {: .skip-from-toc }
 Ensure your constraint or transition guard evaluates to a true/false condition. Here the value of the guard is of type Integer.
 
 #### **0x81001**
@@ -215,7 +216,7 @@ part def A {
 }
 ```
 
-##### Fix
+##### Fix {: .skip-from-toc }
 in constraints access of a port evaluates stream based, while in transitions it evaluates to the explicit type.
 The expression in `c` is valid as `i.b` evaluates to `EventStream<Boolean>`, while in `s` to `Boolean`,
 making the guard invalid. See [SpesML](../SpesML/index.md).
@@ -225,7 +226,7 @@ making the guard invalid. See [SpesML](../SpesML/index.md).
 ##### Explanation
 Cyclic specialization detected (e.g., `part def A specializes B;`, and `part def B specializes A;`).
 
-##### Fix
+##### Fix {: .skip-from-toc }
 Specialization must be acyclic. Remove circular specialization relationships. This includes trivial specializations.
 
 ### 0xD... Serialization Errors
@@ -233,7 +234,7 @@ Specialization must be acyclic. Remove circular specialization relationships. Th
 ##### Explanation
 Symbol table serialization errors.
 
-##### Fix
+##### Fix {: .skip-from-toc }
 This is an internal tool error usually caused by trying to serialize a construct that should not be serialized
 or of unknown timing. Ensure your model conforms strictly to supported SysML constructs.
 
@@ -243,7 +244,7 @@ or of unknown timing. Ensure your model conforms strictly to supported SysML con
 Missing MontiCore specific standard library definitions. The tool failed to find or
 load the `Stream.symtabdefinition` from its resources.
 
-##### Fix
+##### Fix {: .skip-from-toc }
  Ensure all MontiCore Gradle dependencies are loaded.
 
 ### 0xFF... Modeling Guidelines Errors
@@ -251,14 +252,14 @@ load the `Stream.symtabdefinition` from its resources.
 ##### Explanation
 We do not recommend do actions in states.
 
-##### Fix
+##### Fix {: .skip-from-toc }
 Use `entry`, `exit`, or external transitions instead.
 
 #### **0xFF005**
 ##### Explanation
 Name contains not recommended characters.
 
-##### Fix
+##### Fix {: .skip-from-toc }
 For use in validation and verification tools, we recommend simple names.
 Rename the element using only letters, numbers, and underscores. Ensure it does not start with a number.
 
@@ -266,35 +267,37 @@ Rename the element using only letters, numbers, and underscores. Ensure it does 
 ##### Explanation
 Port attribute does not have a type.
 
-##### Fix
+##### Fix {: .skip-from-toc }
 Ensure every attribute within a port definition has at least one type defined via `:` or `defined by`.
 
 #### **0xFF0001**
 ##### Explanation
 Discouraged use of flow connections.
 
-##### Fix
+##### Fix {: .skip-from-toc }
 Use standard `connect` or `connection` statements instead of `flow`.
 
 #### **0xFF0002**
 ##### Explanation
 Part should use at least one port.
 
-##### Fix
+##### Fix {: .skip-from-toc }
 A well-modeled part should communicate with its environment. Add a port to your part definition.
 
 #### **0xFF0003**
 ##### Explanation
 Part has no explicit behavior.
 
-##### Fix
+##### Fix {: .skip-from-toc }
 Add a constraint, a state machine, or subparts to define the behavior of the part.
 
 #### **0xFF0004**
 ##### Explanation
 Part has conflicting behaviors.
 
-##### Fix
+##### Fix {: .skip-from-toc }
 Ensure a part uses exactly one type of behavior specification (constraint, state machine, or composition), not a mixture of them.
 
-All other error codes describe internal errors and should be described through [issues](https://github.com/MontiCore/sysmlv2/issues) for assistance.
+!!! info
+    All other error codes describe internal errors and should be described through [issues](https://github.com/MontiCore/sysmlv2/issues) for assistance.
+

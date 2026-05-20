@@ -40,6 +40,8 @@ extra_css:
   - stylesheets/extra.css
 
 markdown_extensions:
+  - toc:
+      toc_depth: 4
   - def_list
   - attr_list
   - md_in_html
@@ -66,7 +68,7 @@ markdown_extensions:
 
 nav:
   - Home: 'index.md'
-  - Getting Started: 
+  - Getting Started:
     - Overview: 'GettingStarted/index.md'
     - For Users:
       - Tool Download & Use: 'GettingStarted/Users.md'
@@ -77,7 +79,7 @@ nav:
       - Tools & Editors: 'GettingStarted/Editor.md'
   - SpesML:
     - Overview: 'SpesML/index.md'
-    - Reference: 
+    - Reference:
       - Overview: 'Reference/index.md'
       - Stream Library: 'Reference/StreamLibrary.md'
   - Troubleshooting: 'Troubleshooting/index.md'
