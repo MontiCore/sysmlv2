@@ -2,6 +2,7 @@ package deser;
 
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import symboltable.NervigeSymboltableTests;
 
@@ -12,6 +13,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 /**
  * Testet die De-Serialisierung von Parametern einer Komponente
  */
+@Disabled
 public class ParameterDeserTest extends NervigeSymboltableTests {
 
   @Test

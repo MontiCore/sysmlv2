@@ -5,20 +5,20 @@
     {
       "kind": "de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol",
       "name": "RoughStateDef",
-      "fullName":"RoughStateDef",
+      "fullName": "RoughStateDef",
       "spannedScope": {
         "symbols": [
           {
             "kind": "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol",
             "name": "UnfairMedium",
-            "fullName":"RoughStateDef.UnfairMedium",
+            "fullName": "RoughStateDef.UnfairMedium",
             "requirementType": "LLR",
             "spannedScope": {
               "symbols": [
                 {
                   "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
                   "name": "i1",
-                  "fullName":"RoughStateDef.UnfairMedium.i1",
+                  "fullName": "RoughStateDef.UnfairMedium.i1",
                   "types": [
                     {
                       "kind": "de.monticore.types.check.SymTypeOfObject",
@@ -30,7 +30,7 @@
                 {
                   "kind": "de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol",
                   "name": "o1",
-                  "fullName":"RoughStateDef.UnfairMedium.o1",
+                  "fullName": "RoughStateDef.UnfairMedium.o1",
                   "types": [
                     {
                       "kind": "de.monticore.types.check.SymTypeOfObject",
@@ -42,24 +42,24 @@
                 {
                   "kind": "de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol",
                   "name": "behavior",
-                  "fullName":"RoughStateDef.UnfairMedium.behavior",
+                  "fullName": "RoughStateDef.UnfairMedium.behavior",
                   "exhibited": true,
                   "spannedScope": {
                     "symbols": [
                       {
                         "kind": "de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol",
                         "name": "State",
-                        "fullName":"RoughStateDef.UnfairMedium.behavior.State"
+                        "fullName": "RoughStateDef.UnfairMedium.behavior.State"
                       },
                       {
                         "kind": "de.monticore.lang.sysmlstates._symboltable.SysMLTransitionSymbol",
                         "name": "Name1",
-                        "fullName":"RoughStateDef.UnfairMedium.behavior.Name1"
+                        "fullName": "RoughStateDef.UnfairMedium.behavior.Name1"
                       },
                       {
                         "kind": "de.monticore.lang.sysmlstates._symboltable.SysMLTransitionSymbol",
                         "name": "Name2",
-                        "fullName":"RoughStateDef.UnfairMedium.behavior.Name2"
+                        "fullName": "RoughStateDef.UnfairMedium.behavior.Name2"
                       }
                     ]
                   }
@@ -70,13 +70,13 @@
           {
             "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
             "name": "Input",
-            "fullName":"RoughStateDef.Input",
+            "fullName": "RoughStateDef.Input",
             "spannedScope": {
               "symbols": [
                 {
                   "kind": "de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol",
                   "name": "val",
-                  "fullName":"RoughStateDef.Input.val",
+                  "fullName": "RoughStateDef.Input.val",
                   "types": [
                     {
                       "kind": "de.monticore.types.check.SymTypePrimitive",
@@ -91,13 +91,13 @@
           {
             "kind": "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol",
             "name": "Output",
-            "fullName":"RoughStateDef.Output",
+            "fullName": "RoughStateDef.Output",
             "spannedScope": {
               "symbols": [
                 {
                   "kind": "de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol",
                   "name": "val",
-                  "fullName":"RoughStateDef.Output.val",
+                  "fullName": "RoughStateDef.Output.val",
                   "types": [
                     {
                       "kind": "de.monticore.types.check.SymTypePrimitive",
@@ -112,5 +112,50 @@
         ]
       }
     }
-  ]
+  ],
+  "symbolHierarchy": {
+    "de.monticore.lang.componentconnector._symboltable.MildPortSymbol": "de.monticore.symbols.compsymbols._symboltable.PortSymbol",
+    "de.monticore.lang.sysmlv2._symboltable.UserDefinedDefinitionSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmlparts._symboltable.PartDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmlcases._symboltable.UseCaseDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmloccurrences._symboltable.ItemDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmlactions._symboltable.WhileActionUsageSymbol": "de.monticore.lang.sysmlactions._symboltable.ActionUsageSymbol",
+    "de.monticore.lang.sysmlstates._symboltable.StateDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmlconstraints._symboltable.ConcernDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmlconnections._symboltable.InterfaceDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmloccurrences._symboltable.OccurrenceDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmlconstraints._symboltable.ConstraintDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmlparts._symboltable.AttributeDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmlcases._symboltable.VerificationDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmloccurrences._symboltable.IndividualDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.symbols.oosymbols._symboltable.MethodSymbol": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+    "de.monticore.lang.sysmlviews._symboltable.ViewpointDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmlactions._symboltable.LoopActionUsageSymbol": "de.monticore.lang.sysmlactions._symboltable.WhileActionUsageSymbol",
+    "de.monticore.lang.sysmlconstraints._symboltable.RequirementDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.componentconnector._symboltable.AutomatonSymbol": "de.monticore.lang.componentconnector._symboltable.IAutomatonSymbol",
+    "de.monticore.lang.sysmlactions._symboltable.ActionDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmlactions._symboltable.JoinActionSymbol": "de.monticore.lang.sysmlactions._symboltable.ActionUsageSymbol",
+    "de.monticore.lang.sysmlparts._symboltable.EnumDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmlviews._symboltable.RenderingDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.componentconnector._symboltable.MildInstanceSymbol": "de.monticore.symbols.compsymbols._symboltable.SubcomponentSymbol",
+    "de.monticore.lang.sysmlactions._symboltable.MergeActionSymbol": "de.monticore.lang.sysmlactions._symboltable.ActionUsageSymbol",
+    "de.monticore.lang.sysmlconnections._symboltable.FlowDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmlactions._symboltable.CalcDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmlactions._symboltable.ForkActionSymbol": "de.monticore.lang.sysmlactions._symboltable.ActionUsageSymbol",
+    "de.monticore.lang.sysmlcases._symboltable.AnalysisDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmlcases._symboltable.CaseDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmlactions._symboltable.PerformActionUsageSymbol": "de.monticore.lang.sysmlactions._symboltable.ActionUsageSymbol",
+    "de.monticore.lang.sysmlactions._symboltable.ForLoopActionUsageSymbol": "de.monticore.lang.sysmlactions._symboltable.ActionUsageSymbol",
+    "de.monticore.lang.componentconnector._symboltable.MildComponentSymbol": "de.monticore.symbols.compsymbols._symboltable.ComponentTypeSymbol",
+    "de.monticore.lang.componentconnector._symboltable.EventAutomatonSymbol": "de.monticore.lang.componentconnector._symboltable.IAutomatonSymbol",
+    "de.monticore.lang.sysmlactions._symboltable.AcceptActionUsageSymbol": "de.monticore.lang.sysmlactions._symboltable.ActionUsageSymbol",
+    "de.monticore.lang.sysmlviews._symboltable.ViewDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmlactions._symboltable.DecideActionSymbol": "de.monticore.lang.sysmlactions._symboltable.ActionUsageSymbol",
+    "de.monticore.lang.sysmlconnections._symboltable.AllocationDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+    "de.monticore.lang.sysmlconnections._symboltable.ConnectionDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmlparts._symboltable.PortDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+    "de.monticore.symbols.oosymbols._symboltable.FieldSymbol": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol"
+  }
 }

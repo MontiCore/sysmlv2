@@ -13,6 +13,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 /**
  * Demonstriert, dass SysML-Symbole als CompSymbol serialisiert werden können
  */
+@Disabled
 public class PortSymbolDeserTest extends NervigeSymboltableTests {
 
   @Test

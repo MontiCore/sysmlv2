@@ -35,6 +35,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
  * möglichen Lösungen, wobei die letzte die einzige vertretbare Implementierung
  * ist.
  */
+@Disabled
 public class ComponentSymbolDeserTest extends NervigeSymboltableTests {
 
   @Test

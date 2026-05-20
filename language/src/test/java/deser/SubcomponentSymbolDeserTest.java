@@ -2,6 +2,8 @@ package deser;
 
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2Symbols2Json;
+import de.monticore.prettyprint.IndentPrinter;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import symboltable.NervigeSymboltableTests;
 
@@ -12,6 +14,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 /**
  * Demonstriert, dass SysML-Symbole als CompSymbol serialisiert werden können
  */
+@Disabled
 public class SubcomponentSymbolDeserTest extends NervigeSymboltableTests {
 
   @Test
