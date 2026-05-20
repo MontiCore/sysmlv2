@@ -26,7 +26,7 @@ standard library package 'Vehicles' {
 
 This textual form will play a major role in the exchange of models
 between tools thus allowing to build toolchains, as well as in the
-versioning of models, e.g., in Github, and also in the efficient
+versioning of models, e.g., in GitHub, and also in the efficient
 definition of models by people who prepare textual notations.
 
 It is therefore highly relevant to have consistent parsing mechanisms
@@ -154,16 +154,16 @@ models. It provides through the CLI as follows:
 
 where the arguments are:
 
-| Option                   | Explanation                                                                                |
-|--------------------------|--------------------------------------------------------------------------------------------|
-| -ex,--extended           | Runs additional checks assuring models are fit for semantic analysis using [MontiBelle][1] |
-| -h,--help                | Prints this help dialog                                                                    |
-| -i,--input <file>        | Reads the source file (mandatory) and parses the contents                                  |
-| -path <arg>              | Sets the artifact path for imported symbols, space separated.                              |
-| -pp,--prettyprint <file> | Prints the AST to stdout or the specified file (optional)                                  |
-| -r,--report <dir>        | Prints reports of the artifact to the specified directory.                                 |
-| -s,--symboltable <file>  | Serialized the Symbol table of the given artifact.                                         |
-| -v,--version             | Prints version information                                                                 |
+| Option                   | Explanation                                                                        |
+|--------------------------|------------------------------------------------------------------------------------|
+| -ex,--extended           | Runs additional checks assuring the semantic soundness of models according to Spes |
+| -h,--help                | Prints this help dialog                                                            |
+| -i,--input <file>        | Reads the source file (mandatory) and parses the contents                          |
+| -path <arg>              | Sets the artifact path for imported symbols, space separated.                      |
+| -pp,--prettyprint <file> | Prints the AST to stdout or the specified file (optional)                          |
+| -r,--report <dir>        | Prints reports of the artifact to the specified directory.                         |
+| -s,--symboltable <file>  | Serialized the Symbol table of the given artifact.                                 |
+| -v,--version             | Prints version information                                                         |
 
 exemplary usage:
 

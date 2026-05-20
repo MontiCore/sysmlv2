@@ -1,0 +1,52 @@
+# (c) https://github.com/MontiCore/monticore
+
+# .github/workflows/prepare_pages.yml
+name: Prepare and deploy pages
+
+# Preprocess the docs, build a site directory and push its contents to the gh-pages branch
+
+concurrency: # run this test workflow only once per branch
+  group: ${{ github.repository }}-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - docs/**
+      - mkdocs.yml
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+    name: Build and Push
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install mkdocs mkdocs-material mike
+          git clone https://monticore:$GITLAB_TOKEN@git.rwth-aachen.de/se/infrastructure/monticore-pygments-highlighting.git
+          pip install -r ./monticore-pygments-highlighting/requirements.txt
+          pip install ./monticore-pygments-highlighting
+
+      - name: Configure Git user
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: Build and deploy pages
+        run: mkdocs gh-deploy --force
