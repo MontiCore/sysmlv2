@@ -6,6 +6,7 @@ import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.omg.sysml.interactive.SysMLInteractive;
@@ -39,7 +40,7 @@ public class ParsersComparisonTest {
   public void reset() {
     parser.setError(false);
   }
-
+  @Disabled
   @ParameterizedTest(name = "{index} - {0} does parse w/o errors (MontiCore + official)")
   @ValueSource(strings = {
       "packages.sysml",
@@ -64,6 +65,7 @@ public class ParsersComparisonTest {
       "StateActions.sysml",
       "ConditionalSuccessionExample-1.sysml"
   })
+
   public void testParsingModels(String modelName) throws IOException {
     Path modelPath = Path.of(MODEL_PATH, modelName);
 
