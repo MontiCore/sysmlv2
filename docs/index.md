@@ -18,13 +18,13 @@ hide:
 # The Systems Modeling Language v2 {: #more }
 
 One of the interesting new capabilities is the exchange of models
-between tools using a really human-readable textual form of the SysML
+between tools using a human-readable textual form of the SysML
 language in the spirit of a modern programming language (even though it
 has a number of special constructs that resemble modelling concepts).
 
 This textual form will play a major role in the exchange of models
 between tools thus allowing to build toolchains, as well as in the
-versioning of models, e.g., in Github, and also in the efficient
+versioning of models, e.g., in GitHub, and also in the efficient
 definition of models by people who prepare textual notations.
 
 It is therefore highly relevant to have consistent parsing mechanisms
@@ -38,6 +38,16 @@ results can be compared and therefore compilers, linters, checkers of
 context conditions and other advanced tooling, receive the level of
 quality desired for industrial use.
 
+# The SpesML v2 Functional Modeling Profile
+
+In complex system and software engineering, specifying functional behavior early in the design process is essential
+for ensuring correctness and consistency across development artifacts. However, existing modeling languages,
+including SysML v2, are either too abstract or require committing to implementation details prematurely, limiting
+the ability to capture partial specifications. To overcome these limitations, we build a SysML v2 profile, which embodies
+lessons learned from modeling with the SysML v2 which both restricts the very broad SysML v2 language to a usable,
+semantically well-founded subset of the language, and extends the language with communication history-oriented
+specification constructs that leverage underspecification.
+
 <div class="grid cards" markdown>
 
 -   :material-rocket-launch: &nbsp;
@@ -45,7 +55,7 @@ quality desired for industrial use.
 
     ---
 
-    Is this your first time using SysML? Set up a project and start modeling.
+    Is this your first time using SysML v2? Set up a project and start modeling.
 
     ---
 

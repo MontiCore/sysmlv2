@@ -72,7 +72,6 @@ nav:
     - Overview: 'GettingStarted/index.md'
     - For Users:
       - Tool Download & Use: 'GettingStarted/Users.md'
-      - Errors: 'Usage/error.md'
     - For Developers:
       - Building from Source: 'GettingStarted/Developers.md'
       - Setup: 'GettingStarted/Setup.md'
