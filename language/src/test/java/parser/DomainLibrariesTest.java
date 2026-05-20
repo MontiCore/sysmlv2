@@ -152,7 +152,8 @@ public class DomainLibrariesTest {
     assertThat(ast).isPresent();
     assertThat(Log.getFindings()).isEmpty();
   }
-  @Disabled("Temporarily disabled: ShapeItems.sysml has known parse findings")
+
+  @Disabled
   @Test
   public void testParseShapeItems() {
     var ast = tool.parse(domainLibraries + "/Geometry/ShapeItems.sysml");

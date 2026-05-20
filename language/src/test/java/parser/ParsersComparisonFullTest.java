@@ -13,7 +13,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.omg.sysml.interactive.SysMLInteractive;
 
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -76,8 +75,6 @@ public class ParsersComparisonFullTest {
       "StateActions.sysml",
       "ConditionalSuccessionExample-1.sysml"
   })
-
-
   public void testParsingModels(String modelName) throws IOException {
     Path modelPath = Path.of(MODEL_PATH, modelName);
 
