@@ -30,6 +30,3 @@ if(("true").equals(getProperty('isPipelineFullBuild'))) {
   // Visualization-Plugin for VSCode
   include 'visualization-plugin'
 }
-
-
-
