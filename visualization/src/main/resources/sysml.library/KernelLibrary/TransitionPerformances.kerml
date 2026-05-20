@@ -1,44 +1,65 @@
-/**
- * This package contains a library model of the semantics of conditional transitions between occurrences, 
- * including the performance of specified Behaviors when the transition occurs.
- */
-package TransitionPerformances {
+standard library package TransitionPerformances {
+	doc
+	/*
+	 * This package contains a library model of the semantics of conditional transitions between occurrences, 
+	 * including the performance of specified Behaviors when the transition occurs.
+	 */
+
 	private import ScalarValues::Boolean;
+	private import ScalarValues::Natural;
+	private import SequenceFunctions::isEmpty;
+	private import Occurrences::Occurrence;
 	private import Occurrences::HappensBefore;
 	private import Performances::Performance;
 	private import Performances::Evaluation;
-	private import Transfers::Transfer;
+	private import Transfers::MessageTransfer;
+	private import Transfers::AcceptPerformance;
+	private import Transfers::acceptPerformances;
 	private import ControlFunctions::allTrue;
+	private import SequenceFunctions::size;
 	
-	abstract behavior TransitionPerformance(in step transitionLinkSource: Performance[1]) {
-		feature trigger: Transfer[*];
-		expr guard[*];
-		step effect[*];
+	abstract behavior TransitionPerformance {
+		in feature transitionLinkSource: Performance[1];
+		
+		feature trigger: MessageTransfer[*];
+		bool guard[*] subsets enclosedPerformances;
+		step effect[*] subsets enclosedPerformances;
 
+		feature triggerTarget : Occurrence [1] default this;
 		feature transitionLink: HappensBefore[0..1];
 		
-		private binding transitionLink.earlierOccurrence[0..1] = transitionLinkSource[1];
-		private succession transitionLinkSource[1] then effect[*]; 
-		private succession effect[*] then transitionLink.laterOccurrence[1];
+		private binding [0..1] transitionLink.earlierOccurrence = [1] transitionLinkSource;
+		private succession [1] transitionLinkSource then [*] effect;
+		private succession [*] effect then [1] transitionLink.laterOccurrence;
 		
-		private connector transitionLink[0..1] to trigger[1..*];
+		private connector [0..1] transitionLink to [1..*] trigger;
 		private connector all guardConstraint: TPCGuardConstraint[*] 
-			from transitionLink[0..1] to guard[*];
+			from [0..1] transitionLink to [*] guard;
 			
-		private succession all trigger[*] then guard[*];
-		private succession all guard[*] then effect[*];
+		private succession all [*] trigger then [*] guard;
+		private succession all [*] guard then [*] effect;
+
+		feature accNum: Natural [1] = if isEmpty(trigger) ? 0 else 1;
+		step accept: AcceptPerformance[accNum] subsets timeEnclosedOccurrences, acceptPerformances {
+			feature redefines acceptedTransfer = trigger;
+		}
+        binding accept.receiver = triggerTarget;
+
+		private succession [*] guard then [accNum] accept;
 	}
 	
 	behavior NonStateTransitionPerformance specializes TransitionPerformance {
-		private succession transitionLinkSource[1] then trigger[*];
-		private succession transitionLinkSource[1] then guard[*];
-		
-		private succession all guard[*] then transitionLink.laterOccurrence[0..1];
+		feature isTriggerAfter: Boolean default true;
+		private succession [1] transitionLinkSource then [1] Performance::self;
+		private feature taNum: Natural [1] = if isTriggerAfter ? size(trigger) else 0;
+		private succession triggerAfter [taNum] first [0..1] transitionLinkSource then [*] trigger.endShot;
+				
+		private succession all [*] guard then [0..1] transitionLink.laterOccurrence;
 	}
 	
 	assoc struct TPCGuardConstraint {
-		end feature constrainedHBLink: HappensBefore[0..1];
-		end expr constrainedGuard: Evaluation[*] () result: Boolean;
+		end guardedLink [0..1] feature constrainedHBLink: HappensBefore;
+		end bool constrainedGuard;
 		
 		private inv { allTrue(constrainedGuard()) }
 	}	

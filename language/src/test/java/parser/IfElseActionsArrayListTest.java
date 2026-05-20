@@ -1,4 +1,5 @@
 package parser;
+
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IfElseActionsArrayListTest {
+
   SysMLv2Parser parser = SysMLv2Mill.parser();
   @BeforeAll
   public static void init() {
@@ -25,7 +27,6 @@ public class IfElseActionsArrayListTest {
 
   @Test
   public void parsesIfandElseActionsSeparately() throws IOException {
-
     Optional<ASTSysMLModel> rootOpt = parser.parse("src/test/resources/parser/ifelseactions.sysml");
 
     assertTrue(rootOpt.isPresent(), "Expected model to parse");
