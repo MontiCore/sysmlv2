@@ -1,7 +1,7 @@
 // State Space Representation cart example
 
 package CartSample {
-    import StateSpaceRepresentation::*;
+    private import StateSpaceRepresentation::*;
     part def Cart {
         attribute mass :> ISQ::mass;
 
@@ -39,11 +39,11 @@ package CartSample {
                 calc :>> getDerivative { 
                 	in input: CartInput; 
                 	in stateSpace: CartState;
-                    CartStateDerivative(input.force / mass)
+                    new CartStateDerivative(input.force / mass)
                 }
                 calc :>> getOutput {
                 	in :>> stateSpace : CartState;
-                    CartOutput(stateSpace.velocity)
+                    new CartOutput(stateSpace.velocity)
                 }
             }
         }
@@ -54,11 +54,11 @@ package CartSample {
                 in input;
                 out output : PusherOutput;
                 calc :>> getOutput {
-                    PusherOutput(pusherForce)
+                    new PusherOutput(pusherForce)
                 }
             }
         }
 
-        flow pusher.pusherBehavior.output.force to cart.cartBehavior.input.force;
+        flow pusher.pusherBehavior.output to cart.cartBehavior.input;
     }
 }

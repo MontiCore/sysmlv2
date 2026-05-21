@@ -1,6 +1,6 @@
-import Views::*; // import library package, not internal Views package!
+private import Views::*; // private import library package, not internal Views package!
 package '11b-Safety and Security Feaure Views' {
-	import ScalarValues::*;
+	private import ScalarValues::*;
 	
 	package AnnotationDefinitions {	
 		metadata def Safety {
@@ -10,7 +10,7 @@ package '11b-Safety and Security Feaure Views' {
 	}
 	
 	package PartsTree {
-		import AnnotationDefinitions::*;
+		public import AnnotationDefinitions::*;
 		part vehicle {
 			part interior {
 				part alarm {@Security;}
@@ -31,7 +31,7 @@ package '11b-Safety and Security Feaure Views' {
 	}
 
 	package ViewDefinitions {	
-		import AnnotationDefinitions::*;
+		public import AnnotationDefinitions::*;
 		view def SafetyFeatureView {
 			/* Parts that contribute to safety. */		
 			filter @Safety;
@@ -45,19 +45,20 @@ package '11b-Safety and Security Feaure Views' {
 	}
 	
 	package Views {
-		import ViewDefinitions::*;
-		import PartsTree::vehicle;
+		private import ViewDefinitions::*;
+		private import PartsTree::vehicle;
 		
 		view vehicleSafetyFeatureView : SafetyFeatureView {
-			expose vehicle::**;
+			expose vehicle;
 		}
 		
 		view vehicleMandatorySafetyFeatureView :> vehicleSafetyFeatureView {
-			filter Safety::isMandatory;
+		    expose vehicle::*::**;
+			filter @Safety and (as Safety).isMandatory;
 		}
 		
 		view vehicleMandatorySafetyFeatureViewStandalone {
-			expose vehicle::**[@Safety and Safety::isMandatory];
+			expose vehicle::**[@Safety and (as Safety).isMandatory];
 			render asElementTable;
 		}	
 	}

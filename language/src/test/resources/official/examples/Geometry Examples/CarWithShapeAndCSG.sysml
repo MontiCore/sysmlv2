@@ -1,13 +1,13 @@
 package CarWithShapeAndCSG {
-	import SpatialItems::*;
-    import ShapeItems::*;
-    import Objects::Point;
-	import Quantities::VectorQuantityValue;
-	import MeasurementReferences::CoordinateFrame;
-	import MeasurementReferences::TranslationRotationSequence;
-	import MeasurementReferences::Translation;
-	import MeasurementReferences::Rotation;
-	import SI::*;
+	private import SpatialItems::*;
+	private import ShapeItems::*;
+	private import Objects::Point;
+	private import Quantities::VectorQuantityValue;
+	private import MeasurementReferences::CoordinateFrame;
+	private import MeasurementReferences::TranslationRotationSequence;
+	private import MeasurementReferences::Translation;
+	private import MeasurementReferences::Rotation;
+	private import SI::*;
 
 	part def Car :> SpatialItem {
 		doc
@@ -15,18 +15,18 @@ package CarWithShapeAndCSG {
 		 * Car with simple engine
 		 */
 	
-        item :>> shape = Cuboid(4800 [mm], 1840 [mm], 1350 [mm]);
+        item :>> shape = new Cuboid(4800 [mm], 1840 [mm], 1350 [mm]);
 
         attribute datum :>> coordinateFrame {
             :>> mRefs = (mm, mm, mm);
         }
 
-		part powerSource : Engine [1] :> componentItems {
+		part powerSource : Engine [1] :> componentParts {
 			:>> ecf { 
 				:>> mRefs = datum.mRefs;
 				:>> transformation : TranslationRotationSequence {
 					:>> source = datum;
-					:>> elements = ( Translation((3800, (1840-190)/2, 40)[datum]) );
+					:>> elements = ( new Translation((3800, (1840-190)/2, 40)[datum]) );
 				}
 			}
 		}
@@ -44,7 +44,7 @@ package CarWithShapeAndCSG {
 		
 		attribute <ecf> engineCoordinateFrame :>> coordinateFrame;		
 
-		part rawEngineBlock : SpatialItem [1] {
+		part rawEngineBlock :> subSpatialParts [1] {
 			item :>> shape : Box [1] {
 	    		:>> length = 300 [mm];
 	    		:>> width = 190 [mm];
@@ -53,7 +53,7 @@ package CarWithShapeAndCSG {
 		}
 		
 		private attribute rearCylinderSpacing = 90 [mm];
-		private item cylinder1 : SpatialItem [1] {
+		private item cylinder1  :> subSpatialParts [1] {
 			item :>> shape : Cylinder [1] {
 	    		:>> radius = 55 [mm];
 	    		:>> height = 350 [mm];
@@ -61,13 +61,13 @@ package CarWithShapeAndCSG {
 			attribute :>> coordinateFrame {
 				:>> transformation : TranslationRotationSequence {
 					:>> source = ecf;
-					:>> elements = (Translation( (rearCylinderSpacing, rawEngineBlock.shape.width/2, -10)[ecf]));
+					:>> elements = (new Translation( (rearCylinderSpacing, rawEngineBlock.shape.width/2, -10)[ecf]));
 				}
 			}
 		}
 		
 		private attribute cylinderSpacing = 2*cylinder1.shape.radius + 20 [mm];
-		private item cylinder2 : SpatialItem [1] {
+		private item cylinder2  :> subSpatialParts [1] {
 			item :>> shape : Cylinder [1] {
 	    		:>> radius = cylinder1.shape.radius;
 	    		:>> height = cylinder1.shape.height;
@@ -75,7 +75,7 @@ package CarWithShapeAndCSG {
 			attribute :>> coordinateFrame {
 				:>> transformation : TranslationRotationSequence {
 					:>> source = ecf;
-					:>> elements = ( Translation((rearCylinderSpacing + cylinderSpacing, rawEngineBlock.shape.width/2, -10)[ecf]) );
+					:>> elements = ( new Translation((rearCylinderSpacing + cylinderSpacing, rawEngineBlock.shape.width/2, -10)[ecf]) );
 				}
 			}
 		}

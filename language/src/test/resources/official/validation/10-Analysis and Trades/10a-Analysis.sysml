@@ -1,7 +1,7 @@
 package '10a-Analysis' {
-	import ISQ::*;
-	import SI::*;
-	import NumericalFunctions::*;
+	private import ISQ::*;
+	private import SI::*;
+	private import NumericalFunctions::*;
 	
 	package VehicleDesignModel {
 		part def Vehicle {
@@ -35,7 +35,7 @@ package '10a-Analysis' {
 	}
 	
 	package VehicleAnalysisModel {
-		import VehicleDesignModel::Vehicle;
+		private import VehicleDesignModel::Vehicle;
 		
 		requirement def MassAnalysisObjective {
 			subject mass : MassValue;
@@ -44,7 +44,9 @@ package '10a-Analysis' {
 	
 		analysis def MassAnalysisCase {
 			subject vehicle : Vehicle;
-			objective : MassAnalysisObjective;
+			objective : MassAnalysisObjective {
+			    subject = MassAnalysisCase::result;
+			}
 			
 			// Result
 			vehicle.mass

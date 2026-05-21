@@ -5,10 +5,12 @@ package PartTest {
 	public part def A {
 		part <'1'> b: B;
 		protected port c: C;
-		readonly attribute x[0..2];
-		derived ref attribute y :> x;
+		constant attribute x[0..2];
+		derived constant ref attribute y :> x;
 		ref z : ScalarValues::Integer;
 	}
+	
+	item def S;
 	
 	abstract part def <xx> B {
 		public abstract part a: A[1..2];
@@ -20,7 +22,12 @@ package PartTest {
 		}
 		package P { }
 		
-		action a1;
+		succession flow x.p to a1.aa.receiver;
+		
+		action a1 {
+			accept S via x;
+			action aa accept S;
+		}
 		perform action a2;
 		
 		state s1;
@@ -28,7 +35,11 @@ package PartTest {
 	}
 	
 	private port def C {
-		private in ref y: A, B;
+		private in ref y: A, B {
+		    part B_b redefines B::b;
+		    part B_c redefines B::c;
+		    port B_x redefines B::x;
+		}
 		alias z1 for y;
 		alias z2 for y;
 		port c1 : C;

@@ -68,7 +68,7 @@ public class OfficialParserTest {
         .filter(p -> p.toFile().getName().endsWith(".sysml"))
         .collect(Collectors.toList());
 
-    assertThat(models).hasSize(244);
+    assertThat(models).hasSize(251);
     var successful = 0;
     var lines = 0;
 
@@ -89,7 +89,7 @@ public class OfficialParserTest {
     }
 
     //System.out.println("Success rate: " + successful + "/" + 243 + " (" + lines + " findings)");
-    assertThat(successful).isEqualTo(244);
+    assertThat(successful).isEqualTo(251);
     assertThat(Log.getFindings()).isEmpty();
   }
 

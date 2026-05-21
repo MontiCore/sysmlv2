@@ -1,5 +1,5 @@
 package '14c-Language-Extensions' {
-	import ScalarValues::*;
+	private import ScalarValues::*;
 	
 	library package FMEALibrary {
 		
@@ -36,8 +36,8 @@ package '14c-Language-Extensions' {
 		abstract item fmeaItems : FMEAItem[*] nonunique;
 				
 		connection def Causation :> Occurrences::HappensBefore {
-			end cause[*]: Situation;
-			end effect[*]: Situation;
+			end [*] ref cause: Situation;
+			end [*] ref effect: Situation;
 		}
 		
 		abstract connection causations : Causation[*] nonunique;
@@ -53,15 +53,15 @@ package '14c-Language-Extensions' {
 		enum def SIL { A; B; C; }
 		
 		connection def Violation {
-			end sit[*]: Situation;
-			end req[*]: FMEARequirement;
+			end [*] ref sit: Situation;
+			end [*] ref req: FMEARequirement;
 		}
 		
 		abstract connection violations : Violation[*] nonunique;
 		
 		abstract connection def ControllingMeasure {
-			end sit[*]: Situation;
-			end req[*]: FMEARequirement;
+			end [*] ref sit: Situation;
+			end [*] ref req: FMEARequirement;
 		}
 		
 		connection def Prevention :> ControllingMeasure;
@@ -75,8 +75,8 @@ package '14c-Language-Extensions' {
 	}
 	
 	library package FMEAMetadata {
-		import Metaobjects::SemanticMetadata;
-		import FMEALibrary::*;
+		private import Metaobjects::SemanticMetadata;
+		private import FMEALibrary::*;
 
 		enum def Status {
 			Approved;
@@ -110,7 +110,7 @@ package '14c-Language-Extensions' {
 		}
 		
 		metadata def <causation> CausationMetadata :> SemanticMetadata {
-			:>> annotatedElement : SysML::SuccessionAsUsage;
+			:>> annotatedElement : SysML::ConnectionUsage;
 			:>> baseType = causations meta SysML::Usage;
 		}
 		
@@ -139,8 +139,8 @@ package '14c-Language-Extensions' {
 	}
 	
 	package FMEAUserModel {
-		import FMEALibrary::*;
-		import FMEAMetadata::*;
+		private import FMEALibrary::*;
+		private import FMEAMetadata::*;
 		
 		#fmeaspec requirement req1 {
 			doc /* Meter designed according to ISO00124 */
@@ -166,17 +166,17 @@ package '14c-Language-Extensions' {
 				:>> occurs = 0.005;
 			}
 			
-			#causation first 'battery depleted' then 'battery cannot be charged';
+			#causation connect 'battery depleted' to 'battery cannot be charged';
 			
 			#failure occurrence 'battery cannot be charged' {
 				:>> detected = 0.013;
 			}
 			
-			#causation first 'battery cannot be charged' then 'glucose level undetected';
+			#causation connect 'battery cannot be charged' to 'glucose level undetected';
 			
 			#effect occurrence 'glucose level undetected';
 			
-			#causation first 'glucose level undetected' then 'therapy delay';
+			#causation connect 'glucose level undetected' to 'therapy delay';
 			
 			#effect occurrence 'therapy delay' {
 				:>> severity = "High";
