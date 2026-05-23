@@ -49,7 +49,6 @@ public class PartUsage2SubcomponentAdapter extends MildInstanceSymbol {
   public List<ASTParameterValue> getParameterValuesList() {
     return getAdaptee().getSpannedScope().getLocalAttributeUsageSymbols().stream()
         .filter(a -> a.isPresentAstNode())
-        .filter(a -> a.getAstNode().getModifier().isFinal())
         .map(a -> new ParmeterValueWrapper(a, getAdaptee()))
         .collect(Collectors.toList());
   }

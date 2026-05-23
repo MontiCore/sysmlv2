@@ -31,7 +31,7 @@ public class ComponentTypeSymbolAdapterTest extends NervigeSymboltableTests {
 
   @Test
   public void testParameters() throws IOException {
-    var as = process("part def A { final attribute p: int; }");
+    var as = process("part def A { attribute p: int; }");
 
     var parameters = as.resolveMildComponent("A").get().getParameterList();
     assertThat(parameters).hasSize(1);
@@ -231,8 +231,8 @@ public class ComponentTypeSymbolAdapterTest extends NervigeSymboltableTests {
   @Test
   public void testParameterValues() throws IOException {
     var as = process(""
-        + "part def B { final attribute v: nat; }"
-        + "part def A { part b: B { final attribute v = 2; } }");
+        + "part def B { attribute v: nat; }"
+        + "part def A { part b: B { attribute v = 2; } }");
 
     var A = as.resolveMildComponent("A").get();
     var b = (MildInstanceSymbol)A.getSubcomponents("b").get();

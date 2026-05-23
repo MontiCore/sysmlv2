@@ -6,7 +6,6 @@ import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Optional;
@@ -25,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
      *  Modifier "final" should be able to be used as
      *  a name.
      */
+    @Test
     void testFinalAsStateName() throws IOException {
       Log.clearFindings();
       SysMLv2Parser parser = SysMLv2Mill.parser();
