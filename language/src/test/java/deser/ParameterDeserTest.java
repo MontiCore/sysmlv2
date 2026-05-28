@@ -16,7 +16,7 @@ public class ParameterDeserTest extends NervigeSymboltableTests {
 
   @Test
   public void testParameter() throws IOException {
-    var as = process("part def A { final attribute p: int; }");
+    var as = process("part def A { attribute p: int; }");
     setupComponentConnectorSerialization();
 
     var comp = as.resolveComponentType("A").get();
