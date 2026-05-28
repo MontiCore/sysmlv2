@@ -1,5 +1,7 @@
 package de.monticore.lang.componentconnector._symboltable;
 
+import de.monticore.symbols.compsymbols._symboltable.Timing;
+
 public class MildComponentSymbol extends MildComponentSymbolTOP {
 
   public MildComponentSymbol(String name) {
@@ -18,6 +20,10 @@ public class MildComponentSymbol extends MildComponentSymbolTOP {
 
   public boolean isHistoryBased() {
     return !getSpannedScope().getLocalMildSpecificationSymbols().isEmpty();
+  }
+
+  public boolean isTsynHistoryBased() {
+    return getAllPorts().stream().anyMatch(p -> p.getTiming() == Timing.TIMED_SYNC);
   }
 
   public MildSpecificationSymbol getSpecification() {
