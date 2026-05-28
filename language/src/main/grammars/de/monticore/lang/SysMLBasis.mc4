@@ -51,7 +51,7 @@ component grammar SysMLBasis
   interface symbol SysMLType extends SysMLElement;
 
   SysMLCardinality =
-    Cardinality (["ordered"] | ["nonunique"])* ;
+    Cardinality (["ordered"] | ["nonunique"])* | (["ordered"] | ["nonunique"])+;
 
   /**
    * Common interface for any specialization. According to the official spes, this would include subsetting, typing,
@@ -89,7 +89,7 @@ component grammar SysMLBasis
   /* Adaptierung zwecks Rückwärtskompatibilität auf vorherige Version mit direkter MC-Cardinality */
   astrule SysMLTyping =
       method public de.monticore.cardinality._ast.ASTCardinality getCardinality() {
-        if(isPresentSysMLCardinality()) {
+        if(isPresentCardinality()) {
           return getSysMLCardinality().getCardinality();
         }
         Log.error("0x10005 get for Cardinality can't return a value. Attribute is empty.");
@@ -97,7 +97,7 @@ component grammar SysMLBasis
         throw new IllegalStateException();
       }
       method public boolean isPresentCardinality() {
-        return isPresentSysMLCardinality();
+        return isPresentSysMLCardinality() && getSysMLCardinality().isPresentCardinality();
       } ;
 
   /** Refinement relates two behaviors and enforces a subset wrt. to FOCUS SPSes */
