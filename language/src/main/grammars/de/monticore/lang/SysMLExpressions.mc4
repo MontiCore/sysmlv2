@@ -154,7 +154,7 @@ component grammar SysMLExpressions
    * Anders als "&&" und "||" sind diese Operatoren "conditional" oder "lazy" in dem Sinne, dass die rechte Seite nicht
    * ausgeführt wird, wenn die linke Seite false evaluiert bzw. andersrum bei "or". Sind also eher Control-Statements.
    */
-  ConditionalAndExpression implements Expression <120>, InfixExpression =
+  ConditionalAndExpression implements Expression <120>, InfixExpression <120> =
     left:Expression operator:"and" right:Expression;
 
   ConditionalAndExpression2 implements Expression <120>, InfixExpression =
@@ -199,7 +199,7 @@ component grammar SysMLExpressions
     Expression ("hastype" | "@") MCType ;
 
   // Implicitly referencing "this"
-  KerMLHasTypeSelfExpression implements Expression =
+  KerMLHasTypeSelfExpression implements Expression <121> =
     ("hastype" | "@") MCType ;
 
   /**

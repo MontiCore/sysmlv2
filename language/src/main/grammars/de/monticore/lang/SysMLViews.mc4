@@ -47,7 +47,7 @@ component grammar SysMLViews extends SysMLBasis {
 
   Expose implements SysMLElement =
     Modifier UserDefinedKeyword* "expose" MCQualifiedName
-    (("::" | ".") (Star:["*"] | Recursive:["**"]))?
+    (("::" | ".") (Star:["*"] | Recursive:["**"]))*     // See SysMLImports
     ("[" filter:Expression "]")?
     ("{"
         SysMLElement*

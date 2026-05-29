@@ -241,6 +241,7 @@ component grammar SysMLBasis
         | ["event"]                           // only in occurrences
         | ["variation"]
         | ["variant"]
+        | ["constant"]                        // S.41 only in usages https://www.omg.org/spec/SysML/2.0/Language/PDF
       )*;
 
   UserDefinedKeyword =

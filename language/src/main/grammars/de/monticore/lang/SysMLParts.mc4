@@ -73,7 +73,7 @@ component grammar SysMLParts extends SysMLBasis {
    */
 
   symbol scope PartUsage implements SysMLElement =
-    Modifier UserDefinedKeyword* "part" SysMLIdentifier? Name?
+    Modifier UserDefinedKeyword* (cardName:Name? prefixCardinality:SysMLCardinality)? "part" SysMLIdentifier? Name?
     SysMLCardinality? Specialization* DefaultValue?
     ("{"
       SysMLElement*
@@ -138,7 +138,7 @@ component grammar SysMLParts extends SysMLBasis {
    * symboltable (and not needing to re-processes the original models).
    */
   symbol scope PortUsage implements SysMLElement =
-      Modifier UserDefinedKeyword* "port"
+      Modifier UserDefinedKeyword* (cardName:Name? prefixCardinality:SysMLCardinality)? "port"
       SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
       ("{"
          SysMLElement*
@@ -166,11 +166,12 @@ component grammar SysMLParts extends SysMLBasis {
    * CONNECTIONS
    * ##################################################################
    */
+
   symbol ConnectionUsage implements SysMLElement =
     Modifier UserDefinedKeyword* "connection"?
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "connect" (
-      (src:Endpoint "to" tgt:Endpoint) |
+      (srcCardinality:SysMLCardinality? src:Endpoint "to" tgtCardinality:SysMLCardinality? tgt:Endpoint) |
       ("(" (SysMLParameter || ",")* ")")
     )
     ("{"
@@ -190,8 +191,8 @@ component grammar SysMLParts extends SysMLBasis {
     Modifier UserDefinedKeyword* "succession"? "flow"
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("of" FlowPayload)?
-     "from"? source:Endpoint
-     "to" target:Endpoint
+     ("from"? source:Endpoint)?
+     ("to" target:Endpoint)?
      ("{"
         SysMLElement*
       "}" | ";") ;
@@ -214,6 +215,12 @@ component grammar SysMLParts extends SysMLBasis {
     ("{"
        SysMLElement*
      "}" | ";") ;
+
+  // we do want to support "end [0..1] part end1 : Part1;" S.66+
+  // end is already an keyword but it wont support ends cardinality
+  // this shall only used in ConnectionDefs
+  EndConnection implements SysMLElement =
+    "end" connectionCard:SysMLCardinality? SysMLElement;
 
   symbol scope ConnectionDef implements SysMLType =
     Modifier UserDefinedKeyword* "connection" "def"
@@ -249,7 +256,7 @@ component grammar SysMLParts extends SysMLBasis {
     Modifier UserDefinedKeyword* "interface"
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("connect"? (
-      (src:Endpoint "to" tgt:Endpoint) |
+      (srcCardinality:SysMLCardinality?  src:Endpoint "to" tgtCardinality:SysMLCardinality?  tgt:Endpoint) |
       ("(" (SysMLParameter || ",")* ")")
     ))?
     ("{"
@@ -347,9 +354,12 @@ component grammar SysMLParts extends SysMLBasis {
       SysMLElement*
     "}" | ";") ;
 
+  // test integration of "crossed". only valid within and end feature
+  SysMLCrosses = "crosses" Endpoint ;
+
   symbol scope ItemUsage implements SysMLElement =
-    Modifier UserDefinedKeyword* "item" SysMLIdentifier? Name? SysMLCardinality? Specialization*
-    ("(" (SysMLParameter || ",")* ")")? DefaultValue?
+    Modifier UserDefinedKeyword* (cardName:Name? SysMLCardinality)? "item" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    ("(" (SysMLParameter || ",")* ")")? SysMLCrosses? DefaultValue?
     ("{"
       SysMLElement*
      "}" | ";")? ;
@@ -445,7 +455,7 @@ component grammar SysMLParts extends SysMLBasis {
    */
   IncludedUseCaseUsage extends UseCaseUsage =
       Modifier UserDefinedKeyword* "include" ("use" "case")?
-      SysMLIdentifier? Name? SysMLCardinality? Specialization*
+      SysMLIdentifier? SysMLQualifiedName? SysMLCardinality? Specialization*
       ("{"
         (AnalysisObjective | SysMLElement)*
         Expression?

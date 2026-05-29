@@ -62,6 +62,14 @@ component grammar SysMLActions
   /** ==================================================================================================================
    * Special Actions
    * ================================================================================================================ */
+   // https://www.omg.org/spec/SysML/2.0/Language/PDF S.121, S.110
+   // justus: shall work for "action stop terminate;"
+   TerminateActionUsage implements OccurrenceUsageElement extends ActionUsage =
+      Modifier UserDefinedKeyword* "action"? SysMLIdentifier?
+      "terminate" (target:MCQualifiedName? ";")?
+       ("{"
+         SysMLElement*
+       "}")? ;
 
   IfActionUsage implements OccurrenceUsageElement extends ActionUsage =
     Modifier UserDefinedKeyword* "action"?
@@ -177,7 +185,11 @@ component grammar SysMLActions
     MCQualifiedName SysMLCardinality? Specialization* ("{" SysMLElement* "}" | ";") |
     SysMLElement ;
 
+  // TerminateSuccessionThen extends SuccessionThen = "terminate" ;  // todo may be more complex
+  TerminateSuccessionThen extends SuccessionThen = TerminateActionUsage;
+
   // Base successions according to 7.13.5 (Connections > Successions as Usages)
+  // justus: shall parse "then { ... } then terminate"
   SysMLSuccession implements SysMLElement =
     Modifier UserDefinedKeyword* "succession"?
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
