@@ -14,6 +14,7 @@ import de.monticore.lang.sysmlconstraints.symboltable.adapters.RequirementSubjec
 import de.monticore.lang.sysmlparts._ast.ASTSysMLImportStatement;
 import de.monticore.lang.sysmlparts._symboltable.SysMLPackageSymbol;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.ItemDef2TypeSymbolAdapter;
+import de.monticore.lang.sysmloccurrences.symboltable.adapters.OccurrenceDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
@@ -480,6 +481,12 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     var itemDef = resolveItemDefLocally(name);
     if (itemDef.isPresent()) {
       adapted.add(new ItemDef2TypeSymbolAdapter(itemDef.get()));
+    }
+
+    // OccurrenceDef zu Types
+    var occurrenceDef = resolveOccurrenceDefLocally(name);
+    if (occurrenceDef.isPresent()) {
+      adapted.add(new OccurrenceDef2TypeSymbolAdapter(occurrenceDef.get()));
     }
 
     // MetadataDef zu Types
