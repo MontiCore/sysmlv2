@@ -12,18 +12,20 @@ import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
-import de.monticore.symbols.oosymbols._symboltable.OOSymbolsScope;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symboltable.modifiers.AccessModifier;
+import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.SymTypeVariable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static de.monticore.symbols.basicsymbols.BasicSymbolsMillTOP.getMill;
+import java.util.stream.Collectors;
 
 public class SysMLv2Mill extends SysMLv2MillTOP {
 
@@ -36,6 +38,8 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     SysMLv2Mill.addStringType();
     SysMLv2Mill.addScalarValueTypes();
     SysMLv2Mill.addScalarFunctionsTypes();
+    SysMLv2Mill.addKermlCollectionsTypes();
+    SysMLv2Mill.addVectorValuesTypes();
     SysMLv2Mill.addCollectionTypes();
     SysMLv2Mill.addTsynVariables();
     SysMLv2Tool.loadStreamSymbolsFromJar();
@@ -165,6 +169,163 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
 
   protected void setScalarValueSuperTypes(OOTypeSymbol type, OOTypeSymbol superType) {
     type.setSuperTypesList(List.of(SymTypeExpressionFactory.createTypeObject(superType)));
+  }
+
+  public static void addKermlCollectionsTypes() {
+    getMill()._addCollectionsPackage();
+  }
+
+  protected void _addCollectionsPackage() {
+    if (SysMLv2Mill.globalScope().resolveSysMLPackage("Collections").isPresent()) {
+      return;
+    }
+
+    var packageScope = SysMLv2Mill.scope();
+    packageScope.setName("Collections");
+    packageScope.setEnclosingScope(SysMLv2Mill.globalScope());
+    var collections = SysMLv2Mill.sysMLPackageSymbolBuilder()
+        .setName("Collections")
+        .setFullName("Collections")
+        .setPackageName("")
+        .setEnclosingScope(SysMLv2Mill.globalScope())
+        .setSpannedScope(packageScope)
+        .build();
+    packageScope.setSpanningSymbol(collections);
+    SysMLv2Mill.globalScope().add(collections);
+
+    var collection = createCollectionType(packageScope, "Collection", "T");
+    var orderedCollection = createCollectionType(packageScope, "OrderedCollection", "T");
+    var uniqueCollection = createCollectionType(packageScope, "UniqueCollection", "T");
+    var array = createCollectionType(packageScope, "Array", "T");
+    var bag = createCollectionType(packageScope, "Bag", "T");
+    var set = createCollectionType(packageScope, "Set", "T");
+    var orderedSet = createCollectionType(packageScope, "OrderedSet", "T");
+    var list = createCollectionType(packageScope, "List", "T");
+    var keyValuePair = createCollectionType(packageScope, "KeyValuePair", "K", "V");
+    var map = createCollectionType(packageScope, "Map", "K", "V");
+    var orderedMap = createCollectionType(packageScope, "OrderedMap", "K", "V");
+
+    setCollectionSuperTypes(orderedCollection, collection);
+    setCollectionSuperTypes(uniqueCollection, collection);
+    setCollectionSuperTypes(array, orderedCollection);
+    setCollectionSuperTypes(bag, collection);
+    setCollectionSuperTypes(set, uniqueCollection);
+    setCollectionSuperTypes(orderedSet, orderedCollection, uniqueCollection);
+    setCollectionSuperTypes(list, orderedCollection);
+    setCollectionSuperTypes(orderedMap, map);
+
+    // Map :> Collection
+    var k = map.getSpannedScope().resolveTypeVarLocally("K");
+    var v = map.getSpannedScope().resolveTypeVarLocally("V");
+    if (k.isPresent() && v.isPresent()) {
+      var kv = SymTypeExpressionFactory.createGenerics(keyValuePair,
+          SymTypeExpressionFactory.createTypeVariable(k.get()),
+          SymTypeExpressionFactory.createTypeVariable(v.get()));
+      map.setSuperTypesList(
+          List.of(SymTypeExpressionFactory.createGenerics(collection, kv)));
+
+
+    }
+  }
+
+  protected OOTypeSymbol createCollectionType(ISysMLv2Scope packageScope, String name, String... typeVars) {
+    var spannedScope = scope();
+    for (String typeVarName : typeVars) {
+      var typeVar = BasicSymbolsMill.typeVarSymbolBuilder().setName(typeVarName).build();
+      spannedScope.add(typeVar);
+    }
+
+    var type = OOSymbolsMill.oOTypeSymbolBuilder()
+        .setName(name)
+        .setFullName("Collections." + name)
+        .setPackageName("Collections")
+        .setEnclosingScope(packageScope)
+        .setSpannedScope(spannedScope)
+        .build();
+    packageScope.add(type);
+    return type;
+  }
+
+  protected void setCollectionSuperTypes(OOTypeSymbol type, OOTypeSymbol... superTypes) {
+    List<SymTypeExpression> superTypeExpressions = new ArrayList<>();
+    for (OOTypeSymbol superType : superTypes) {
+      if (!superType.getSpannedScope().getTypeVarSymbols().isEmpty()) {
+        List<SymTypeExpression> typeArgs = type.getSpannedScope().getLocalTypeVarSymbols().stream()
+            .map(SymTypeExpressionFactory::createTypeVariable)
+            .collect(Collectors.toList());
+        superTypeExpressions.add(SymTypeExpressionFactory.createGenerics(superType, typeArgs));
+      } else {
+        superTypeExpressions.add(SymTypeExpressionFactory.createTypeObject(superType));
+      }
+    }
+    type.setSuperTypesList(superTypeExpressions);
+  }
+
+  public static void addVectorValuesTypes() {
+    getMill()._addVectorValuesPackage();
+  }
+
+  protected void _addVectorValuesPackage() {
+    if (SysMLv2Mill.globalScope().resolveSysMLPackage("VectorValues").isPresent()) {
+      return;
+    }
+
+    var packageScope = SysMLv2Mill.scope();
+    packageScope.setName("VectorValues");
+    packageScope.setEnclosingScope(SysMLv2Mill.globalScope());
+    var vectorValues = SysMLv2Mill.sysMLPackageSymbolBuilder()
+        .setName("VectorValues")
+        .setFullName("VectorValues")
+        .setPackageName("")
+        .setEnclosingScope(SysMLv2Mill.globalScope())
+        .setSpannedScope(packageScope)
+        .build();
+    packageScope.setSpanningSymbol(vectorValues);
+    SysMLv2Mill.globalScope().add(vectorValues);
+
+    var vectorValue = createVectorValueType(packageScope, "VectorValue");
+    var numericalVectorValue = createVectorValueType(packageScope, "NumericalVectorValue");
+    var cartesianVectorValue = createVectorValueType(packageScope, "CartesianVectorValue");
+    var threeVectorValue = createVectorValueType(packageScope, "ThreeVectorValue");
+    var cartesianThreeVectorValue = createVectorValueType(packageScope, "CartesianThreeVectorValue");
+
+    var array = SysMLv2Mill.globalScope().resolveType("Collections.Array").get();
+    var numericalValue = SysMLv2Mill.globalScope().resolveType("ScalarValues.NumericalValue").get();
+    var realValue = SysMLv2Mill.globalScope().resolveType("ScalarValues.Real").get();
+
+    // NumericalVectorValue :> VectorValue, Array<NumericalValue>
+    numericalVectorValue.setSuperTypesList(List.of(
+        SymTypeExpressionFactory.createTypeObject(vectorValue),
+        SymTypeExpressionFactory.createGenerics(array, SymTypeExpressionFactory.createTypeObject(numericalValue))
+    ));
+
+    // CartesianVectorValue :> NumericalVectorValue
+    cartesianVectorValue.setSuperTypesList(List.of(
+        SymTypeExpressionFactory.createTypeObject(numericalVectorValue)
+    ));
+
+    // ThreeVectorValue :> NumericalVectorValue
+    threeVectorValue.setSuperTypesList(List.of(
+        SymTypeExpressionFactory.createTypeObject(numericalVectorValue)
+    ));
+
+    // CartesianThreeVectorValue :> CartesianVectorValue, ThreeVectorValue
+    cartesianThreeVectorValue.setSuperTypesList(List.of(
+        SymTypeExpressionFactory.createTypeObject(cartesianVectorValue),
+        SymTypeExpressionFactory.createTypeObject(threeVectorValue)
+    ));
+  }
+
+  protected OOTypeSymbol createVectorValueType(ISysMLv2Scope packageScope, String name) {
+    var type = OOSymbolsMill.oOTypeSymbolBuilder()
+        .setName(name)
+        .setFullName("VectorValues." + name)
+        .setPackageName("VectorValues")
+        .setEnclosingScope(packageScope)
+        .setSpannedScope(scope())
+        .build();
+    packageScope.add(type);
+    return type;
   }
 
   protected OOTypeSymbol buildOptionalType() {
