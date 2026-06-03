@@ -1,12 +1,13 @@
 package symboltable;
 
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
-import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
+import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.se_rwth.commons.logging.LogStub;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -14,11 +15,31 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class StandardLibraryImportTest {
+  public static SysMLv2Tool tool;
+
+  @BeforeAll
+  public static void init() {
+    LogStub.init();
+    tool = new SysMLv2Tool();
+    tool.init();
+  }
+
+  @Test
+  public void testKerMLLib() {
+    var globalScope = tool.getGlobalScope();
+    assertThat(globalScope.resolveSysMLPackage("ScalarValues")).isPresent();
+    assertThat(globalScope.resolveSysMLPackage("Collections")).isPresent();
+    assertThat(globalScope.resolveSysMLPackage("VectorValues")).isPresent();
+
+    // Why not SysMLType?
+    assertThat(globalScope.resolveType("ScalarValues.Boolean")).isPresent();
+    assertThat(globalScope.resolveType("Collections.Bag")).isPresent();
+    assertThat(globalScope.resolveType("VectorValues.CartesianVectorValue")).isPresent();
+  }
+
   @Test()
   public void testFQNResolving() throws IOException {
-    LogStub.init();
-    var tool = new SysMLv2Tool();
-    tool.init();
+
 
     var model = "attribute a: ScalarValues::Complex;";
 
