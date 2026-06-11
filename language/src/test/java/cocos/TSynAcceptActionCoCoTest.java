@@ -4,20 +4,19 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
-import de.monticore.lang.sysmlv2.cocos.EventTransitionRequiresAccept;
+import de.monticore.lang.sysmlv2.cocos.TSynAcceptActionCoCo;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class EventTransitionRequiresAcceptTest {
+public class TSynAcceptActionCoCoTest {
 
   @BeforeAll
   public static void init() {
@@ -30,7 +29,7 @@ public class EventTransitionRequiresAcceptTest {
   }
 
   @Test
-  void eventAutomaton_withAccept_mustNotLogError() {
+  void tsynAutomaton_withoutAccept_mustNotLogError() {
     var tool = new SysMLv2Tool();
     tool.init();
     ASTSysMLModel ast = null;
@@ -46,17 +45,15 @@ public class EventTransitionRequiresAcceptTest {
     tool.finalizeSymbolTable(ast);
 
     var checker = new SysMLv2CoCoChecker();
-    checker.addCoCo(new EventTransitionRequiresAccept());
+    checker.addCoCo(new TSynAcceptActionCoCo());
     checker.checkAll(ast);
-    var errors = Log.getFindings().stream()
-        .filter(s -> s.isError())
-        .collect(Collectors.toList());
+    var errors = Log.getFindings().stream().collect(Collectors.toList());
     assertTrue(errors.isEmpty(),
         "Expected no errors, but got:\n" + errors);
   }
 
   @Test
-  void eventAutomaton_withoutAccept_mustLogError() {
+  void tsynAutomaton_withAccept_mustLogError() {
     var tool = new SysMLv2Tool();
     tool.init();
     ASTSysMLModel ast = null;
@@ -72,49 +69,35 @@ public class EventTransitionRequiresAcceptTest {
     tool.finalizeSymbolTable(ast);
 
     var checker = new SysMLv2CoCoChecker();
-    checker.addCoCo(new EventTransitionRequiresAccept());
+    checker.addCoCo(new TSynAcceptActionCoCo());
     checker.checkAll(ast);
     assertFalse(Log.getFindings().isEmpty());
   }
 
-  String valid = "part def TestWithAccept {\n"
-      + "  port input: Booleans;\n"
-      + "  port output: ~Booleans;\n"
+  String valid = "part def TestWithoutAccept {\n"
+      + "  port input: int;\n"
+      + "  port output: ~int;\n"
       + "\n"
-      + "  exhibit state behavior {\n"
-      + "    entry;\n"
-      + "      then S;\n"
-      + "\n"
-      + "    state S;\n"
-      + "\n"
+      + "  #tsyn exhibit state behavior {\n"
       + "    transition\n"
       + "      first S\n"
-      + "      accept input.val\n"
-      + "      if input.val == true\n"
-      + "      do action {\n"
-      + "        send false to output.val;\n"
-      + "      }\n"
       + "      then S;\n"
       + "  }\n"
       + "}";
 
-  String invalid = "part def TestWithoutAccept {\n"
-        + "  port input: Booleans;\n"
-        + "\n"
-        + "  exhibit state behavior {\n"
-        + "    entry; then S;\n"
-        + "\n"
-        + "    state S;\n"
-        + "\n"
-        + "    transition ok\n"
-        + "      first S\n"
-        + "      accept input.val\n"
-        + "      then S;\n"
-        + "\n"
-        + "    transition bad\n"
-        + "      first S\n"
-        + "      then S;\n"
-        + "  }\n"
-        + "}";
+  String invalid = "part def TestWithAccept {\n"
+      + "  port input: int;\n"
+      + "\n"
+      + "  #tsyn exhibit state behavior {\n"
+      + "    transition ok\n"
+      + "      first S\n"
+      + "      then S;\n"
+      + "\n"
+      + "    transition bad\n"
+      + "      first S\n"
+      + "      accept input.val\n"
+      + "      then S;\n"
+      + "   }\n"
+      + "}";
 
 }
