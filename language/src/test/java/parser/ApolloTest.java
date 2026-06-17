@@ -1,6 +1,8 @@
 package parser;
 
+import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
+import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,9 +45,13 @@ public class ApolloTest {
     var lines = 0;
 
     Log.enableFailQuick(false);
+    var asts = new ArrayList<ASTSysMLModel>();
+
     for(var model: models) {
       try {
-        var ast = tool.parse(model.toString());
+        var ast = SysMLv2Mill.parser().parse(model.toString());
+        assertThat(ast).as("Could not parse " + model).isPresent();
+        asts.add(ast.get());
         if(Log.getFindings().isEmpty()) {
           successful++;
         }
@@ -56,9 +63,18 @@ public class ApolloTest {
         Log.clearFindings();
       }
     }
+    asts.forEach(ast -> tool.createSymbolTable(ast));
+    asts.forEach(ast -> tool.completeSymbolTable(ast));
+    asts.forEach(ast -> tool.finalizeSymbolTable(ast));
+
+    asts.forEach(ast -> tool.runDefaultCoCos(ast));
+    // asts.forEach(ast -> tool.runAdditionalCoCos(ast));
 
     assertThat(successful).isEqualTo(27);
     assertThat(Log.getFindings()).isEmpty();
+
+    var errors = Log.getFindings().stream().filter(f -> f.isError()).collect(Collectors.toList());
+    assertThat(errors).as(() -> Log.getFindings().toString()).isEmpty();
   }
 
 }

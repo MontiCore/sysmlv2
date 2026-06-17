@@ -6,7 +6,7 @@ import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartUsageCoCo;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
-
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import java.util.stream.Collectors;
 
 /**
@@ -21,6 +21,7 @@ public class PartTypeDefinitionExistsCoCo implements SysMLPartsASTPartUsageCoCo 
   @Override
   public void check(ASTPartUsage node) {
     var nonExistent = node.streamSpecializations()
+        .filter(s -> s instanceof ASTSysMLTyping)
         .flatMap(ASTSpecialization::streamSuperTypes)
         .filter(t ->
             node.getEnclosingScope().resolvePartDef(printPartType(t)).isEmpty()

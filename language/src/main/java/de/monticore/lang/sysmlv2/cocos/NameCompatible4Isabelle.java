@@ -27,7 +27,10 @@ public class NameCompatible4Isabelle implements SysMLStatesASTStateDefCoCo,
     SysMLPartsASTSysMLPackageCoCo {
   //check for name
   private void LogsCompatible4Isabelle(String name, SourcePosition start, SourcePosition end) {
-    if(!name.matches("^(?!0-9)[a-zA-Z0-9_]+$") && !name.isEmpty()) {
+    // Names must start with a letter or underscore.
+    // Subsequent characters may also include digits, spaces, dots, and hyphens.
+    // Name like 'Roger B. Chaffee' can be accepted.
+    if (!name.isEmpty() && !name.matches("^[a-zA-Z_][a-zA-Z0-9_ .-]*$")) {
       Log.error("0xFF005 This name is not Isabelle compatible", start, end);
     }
   }

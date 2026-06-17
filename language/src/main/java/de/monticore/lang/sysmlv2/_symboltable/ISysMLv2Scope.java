@@ -12,6 +12,7 @@ import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlconstraints.symboltable.adapters.RequirementSubject2VariableSymbolAdapter;
 import de.monticore.lang.sysmlparts._ast.ASTSysMLImportStatement;
+import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlparts._symboltable.SysMLPackageSymbol;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.ItemDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.OccurrenceDef2TypeSymbolAdapter;
@@ -137,6 +138,138 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
         );
         result.addAll(resolvedEnclosing);
         foundSymbols = foundSymbols || !resolvedEnclosing.isEmpty();
+      }
+      /*
+       * Fallback for names that cannot safely be represented as a
+       * dot-qualified name, for example quoted SysML names containing dots.
+       *
+       * First try normal resolution. Only if that fails, resolve the imported
+       * package and search for the unchanged name inside its local scope.
+       */
+      if (result.isEmpty() && name.contains(".")) {
+        for (ImportStatement importStatement : importStatements) {
+          if (!importStatement.isStar()) {
+            continue;
+          }
+
+          var importedPackage = getEnclosingScope().resolveSysMLPackage(importStatement.getStatement());
+
+          if (importedPackage.isPresent()
+                  && importedPackage.get().getSpannedScope() instanceof ISysMLv2Scope
+          ) {
+            ISysMLv2Scope importedScope = (ISysMLv2Scope) importedPackage.get().getSpannedScope();
+
+            result.addAll(
+                importedScope.resolveTypeLocallyMany(
+                    false,
+                    name,
+                    modifier,
+                    predicate
+                )
+            );
+          }
+        }
+      }
+    }
+
+    return new ArrayList<>(result);
+  }
+
+  default void collectImportsFromScope(
+      ISysMLv2Scope scope,
+      List<ImportStatement> importStatements
+  ) {
+    if (scope == null || !scope.isPresentAstNode()) {
+      return;
+    }
+
+    var visitor = new SysMLPartsVisitor2() {
+      @Override
+      public void visit(ASTSysMLImportStatement node) {
+        // Only collect imports declared directly in this scope.
+        if (!scope.equals(node.getEnclosingScope())) {
+          return;
+        }
+
+        importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
+                node.isStar() || node.isRecursive()
+            )
+        );
+      }
+    };
+
+    var traverser = SysMLv2Mill.inheritanceTraverser();
+    traverser.add4SysMLParts(visitor);
+    scope.getAstNode().accept(traverser);
+  }
+
+  @Override
+  default List<PartDefSymbol> continuePartDefWithEnclosingScope(
+      boolean foundSymbols,
+      String name,
+      AccessModifier modifier,
+      Predicate<PartDefSymbol> predicate
+  ) {
+    final LinkedHashSet<PartDefSymbol> result = new LinkedHashSet<>();
+
+    if (checkIfContinueWithEnclosingScope(foundSymbols)
+            && getEnclosingScope() != null
+    ) {
+      var importStatements = new LinkedList<ImportStatement>();
+
+      /*
+       * The local search in this scope has already finished.
+       *
+       * Before continuing into the enclosing scope, apply the
+       * imports declared in the current scope.
+       */
+      collectImportsFromScope(this, importStatements);
+
+      Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
+
+      for (String potentialName : potentialNames) {
+        var resolvedEnclosing = getEnclosingScope().resolvePartDefMany(
+            foundSymbols,
+            potentialName,
+            modifier,
+            predicate
+        );
+
+        result.addAll(resolvedEnclosing);
+
+        foundSymbols = foundSymbols || !resolvedEnclosing.isEmpty();
+      }
+
+      /*
+       * Fallback for names that cannot safely be represented as a
+       * dot-qualified name, for example quoted SysML names containing dots.
+       *
+       * First try normal resolution. Only if that fails, resolve the imported
+       * package and search for the unchanged name inside its local scope.
+       */
+      if (result.isEmpty() && name.contains(".")) {
+        for (ImportStatement importStatement : importStatements) {
+          if (!importStatement.isStar()) {
+            continue;
+          }
+
+          var importedPackage = getEnclosingScope().resolveSysMLPackage(importStatement.getStatement());
+
+          if (importedPackage.isPresent()
+                  && importedPackage.get().getSpannedScope() instanceof ISysMLv2Scope
+          ) {
+            ISysMLv2Scope importedScope = (ISysMLv2Scope) importedPackage.get().getSpannedScope();
+
+            result.addAll(
+                importedScope.resolvePartDefLocallyMany(
+                    false,
+                    name,
+                    modifier,
+                    predicate
+                )
+            );
+          }
+        }
       }
     }
 
@@ -277,7 +410,6 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       potentialSymbolNames.add(this.getSpanningSymbol().getName() + "." + name);
     }
 
-    // import statements are not yet considered
 
     return potentialSymbolNames;
   }
@@ -650,6 +782,30 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     });
 
     return adapted;
+  }
+
+//  The generated filter cannot correctly resolve quoted names containing
+//  dots, such as 'Roger B. Chaffee'. During resolution, the quotes are
+//  removed and the dots are interpreted as qualification separators.
+//  The override therefore checks all local PartDefSymbols directly and
+//  compares the requested name with both the symbol name and its full name.
+  @Override
+  default Optional<PartDefSymbol> filterPartDef(
+      String name,
+      LinkedListMultimap<String, PartDefSymbol> symbols
+  ) {
+    final Set<PartDefSymbol> resolvedSymbols = new LinkedHashSet<>();
+
+    for (PartDefSymbol symbol : symbols.values()) {
+      if (
+          symbol.getName().equals(name)
+              || symbol.getFullName().equals(name)
+      ) {
+        resolvedSymbols.add(symbol);
+      }
+    }
+
+    return getResolvedOrThrowException(resolvedSymbols);
   }
 
   // Alongside filtering for "name" and "fullname", we also filter for
