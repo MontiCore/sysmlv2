@@ -68,7 +68,7 @@ public class ApolloTest {
     asts.forEach(ast -> tool.finalizeSymbolTable(ast));
 
     asts.forEach(ast -> tool.runDefaultCoCos(ast));
-    // asts.forEach(ast -> tool.runAdditionalCoCos(ast));
+    asts.forEach(ast -> tool.runAdditionalCoCos(ast));
 
     assertThat(successful).isEqualTo(27);
     assertThat(Log.getFindings()).isEmpty();
