@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import de.se_rwth.commons.logging.Finding;
 
 /**
- * Checks that the Apollo_11 can be parsed
+ * Checks that the Apollo 11 models can be parsed and pass all CoCo checks.
  * https://github.com/airbus/apollo-11-sysml-v2/tree/main
  */
 public class ApolloTest {
@@ -69,12 +69,12 @@ public class ApolloTest {
     asts.forEach(ast -> tool.completeSymbolTable(ast));
     asts.forEach(ast -> tool.finalizeSymbolTable(ast));
 
-    //asts.forEach(ast -> tool.runDefaultCoCos(ast));
+    //casts.forEach(ast -> tool.runDefaultCoCos(ast));
     asts.forEach(ast -> tool.runAdditionalCoCos(ast));
 
     assertThat(successful).isEqualTo(27);
-    var errors = Log.getFindings().stream().filter(Finding::isError).collect(Collectors.toList());
 
+    var errors = Log.getFindings().stream().filter(Finding::isError).collect(Collectors.toList());
     assertThat(errors).as(errors::toString).isEmpty();
   }
 
