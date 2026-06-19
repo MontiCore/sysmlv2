@@ -10,68 +10,78 @@ import de.se_rwth.commons.logging.Log;
 
 import java.util.stream.Collectors;
 
-// TODO Muss mit SpecialiationExists zusammenspielen, also darf der nicht anschlagen, wenn garkein Type existiert,
-// sondern nur, wenn zwar einer existiert, es aber keine ActionDef/ActionUsage ist
-public class ActionSupertypes implements SysMLActionsASTActionDefCoCo, SysMLActionsASTActionUsageCoCo {
+// TODO Muss mit SpecialiationExists zusammenspielen, also darf der nicht
+//  anschlagen, wenn garkein Type existiert,
+// sondern nur, wenn zwar einer existiert, es aber keine
+// ActionDef/ActionUsage ist
+public class ActionSupertypes
+    implements SysMLActionsASTActionDefCoCo, SysMLActionsASTActionUsageCoCo {
 
   private String printName(ASTMCType type) {
     return type.printType();
   }
 
   /**
-   * Checks that existing super types (specializations) of an ActionDef are Action definitions.
-   * Missing super types are ignored because they are reported by SpecializationExistsTC3.
+   * Checks that existing super types (specializations) of an ActionDef are
+   * Action definitions. Missing super types are ignored because they are
+   * reported by SpecializationExistsTC3.
    */
   @Override
   public void check(ASTActionDef node) {
     var invalidSupertypes = node.streamSpecializations()
         .flatMap(s -> s.streamSuperTypes())
-        .filter(t ->  {
-        String name = printName(t);
+        .filter(t -> {
+          String name = printName(t);
 
-        boolean exists =
-            node.getEnclosingScope().resolveType(name).isPresent()
-                || node.getEnclosingScope().resolveActionDef(name).isPresent()
-                || node.getEnclosingScope().resolveActionUsage(name).isPresent();
+          boolean exists =
+              node.getEnclosingScope().resolveType(name).isPresent()
+                  || node.getEnclosingScope().resolveActionDef(name).isPresent()
+                  || node.getEnclosingScope().resolveActionUsage(
+                  name).isPresent();
 
-        boolean isActionDef =
-            node.getEnclosingScope().resolveActionDef(name).isPresent();
+          boolean isActionDef =
+              node.getEnclosingScope().resolveActionDef(name).isPresent();
 
-        return exists && !isActionDef;
-      })
+          return exists && !isActionDef;
+        })
         .collect(Collectors.toList());
 
-    for(var problem: invalidSupertypes) {
-      Log.error("0x10017 Specialization \"" + printName(problem) + "\" is not an Action definition.");
+    for (var problem : invalidSupertypes) {
+      Log.error("0x10017 Specialization \"" + printName(problem)
+          + "\" is not an Action definition.");
     }
   }
 
   /**
-   * Checks that existing super types (specializations) of an ActionUsage are Action definitions or usages.
-   * Missing super types are ignored because they are reported by SpecializationExistsTC3.
+   * Checks that existing super types (specializations) of an ActionUsage are
+   * Action definitions or usages. Missing super types are ignored because they
+   * are reported by SpecializationExistsTC3.
    */
   @Override
   public void check(ASTActionUsage node) {
     var invalidSupertypes = node.streamSpecializations()
         .flatMap(s -> s.streamSuperTypes())
         .filter(t -> {
-        String name = printName(t);
+          String name = printName(t);
 
-        boolean exists =
-            node.getEnclosingScope().resolveType(name).isPresent()
-                || node.getEnclosingScope().resolveActionDef(name).isPresent()
-                || node.getEnclosingScope().resolveActionUsage(name).isPresent();
+          boolean exists =
+              node.getEnclosingScope().resolveType(name).isPresent()
+                  || node.getEnclosingScope().resolveActionDef(name).isPresent()
+                  || node.getEnclosingScope().resolveActionUsage(
+                  name).isPresent();
 
-        boolean isAction =
-            node.getEnclosingScope().resolveActionDef(name).isPresent()
-                || node.getEnclosingScope().resolveActionUsage(name).isPresent();
+          boolean isAction =
+              node.getEnclosingScope().resolveActionDef(name).isPresent()
+                  || node.getEnclosingScope().resolveActionUsage(
+                  name).isPresent();
 
-        return exists && !isAction;
-      })
+          return exists && !isAction;
+        })
         .collect(Collectors.toList());
 
-    for(var problem: invalidSupertypes) {
-      Log.error("0x10020 Specialization \"" + printName(problem) + "\" is not an Action definition or usage.");
+    for (var problem : invalidSupertypes) {
+      Log.error("0x10020 Specialization \"" + printName(problem)
+          + "\" is not an Action definition or usage.");
     }
   }
 }
