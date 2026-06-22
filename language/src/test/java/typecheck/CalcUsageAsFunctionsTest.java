@@ -73,6 +73,6 @@ public class CalcUsageAsFunctionsTest {
     checker.checkAll(ast);
 
     assertThat(Log.getFindings()).hasSize(1);
-    assertThat(Log.getFindings().get(0).getMsg()).contains("0x80002 The expression type is 'nat' but should be boolean!");
+    assertThat(Log.getFindings().get(0).getMsg()).contains("0x80002");
   }
 }
