@@ -6,6 +6,7 @@ import de.monticore.lang.componentconnector._symboltable.EventAutomatonSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildPortSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol;
+import de.monticore.lang.sysmlactions._symboltable.CalcUsageSymbol;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol;
 import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
@@ -34,6 +35,7 @@ import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
 import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.symboltable.adapters.AttributeUsage2PortSymbolAdapter;
+import de.monticore.lang.sysmlv2.symboltable.adapters.CalcUsage2VariableAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Constraint2SpecificationAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.MetadataDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.PartDef2ComponentAdapter;
@@ -324,6 +326,8 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
         AccessModifier.ALL_INCLUSION, x -> true);
     var anonymous = resolveAnonymousUsageLocallyMany(false, name,
         AccessModifier.ALL_INCLUSION, x -> true);
+    var calcs = resolveCalcUsageLocallyMany(false, name,
+        AccessModifier.ALL_INCLUSION, x -> true);
 
     var adapted = new ArrayList<VariableSymbol>();
     for (PortUsageSymbol portUsage : ports) {
@@ -388,6 +392,11 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
         variable.setType(SymTypeExpressionFactory.createTypeObject(resolved));
         adapted.add(variable);
       }
+    }
+
+    for (CalcUsageSymbol calcUsage : calcs) {
+      var variable = new CalcUsage2VariableAdapter(calcUsage);
+      adapted.add(variable);
     }
 
     // Falls Requirement, dann subject befragen

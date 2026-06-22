@@ -178,6 +178,32 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
       });
       node.accept(traverser);
       node.getSymbol().setReturnType(returnType[0]);
+
+      List<SymTypeExpression> argTypes = new ArrayList<>();
+      var argTraverser = SysMLv2Mill.inheritanceTraverser();
+      argTraverser.add4SysMLBasis(new SysMLBasisVisitor2() {
+        @Override
+        public void visit(ASTAnonymousUsage retNode) {
+          if (retNode.getModifier().isIn() && retNode.getEnclosingScope() == node.getSpannedScope()) {
+            List<SymTypeExpression> types = getTypeCompletion(retNode.getSpecializationList(), false);
+            var argType = types.isEmpty() ? SymTypeExpressionFactory.createObscureType() : types.get(0);
+            argTypes.add(argType);
+          }
+        }
+      });
+
+      argTraverser.add4SysMLParts(new SysMLPartsVisitor2() {
+        @Override
+        public void visit(ASTAttributeUsage retNode) {
+          if (retNode.getModifier().isIn() && retNode.getEnclosingScope() == node.getSpannedScope()) {
+            List<SymTypeExpression> types = getTypeCompletion(retNode.getSpecializationList(), false);
+            var argType = types.isEmpty() ? SymTypeExpressionFactory.createObscureType() : types.get(0);
+            argTypes.add(argType);
+          }
+        }
+      });
+      node.accept(argTraverser);
+      node.getSymbol().setArgTypes(argTypes);
     }
   }
 
