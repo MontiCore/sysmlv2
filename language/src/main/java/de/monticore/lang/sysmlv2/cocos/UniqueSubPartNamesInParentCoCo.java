@@ -16,6 +16,11 @@ public class UniqueSubPartNamesInParentCoCo implements SysMLPartsASTPartUsageCoC
 
     var scope = node.getEnclosingScope();
 
+    // Unnamed PartUsages are allowed and are ignored by this check.
+    if (!node.isPresentName()) {
+      return;
+    }
+
     String partName = node.getName();
 
     int matches = scope
