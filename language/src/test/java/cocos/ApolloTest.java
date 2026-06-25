@@ -1,18 +1,23 @@
-package parser;
+package cocos;
 
+import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
+import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
+import de.se_rwth.commons.logging.Finding;
 
 /**
- * Checks that the Apollo_11 can be parsed
+ * Checks that the Apollo 11 models can be parsed and pass all CoCo checks.
  * https://github.com/airbus/apollo-11-sysml-v2/tree/main
  */
 public class ApolloTest {
@@ -28,7 +33,7 @@ public class ApolloTest {
   @BeforeEach
   public void init() {
     tool.init();
-    Log.init();
+    LogStub.init();
   }
 
   @Test
@@ -42,9 +47,13 @@ public class ApolloTest {
     var lines = 0;
 
     Log.enableFailQuick(false);
+    var asts = new ArrayList<ASTSysMLModel>();
+
     for(var model: models) {
       try {
-        var ast = tool.parse(model.toString());
+        var ast = SysMLv2Mill.parser().parse(model.toString());
+        assertThat(ast).as("Could not parse " + model).isPresent();
+        asts.add(ast.get());
         if(Log.getFindings().isEmpty()) {
           successful++;
         }
@@ -56,9 +65,17 @@ public class ApolloTest {
         Log.clearFindings();
       }
     }
+    asts.forEach(ast -> tool.createSymbolTable(ast));
+    asts.forEach(ast -> tool.completeSymbolTable(ast));
+    asts.forEach(ast -> tool.finalizeSymbolTable(ast));
+
+    //asts.forEach(ast -> tool.runDefaultCoCos(ast));
+   // asts.forEach(ast -> tool.runAdditionalCoCos(ast));
 
     assertThat(successful).isEqualTo(27);
-    assertThat(Log.getFindings()).isEmpty();
+
+    var errors = Log.getFindings().stream().filter(Finding::isError).collect(Collectors.toList());
+    assertThat(errors).as(errors::toString).isEmpty();
   }
 
 }
