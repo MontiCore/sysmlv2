@@ -33,6 +33,10 @@ public class SysMLTypeVisitorOperatorCalculator extends
     return type;
   }
 
+  /**
+   * calculates {@code +,-,%}
+   * without support for String
+   */
   @Override
   protected SymTypeExpression calculatePlusMinusModulo(
       SymTypeExpression left,
@@ -61,6 +65,9 @@ public class SysMLTypeVisitorOperatorCalculator extends
     return type;
   }
 
+  /**
+   * See Documentation in super class
+   */
   @Override
   protected SymTypeExpression calculateToString(
       SymTypeExpression inner
@@ -100,6 +107,10 @@ public class SysMLTypeVisitorOperatorCalculator extends
     return type;
   }
 
+  /**
+   * calculates {@code +,-,*,/,%}
+   * without support for String and SIUnits
+   */
   @Override
   protected SymTypeExpression calculateArithmeticExpressionNumeric(
       SymTypeExpression left,
@@ -117,6 +128,9 @@ public class SysMLTypeVisitorOperatorCalculator extends
     return type;
   }
 
+  /**
+   * calculates unary {@code +,-}
+   */
   @Override
   protected SymTypeExpression calculatePlusMinusPrefix(SymTypeExpression inner) {
     var type = super.calculatePlusMinusPrefix(inner);
@@ -126,6 +140,9 @@ public class SysMLTypeVisitorOperatorCalculator extends
     return type;
   }
 
+  /**
+   * calculates {@code ==, !=}
+   */
   @Override
   protected SymTypeExpression calculateEqualityInequality(
       SymTypeExpression left,
@@ -143,6 +160,9 @@ public class SysMLTypeVisitorOperatorCalculator extends
     return type;
   }
 
+  /**
+   * calculates {@code <, <=, >, =>}
+   */
   @Override
   protected SymTypeExpression calculateNumericComparison(
       SymTypeExpression left,
@@ -160,6 +180,9 @@ public class SysMLTypeVisitorOperatorCalculator extends
     return type;
   }
 
+  /**
+   * calculates {@code &&, ||}
+   */
   @Override
   protected SymTypeExpression calculateConditionalBooleanOp(
       SymTypeExpression left,
@@ -201,6 +224,9 @@ public class SysMLTypeVisitorOperatorCalculator extends
     return SymTypeExpressionFactory.createObscureType();
   }
 
+  /**
+   * calculates {@code &, |, ^}
+   */
   @Override
   protected SymTypeExpression calculateBinaryInfixOp(
       SymTypeExpression left,
@@ -215,6 +241,9 @@ public class SysMLTypeVisitorOperatorCalculator extends
     return type;
   }
 
+  /**
+   * calculates ~
+   */
   @Override
   protected SymTypeExpression calculateBitwiseComplement(SymTypeExpression inner) {
     var type = super.calculateBitwiseComplement(inner);
@@ -271,6 +300,13 @@ public class SysMLTypeVisitorOperatorCalculator extends
     return type;
   }
 
+  /**
+   * Returns the ReturnType of a FunctionType.
+   * TypeCheck3 returns the FunctionTypes signature (for "list.count()"
+   * TC3 would return "() -> int").
+   * So this is used to allow using functions directly with operators,
+   * effectively treating them as their return value.
+   */
   protected SymTypeExpression getFunctionReturnType(SymTypeExpression expression) {
     if (expression.isFunctionType()) {
       return expression.asFunctionType().getType();
