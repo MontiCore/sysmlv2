@@ -29,6 +29,7 @@ import de.monticore.lang.sysmlparts.symboltable.adapters.CalcUsage2FunctionSymbo
 import de.monticore.lang.sysmlparts.symboltable.adapters.EnumDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.PartDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.PartUsage2TypeSymbolAdapter;
+import de.monticore.lang.sysmlparts.symboltable.adapters.PartUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.PortDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.PortUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
@@ -328,6 +329,8 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
         AccessModifier.ALL_INCLUSION, x -> true);
     var calcs = resolveCalcUsageLocallyMany(false, name,
         AccessModifier.ALL_INCLUSION, x -> true);
+    var parts = resolvePartUsageLocallyMany(false, name,
+        AccessModifier.ALL_INCLUSION, x -> true);
 
     var adapted = new ArrayList<VariableSymbol>();
     for (PortUsageSymbol portUsage : ports) {
@@ -351,6 +354,17 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
         adapted.add(variable);
       }
+    }
+
+    for (PartUsageSymbol partUsage : parts) {
+      var variable = new PartUsage2VariableSymbolAdapter(partUsage);
+
+      var types = partUsage.getTypesList();
+      if (types.size() == 1) {
+        variable.setType(types.get(0));
+      }
+
+      adapted.add(variable);
     }
 
     for (AttributeUsageSymbol attrUsage : attributes) {
