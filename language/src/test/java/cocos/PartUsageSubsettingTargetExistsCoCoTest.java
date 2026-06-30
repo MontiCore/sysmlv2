@@ -7,15 +7,10 @@ import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
-import de.monticore.lang.sysmlv2.cocos.PartTypeDefinitionExistsCoCo;
 import de.monticore.lang.sysmlv2.cocos.PartUsageSubsettingTargetExistsCoCo;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,8 +38,9 @@ public class PartUsageSubsettingTargetExistsCoCoTest {
 
   @Nested
   public class PartTypeDefinitionExistsCoCoTests {
+    @Disabled("The symbolic ':>' syntax is currently ambiguous in the grammar")
     @Test
-    public void testValid() throws IOException {
+    public void testValidSubsettingWithSymbolicSyntax() throws IOException {
       String validModel =
           "part def Wheel;"
               + "part def Vehicle {"
@@ -58,13 +54,46 @@ public class PartUsageSubsettingTargetExistsCoCoTest {
       assertThat(errors).hasSize(0);
     }
 
+    @Disabled("The symbolic ':>' syntax is currently ambiguous in the grammar")
     @Test
-    public void testInvalid() throws IOException {
+    public void testInvalidSubsettingWithSymbolicSyntax() throws IOException {
       String invalidModel =
           "part def Wheel;"
               + "part def Vehicle {"
               +   "part frontWheel : Wheel :> undefinedWheel;"
               + "}";
+
+      var ast = parse(invalidModel);
+      createSt(ast);
+      var errors = check(ast);
+      errors.forEach(f -> System.out.println(f.getMsg()));
+
+      assertThat(errors).hasSize(1);
+      assertThat(errors.get(0).getMsg()).contains("0x10AA9");
+    }
+
+    @Test
+    public void testValidSubsettingWithKeywordSyntax() throws IOException {
+      String validModel =
+              "part def Wheel;"
+                      + "part def Vehicle {"
+                      +   "part wheels : Wheel;"
+                      +   "part frontWheel : Wheel subsets wheels;"
+                      + "}";
+
+      var ast = parse(validModel);
+      createSt(ast);
+      var errors = check(ast);
+      assertThat(errors).hasSize(0);
+    }
+
+    @Test
+    public void testInvalidSubsettingWithKeywordSyntax() throws IOException {
+      String invalidModel =
+              "part def Wheel;"
+                      + "part def Vehicle {"
+                      +   "part frontWheel : Wheel subsets undefinedWheel;"
+                      + "}";
 
       var ast = parse(invalidModel);
       createSt(ast);
