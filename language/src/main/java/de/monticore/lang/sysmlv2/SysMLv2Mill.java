@@ -34,6 +34,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     SysMLv2Mill.initializePrimitives();
     SysMLv2Mill.addStringType();
     SysMLv2Mill.addScalarValueTypes();
+    SysMLv2Mill.addScalarFunctionsTypes();
     SysMLv2Mill.addCollectionTypes();
     SysMLv2Mill.addTsynVariables();
     SysMLv2Tool.loadStreamSymbolsFromJar();
@@ -67,6 +68,10 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
 
   public static void addScalarValueTypes() {
     getMill()._addScalarValueTypes();
+  }
+
+  public static void addScalarFunctionsTypes() {
+    getMill()._addScalarFunctionsTypes();
   }
 
   protected void _addStringType() {
@@ -121,6 +126,29 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     setScalarValueSuperTypes(integer, rational);
     setScalarValueSuperTypes(natural, integer);
     setScalarValueSuperTypes(positive, natural);
+  }
+
+  protected void _addScalarFunctionsTypes() {
+    if (SysMLv2Mill.globalScope().resolveSysMLPackage("ScalarFunctions").isPresent()) {
+      return;
+    }
+
+    var packageScope = SysMLv2Mill.scope();
+    packageScope.setName("ScalarFunctions");
+    packageScope.setEnclosingScope(SysMLv2Mill.globalScope());
+    var scalarFunctions = SysMLv2Mill.sysMLPackageSymbolBuilder()
+        .setName("ScalarFunctions")
+        .setFullName("ScalarFunctions")
+        .setPackageName("")
+        .setEnclosingScope(SysMLv2Mill.globalScope())
+        .setSpannedScope(packageScope)
+        .build();
+    packageScope.setSpanningSymbol(scalarFunctions);
+    SysMLv2Mill.globalScope().add(scalarFunctions);
+
+    OOTypeSymbol scalarValue = (OOTypeSymbol) SysMLv2Mill.globalScope().resolveType("ScalarValues.ScalarValue").get();
+
+    packageScope.add(buildMinFunction(scalarValue));
   }
 
   protected OOTypeSymbol createScalarValueType(ISysMLv2Scope packageScope, String name) {
@@ -449,6 +477,28 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     return SysMLv2Mill.functionSymbolBuilder()
         .setName("infTimes")
         .setType(returnType)
+        .setSpannedScope(parameterList)
+        .build();
+  }
+
+  protected FunctionSymbol buildMinFunction(OOTypeSymbol type) {
+    var parameterList = scope();
+
+    VariableSymbol x = SysMLv2Mill.variableSymbolBuilder()
+        .setName("x")
+        .setType(SymTypeExpressionFactory.createTypeObject(type))
+        .build();
+    VariableSymbol y = SysMLv2Mill.variableSymbolBuilder()
+        .setName("y")
+        .setType(SymTypeExpressionFactory.createTypeObject(type))
+        .build();
+
+    parameterList.add(x);
+    parameterList.add(y);
+
+    return SysMLv2Mill.functionSymbolBuilder()
+        .setName("min")
+        .setType(SymTypeExpressionFactory.createTypeObject(type))
         .setSpannedScope(parameterList)
         .build();
   }
