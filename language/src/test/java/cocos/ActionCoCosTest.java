@@ -74,15 +74,36 @@ public class ActionCoCosTest {
     }
 
     @Test
-    public void testInvalid() throws IOException {
-      ASTSysMLModel ast = SysMLv2Mill.parser().parse_String("action def B: A;").get();
+    public void testInvalidActionDefSupertypeExistsButIsNotAction() throws IOException {
+      ASTSysMLModel ast = SysMLv2Mill.parser().parse_String("part def A; action def B: A;").get();
       SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
       var checker = new SysMLv2CoCoChecker();
       checker.addCoCo((SysMLActionsASTActionDefCoCo) new ActionSupertypes());
       Log.enableFailQuick(false);
       checker.checkAll(ast);
       assertFalse(Log.getFindings().isEmpty());
+      assertTrue(Log.getFindings().stream()
+          .anyMatch(f -> f.getMsg().contains("0x10017")));
     }
+
+     @Test
+    public void testMissingActionDefSupertypeIsNotReportedByActionSupertypes() throws IOException {
+      ASTSysMLModel ast = SysMLv2Mill.parser()
+          .parse_String("action def B: A;")
+          .get();
+
+      SysMLv2Mill.scopesGenitorDelegator().createFromAST(ast);
+
+      var checker = new SysMLv2CoCoChecker();
+      checker.addCoCo((SysMLActionsASTActionDefCoCo) new ActionSupertypes());
+
+      Log.enableFailQuick(false);
+      checker.checkAll(ast);
+
+      assertTrue(Log.getFindings().stream()
+          .noneMatch(f -> f.getMsg().contains("0x10017")));
+    }
+    
   }
 
 }
