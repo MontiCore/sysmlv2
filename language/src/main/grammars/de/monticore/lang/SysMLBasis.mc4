@@ -226,6 +226,7 @@ component grammar SysMLBasis
         | ["private"]      | [private:"-"]
         | ["protected"]    | [protected:"#"]
         | ["abstract"]
+        | ["constant"]
         | ["local"]
         | ["derived"]      | [derived:"/"]
         | ["readonly"]     | [readonly:"?"]
