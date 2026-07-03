@@ -13,6 +13,7 @@ import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -77,6 +78,19 @@ public class SpecializationExistsCoCoTest {
     createSt(ast);
     var errors = check(ast);
     assertThat(errors).hasSize(0);
+  }
+
+  @Disabled("Die CoCo sucht 'P' im enclosing Scope von ':P', was dem der Part "
+      + "Usage entspricht.")
+  @Test
+  public void testInvalid() throws IOException {
+    var model = "part p: P { part def P; }";
+    var ast = parse(model);
+    createSt(ast);
+    var errors = check(ast);
+
+    assertThat(errors).hasSize(1);
+    assertThat(errors.get(0).getMsg()).contains("0xA0324");
   }
 
   private ASTSysMLModel parse(String model) throws IOException {

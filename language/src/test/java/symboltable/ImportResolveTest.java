@@ -281,4 +281,86 @@ public class ImportResolveTest {
     assertThat(optParent.get().getFullName()).isEqualTo("Other.InnerOther.Parent");
   }
 
+  /** Prüft, dass ein Import die korrekten Variablen sichtbar macht */
+  @Disabled("Es fehlt ein PartUsage2VariableAdapter")
+  @Test
+  public void testVisibilityOfVariables() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+
+    var parentModel = "package o { part p; }";
+    var model = "package test { import o::*; }";
+
+    var parentAst = SysMLv2Mill.parser().parse_String(parentModel).get();
+    tool.createSymbolTable(parentAst);
+    tool.completeSymbolTable(parentAst);
+    tool.finalizeSymbolTable(parentAst);
+
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    var scope = ((ASTSysMLPackage)ast.getSysMLElement(0)).getSpannedScope();
+    var p = scope.resolveVariable("p");
+
+    assertThat(p).isPresent();
+    assertThat(p.get().getFullName()).isEqualTo("o.p");
+  }
+
+  /** Prüft, dass ein Import die korrekten Typen sichtbar macht */
+  @Test
+  public void testVisibilityOfTypes() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+
+    var parentModel = "package o { part def P; }";
+    var model = "package test { import o::*; }";
+
+    var parentAst = SysMLv2Mill.parser().parse_String(parentModel).get();
+    tool.createSymbolTable(parentAst);
+    tool.completeSymbolTable(parentAst);
+    tool.finalizeSymbolTable(parentAst);
+
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    var scope = ((ASTSysMLPackage)ast.getSysMLElement(0)).getSpannedScope();
+    var p = scope.resolveType("P");
+
+    assertThat(p).isPresent();
+    assertThat(p.get().getFullName()).isEqualTo("o.P");
+  }
+
+  /** Prüft, dass ein Import die korrekten Funktionen sichtbar macht */
+  @Test
+  public void testVisibilityOfFunctions() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+
+    var parentModel = "package o { calc def C; }";
+    var model = "package test { import o::*; }";
+
+    var parentAst = SysMLv2Mill.parser().parse_String(parentModel).get();
+    tool.createSymbolTable(parentAst);
+    tool.completeSymbolTable(parentAst);
+    tool.finalizeSymbolTable(parentAst);
+
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    var scope = ((ASTSysMLPackage)ast.getSysMLElement(0)).getSpannedScope();
+    var p = scope.resolveFunction("C");
+
+    assertThat(p).isPresent();
+    assertThat(p.get().getFullName()).isEqualTo("o.C");
+  }
+
 }
