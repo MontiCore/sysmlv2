@@ -79,12 +79,44 @@ public class SpecializationExistsCoCoTest {
     assertThat(errors).hasSize(0);
   }
 
+  @Test
+  public void testPartDefWithImportValid() throws IOException {
+    String parent = "package P { part def MyPartDef; }";
+    String model = "import P::*; part myPart : MyPartDef;";
+
+    var parentAst = parse(parent);
+    createSt(parentAst);
+
+    var ast = parse(model);
+    createSt(ast);
+
+    var errors = check(ast);
+    assertThat(errors).hasSize(0);
+  }
+
+  @Test
+  public void testPartDefWithImportInvalid() throws IOException {
+    String parent = "package P { item def MyPartDef; }";
+    String model = "import P::*; part myPart : MyPartDef;";
+
+    var parentAst = parse(parent);
+    createSt(parentAst);
+
+    var ast = parse(model);
+    createSt(ast);
+
+    var errors = check(ast);
+    assertThat(errors).hasSize(0);
+  }
+
+  // TODO Inlinen
   private ASTSysMLModel parse(String model) throws IOException {
     var optAst = SysMLv2Mill.parser().parse_String(model);
     assertThat(optAst).isPresent();
     return optAst.get();
   }
 
+  // TODO Inlinen
   private ISysMLv2ArtifactScope createSt(ASTSysMLModel ast) {
     var tool = new SysMLv2Tool();
     var scope = tool.createSymbolTable(ast);
@@ -92,6 +124,7 @@ public class SpecializationExistsCoCoTest {
     return scope;
   }
 
+  // TODO Inlinen
   private List<Finding> check(ASTSysMLModel ast) {
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo(new SpecializationExistsTC3());

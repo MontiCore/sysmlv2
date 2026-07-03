@@ -5,15 +5,14 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
-import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
 import de.monticore.lang.sysmlv2.cocos.PartTypeDefinitionExistsCoCo;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -24,13 +23,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class PartTypeDefinitionExistsCoCoTest {
 
-  private static final String MODEL_PATH = "src/test/resources/parser";
-
-  private SysMLv2Parser parser = SysMLv2Mill.parser();
-
   @BeforeAll
   public static void init() {
-    Log.init();
+    LogStub.init();
     SysMLv2Mill.init();
   }
 
@@ -42,66 +37,94 @@ public class PartTypeDefinitionExistsCoCoTest {
     Log.clearFindings();
   }
 
-  @Nested
-  public class PartTypeDefinitionExistsCoCoTests {
-    @Test
-    public void testValid() throws IOException {
-      String validModel =
-            "part def SubComponent1;"
-          + "part def SubComponent2;"
-          + "part def MainComponent{"
-          +   "part subcomp1: SubComponent1;"
-          +   "part subcomp2: SubComponent2;"
-          + "}";
+  @Test
+  public void testValid() throws IOException {
+    String validModel =
+          "part def A;"
+        + "part def B{"
+        +   "part a: A;"
+        + "}";
 
-      var ast = parse(validModel);
-      createSt(ast);
-      var errors = check(ast);
-      assertThat(errors).hasSize(0);
-    }
+    var ast = parse(validModel);
+    createSt(ast);
+    var errors = check(ast);
+    assertThat(errors).hasSize(0);
+  }
 
-    @Test
-    public void testInvalid() throws IOException {
-      String invalidModel =
-            "part def SubComponent1;"
-          + "part def MainComponent{"
-          +   "part subcomp1: SubComponent1;"
-          +   "part subcomp2: UndefinedComponent;"
-          + "}";
+  @Test
+  public void testInvalid() throws IOException {
+    String invalidModel =
+          "item def A;"
+        + "part def B {"
+        +   "part a: A;"
+        + "}";
 
-      var ast = parse(invalidModel);
-      createSt(ast);
-      var errors = check(ast);
-      assertThat(errors).hasSize(1);
-      assertThat(errors.get(0).getMsg()).contains("0x10AA1");
-    }
+    var ast = parse(invalidModel);
+    createSt(ast);
+    var errors = check(ast);
+    assertThat(errors).hasSize(1);
+    assertThat(errors.get(0).getMsg()).contains("0x10AA1");
+  }
 
-    private ASTSysMLModel parse(String model) throws IOException {
-      var optAst = SysMLv2Mill.parser().parse_String(model);
-      assertThat(optAst).isPresent();
-      return optAst.get();
-    }
+  @Test
+  public void testWithImports_Valid() throws IOException {
+    String parent = "package P { part def MyPartDef; }";
+    String model = "import P::*; part myPart : MyPartDef;";
 
-    private ISysMLv2ArtifactScope createSt(ASTSysMLModel ast) {
-      var tool = new SysMLv2Tool();
-      var scope = tool.createSymbolTable(ast);
-      tool.completeSymbolTable(ast);
-      return scope;
-    }
+    var parentAst = parse(parent);
+    createSt(parentAst);
 
-    private List<Finding> check(ASTSysMLModel ast) {
-      var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo(new PartTypeDefinitionExistsCoCo());
-      Log.enableFailQuick(false);
-      checker.checkAll(ast);
-      return Log.getFindings().stream().filter(Finding::isError).collect(
-          Collectors.toList());
-    }
+    var ast = parse(model);
+    createSt(ast);
 
-    @AfterEach
-    void clearLog() {
-      Log.clearFindings();
-      Log.enableFailQuick(true);
-    }
+    var errors = check(ast);
+    assertThat(errors).hasSize(0);
+  }
+
+  @Test
+  public void testWithImports_Invalid() throws IOException {
+    String parent = "package P { item def MyPartDef; }";
+    String model = "import P::*; part myPart : MyPartDef;";
+
+    var parentAst = parse(parent);
+    createSt(parentAst);
+
+    var ast = parse(model);
+    createSt(ast);
+
+    var errors = check(ast);
+    assertThat(errors).hasSize(1);
+    assertThat(errors.get(0).getMsg()).contains("0x10AA1");
+  }
+
+  // TODO Inlinen
+  private ASTSysMLModel parse(String model) throws IOException {
+    var optAst = SysMLv2Mill.parser().parse_String(model);
+    assertThat(optAst).isPresent();
+    return optAst.get();
+  }
+
+  // TODO Inlinen
+  private ISysMLv2ArtifactScope createSt(ASTSysMLModel ast) {
+    var tool = new SysMLv2Tool();
+    var scope = tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    return scope;
+  }
+
+  // TODO Inlinen
+  private List<Finding> check(ASTSysMLModel ast) {
+    var checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new PartTypeDefinitionExistsCoCo());
+    Log.enableFailQuick(false);
+    checker.checkAll(ast);
+    return Log.getFindings().stream().filter(Finding::isError).collect(
+        Collectors.toList());
+  }
+
+  @AfterEach
+  void clearLog() {
+    Log.clearFindings();
+    Log.enableFailQuick(true);
   }
 }

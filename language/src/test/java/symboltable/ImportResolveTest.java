@@ -1,5 +1,6 @@
 package symboltable;
 
+import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._ast.ASTSysMLPackage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
@@ -281,4 +282,92 @@ public class ImportResolveTest {
     assertThat(optParent.get().getFullName()).isEqualTo("Other.InnerOther.Parent");
   }
 
+  /**
+   * Testet den Fall, dass das Import-Statement direkt neben der Referenzen
+   * steht und es aussen herum ein Package gibt (also nicht direkt das
+   * ArtifactScope)
+   */
+  @Test
+  public void testImportSideBySideWithPackage() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+
+    var parentModel = "package o { part def T; }";
+    var model = "package p { import o::*; part m:T; }";
+
+    var parentAst = SysMLv2Mill.parser().parse_String(parentModel).get();
+    tool.createSymbolTable(parentAst);
+    tool.completeSymbolTable(parentAst);
+    tool.finalizeSymbolTable(parentAst);
+
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    var partM = ((ASTSysMLPackage)ast.getSysMLElement(0)).getSysMLElement(1);
+    var scopeT = ((ASTPartUsage)partM).getSpecialization(0).getSuperTypes(0)
+        .getEnclosingScope();
+    var partDefT = ((ISysMLv2Scope)scopeT).resolveType("T");
+
+    assertThat(partDefT).isPresent();
+    assertThat(partDefT.get().getFullName()).isEqualTo("o.T");
+  }
+
+  /**
+   * Testet den Fall, dass das Import-Statement direkt neben der Referenzen
+   * steht und es aussen herum direkt das ArtifactScope
+   */
+  @Test
+  public void testImportSideBySideInArtifact() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+
+    var parentModel = "package o { part def T; }";
+    var model = "import o::*; part m:T;"; // Hier ist der Unterschied, kein p
+
+    var parentAst = SysMLv2Mill.parser().parse_String(parentModel).get();
+    tool.createSymbolTable(parentAst);
+    tool.completeSymbolTable(parentAst);
+    tool.finalizeSymbolTable(parentAst);
+
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    var scopeT = ((ASTPartUsage)ast.getSysMLElement(1)).getSpecialization(0).getSuperTypes(0).getEnclosingScope();
+    var partDefT = ((ISysMLv2Scope)scopeT).resolveType("T");
+
+    assertThat(partDefT).isPresent();
+    assertThat(partDefT.get().getFullName()).isEqualTo("o.T");
+  }
+
+
+  /**
+   * TODO Gehört eher nicht zu den Imports, sondern zeigt, dass Scopes nicht
+   * an den Curly Braces beginnen, sondern direkt beim ersten Keyword des NTs
+   */
+  @Disabled
+  @Test
+  public void testInvalidScopes() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+
+    var invalidModel = "part t:T { part def T; }";
+
+    var ast = SysMLv2Mill.parser().parse_String(invalidModel).get();
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    var scopeT = ((ASTPartUsage)ast.getSysMLElement(0)).getSpecialization(0)
+        .getSuperTypes(0).getEnclosingScope();
+    var partDefT = ((ISysMLv2Scope)scopeT).resolveType("T");
+
+    assertThat(partDefT).isEmpty();
+  }
 }
