@@ -13,6 +13,7 @@ import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlconstraints.symboltable.adapters.RequirementSubject2VariableSymbolAdapter;
 import de.monticore.lang.sysmlparts._ast.ASTSysMLImportStatement;
+import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlparts._symboltable.SysMLPackageSymbol;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.ItemDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.OccurrenceDef2TypeSymbolAdapter;
@@ -114,11 +115,11 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     ) {
 
       var importStatements = new LinkedList<ImportStatement>();
-      if(getEnclosingScope().isPresentAstNode()) {
+      if(this.isPresentAstNode()) {
         var visitor = new SysMLPartsVisitor2() {
           @Override
           public void visit(ASTSysMLImportStatement node) {
-            if (getEnclosingScope().equals(node.getEnclosingScope())) {
+            if (node.getEnclosingScope().equals(this)) {
               importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
                   node.isStar() || node.isRecursive()));
             }
@@ -126,7 +127,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
         };
         var traverser = SysMLv2Mill.inheritanceTraverser();
         traverser.add4SysMLParts(visitor);
-        getEnclosingScope().getAstNode().accept(traverser);
+        this.getAstNode().accept(traverser);
       }
 
       Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
@@ -162,11 +163,11 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     ) {
 
       var importStatements = new LinkedList<ImportStatement>();
-      if(getEnclosingScope().isPresentAstNode()) {
+      if(this.isPresentAstNode()) {
         var visitor = new SysMLPartsVisitor2() {
           @Override
           public void visit(ASTSysMLImportStatement node) {
-            if (getEnclosingScope().equals(node.getEnclosingScope())) {
+            if (node.getEnclosingScope().equals(this)) {
               importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
                   node.isStar() || node.isRecursive()));
             }
@@ -174,7 +175,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
         };
         var traverser = SysMLv2Mill.inheritanceTraverser();
         traverser.add4SysMLParts(visitor);
-        getEnclosingScope().getAstNode().accept(traverser);
+        this.getAstNode().accept(traverser);
       }
 
       Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
@@ -210,11 +211,11 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     ) {
 
       var importStatements = new LinkedList<ImportStatement>();
-      if(getEnclosingScope().isPresentAstNode()) {
+      if(this.isPresentAstNode()) {
         var visitor = new SysMLPartsVisitor2() {
           @Override
           public void visit(ASTSysMLImportStatement node) {
-            if (getEnclosingScope().equals(node.getEnclosingScope())) {
+            if (node.getEnclosingScope().equals(this)) {
               importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
                   node.isStar() || node.isRecursive()));
             }
@@ -222,7 +223,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
         };
         var traverser = SysMLv2Mill.inheritanceTraverser();
         traverser.add4SysMLParts(visitor);
-        getEnclosingScope().getAstNode().accept(traverser);
+        this.getAstNode().accept(traverser);
       }
 
       Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
@@ -284,6 +285,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     return potentialSymbolNames;
   }
 
+  /**
+   * Adaptiert SysML Requirement Usages auf CC Requirements
+   */
   @Override
   default List<RequirementSymbol> resolveAdaptedRequirementLocallyMany(
       boolean foundSymbols,
