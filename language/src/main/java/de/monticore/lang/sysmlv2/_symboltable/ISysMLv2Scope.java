@@ -113,22 +113,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       && getEnclosingScope() != null
     ) {
 
-      var importStatements = new LinkedList<ImportStatement>();
-      if(this.isPresentAstNode()) {
-        var visitor = new SysMLPartsVisitor2() {
-          @Override
-          public void visit(ASTSysMLImportStatement node) {
-            if (node.getEnclosingScope().equals(ISysMLv2Scope.this)) {
-              importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
-                  node.isStar() || node.isRecursive()));
-            }
-          }
-        };
-        var traverser = SysMLv2Mill.inheritanceTraverser();
-        traverser.add4SysMLParts(visitor);
-        this.getAstNode().accept(traverser);
-      }
-
+      var importStatements = findImports();
       Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
 
       for (String potentialName : potentialNames) {
@@ -143,6 +128,30 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     }
 
     return new ArrayList<>(result);
+  }
+
+  default List<ImportStatement> findImports() {
+    var importStatements = new LinkedList<ImportStatement>();
+
+    if (this.isPresentAstNode()) {
+      var visitor = new SysMLPartsVisitor2() {
+        @Override
+        public void visit(ASTSysMLImportStatement node) {
+          if (node.getEnclosingScope().equals(ISysMLv2Scope.this)) {
+            importStatements.add(new ImportStatement(
+                node.getMCQualifiedName().getQName(),
+                node.isStar() || node.isRecursive()
+            ));
+          }
+        }
+      };
+
+      var traverser = SysMLv2Mill.inheritanceTraverser();
+      traverser.add4SysMLParts(visitor);
+      this.getAstNode().accept(traverser);
+    }
+
+    return importStatements;
   }
 
   /**
@@ -161,22 +170,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       && getEnclosingScope() != null
     ) {
 
-      var importStatements = new LinkedList<ImportStatement>();
-      if(this.isPresentAstNode()) {
-        var visitor = new SysMLPartsVisitor2() {
-          @Override
-          public void visit(ASTSysMLImportStatement node) {
-            if (node.getEnclosingScope().equals(ISysMLv2Scope.this)) {
-              importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
-                  node.isStar() || node.isRecursive()));
-            }
-          }
-        };
-        var traverser = SysMLv2Mill.inheritanceTraverser();
-        traverser.add4SysMLParts(visitor);
-        this.getAstNode().accept(traverser);
-      }
-
+      var importStatements = findImports();
       Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
 
       for (String potentialName : potentialNames) {
@@ -209,22 +203,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       && (getEnclosingScope() != null)
     ) {
 
-      var importStatements = new LinkedList<ImportStatement>();
-      if(this.isPresentAstNode()) {
-        var visitor = new SysMLPartsVisitor2() {
-          @Override
-          public void visit(ASTSysMLImportStatement node) {
-            if (node.getEnclosingScope().equals(ISysMLv2Scope.this)) {
-              importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
-                  node.isStar() || node.isRecursive()));
-            }
-          }
-        };
-        var traverser = SysMLv2Mill.inheritanceTraverser();
-        traverser.add4SysMLParts(visitor);
-        this.getAstNode().accept(traverser);
-      }
-
+      var importStatements = findImports();
       Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
 
       for (String potentialName : potentialNames) {

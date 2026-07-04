@@ -1,5 +1,9 @@
 package de.monticore.lang.sysmlv2._symboltable;
 
+import de.monticore.symboltable.ImportStatement;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class SysMLv2ArtifactScope extends SysMLv2ArtifactScopeTOP {
@@ -16,4 +20,10 @@ public class SysMLv2ArtifactScope extends SysMLv2ArtifactScopeTOP {
     return super.getName();
   }
 
+  @Override
+  public List<ImportStatement> getImportsList() {
+    var imports = new ArrayList<>(super.getImportsList());
+    imports.addAll(findImports());
+    return imports;
+  }
 }
