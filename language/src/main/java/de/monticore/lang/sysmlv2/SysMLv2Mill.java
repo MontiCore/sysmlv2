@@ -3,6 +3,7 @@ package de.monticore.lang.sysmlv2;
 
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
+import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.symbols.basicsymbols._symboltable.BasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
@@ -146,9 +147,8 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     packageScope.setSpanningSymbol(scalarFunctions);
     SysMLv2Mill.globalScope().add(scalarFunctions);
 
-    OOTypeSymbol scalarValue = (OOTypeSymbol) SysMLv2Mill.globalScope().resolveType("ScalarValues.ScalarValue").get();
 
-    packageScope.add(buildMinFunction(scalarValue));
+    packageScope.add(buildMinFunction(buildLongType()));
   }
 
   protected OOTypeSymbol createScalarValueType(ISysMLv2Scope packageScope, String name) {
@@ -309,6 +309,10 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         SysMLv2Mill.globalScope().resolveType("nat").get());
   }
 
+  protected SymTypePrimitive buildLongType() {
+    return SymTypeExpressionFactory.createPrimitive(
+        SysMLv2Mill.globalScope().resolveType("long").get());
+  }
   protected FunctionSymbol buildSnthFunction(TypeVarSymbol typeVar) {
     var parameterList = scope();
 
@@ -481,16 +485,16 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         .build();
   }
 
-  protected FunctionSymbol buildMinFunction(OOTypeSymbol type) {
+  protected FunctionSymbol buildMinFunction(SymTypeExpression type) {
     var parameterList = scope();
 
     VariableSymbol x = SysMLv2Mill.variableSymbolBuilder()
         .setName("x")
-        .setType(SymTypeExpressionFactory.createTypeObject(type))
+        .setType(type)
         .build();
     VariableSymbol y = SysMLv2Mill.variableSymbolBuilder()
         .setName("y")
-        .setType(SymTypeExpressionFactory.createTypeObject(type))
+        .setType(type)
         .build();
 
     parameterList.add(x);
@@ -498,7 +502,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
 
     return SysMLv2Mill.functionSymbolBuilder()
         .setName("min")
-        .setType(SymTypeExpressionFactory.createTypeObject(type))
+        .setType(type)
         .setSpannedScope(parameterList)
         .build();
   }
