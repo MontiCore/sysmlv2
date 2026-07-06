@@ -148,7 +148,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     SysMLv2Mill.globalScope().add(scalarFunctions);
 
 
-    packageScope.add(buildMinFunction(buildLongType()));
+    packageScope.add(buildMinFunction());
   }
 
   protected OOTypeSymbol createScalarValueType(ISysMLv2Scope packageScope, String name) {
@@ -309,10 +309,6 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         SysMLv2Mill.globalScope().resolveType("nat").get());
   }
 
-  protected SymTypePrimitive buildLongType() {
-    return SymTypeExpressionFactory.createPrimitive(
-        SysMLv2Mill.globalScope().resolveType("long").get());
-  }
   protected FunctionSymbol buildSnthFunction(TypeVarSymbol typeVar) {
     var parameterList = scope();
 
@@ -485,8 +481,11 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         .build();
   }
 
-  protected FunctionSymbol buildMinFunction(SymTypeExpression type) {
+  protected FunctionSymbol buildMinFunction() {
     var parameterList = scope();
+    var type = SymTypeExpressionFactory.createPrimitive(
+        globalScope().resolveType("long").get()
+    );
 
     VariableSymbol x = SysMLv2Mill.variableSymbolBuilder()
         .setName("x")
