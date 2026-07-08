@@ -3,6 +3,7 @@ package de.monticore.lang.sysmlv2;
 
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
+import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.symbols.basicsymbols._symboltable.BasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
@@ -34,6 +35,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     SysMLv2Mill.initializePrimitives();
     SysMLv2Mill.addStringType();
     SysMLv2Mill.addScalarValueTypes();
+    SysMLv2Mill.addScalarFunctionsTypes();
     SysMLv2Mill.addCollectionTypes();
     SysMLv2Mill.addTsynVariables();
     SysMLv2Tool.loadStreamSymbolsFromJar();
@@ -67,6 +69,10 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
 
   public static void addScalarValueTypes() {
     getMill()._addScalarValueTypes();
+  }
+
+  public static void addScalarFunctionsTypes() {
+    getMill()._addScalarFunctionsTypes();
   }
 
   protected void _addStringType() {
@@ -121,6 +127,28 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     setScalarValueSuperTypes(integer, rational);
     setScalarValueSuperTypes(natural, integer);
     setScalarValueSuperTypes(positive, natural);
+  }
+
+  protected void _addScalarFunctionsTypes() {
+    if (SysMLv2Mill.globalScope().resolveSysMLPackage("ScalarFunctions").isPresent()) {
+      return;
+    }
+
+    var packageScope = SysMLv2Mill.scope();
+    packageScope.setName("ScalarFunctions");
+    packageScope.setEnclosingScope(SysMLv2Mill.globalScope());
+    var scalarFunctions = SysMLv2Mill.sysMLPackageSymbolBuilder()
+        .setName("ScalarFunctions")
+        .setFullName("ScalarFunctions")
+        .setPackageName("")
+        .setEnclosingScope(SysMLv2Mill.globalScope())
+        .setSpannedScope(packageScope)
+        .build();
+    packageScope.setSpanningSymbol(scalarFunctions);
+    SysMLv2Mill.globalScope().add(scalarFunctions);
+
+
+    packageScope.add(buildMinFunction());
   }
 
   protected OOTypeSymbol createScalarValueType(ISysMLv2Scope packageScope, String name) {
@@ -449,6 +477,31 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     return SysMLv2Mill.functionSymbolBuilder()
         .setName("infTimes")
         .setType(returnType)
+        .setSpannedScope(parameterList)
+        .build();
+  }
+
+  protected FunctionSymbol buildMinFunction() {
+    var parameterList = scope();
+    var type = SymTypeExpressionFactory.createPrimitive(
+        globalScope().resolveType("long").get()
+    );
+
+    VariableSymbol x = SysMLv2Mill.variableSymbolBuilder()
+        .setName("x")
+        .setType(type)
+        .build();
+    VariableSymbol y = SysMLv2Mill.variableSymbolBuilder()
+        .setName("y")
+        .setType(type)
+        .build();
+
+    parameterList.add(x);
+    parameterList.add(y);
+
+    return SysMLv2Mill.functionSymbolBuilder()
+        .setName("min")
+        .setType(type)
         .setSpannedScope(parameterList)
         .build();
   }
