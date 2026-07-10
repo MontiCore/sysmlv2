@@ -2,18 +2,19 @@
 package de.monticore.lang;
 
 // We split KerML in partial grammars
-component grammar KerMLBase
+component grammar KerMLBase  
     extends de.monticore.MCBasics,
-            de.monticore.types.MCBasicTypes
+            de.monticore.types.MCBasicTypes 
 {
-    KerMLQualifiedName = Name ("::" Name)* ;
+    KerMLQualifiedName extends MCQualifiedName = 
+        Name ("::" Name)* ;
 
-    PackageDeclaration =
+    PackageDeclaration = 
         ("standard")? ("library")? "package" Name "{"
             (DocBlock)?
             (ImportStatement)* (PackageElement)* "}";
-
-    ImportStatement =
+    
+    ImportStatement = 
         ("private" | "public")? "import" KerMLQualifiedName ("::" "*")? ";";
 
     interface PackageElement;
