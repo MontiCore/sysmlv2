@@ -1,35 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
-grammar KerML extends de.monticore.MCBasics {
+grammar KerML extends KerMLExpressions {
 
   start KerMLDocument;
 
-  KerMLDocument = DataType;
-
-  DataType =
-    ("abstract")?
-    "datatype"
-    Name
-    "{"
-    (Feature)* "}";
-
-  Feature =
-    "feature"
-    Name
-    (Multiplicity)?
-    ("nonunique")?
-    ";";
-
-  Multiplicity =
-    "["
-    min:Bound
-    ".."
-    max:Bound
-    "]";
-
-  Bound =
-    Number | "*" | Name ;
-
-  token Number = ( '0'..'9')+;
+  KerMLDocument = PackageDeclaration;
 }

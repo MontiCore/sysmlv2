@@ -1,0 +1,34 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.lang;
+
+component grammar KerMLTypes
+    extends KerMLBase,
+            de.monticore.literals.MCCommonLiterals
+{
+    interface TypeElement;
+
+    Datatype implements PackageElement =
+        ("abstract")? "datatype" Name
+        ((":>" | "specializes") superTypes:KerMLQualifiedName ("," superTypes:KerMLQualifiedName)*)?
+        ("intersects" intersectTypes:KerMLQualifiedName ("," intersectTypes:KerMLQualifiedName)*)?
+        ("{"
+            (DocBlock)?
+            (TypeElement)* "}" | ";");
+
+    Feature implements TypeElement =
+        (DocBlock)?
+        "feature" 
+        (":>>")?
+        Name
+        (":" type:KerMLQualifiedName)?
+        (Multiplicity)?
+        ("ordered" |"nonunique")*
+        (":>>" redefined:KerMLQualifiedName ("," redefined:KerMLQualifiedName)*)?
+        (FeatureInit | ";");
+
+    interface FeatureInit;
+    FeatureBlock implements FeatureInit = "{" (DocBlock)? "}";
+
+    Multiplicity = "[" min:Bound ".." max:Bound "]" | "[" exact:Bound "]";
+    Bound = NatLiteral | "*" | Name;
+}
