@@ -31,4 +31,18 @@ component grammar KerMLTypes
 
     Multiplicity = "[" min:Bound ".." max:Bound "]" | "[" exact:Bound "]";
     Bound = NatLiteral | "*" | Name;
+
+    FunctionDeclaration implements PackageElement =
+        ("abstract")? "function" 
+        (Name)
+        ( (":>" | "specializes") superTypes:KerMLQualifiedName ("," superTypes:KerMLQualifiedName)*)?
+        "{"
+        (FunctionParameter)* "}";
+
+    FunctionParameter =
+        ("in" | "out" | "inout" | "return")? 
+        (Name)? 
+        (":" type:KerMLQualifiedName)? 
+        (Multiplicity)?
+        ("ordered" | "nonunique")* (FeatureInit | ";");
 }
