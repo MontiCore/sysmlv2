@@ -15,7 +15,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class KerMLFunctionLibParserTest {
+public class KerMLSemanticLibParserTest {
 
   @BeforeAll
   public static void setUp(){
@@ -26,25 +26,25 @@ public class KerMLFunctionLibParserTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "BaseFunctions.kerml",
-      "BooleanFunctions.kerml",
-      "CollectionFunctions.kerml",
-      //"ComplexFunction.kerml",
-      //"ControlFunctions.kerml",
-      //"DataFunctions.kerml",
-      //"IntegerFunctions.kerml",
-      //"NaturalFunctions.kerml",
-      //"NumericalFunctions.kerml",
-      //"OccurrenceFunctions.kerml",
-      //"RationalFunctions.kerml",
-      //"ScalarFunctions.kerml",
-      //"SequenceFunctions.kerml",
-      //"StringFunctions.kerml",
-      //"TrigFunctions.kerml",
-      //"VectorFunctions.kerml"
+      "Base.kerml",
+      //"Clocks.kerml"
+      //"ControlPerformances.kerml"
+      //"FeatureReferencingPerformances.kerml"
+      //"KerML.kerml"
+      //"Links.kerml"
+      //"Metaobjects.kerml"
+      //"Objects.kerml"
+      //"Observation.kerml"
+      //"Occurrences.kerml"
+      //"Performances.kerml"
+      //"SpatialFrames.kerml"
+      //"StatePerformances.kerml"
+      //"Transfers.kerml"
+      //"TransitionPerformance.kerml"
+      //"Triggers.kerml"
   })
   public void testParseKernelDataTypeLibrary(String filename) throws IOException {
-    String modelFile = "src/test/resources/KernelFunctionLibrary/" + filename;
+    String modelFile = "src/test/resources/KernelSemanticLibrary/" + filename;
     KerMLParser parser = KerMLMill.parser();
     Optional<ASTKerMLDocument> ast = parser.parse(modelFile);
 
