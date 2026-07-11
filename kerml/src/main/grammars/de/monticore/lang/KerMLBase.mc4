@@ -6,17 +6,35 @@ component grammar KerMLBase
     extends de.monticore.MCBasics,
             de.monticore.types.MCBasicTypes
 {
-    KerMLQualifiedName = Name ("::" Name)* ;
+    /*
+        Definition of a qualified Name for Imports and Functions
+    */
+    KerMLQualifiedName = Name (("::"|".") Name)*;
 
+    /*
+        Structure of the whole file
+    */
     PackageDeclaration =
         ("standard")? ("library")? "package" Name "{"
             (DocBlock)?
             (ImportStatement)* (PackageElement)* "}";
 
+    // Handels import statements
     ImportStatement =
         ("private" | "public")? "import" KerMLQualifiedName ("::" "*")? ";";
 
-    interface PackageElement;
-
+    /*
+        Handles comments that start with doc where the comment-part is handled by MCBasic
+    */
     DocBlock = "doc";
+
+    /*
+        Element that is whichin the package like functions and datatype defintions
+    */
+    interface PackageElement;
+    
+    /*
+        Todo
+    */
+    interface TypeElement;
 }
