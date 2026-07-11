@@ -20,6 +20,9 @@ include 'cc'
 // The MontiCore-based language implementation of textual SysML v2
 include 'language'
 
+// The MontiCore-based language implemenation of KerML
+include 'kerml'
+
 if(("true").equals(getProperty('isPipelineFullBuild'))) {
   // MontiCore-Language-Server-Generator-based language server imlementation
   include 'language-server'
