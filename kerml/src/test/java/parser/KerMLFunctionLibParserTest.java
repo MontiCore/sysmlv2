@@ -29,7 +29,7 @@ public class KerMLFunctionLibParserTest {
       "BaseFunctions.kerml",
       "BooleanFunctions.kerml",
       "CollectionFunctions.kerml",
-      //"ComplexFunction.kerml",
+      //"ComplexFunctions.kerml",
       //"ControlFunctions.kerml",
       //"DataFunctions.kerml",
       //"IntegerFunctions.kerml",

@@ -10,19 +10,22 @@ component grammar KerMLTypes
         Implementation of PackageElements like datatypes, classifiers and features
     */
     Datatype implements PackageElement =
-        ("abstract")? ("datatype" ) Name
+        DatatypeHead ("{" (DocBlock)? (TypeElement)* "}" | ";");
+
+    DatatypeHead =
+        ("abstract")? "datatype" Name
         ((":>" | "specializes") superTypes:KerMLQualifiedName ("," superTypes:KerMLQualifiedName)*)?
-        ("intersects" intersectTypes:KerMLQualifiedName ("," intersectTypes:KerMLQualifiedName)*)?
-        ("{" (DocBlock)? (TypeElement)* "}" | ";");
+        ("intersects" intersectTypes:KerMLQualifiedName ("," intersectTypes:KerMLQualifiedName)*)?;
 
     Classifier implements PackageElement = 
         ("abstract") ? ("classifier") Name
         ("{" (DocBlock)? (TypeElement)* "}");
 
     Feature implements PackageElement =
+        Visibility?
         ("abstract")?
-        "feature"
-        Name
+        ("var")?
+        "feature" Name
         (":" type:KerMLQualifiedName)?
         (TypeMultiplicity)?
         ("ordered")?
@@ -33,30 +36,75 @@ component grammar KerMLTypes
         ("{" (DocBlock)? (TypeElement)* "}");
 
     Multiplicity implements PackageElement = 
-        "multiplicity"
-        Name
-        TypeMultiplicity
+        MultiplicityHead
         ("{" (DocBlock)? "}");
 
+    MultiplicityHead =
+        "multiplicity"
+        Name
+        TypeMultiplicity;
+
     Function implements PackageElement = 
+        Visibility?
         ("abstract")? "function" FunctionName
         ("specializes" superFunctions:QualifiedFunctionName ("," superFunctions:QualifiedFunctionName)*)?
-        ("{" (FunctionParameter)* (FunctionReturn)? "}");
+        "{" FunctionBody "}";
+
+    Struct implements PackageElement =
+        Visibility? 
+        ("abstract")?
+        "struct" StructName "{" StructBody? "}";
+
+    Behavior implements PackageElement =
+        BehaviorHead "{" BehaviorBody "}";
+
+    BehaviorHead = 
+        "behavior" Name "specializes" Name;
+
+    BehaviorBody = "test";
+    
+    StructName = 
+        Name (TypeMultiplicity)? (":>" | ":")? ((Name (TypeMultiplicity)?) ("," Name (TypeMultiplicity)*)*)?;
+
+    StructBody = 
+        (DocBlock)?
+        (StructVar | StructInv | Feature)* ;
+
+    StructVar = 
+        Visibility?
+        Name 
+        ":"
+        (Name)?
+        (":>>" Name)? ";";
+
+    StructInv = 
+        "inv"
+        Name
+        "{" (DocBlock)? "}";
+        
+
+    FunctionBody = 
+        ((FunctionParameter|TypeFeature|Function|IfElse)* (FunctionReturn)?)? ;
 
     FunctionParameter = 
-        ("in") FunctionName ":" Name TypeMultiplicity? ("ordered")? ("nonunique")? ";";
+        ("in") (FunctionName|Char) ":" Name TypeMultiplicity? ("ordered")? ("nonunique")? ";";
 
     FunctionReturn =
         "return" ":" Name TypeMultiplicity? ("ordered")? ("nonunique")? 
-        ("=")?  Expression? ";" ;
+        ("=")?  (Expression | FunctionCall | IfElse)? "#"? "(index)"? ";" ;
+
+    FunctionCall = (QualifiedFunctionName? "(" FunctionVar")");
+
+    FunctionVar = Name ("." Name | "as" Name)*;
 
     FunctionName = Name | EscapedName;
 
-    token EscapedName = "\'"(Name | "==" | "!=" | "===" | "[" | "!==" | "#" | "," | "@" | "@@" | "|" | "&")"\'";
+    token EscapedName = "\'"(Name | "==" | "!=" | "===" | "[" | "!==" | "#" | "," | "@" | "@@" | "|" | "&" | "array#")"\'";
 
     QualifiedFunctionName = FunctionName ("::" FunctionName)*;
 
     TypeFeature implements TypeElement =
+        Visibility?
         "feature" 
         (":>>")?
         Name
@@ -74,6 +122,20 @@ component grammar KerMLTypes
     FeatureBlock implements FeatureInit = "{" (DocBlock)? "}";
 
     TypeMultiplicity = "[" min:Bound ".." max:Bound "]" | "[" exact:Bound "]";
-    Bound = NatLiteral | "*";
 
+    Bound = NatLiteral | "*" | Name;
+
+    IfElse = 
+        "if" IfElsePart "?" IfElsePart "else" IfElsePart;
+
+    IfElsePart = IfElseElement+ ;
+
+    IfElseElement = 
+          Name | NatLiteral | "null" | "in" | "or" | "and" | "as"
+        | "#" | "*" | "+" | "-" | "." | "," | ":" | "=" | "==" | "!=" | "<" | ">" | "<=" | ">=" | "!" | "->" | ".."
+        | "(" (IfElseElement | ";")* ")"
+        | "{" (IfElseElement | ";")* "}"
+        | "[" (IfElseElement | ";")* "]" ;
+    
+    interface TypeElement;
 }

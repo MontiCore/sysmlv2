@@ -7,34 +7,29 @@ component grammar KerMLBase
             de.monticore.types.MCBasicTypes
 {
     /*
-        Definition of a qualified Name for Imports and Functions
-    */
-    KerMLQualifiedName = Name (("::"|".") Name)*;
-
-    /*
         Structure of the whole file
     */
     PackageDeclaration =
         ("standard")? ("library")? "package" Name "{"
-            (DocBlock)?
-            (ImportStatement)* (PackageElement)* "}";
+            (DocBlock | ImportStatement)* (PackageElement)* "}";
 
     // Handels import statements
     ImportStatement =
-        ("private" | "public")? "import" KerMLQualifiedName ("::" "*")? ";";
+        Visibility? "import" KerMLQualifiedName ("::" "*")? ";";
+
+    /*
+        Definition of a qualified Name for Imports and Functions
+    */
+    KerMLQualifiedName = Name (("::"|".") Name)*;
 
     /*
         Handles comments that start with doc where the comment-part is handled by MCBasic
     */
     DocBlock = "doc";
 
+    Visibility = ("private" | "public");
     /*
-        Element that is whichin the package like functions and datatype defintions
+        Element that is whithin the package like functions and datatype defintions
     */
-    interface PackageElement;
-    
-    /*
-        Todo
-    */
-    interface TypeElement;
+    interface PackageElement; 
 }
