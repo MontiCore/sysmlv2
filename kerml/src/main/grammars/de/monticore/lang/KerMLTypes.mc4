@@ -17,7 +17,7 @@ component grammar KerMLTypes
         ((":>" | "specializes") superTypes:KerMLQualifiedName ("," superTypes:KerMLQualifiedName)*)?
         ("intersects" intersectTypes:KerMLQualifiedName ("," intersectTypes:KerMLQualifiedName)*)?;
 
-    Classifier implements PackageElement = 
+    Classifier implements PackageElement =
         ("abstract") ? ("classifier") Name
         ("{" (DocBlock)? (TypeElement)* "}");
 
@@ -35,7 +35,7 @@ component grammar KerMLTypes
         ((":>>"| "redefines") redefined:KerMLQualifiedName ("," redefined:KerMLQualifiedName)*)?
         ("{" (DocBlock)? (TypeElement)* "}");
 
-    Multiplicity implements PackageElement = 
+    Multiplicity implements PackageElement =
         MultiplicityHead
         ("{" (DocBlock)? "}");
 
@@ -44,53 +44,53 @@ component grammar KerMLTypes
         Name
         TypeMultiplicity;
 
-    Function implements PackageElement = 
+    Function implements PackageElement =
         Visibility?
         ("abstract")? "function" FunctionName
         ("specializes" superFunctions:QualifiedFunctionName ("," superFunctions:QualifiedFunctionName)*)?
         "{" FunctionBody "}";
 
     Struct implements PackageElement =
-        Visibility? 
+        Visibility?
         ("abstract")?
         "struct" StructName "{" StructBody? "}";
 
     Behavior implements PackageElement =
         BehaviorHead "{" BehaviorBody "}";
 
-    BehaviorHead = 
+    BehaviorHead =
         "behavior" Name "specializes" Name;
 
     BehaviorBody = "test";
-    
-    StructName = 
+
+    StructName =
         Name (TypeMultiplicity)? (":>" | ":")? ((Name (TypeMultiplicity)?) ("," Name (TypeMultiplicity)*)*)?;
 
-    StructBody = 
+    StructBody =
         (DocBlock)?
         (StructVar | StructInv | Feature)* ;
 
-    StructVar = 
+    StructVar =
         Visibility?
-        Name 
+        Name
         ":"
         (Name)?
         (":>>" Name)? ";";
 
-    StructInv = 
+    StructInv =
         "inv"
         Name
         "{" (DocBlock)? "}";
-        
 
-    FunctionBody = 
+
+    FunctionBody =
         ((FunctionParameter|TypeFeature|Function|IfElse)* (FunctionReturn)?)? ;
 
-    FunctionParameter = 
+    FunctionParameter =
         ("in") (FunctionName|Char) ":" Name TypeMultiplicity? ("ordered")? ("nonunique")? ";";
 
     FunctionReturn =
-        "return" ":" Name TypeMultiplicity? ("ordered")? ("nonunique")? 
+        "return" ":" Name TypeMultiplicity? ("ordered")? ("nonunique")?
         ("=")?  (Expression | FunctionCall | IfElse)? "#"? "(index)"? ";" ;
 
     FunctionCall = (QualifiedFunctionName? "(" FunctionVar")");
@@ -105,7 +105,7 @@ component grammar KerMLTypes
 
     TypeFeature implements TypeElement =
         Visibility?
-        "feature" 
+        "feature"
         (":>>")?
         Name
         (":" type:KerMLQualifiedName)?
@@ -125,17 +125,17 @@ component grammar KerMLTypes
 
     Bound = NatLiteral | "*" | Name;
 
-    IfElse = 
+    IfElse =
         "if" IfElsePart "?" IfElsePart "else" IfElsePart;
 
     IfElsePart = IfElseElement+ ;
 
-    IfElseElement = 
+    IfElseElement =
           Name | NatLiteral | "null" | "in" | "or" | "and" | "as"
         | "#" | "*" | "+" | "-" | "." | "," | ":" | "=" | "==" | "!=" | "<" | ">" | "<=" | ">=" | "!" | "->" | ".."
         | "(" (IfElseElement | ";")* ")"
         | "{" (IfElseElement | ";")* "}"
         | "[" (IfElseElement | ";")* "]" ;
-    
+
     interface TypeElement;
 }

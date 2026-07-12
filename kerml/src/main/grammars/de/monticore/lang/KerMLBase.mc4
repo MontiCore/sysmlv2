@@ -31,5 +31,5 @@ component grammar KerMLBase
     /*
         Element that is whithin the package like functions and datatype defintions
     */
-    interface PackageElement; 
+    interface PackageElement;
 }
