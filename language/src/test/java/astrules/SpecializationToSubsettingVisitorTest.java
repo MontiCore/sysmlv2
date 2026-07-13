@@ -43,7 +43,11 @@ public class SpecializationToSubsettingVisitorTest {
     assertThat(person.getSpecialization(0)).isInstanceOf(ASTSysMLSpecialization.class);
     assertThat(person.getSpecialization(0)).isNotInstanceOf(ASTSysMLSubsetting.class);
 
-    SpecializationToSubsettingVisitor.apply(ast.get());
+    SpecializationToSubsettingVisitor visitor =
+        new SpecializationToSubsettingVisitor();
+    var traverser = SysMLv2Mill.traverser();
+    traverser.add4SysMLParts(visitor);
+    ast.get().accept(traverser);
 
     assertThat(person.getSpecializationList()).hasSize(1);
     assertThat(person.getSpecialization(0)).isInstanceOf(ASTSysMLSpecialization.class);
@@ -72,7 +76,11 @@ public class SpecializationToSubsettingVisitorTest {
     assertThat(before.get(1)).isInstanceOf(ASTSysMLSpecialization.class);
     assertThat(before.get(1)).isNotInstanceOf(ASTSysMLSubsetting.class);
 
-    SpecializationToSubsettingVisitor.apply(ast.get());
+    SpecializationToSubsettingVisitor visitor =
+        new SpecializationToSubsettingVisitor();
+    var traverser = SysMLv2Mill.traverser();
+    traverser.add4SysMLParts(visitor);
+    ast.get().accept(traverser);
 
     List<ASTSpecialization> after = p.getSpecializationList();
 
