@@ -5,6 +5,7 @@ import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartUsageCoCo;
+import de.monticore.lang.sysmlparts.symboltable.adapters.PartDef2TypeSymbolAdapter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 
@@ -25,7 +26,10 @@ public class PartTypeDefinitionExistsCoCo implements SysMLPartsASTPartUsageCoCo 
         .filter(s -> s instanceof ASTSysMLTyping)
         .flatMap(ASTSpecialization::streamSuperTypes)
         .filter(t ->
-            node.getEnclosingScope().resolvePartDef(printPartType(t)).isEmpty()
+            node.getEnclosingScope()
+                .resolveType(printPartType(t))
+                .filter(PartDef2TypeSymbolAdapter.class::isInstance)
+                .isEmpty()
         )
         .collect(Collectors.toList());
 
