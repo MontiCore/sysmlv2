@@ -12,6 +12,7 @@ import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -81,6 +82,23 @@ public class RefinementTargetDefinitionExistsCoCoTest {
       var errors = check(ast);
       assertThat(errors).hasSize(1);
       assertThat(errors.get(0).getMsg()).contains("0x10AA2");
+    }
+
+    @Disabled("Currently cannot resolve a RequirementDef refinement target by its identifier")
+    @Test
+    public void testValidRequirementDefTargetByIdentifier() throws IOException {
+      String model =
+          "requirement def <'R1'> R;"
+          + "part def Part {"
+          + "  #refinement dependency Part to 'R1';"
+          + "}";
+
+      var ast = parse(model);
+      createSt(ast);
+
+      var errors = check(ast);
+
+      assertThat(errors).isEmpty();
     }
 
     private ASTSysMLModel parse(String model) throws IOException {
