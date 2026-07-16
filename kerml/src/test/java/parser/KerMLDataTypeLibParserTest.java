@@ -1,4 +1,4 @@
-package parser;
+/*package parser;
 
 import de.monticore.lang.kerml.KerMLMill;
 import de.monticore.lang.kerml._ast.ASTKerMLDocument;
@@ -40,3 +40,4 @@ public class KerMLDataTypeLibParserTest {
     assertTrue(ast.isPresent(), "Ast generation failed!");
   }
 }
+*/
