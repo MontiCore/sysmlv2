@@ -20,7 +20,7 @@ component grammar KerMLBase
     /*
         Definition of a qualified Name for Imports and Functions
     */
-    KerMLQualifiedName = Name (("::"|".") Name)*;
+    KerMLQualifiedName extends MCQualifiedName = Name (("::"|".") Name)*;
 
     /*
         Handles comments that start with doc where the comment-part is handled by MCBasic
@@ -48,7 +48,7 @@ component grammar KerMLBase
             | ["event"]                           // only in occurrences
             | ["variation"]
             | ["variant"]
-        )*;
+        )*; 
 
     /*
         Element that is whithin the package like functions and datatype defintions

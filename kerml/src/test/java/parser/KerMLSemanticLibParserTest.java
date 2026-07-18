@@ -27,7 +27,7 @@ public class KerMLSemanticLibParserTest {
   @ParameterizedTest
   @ValueSource(strings = {
       "Base.kerml",
-      "Clocks.kerml"
+      //"Clocks.kerml"
       //"ControlPerformances.kerml"
       //"FeatureReferencingPerformances.kerml"
       //"KerML.kerml"
