@@ -79,35 +79,44 @@ component grammar KerMLTypes
 
     StructInv =
         "inv"
-        Name
-        "{" (DocBlock)? "}";
+        Name?
+        "{" (DocBlock|PackageElement)? "}";
 
 
     FunctionBody =
-        ((FunctionParameter|TypeFeature|Function|IfElse)* (FunctionReturn)?)? ;
+        ((FunctionParameter|TypeFeature|Function|IfElse |FunctionReturn| Invariant|DocBlock)*)? ("chain")?;
 
     FunctionParameter =
-        ("in") (FunctionName|Char) ":" Name TypeMultiplicity? ("ordered")? ("nonunique")? ";";
+        ("in") (FunctionName|Char)* ":"? (FunctionBlock)* Name? TypeMultiplicity? ("ordered")? ("nonunique")? ("chain")?(FunctionParameter|";")*;
+
+    FunctionBlock = "{"(FunctionReturn)* "}";
 
     FunctionReturn =
-        "return" ":" Name TypeMultiplicity? ("ordered")? ("nonunique")?
-        ("=")?  (Expression | FunctionCall | IfElse)? "#"? "(index)"? ";" ;
+        "return" ":"? Name TypeMultiplicity? ("ordered")? ("nonunique")?
+        ("=" | "default")?  (Expression | FunctionCall | IfElse)? EscapedName? "#"? "??"? "(index)"? Name? ";" ;
 
-    FunctionCall = (QualifiedFunctionName? "(" FunctionVar")");
+    FunctionCall = (QualifiedFunctionName? "(" (Expression ("," Expression)*)?")");
 
-    FunctionVar = Name ("." Name | "as" Name)*;
+    KerMLAsExpression implements Expression =
+        Expression "as" KerMLQualifiedName;
 
-    FunctionName = Name | EscapedName;
+    FunctionName = Name | EscapedName | SpecialName;
 
-    token EscapedName = "\'"(Name | "==" | "!=" | "===" | "[" | "!==" | "#" | "," | "@" | "@@" | "|" | "&" | "array#")"\'";
+    SpecialName = "test" | "expr" | "thenValue"| "null";
+
+    token EscapedName = "\'"(Name | "==" | "!=" | "===" | "[" | "!==" | "#" | "," | "@" | "@@" | "|" 
+    | "&" | "array#" | "+" | "-" | "*" | "/" | "**" | "^" | "==" | "." | "??" | "%" | "~" | "<" | ">"
+    | "<=" | ">=" | "..")"\'";
 
     QualifiedFunctionName = FunctionName ("::" FunctionName)*;
 
     TypeFeature implements PackageElement =
         Modifier?
-        "feature"
+        "feature" 
+        ( "step" | "chain")?
+        ("chains")?
         (":>>")?
-        Name
+        KerMLQualifiedName
         (":" type:KerMLQualifiedName)?
         (TypeMultiplicity)?
         ("ordered")?
@@ -119,7 +128,7 @@ component grammar KerMLTypes
 
     interface FeatureInit;
 
-    FeatureBlock implements FeatureInit = "{" (DocBlock)? "}";
+    FeatureBlock implements FeatureInit = "{" (DocBlock|PackageElement)* "}";
 
     TypeMultiplicity = "[" min:Bound ".." max:Bound "]" | "[" exact:Bound "]";
 
@@ -138,5 +147,5 @@ component grammar KerMLTypes
         | "[" (IfElseElement | ";")* "]" ;
 
     Invariant implements PackageElement =
-        "inv" "{" Expression "}";
+        "inv" MCQualifiedName? "{" MCQualifiedName? Expression "}";
 }

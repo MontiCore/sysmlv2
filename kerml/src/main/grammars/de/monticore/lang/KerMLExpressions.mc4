@@ -17,7 +17,7 @@ component grammar KerMLExpressions
         Expression "->" Expression ;
 
     KerMLLiteralArgExpression implements Expression =
-        Expression (Literal);
+        Expression (Literal| EscapedName);
 
     KerMLIteratorExpression implements Expression =
         Expression "->" Name
