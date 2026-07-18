@@ -10,7 +10,7 @@ component grammar KerMLTypes
         Implementation of PackageElements like datatypes, classifiers and features
     */
     Datatype implements PackageElement =
-        DatatypeHead ("{" (DocBlock)? (TypeElement)* "}" | ";");
+        DatatypeHead ("{" (DocBlock|PackageElement)* "}" | ";");
 
     DatatypeHead =
         ("abstract")? "datatype" Name
@@ -19,7 +19,7 @@ component grammar KerMLTypes
 
     Classifier implements PackageElement =
         ("abstract") ? ("classifier") Name
-        ("{" (DocBlock)? (TypeElement)* "}");
+        ("{" (DocBlock|PackageElement)* "}");
 
     Feature implements PackageElement =
         Modifier?
@@ -33,7 +33,7 @@ component grammar KerMLTypes
         ("subsets" subsets:KerMLQualifiedName ("," subsets:KerMLQualifiedName)*)?
         ("chains" chains:KerMLQualifiedName ("," chains:KerMLQualifiedName)*)?
         ((":>>"| "redefines") redefined:KerMLQualifiedName ("," redefined:KerMLQualifiedName)*)?
-        ("{" (DocBlock)? (TypeElement)* "}");
+        ("{" (DocBlock|PackageElement)* "}");
 
     Multiplicity implements PackageElement =
         MultiplicityHead
@@ -103,7 +103,7 @@ component grammar KerMLTypes
 
     QualifiedFunctionName = FunctionName ("::" FunctionName)*;
 
-    TypeFeature implements TypeElement =
+    TypeFeature implements PackageElement =
         Modifier?
         "feature"
         (":>>")?
@@ -137,5 +137,6 @@ component grammar KerMLTypes
         | "{" (IfElseElement | ";")* "}"
         | "[" (IfElseElement | ";")* "]" ;
 
-    interface TypeElement;
+    Invariant implements PackageElement =
+        "inv" "{" Expression "}";
 }

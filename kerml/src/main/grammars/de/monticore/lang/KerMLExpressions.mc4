@@ -6,8 +6,6 @@ component grammar KerMLExpressions
             de.monticore.expressions.CommonExpressions,
             de.monticore.literals.MCCommonLiterals
 {
-    Invariant implements TypeElement =
-        "inv" "{" Expression "}";
 
     FeatureAssignment implements FeatureInit =
         "=" Expression (FeatureBlock | ";");
