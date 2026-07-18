@@ -9,7 +9,7 @@ component grammar SysMLActions
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
       SysMLElement*
-    "}" | ";") ;
+    "}" | ";")
 
   /**
    * Inline-Usages do not terminate in semicolons or closing brackets and are intended

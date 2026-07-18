@@ -22,7 +22,7 @@ component grammar KerMLTypes
         ("{" (DocBlock)? (TypeElement)* "}");
 
     Feature implements PackageElement =
-        Visibility?
+        Modifier?
         ("abstract")?
         ("var")?
         "feature" Name
@@ -45,13 +45,13 @@ component grammar KerMLTypes
         TypeMultiplicity;
 
     Function implements PackageElement =
-        Visibility?
+        Modifier?
         ("abstract")? "function" FunctionName
         ("specializes" superFunctions:QualifiedFunctionName ("," superFunctions:QualifiedFunctionName)*)?
         "{" FunctionBody "}";
 
     Struct implements PackageElement =
-        Visibility?
+        Modifier?
         ("abstract")?
         "struct" StructName "{" StructBody? "}";
 
@@ -71,7 +71,7 @@ component grammar KerMLTypes
         (StructVar | StructInv | Feature)* ;
 
     StructVar =
-        Visibility?
+        Modifier?
         Name
         ":"
         (Name)?
@@ -104,7 +104,7 @@ component grammar KerMLTypes
     QualifiedFunctionName = FunctionName ("::" FunctionName)*;
 
     TypeFeature implements TypeElement =
-        Visibility?
+        Modifier?
         "feature"
         (":>>")?
         Name

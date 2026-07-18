@@ -27,7 +27,7 @@ public class KerMLSemanticLibParserTest {
   @ParameterizedTest
   @ValueSource(strings = {
       "Base.kerml",
-      //"Clocks.kerml"
+      "Clocks.kerml"
       //"ControlPerformances.kerml"
       //"FeatureReferencingPerformances.kerml"
       //"KerML.kerml"
@@ -47,7 +47,6 @@ public class KerMLSemanticLibParserTest {
     String modelFile = "src/test/resources/KernelSemanticLibrary/" + filename;
     KerMLParser parser = KerMLMill.parser();
     Optional<ASTKerMLDocument> ast = parser.parse(modelFile);
-
 
     assertFalse(parser.hasErrors(), "Parser threw Errors!");
     assertTrue(ast.isPresent(), "Ast generation failed!");

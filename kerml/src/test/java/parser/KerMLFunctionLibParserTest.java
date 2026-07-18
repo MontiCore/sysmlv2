@@ -48,7 +48,6 @@ public class KerMLFunctionLibParserTest {
     KerMLParser parser = KerMLMill.parser();
     Optional<ASTKerMLDocument> ast = parser.parse(modelFile);
 
-
     assertFalse(parser.hasErrors(), "Parser threw Errors!");
     assertTrue(ast.isPresent(), "Ast generation failed!");
   }

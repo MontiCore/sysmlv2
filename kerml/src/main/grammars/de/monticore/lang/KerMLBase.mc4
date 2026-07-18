@@ -11,11 +11,11 @@ component grammar KerMLBase
     */
     PackageDeclaration =
         ("standard")? ("library")? "package" Name "{"
-            (DocBlock | ImportStatement)* (PackageElement)* "}";
+            (DocBlock | ImportStatement | PackageElement)* "}";
 
     // Handels import statements
     ImportStatement =
-        Visibility? "import" KerMLQualifiedName ("::" "*")? ";";
+        Modifier? "import" KerMLQualifiedName ("::" "*")? ";";
 
     /*
         Definition of a qualified Name for Imports and Functions
@@ -27,7 +27,29 @@ component grammar KerMLBase
     */
     DocBlock = "doc";
 
-    Visibility = ("private" | "public");
+    Modifier =
+        //Stereotype?
+        (   ["public"]       | [public:"+"]
+            | ["private"]      | [private:"-"]
+            | ["protected"]    | [protected:"#"]
+            | ["final"]
+            | ["abstract"]
+            | ["local"]
+            | ["derived"]      | [derived:"/"]
+            | ["readonly"]     | [readonly:"?"]
+            | ["static"]
+            | ["in"] | ["out"] | ["inout"]        // default direction is "in"
+            | ["end"]
+            | ["ref"]
+            | ["return"]                          // only in calculation, analysis, verification, function
+            | ["timeslice"]                       // only in occurrences
+            | ["snapshot"]                        // only in occurrences
+            | ["individual"]                      // only in occurrences
+            | ["event"]                           // only in occurrences
+            | ["variation"]
+            | ["variant"]
+        )*;
+
     /*
         Element that is whithin the package like functions and datatype defintions
     */
