@@ -3,46 +3,140 @@ package de.monticore.lang;
 
 component grammar KerMLTypes
     extends KerMLBase,
-            de.monticore.literals.MCCommonLiterals
+            de.monticore.literals.MCCommonLiterals,
+            de.monticore.expressions.ExpressionsBasis
 {
-    interface TypeElement;
-
+    /*
+        Implementation of PackageElements like datatypes, classifiers and features
+    */
     Datatype implements PackageElement =
+        DatatypeHead ("{" (DocBlock|PackageElement)* "}" | ";");
+
+    DatatypeHead =
         ("abstract")? "datatype" Name
         ((":>" | "specializes") superTypes:KerMLQualifiedName ("," superTypes:KerMLQualifiedName)*)?
-        ("intersects" intersectTypes:KerMLQualifiedName ("," intersectTypes:KerMLQualifiedName)*)?
-        ("{"
-            (DocBlock)?
-            (TypeElement)* "}" | ";");
+        ("intersects" intersectTypes:KerMLQualifiedName ("," intersectTypes:KerMLQualifiedName)*)?;
 
-    Feature implements TypeElement =
+    Classifier implements PackageElement =
+        ("abstract") ? ("classifier") Name
+        ("{" (DocBlock|PackageElement)* "}");
+
+    Feature implements PackageElement =
+        Modifier?
+        ("abstract")?
+        ("var")?
+        "feature" Name
+        (":" type:KerMLQualifiedName)?
+        (TypeMultiplicity)?
+        ("ordered")?
+        ("nonunique")?
+        ("subsets" subsets:KerMLQualifiedName ("," subsets:KerMLQualifiedName)*)?
+        ("chains" chains:KerMLQualifiedName ("," chains:KerMLQualifiedName)*)?
+        ((":>>"| "redefines") redefined:KerMLQualifiedName ("," redefined:KerMLQualifiedName)*)?
+        ("{" (DocBlock|PackageElement)* "}");
+
+    Multiplicity implements PackageElement =
+        MultiplicityHead
+        ("{" (DocBlock)? "}");
+
+    MultiplicityHead =
+        "multiplicity"
+        Name
+        TypeMultiplicity;
+
+    Function implements PackageElement =
+        Modifier?
+        ("abstract")? "function" FunctionName
+        ("specializes" superFunctions:QualifiedFunctionName ("," superFunctions:QualifiedFunctionName)*)?
+        "{" FunctionBody "}";
+
+    Struct implements PackageElement =
+        Modifier?
+        ("abstract")?
+        "struct" StructName "{" StructBody? "}";
+
+    Behavior implements PackageElement =
+        BehaviorHead "{" BehaviorBody "}";
+
+    BehaviorHead =
+        "behavior" Name "specializes" Name;
+
+    BehaviorBody = "test";
+
+    StructName =
+        Name (TypeMultiplicity)? (":>" | ":")? ((Name (TypeMultiplicity)?) ("," Name (TypeMultiplicity)*)*)?;
+
+    StructBody =
         (DocBlock)?
-        "feature" 
+        (StructVar | StructInv | Feature)* ;
+
+    StructVar =
+        Modifier?
+        Name
+        ":"
+        (Name)?
+        (":>>" Name)? ";";
+
+    StructInv =
+        "inv"
+        Name
+        "{" (DocBlock)? "}";
+
+
+    FunctionBody =
+        ((FunctionParameter|TypeFeature|Function|IfElse)* (FunctionReturn)?)? ;
+
+    FunctionParameter =
+        ("in") (FunctionName|Char) ":" Name TypeMultiplicity? ("ordered")? ("nonunique")? ";";
+
+    FunctionReturn =
+        "return" ":" Name TypeMultiplicity? ("ordered")? ("nonunique")?
+        ("=")?  (Expression | FunctionCall | IfElse)? "#"? "(index)"? ";" ;
+
+    FunctionCall = (QualifiedFunctionName? "(" FunctionVar")");
+
+    FunctionVar = Name ("." Name | "as" Name)*;
+
+    FunctionName = Name | EscapedName;
+
+    token EscapedName = "\'"(Name | "==" | "!=" | "===" | "[" | "!==" | "#" | "," | "@" | "@@" | "|" | "&" | "array#")"\'";
+
+    QualifiedFunctionName = FunctionName ("::" FunctionName)*;
+
+    TypeFeature implements PackageElement =
+        Modifier?
+        "feature"
         (":>>")?
         Name
         (":" type:KerMLQualifiedName)?
-        (Multiplicity)?
-        ("ordered" |"nonunique")*
-        (":>>" redefined:KerMLQualifiedName ("," redefined:KerMLQualifiedName)*)?
+        (TypeMultiplicity)?
+        ("ordered")?
+        ("nonunique")?
+        ("subsets" subsets:KerMLQualifiedName ("," subsets:KerMLQualifiedName)*)?
+        ("chains" chains:KerMLQualifiedName ("," chains:KerMLQualifiedName)*)?
+        ((":>>"| "redefines") redefined:KerMLQualifiedName ("," redefined:KerMLQualifiedName)*)?
         (FeatureInit | ";");
 
     interface FeatureInit;
+
     FeatureBlock implements FeatureInit = "{" (DocBlock)? "}";
 
-    Multiplicity = "[" min:Bound ".." max:Bound "]" | "[" exact:Bound "]";
+    TypeMultiplicity = "[" min:Bound ".." max:Bound "]" | "[" exact:Bound "]";
+
     Bound = NatLiteral | "*" | Name;
 
-    FunctionDeclaration implements PackageElement =
-        ("abstract")? "function" 
-        (Name)
-        ( (":>" | "specializes") superTypes:KerMLQualifiedName ("," superTypes:KerMLQualifiedName)*)?
-        "{"
-        (FunctionParameter)* "}";
+    IfElse =
+        "if" IfElsePart "?" IfElsePart "else" IfElsePart;
 
-    FunctionParameter =
-        ("in" | "out" | "inout" | "return")? 
-        (Name)? 
-        (":" type:KerMLQualifiedName)? 
-        (Multiplicity)?
-        ("ordered" | "nonunique")* (FeatureInit | ";");
+    IfElsePart = IfElseElement+ ;
+
+    IfElseElement =
+          Name | NatLiteral | "null" | "in" | "or" | "and" | "as"
+        | "#" | "*" | "+" | "-" | "." | "," | ":" | "=" | "==" | "!=" | "<" | ">" | "<=" | ">=" | "!" | "->" | ".."
+        | "(" (IfElseElement | ";")* ")"
+        | "{" (IfElseElement | ";")* "}"
+        | "[" (IfElseElement | ";")* "]" ;
+
+    Invariant implements PackageElement =
+        "inv" "{" Expression "}";
 }

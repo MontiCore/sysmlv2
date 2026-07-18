@@ -15,7 +15,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class KerMLDataTypeLibParserTest {
+public class KerMLSemanticLibParserTest {
 
   @BeforeAll
   public static void setUp(){
@@ -26,15 +26,28 @@ public class KerMLDataTypeLibParserTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "Collections.kerml",
-      "ScalarValues.kerml",
-      "VectorValues.kerml"
+      "Base.kerml",
+      //"Clocks.kerml"
+      //"ControlPerformances.kerml"
+      //"FeatureReferencingPerformances.kerml"
+      //"KerML.kerml"
+      //"Links.kerml"
+      //"Metaobjects.kerml"
+      //"Objects.kerml"
+      //"Observation.kerml"
+      //"Occurrences.kerml"
+      //"Performances.kerml"
+      //"SpatialFrames.kerml"
+      //"StatePerformances.kerml"
+      //"Transfers.kerml"
+      //"TransitionPerformance.kerml"
+      //"Triggers.kerml"
   })
   public void testParseKernelDataTypeLibrary(String filename) throws IOException {
-    String modelFile = "src/test/resources/KernelDataTypeLibrary/" + filename;
+    String modelFile = "src/test/resources/KernelSemanticLibrary/" + filename;
     KerMLParser parser = KerMLMill.parser();
     Optional<ASTKerMLDocument> ast = parser.parse(modelFile);
-    
+
     assertFalse(parser.hasErrors(), "Parser threw Errors!");
     assertTrue(ast.isPresent(), "Ast generation failed!");
   }
