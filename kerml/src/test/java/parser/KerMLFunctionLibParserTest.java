@@ -30,17 +30,17 @@ public class KerMLFunctionLibParserTest {
       "BooleanFunctions.kerml",
       "CollectionFunctions.kerml",
       "ComplexFunctions.kerml",
-      //"ControlFunctions.kerml",
+      "ControlFunctions.kerml",
       "DataFunctions.kerml",
       "IntegerFunctions.kerml",
       "NaturalFunctions.kerml",
       "NumericalFunctions.kerml",
-      //"OccurrenceFunctions.kerml",
+      "OccurrenceFunctions.kerml",
       "RationalFunctions.kerml",
       "ScalarFunctions.kerml",
-      //"SequenceFunctions.kerml",
+      "SequenceFunctions.kerml",
       "StringFunctions.kerml",
-      //"TrigFunctions.kerml",
+      "TrigFunctions.kerml",
       //"VectorFunctions.kerml"
   })
   public void testParseKernelDataTypeLibrary(String filename) throws IOException {

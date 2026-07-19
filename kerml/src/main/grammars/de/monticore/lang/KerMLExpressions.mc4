@@ -29,10 +29,40 @@ component grammar KerMLExpressions
     KerMLNotExpression implements Expression =
         "not" Expression ;
 
-
     KerMLLogicalExpression implements Expression =
-        Expression ("and" | "or") Expression ;
+        Expression ("and" | "or" | "&" | "|" | "implies" | "xor") Expression ;
 
     KerMLIdentityExpression implements Expression =
         Expression ("===" | "!==") Expression;
+
+    KerMLArrowExpression implements Expression =
+        Expression "->" Name 
+        ( 
+            ( "(" (Expression ("," Expression)*)? ")" ) 
+          | ( FunctionBlock )                           
+          | ( KerMLQualifiedName | EscapedName ) 
+        )? 
+        ( "#" ( "(" Expression ")" | "(index)" ) )? ;
+
+    KerMLIndexExpression implements Expression =
+        Expression "#" ( "(" Expression ")" | "(index)" );
+
+    KerMLQualifiedNameExpression implements Expression =
+        KerMLQualifiedName ;
+
+    KerMLRangeExpression implements Expression =
+        Expression ".." Expression ;
+    
+    KerMLTupleExpression implements Expression =
+        "(" Expression ("," Expression)+ ")" ;
+
+    token KerMLScientificNumber = ('0'..'9')+ ("e" | "E") ("+" | "-")? ('0'..'9')+ ;
+    
+    token KerMLDecimalNumber = ('0'..'9')+ "." ('0'..'9')+ ( ("e" | "E") ("+" | "-")? ('0'..'9')+ )? ;
+
+    KerMLCustomNumericExpression implements Expression =
+        KerMLScientificNumber | KerMLDecimalNumber ;
+
+    KerMLIfElseExpression implements Expression =
+        "if" Expression "?" Expression "else" Expression ;
 }
