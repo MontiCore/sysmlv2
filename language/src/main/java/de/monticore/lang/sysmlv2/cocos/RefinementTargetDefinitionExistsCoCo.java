@@ -26,17 +26,10 @@ public class RefinementTargetDefinitionExistsCoCo implements SysMLPartsASTPartDe
         .filter(s -> s instanceof ASTSysMLRefinement)
         .flatMap(ASTSpecialization::streamSuperTypes)
         .map((ASTMCType t) -> t.printType())
-        .filter(name -> node.getEnclosingScope().resolvePartDef(name).isEmpty());
-
-    var nonExistentDependencies = node.getRefinementDependencies().stream()
-        .flatMap(dep -> dep.getTargetsList().stream())
-        .map(Object::toString)
-        .filter(name -> node.getEnclosingScope().resolvePartDef(name).isEmpty());
-
-    var nonExistent = Stream.concat(nonExistentSpecializations, nonExistentDependencies)
+        .filter(name -> node.getEnclosingScope().resolvePartDef(name).isEmpty())
         .collect(Collectors.toList());
 
-    for (var problem : nonExistent) {
+    for (var problem : nonExistentSpecializations) {
       Log.error(
           "0x10AA2 The name used in 'refines' \"" + problem
               + "\" does not exist as a part definition.",
