@@ -5,6 +5,7 @@ import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintUsageCoCo;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types3.SymTypeRelations;
 import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.SourcePositionBuilder;
@@ -23,7 +24,7 @@ public class ConstraintIsBooleanTC3 implements SysMLConstraintsASTConstraintUsag
         var end = constraintEnd(start);
         Log.error("0x80001 Failed to derive a type!", start, end);
       }
-      else if(!type.printFullName().equals("boolean")) {
+      else if(!SymTypeRelations.isBoolean(type)) {
         Log.error("0x80002 The expression type is '" + type.printFullName() + "' but should be boolean!", expr.get_SourcePositionStart(), expr.get_SourcePositionEnd());
       }
     }

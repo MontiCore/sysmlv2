@@ -73,8 +73,7 @@ public class SysMLOCLExpressionsTypeVisitor extends OCLExpressionsTypeVisitor im
       SymTypeExpression left, SymTypeExpression right) {
 
     if (SymTypeRelations.isCompatible(left, right)
-        && left.isPrimitive()
-        && left.asPrimitive().getPrimitiveName().equals("boolean")) {
+        && SymTypeRelations.isBoolean(left)) {
       return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
     }
     return SymTypeExpressionFactory.createObscureType();
