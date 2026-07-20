@@ -4,6 +4,7 @@ import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.lang.sysmlstates._ast.ASTSysMLTransition;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTSysMLTransitionCoCo;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types3.SymTypeRelations;
 import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 
@@ -22,7 +23,7 @@ public class TypeCheck3TransitionGuards implements SysMLStatesASTSysMLTransition
               expr.get_SourcePositionStart(),
               expr.get_SourcePositionEnd());
         }
-        else if(!type.isPrimitive() || !type.asPrimitive().getPrimitiveName().equals("boolean")) {
+        else if(!SymTypeRelations.isBoolean(type)) {
           Log.error("0x80005 The expression type is '" + type.printFullName() + "' but should be boolean!",
               expr.get_SourcePositionStart(),
               expr.get_SourcePositionEnd());
