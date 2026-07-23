@@ -44,49 +44,34 @@ component grammar KerMLTypes
         Modifier
         "function" FunctionName
         ("specializes" superFunctions:QualifiedFunctionName ("," superFunctions:QualifiedFunctionName)*)?
-        FunctionBody;
+        ("{" 
+            (FunctionReturn | FunctionParameter | TypeFeature | Function | IfElse | Invariant 
+            | DocBlock | Connector | Step | Succession)* ("chain")? 
+        "}" | ";");
 
     Struct implements PackageElement =
         Modifier
-        "struct" StructName "{" StructBody? "}";
+        "struct" Name (TypeMultiplicity)? (":>" | ":")? ((Name (TypeMultiplicity)?) ("," Name (TypeMultiplicity)*)*)?
+        ("{" 
+            (DocBlock)? (StructVar | StructInv | Feature)* 
+        "}" | ";");
 
     Behavior implements PackageElement =
-        BehaviorHead BehaviorBody;
-
-    BehaviorHead =
         Modifier "behavior" Name 
-        ("specializes" superBehaviors:KerMLQualifiedName ("," superBehaviors:KerMLQualifiedName)*)? ;
-
-    BehaviorBody = 
-        "{" (FunctionReturn | FunctionParameter | TypeFeature | Function 
-            | IfElse | Invariant | DocBlock | Connector | Step | Succession)* ("chain")? "}";
-
-    StructName =
-        Name (TypeMultiplicity)? (":>" | ":")? ((Name (TypeMultiplicity)?) ("," Name (TypeMultiplicity)*)*)?;
-
-    StructBody =
-        (DocBlock)?
-        (StructVar | StructInv | Feature)* ;
+        ("specializes" superBehaviors:KerMLQualifiedName ("," superBehaviors:KerMLQualifiedName)*)?
+        ("{" 
+            (FunctionReturn | FunctionParameter | TypeFeature | Function 
+            | IfElse | Invariant | DocBlock | Connector | Step | Succession)* ("chain")? 
+        "}" | ";");        
 
     StructVar =
-        Modifier?
-        Name
-        ":"
-        (Name)?
-        (":>>" Name)? ";";
+        Modifier Name ":" (Name)? (":>>" Name)? ";";
 
     StructInv =
-        "inv"
-        Name?
-        "{" (DocBlock|PackageElement)? "}";
-
-
-    FunctionBody =
-        "{" (FunctionReturn | FunctionParameter | TypeFeature | Function | IfElse | Invariant | DocBlock | Connector | Step | Succession)* 
-        ("chain")? "}";
+        "inv" Name? "{" (DocBlock|PackageElement)? "}";
 
     FunctionParameter =
-        Modifier?
+        Modifier
         (FunctionName)+ 
         (":" type:KerMLQualifiedName)? 
         TypeMultiplicity? 
@@ -119,7 +104,7 @@ component grammar KerMLTypes
     QualifiedFunctionName = FunctionName ("::" FunctionName)*;
 
     TypeFeature implements PackageElement =
-        Modifier?
+        Modifier
         "feature" 
         ( "step" | "chain")?
         ("chains")?
