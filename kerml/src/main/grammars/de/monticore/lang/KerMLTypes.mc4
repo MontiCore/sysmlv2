@@ -44,7 +44,7 @@ component grammar KerMLTypes
         Modifier
         "function" FunctionName
         ("specializes" superFunctions:QualifiedFunctionName ("," superFunctions:QualifiedFunctionName)*)?
-        "{" FunctionBody "}";
+        FunctionBody;
 
     Struct implements PackageElement =
         Modifier
@@ -82,8 +82,8 @@ component grammar KerMLTypes
 
 
     FunctionBody =
-        (FunctionReturn | FunctionParameter | TypeFeature | Function | IfElse | Invariant | DocBlock | Connector | Step | Succession)* 
-        ("chain")?;
+        "{" (FunctionReturn | FunctionParameter | TypeFeature | Function | IfElse | Invariant | DocBlock | Connector | Step | Succession)* 
+        ("chain")? "}";
 
     FunctionParameter =
         Modifier?
