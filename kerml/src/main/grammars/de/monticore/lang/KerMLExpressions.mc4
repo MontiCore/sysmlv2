@@ -11,7 +11,7 @@ component grammar KerMLExpressions
         "=" Expression (FeatureBlock | ";");
 
     NullCoalescingExpression implements Expression =
-    Expression "??" Expression ;
+        Expression "??" Expression ;
 
     ArrowExpression implements Expression =
         Expression "->" Expression ;
@@ -38,11 +38,11 @@ component grammar KerMLExpressions
     KerMLArrowExpression implements Expression =
         Expression "->" Name 
         ( 
-            ( "(" (Expression ("," Expression)*)? ")" ) 
-          | ( FunctionBlock )                           
-          | ( KerMLQualifiedName | EscapedName ) 
-        )? 
-        ( "#" ( "(" Expression ")" | "(index)" ) )? ;
+            Arguments 
+          | FunctionBlock                           
+          | KerMLQualifiedName 
+          | EscapedName  
+        )? ;
 
     KerMLIndexExpression implements Expression =
         Expression "#" ( "(" Expression ")" | "(index)" );

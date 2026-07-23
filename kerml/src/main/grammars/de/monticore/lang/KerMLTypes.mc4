@@ -6,9 +6,6 @@ component grammar KerMLTypes
             de.monticore.literals.MCCommonLiterals,
             de.monticore.expressions.ExpressionsBasis
 {
-    /*
-        Implementation of PackageElements like datatypes, classifiers and features
-    */
     Datatype implements PackageElement =
         DatatypeHead ("{" (DocBlock|PackageElement)* "}" | ";");
 
@@ -22,8 +19,7 @@ component grammar KerMLTypes
         ("{" (DocBlock|PackageElement)* "}");
 
     Feature implements PackageElement =
-        Modifier?
-        ("abstract")?
+        Modifier
         ("var")?
         "feature" Name
         (":" type:KerMLQualifiedName)?
@@ -45,53 +41,37 @@ component grammar KerMLTypes
         TypeMultiplicity;
 
     Function implements PackageElement =
-        Modifier?
-        ("abstract")? "function" (FunctionName)
+        Modifier
+        "function" FunctionName
         ("specializes" superFunctions:QualifiedFunctionName ("," superFunctions:QualifiedFunctionName)*)?
-        "{" FunctionBody "}";
+        ("{" 
+            (FunctionReturn | FunctionParameter | TypeFeature | Function | IfElse | Invariant 
+            | DocBlock | Connector | Step | Succession)* ("chain")? 
+        "}" | ";");
 
     Struct implements PackageElement =
-        Modifier?
-        ("abstract")?
-        "struct" StructName "{" StructBody? "}";
+        Modifier
+        "struct" Name (TypeMultiplicity)? (":>" | ":")? ((Name (TypeMultiplicity)?) ("," Name (TypeMultiplicity)*)*)?
+        ("{" 
+            (DocBlock)? (StructVar | StructInv | Feature)* 
+        "}" | ";");
 
     Behavior implements PackageElement =
-        BehaviorHead "{" BehaviorBody "}";
-
-    BehaviorHead =
-        Modifier? ("abstract")? "behavior" Name 
-        ("specializes" superBehaviors:KerMLQualifiedName ("," superBehaviors:KerMLQualifiedName)*)? ;
-
-    BehaviorBody = 
-        (FunctionReturn | FunctionParameter | TypeFeature | Function | IfElse | Invariant | DocBlock | Connector | Step | Succession)* 
-        ("chain")?;
-
-    StructName =
-        Name (TypeMultiplicity)? (":>" | ":")? ((Name (TypeMultiplicity)?) ("," Name (TypeMultiplicity)*)*)?;
-
-    StructBody =
-        (DocBlock)?
-        (StructVar | StructInv | Feature)* ;
+        Modifier "behavior" Name 
+        ("specializes" superBehaviors:KerMLQualifiedName ("," superBehaviors:KerMLQualifiedName)*)?
+        ("{" 
+            (FunctionReturn | FunctionParameter | TypeFeature | Function 
+            | IfElse | Invariant | DocBlock | Connector | Step | Succession)* ("chain")? 
+        "}" | ";");        
 
     StructVar =
-        Modifier?
-        Name
-        ":"
-        (Name)?
-        (":>>" Name)? ";";
+        Modifier Name ":" (Name)? (":>>" Name)? ";";
 
     StructInv =
-        "inv"
-        Name?
-        "{" (DocBlock|PackageElement)? "}";
-
-
-    FunctionBody =
-        (FunctionReturn | FunctionParameter | TypeFeature | Function | IfElse | Invariant | DocBlock | Connector | Step | Succession)* 
-        ("chain")?;
+        "inv" Name? "{" (DocBlock|PackageElement)? "}";
 
     FunctionParameter =
-        Modifier?
+        Modifier
         (FunctionName)+ 
         (":" type:KerMLQualifiedName)? 
         TypeMultiplicity? 
@@ -124,7 +104,7 @@ component grammar KerMLTypes
     QualifiedFunctionName = FunctionName ("::" FunctionName)*;
 
     TypeFeature implements PackageElement =
-        Modifier?
+        Modifier
         "feature" 
         ( "step" | "chain")?
         ("chains")?
@@ -163,7 +143,7 @@ component grammar KerMLTypes
         "inv" MCQualifiedName? "{" MCQualifiedName? Expression "}";
 
     Connector implements PackageElement = 
-        Modifier?
+        Modifier
         "connector" ("all")? Name?
         (":" type:KerMLQualifiedName)?
         (TypeMultiplicity)?
@@ -172,25 +152,24 @@ component grammar KerMLTypes
         ";" ;
     
     Step implements PackageElement =
-        Modifier?
+        Modifier
         ("composite")? "step" Name? (":" type:KerMLQualifiedName)?
         ("{" (StepProperty | DocBlock | ";")* "}" | ";") ;
 
     StepProperty = 
-        Modifier? Name ("=" Expression)? ";" ;
+        Modifier Name ("=" Expression)? ";" ;
 
     Succession implements PackageElement =
-        Modifier?
-        "succession" Expression "then" Expression ";" ;
+        Modifier "succession" Expression "then" Expression ";" ;
 
     Binding implements PackageElement =
         "binding" Name "=" Expression ";" ;
 
     Alias implements PackageElement =
-        Modifier? "alias" EscapedName "for" KerMLQualifiedName ";" ;
+        Modifier "alias" EscapedName "for" KerMLQualifiedName ";" ;
 
     NamelessRedefinitionFeature implements PackageElement =
-        Modifier? "feature" (":>>" | "redefines") KerMLQualifiedName ("," KerMLQualifiedName)* ";" ;
+        Modifier "feature" (":>>" | "redefines") KerMLQualifiedName ("," KerMLQualifiedName)* ";" ;
 
     ShorthandRedefinition implements PackageElement =
         ":>>" Name "=" Expression ";" ;
