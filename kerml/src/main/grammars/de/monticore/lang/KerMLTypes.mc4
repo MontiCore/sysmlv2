@@ -51,15 +51,15 @@ component grammar KerMLTypes
         "struct" StructName "{" StructBody? "}";
 
     Behavior implements PackageElement =
-        BehaviorHead "{" BehaviorBody "}";
+        BehaviorHead BehaviorBody;
 
     BehaviorHead =
         Modifier "behavior" Name 
         ("specializes" superBehaviors:KerMLQualifiedName ("," superBehaviors:KerMLQualifiedName)*)? ;
 
     BehaviorBody = 
-        (FunctionReturn | FunctionParameter | TypeFeature | Function | IfElse | Invariant | DocBlock | Connector | Step | Succession)* 
-        ("chain")?;
+        "{" (FunctionReturn | FunctionParameter | TypeFeature | Function 
+            | IfElse | Invariant | DocBlock | Connector | Step | Succession)* ("chain")? "}";
 
     StructName =
         Name (TypeMultiplicity)? (":>" | ":")? ((Name (TypeMultiplicity)?) ("," Name (TypeMultiplicity)*)*)?;
