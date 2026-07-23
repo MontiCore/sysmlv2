@@ -38,9 +38,10 @@ component grammar KerMLExpressions
     KerMLArrowExpression implements Expression =
         Expression "->" Name 
         ( 
-            ( "(" (Expression ("," Expression)*)? ")" ) 
-          | ( FunctionBlock )                           
-          | ( KerMLQualifiedName | EscapedName ) 
+            Arguments 
+          | FunctionBlock                           
+          | KerMLQualifiedName 
+          | EscapedName  
         )? ;
 
     KerMLIndexExpression implements Expression =
