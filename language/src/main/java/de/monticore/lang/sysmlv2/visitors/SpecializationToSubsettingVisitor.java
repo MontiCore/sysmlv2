@@ -3,17 +3,17 @@ package de.monticore.lang.sysmlv2.visitors;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSubsetting;
-import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
-import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
+import de.monticore.lang.sysmlbasis._visitor.SysMLBasisVisitor2;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SpecializationToSubsettingVisitor implements SysMLPartsVisitor2 {
+public class SpecializationToSubsettingVisitor implements SysMLBasisVisitor2 {
 
   @Override
-  public void endVisit(ASTAttributeUsage node) {
+  public void endVisit(ASTSysMLUsage node) {
     List<ASTSpecialization> newList = new ArrayList<>();
     boolean changed = false;
 
