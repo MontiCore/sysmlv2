@@ -48,7 +48,7 @@ grammar SysMLv2 extends SysMLExpressions,
       SysMLElement*
     "}" | ";") ;
 
-  symbol scope UserDefinedUsage implements SysMLElement =
+  symbol scope UserDefinedUsage implements SysMLUsage =
     Modifier UserDefinedKeyword+ Name SysMLCardinality? Specialization*
     ("{"
       SysMLElement*
