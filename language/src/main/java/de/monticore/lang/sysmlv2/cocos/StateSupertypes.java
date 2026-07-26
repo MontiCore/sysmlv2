@@ -5,6 +5,7 @@ import de.monticore.lang.sysmlstates._ast.ASTStateDef;
 import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateDefCoCo;
 import de.monticore.lang.sysmlstates._cocos.SysMLStatesASTStateUsageCoCo;
+import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 
@@ -25,7 +26,8 @@ public class StateSupertypes implements SysMLStatesASTStateDefCoCo, SysMLStatesA
   public void check(ASTStateDef node) {
     var nonExistent = node.streamSpecializations()
         .flatMap(s -> s.streamSuperTypes())
-        .filter(t -> node.getEnclosingScope().resolveStateDef(printName(t)).isEmpty())
+        .filter(t -> node.getEnclosingScope().resolveType(printName(t))
+            .filter(StateDef2TypeSymbolAdapter.class::isInstance).isEmpty())
         .collect(Collectors.toList());
 
     for(var problem: nonExistent) {
@@ -40,7 +42,8 @@ public class StateSupertypes implements SysMLStatesASTStateDefCoCo, SysMLStatesA
   public void check(ASTStateUsage node) {
     var nonExistent = node.streamSpecializations()
         .flatMap(s -> s.streamSuperTypes())
-        .filter(t -> node.getEnclosingScope().resolveStateDef(printName(t)).isEmpty()
+        .filter(t -> node.getEnclosingScope().resolveType(printName(t))
+            .filter(StateDef2TypeSymbolAdapter.class::isInstance).isEmpty()
             && node.getEnclosingScope().resolveStateUsage(printName(t)).isEmpty())
         .collect(Collectors.toList());
 
