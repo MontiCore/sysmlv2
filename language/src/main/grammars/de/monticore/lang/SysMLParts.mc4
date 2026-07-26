@@ -43,7 +43,7 @@ component grammar SysMLParts extends SysMLBasis {
       (SysMLElement | AnonEnumUsage)*
     "}" | ";") ;
 
-  symbol EnumUsage implements SysMLElement =
+  symbol EnumUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* "enum"
     SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
@@ -72,7 +72,7 @@ component grammar SysMLParts extends SysMLBasis {
    * ##################################################################
    */
 
-  symbol scope PartUsage implements SysMLElement =
+  symbol scope PartUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* "part" SysMLIdentifier? Name?
     SysMLCardinality? Specialization* DefaultValue?
     ("{"
@@ -102,7 +102,7 @@ component grammar SysMLParts extends SysMLBasis {
         return Optional.empty();
       } ;
 
-  symbol scope AttributeUsage implements SysMLElement =
+  symbol scope AttributeUsage implements SysMLUsage =
       Modifier UserDefinedKeyword* "attribute"
       SysMLIdentifier? Name? SysMLCardinality?
       Specialization* DefaultValue?
@@ -137,7 +137,7 @@ component grammar SysMLParts extends SysMLBasis {
    * integrate with the existing artifacts (i.e., theories containing specific channel names) only by referencing the
    * symboltable (and not needing to re-processes the original models).
    */
-  symbol scope PortUsage implements SysMLElement =
+  symbol scope PortUsage implements SysMLUsage =
       Modifier UserDefinedKeyword* "port"
       SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
       ("{"
@@ -166,7 +166,7 @@ component grammar SysMLParts extends SysMLBasis {
    * CONNECTIONS
    * ##################################################################
    */
-  symbol ConnectionUsage implements SysMLElement =
+  symbol ConnectionUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* "connection"?
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "connect" (
@@ -186,7 +186,7 @@ component grammar SysMLParts extends SysMLBasis {
   FlowPayload =
     (Name SysMLCardinality? Specialization* | MCType SysMLCardinality?) DefaultValue? ;
 
-  FlowUsage implements SysMLElement =
+  FlowUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* "succession"? "flow"
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("of" FlowPayload)?
@@ -197,7 +197,7 @@ component grammar SysMLParts extends SysMLBasis {
       "}" | ";") ;
 
   // explizites bind durch keyword
-  Bind implements SysMLElement =
+  Bind implements SysMLUsage =
     Modifier UserDefinedKeyword* "binding"?
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "bind" source:Endpoint "=" target:Endpoint
@@ -224,7 +224,7 @@ component grammar SysMLParts extends SysMLBasis {
 
   // Aus Kompatibilitätsgründen ist der Name hier nicht "ConnectionUsage". Genau genommen ist ein einfaches
   // "connect" der Sonderfall, nicht andersrum.
-  symbol scope ConnectionUsageProper implements SysMLElement =
+  symbol scope ConnectionUsageProper implements SysMLUsage =
     Modifier UserDefinedKeyword* "connection"
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("{"
@@ -245,7 +245,7 @@ component grammar SysMLParts extends SysMLBasis {
       SysMLElement*
     "}" | ";") ;
 
-  symbol scope InterfaceUsage implements SysMLElement =
+  symbol scope InterfaceUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* "interface"
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("connect"? (
@@ -275,7 +275,7 @@ component grammar SysMLParts extends SysMLBasis {
       SysMLElement*
     "}" | ";") ;
 
-  symbol scope AllocationUsage implements SysMLElement =
+  symbol scope AllocationUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* "allocation"
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("{"
@@ -347,7 +347,7 @@ component grammar SysMLParts extends SysMLBasis {
       SysMLElement*
     "}" | ";") ;
 
-  symbol scope ItemUsage implements SysMLElement =
+  symbol scope ItemUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* "item" SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("(" (SysMLParameter || ",")* ")")? DefaultValue?
     ("{"
@@ -390,7 +390,7 @@ component grammar SysMLParts extends SysMLBasis {
         (AnalysisObjective | SysMLElement)*
       "}" | ";") ;
 
-  symbol scope AnalysisUsage implements SysMLElement =
+  symbol scope AnalysisUsage implements SysMLUsage =
       Modifier UserDefinedKeyword* "analysis"
       SysMLIdentifier? Name? SysMLCardinality? Specialization*
       ("{"
@@ -406,7 +406,7 @@ component grammar SysMLParts extends SysMLBasis {
         Expression?
       "}" | ";") ;
 
-  symbol scope VerificationUsage implements SysMLElement =
+  symbol scope VerificationUsage implements SysMLUsage =
       Modifier UserDefinedKeyword* "verification"
       Name? SysMLCardinality? Specialization*
       ("{"
@@ -459,7 +459,7 @@ component grammar SysMLParts extends SysMLBasis {
         Expression?
       "}" | ";") ;
 
-  symbol scope CaseUsage implements SysMLElement =
+  symbol scope CaseUsage implements SysMLUsage =
       Modifier UserDefinedKeyword* "case"
       SysMLIdentifier? Name? SysMLCardinality? Specialization*
       ("{"
@@ -519,7 +519,7 @@ component grammar SysMLParts extends SysMLBasis {
         SysMLElement*
      "}" | ";") ;
 
-  SysMLMetaDataUsage implements SysMLElement =
+  SysMLMetaDataUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* ("metadata" | "@")
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("about" about:(MCQualifiedName || ",")+)?
@@ -543,7 +543,7 @@ component grammar SysMLParts extends SysMLBasis {
         SysMLElement*
       "}" | ";") ;
 
-    symbol scope ViewpointUsage implements SysMLElement =
+    symbol scope ViewpointUsage implements SysMLUsage =
       Modifier UserDefinedKeyword* "viewpoint"
       SysMLIdentifier? Name? SysMLCardinality? Specialization*
       ("{"
@@ -561,7 +561,7 @@ component grammar SysMLParts extends SysMLBasis {
           (RenderingReference | SysMLElement)*
        "}" | ";") ;
 
-    symbol scope ViewUsage implements SysMLElement =
+    symbol scope ViewUsage implements SysMLUsage =
       Modifier UserDefinedKeyword* "view"
       SysMLIdentifier? Name? SysMLCardinality? Specialization*
       ("{"
@@ -593,7 +593,7 @@ component grammar SysMLParts extends SysMLBasis {
         SysMLElement*
       "}" | ";") ;
 
-    symbol scope RenderingUsage implements SysMLElement =
+    symbol scope RenderingUsage implements SysMLUsage =
       Modifier UserDefinedKeyword* ["render"]? "rendering"
       SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
       ("{"

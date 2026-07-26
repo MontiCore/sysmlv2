@@ -60,6 +60,9 @@ component grammar SysMLBasis
    */
   interface Specialization = superTypes:MCType+;
 
+  // Interface zum Unterscheiden zwischen Usages und anderen Typen mit dem Visitor
+  interface SysMLUsage extends SysMLElement = Specialization*;
+
   // Specialization ist spezifisch für Definitions
   SysMLSpecialization implements Specialization =
       (":>" | "specializes") superTypes:(MCType || ",")+ SysMLCardinality?;
@@ -250,7 +253,7 @@ component grammar SysMLBasis
    * Anonyme Usage, deren "Typ" im Sinne der SysML (also Beispielsweise "attribute" oder "part") sich erst durch
    * die Spezialisationen (Typisierungen) ergibt.
    */
-  symbol scope AnonymousUsage implements SysMLElement =
+  symbol scope AnonymousUsage implements SysMLUsage =
       Modifier UserDefinedKeyword* SysMLIdentifier? Name? SysMLCardinality?
       Specialization+ DefaultValue?
       ("{"
@@ -262,7 +265,7 @@ component grammar SysMLBasis
       in:boolean
       out:boolean ;
 
-  symbol scope AnonymousReference implements SysMLElement =
+  symbol scope AnonymousReference implements SysMLUsage =
        Modifier UserDefinedKeyword* SysMLIdentifier? src:MCQualifiedName SysMLCardinality?
        Specialization* DefaultValue?
        ("{"
@@ -278,7 +281,7 @@ component grammar SysMLBasis
    * Occurrence usages can be used in successions.
    * Example: "first send a to b if b then perform myAction;"
    */
-  interface OccurrenceUsageElement extends SysMLElement;
+  interface OccurrenceUsageElement extends SysMLUsage;
 
   // Inline-Variante für das "first" vor dem "then"
   interface IInlineOccurrenceUsage ;
