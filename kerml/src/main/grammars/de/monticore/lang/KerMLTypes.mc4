@@ -90,8 +90,8 @@ component grammar KerMLTypes
 
     FunctionCall = (QualifiedFunctionName? "(" (Expression ("," Expression)*)?")");
 
-    KerMLAsExpression implements Expression =
-        Expression "as" KerMLQualifiedName;
+    KerMLAsExpression implements Expression <150> =
+        left:Expression "as" right:KerMLQualifiedName;
 
     FunctionName = Name | EscapedName | SpecialName;
 

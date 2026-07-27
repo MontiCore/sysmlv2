@@ -6,6 +6,7 @@ component grammar KerMLExpressions
             de.monticore.expressions.CommonExpressions,
             de.monticore.literals.MCCommonLiterals
 {
+    // Same as Sysml
     ConditionalAndExpression implements Expression <120>, InfixExpression =
         left:Expression operator:"and" right:Expression;
 
@@ -21,29 +22,18 @@ component grammar KerMLExpressions
     ConditionalNotExpression implements Expression <190> =
         "not" Expression;
 
-    FeatureAssignment implements FeatureInit =
-        "=" Expression (FeatureBlock | ";");
+    KerMLEnumerationExpression implements Expression =
+        "(" start:Expression ".." end:Expression ")" ;
+    // Differs from Sysml but similar 
 
-    NullCoalescingExpression implements Expression =
-        Expression "??" Expression;
-
-    ArrowExpression implements Expression =
-        Expression "->" Expression;
-
-    KerMLLiteralArgExpression implements Expression =
-        Expression (Literal| EscapedName);
-
-    KerMLIteratorExpression implements Expression =
+    KerMLIteratorExpression implements Expression <120> =
         Expression "->" Name
         "{"
         ("in" iteratorName:Name ":" iteratorType:KerMLQualifiedName ";")?
         body:Expression
         "}";
 
-    KerMLIdentityExpression implements Expression =
-        Expression ("===" | "!==") Expression;
-
-    KerMLArrowExpression implements Expression =
+    KerMLFunctionOperationExpression implements Expression <120> =
         Expression "->" Name 
         ( 
             Arguments 
@@ -52,25 +42,39 @@ component grammar KerMLExpressions
           | EscapedName  
         )? ;
 
-    KerMLIndexExpression implements Expression =
+    KerMLIndexExpression implements Expression <130> =
         Expression "#" ( "(" Expression ")" | "(index)" );
 
-    KerMLQualifiedNameExpression implements Expression =
-        KerMLQualifiedName ;
+    // Not in Sysml
+    FeatureAssignment implements FeatureInit <110> =
+        "=" Expression (FeatureBlock | ";");
 
-    KerMLEnumerationExpression implements Expression =
-    "(" start:Expression ".." end:Expression ")" ;
+    NullCoalescingExpression implements Expression <110> =
+        Expression "??" Expression;
+
+    ArrowExpression implements Expression <100> =
+        Expression "->" Expression;
+
+    KerMLLiteralArgExpression implements Expression <140> =
+        Expression (Literal| EscapedName);
+
+    KerMLIdentityExpression implements Expression <90> =
+        Expression ("===" | "!==") Expression;
+
+    KerMLQualifiedNameExpression implements Expression =
+        KerMLQualifiedName;
     
     KerMLTupleExpression implements Expression =
-        "(" Expression ("," Expression)+ ")" ;
+        "(" Expression ("," Expression)+ ")";
 
-    token KerMLScientificNumber = ('0'..'9')+ ("e" | "E") ("+" | "-")? ('0'..'9')+ ;
+    token KerMLScientificToken = ('0'..'9')+ ("e" | "E") ("+" | "-")? ('0'..'9')+ ;
     
-    token KerMLDecimalNumber = ('0'..'9')+ "." ('0'..'9')+ ( ("e" | "E") ("+" | "-")? ('0'..'9')+ )? ;
+    token KerMLDecimalToken = ('0'..'9')+ "." ('0'..'9')+ ( ("e" | "E") ("+" | "-")? ('0'..'9')+ )? ;
 
-    KerMLCustomNumericExpression implements Expression =
-        KerMLScientificNumber | KerMLDecimalNumber ;
+    KerMLScientificLiteral implements Literal = KerMLScientificToken;
+
+    KerMLDecimalNumber implements Literal = KerMLDecimalToken;
 
     KerMLIfElseExpression implements Expression =
-        "if" Expression "?" Expression "else" Expression ;
+        "if" Expression "?" Expression "else" Expression;
 }
