@@ -1,6 +1,7 @@
 package symboltable;
 
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
+import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
@@ -76,5 +77,22 @@ public class StandardLibraryImportTest {
     assertThat(type.printType()).isEqualTo("Bag");
     assertThat(((ISysMLv2Scope)type.getEnclosingScope()).resolveType(type.printType())).isPresent();
     assertThat(((ISysMLv2Scope)type.getEnclosingScope()).resolveType(type.printType()).get().getFullName()).isEqualTo("Collections.Bag");
+  }
+
+  @Test
+  public void testStatesImport() throws IOException {
+    var model = " private import States::*;"+
+        "state def MyState : StateAction;";
+
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    var resolvedStateAction = ast.getEnclosingScope().resolveType("StateAction");
+
+    assertThat(resolvedStateAction).isPresent();
+    assertThat(resolvedStateAction.get()).isInstanceOf(StateDef2TypeSymbolAdapter.class);
   }
 }

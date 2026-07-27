@@ -42,6 +42,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     SysMLv2Mill.addVectorValuesTypes();
     SysMLv2Mill.addCollectionTypes();
     SysMLv2Mill.addTsynVariables();
+    SysMLv2Mill.addStatesTypes();
     SysMLv2Tool.loadStreamSymbolsFromJar();
   }
 
@@ -665,5 +666,42 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         .setType(type)
         .setSpannedScope(parameterList)
         .build();
+  }
+
+  public static void addStatesTypes(){
+    getMill()._addStatesTypes();
+  }
+
+  protected void _addStatesTypes() {
+    if (SysMLv2Mill.globalScope().resolveSysMLPackage("States").isPresent()) {
+      return;
+    }
+    var packageScope = SysMLv2Mill.scope();
+    packageScope.setName("States");
+    packageScope.setEnclosingScope(SysMLv2Mill.globalScope());
+
+    var statesPackage = SysMLv2Mill.sysMLPackageSymbolBuilder()
+        .setName("States")
+        .setFullName("States")
+        .setPackageName("")
+        .setEnclosingScope(SysMLv2Mill.globalScope())
+        .setSpannedScope(packageScope)
+        .build();
+    packageScope.setSpanningSymbol(statesPackage);
+    SysMLv2Mill.globalScope().add(statesPackage);
+
+    var stateActionScope = SysMLv2Mill.scope();
+    stateActionScope.setName("StateAction");
+    stateActionScope.setEnclosingScope(packageScope);
+
+    var stateAction = SysMLv2Mill.stateDefSymbolBuilder()
+        .setName("StateAction")
+        .setFullName("States.StateAction")
+        .setPackageName("States")
+        .setEnclosingScope(packageScope)
+        .setSpannedScope(stateActionScope)
+        .build();
+
+    packageScope.add(stateAction);
   }
 }
