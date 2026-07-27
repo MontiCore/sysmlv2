@@ -34,8 +34,7 @@ component grammar KerMLExpressions
             |
             (Arguments 
             | FunctionBlock                           
-            | KerMLQualifiedName 
-            | EscapedName)
+            | QualifiedFunctionName)
         )? ;
 
     KerMLIndexExpression implements Expression <130> =
@@ -73,4 +72,7 @@ component grammar KerMLExpressions
 
     KerMLIfElseExpression implements Expression =
         "if" Expression "?" Expression "else" Expression;
+
+    ConditionalImpliesExpression implements Expression <115>, InfixExpression =
+        left:Expression operator:"implies" right:Expression;
 }

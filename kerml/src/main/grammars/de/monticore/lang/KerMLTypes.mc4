@@ -74,6 +74,9 @@ component grammar KerMLTypes
     StructInv =
         "inv" Name? "{" (DocBlock|PackageElement)? "}";
 
+    Test implements PackageElement = 
+        Expression "implies" Expression;
+
     FunctionParameter =
         Modifier
         (FunctionName)+ 
@@ -103,7 +106,7 @@ component grammar KerMLTypes
 
     token EscapedName = "\'"(Name | "==" | "!=" | "===" | "[" | "!==" | "#" | "," | "@" | "@@" | "|" 
     | "&" | "array#" | "+" | "-" | "*" | "/" | "**" | "^" | "==" | "." | "??" | "%" | "~" | "<" | ">"
-    | "<=" | ">=" | "..")"\'";
+    | "<=" | ">=" | "..")+"\'";
 
     QualifiedFunctionName = FunctionName ("::" FunctionName)*;
 

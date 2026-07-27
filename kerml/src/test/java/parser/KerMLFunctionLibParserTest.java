@@ -41,7 +41,7 @@ public class KerMLFunctionLibParserTest {
       "SequenceFunctions.kerml",
       "StringFunctions.kerml",
       "TrigFunctions.kerml",
-      //"VectorFunctions.kerml"
+      "VectorFunctions.kerml"
   })
   public void testParseKernelDataTypeLibrary(String filename) throws IOException {
     String modelFile = "src/test/resources/KernelFunctionLibrary/" + filename;
