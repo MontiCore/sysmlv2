@@ -65,7 +65,7 @@ component grammar KerMLTypes
         (KerMLSpecialization)?
         ("{" 
             (FunctionReturn | FunctionParameter | Feature | Function 
-            | IfElse | Invariant | DocBlock | Connector | Step | Succession)* ("chain")? 
+            | IfElse | Invariant | DocBlock | Connector | Step | Succession| Binding)* ("chain")? 
         "}" | ";");        
 
     StructVar =
@@ -79,7 +79,8 @@ component grammar KerMLTypes
 
     FunctionParameter =
         Modifier
-        (FunctionName)+ 
+        (KerMLRedefinition)?
+        (FunctionName)* 
         (":" type:KerMLQualifiedName)? 
         TypeMultiplicity? 
         ("ordered")? 
@@ -143,16 +144,17 @@ component grammar KerMLTypes
     Step implements PackageElement =
         Modifier
         ("composite")? "step" Name? (":" type:KerMLQualifiedName)?
+        (TypeMultiplicity)?
         ("{" (StepProperty | DocBlock | ";")* "}" | ";") ;
 
     StepProperty = 
         Modifier Name ("=" Expression)? ";" ;
 
     Succession implements PackageElement =
-        Modifier "succession" Expression "then" Expression ";" ;
+        Modifier "succession" (TypeMultiplicity)? Expression "then" (TypeMultiplicity)? Expression ";" ;
 
     Binding implements PackageElement =
-        "binding" Name "=" Expression ";" ;
+        "binding" (Name ("of")?)? (TypeMultiplicity)? left:Expression "=" (TypeMultiplicity)? right:Expression ";" ;
 
     Alias implements PackageElement =
         Modifier "alias" EscapedName "for" KerMLQualifiedName ";" ;
