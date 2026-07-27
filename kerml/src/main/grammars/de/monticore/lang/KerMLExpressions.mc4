@@ -6,15 +6,29 @@ component grammar KerMLExpressions
             de.monticore.expressions.CommonExpressions,
             de.monticore.literals.MCCommonLiterals
 {
+    ConditionalAndExpression implements Expression <120>, InfixExpression =
+        left:Expression operator:"and" right:Expression;
+
+    ConditionalAndExpression2 implements Expression <120>, InfixExpression =
+        left:Expression operator:"&" right:Expression;
+
+    ConditionalOrExpression implements Expression <117>, InfixExpression =
+        left:Expression operator:"or" right:Expression;
+
+    ConditionalOrExpression2 implements Expression <117>, InfixExpression =
+        left:Expression operator:"|" right:Expression;
+
+    ConditionalNotExpression implements Expression <190> =
+        "not" Expression;
 
     FeatureAssignment implements FeatureInit =
         "=" Expression (FeatureBlock | ";");
 
     NullCoalescingExpression implements Expression =
-        Expression "??" Expression ;
+        Expression "??" Expression;
 
     ArrowExpression implements Expression =
-        Expression "->" Expression ;
+        Expression "->" Expression;
 
     KerMLLiteralArgExpression implements Expression =
         Expression (Literal| EscapedName);
@@ -25,12 +39,6 @@ component grammar KerMLExpressions
         ("in" iteratorName:Name ":" iteratorType:KerMLQualifiedName ";")?
         body:Expression
         "}";
-
-    KerMLNotExpression implements Expression =
-        "not" Expression ;
-
-    KerMLLogicalExpression implements Expression =
-        Expression ("and" | "or" | "&" | "|" | "implies" | "xor") Expression ;
 
     KerMLIdentityExpression implements Expression =
         Expression ("===" | "!==") Expression;
@@ -50,8 +58,8 @@ component grammar KerMLExpressions
     KerMLQualifiedNameExpression implements Expression =
         KerMLQualifiedName ;
 
-    KerMLRangeExpression implements Expression =
-        Expression ".." Expression ;
+    KerMLEnumerationExpression implements Expression =
+    "(" start:Expression ".." end:Expression ")" ;
     
     KerMLTupleExpression implements Expression =
         "(" Expression ("," Expression)+ ")" ;
