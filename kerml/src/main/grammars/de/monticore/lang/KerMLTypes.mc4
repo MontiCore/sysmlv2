@@ -21,16 +21,20 @@ component grammar KerMLTypes
     Feature implements PackageElement =
         Modifier
         ("var")?
-        "feature" Name
+        "feature" 
+        ("step" | "chain")?
+        ("chains")?
+        (":>>" | "redefines")?
+        KerMLQualifiedName
         (":" type:KerMLQualifiedName)?
         (TypeMultiplicity)?
         ("ordered")?
         ("nonunique")?
-        ("subsets" subsets:KerMLQualifiedName ("," subsets:KerMLQualifiedName)*)?
-        ("chains" chains:KerMLQualifiedName ("," chains:KerMLQualifiedName)*)?
+        (KerMLSubsetting)?
+        (KerMLChains)?
         (KerMLRedefinition)?
-        ("{" (DocBlock|PackageElement)* "}");
-
+        (FeatureInit | ";");
+        
     Multiplicity implements PackageElement =
         MultiplicityHead
         ("{" (DocBlock)? "}");
@@ -45,7 +49,7 @@ component grammar KerMLTypes
         "function" FunctionName
         ("specializes" superFunctions:(QualifiedFunctionName || ",")+)?
         ("{" 
-            (FunctionReturn | FunctionParameter | TypeFeature | Function | IfElse | Invariant 
+            (FunctionReturn | FunctionParameter | Feature | Function | IfElse | Invariant 
             | DocBlock | Connector | Step | Succession)* ("chain")? 
         "}" | ";");
 
@@ -60,7 +64,7 @@ component grammar KerMLTypes
         Modifier "behavior" Name 
         (KerMLSpecialization)?
         ("{" 
-            (FunctionReturn | FunctionParameter | TypeFeature | Function 
+            (FunctionReturn | FunctionParameter | Feature | Function 
             | IfElse | Invariant | DocBlock | Connector | Step | Succession)* ("chain")? 
         "}" | ";");        
 
@@ -102,22 +106,6 @@ component grammar KerMLTypes
     | "<=" | ">=" | "..")"\'";
 
     QualifiedFunctionName = FunctionName ("::" FunctionName)*;
-
-    TypeFeature implements PackageElement =
-        Modifier
-        "feature" 
-        ( "step" | "chain")?
-        ("chains")?
-        (":>>" | "redefines")?
-        KerMLQualifiedName
-        (":" type:KerMLQualifiedName)?
-        (TypeMultiplicity)?
-        ("ordered")?
-        ("nonunique")?
-        ("subsets" subsets:KerMLQualifiedName ("," subsets:KerMLQualifiedName)*)?
-        ("chains" chains:KerMLQualifiedName ("," chains:KerMLQualifiedName)*)?
-        (KerMLRedefinition)?
-        (FeatureInit | ";");
 
     interface FeatureInit;
 
@@ -174,10 +162,18 @@ component grammar KerMLTypes
     ShorthandRedefinition implements PackageElement =
         ":>>" Name "=" Expression ";" ;
 
+    // Same as SysML
+
+    KerMLSpecialization =
+        (":>" | "specializes") specialized:(KerMLQualifiedName || ",")+ ;
+
+    KerMLSubsetting = 
+        (":>" | "subsets") subset:(KerMLQualifiedName || ",")+ ;
+
     KerMLRedefinition = 
         (":>>" | "redefines") redefined:(KerMLQualifiedName || ",")+ ;
 
-    KerMLSpecialization =
-        (":>" | "specializes") superTypes:(KerMLQualifiedName || ",")+ ;
-
+    // Not in SysML but same style
+    KerMLChains = 
+        (":>" | "chains") chained:(KerMLQualifiedName || ",")+ ;
 }
