@@ -11,7 +11,7 @@ component grammar KerMLTypes
 
     DatatypeHead =
         ("abstract")? "datatype" Name
-        ((":>" | "specializes") superTypes:KerMLQualifiedName ("," superTypes:KerMLQualifiedName)*)?
+        (KerMLSpecialization)?
         ("intersects" intersectTypes:KerMLQualifiedName ("," intersectTypes:KerMLQualifiedName)*)?;
 
     Classifier implements PackageElement =
@@ -28,7 +28,7 @@ component grammar KerMLTypes
         ("nonunique")?
         ("subsets" subsets:KerMLQualifiedName ("," subsets:KerMLQualifiedName)*)?
         ("chains" chains:KerMLQualifiedName ("," chains:KerMLQualifiedName)*)?
-        ((":>>"| "redefines") redefined:KerMLQualifiedName ("," redefined:KerMLQualifiedName)*)?
+        (KerMLRedefinition)?
         ("{" (DocBlock|PackageElement)* "}");
 
     Multiplicity implements PackageElement =
@@ -43,7 +43,7 @@ component grammar KerMLTypes
     Function implements PackageElement =
         Modifier
         "function" FunctionName
-        ("specializes" superFunctions:QualifiedFunctionName ("," superFunctions:QualifiedFunctionName)*)?
+        ("specializes" superFunctions:(QualifiedFunctionName || ",")+)?
         ("{" 
             (FunctionReturn | FunctionParameter | TypeFeature | Function | IfElse | Invariant 
             | DocBlock | Connector | Step | Succession)* ("chain")? 
@@ -58,7 +58,7 @@ component grammar KerMLTypes
 
     Behavior implements PackageElement =
         Modifier "behavior" Name 
-        ("specializes" superBehaviors:KerMLQualifiedName ("," superBehaviors:KerMLQualifiedName)*)?
+        (KerMLSpecialization)?
         ("{" 
             (FunctionReturn | FunctionParameter | TypeFeature | Function 
             | IfElse | Invariant | DocBlock | Connector | Step | Succession)* ("chain")? 
@@ -116,7 +116,7 @@ component grammar KerMLTypes
         ("nonunique")?
         ("subsets" subsets:KerMLQualifiedName ("," subsets:KerMLQualifiedName)*)?
         ("chains" chains:KerMLQualifiedName ("," chains:KerMLQualifiedName)*)?
-        ((":>>"| "redefines") redefined:KerMLQualifiedName ("," redefined:KerMLQualifiedName)*)?
+        (KerMLRedefinition)?
         (FeatureInit | ";");
 
     interface FeatureInit;
@@ -169,8 +169,15 @@ component grammar KerMLTypes
         Modifier "alias" EscapedName "for" KerMLQualifiedName ";" ;
 
     NamelessRedefinitionFeature implements PackageElement =
-        Modifier "feature" (":>>" | "redefines") KerMLQualifiedName ("," KerMLQualifiedName)* ";" ;
+        Modifier "feature" KerMLRedefinition ";" ;
 
     ShorthandRedefinition implements PackageElement =
         ":>>" Name "=" Expression ";" ;
+
+    KerMLRedefinition = 
+        (":>>" | "redefines") redefined:(KerMLQualifiedName || ",")+ ;
+
+    KerMLSpecialization =
+        (":>" | "specializes") superTypes:(KerMLQualifiedName || ",")+ ;
+
 }

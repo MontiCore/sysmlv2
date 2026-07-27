@@ -26,20 +26,16 @@ component grammar KerMLExpressions
         "(" start:Expression ".." end:Expression ")" ;
     // Differs from Sysml but similar 
 
-    KerMLIteratorExpression implements Expression <120> =
-        Expression "->" Name
-        "{"
-        ("in" iteratorName:Name ":" iteratorType:KerMLQualifiedName ";")?
-        body:Expression
-        "}";
-
     KerMLFunctionOperationExpression implements Expression <120> =
-        Expression "->" Name 
-        ( 
-            Arguments 
-          | FunctionBlock                           
-          | KerMLQualifiedName 
-          | EscapedName  
+        Expression "->" Name
+        (
+            ("{" ("in" iteratorName:Name ":" iteratorType:KerMLQualifiedName ";")?
+            body:Expression "}")
+            |
+            (Arguments 
+            | FunctionBlock                           
+            | KerMLQualifiedName 
+            | EscapedName)
         )? ;
 
     KerMLIndexExpression implements Expression <130> =
