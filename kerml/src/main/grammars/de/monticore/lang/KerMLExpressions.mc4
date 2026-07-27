@@ -34,8 +34,11 @@ component grammar KerMLExpressions
             |
             (Arguments 
             | FunctionBlock                           
-            | QualifiedFunctionName)
+            | KerMLQualifiedFunctionName)
         )? ;
+
+    ArrowExpression implements Expression <110>, InfixExpression =
+        left:Expression operator:"->" right:Expression;
 
     KerMLIndexExpression implements Expression <130> =
         Expression "#" ( "(" Expression ")" | "(index)" );
@@ -46,9 +49,6 @@ component grammar KerMLExpressions
 
     NullCoalescingExpression implements Expression <110> =
         Expression "??" Expression;
-
-    ArrowExpression implements Expression <100> =
-        Expression "->" Expression;
 
     KerMLLiteralArgExpression implements Expression <140> =
         Expression (Literal| EscapedName);

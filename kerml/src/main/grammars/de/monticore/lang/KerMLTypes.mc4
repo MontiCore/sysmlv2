@@ -47,7 +47,7 @@ component grammar KerMLTypes
     Function implements PackageElement =
         Modifier
         "function" FunctionName
-        ("specializes" superFunctions:(QualifiedFunctionName || ",")+)?
+        ( (":>" | "specializes") superFunctions:(KerMLQualifiedFunctionName || ",")+ )?
         ("{" 
             (FunctionReturn | FunctionParameter | Feature | Function | IfElse | Invariant 
             | DocBlock | Connector | Step | Succession)* ("chain")? 
@@ -72,7 +72,7 @@ component grammar KerMLTypes
         Modifier Name ":" (Name)? (":>>" Name)? ";";
 
     StructInv =
-        "inv" Name? "{" (DocBlock|PackageElement)? "}";
+        "inv" MCQualifiedName? "{" (DocBlock|PackageElement|Expression)* "}";
 
     Test implements PackageElement = 
         Expression "implies" Expression;
@@ -95,7 +95,7 @@ component grammar KerMLTypes
         ( ("=" | "default") Expression )? 
         (FeatureBlock | ";") ;
 
-    FunctionCall = (QualifiedFunctionName? "(" (Expression ("," Expression)*)?")");
+    FunctionCall = (KerMLQualifiedFunctionName? "(" (Expression ("," Expression)*)?")");
 
     KerMLAsExpression implements Expression <150> =
         left:Expression "as" right:KerMLQualifiedName;
@@ -108,7 +108,7 @@ component grammar KerMLTypes
     | "&" | "array#" | "+" | "-" | "*" | "/" | "**" | "^" | "==" | "." | "??" | "%" | "~" | "<" | ">"
     | "<=" | ">=" | "..")+"\'";
 
-    QualifiedFunctionName = FunctionName ("::" FunctionName)*;
+    KerMLQualifiedFunctionName = FunctionName ("::" FunctionName)*;
 
     interface FeatureInit;
 
@@ -119,9 +119,7 @@ component grammar KerMLTypes
     Bound = NatLiteral | "*" | Name;
 
     IfElse =
-        "if" IfElsePart "?" IfElsePart "else" IfElsePart;
-
-    IfElsePart = IfElseElement+ ;
+        "if" Expression "?" Expression "else" Expression;
 
     IfElseElement =
           Name | NatLiteral | "null" | "in" | "or" | "and" | "as"
@@ -131,7 +129,7 @@ component grammar KerMLTypes
         | "[" (IfElseElement | ";")* "]" ;
 
     Invariant implements PackageElement =
-        "inv" MCQualifiedName? "{" MCQualifiedName? Expression "}";
+        "inv" MCQualifiedName? "{" (DocBlock | PackageElement | Expression)* "}";
 
     Connector implements PackageElement = 
         Modifier

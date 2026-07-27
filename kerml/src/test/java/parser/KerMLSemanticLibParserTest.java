@@ -27,21 +27,21 @@ public class KerMLSemanticLibParserTest {
   @ParameterizedTest
   @ValueSource(strings = {
       "Base.kerml",
-      //"Clocks.kerml"
-      //"ControlPerformances.kerml"
-      //"FeatureReferencingPerformances.kerml"
-      //"KerML.kerml"
-      //"Links.kerml"
-      //"Metaobjects.kerml"
-      //"Objects.kerml"
-      //"Observation.kerml"
-      //"Occurrences.kerml"
-      //"Performances.kerml"
-      //"SpatialFrames.kerml"
-      //"StatePerformances.kerml"
-      //"Transfers.kerml"
-      //"TransitionPerformance.kerml"
-      //"Triggers.kerml"
+      "Clocks.kerml",
+      "ControlPerformances.kerml"
+      //"FeatureReferencingPerformances.kerml",
+      //"KerML.kerml",
+      //"Links.kerml",
+      //"Metaobjects.kerml",
+      //"Objects.kerml",
+      //"Observation.kerml",
+      //"Occurrences.kerml",
+      //"Performances.kerml",
+      //"SpatialFrames.kerml",
+      //"StatePerformances.kerml",
+      //"Transfers.kerml",
+      //"TransitionPerformance.kerml",
+      //"Triggers.kerml",
   })
   public void testParseKernelDataTypeLibrary(String filename) throws IOException {
     String modelFile = "src/test/resources/KernelSemanticLibrary/" + filename;
