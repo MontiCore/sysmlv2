@@ -26,21 +26,19 @@ component grammar KerMLExpressions
         "(" start:Expression ".." end:Expression ")" ;
     // Differs from Sysml but similar 
 
-    KerMLIteratorExpression implements Expression <120> =
-        Expression "->" Name
-        "{"
-        ("in" iteratorName:Name ":" iteratorType:KerMLQualifiedName ";")?
-        body:Expression
-        "}";
-
     KerMLFunctionOperationExpression implements Expression <120> =
-        Expression "->" Name 
-        ( 
-            Arguments 
-          | FunctionBlock                           
-          | KerMLQualifiedName 
-          | EscapedName  
+        Expression "->" Name
+        (
+            ("{" ("in" iteratorName:Name ":" iteratorType:KerMLQualifiedName ";")?
+            body:Expression "}")
+            |
+            (Arguments 
+            | FunctionBlock                           
+            | KerMLQualifiedFunctionName)
         )? ;
+
+    ArrowExpression implements Expression <110>, InfixExpression =
+        left:Expression operator:"->" right:Expression;
 
     KerMLIndexExpression implements Expression <130> =
         Expression "#" ( "(" Expression ")" | "(index)" );
@@ -51,9 +49,6 @@ component grammar KerMLExpressions
 
     NullCoalescingExpression implements Expression <110> =
         Expression "??" Expression;
-
-    ArrowExpression implements Expression <100> =
-        Expression "->" Expression;
 
     KerMLLiteralArgExpression implements Expression <140> =
         Expression (Literal| EscapedName);
@@ -77,4 +72,7 @@ component grammar KerMLExpressions
 
     KerMLIfElseExpression implements Expression =
         "if" Expression "?" Expression "else" Expression;
+
+    ConditionalImpliesExpression implements Expression <115>, InfixExpression =
+        left:Expression operator:"implies" right:Expression;
 }
