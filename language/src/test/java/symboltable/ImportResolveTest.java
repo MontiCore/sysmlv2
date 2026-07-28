@@ -5,6 +5,8 @@ import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
+import de.monticore.lang.sysmlv2.symboltable.completers.ImportsCompleter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.Disabled;
@@ -14,7 +16,7 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ImportResolveTest {
+public class ImportResolveTest extends NervigeSymboltableTests {
 
   /**
    * Tests the general resolution of FQN without using imports.
@@ -279,6 +281,56 @@ public class ImportResolveTest {
 
     assertThat(optParent).isPresent(); // check if we did resolve
     assertThat(optParent.get().getFullName()).isEqualTo("Other.InnerOther.Parent");
+  }
+
+  @Test
+  public void testSpecialImports() throws IOException {
+    var as3 = process(""
+        + "package WithNesting {"
+        + "  part def B {"
+        + "    part b {"
+        + "      port c;"
+        + "    }"
+        + "  }"
+        + "  "
+        + "  part wrong :> WithNesting::B.b;"
+        + "  part resolves :> WithNesting::B::b;"
+        + "  part wrong1 :> b;"
+        + "  part resolves1 :> B::b;"
+        + "  port resolves2 :> B::b.c;"
+        + "  port resolves3 :> B::b::c;"
+        + ""
+        + "  part a: B {"
+        + "    part g {"
+        + "      port h;"
+        + "    }"
+        + "  }"
+        + ""
+        + "  part e :> a.b;"
+        + "  port f :> a.b.c;"
+        + "  port j :> a.g.h;"
+        + "  part i :> 'Wi:th\\Special Chars '::k;"
+        + "  part o :> 'Wi:th\\Special Chars '::k.b;"
+        + ""
+        + "  part def E :> B;"
+        + "  part resolves4 :> E::b;"
+        + "  part m : E;"
+        + "  part n :> m.b;"
+        + "}");
+
+    var as4 = process(""
+        + "package ForImports {"
+        + "  private import WithNesting::**;"
+        + "}");
+
+    var package4 = as4.getSubScopes().get(0);
+    SysMLv2Traverser tra = SysMLv2Mill.inheritanceTraverser();
+    tra.add4SysMLImportsAndPackages(new ImportsCompleter());
+    package4.getAstNode().accept(tra);
+
+    // what about fully qn with the same name but different symbols that span the scope.
+
+    // resolving from an unnamed scope with/without imports
   }
 
 }

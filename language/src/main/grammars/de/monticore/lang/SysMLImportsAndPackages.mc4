@@ -3,6 +3,8 @@ package de.monticore.lang;
 
 component grammar SysMLImportsAndPackages extends SysMLBasis {
 
+  scoperule = imports:de.monticore.symboltable.ImportStatement*;
+
   /**
    * From PrivateImportTest.sysml: "import all" overrides private import.
    */
