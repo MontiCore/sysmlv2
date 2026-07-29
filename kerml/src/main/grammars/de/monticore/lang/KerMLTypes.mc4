@@ -86,7 +86,8 @@ component grammar KerMLTypes
 
     Behavior implements PackageElement =
         Modifier "behavior" Name 
-        (KerMLSpecialization)?
+        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition | KerMLChains | KerMLCrossing 
+        | KerMLIntersection | KerMLInverse | KerMLUnion | KerMLDisjoint )*
         ("{" 
             (Feature | Function | IfElse | Invariant | DocBlock | Connector 
             | Step | Succession | Binding | FunctionReturn | FunctionParameter)* ("chain")? 
@@ -96,7 +97,7 @@ component grammar KerMLTypes
         Modifier Name ":" (Name)? (":>>" Name)? ";";
 
     StructInv =
-        "inv" MCQualifiedName? "{" (DocBlock|PackageElement|Expression)* "}";
+        Modifier "inv" MCQualifiedName? "{" (DocBlock|PackageElement|Expression)* "}";
 
     Test implements PackageElement = 
         Expression "implies" Expression;
@@ -153,7 +154,7 @@ component grammar KerMLTypes
         | "[" (IfElseElement | ";")* "]" ;
 
     Invariant implements PackageElement =
-        "inv" MCQualifiedName? "{" (DocBlock | PackageElement | Expression)* "}";
+        Modifier "inv" MCQualifiedName? "{" (DocBlock | PackageElement | Expression)* "}";
 
     Connector implements PackageElement = 
         Modifier
@@ -211,7 +212,7 @@ component grammar KerMLTypes
         Modifier Name ("=" Expression)? ";" ;
 
     Succession implements PackageElement =
-        Modifier "succession" (TypeMultiplicity)? Expression "then" (TypeMultiplicity)? Expression ";" ;
+        Modifier "succession" ("all")? (TypeMultiplicity)? Expression "then" (TypeMultiplicity)? Expression ";" ;
 
     Binding implements PackageElement =
         Modifier "binding" (Name ("of")?)? (TypeMultiplicity)? left:Expression "=" 
