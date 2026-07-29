@@ -14,7 +14,7 @@ component grammar KerMLBase
         ( "{"(DocBlock | ImportStatement | PackageElement)* "}");
 
     // Handels import statements
-    ImportStatement =
+    ImportStatement implements PackageElement =
         Modifier "import" KerMLQualifiedName ("::" "*")? ";";
 
     /*
