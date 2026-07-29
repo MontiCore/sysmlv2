@@ -10,6 +10,11 @@ import de.monticore.lang.sysmlbasis._visitor.SysMLBasisVisitor2;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *  Besucht alle SysMLElemente, die das Interface SysMLUsage
+ *  implementieren und ändert falsch interpretierte Specializations zu
+ *  Subsettings um
+ */
 public class SpecializationToSubsettingVisitor implements SysMLBasisVisitor2 {
 
   @Override

@@ -5,7 +5,6 @@ import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLSubsetting;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLUsage;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTItemDef;
@@ -37,152 +36,236 @@ public class SpecializationToSubsettingVisitorTest {
 
   @Test
   public void attributeDefNoChange() throws IOException {
-    ASTSysMLModel ast = parse(
+    // Checks that attribute definition specializations are not rewritten.
+    Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse_String(
         "attribute def Lebewesen; "
             + "attribute def Person :> Lebewesen;"
     );
-
-    ASTAttributeDef person = (ASTAttributeDef) ast.getSysMLElement(1);
-    assertDefinitionSpecialization(person.getSpecializationList());
-    applyVisitor(ast);
-    assertDefinitionSpecialization(person.getSpecializationList());
-  }
-
-  @Test
-  public void attributeUsageChange() throws IOException {
-    ASTSysMLModel ast = parse(
-        "attribute def Person; "
-            + "attribute alleMenschenDieserErde; "
-            + "attribute p : Person :> alleMenschenDieserErde;"
-    );
-
-    ASTAttributeUsage p = (ASTAttributeUsage) ast.getSysMLElement(2);
-    assertUsageBeforeRewrite(p);
-    applyVisitor(ast);
-    assertUsageAfterRewrite(p);
-  }
-
-  @Test
-  public void partDefNoChange() throws IOException {
-    ASTSysMLModel ast = parse(
-        "part def Vehicle; "
-            + "part def Car :> Vehicle;"
-    );
-
-    ASTPartDef carDef = (ASTPartDef) ast.getSysMLElement(1);
-    assertDefinitionSpecialization(carDef.getSpecializationList());
-    applyVisitor(ast);
-    assertDefinitionSpecialization(carDef.getSpecializationList());
-  }
-
-  @Test
-  public void partUsageChange() throws IOException {
-    ASTSysMLModel ast = parse(
-        "part def Car; "
-            + "part fleetCar; "
-            + "part car : Car :> fleetCar;"
-    );
-
-    ASTPartUsage carUsage = (ASTPartUsage) ast.getSysMLElement(2);
-    assertUsageBeforeRewrite(carUsage);
-    applyVisitor(ast);
-    assertUsageAfterRewrite(carUsage);
-  }
-
-  @Test
-  public void itemDefNoChange() throws IOException {
-    ASTSysMLModel ast = parse(
-        "item def Payload; "
-            + "item def SensorData :> Payload;"
-    );
-
-    ASTItemDef dataDef = (ASTItemDef) ast.getSysMLElement(1);
-    assertDefinitionSpecialization(dataDef.getSpecializationList());
-    applyVisitor(ast);
-    assertDefinitionSpecialization(dataDef.getSpecializationList());
-  }
-
-  @Test
-  public void itemUsageChange() throws IOException {
-    ASTSysMLModel ast = parse(
-        "item def SensorData; "
-            + "item storedPayload; "
-            + "item data : SensorData :> storedPayload;"
-    );
-
-    ASTItemUsage dataUsage = (ASTItemUsage) ast.getSysMLElement(2);
-    assertUsageBeforeRewrite(dataUsage);
-    applyVisitor(ast);
-    assertUsageAfterRewrite(dataUsage);
-  }
-
-  @Test
-  public void portDefNoChange() throws IOException {
-    ASTSysMLModel ast = parse(
-        "port def InterfaceEnd; "
-            + "port def DataPort :> InterfaceEnd;"
-    );
-
-    ASTPortDef dataPortDef = (ASTPortDef) ast.getSysMLElement(1);
-    assertDefinitionSpecialization(dataPortDef.getSpecializationList());
-    applyVisitor(ast);
-    assertDefinitionSpecialization(dataPortDef.getSpecializationList());
-  }
-
-  @Test
-  public void portUsageChange() throws IOException {
-    ASTSysMLModel ast = parse(
-        "port def DataPort; "
-            + "port externalPort; "
-            + "port dataPort : DataPort :> externalPort;"
-    );
-
-    ASTPortUsage dataPortUsage = (ASTPortUsage) ast.getSysMLElement(2);
-    assertUsageBeforeRewrite(dataPortUsage);
-    applyVisitor(ast);
-    assertUsageAfterRewrite(dataPortUsage);
-  }
-
-  private static ASTSysMLModel parse(String model) throws IOException {
-    Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse_String(model);
     assertThat(ast).isPresent();
-    return ast.get();
-  }
 
-  private static void applyVisitor(ASTSysMLModel ast) {
+    ASTSysMLModel model = ast.get();
+    ASTAttributeDef person = (ASTAttributeDef) model.getSysMLElement(1);
+    List<ASTSpecialization> before = person.getSpecializationList();
+    assertThat(before).hasSize(1);
+    assertThat(before.get(0)).isInstanceOf(ASTSysMLSpecialization.class);
+    assertThat(before.get(0)).isNotInstanceOf(ASTSysMLSubsetting.class);
+
     SpecializationToSubsettingVisitor visitor =
         new SpecializationToSubsettingVisitor();
     var traverser = SysMLv2Mill.inheritanceTraverser();
     traverser.add4SysMLBasis(visitor);
-    ast.accept(traverser);
+    model.accept(traverser);
+
+    List<ASTSpecialization> after = person.getSpecializationList();
+    assertThat(after).hasSize(1);
+    assertThat(after.get(0)).isInstanceOf(ASTSysMLSpecialization.class);
+    assertThat(after.get(0)).isNotInstanceOf(ASTSysMLSubsetting.class);
   }
 
-  private static void assertDefinitionSpecialization(
-      List<ASTSpecialization> specializations) {
-    assertThat(specializations).hasSize(1);
-    assertThat(specializations.get(0)).isInstanceOf(ASTSysMLSpecialization.class);
-    assertThat(specializations.get(0)).isNotInstanceOf(ASTSysMLSubsetting.class);
-  }
+  @Test
+  public void attributeUsageChange() throws IOException {
+    // Checks that attribute usage specializations are rewritten to subsettings.
+    Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse_String(
+        "attribute def Person; "
+            + "attribute alleMenschenDieserErde; "
+            + "attribute p : Person :> alleMenschenDieserErde;"
+    );
+    assertThat(ast).isPresent();
 
-  private static void assertUsageBeforeRewrite(ASTSysMLUsage usage) {
-    List<ASTSpecialization> before = usage.getSpecializationList();
-
-    // Parser-Verhalten ohne Visitor:
-    // ": Type" ist korrekt ein Typing.
-    // ":> baseUsage" wird wegen der Grammatik zunächst falsch als Specialization geparst.
+    ASTSysMLModel model = ast.get();
+    ASTAttributeUsage p = (ASTAttributeUsage) model.getSysMLElement(2);
+    List<ASTSpecialization> before = p.getSpecializationList();
     assertThat(before).hasSize(2);
     assertThat(before.get(0)).isInstanceOf(ASTSysMLTyping.class);
     assertThat(before.get(1)).isInstanceOf(ASTSysMLSpecialization.class);
     assertThat(before.get(1)).isNotInstanceOf(ASTSysMLSubsetting.class);
+
+    SpecializationToSubsettingVisitor visitor =
+        new SpecializationToSubsettingVisitor();
+    var traverser = SysMLv2Mill.inheritanceTraverser();
+    traverser.add4SysMLBasis(visitor);
+    model.accept(traverser);
+
+    List<ASTSpecialization> after = p.getSpecializationList();
+    assertThat(after).hasSize(2);
+    assertThat(after.get(0)).isInstanceOf(ASTSysMLTyping.class);
+    assertThat(after.get(1)).isInstanceOf(ASTSysMLSubsetting.class);
+    assertThat(after.get(1)).isNotInstanceOf(ASTSysMLSpecialization.class);
   }
 
-  private static void assertUsageAfterRewrite(ASTSysMLUsage usage) {
-    List<ASTSpecialization> after = usage.getSpecializationList();
+  @Test
+  public void partDefNoChange() throws IOException {
+    // Checks that part definition specializations are not rewritten.
+    Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse_String(
+        "part def Vehicle; "
+            + "part def Car :> Vehicle;"
+    );
+    assertThat(ast).isPresent();
 
-    // Nach dem Visitor:
-    // Typing bleibt erhalten.
-    // Die falsche Specialization ist weg.
-    // Stattdessen gibt es genau ein Subsetting.
+    ASTSysMLModel model = ast.get();
+    ASTPartDef carDef = (ASTPartDef) model.getSysMLElement(1);
+    List<ASTSpecialization> before = carDef.getSpecializationList();
+    assertThat(before).hasSize(1);
+    assertThat(before.get(0)).isInstanceOf(ASTSysMLSpecialization.class);
+    assertThat(before.get(0)).isNotInstanceOf(ASTSysMLSubsetting.class);
+
+    SpecializationToSubsettingVisitor visitor =
+        new SpecializationToSubsettingVisitor();
+    var traverser = SysMLv2Mill.inheritanceTraverser();
+    traverser.add4SysMLBasis(visitor);
+    model.accept(traverser);
+
+    List<ASTSpecialization> after = carDef.getSpecializationList();
+    assertThat(after).hasSize(1);
+    assertThat(after.get(0)).isInstanceOf(ASTSysMLSpecialization.class);
+    assertThat(after.get(0)).isNotInstanceOf(ASTSysMLSubsetting.class);
+  }
+
+  @Test
+  public void partUsageChange() throws IOException {
+    // Checks that part usage specializations are rewritten to subsettings.
+    Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse_String(
+        "part def Car; "
+            + "part fleetCar; "
+            + "part car : Car :> fleetCar;"
+    );
+    assertThat(ast).isPresent();
+
+    ASTSysMLModel model = ast.get();
+    ASTPartUsage carUsage = (ASTPartUsage) model.getSysMLElement(2);
+    List<ASTSpecialization> before = carUsage.getSpecializationList();
+    assertThat(before).hasSize(2);
+    assertThat(before.get(0)).isInstanceOf(ASTSysMLTyping.class);
+    assertThat(before.get(1)).isInstanceOf(ASTSysMLSpecialization.class);
+    assertThat(before.get(1)).isNotInstanceOf(ASTSysMLSubsetting.class);
+
+    SpecializationToSubsettingVisitor visitor =
+        new SpecializationToSubsettingVisitor();
+    var traverser = SysMLv2Mill.inheritanceTraverser();
+    traverser.add4SysMLBasis(visitor);
+    model.accept(traverser);
+
+    List<ASTSpecialization> after = carUsage.getSpecializationList();
+    assertThat(after).hasSize(2);
+    assertThat(after.get(0)).isInstanceOf(ASTSysMLTyping.class);
+    assertThat(after.get(1)).isInstanceOf(ASTSysMLSubsetting.class);
+    assertThat(after.get(1)).isNotInstanceOf(ASTSysMLSpecialization.class);
+  }
+
+  @Test
+  public void itemDefNoChange() throws IOException {
+    // Checks that item definition specializations are not rewritten.
+    Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse_String(
+        "item def Payload; "
+            + "item def SensorData :> Payload;"
+    );
+    assertThat(ast).isPresent();
+
+    ASTSysMLModel model = ast.get();
+    ASTItemDef dataDef = (ASTItemDef) model.getSysMLElement(1);
+    List<ASTSpecialization> before = dataDef.getSpecializationList();
+    assertThat(before).hasSize(1);
+    assertThat(before.get(0)).isInstanceOf(ASTSysMLSpecialization.class);
+    assertThat(before.get(0)).isNotInstanceOf(ASTSysMLSubsetting.class);
+
+    SpecializationToSubsettingVisitor visitor =
+        new SpecializationToSubsettingVisitor();
+    var traverser = SysMLv2Mill.inheritanceTraverser();
+    traverser.add4SysMLBasis(visitor);
+    model.accept(traverser);
+
+    List<ASTSpecialization> after = dataDef.getSpecializationList();
+    assertThat(after).hasSize(1);
+    assertThat(after.get(0)).isInstanceOf(ASTSysMLSpecialization.class);
+    assertThat(after.get(0)).isNotInstanceOf(ASTSysMLSubsetting.class);
+  }
+
+  @Test
+  public void itemUsageChange() throws IOException {
+    // Checks that item usage specializations are rewritten to subsettings.
+    Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse_String(
+        "item def SensorData; "
+            + "item storedPayload; "
+            + "item data : SensorData :> storedPayload;"
+    );
+    assertThat(ast).isPresent();
+
+    ASTSysMLModel model = ast.get();
+    ASTItemUsage dataUsage = (ASTItemUsage) model.getSysMLElement(2);
+    List<ASTSpecialization> before = dataUsage.getSpecializationList();
+    assertThat(before).hasSize(2);
+    assertThat(before.get(0)).isInstanceOf(ASTSysMLTyping.class);
+    assertThat(before.get(1)).isInstanceOf(ASTSysMLSpecialization.class);
+    assertThat(before.get(1)).isNotInstanceOf(ASTSysMLSubsetting.class);
+
+    SpecializationToSubsettingVisitor visitor =
+        new SpecializationToSubsettingVisitor();
+    var traverser = SysMLv2Mill.inheritanceTraverser();
+    traverser.add4SysMLBasis(visitor);
+    model.accept(traverser);
+
+    List<ASTSpecialization> after = dataUsage.getSpecializationList();
+    assertThat(after).hasSize(2);
+    assertThat(after.get(0)).isInstanceOf(ASTSysMLTyping.class);
+    assertThat(after.get(1)).isInstanceOf(ASTSysMLSubsetting.class);
+    assertThat(after.get(1)).isNotInstanceOf(ASTSysMLSpecialization.class);
+  }
+
+  @Test
+  public void portDefNoChange() throws IOException {
+    // Checks that port definition specializations are not rewritten.
+    Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse_String(
+        "port def InterfaceEnd; "
+            + "port def DataPort :> InterfaceEnd;"
+    );
+    assertThat(ast).isPresent();
+
+    ASTSysMLModel model = ast.get();
+    ASTPortDef dataPortDef = (ASTPortDef) model.getSysMLElement(1);
+    List<ASTSpecialization> before = dataPortDef.getSpecializationList();
+    assertThat(before).hasSize(1);
+    assertThat(before.get(0)).isInstanceOf(ASTSysMLSpecialization.class);
+    assertThat(before.get(0)).isNotInstanceOf(ASTSysMLSubsetting.class);
+
+    SpecializationToSubsettingVisitor visitor =
+        new SpecializationToSubsettingVisitor();
+    var traverser = SysMLv2Mill.inheritanceTraverser();
+    traverser.add4SysMLBasis(visitor);
+    model.accept(traverser);
+
+    List<ASTSpecialization> after = dataPortDef.getSpecializationList();
+    assertThat(after).hasSize(1);
+    assertThat(after.get(0)).isInstanceOf(ASTSysMLSpecialization.class);
+    assertThat(after.get(0)).isNotInstanceOf(ASTSysMLSubsetting.class);
+  }
+
+  @Test
+  public void portUsageChange() throws IOException {
+    // Checks that port usage specializations are rewritten to subsettings.
+    Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse_String(
+        "port def DataPort; "
+            + "port externalPort; "
+            + "port dataPort : DataPort :> externalPort;"
+    );
+    assertThat(ast).isPresent();
+
+    ASTSysMLModel model = ast.get();
+    ASTPortUsage dataPortUsage = (ASTPortUsage) model.getSysMLElement(2);
+    List<ASTSpecialization> before = dataPortUsage.getSpecializationList();
+
+    assertThat(before).hasSize(2);
+    assertThat(before.get(0)).isInstanceOf(ASTSysMLTyping.class);
+    assertThat(before.get(1)).isInstanceOf(ASTSysMLSpecialization.class);
+    assertThat(before.get(1)).isNotInstanceOf(ASTSysMLSubsetting.class);
+
+    SpecializationToSubsettingVisitor visitor =
+        new SpecializationToSubsettingVisitor();
+    var traverser = SysMLv2Mill.inheritanceTraverser();
+    traverser.add4SysMLBasis(visitor);
+    model.accept(traverser);
+
+    List<ASTSpecialization> after = dataPortUsage.getSpecializationList();
+
     assertThat(after).hasSize(2);
     assertThat(after.get(0)).isInstanceOf(ASTSysMLTyping.class);
     assertThat(after.get(1)).isInstanceOf(ASTSysMLSubsetting.class);
