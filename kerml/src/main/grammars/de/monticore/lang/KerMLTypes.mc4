@@ -30,11 +30,14 @@ component grammar KerMLTypes
         ("step" | "chain")?
         ("chains")?
         (":>>" | "redefines")?
-        name:KerMLQualifiedName?
+        (name:KerMLQualifiedName? (TypeMultiplicity)?)? 
+        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition 
+        | KerMLChains | KerMLCrossing | KerMLIntersection )*
         (":" type:KerMLQualifiedName)?
         (TypeMultiplicity
             |"ordered"
             |"nonunique"
+            | KerMLSpecialization
             | KerMLSubsetting
             | KerMLChains
             | KerMLRedefinition
@@ -154,6 +157,8 @@ component grammar KerMLTypes
         (shortName:KerMLQualifiedName (shortMultiplicity:TypeMultiplicity)?)?
         "step" 
         (name:KerMLQualifiedName)? 
+        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition | KerMLChains 
+        | KerMLCrossing | KerMLIntersection )*
         (":" type:KerMLQualifiedName)?
         ( TypeMultiplicity | "ordered" | "nonunique" | KerMLSubsetting 
         | KerMLChains | KerMLRedefinition | KerMLCrossing | KerMLIntersection)*
