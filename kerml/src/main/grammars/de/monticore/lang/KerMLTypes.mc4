@@ -6,6 +6,9 @@ component grammar KerMLTypes
             de.monticore.literals.MCCommonLiterals,
             de.monticore.expressions.ExpressionsBasis
 {
+    @Override
+    KerMLQualifiedName = Funparts:FunctionName (("::" | ".") Funparts:FunctionName)*;
+
     Datatype implements PackageElement =
         DatatypeHead ("{" (DocBlock|PackageElement)* "}" | ";");
 
@@ -15,24 +18,48 @@ component grammar KerMLTypes
         ("intersects" intersectTypes:KerMLQualifiedName ("," intersectTypes:KerMLQualifiedName)*)?;
 
     Classifier implements PackageElement =
-        ("abstract") ? ("classifier") Name
-        ("{" (DocBlock|PackageElement)* "}");
+        Modifier
+        ("classifier" | "subclassifier" | "predicate") ("all")? 
+        Name (TypeMultiplicity)?
+        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition | KerMLChains 
+        | KerMLCrossing | KerMLIntersection | KerMLInverse | KerMLUnion | KerMLDisjoint )*
+        ("{" (DocBlock|PackageElement)* "}"| ";");
 
     Feature implements PackageElement =
-        Modifier
+        Modifier(KerMLSpecialization)?
+        (KerMLIntersection)?
+        (KerMLDisjoint)?
+        ("composite")?
         ("var")?
-        "feature" 
+        (shortName:KerMLQualifiedName (shortMultiplicity:TypeMultiplicity)?)?
+        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition 
+        | KerMLChains | KerMLCrossing | KerMLIntersection 
+        | KerMLInverse | KerMLUnion | KerMLReferences | KerMLDisjoint)*
+        (preMultiplicity:TypeMultiplicity)?
+        ("feature" | "expr" | "portion" ("feature" | "expr")?)?
+        ("all")?
         ("step" | "chain")?
         ("chains")?
         (":>>" | "redefines")?
-        KerMLQualifiedName
+        (name:KerMLQualifiedName? (TypeMultiplicity)?)? 
+        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition 
+        | KerMLChains | KerMLCrossing | KerMLIntersection 
+        | KerMLInverse | KerMLUnion | KerMLReferences | KerMLDisjoint)*
         (":" type:KerMLQualifiedName)?
-        (TypeMultiplicity)?
-        ("ordered")?
-        ("nonunique")?
-        (KerMLSubsetting)?
-        (KerMLChains)?
-        (KerMLRedefinition)?
+        (TypeMultiplicity
+            |"ordered"
+            |"nonunique"
+            | KerMLSpecialization
+            | KerMLSubsetting
+            | KerMLChains
+            | KerMLRedefinition
+            | KerMLCrossing
+            | KerMLIntersection
+            | KerMLInverse 
+            | KerMLUnion
+            | KerMLReferences
+            |KerMLDisjoint)*
+        ( ("=" | "default") Expression )?
         (FeatureInit | ";");
         
     Multiplicity implements PackageElement =
@@ -49,50 +76,51 @@ component grammar KerMLTypes
         "function" FunctionName
         ( (":>" | "specializes") superFunctions:(KerMLQualifiedFunctionName || ",")+ )?
         ("{" 
-            (FunctionReturn | FunctionParameter | Feature | Function | IfElse | Invariant 
-            | DocBlock | Connector | Step | Succession)* ("chain")? 
+            ( Feature | Function | IfElse | Invariant | DocBlock | Connector | Step  
+            | Succession | FunctionReturn | FunctionParameter  )* ("chain")? 
         "}" | ";");
 
     Struct implements PackageElement =
         Modifier
-        "struct" Name (TypeMultiplicity)? (":>" | ":")? ((Name (TypeMultiplicity)?) ("," Name (TypeMultiplicity)*)*)?
+        "struct" ("all")? Name (TypeMultiplicity | KerMLSpecialization |KerMLIntersection | KerMLDisjoint)*
+        ((Name (TypeMultiplicity)?) ("," Name (TypeMultiplicity)*)*)?
         ("{" 
-            (DocBlock)? (StructVar | StructInv | Feature)* 
+            (DocBlock |StructVar | StructInv | CommentElement | PackageElement |Feature | Step)* 
         "}" | ";");
 
     Behavior implements PackageElement =
-        Modifier "behavior" Name 
-        (KerMLSpecialization)?
+        Modifier ("behavior" | "interaction") ("all")? Name 
+        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition | KerMLChains | KerMLCrossing 
+        | KerMLIntersection | KerMLInverse | KerMLUnion | KerMLDisjoint )*
         ("{" 
-            (FunctionReturn | FunctionParameter | Feature | Function 
-            | IfElse | Invariant | DocBlock | Connector | Step | Succession| Binding)* ("chain")? 
+            (Feature | Function | IfElse | Invariant | DocBlock | Connector 
+            | Step | Succession | Binding | FunctionReturn | FunctionParameter)* ("chain")? 
         "}" | ";");        
 
     StructVar =
         Modifier Name ":" (Name)? (":>>" Name)? ";";
 
     StructInv =
-        "inv" MCQualifiedName? "{" (DocBlock|PackageElement|Expression)* "}";
+        Modifier "inv" MCQualifiedName? "{" (DocBlock|PackageElement|Expression)* "}";
 
     Test implements PackageElement = 
         Expression "implies" Expression;
 
-    FunctionParameter =
+    FunctionParameter implements PackageElement =
         Modifier
         (KerMLRedefinition)?
         (FunctionName)* 
         (":" type:KerMLQualifiedName)? 
-        TypeMultiplicity? 
-        ("ordered")? 
-        ("nonunique")? 
-        ("chain")? 
-        ("default" Expression)?
+        ( TypeMultiplicity | "ordered" | "nonunique" | KerMLSubsetting 
+            | KerMLChains | KerMLRedefinition | "chain" )*
+        (("="|"default") Expression)?
         ( (FunctionBlock)+ (";")? | ";" ) ;
 
-    FunctionBlock = "{"(FunctionParameter | FunctionReturn | DocBlock | Expression | ";")* "}";
+    FunctionBlock = "{"( PackageElement | DocBlock | Expression | ";")* "}";
 
-    FunctionReturn =
-        "return" (Name)? (":" type:KerMLQualifiedName)? (TypeMultiplicity)? ("ordered")? ("nonunique")?
+    FunctionReturn implements PackageElement=
+        "return" (Name)? (":" type:KerMLQualifiedName)? 
+        ( TypeMultiplicity | "ordered" | "nonunique" | KerMLSubsetting | KerMLChains | KerMLRedefinition | "chain" )*
         ( ("=" | "default") Expression )? 
         (FeatureBlock | ";") ;
 
@@ -130,31 +158,82 @@ component grammar KerMLTypes
         | "[" (IfElseElement | ";")* "]" ;
 
     Invariant implements PackageElement =
-        "inv" MCQualifiedName? "{" (DocBlock | PackageElement | Expression)* "}";
+        Modifier "inv" MCQualifiedName? "{" (DocBlock | PackageElement | Expression)* "}";
 
     Connector implements PackageElement = 
         Modifier
         "connector" ("all")? Name?
+        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition | KerMLChains 
+        | KerMLCrossing | KerMLIntersection | KerMLInverse | KerMLUnion | KerMLReferences 
+        | KerMLDisjoint )*
         (":" type:KerMLQualifiedName)?
         (TypeMultiplicity)?
-        "from" (TypeMultiplicity)? Expression
-        "to" (TypeMultiplicity)? Expression
-        ";" ;
+        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition | KerMLChains 
+        | KerMLCrossing | KerMLIntersection | KerMLInverse | KerMLUnion | KerMLReferences | KerMLDisjoint )*
+        (
+            ("from")? (TypeMultiplicity)? Expression ("references" fromRef:KerMLQualifiedName)?
+            "to" (TypeMultiplicity)? Expression ("references" toRef:KerMLQualifiedName)?
+        )?
+        ("{" (DocBlock | PackageElement)* "}"|";") ;
     
     Step implements PackageElement =
         Modifier
-        ("composite")? "step" Name? (":" type:KerMLQualifiedName)?
-        (TypeMultiplicity)?
-        ("{" (StepProperty | DocBlock | ";")* "}" | ";") ;
+        ("composite")? 
+        (shortName:KerMLQualifiedName (shortMultiplicity:TypeMultiplicity)?)?
+        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition | KerMLChains 
+        | KerMLCrossing | KerMLIntersection | KerMLInverse | KerMLUnion | KerMLReferences | KerMLDisjoint)*
+        (preMultiplicity:TypeMultiplicity)?
+        "step" 
+        (":>>" | "redefines")?
+        (name:KerMLQualifiedName)? 
+        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition | KerMLChains 
+        | KerMLCrossing | KerMLIntersection | KerMLInverse | KerMLUnion | KerMLReferences | KerMLDisjoint)*
+        (":" type:KerMLQualifiedName)?
+        ( TypeMultiplicity | "ordered" | "nonunique" | KerMLSubsetting 
+        | KerMLChains | KerMLRedefinition | KerMLCrossing | KerMLIntersection
+        | KerMLInverse | KerMLUnion | KerMLReferences | KerMLDisjoint)*
+        ( ("=" | "default") Expression )?
+        (FeatureBlock | ";") ;
+
+    Metaclass implements PackageElement =
+        Modifier
+        "metaclass" Name
+        (KerMLSpecialization)?
+        ("{" (DocBlock | PackageElement)* "}" | ";");
+
+    Association implements PackageElement =
+        Modifier
+        "assoc" ("struct")? ("all")? Name (TypeMultiplicity)?
+        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition 
+        | KerMLChains | KerMLCrossing | KerMLIntersection | KerMLInverse 
+        | KerMLUnion | KerMLDisjoint )*
+        ("{" (DocBlock | PackageElement)* "}" | ";");
+
+    CommentElement implements PackageElement =
+        "comment" (Name)? 
+        ("about" KerMLQualifiedName ("," KerMLQualifiedName)*)? 
+        ("{" (DocBlock | PackageElement)* "}" | ";")? ;
+
+    KerMLCrossing = 
+        "crosses" crossed:(KerMLQualifiedName || ",")+ ;
+
+    KerMLIntersection = 
+        "intersects" (KerMLQualifiedName || ",")+;
 
     StepProperty = 
         Modifier Name ("=" Expression)? ";" ;
 
     Succession implements PackageElement =
-        Modifier "succession" (TypeMultiplicity)? Expression "then" (TypeMultiplicity)? Expression ";" ;
+        Modifier "succession" ("all")? (Name (TypeMultiplicity)?)?() 
+        (("first")? (TypeMultiplicity)? left:Expression)? 
+        "then" 
+        (TypeMultiplicity)? right:Expression 
+        ("{" (DocBlock | PackageElement)* "}" | ";") ;
 
     Binding implements PackageElement =
-        "binding" (Name ("of")?)? (TypeMultiplicity)? left:Expression "=" (TypeMultiplicity)? right:Expression ";" ;
+        Modifier "binding" (Name (TypeMultiplicity)?("of")?)? (TypeMultiplicity)? left:Expression "=" 
+        (TypeMultiplicity)? right:Expression 
+        ("{" (DocBlock | PackageElement)*"}" |";") ;
 
     Alias implements PackageElement =
         Modifier "alias" EscapedName "for" KerMLQualifiedName ";" ;
@@ -165,6 +244,38 @@ component grammar KerMLTypes
     ShorthandRedefinition implements PackageElement =
         ":>>" Name "=" Expression ";" ;
 
+    Classification implements PackageElement =
+        Modifier
+        "class" ("all")? Name (TypeMultiplicity)?
+        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition 
+        | KerMLChains | KerMLCrossing | KerMLIntersection | KerMLInverse 
+        | KerMLUnion | KerMLDisjoint )*
+        ("{" (DocBlock | PackageElement)* "}" | ";");
+
+    BodyRelationStatement implements PackageElement =
+        Modifier 
+        ("specializes" | ":>" | "subsets" | "redefines" | ":>>" | "chains" 
+        | "crosses" | "intersects" | "unions" | "inverse" ("of")? | "disjoint" ("from")?)
+        targets:(KerMLQualifiedName || ",")+ 
+        ("{" (DocBlock | PackageElement| Expression)* "}" | ";") ;
+
+    KerMLDisjoint = 
+        "disjoint" "from" disjoints:(KerMLQualifiedName || ",")+ ;
+
+    KerMLInverse = 
+        "inverse" ("of")? inverses:(KerMLQualifiedName || ",")+ ;
+
+    KerMLUnion = 
+        "unions" unioned:(KerMLQualifiedName || ",")+ ;
+
+    SubsetStatement implements PackageElement =
+        Modifier "subset" left:KerMLQualifiedName "subsets" right:(KerMLQualifiedName || ",")+ ";" ;
+
+    DisjointStatement implements PackageElement =
+        Modifier "disjoint" left:KerMLQualifiedName "from" right:(KerMLQualifiedName || ",")+ ";" ;
+
+    KerMLReferences = 
+        "references" referenced:(KerMLQualifiedName || ",")+ ;
     // Same as SysML
 
     KerMLSpecialization =

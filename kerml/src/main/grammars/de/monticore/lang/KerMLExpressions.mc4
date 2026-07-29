@@ -56,9 +56,17 @@ component grammar KerMLExpressions
     KerMLIdentityExpression implements Expression <90> =
         Expression ("===" | "!==") Expression;
 
+    KerMLIsTypeExpression implements Expression <150> =
+        left:Expression "istype" right:KerMLQualifiedName;
+    
     KerMLQualifiedNameExpression implements Expression =
         KerMLQualifiedName;
     
+    KerMLNewExpression implements Expression =
+        "new" type:KerMLQualifiedName 
+        ("(" (Expression ("," Expression)*)? ")")? 
+        ("{" (DocBlock | PackageElement | Expression | ";")* "}")? ;
+        
     KerMLTupleExpression implements Expression =
         "(" Expression ("," Expression)+ ")";
 
