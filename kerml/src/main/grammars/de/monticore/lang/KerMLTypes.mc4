@@ -25,6 +25,7 @@ component grammar KerMLTypes
         Modifier
         ("composite")?
         ("var")?
+        (shortName:KerMLQualifiedName (shortMultiplicity:TypeMultiplicity)?)?
         ("feature" | "expr")
         ("step" | "chain")?
         ("chains")?
@@ -36,7 +37,8 @@ component grammar KerMLTypes
             |"nonunique"
             | KerMLSubsetting
             | KerMLChains
-            | KerMLRedefinition)*
+            | KerMLRedefinition
+            | KerMLCrossing)*
         ( ("=" | "default") Expression )?
         (FeatureInit | ";");
         
@@ -156,6 +158,15 @@ component grammar KerMLTypes
         "metaclass" Name
         (KerMLSpecialization)?
         ("{" (DocBlock | PackageElement)* "}" | ";");
+
+    Association implements PackageElement =
+        Modifier
+        "assoc" ("all")? Name
+        (KerMLSpecialization)?
+        ("{" (DocBlock | PackageElement)* "}" | ";");
+
+    KerMLCrossing = 
+        "crosses" crossed:(KerMLQualifiedName || ",")+ ;
 
     StepProperty = 
         Modifier Name ("=" Expression)? ";" ;
