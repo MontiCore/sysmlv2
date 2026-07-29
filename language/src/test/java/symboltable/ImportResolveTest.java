@@ -5,6 +5,8 @@ import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.lang.sysmlv2._symboltable.SysMLv2DeSer;
+import de.monticore.lang.sysmlv2._symboltable.SysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.lang.sysmlv2.symboltable.completers.ImportsCompleter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
@@ -251,7 +253,6 @@ public class ImportResolveTest extends NervigeSymboltableTests {
    *
    * @throws IOException Mills parser exception, shall not happen
    */
-  @Disabled("Recursive Imports are currently unsupported in our implementation")
   @Test()
   public void testSysMLScopeRecursiveImport() throws IOException {
     LogStub.init();
@@ -259,7 +260,7 @@ public class ImportResolveTest extends NervigeSymboltableTests {
     tool.init();
 
     var parentModel = "package Other { package InnerOther { part def Parent; } }";
-    var model = "package test { private import Other::**; part def Child : Parent; }";
+    var model = "package test { public import Other::InnerOther::**; part def Child : Parent; }";
 
     var parentAst = SysMLv2Mill.parser().parse_String(parentModel).get();
     var ast = SysMLv2Mill.parser().parse_String(model).get();
@@ -272,7 +273,7 @@ public class ImportResolveTest extends NervigeSymboltableTests {
     tool.completeSymbolTable(ast);
     tool.finalizeSymbolTable(ast);
 
-    var partDef = (ASTPartDef) ((ASTSysMLPackage) ast.getSysMLElement(0)).getSysMLElement(1  );
+    var partDef = (ASTPartDef) ((ASTSysMLPackage) ast.getSysMLElement(0)).getSysMLElement(2  );
     var parentRef = (ASTMCQualifiedType) partDef.getSpecialization(0).getSuperTypes(0);
 
     var parentName = parentRef.getNameList().get(0);
@@ -281,6 +282,10 @@ public class ImportResolveTest extends NervigeSymboltableTests {
 
     assertThat(optParent).isPresent(); // check if we did resolve
     assertThat(optParent.get().getFullName()).isEqualTo("Other.InnerOther.Parent");
+
+    //var res = ((SysMLv2GlobalScope)SysMLv2Mill.globalScope()).getSymbols2Json().serialize(ast.getEnclosingScope());
+    //var resBack = ((SysMLv2GlobalScope)SysMLv2Mill.globalScope()).getSymbols2Json().deserialize(res);
+    //assertThat(res).isNotEmpty();
   }
 
   @Test

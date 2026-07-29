@@ -1,6 +1,5 @@
 package de.monticore.lang.sysmlv2.symboltable.completers;
 
-import de.monticore.lang.sysmlbasis.SysMLNames;
 import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLImportStatement;
 import de.monticore.lang.sysmlimportsandpackages._visitor.SysMLImportsAndPackagesVisitor2;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
@@ -29,6 +28,10 @@ import java.util.stream.Collectors;
 public class ImportsCompleter implements SysMLImportsAndPackagesVisitor2 {
   @Override
   public void visit(ASTSysMLImportStatement node) {
+    if (node.isPublic()) {
+      node.getEnclosingScope().addSysMLImports(node);
+    }
+    /*
     if (node.isRecursive()) {
       var packagee = node.getEnclosingScope().resolveSysMLPackage(node.getQName());
       var def = ((ISysMLv2Scope)node.getEnclosingScope()).resolvePartDef(node.getQName());
@@ -72,6 +75,8 @@ public class ImportsCompleter implements SysMLImportsAndPackagesVisitor2 {
 
       }
     }
+
+     */
   }
 
   private <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {

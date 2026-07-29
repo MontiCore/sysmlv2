@@ -46,6 +46,7 @@ import de.monticore.lang.sysmlv2.symboltable.completers.CausalityCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectRefinementCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectionCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.IdentifierCompletion;
+import de.monticore.lang.sysmlv2.symboltable.completers.ImportsCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.RequirementClassificationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.StateUsageCompleter;
@@ -217,6 +218,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     traverser.add4SysMLBasis(completer);
     traverser.add4SysMLParts(completer);
     traverser.add4SysMLConstraints(completer);
+    traverser.add4SysMLImportsAndPackages(new ImportsCompleter());
 
     traverser.add4SysMLParts(new RequirementClassificationCompleter());
     traverser.add4SysMLParts(new DirectRefinementCompleter());
