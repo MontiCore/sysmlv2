@@ -33,7 +33,7 @@ public class KerMLSemanticLibParserTest {
       "KerML.kerml",
       "Links.kerml",
       "Metaobjects.kerml",
-      //"Objects.kerml",
+      "Objects.kerml",
       //"Observation.kerml",
       //"Occurrences.kerml",
       //"Performances.kerml",

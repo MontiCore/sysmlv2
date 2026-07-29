@@ -26,11 +26,11 @@ component grammar KerMLTypes
         ("composite")?
         ("var")?
         (shortName:KerMLQualifiedName (shortMultiplicity:TypeMultiplicity)?)?
-        ("feature" | "expr")
+        ("feature" | "expr" | "portion" ("feature" | "expr")?)
         ("step" | "chain")?
         ("chains")?
         (":>>" | "redefines")?
-        name:KerMLQualifiedName
+        name:KerMLQualifiedName?
         (":" type:KerMLQualifiedName)?
         (TypeMultiplicity
             |"ordered"
@@ -38,7 +38,8 @@ component grammar KerMLTypes
             | KerMLSubsetting
             | KerMLChains
             | KerMLRedefinition
-            | KerMLCrossing)*
+            | KerMLCrossing
+            | KerMLIntersection)*
         ( ("=" | "default") Expression )?
         (FeatureInit | ";");
         
@@ -62,9 +63,9 @@ component grammar KerMLTypes
 
     Struct implements PackageElement =
         Modifier
-        "struct" Name (TypeMultiplicity)? (":>" | ":")? ((Name (TypeMultiplicity)?) ("," Name (TypeMultiplicity)*)*)?
+        "struct" ("all")? Name (TypeMultiplicity)? (KerMLSpecialization)? (KerMLIntersection)? ((Name (TypeMultiplicity)?) ("," Name (TypeMultiplicity)*)*)?
         ("{" 
-            (DocBlock)? (StructVar | StructInv | Feature)* 
+            (DocBlock |StructVar | StructInv | CommentElement | PackageElement |Feature | Step)* 
         "}" | ";");
 
     Behavior implements PackageElement =
@@ -149,9 +150,15 @@ component grammar KerMLTypes
     
     Step implements PackageElement =
         Modifier
-        ("composite")? "step" Name? (":" type:KerMLQualifiedName)?
-        (TypeMultiplicity)?
-        ("{" (StepProperty | DocBlock | ";")* "}" | ";") ;
+        ("composite")? 
+        (shortName:KerMLQualifiedName (shortMultiplicity:TypeMultiplicity)?)?
+        "step" 
+        (name:KerMLQualifiedName)? 
+        (":" type:KerMLQualifiedName)?
+        ( TypeMultiplicity | "ordered" | "nonunique" | KerMLSubsetting 
+        | KerMLChains | KerMLRedefinition | KerMLCrossing | KerMLIntersection)*
+        ( ("=" | "default") Expression )?
+        (FeatureBlock | ";") ;
 
     Metaclass implements PackageElement =
         Modifier
@@ -161,12 +168,21 @@ component grammar KerMLTypes
 
     Association implements PackageElement =
         Modifier
-        "assoc" ("all")? Name
+        "assoc" ("struct")? ("all")? Name
         (KerMLSpecialization)?
+        (KerMLIntersection)?
         ("{" (DocBlock | PackageElement)* "}" | ";");
+
+    CommentElement implements PackageElement =
+        "comment" (Name)? 
+        ("about" KerMLQualifiedName ("," KerMLQualifiedName)*)? 
+        ("{" (DocBlock | PackageElement)* "}" | ";")? ;
 
     KerMLCrossing = 
         "crosses" crossed:(KerMLQualifiedName || ",")+ ;
+
+    KerMLIntersection = 
+        "intersects" (KerMLQualifiedName || ",")+;
 
     StepProperty = 
         Modifier Name ("=" Expression)? ";" ;
