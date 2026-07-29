@@ -6,6 +6,9 @@ component grammar KerMLTypes
             de.monticore.literals.MCCommonLiterals,
             de.monticore.expressions.ExpressionsBasis
 {
+    @Override
+    KerMLQualifiedName = Funparts:FunctionName (("::" | ".") Funparts:FunctionName)*;
+
     Datatype implements PackageElement =
         DatatypeHead ("{" (DocBlock|PackageElement)* "}" | ";");
 
@@ -20,12 +23,13 @@ component grammar KerMLTypes
 
     Feature implements PackageElement =
         Modifier
+        ("composite")?
         ("var")?
         ("feature" | "expr")
         ("step" | "chain")?
         ("chains")?
         (":>>" | "redefines")?
-        KerMLQualifiedName
+        name:KerMLQualifiedName
         (":" type:KerMLQualifiedName)?
         (TypeMultiplicity
             |"ordered"
@@ -146,6 +150,12 @@ component grammar KerMLTypes
         ("composite")? "step" Name? (":" type:KerMLQualifiedName)?
         (TypeMultiplicity)?
         ("{" (StepProperty | DocBlock | ";")* "}" | ";") ;
+
+    Metaclass implements PackageElement =
+        Modifier
+        "metaclass" Name
+        (KerMLSpecialization)?
+        ("{" (DocBlock | PackageElement)* "}" | ";");
 
     StepProperty = 
         Modifier Name ("=" Expression)? ";" ;

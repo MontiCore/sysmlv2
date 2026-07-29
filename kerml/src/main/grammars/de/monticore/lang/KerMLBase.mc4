@@ -9,19 +9,18 @@ component grammar KerMLBase
     /*
         Structure of the whole file
     */
-    PackageDeclaration =
-        ("standard")? ("library")? "package" Name "{"
-            (DocBlock | ImportStatement | PackageElement)* "}";
+    PackageDeclaration implements PackageElement=
+        Modifier  ("standard")? ("library")? "package" KerMLQualifiedName
+        ( "{"(DocBlock | ImportStatement | PackageElement)* "}");
 
     // Handels import statements
     ImportStatement =
-        Modifier? "import" KerMLQualifiedName ("::" "*")? ";";
+        Modifier "import" KerMLQualifiedName ("::" "*")? ";";
 
     /*
         Definition of a qualified Name for Imports and Functions
     */
-    KerMLQualifiedName extends MCQualifiedName = Name (("::"|".") Name)*;
-
+    KerMLQualifiedName extends MCQualifiedName = parts:Name (("::"|".") parts:Name)*;
     /*
         Handles comments that start with doc where the comment-part is handled by MCBasic
     */
@@ -48,6 +47,7 @@ component grammar KerMLBase
             | ["event"]                           // only in occurrences
             | ["variation"]
             | ["variant"]
+            | ["member"]
         )*; 
 
     /*
