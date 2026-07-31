@@ -17,7 +17,7 @@ component grammar KerMLTypes
 
     Classifier implements PackageElement =
         Modifier
-        ("classifier" | "subclassifier" | "predicate") ("all")? 
+        ("class" | "classifier" | "subclassifier" | "predicate") ("all")? 
         Name (TypeMultiplicity)?
         (KerMLRelationClause)*
         ("{" (DocBlock|PackageElement)* "}"| ";");
@@ -62,7 +62,7 @@ component grammar KerMLTypes
 
     Struct implements PackageElement =
         Modifier
-        "struct" ("all")? Name (TypeMultiplicity | KerMLSpecialization |KerMLIntersection | KerMLDisjoint)*
+        "struct" ("all")? Name (TypeMultiplicity | KerMLRelationClause)*
         ((Name (TypeMultiplicity)?) ("," Name (TypeMultiplicity)*)*)?
         ("{" 
             (DocBlock |StructVar | StructInv | CommentElement | PackageElement |Feature | Step)* 
@@ -207,12 +207,6 @@ component grammar KerMLTypes
 
     ShorthandRedefinition implements PackageElement =
         ":>>" Name "=" Expression ";" ;
-
-    Classification implements PackageElement =
-        Modifier
-        "class" ("all")? Name (TypeMultiplicity)?
-        (KerMLRelationClause)*
-        ("{" (DocBlock | PackageElement)* "}" | ";");
 
     BodyRelationStatement implements PackageElement =
         Modifier 
