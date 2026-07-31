@@ -33,7 +33,8 @@ component grammar KerMLTypes
         ("step" | "chain")?
         ("chains")?
         (":>>" | "redefines")?
-        (name:KerMLQualifiedName? (TypeMultiplicity)?)? 
+        name:KerMLQualifiedName? 
+        (TypeMultiplicity)? 
         (KerMLRelationClause)*
         (":" type:KerMLQualifiedName)?
         (TypeMultiplicity
