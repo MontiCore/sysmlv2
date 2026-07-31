@@ -117,7 +117,7 @@ component grammar SysMLExpressions
    SysMLBodyExpression implements Expression =
      "{" SysMLElement* inner:Expression "}" ;
 
-  SysMLFunctionOperationExpression implements Expression <120> =
+  SysMLFunctionOperationExpression implements Expression <291> =
     Expression "->" Name
     ("(" (SysMLParameter || ",")* ")")?
     (body:SysMLBodyExpression)? ;
