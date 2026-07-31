@@ -10,31 +10,25 @@ component grammar KerMLTypes
     KerMLQualifiedName = Funparts:FunctionName (("::" | ".") Funparts:FunctionName)*;
 
     Datatype implements PackageElement =
-        DatatypeHead ("{" (DocBlock|PackageElement)* "}" | ";");
-
-    DatatypeHead =
-        ("abstract")? "datatype" Name
-        (KerMLSpecialization)?
-        ("intersects" intersectTypes:KerMLQualifiedName ("," intersectTypes:KerMLQualifiedName)*)?;
+        Modifier "datatype" Name
+        (KerMLRelationClause)?
+        ("intersects" intersectTypes:KerMLQualifiedName ("," intersectTypes:KerMLQualifiedName)*)?
+        ("{" (DocBlock|PackageElement)* "}" | ";");        
 
     Classifier implements PackageElement =
         Modifier
         ("classifier" | "subclassifier" | "predicate") ("all")? 
         Name (TypeMultiplicity)?
-        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition | KerMLChains 
-        | KerMLCrossing | KerMLIntersection | KerMLInverse | KerMLUnion | KerMLDisjoint )*
+        (KerMLRelationClause)*
         ("{" (DocBlock|PackageElement)* "}"| ";");
 
     Feature implements PackageElement =
-        Modifier(KerMLSpecialization)?
-        (KerMLIntersection)?
-        (KerMLDisjoint)?
+        Modifier
+        (KerMLRelationClause)*
         ("composite")?
         ("var")?
         (shortName:KerMLQualifiedName (shortMultiplicity:TypeMultiplicity)?)?
-        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition 
-        | KerMLChains | KerMLCrossing | KerMLIntersection 
-        | KerMLInverse | KerMLUnion | KerMLReferences | KerMLDisjoint)*
+        (KerMLRelationClause)*
         (preMultiplicity:TypeMultiplicity)?
         ("feature" | "expr" | "portion" ("feature" | "expr")?)?
         ("all")?
@@ -42,34 +36,20 @@ component grammar KerMLTypes
         ("chains")?
         (":>>" | "redefines")?
         (name:KerMLQualifiedName? (TypeMultiplicity)?)? 
-        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition 
-        | KerMLChains | KerMLCrossing | KerMLIntersection 
-        | KerMLInverse | KerMLUnion | KerMLReferences | KerMLDisjoint)*
+        (KerMLRelationClause)*
         (":" type:KerMLQualifiedName)?
         (TypeMultiplicity
             |"ordered"
             |"nonunique"
-            | KerMLSpecialization
-            | KerMLSubsetting
-            | KerMLChains
-            | KerMLRedefinition
-            | KerMLCrossing
-            | KerMLIntersection
-            | KerMLInverse 
-            | KerMLUnion
-            | KerMLReferences
-            |KerMLDisjoint)*
+            | KerMLRelationClause)*
         ( ("=" | "default") Expression )?
         (FeatureInit | ";");
         
     Multiplicity implements PackageElement =
-        MultiplicityHead
-        ("{" (DocBlock)? "}");
-
-    MultiplicityHead =
         "multiplicity"
-        Name
-        TypeMultiplicity;
+        KerMLQualifiedName
+        TypeMultiplicity
+        ("{" (DocBlock)? "}");
 
     Function implements PackageElement =
         Modifier
@@ -90,8 +70,7 @@ component grammar KerMLTypes
 
     Behavior implements PackageElement =
         Modifier ("behavior" | "interaction") ("all")? Name 
-        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition | KerMLChains | KerMLCrossing 
-        | KerMLIntersection | KerMLInverse | KerMLUnion | KerMLDisjoint )*
+        (KerMLRelationClause)*
         ("{" 
             (Feature | Function | IfElse | Invariant | DocBlock | Connector 
             | Step | Succession | Binding | FunctionReturn | FunctionParameter)* ("chain")? 
@@ -134,7 +113,7 @@ component grammar KerMLTypes
     SpecialName = "test" | "expr" | "thenValue"| "null";
 
     token EscapedName = "\'"(Name | "==" | "!=" | "===" | "[" | "!==" | "#" | "," | "@" | "@@" | "|" 
-    | "&" | "array#" | "+" | "-" | "*" | "/" | "**" | "^" | "==" | "." | "??" | "%" | "~" | "<" | ">"
+    | "&" | "array#" | "+" | "-" | "*" | "/" | "**" | "^" | "." | "??" | "%" | "~" | "<" | ">"
     | "<=" | ">=" | "..")+"\'";
 
     KerMLQualifiedFunctionName = FunctionName ("::" FunctionName)*;
@@ -163,13 +142,10 @@ component grammar KerMLTypes
     Connector implements PackageElement = 
         Modifier
         "connector" ("all")? Name?
-        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition | KerMLChains 
-        | KerMLCrossing | KerMLIntersection | KerMLInverse | KerMLUnion | KerMLReferences 
-        | KerMLDisjoint )*
+        (KerMLRelationClause)*
         (":" type:KerMLQualifiedName)?
         (TypeMultiplicity)?
-        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition | KerMLChains 
-        | KerMLCrossing | KerMLIntersection | KerMLInverse | KerMLUnion | KerMLReferences | KerMLDisjoint )*
+        (KerMLRelationClause)*
         (
             ("from")? (TypeMultiplicity)? Expression ("references" fromRef:KerMLQualifiedName)?
             "to" (TypeMultiplicity)? Expression ("references" toRef:KerMLQualifiedName)?
@@ -180,18 +156,14 @@ component grammar KerMLTypes
         Modifier
         ("composite")? 
         (shortName:KerMLQualifiedName (shortMultiplicity:TypeMultiplicity)?)?
-        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition | KerMLChains 
-        | KerMLCrossing | KerMLIntersection | KerMLInverse | KerMLUnion | KerMLReferences | KerMLDisjoint)*
+        (KerMLRelationClause)*
         (preMultiplicity:TypeMultiplicity)?
         "step" 
         (":>>" | "redefines")?
         (name:KerMLQualifiedName)? 
-        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition | KerMLChains 
-        | KerMLCrossing | KerMLIntersection | KerMLInverse | KerMLUnion | KerMLReferences | KerMLDisjoint)*
+        (KerMLRelationClause)*
         (":" type:KerMLQualifiedName)?
-        ( TypeMultiplicity | "ordered" | "nonunique" | KerMLSubsetting 
-        | KerMLChains | KerMLRedefinition | KerMLCrossing | KerMLIntersection
-        | KerMLInverse | KerMLUnion | KerMLReferences | KerMLDisjoint)*
+        ( "ordered" | "nonunique" | KerMLRelationClause)*
         ( ("=" | "default") Expression )?
         (FeatureBlock | ";") ;
 
@@ -204,21 +176,13 @@ component grammar KerMLTypes
     Association implements PackageElement =
         Modifier
         "assoc" ("struct")? ("all")? Name (TypeMultiplicity)?
-        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition 
-        | KerMLChains | KerMLCrossing | KerMLIntersection | KerMLInverse 
-        | KerMLUnion | KerMLDisjoint )*
+        (KerMLRelationClause)*
         ("{" (DocBlock | PackageElement)* "}" | ";");
 
     CommentElement implements PackageElement =
-        "comment" (Name)? 
+        "comment" (KerMLQualifiedName)? 
         ("about" KerMLQualifiedName ("," KerMLQualifiedName)*)? 
         ("{" (DocBlock | PackageElement)* "}" | ";")? ;
-
-    KerMLCrossing = 
-        "crosses" crossed:(KerMLQualifiedName || ",")+ ;
-
-    KerMLIntersection = 
-        "intersects" (KerMLQualifiedName || ",")+;
 
     StepProperty = 
         Modifier Name ("=" Expression)? ";" ;
@@ -247,9 +211,7 @@ component grammar KerMLTypes
     Classification implements PackageElement =
         Modifier
         "class" ("all")? Name (TypeMultiplicity)?
-        ( KerMLSpecialization | KerMLSubsetting | KerMLRedefinition 
-        | KerMLChains | KerMLCrossing | KerMLIntersection | KerMLInverse 
-        | KerMLUnion | KerMLDisjoint )*
+        (KerMLRelationClause)*
         ("{" (DocBlock | PackageElement)* "}" | ";");
 
     BodyRelationStatement implements PackageElement =
@@ -259,14 +221,34 @@ component grammar KerMLTypes
         targets:(KerMLQualifiedName || ",")+ 
         ("{" (DocBlock | PackageElement| Expression)* "}" | ";") ;
 
-    KerMLDisjoint = 
-        "disjoint" "from" disjoints:(KerMLQualifiedName || ",")+ ;
+    interface KerMLRelationClause;
 
-    KerMLInverse = 
+    KerMLSpecialization implements KerMLRelationClause =
+        (":>" | "specializes") specialized:(KerMLQualifiedName || ",")+ ;
+
+    KerMLSubsetting implements KerMLRelationClause = 
+        (":>" | "subsets") subset:(KerMLQualifiedName || ",")+ ;
+    
+    KerMLRedefinition implements KerMLRelationClause = 
+        (":>>" | "redefines") redefined:(KerMLQualifiedName || ",")+ ;
+    
+    KerMLChains implements KerMLRelationClause = 
+        (":>" | "chains") chained:(KerMLQualifiedName || ",")+ ;
+
+    KerMLCrossing implements KerMLRelationClause = 
+        "crosses" KerMLQualifiedName ("," KerMLQualifiedName)* ;
+
+    KerMLIntersection implements KerMLRelationClause = 
+        "intersects" KerMLQualifiedName ("," KerMLQualifiedName)*;
+
+    KerMLInverse implements KerMLRelationClause = 
         "inverse" ("of")? inverses:(KerMLQualifiedName || ",")+ ;
 
-    KerMLUnion = 
+    KerMLUnion  implements KerMLRelationClause= 
         "unions" unioned:(KerMLQualifiedName || ",")+ ;
+    
+    KerMLDisjoint implements KerMLRelationClause = 
+        "disjoint" "from" disjoints:(KerMLQualifiedName || ",")+ ;
 
     SubsetStatement implements PackageElement =
         Modifier "subset" left:KerMLQualifiedName "subsets" right:(KerMLQualifiedName || ",")+ ";" ;
@@ -274,20 +256,6 @@ component grammar KerMLTypes
     DisjointStatement implements PackageElement =
         Modifier "disjoint" left:KerMLQualifiedName "from" right:(KerMLQualifiedName || ",")+ ";" ;
 
-    KerMLReferences = 
+    KerMLReferences implements KerMLRelationClause= 
         "references" referenced:(KerMLQualifiedName || ",")+ ;
-    // Same as SysML
-
-    KerMLSpecialization =
-        (":>" | "specializes") specialized:(KerMLQualifiedName || ",")+ ;
-
-    KerMLSubsetting = 
-        (":>" | "subsets") subset:(KerMLQualifiedName || ",")+ ;
-
-    KerMLRedefinition = 
-        (":>>" | "redefines") redefined:(KerMLQualifiedName || ",")+ ;
-
-    // Not in SysML but same style
-    KerMLChains = 
-        (":>" | "chains") chained:(KerMLQualifiedName || ",")+ ;
 }
