@@ -259,11 +259,37 @@ public class ImportResolveTest extends NervigeSymboltableTests {
     var tool = new SysMLv2Tool();
     tool.init();
 
+    // working constellation
+    //var parentModel = "package Other { package InnerOther { part def Parent; } }";
+    //var model = "package test { public import Other::InnerOther::**; part def Child; }";
+    //var modelImportingAPublic = "package Estranged { private import test::*; part def Uncle : Parent;}";
+    // the simple import check happens if you have multiple name parts of the "name"? Dont think so
+    // what do you do if you find the symbol itself? does it go inside itself? Actually it should bcuz in the sysml it is allowed
+
+    // constellation works.
+    //var parentModel = "package Other { package InnerOther { part def Parent; } }";
+    //var model = "package test { public import Other::**; part def Child; }";
+    //var modelImportingAPublic = "package Estranged { private import test::*; part def Uncle : Parent;}";
+
     var parentModel = "package Other { package InnerOther { part def Parent; } }";
-    var model = "package test { public import Other::InnerOther::**; part def Child : Parent; }";
+    var model = "package test { public import Other::**; part def Child; }";
+    // you cant import here Sibling::* where Sibling is defined
+    var modelImportingAPublic = ""
+        + "package Estranged { "
+        + "  part def Sibling { "
+        + "    part def Niece { "
+        + "      part def Daughter; "
+        + "    }"
+        + "} "
+        + "  part def Uncle {"
+        + "    private import Sibling::Niece;"
+        + "    part def NieceClone :> Niece::Daughter;"
+        + "  }"
+        + "}";
 
     var parentAst = SysMLv2Mill.parser().parse_String(parentModel).get();
     var ast = SysMLv2Mill.parser().parse_String(model).get();
+    var astImportingAPublic = SysMLv2Mill.parser().parse_String(modelImportingAPublic).get();
 
     tool.createSymbolTable(parentAst);
     tool.completeSymbolTable(parentAst);
@@ -273,12 +299,16 @@ public class ImportResolveTest extends NervigeSymboltableTests {
     tool.completeSymbolTable(ast);
     tool.finalizeSymbolTable(ast);
 
-    var partDef = (ASTPartDef) ((ASTSysMLPackage) ast.getSysMLElement(0)).getSysMLElement(2  );
+    tool.createSymbolTable(astImportingAPublic);
+    tool.completeSymbolTable(astImportingAPublic);
+    tool.finalizeSymbolTable(astImportingAPublic);
+
+    var partDef = (ASTPartDef) ((ASTSysMLPackage) astImportingAPublic.getSysMLElement(0)).getSysMLElement(1  );
     var parentRef = (ASTMCQualifiedType) partDef.getSpecialization(0).getSuperTypes(0);
 
     var parentName = parentRef.getNameList().get(0);
 
-    var optParent = ((ISysMLv2Scope) parentRef.getEnclosingScope()).resolvePartDef(parentName);
+    var optParent = ((ISysMLv2Scope) parentRef.getEnclosingScope()).resolveType(parentName);
 
     assertThat(optParent).isPresent(); // check if we did resolve
     assertThat(optParent.get().getFullName()).isEqualTo("Other.InnerOther.Parent");

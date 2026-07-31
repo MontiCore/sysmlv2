@@ -64,9 +64,9 @@ package FromImports {
 }
 
 package WithNestation {
-  private import FromImports::*::**;
+  private import FromImports::*;
 
-  part u: ST1;// S::ST;
+  part u: ST;// S::ST;
 
   part def A {
     part def X {
@@ -92,4 +92,14 @@ package WithNestation {
   //part m : B;
   //part n :> m.b;
 
+}
+
+package Estranged {
+  part def Sibling {
+    part def Niece;
+  }
+  part def Uncle {
+    private import Sibling::Niece::**;
+    part def NieceClone :> Niece;
+  }
 }

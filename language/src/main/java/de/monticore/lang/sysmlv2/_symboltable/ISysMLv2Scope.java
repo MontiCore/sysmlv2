@@ -1,5 +1,6 @@
 package de.monticore.lang.sysmlv2._symboltable;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.LinkedListMultimap;
 import de.monticore.lang.componentconnector._symboltable.AutomatonSymbol;
 import de.monticore.lang.componentconnector._symboltable.EventAutomatonSymbol;
@@ -12,7 +13,6 @@ import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlconstraints.symboltable.adapters.RequirementSubject2VariableSymbolAdapter;
 import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLImportStatement;
-import de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol;
 import de.monticore.lang.sysmlimportsandpackages._visitor.SysMLImportsAndPackagesVisitor2;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.ItemDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
@@ -43,26 +43,23 @@ import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.symboltable.IScope;
 import de.monticore.symboltable.IScopeSpanningSymbol;
-import de.monticore.symboltable.ImportStatement;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
-import de.monticore.visitor.IVisitor;
-import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.Names;
+import de.se_rwth.commons.Splitters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-import static de.se_rwth.commons.Names.getQualifier;
 import static de.se_rwth.commons.Names.getSimpleName;
 
 public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
@@ -261,31 +258,29 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     return fqn.substring(startIndex);
   }
 
-  public default List<String> findAllScopeNamesForRecursive(ASTSysMLImportStatement statement) {
+  public default void findAllScopeNamesForRecursive(String name, ASTSysMLImportStatement statement, Set<String> names) {
     // TODO theoretically usages cannot be imported. see if true. if true then no namespace symbols is needed
-    var namespaceCollector = new IVisitor() {
-      final List<String> namespaces = new ArrayList<>();
+    var namespaceCollector = new SysMLv2Visitor2() {
       @Override
-      public void visit(IScope scope) {
+      public void visit(ISysMLv2Scope scope) {
         // only look in named scopes
         if (scope.isPresentName() && scope.isPresentSpanningSymbol()) {
           // TODO also public imports
-          namespaces.add(
+          names.add(
               getRelativeFromFqn(statement.getQName(),
                   scope.getSpanningSymbol().getFullName()));
+          myRecursion(name, scope.getSysMLImportsList(), names);
         }
       }
     };
 
     var traverser = SysMLv2Mill.inheritanceTraverser();
-    traverser.add4IVisitor(namespaceCollector);
+    traverser.add4SysMLv2(namespaceCollector);
     var namespace = resolveSysMLType(statement.getQName());
     var packageNamespace = resolveSysMLPackage(statement.getQName());
     if (namespace.isPresent() && namespace.get() instanceof IScopeSpanningSymbol) {
       ((IScopeSpanningSymbol)namespace.get()).getSpannedScope().accept(traverser);
     } else packageNamespace.ifPresent(sysMLPackageSymbol -> sysMLPackageSymbol.getSpannedScope().accept(traverser));
-
-    return namespaceCollector.namespaces;
   }
 
   /**
@@ -301,30 +296,44 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
    */
   default Set<String> calcQNamesForEnclosingScope(String name,
                                                   List<ASTSysMLImportStatement> importStatements) {
-    Set<String> potentialSymbolNames = new LinkedHashSet<>();
-    potentialSymbolNames.add(name);
+    Set<String> potentialNamespaces = new LinkedHashSet<>();
 
     // if name is already qualified, no further (potential) names exist by imports
     // qualify names based on the import statements of enclosing scope
     // 1. qualify star imports by replacing the start with symbolname
     // 2. qualify direct imports when the name matches
+    myRecursion(name, importStatements, potentialNamespaces);
+    var res = potentialNamespaces.stream().map(namespace -> namespace + "." + name).collect(Collectors.toSet());
+    res.add(name);
+
+    return res;
+  }
+
+  public default void myRecursion(String name, List<ASTSysMLImportStatement> importStatements, Set<String> namespaces) {
     for (var importStatement : importStatements) {
-      if (getSimpleName(importStatement.getQName()).equals(name) && !importStatement.isStar()) {
+      // in sysml it is valid to resolve B::C somewhere where A::B was imported
+      List<String> partsList = importStatement.getMCQualifiedName().getPartsList();
+      List<String> nameList = Splitters.DOT.splitToList(name);
+      if (partsList.get(partsList.size() - 1).equals(nameList.get(0)) && !importStatement.isStar()) {
         // in NonStar Recursive imports you also can address the statement itself
-        potentialSymbolNames.add(importStatement.getQName());
+        namespaces.add(Names.constructQualifiedName(partsList.subList(0, partsList.size() - 1))); // import A; What is that you can find S in there (so go after its orig fqn)
       }
       if (importStatement.isRecursive()) {
-        potentialSymbolNames.addAll(findAllScopeNamesForRecursive(importStatement)
-            .stream()
-            .map(namespace -> namespace + "." + name)
-            .toList());
+        findAllScopeNamesForRecursive(name, importStatement, namespaces);
       }
       if (importStatement.isStar() && !importStatement.isRecursive()) {
-        potentialSymbolNames.add(importStatement.getQName() + "." + name);
+        namespaces.add(importStatement.getQName());
+        var potNamespace = resolveSysMLType(importStatement.getQName());
+        var potNamespacePackage = resolveSysMLPackage(importStatement.getQName());
+        if (potNamespace.isPresent()) {
+          myRecursion(name,
+              ((ISysMLv2Scope) ((IScopeSpanningSymbol) potNamespace.get()).getSpannedScope()).getSysMLImportsList(),
+              namespaces);
+        } else if (potNamespacePackage.isPresent()) {
+          myRecursion(name, ((ISysMLv2Scope)((IScopeSpanningSymbol)potNamespacePackage.get()).getSpannedScope()).getSysMLImportsList(), namespaces);
+        }
       }
     }
-
-    return potentialSymbolNames;
   }
 
   @Override
@@ -716,5 +725,4 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
     return getResolvedOrThrowException(resolvedSymbols);
   }
-
 }
