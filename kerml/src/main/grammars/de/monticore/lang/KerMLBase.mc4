@@ -17,18 +17,14 @@ component grammar KerMLBase
     ImportStatement implements PackageElement =
         Modifier "import" KerMLQualifiedName ("::" "*")? ";";
 
-    KerMLName = Name | EscapedName | SpecialName;
-
-    SpecialName = "test" | "expr" | "thenValue" | "null";
-
-    token EscapedName = "\'"(Name | "==" | "!=" | "===" | "[" | "!==" | "#" | "," | "@" | "@@" | "|" 
-    | "&" | "array#" | "+" | "-" | "*" | "/" | "**" | "^" | "." | "??" | "%" | "~" | "<" | ">"
-    | "<=" | ">=" | "..")+"\'";
+    /* Matches anything except a single quote */
+    fragment token Anything = ~ ('\'') ;
 
     /*
         Definition of a qualified Name for Imports and Functions
     */
-    KerMLQualifiedName extends MCQualifiedName = kermlParts:KerMLName (("::"|".") kermlParts:KerMLName)*;
+    KerMLQualifiedName extends MCQualifiedName = parts:Name (("::"|".") parts:Name)*;
+
     /*
         Handles comments that start with doc where the comment-part is handled by MCBasic
     */

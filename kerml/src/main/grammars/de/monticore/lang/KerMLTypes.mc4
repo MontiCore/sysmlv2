@@ -9,7 +9,7 @@ component grammar KerMLTypes
 
     Datatype implements PackageElement =
         Modifier "datatype" Name
-        (KerMLRelationClause)?
+        (KerMLRelationClause)*
         ("intersects" intersectTypes:KerMLQualifiedName ("," intersectTypes:KerMLQualifiedName)*)?
         ("{" (DocBlock|PackageElement)* "}" | ";");        
 
@@ -50,12 +50,10 @@ component grammar KerMLTypes
         ("{" (DocBlock)? "}");
 
     Function implements PackageElement =
-        Modifier
-        "function" FunctionName
+        Modifier "function" FunctionName
         ( (":>" | "specializes") superFunctions:(KerMLQualifiedFunctionName || ",")+ )?
         ("{" 
-            ( Feature | Function | IfElse | Invariant | DocBlock | Connector | Step  
-            | Succession | FunctionReturn | FunctionParameter  )* ("chain")? 
+            (PackageElement | DocBlock | FunctionReturn | FunctionParameter)* ("chain")? 
         "}" | ";");
 
     Struct implements PackageElement =
@@ -63,27 +61,23 @@ component grammar KerMLTypes
         "struct" ("all")? Name (TypeMultiplicity | KerMLRelationClause)*
         ((Name (TypeMultiplicity)?) ("," Name (TypeMultiplicity)*)*)?
         ("{" 
-            (DocBlock |StructVar | StructInv | CommentElement | PackageElement |Feature | Step)* 
+            (DocBlock | PackageElement)* 
         "}" | ";");
 
     Behavior implements PackageElement =
         Modifier ("behavior" | "interaction") ("all")? Name 
         (KerMLRelationClause)*
         ("{" 
-            (Feature | Function | IfElse | Invariant | DocBlock | Connector 
-            | Step | Succession | Binding | FunctionReturn | FunctionParameter)* ("chain")? 
+            (PackageElement | DocBlock | FunctionReturn | FunctionParameter)* ("chain")? 
         "}" | ";");        
 
-    StructVar =
+    StructVar implements PackageElement=
         Modifier Name ":" (Name)? (":>>" Name)? ";";
 
-    StructInv =
-        Modifier "inv" MCQualifiedName? "{" (DocBlock|PackageElement|Expression)* "}";
-
-    Test implements PackageElement = 
+    Implies implements PackageElement = 
         Expression "implies" Expression;
 
-    FunctionName = KerMLName;
+    FunctionName = KerMLQualifiedName;
 
     FunctionParameter implements PackageElement =
         Modifier
@@ -99,14 +93,11 @@ component grammar KerMLTypes
 
     FunctionReturn implements PackageElement=
         "return" (Name)? (":" type:KerMLQualifiedName)? 
-        ( TypeMultiplicity | "ordered" | "nonunique" | KerMLSubsetting | KerMLChains | KerMLRedefinition | "chain" )*
+        ( TypeMultiplicity | KerMLRelationClause | "ordered" | "nonunique" | "chain" )*
         ( ("=" | "default") Expression )? 
         (FeatureBlock | ";") ;
 
     FunctionCall = (KerMLQualifiedFunctionName? "(" (Expression ("," Expression)*)?")");
-
-    KerMLAsExpression implements Expression <150> =
-        left:Expression "as" right:KerMLQualifiedName;
 
     KerMLQualifiedFunctionName = FunctionName ("::" FunctionName)*;
 
@@ -118,7 +109,7 @@ component grammar KerMLTypes
 
     Bound = NatLiteral | "*" | Name;
 
-    IfElse =
+    IfElse implements PackageElement =
         "if" Expression "?" Expression "else" Expression;
 
     IfElseElement =
@@ -176,9 +167,6 @@ component grammar KerMLTypes
         ("about" KerMLQualifiedName ("," KerMLQualifiedName)*)? 
         ("{" (DocBlock | PackageElement)* "}" | ";")? ;
 
-    StepProperty = 
-        Modifier Name ("=" Expression)? ";" ;
-
     Succession implements PackageElement =
         Modifier "succession" ("all")? (Name (TypeMultiplicity)?)?() 
         (("first")? (TypeMultiplicity)? left:Expression)? 
@@ -192,7 +180,7 @@ component grammar KerMLTypes
         ("{" (DocBlock | PackageElement)*"}" |";") ;
 
     Alias implements PackageElement =
-        Modifier "alias" EscapedName "for" KerMLQualifiedName ";" ;
+        Modifier "alias" KerMLQualifiedName "for" KerMLQualifiedName ";" ;
 
     NamelessRedefinitionFeature implements PackageElement =
         Modifier "feature" KerMLRedefinition ";" ;
