@@ -6,8 +6,6 @@ component grammar KerMLTypes
             de.monticore.literals.MCCommonLiterals,
             de.monticore.expressions.ExpressionsBasis
 {
-    @Override
-    KerMLQualifiedName = Funparts:FunctionName (("::" | ".") Funparts:FunctionName)*;
 
     Datatype implements PackageElement =
         Modifier "datatype" Name
@@ -85,6 +83,8 @@ component grammar KerMLTypes
     Test implements PackageElement = 
         Expression "implies" Expression;
 
+    FunctionName = KerMLName;
+
     FunctionParameter implements PackageElement =
         Modifier
         (KerMLRedefinition)?
@@ -107,14 +107,6 @@ component grammar KerMLTypes
 
     KerMLAsExpression implements Expression <150> =
         left:Expression "as" right:KerMLQualifiedName;
-
-    FunctionName = Name | EscapedName | SpecialName;
-
-    SpecialName = "test" | "expr" | "thenValue"| "null";
-
-    token EscapedName = "\'"(Name | "==" | "!=" | "===" | "[" | "!==" | "#" | "," | "@" | "@@" | "|" 
-    | "&" | "array#" | "+" | "-" | "*" | "/" | "**" | "^" | "." | "??" | "%" | "~" | "<" | ">"
-    | "<=" | ">=" | "..")+"\'";
 
     KerMLQualifiedFunctionName = FunctionName ("::" FunctionName)*;
 
@@ -141,7 +133,7 @@ component grammar KerMLTypes
 
     Connector implements PackageElement = 
         Modifier
-        "connector" ("all")? Name?
+        "connector" ("all")? KerMLQualifiedName?
         (KerMLRelationClause)*
         (":" type:KerMLQualifiedName)?
         (TypeMultiplicity)?
