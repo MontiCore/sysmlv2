@@ -43,7 +43,7 @@ component grammar SysMLParts extends SysMLBasis {
       (SysMLElement | AnonEnumUsage)*
     "}" | ";") ;
 
-  symbol EnumUsage implements SysMLElement =
+  symbol EnumUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* "enum"
     SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
@@ -72,7 +72,7 @@ component grammar SysMLParts extends SysMLBasis {
    * ##################################################################
    */
 
-  symbol scope PartUsage implements SysMLElement =
+  symbol scope PartUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* "part" SysMLIdentifier? Name?
     SysMLCardinality? Specialization* DefaultValue?
     ("{"
@@ -102,7 +102,7 @@ component grammar SysMLParts extends SysMLBasis {
         return Optional.empty();
       } ;
 
-  symbol scope AttributeUsage implements SysMLElement =
+  symbol scope AttributeUsage implements SysMLUsage =
       Modifier UserDefinedKeyword* "attribute"
       SysMLIdentifier? Name? SysMLCardinality?
       Specialization* DefaultValue?
@@ -137,7 +137,7 @@ component grammar SysMLParts extends SysMLBasis {
    * integrate with the existing artifacts (i.e., theories containing specific channel names) only by referencing the
    * symboltable (and not needing to re-processes the original models).
    */
-  symbol scope PortUsage implements SysMLElement =
+  symbol scope PortUsage implements SysMLUsage =
       Modifier UserDefinedKeyword* "port"
       SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
       ("{"
@@ -161,7 +161,7 @@ component grammar SysMLParts extends SysMLBasis {
       return Optional.empty();
     } ;
 
-  symbol ConnectionUsage implements SysMLElement =
+  symbol ConnectionUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* "connection"?
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "connect" (

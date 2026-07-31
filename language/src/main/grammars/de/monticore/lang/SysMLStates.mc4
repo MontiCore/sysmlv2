@@ -10,7 +10,7 @@ component grammar SysMLStates extends SysMLActions {
       (EntryAction | DoAction | ExitAction | SysMLElement)*
     "}" | ";") ;
 
-  symbol scope StateUsage implements SysMLElement =
+  symbol scope StateUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* exhibited:["exhibit"]? "state" SysMLIdentifier?
     Name? SysMLCardinality? Specialization*
     ("(" (SysMLParameter || ",")* ")")? paralled:["parallel"]? DefaultValue?
@@ -18,7 +18,7 @@ component grammar SysMLStates extends SysMLActions {
       (EntryAction | DoAction | ExitAction | SysMLElement)*
     "}" | ";") ;
 
-  ExhibitedStateReference implements SysMLElement =
+  ExhibitedStateReference implements SysMLUsage =
     UserDefinedKeyword* "exhibit" MCQualifiedName?
     SysMLCardinality? Specialization*
     ("{"
