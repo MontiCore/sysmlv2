@@ -32,7 +32,7 @@ component grammar SysMLImportsAndPackages extends SysMLBasis {
        SysMLElement*
      "}" | ";") ;
 
-  symbol scope SysMLPackage implements SysMLElement =
+  symbol SysMLPackage implements SysMLNamespace =
     ["standard"]? ["library"]? "package" SysMLIdentifier? Name?
     ("{"
        SysMLElement*

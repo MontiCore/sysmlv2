@@ -4,7 +4,7 @@ package de.monticore.lang;
 component grammar SysMLActions
     extends de.monticore.lang.SysMLBasis {
 
-  symbol scope ActionDef implements SysMLType =
+  symbol ActionDef implements SysMLType =
     Modifier UserDefinedKeyword* "action" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
@@ -15,7 +15,7 @@ component grammar SysMLActions
    * Inline-Usages do not terminate in semicolons or closing brackets and are intended
    * for use in other constructs such as successions or transitions.
    */
-  scope InlineActionUsage implements IInlineOccurrenceUsage =
+  InlineActionUsage implements IInlineOccurrenceUsage =
     Modifier UserDefinedKeyword* "action" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
       SysMLElement*
@@ -35,25 +35,25 @@ component grammar SysMLActions
    * Control Nodes
    * ================================================================================================================ */
 
-  symbol scope ForkAction extends ActionUsage =
+  symbol ForkAction extends ActionUsage =
     Modifier UserDefinedKeyword* "fork" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
        SysMLElement*
      "}" | ";") ;
 
-  symbol scope DecideAction extends ActionUsage =
+  symbol DecideAction extends ActionUsage =
     Modifier UserDefinedKeyword* "decide" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
        SysMLElement*
      "}" | ";") ;
 
-  symbol scope JoinAction extends ActionUsage =
+  symbol JoinAction extends ActionUsage =
     Modifier UserDefinedKeyword* "join" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
        SysMLElement*
      "}" | ";") ;
 
-  symbol scope MergeAction extends ActionUsage =
+  symbol MergeAction extends ActionUsage =
     Modifier UserDefinedKeyword* "merge" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
        SysMLElement*
@@ -77,7 +77,7 @@ component grammar SysMLActions
      payloadHandle:Name? "at" timeTrigger:Expression |
      payloadHandle:Name? "after" relativeTimeTrigger: Expression ;
 
-  scope InlineAcceptActionUsage extends InlineActionUsage =
+  InlineAcceptActionUsage extends InlineActionUsage =
     Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "accept" Payload ("via" receiver:MCQualifiedName)?
     ("{"
@@ -91,7 +91,7 @@ component grammar SysMLActions
        SysMLElement*
      "}" | ";") ;
 
-  scope InlinePerformActionUsage extends InlineActionUsage =
+  InlinePerformActionUsage extends InlineActionUsage =
     Modifier UserDefinedKeyword* "perform" "action"? SysMLIdentifier? Name? SysMLCardinality?
     Specialization* DefaultValue?
     ("{"
@@ -111,7 +111,7 @@ component grammar SysMLActions
        SysMLElement*
      "}" | ";") ;
 
-  scope InlineAssignmentActionUsage extends InlineActionUsage =
+  InlineAssignmentActionUsage extends InlineActionUsage =
     Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "assign" target:MCQualifiedName ":=" valueExpression:Expression
     ("{"
@@ -143,7 +143,7 @@ component grammar SysMLActions
        SysMLElement*
      "}" | ";") ;
 
-  symbol scope WhileActionUsage extends ActionUsage =
+  symbol WhileActionUsage extends ActionUsage =
     Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "while" while:Expression ("(" (SysMLParameter || ",")* ")")?
     BodyClause ("until" until:Expression ";")? ;
@@ -152,11 +152,11 @@ component grammar SysMLActions
    * The keyword loop may be used as a shorthand for while true. This is useful for a while loop that is designed to
    * be non-terminating or will be terminated with just an until expression.
    */
-  symbol scope LoopActionUsage extends WhileActionUsage =
+  symbol LoopActionUsage extends WhileActionUsage =
     Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "loop" BodyClause ("until" until:Expression ";")? ;
 
-  symbol scope ForLoopActionUsage extends ActionUsage =
+  symbol ForLoopActionUsage extends ActionUsage =
     Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "for" loopVar:Name loopSpecs:Specialization* "in" (start:Expression ".." end:Expression | sequence:Expression)
     BodyClause ;
@@ -218,7 +218,7 @@ component grammar SysMLActions
    * Calculations
    * ================================================================================================================ */
 
-  symbol scope CalcDef implements SysMLType =
+  symbol CalcDef implements SysMLType =
     Modifier UserDefinedKeyword* "calc" "def" Name SysMLCardinality? Specialization*
     ("{"
       SysMLElement*

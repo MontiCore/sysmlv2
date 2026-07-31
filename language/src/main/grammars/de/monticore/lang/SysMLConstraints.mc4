@@ -5,7 +5,7 @@ component grammar SysMLConstraints
     extends SysMLBasis,
             SysMLActions {
 
-  symbol scope ConstraintDef implements SysMLType =
+  symbol ConstraintDef implements SysMLType =
     Modifier UserDefinedKeyword* "constraint" "def"
     Name SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
@@ -13,7 +13,7 @@ component grammar SysMLConstraints
       Expression?
     "}" | ";") ;
 
-  symbol scope ConstraintUsage implements SysMLUsage =
+  symbol ConstraintUsage implements SysMLUsage =
     Modifier (
       (["require"] | ["assume"] | ["assert"]) ["not"]? UserDefinedKeyword* "constraint"?
       | UserDefinedKeyword* "constraint"
@@ -24,7 +24,7 @@ component grammar SysMLConstraints
       Expression?
     "}" | ";") ;
 
-  ConstraintReference implements SysMLUsage =
+  ConstraintReference implements SysMLNamespace =
     (
       (["require"] | ["assume"] | ["assert"]) UserDefinedKeyword* "constraint"?
       | UserDefinedKeyword* "constraint"
@@ -36,7 +36,7 @@ component grammar SysMLConstraints
       Expression?
     "}" | ";") ;
 
-  symbol scope RequirementDef implements SysMLType  =
+  symbol RequirementDef implements SysMLType  =
       Modifier UserDefinedKeyword* "requirement" "def"
       SysMLIdentifier? Name SysMLCardinality? Specialization*
       ("(" (SysMLParameter || ",")* ")")?
@@ -46,7 +46,7 @@ component grammar SysMLConstraints
 
   // Satisfy Requirement Usages are ConstraintUsages and as such can be
   // required/assumed/asserted
-  symbol scope RequirementUsage implements SysMLUsage =
+  symbol RequirementUsage implements SysMLUsage =
       Modifier (["require"] | ["assume"] | ["assert"])? UserDefinedKeyword*
       ["verify"]? ["not"]? ["satisfy"]? "requirement"
       SysMLIdentifier? Name? SysMLCardinality? Specialization*
@@ -107,7 +107,7 @@ component grammar SysMLConstraints
           SysMLElement*
        "}" | ";") ;
 
-  symbol scope ConcernDef implements SysMLType  =
+  symbol ConcernDef implements SysMLType  =
       Modifier UserDefinedKeyword* "concern" "def"
       SysMLIdentifier? Name SysMLCardinality? Specialization*
       ("(" (SysMLParameter || ",")* ")")?
@@ -115,7 +115,7 @@ component grammar SysMLConstraints
         SysMLElement*
       "}" | ";") ;
 
-  symbol scope ConcernUsage implements SysMLUsage =
+  symbol ConcernUsage implements SysMLUsage =
       Modifier UserDefinedKeyword* ["frame"]? "concern"
       SysMLIdentifier? Name? SysMLCardinality? Specialization*
       ("(" (SysMLParameter || ",")* ")")?

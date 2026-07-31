@@ -3,7 +3,7 @@ package de.monticore.lang;
 
 component grammar SysMLOccurrences extends SysMLBasis {
 
-  symbol scope OccurrenceDef implements SysMLType =
+  symbol OccurrenceDef implements SysMLType =
     Modifier UserDefinedKeyword* "occurrence" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
@@ -17,7 +17,7 @@ component grammar SysMLOccurrences extends SysMLBasis {
       SysMLElement*
     "}")? ;
 
-  symbol scope OccurrenceUsage implements OccurrenceUsageElement =
+  symbol OccurrenceUsage implements OccurrenceUsageElement =
     Modifier UserDefinedKeyword* "occurrence" SysMLIdentifier? Name? SysMLCardinality? Specialization*
     DefaultValue?
     ("{"
@@ -25,7 +25,7 @@ component grammar SysMLOccurrences extends SysMLBasis {
     "}" | ";") ;
 
   // IndividualUsages are parsed as AnonymousReferences with Modifier UserDefinedKeyword* "individual"
-  symbol scope IndividualDef implements SysMLType =
+  symbol IndividualDef implements SysMLType =
     Modifier UserDefinedKeyword* "individual" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
@@ -38,7 +38,7 @@ component grammar SysMLOccurrences extends SysMLBasis {
    * more item definitions.
    * ================================================================================================================ */
 
-  symbol scope ItemDef implements SysMLType =
+  symbol ItemDef implements SysMLType =
     Modifier UserDefinedKeyword* "item" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("(" (SysMLParameter || ",")* ")")?
@@ -46,7 +46,7 @@ component grammar SysMLOccurrences extends SysMLBasis {
       SysMLElement*
     "}" | ";") ;
 
-  symbol scope ItemUsage implements SysMLElement =
+  symbol ItemUsage implements SysMLElement =
     Modifier UserDefinedKeyword* "item" SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("(" (SysMLParameter || ",")* ")")? DefaultValue?
     ("{"
