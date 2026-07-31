@@ -319,7 +319,25 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
         namespaces.add(Names.constructQualifiedName(partsList.subList(0, partsList.size() - 1))); // import A; What is that you can find S in there (so go after its orig fqn)
       }
       if (importStatement.isRecursive()) {
-        findAllScopeNamesForRecursive(name, importStatement, namespaces);
+        var traverser = SysMLv2Mill.inheritanceTraverser();
+        traverser.add4SysMLv2( new SysMLv2Visitor2() {
+          @Override
+          public void visit(ISysMLv2Scope scope) {
+            // only look in named scopes
+            if (scope.isPresentName() && scope.isPresentSpanningSymbol()) {
+              // TODO also public imports
+              namespaces.add(
+                  getRelativeFromFqn(importStatement.getQName(),
+                      scope.getSpanningSymbol().getFullName()));
+              myRecursion(name, scope.getSysMLImportsList(), namespaces);
+            }
+          }
+        });
+        var namespace = resolveSysMLType(importStatement.getQName());
+        var packageNamespace = resolveSysMLPackage(importStatement.getQName());
+        if (namespace.isPresent() && namespace.get() instanceof IScopeSpanningSymbol) {
+          ((IScopeSpanningSymbol)namespace.get()).getSpannedScope().accept(traverser);
+        } else packageNamespace.ifPresent(sysMLPackageSymbol -> sysMLPackageSymbol.getSpannedScope().accept(traverser));
       }
       if (importStatement.isStar() && !importStatement.isRecursive()) {
         namespaces.add(importStatement.getQName());
