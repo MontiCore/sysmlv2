@@ -22,6 +22,9 @@ component grammar KerMLExpressions
     ConditionalNotExpression implements Expression <190> =
         "not" Expression;
 
+    KerMLAsExpression implements Expression <150> =
+        left:Expression "as" right:KerMLQualifiedName;
+
     KerMLEnumerationExpression implements Expression =
         "(" start:Expression ".." end:Expression ")" ;
     // Differs from Sysml but similar 
@@ -51,7 +54,7 @@ component grammar KerMLExpressions
         Expression "??" Expression;
 
     KerMLLiteralArgExpression implements Expression <140> =
-        Expression (Literal| EscapedName);
+        Expression (Literal| KerMLQualifiedName);
 
     KerMLIdentityExpression implements Expression <90> =
         Expression ("===" | "!==") Expression;
