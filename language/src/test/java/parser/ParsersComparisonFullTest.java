@@ -90,7 +90,7 @@ public class ParsersComparisonFullTest {
     List<Issue> issues = official.validate();
 
     assertTrue(
-        issues.stream().allMatch(issue -> !issue.getSeverity().name().equals("ERROR")),
+        issues.stream().noneMatch(issue -> issue.getSeverity().name().equals("ERROR")),
         () -> "Official OMG validation issues for " + modelName + ":\n" + formatIssues(issues)
     );
   }

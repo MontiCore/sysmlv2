@@ -96,10 +96,25 @@ package WithNestation {
 
 package Estranged {
   part def Sibling {
-    part def Niece;
+    part def Niece {
+      part a {
+        part b {
+          part def C;
+        }
+      }
+    }
   }
   part def Uncle {
-    private import Sibling::Niece::**;
-    part def NieceClone :> Niece;
+    //private import Sibling::Niece::**;
+    // part def NieceClone :> Niece;
+    //part n :> b; // a
+
+    // is fully valid
+    //private import Sibling::Niece::**;
+    //part n1 : C;
+
+    // is fully valid
+    // private import Sibling::Niece::a::b::*;
+    // part n1 : C;
   }
 }

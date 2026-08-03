@@ -1,6 +1,5 @@
 package de.monticore.lang.sysmlv2._symboltable;
 
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.LinkedListMultimap;
 import de.monticore.lang.componentconnector._symboltable.AutomatonSymbol;
 import de.monticore.lang.componentconnector._symboltable.EventAutomatonSymbol;
@@ -269,7 +268,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
           names.add(
               getRelativeFromFqn(statement.getQName(),
                   scope.getSpanningSymbol().getFullName()));
-          myRecursion(name, scope.getSysMLImportsList(), names);
+          findAllNamespacesForImports(name, scope.getSysMLImportsList(), names);
         }
       }
     };
@@ -302,14 +301,14 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     // qualify names based on the import statements of enclosing scope
     // 1. qualify star imports by replacing the start with symbolname
     // 2. qualify direct imports when the name matches
-    myRecursion(name, importStatements, potentialNamespaces);
+    findAllNamespacesForImports(name, importStatements, potentialNamespaces);
     var res = potentialNamespaces.stream().map(namespace -> namespace + "." + name).collect(Collectors.toSet());
     res.add(name);
 
     return res;
   }
 
-  public default void myRecursion(String name, List<ASTSysMLImportStatement> importStatements, Set<String> namespaces) {
+  public default void findAllNamespacesForImports(String name, List<ASTSysMLImportStatement> importStatements, Set<String> namespaces) {
     for (var importStatement : importStatements) {
       // in sysml it is valid to resolve B::C somewhere where A::B was imported
       List<String> partsList = importStatement.getMCQualifiedName().getPartsList();
@@ -325,11 +324,10 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
           public void visit(ISysMLv2Scope scope) {
             // only look in named scopes
             if (scope.isPresentName() && scope.isPresentSpanningSymbol()) {
-              // TODO also public imports
               namespaces.add(
                   getRelativeFromFqn(importStatement.getQName(),
                       scope.getSpanningSymbol().getFullName()));
-              myRecursion(name, scope.getSysMLImportsList(), namespaces);
+              findAllNamespacesForImports(name, scope.getSysMLImportsList(), namespaces);
             }
           }
         });
@@ -344,11 +342,11 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
         var potNamespace = resolveSysMLType(importStatement.getQName());
         var potNamespacePackage = resolveSysMLPackage(importStatement.getQName());
         if (potNamespace.isPresent()) {
-          myRecursion(name,
+          findAllNamespacesForImports(name,
               ((ISysMLv2Scope) ((IScopeSpanningSymbol) potNamespace.get()).getSpannedScope()).getSysMLImportsList(),
               namespaces);
         } else if (potNamespacePackage.isPresent()) {
-          myRecursion(name, ((ISysMLv2Scope)((IScopeSpanningSymbol)potNamespacePackage.get()).getSpannedScope()).getSysMLImportsList(), namespaces);
+          findAllNamespacesForImports(name, ((ISysMLv2Scope)((IScopeSpanningSymbol)potNamespacePackage.get()).getSpannedScope()).getSysMLImportsList(), namespaces);
         }
       }
     }
