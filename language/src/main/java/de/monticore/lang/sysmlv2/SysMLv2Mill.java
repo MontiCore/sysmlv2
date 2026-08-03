@@ -69,7 +69,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
   }
 
   public static void addStringType() {
-    getMill()._addStringType();
+    BasicSymbolsMill.initializeString();
   }
 
   public static void addScalarValueTypes() {
@@ -78,20 +78,6 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
 
   public static void addScalarFunctionsTypes() {
     getMill()._addScalarFunctionsTypes();
-  }
-
-  protected void _addStringType() {
-    // ensures adding the type symbol only once
-    if (SysMLv2Mill.globalScope().resolveType("String").isPresent()) {
-      return;
-    }
-
-    var type = OOSymbolsMill.oOTypeSymbolBuilder()
-        .setName("String")
-        .setSpannedScope(scope())
-        .build();
-
-    SysMLv2Mill.globalScope().add(type);
   }
 
   protected void _addScalarValueTypes() {
