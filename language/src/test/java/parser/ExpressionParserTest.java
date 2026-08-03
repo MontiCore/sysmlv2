@@ -12,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
+import de.monticore.lang.sysmlexpressions._ast.ASTSysMLFunctionOperationExpression;
 
 import java.io.IOException;
 
@@ -80,6 +82,49 @@ public class ExpressionParserTest {
     assertThat(ast).isPresent();
     assertThat(Log.getFindings()).isEmpty();
     assertThat(ast.get()).isInstanceOf(ASTElementOfExpression.class);
+  }
+
+  /**
+   * Checks that a function operation following a field access binds correctly.
+   */
+  @Test
+  public void testFunctionOperationAfterFieldAccess() throws IOException {
+    var ast = parser.parse_StringExpression("a.b->c");
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    assertThat(ast.get()).isInstanceOf(ASTSysMLFunctionOperationExpression.class);
+
+    var functionOperation = (ASTSysMLFunctionOperationExpression) ast.get();
+    assertThat(functionOperation.getExpression())
+        .isInstanceOf(ASTFieldAccessExpression.class);
+    assertThat(functionOperation.getSysMLQualifiedName().getPartsList())
+        .containsExactly("c");
+  }
+
+  /**
+   * Checks that qualified names on both sides of a function operation
+   * are parsed with the correct binding.
+   */
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "a.b->c.d",
+      "a::b->c::d",
+      "a::b->c.d",
+      "a.b->c::d"
+  })
+  public void testQualifiedNamesInFunctionOperation(String expr) throws IOException {
+    var ast = parser.parse_StringExpression(expr);
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    assertThat(ast.get()).isInstanceOf(ASTSysMLFunctionOperationExpression.class);
+
+    var functionOperation = (ASTSysMLFunctionOperationExpression) ast.get();
+    assertThat(functionOperation.getExpression())
+        .isInstanceOf(ASTFieldAccessExpression.class);
+    assertThat(functionOperation.getSysMLQualifiedName().getPartsList())
+        .containsExactly("c", "d");
   }
 
 }

@@ -111,7 +111,7 @@ component grammar SysMLExpressions
    * useful for chaining invocations in an effective data flow
    */
   SysMLFunctionOperationExpression implements Expression =
-    Expression "->" Name ("(" (SysMLParameter || ",")* ")")? ("{" SysMLElement* inner:Expression "}")? ;
+    Expression "->" SysMLQualifiedName ("(" (SysMLParameter || ",")* ")")? ("{" SysMLElement* inner:Expression "}")? ;
 
   // Eigentlich ist "^" der Name einer CalcDef aus den Domain Libraries
   CalcDefPowerExpression implements Expression =
