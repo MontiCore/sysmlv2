@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
+// TODO "extends KerMLElements (ehem. -Types)" entfernen
 component grammar KerMLExpressions
     extends KerMLTypes,
             de.monticore.expressions.CommonExpressions,
@@ -27,7 +28,7 @@ component grammar KerMLExpressions
 
     KerMLEnumerationExpression implements Expression =
         "(" start:Expression ".." end:Expression ")" ;
-    // Differs from Sysml but similar 
+    // Differs from Sysml but similar
 
     KerMLFunctionOperationExpression implements Expression <120> =
         Expression "->" Name
@@ -35,8 +36,8 @@ component grammar KerMLExpressions
             ("{" ("in" iteratorName:Name ":" iteratorType:KerMLQualifiedName ";")?
             body:Expression "}")
             |
-            (Arguments 
-            | FunctionBlock                           
+            (Arguments
+            | FunctionBlock
             | KerMLQualifiedFunctionName)
         )? ;
 
@@ -61,26 +62,35 @@ component grammar KerMLExpressions
 
     KerMLIsTypeExpression implements Expression <150> =
         left:Expression "istype" right:KerMLQualifiedName;
-    
+
     KerMLQualifiedNameExpression implements Expression =
         KerMLQualifiedName;
-    
+
+
     KerMLNewExpression implements Expression =
-        "new" type:KerMLQualifiedName 
-        ("(" (Expression ("," Expression)*)? ")")? 
+        "new" type:KerMLQualifiedName
+        // TODO "Argument" verwenden? Siehe https://git.rwth-aachen.de/montibelle/frontend/transformer/sysmltransformer/-/work_items/355
+        ("(" (Expression ("," Expression)*)? ")")?
+        // TODO konkrete Elemente (ehem. Types) ersetzen durch ein Interface
+        //  "KerMLElement" aus KerMLBase
+        // TODO Semikolon hat hier nichts verloren
         ("{" (DocBlock | PackageElement | Expression | ";")* "}")? ;
-        
+
     KerMLTupleExpression implements Expression =
         "(" Expression ("," Expression)+ ")";
 
     token KerMLScientificToken = ('0'..'9')+ ("e" | "E") ("+" | "-")? ('0'..'9')+ ;
-    
+
+    // Breite 80, Newlines verwenden
     token KerMLDecimalToken = ('0'..'9')+ "." ('0'..'9')+ ( ("e" | "E") ("+" | "-")? ('0'..'9')+ )? ;
 
     KerMLScientificLiteral implements Literal = KerMLScientificToken;
 
     KerMLDecimalNumber implements Literal = KerMLDecimalToken;
 
+    // TODO TernaryExpression kopieren, 1:1 (und generell alle Regeln mit der
+    //  SysML abgleichen: Formatierung, Namen, Benennung der Teile, Dokumention,
+    //  etc.
     KerMLIfElseExpression implements Expression =
         "if" Expression "?" Expression "else" Expression;
 

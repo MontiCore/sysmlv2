@@ -1,37 +1,50 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
-// We split KerML in partial grammars
+// TODO Rename "KerMLBasis" wie in SysML
+// TODO Ziel für beinhaltete Elemente: Nur, was absolut nötig ist, dh. keine
+//  Overrides von existierenden Regeln (zB Modifier). Stattdessen die Overrides
+//  in KerML.mc4 machen. Die existierenden Regeln bzw deren Grammatik (zB
+//  UML-Modifier) dort importieren, wo unbedingt gebraucht (zB in Elements (ehem
+//  Types), da diese die Regel "Modifier" benötigen.
 component grammar KerMLBase
     extends de.monticore.MCBasics,
             de.monticore.types.MCBasicTypes
 {
-    /*
-        Structure of the whole file
-    */
+    // TODO nach Elements schieben
     PackageDeclaration implements PackageElement=
         Modifier  ("standard")? ("library")? "package" KerMLQualifiedName
         ( "{"(DocBlock | ImportStatement | PackageElement)* "}");
 
+    // TODO Verschieben nach Elements (ehem. Types)
     // Handels import statements
     ImportStatement implements PackageElement =
+        // Hier unbedingt SysML-Original kopieren, so gut es geht und so weit es
+        // nötig ist.
         Modifier "import" KerMLQualifiedName ("::" "*")? ";";
 
     /* Matches anything except a single quote */
     fragment token Anything = ~ ('\'') ;
 
-    /*
-        Definition of a qualified Name for Imports and Functions
-    */
+    // TODO 1: alle benutzenden Stellen durch "MCQualifiedName" ersetzen
+    // TODO 2: Nach KerML.mc4 verschieben
     KerMLQualifiedName extends MCQualifiedName = parts:Name (("::"|".") parts:Name)*;
 
+    // Kommentare sehen so aus:
+    /**
+     * So bitte
+     */
     /*
         Handles comments that start with doc where the comment-part is handled by MCBasic
     */
     DocBlock = "doc";
 
+    // TODO Nach KerML.mc4 verschieben, @Override hinzufügen (wie in SysML),
+    //  dazu die KerML.mc4-Grammatik von de.monticore.UMLModifier erben lassen
+    //  (wie in SysML)
     Modifier =
-        //Stereotype?
+        // TODO Einkommentieren, konservativ das existierende Modifier erweitern
+        //Stereotype? // <Test> public part def Test;
         (   ["public"]       | [public:"+"]
             | ["private"]      | [private:"-"]
             | ["protected"]    | [protected:"#"]
@@ -52,7 +65,7 @@ component grammar KerMLBase
             | ["variation"]
             | ["variant"]
             | ["member"]
-        )*; 
+        )*;
 
     /*
         Element that is whithin the package like functions and datatype defintions

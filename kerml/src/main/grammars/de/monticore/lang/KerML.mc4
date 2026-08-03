@@ -1,19 +1,27 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
+
+// TODO Ziel bei Imports:
+// Basis importiert möglichst wenig aus MontiCore
+// Elements (ehem. Types) basieren nur auf Basis und eventuell weiteren MC-Grammatiken
+// Expressions basieren nur aus ExpressionBasis, wenn absolut nicht zu vermeiden, dann auch auf Basis
+// Diese Grammatik hier importier Basis, Expressions, Elements (ehem Types)
 grammar KerML extends KerMLExpressions {
 
+  // TODO Rename KerMLModel
   start KerMLDocument;
 
+  // TODO: KerMLModel = KerMLElement*; (wie in der SysML)
   KerMLDocument = PackageDeclaration;
 
   @Override
-    token Name =
-      ( ( 'a'..'z' | 'A'..'Z' | '_' | '$' )
-        ( 'a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '$' )* )
-      | ( '\'' Anything* '\'' ) :
-      {
-        if(getText().length() > 0 && getText().charAt(0) == '\'')
-          setText(getText().substring(1, getText().length() - 1));
-      } ;
+  token Name =
+    ( ( 'a'..'z' | 'A'..'Z' | '_' | '$' )
+      ( 'a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '$' )* )
+    | ( '\'' Anything* '\'' ) :
+    {
+      if(getText().length() > 0 && getText().charAt(0) == '\'')
+        setText(getText().substring(1, getText().length() - 1));
+    } ;
 }
