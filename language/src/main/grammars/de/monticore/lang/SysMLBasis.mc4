@@ -47,7 +47,7 @@ component grammar SysMLBasis
   /** Elemente der Bodies/Pakete */
   interface SysMLElement;
 
-  interface symbol scope SysMLNamespace extends SysMLElement = Name?;
+  interface symbol scope SysMLNamespace extends SysMLElement;
 
   /** Element mit eigenem Symbol für resolve (zB. für ReqDef) */
   interface symbol SysMLType extends SysMLNamespace = Name;

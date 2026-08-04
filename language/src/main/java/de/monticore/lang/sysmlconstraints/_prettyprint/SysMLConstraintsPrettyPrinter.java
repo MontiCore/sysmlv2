@@ -2,6 +2,7 @@
 package de.monticore.lang.sysmlconstraints._prettyprint;
 
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLParameter;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLReference;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintReference;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.prettyprint.CommentPrettyPrinter;
@@ -102,17 +103,20 @@ public class SysMLConstraintsPrettyPrinter
 
     node.getUserDefinedKeywordList().forEach(n -> n.accept(getTraverser()));
 
-    getPrinter().print("constraint ");
-
-    if (node.isPresentMCQualifiedName()) {
-      node.getMCQualifiedName().accept(getTraverser());
-    }
+    node.getMCQualifiedName().accept(getTraverser());
 
     if (node.isPresentSysMLCardinality()) {
       node.getSysMLCardinality().accept(getTraverser());
     }
 
-    node.getSpecializationList().forEach(n -> n.accept(getTraverser()));
+    // We remove the specialization because it is already specified through the QN
+    node.getSpecializationList()
+        .stream()
+        .filter(it ->
+            !(it instanceof ASTSysMLReference &&
+            it.sizeSuperTypes() == 1 &&
+            it.getSuperTypes(0).printType().equals(node.getMCQualifiedName().getQName())))
+        .forEach(n -> n.accept(getTraverser()));
 
     getPrinter().stripTrailing();
     getPrinter().print("(");

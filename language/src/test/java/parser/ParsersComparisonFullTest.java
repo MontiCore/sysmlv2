@@ -62,10 +62,10 @@ public class ParsersComparisonFullTest {
     Path modelPath = Path.of(MODEL_PATH, modelName);
 
     // 1) MontiCore parse
-    //Optional<ASTSysMLModel> astOpt = SysMLv2Mill.parser().parse(modelPath.toString());
-    //assertFalse(parser.hasErrors(), "MontiCore parsing should not have failed");
-    //assertTrue(astOpt.isPresent(), "MontiCore AST should have been created");
-    //ASTSysMLModel ast = astOpt.get();
+    Optional<ASTSysMLModel> astOpt = SysMLv2Mill.parser().parse(modelPath.toString());
+    assertFalse(parser.hasErrors(), "MontiCore parsing should not have failed");
+    assertTrue(astOpt.isPresent(), "MontiCore AST should have been created");
+    ASTSysMLModel ast = astOpt.get();
 //
     ////1b) MontiCore full validation (CoCos)
     ////montiCoCos.runDefaultCoCos(ast);

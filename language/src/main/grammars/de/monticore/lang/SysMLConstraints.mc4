@@ -14,22 +14,17 @@ component grammar SysMLConstraints
     "}" | ";") ;
 
   symbol ConstraintUsage implements SysMLUsage =
-    Modifier (
-      (["require"] | ["assume"] | ["assert"]) ["not"]? UserDefinedKeyword* "constraint"?
-      | UserDefinedKeyword* "constraint"
-    )
+    Modifier
+    (["require"] | ["assume"] | ["assert"])? ["not"]? UserDefinedKeyword* "constraint"
     Name? SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
       SysMLElement*
       Expression?
     "}" | ";") ;
 
-  ConstraintReference implements SysMLNamespace =
-    (
-      (["require"] | ["assume"] | ["assert"]) UserDefinedKeyword* "constraint"?
-      | UserDefinedKeyword* "constraint"
-    )
-    MCQualifiedName? SysMLCardinality? Specialization*
+  ConstraintReference extends ConstraintUsage =
+    (["require"] | ["assume"] | ["assert"]) ["not"]?
+    MCQualifiedName SysMLCardinality? Specialization*
     ("(" (SysMLParameter || ",")* ")")?
     ("{"
       SysMLElement*
@@ -57,7 +52,7 @@ component grammar SysMLConstraints
          SysMLElement*
       "}" | ";") ;
 
-  symbol RequirementSubject implements SysMLElement =
+  symbol RequirementSubject implements SysMLNamespace =
       "subject" Name? SysMLCardinality? Specialization* DefaultValue?
       ("{"
         SysMLElement*
@@ -101,8 +96,8 @@ component grammar SysMLConstraints
    * rather than verify requirement to declare a verified requirement using
    * reference subsetting.
    */
-  RequirementVerification implements SysMLUsage =
-      "verify" req:MCQualifiedName SysMLCardinality? Specialization*
+  RequirementVerificationReference extends RequirementUsage =
+      key("verify") req:MCQualifiedName SysMLCardinality? Specialization*
       ("{"
           SysMLElement*
        "}" | ";") ;

@@ -18,11 +18,12 @@ component grammar SysMLStates extends SysMLActions {
       (EntryAction | DoAction | ExitAction | SysMLElement)*
     "}" | ";") ;
 
-  ExhibitedStateReference implements SysMLUsage =
-    UserDefinedKeyword* "exhibit" MCQualifiedName?
+  ExhibitedStateReference extends StateUsage =
+    UserDefinedKeyword* "exhibit" MCQualifiedName
     SysMLCardinality? Specialization*
+    ("(" (SysMLParameter || ",")* ")")? paralled:["parallel"]? DefaultValue?
     ("{"
-      SysMLElement*
+      (EntryAction | DoAction | ExitAction | SysMLElement)*
     "}" | ";") ;
 
   symbolrule StateUsage =
