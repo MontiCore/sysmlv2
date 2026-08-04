@@ -8,19 +8,11 @@ package de.monticore.lang;
 //  Types), da diese die Regel "Modifier" benötigen.
 component grammar KerMLBasis
     extends de.monticore.MCBasics,
-            de.monticore.types.MCBasicTypes,
-            de.monticore.UMLModifier
+            de.monticore.types.MCBasicTypes
 {
-    
-    /* Matches anything except a single quote */
-    fragment token Anything = ~ ('\'') ;
-
     interface KerMLElement;
-
     interface IFeatureBlock;
-    interface IFunctionBlock;
     interface FeatureInit;
-
     KerMLQualifiedFunctionName = FunctionName ("::" FunctionName)*;
     FunctionName = MCQualifiedName;
 }

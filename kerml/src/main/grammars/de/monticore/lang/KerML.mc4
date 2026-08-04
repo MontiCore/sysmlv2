@@ -12,11 +12,12 @@ grammar KerML
           KerMLElements
 {
 
-  // TODO Rename KerMLModel
   start KerMLModel;
 
-  // TODO: KerMLModel = KerMLElement*; (wie in der SysML)
   KerMLModel = KerMLElement*;
+
+  /* Matches anything except a single quote */
+    fragment token Anything = ~ ('\'') ;
 
   @Override
   token Name =
@@ -54,4 +55,14 @@ grammar KerML
             )*;
 
   KerMLQualifiedName extends MCQualifiedName = parts:Name (("::"|".") parts:Name)*;
+
+  KerMLScientificLiteral implements Literal = KerMLScientificToken;
+
+  KerMLDecimalNumber implements Literal = KerMLDecimalToken;
+
+  token KerMLScientificToken =
+        ('0'..'9')+ ("e" | "E") ("+" | "-")? ('0'..'9')+ ;
+
+  token KerMLDecimalToken =
+        ('0'..'9')+ "." ('0'..'9')+ ( ("e" | "E") ("+" | "-")? ('0'..'9')+ )?;
 }

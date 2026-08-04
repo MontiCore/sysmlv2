@@ -1,11 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
-// TODO Umbenennen in KerMLElements
 component grammar KerMLElements
     extends KerMLBasis,
             de.monticore.literals.MCCommonLiterals,
-            de.monticore.expressions.ExpressionsBasis
+            de.monticore.expressions.ExpressionsBasis,
+            de.monticore.UMLModifier
 {
     DocBlock implements KerMLElement= "doc";
 
@@ -90,7 +90,7 @@ component grammar KerMLElements
         (("="|"default") Expression)?
         ( (FunctionBlock)+ (";")? | ";" ) ;
 
-    FunctionBlock implements IFunctionBlock = "{"( KerMLElement | Expression | ";")* "}";
+    FunctionBlock implements KerMLElement = "{"( KerMLElement | Expression | ";")* "}";
 
     FunctionReturn implements KerMLElement=
         "return" (Name)? (":" type:MCQualifiedName)?
