@@ -1,18 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
-// TODO Ziel für beinhaltete Elemente: Nur, was absolut nötig ist, dh. keine
-//  Overrides von existierenden Regeln (zB Modifier). Stattdessen die Overrides
-//  in KerML.mc4 machen. Die existierenden Regeln bzw deren Grammatik (zB
-//  UML-Modifier) dort importieren, wo unbedingt gebraucht (zB in Elements (ehem
-//  Types), da diese die Regel "Modifier" benötigen.
 component grammar KerMLBasis
-    extends de.monticore.MCBasics,
-            de.monticore.types.MCBasicTypes
+    extends de.monticore.types.MCBasicTypes
 {
     interface KerMLElement;
-    interface IFeatureBlock;
-    interface FeatureInit;
-    KerMLQualifiedFunctionName = FunctionName ("::" FunctionName)*;
-    FunctionName = MCQualifiedName;
 }

@@ -3,8 +3,7 @@ package de.monticore.lang;
 
 component grammar KerMLExpressions
     extends KerMLBasis,
-            de.monticore.expressions.CommonExpressions,
-            de.monticore.literals.MCCommonLiterals
+            de.monticore.expressions.CommonExpressions
 {
     ConditionalAndExpression implements Expression <120>, InfixExpression =
         left:Expression operator:"and" right:Expression;
@@ -66,7 +65,7 @@ component grammar KerMLExpressions
       (
           ("{" ("in" iteratorName:Name ":" iteratorType:MCQualifiedName ";")?
           body:Expression "}")
-          | (Arguments | KerMLElement | KerMLQualifiedFunctionName)
-
+          | (Arguments | KerMLElement | MCQualifiedName)
       )? ;
+
 }

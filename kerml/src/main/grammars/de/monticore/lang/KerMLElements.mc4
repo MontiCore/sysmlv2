@@ -3,8 +3,6 @@ package de.monticore.lang;
 
 component grammar KerMLElements
     extends KerMLBasis,
-            de.monticore.literals.MCCommonLiterals,
-            de.monticore.expressions.ExpressionsBasis,
             de.monticore.UMLModifier
 {
     DocBlock implements KerMLElement= "doc";
@@ -44,7 +42,7 @@ component grammar KerMLElements
             |"nonunique"
             | KerMLRelationClause)*
         ( ("=" | "default") Expression )?
-        (FeatureInit | ";");
+        (FeatureBlock| ";");
 
     Multiplicity implements KerMLElement =
         "multiplicity"
@@ -53,8 +51,8 @@ component grammar KerMLElements
         ("{" (DocBlock)? "}");
 
     Function implements KerMLElement =
-        Modifier "function" FunctionName
-        ( (":>" | "specializes") superFunctions:(KerMLQualifiedFunctionName || ",")+ )?
+        Modifier "function" MCQualifiedName
+        ( (":>" | "specializes") superFunctions:(MCQualifiedName || ",")+ )?
         ("{"
             (KerMLElement | FunctionReturn | FunctionParameter)* ("chain")?
         "}" | ";");
@@ -83,7 +81,7 @@ component grammar KerMLElements
     FunctionParameter implements KerMLElement =
         Modifier
         (KerMLRedefinition)?
-        (FunctionName)*
+        (name:MCQualifiedName)*
         (":" type:MCQualifiedName)?
         ( TypeMultiplicity | "ordered" | "nonunique" | KerMLSubsetting
             | KerMLChains | KerMLRedefinition | "chain" )*
@@ -98,9 +96,9 @@ component grammar KerMLElements
         ( ("=" | "default") Expression )?
         (FeatureBlock | ";") ;
 
-    FunctionCall = (KerMLQualifiedFunctionName? "(" (Expression ("," Expression)*)?")");
+    FunctionCall = (MCQualifiedName? "(" (Expression ("," Expression)*)?")");
 
-    FeatureBlock implements FeatureInit, IFeatureBlock = "{" (KerMLElement)* "}";
+    FeatureBlock = "{" (KerMLElement)* "}";
 
     TypeMultiplicity = "[" min:Bound ".." max:Bound "]" | "[" exact:Bound "]";
 
