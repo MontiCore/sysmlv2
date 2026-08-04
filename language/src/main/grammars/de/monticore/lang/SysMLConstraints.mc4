@@ -15,7 +15,8 @@ component grammar SysMLConstraints
 
   symbol ConstraintUsage implements SysMLUsage =
     Modifier
-    (["require"] | ["assume"] | ["assert"])? ["not"]? UserDefinedKeyword* "constraint"
+    (["require"] | ["assume"] | ["assert"])? ["not"]?
+    (UserDefinedKeyword* "constraint" | UserDefinedKeyword+)
     Name? SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
       SysMLElement*
@@ -42,8 +43,9 @@ component grammar SysMLConstraints
   // Satisfy Requirement Usages are ConstraintUsages and as such can be
   // required/assumed/asserted
   symbol RequirementUsage implements SysMLUsage =
-      Modifier (["require"] | ["assume"] | ["assert"])? UserDefinedKeyword*
-      ["verify"]? ["not"]? ["satisfy"]? "requirement"
+      Modifier UserDefinedKeyword* (["require"] | ["assume"] | ["assert"])?
+      ["not"]? ["satisfy"]?
+      (["verify"] (UserDefinedKeyword* "requirement" | UserDefinedKeyword+) | "requirement")
       SysMLIdentifier? Name? SysMLCardinality? Specialization*
       DefaultValue?
       ("by" subject:MCQualifiedName)?
@@ -83,10 +85,11 @@ component grammar SysMLConstraints
    * it is then related to the satisfy requirement usage by a reference
    * subsetting relationship
    */
-  RequirementSatisfaction implements SysMLElement =
-      (["require"] | ["assume"] | ["assert"])? UserDefinedKeyword*
+  RequirementSatisfyReference extends RequirementUsage =
+      Modifier UserDefinedKeyword* (["require"] | ["assume"] | ["assert"])?
       ["not"]? "satisfy"
-      req:MCQualifiedName ("by" subject:MCQualifiedName)?
+      req:MCQualifiedName SysMLCardinality? Specialization*
+      ("by" subject:MCQualifiedName)?
       ("{"
           SysMLElement*
        "}" | ";") ;
@@ -96,11 +99,11 @@ component grammar SysMLConstraints
    * rather than verify requirement to declare a verified requirement using
    * reference subsetting.
    */
-  RequirementVerificationReference extends RequirementUsage =
-      key("verify") req:MCQualifiedName SysMLCardinality? Specialization*
-      ("{"
-          SysMLElement*
-       "}" | ";") ;
+  RequirementVerifyReference extends RequirementUsage =
+    Modifier "verify" req:MCQualifiedName Specialization*
+    ("{"
+        SysMLElement*
+     "}" | ";") ;
 
   symbol ConcernDef implements SysMLType  =
       Modifier UserDefinedKeyword* "concern" "def"

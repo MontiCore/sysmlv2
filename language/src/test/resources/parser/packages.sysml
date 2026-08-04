@@ -105,9 +105,6 @@ package Estranged {
     }
   }
 
-  constraint someConstr {
-    true
-  }
   part def Uncle {
     //private import Sibling::Niece::**;
     // part def NieceClone :> Niece;
@@ -121,10 +118,9 @@ package Estranged {
     // private import Sibling::Niece::a::b::*;
     // part n1 : C;
 
+    requirement someConstr;
 
 
-    assert not someConstr {
-      true
-    }
+    satisfy someConstr;
   }
 }

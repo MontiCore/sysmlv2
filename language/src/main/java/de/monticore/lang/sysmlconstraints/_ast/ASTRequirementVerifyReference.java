@@ -8,7 +8,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ASTRequirementVerificationReference extends ASTRequirementVerificationReferenceTOP {
+public class ASTRequirementVerifyReference extends ASTRequirementVerifyReferenceTOP {
   @Override
   public List<ASTSpecialization> getSpecializationList() {
     List<ASTSpecialization> res = new ArrayList<>(super.getSpecializationList());
@@ -28,5 +28,10 @@ public class ASTRequirementVerificationReference extends ASTRequirementVerificat
 
     res.add(reference);
     return res;
+  }
+
+  @Override
+  public boolean isVerify() {
+    return true;
   }
 }
