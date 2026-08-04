@@ -51,4 +51,6 @@ grammar KerML
                 | ["variant"]
                 | ["member"]
             )*;
+
+  KerMLQualifiedName extends MCQualifiedName = parts:Name (("::"|".") parts:Name)*;
 }

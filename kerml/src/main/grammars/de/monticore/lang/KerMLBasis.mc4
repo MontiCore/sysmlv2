@@ -13,7 +13,7 @@ component grammar KerMLBasis
 {
     // TODO nach Elements schieben
     PackageDeclaration implements PackageElement=
-        Modifier  ("standard")? ("library")? "package" KerMLQualifiedName
+        Modifier  ("standard")? ("library")? "package" MCQualifiedName
         ( "{"(DocBlock | PackageElement)* "}");
 
     // TODO Verschieben nach Elements (ehem. Types)
@@ -21,28 +21,12 @@ component grammar KerMLBasis
     ImportStatement implements PackageElement =
         // Hier unbedingt SysML-Original kopieren, so gut es geht und so weit es
         // nötig ist.
-        Modifier "import" KerMLQualifiedName ("::" "*")? ";";
+        Modifier "import" MCQualifiedName ("::" "*")? ";";
 
     /* Matches anything except a single quote */
     fragment token Anything = ~ ('\'') ;
 
-    // TODO 1: alle benutzenden Stellen durch "MCQualifiedName" ersetzen
-    // TODO 2: Nach KerML.mc4 verschieben
-    KerMLQualifiedName extends MCQualifiedName = parts:Name (("::"|".") parts:Name)*;
-
-    // Kommentare sehen so aus:
-    /**
-     * So bitte
-     */
     DocBlock = "doc";
 
-    // TODO Nach KerML.mc4 verschieben, @Override hinzufügen (wie in SysML),
-    //  dazu die KerML.mc4-Grammatik von de.monticore.UMLModifier erben lassen
-    //  (wie in SysML)
-
-
-    /*
-        Element that is whithin the package like functions and datatype defintions
-    */
     interface PackageElement;
 }
