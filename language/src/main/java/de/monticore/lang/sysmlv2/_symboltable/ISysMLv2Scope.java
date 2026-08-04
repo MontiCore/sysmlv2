@@ -183,7 +183,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
         foundSymbols = foundSymbols || !resolvedEnclosing.isEmpty();
       }
     }
-    return new ArrayList<>();
+    return new ArrayList<>(result);
   }
 
   /**
@@ -229,7 +229,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
         foundSymbols = foundSymbols || !resolvedEnclosing.isEmpty();
       }
     }
-    return new ArrayList<>();
+    return new ArrayList<>(result);
   }
 
   public static <T> String getRelativeFromFqn(String relative, String fqn) {

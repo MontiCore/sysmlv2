@@ -20,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Checks that name references in requirements are resolved within the scope of the subject.
  * TODO rewrite this to TC3
  */
-@Disabled
 public class RequirementSubjectTest extends NervigeSymboltableTests {
 
   @Test
