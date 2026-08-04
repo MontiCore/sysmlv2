@@ -149,21 +149,20 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     String name,
     AccessModifier modifier,
     Predicate<VariableSymbol> predicate
-  ) { /*
+  ) {
     final LinkedHashSet<VariableSymbol> result = new LinkedHashSet<>();
     if (
       checkIfContinueWithEnclosingScope(foundSymbols)
       && getEnclosingScope() != null
     ) {
 
-      var importStatements = new LinkedList<ImportStatement>();
+      var importStatements = new LinkedList<ASTSysMLImportStatement>();
       if(getEnclosingScope().isPresentAstNode()) {
         var visitor = new SysMLImportsAndPackagesVisitor2() {
           @Override
           public void visit(ASTSysMLImportStatement node) {
             if (getEnclosingScope().equals(node.getEnclosingScope())) {
-              importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
-                  node.isStar() || node.isRecursive()));
+              importStatements.add(node);
             }
           }
         };
@@ -184,7 +183,6 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
         foundSymbols = foundSymbols || !resolvedEnclosing.isEmpty();
       }
     }
-*/
     return new ArrayList<>();
   }
 
@@ -197,21 +195,20 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     String name,
     AccessModifier modifier,
     Predicate<FunctionSymbol> predicate
-  ) { /*
+  ) {
     final LinkedHashSet<FunctionSymbol> result = new LinkedHashSet<>();
     if (
       checkIfContinueWithEnclosingScope(foundSymbols)
       && (getEnclosingScope() != null)
     ) {
 
-      var importStatements = new LinkedList<ImportStatement>();
+      var importStatements = new LinkedList<ASTSysMLImportStatement>();
       if(getEnclosingScope().isPresentAstNode()) {
         var visitor = new SysMLImportsAndPackagesVisitor2() {
           @Override
           public void visit(ASTSysMLImportStatement node) {
             if (getEnclosingScope().equals(node.getEnclosingScope())) {
-              importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
-                  node.isStar() || node.isRecursive()));
+              importStatements.add(node);
             }
           }
         };
@@ -232,9 +229,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
         foundSymbols = foundSymbols || !resolvedEnclosing.isEmpty();
       }
     }
-*/
     return new ArrayList<>();
-
   }
 
   public static <T> String getRelativeFromFqn(String relative, String fqn) {

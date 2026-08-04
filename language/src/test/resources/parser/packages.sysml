@@ -118,9 +118,8 @@ package Estranged {
     // private import Sibling::Niece::a::b::*;
     // part n1 : C;
 
-    requirement someConstr;
+    part def S { attribute a: boolean; }
 
-
-    satisfy someConstr;
+    requirement R { subject s: S; constraint t { a } }
   }
 }

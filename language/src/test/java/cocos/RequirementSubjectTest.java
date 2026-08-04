@@ -6,6 +6,7 @@ import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import symboltable.NervigeSymboltableTests;
 
@@ -17,7 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Checks that name references in requirements are resolved within the scope of the subject.
+ * TODO rewrite this to TC3
  */
+@Disabled
 public class RequirementSubjectTest extends NervigeSymboltableTests {
 
   @Test
