@@ -225,7 +225,7 @@ component grammar SysMLActions
       Expression?
     "}" | ";") ;
 
-  symbol scope CalcUsage implements SysMLUsage =
+  symbol CalcUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* "calc" SysMLIdentifier? Name? SysMLCardinality? Specialization*
     DefaultValue?
     ("{"

@@ -289,18 +289,18 @@ library package ESA_SysML2_Solution {
             attribute 'close-out status':CloseOutStatusType;
             attribute 'close-out rationale':String;
         }
-        //requirement eSARequirements : ESARequirement;
-//
-        //requirement def Justification{
-        //    doc /*Rationale for a requirement*/
-        //}
-        //requirement justifications : Justification;
-//
-        //requirement def UserNeed{
-        //    doc /*What is necessary for, or desired by, the user.
-        //    Source: ECSS-E-ST-10-06C (need)*/
-        //}
-        //requirement userNeeds : UserNeed;
+        requirement eSARequirements : ESARequirement;
+
+        requirement def Justification{
+            doc /*Rationale for a requirement*/
+        }
+        requirement justifications : Justification;
+
+        requirement def UserNeed{
+            doc /*What is necessary for, or desired by, the user.
+            Source: ECSS-E-ST-10-06C (need)*/
+        }
+        requirement userNeeds : UserNeed;
 
         /* Custom package / annotation of packages is not supported in SysML2
 
