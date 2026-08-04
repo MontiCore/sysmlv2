@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.types;
 
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLQualifiedName;
+import de.monticore.lang.sysmlv2._ast.ASTSysMLQualifiedName;
 import de.monticore.lang.sysmlbasis._visitor.SysMLBasisHandler;
 import de.monticore.lang.sysmlbasis._visitor.SysMLBasisTraverser;
 import de.monticore.lang.sysmlbasis._visitor.SysMLBasisVisitor2;

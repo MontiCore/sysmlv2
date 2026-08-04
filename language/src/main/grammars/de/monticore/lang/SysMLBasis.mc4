@@ -136,17 +136,6 @@ component grammar SysMLBasis
    * ##################################################################
    */
 
-  SysMLQualifiedName extends MCQualifiedName =
-    Name (("::" | ".") Name)* ;
-
-  astrule SysMLQualifiedName =
-    method public List<String> getPartsList() {
-      return getNameList();
-    }
-    method public String getBaseName() {
-      return getPartsList().get(getPartsList().size()-1);
-    } ;
-
   token MultilineNote =
      "//*" .*? "*/"  : -> channel(HIDDEN);
 
