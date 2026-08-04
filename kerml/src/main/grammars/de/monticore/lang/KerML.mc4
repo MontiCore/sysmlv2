@@ -10,10 +10,10 @@ package de.monticore.lang;
 grammar KerML extends KerMLExpressions {
 
   // TODO Rename KerMLModel
-  start KerMLDocument;
+  start KerMLModel;
 
   // TODO: KerMLModel = KerMLElement*; (wie in der SysML)
-  KerMLDocument = PackageDeclaration;
+  KerMLModel = PackageDeclaration;
 
   @Override
   token Name =
