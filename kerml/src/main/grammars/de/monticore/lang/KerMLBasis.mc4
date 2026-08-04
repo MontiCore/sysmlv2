@@ -12,13 +12,13 @@ component grammar KerMLBasis
             de.monticore.UMLModifier
 {
     // TODO nach Elements schieben
-    PackageDeclaration implements PackageElement=
+    PackageDeclaration implements KerMLElement=
         Modifier  ("standard")? ("library")? "package" MCQualifiedName
-        ( "{"(DocBlock | PackageElement)* "}");
+        ( "{" (KerMLElement)* "}");
 
     // TODO Verschieben nach Elements (ehem. Types)
     // Handels import statements
-    ImportStatement implements PackageElement =
+    ImportStatement implements KerMLElement =
         // Hier unbedingt SysML-Original kopieren, so gut es geht und so weit es
         // nötig ist.
         Modifier "import" MCQualifiedName ("::" "*")? ";";
@@ -26,7 +26,12 @@ component grammar KerMLBasis
     /* Matches anything except a single quote */
     fragment token Anything = ~ ('\'') ;
 
-    DocBlock = "doc";
+    interface KerMLElement;
 
-    interface PackageElement;
+    interface IFeatureBlock;
+    interface IFunctionBlock;
+    interface FeatureInit;
+
+    KerMLQualifiedFunctionName = FunctionName ("::" FunctionName)*;
+    FunctionName = MCQualifiedName;
 }

@@ -8,14 +8,15 @@ package de.monticore.lang;
 // Expressions basieren nur aus ExpressionBasis, wenn absolut nicht zu vermeiden, dann auch auf Basis
 // Diese Grammatik hier importier Basis, Expressions, Elements (ehem Types)
 grammar KerML
-  extends KerMLExpressions
+  extends KerMLExpressions,
+          KerMLElements
 {
 
   // TODO Rename KerMLModel
   start KerMLModel;
 
   // TODO: KerMLModel = KerMLElement*; (wie in der SysML)
-  KerMLModel = PackageDeclaration;
+  KerMLModel = KerMLElement*;
 
   @Override
   token Name =

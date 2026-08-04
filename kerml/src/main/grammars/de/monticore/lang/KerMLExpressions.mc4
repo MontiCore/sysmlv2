@@ -3,7 +3,7 @@ package de.monticore.lang;
 
 // TODO "extends KerMLElements (ehem. -Types)" entfernen
 component grammar KerMLExpressions
-    extends KerMLElements,
+    extends KerMLBasis,
             de.monticore.expressions.CommonExpressions,
             de.monticore.literals.MCCommonLiterals
 {
@@ -37,7 +37,7 @@ component grammar KerMLExpressions
             body:Expression "}")
             |
             (Arguments
-            | FunctionBlock
+            | IFunctionBlock
             | KerMLQualifiedFunctionName)
         )? ;
 
@@ -48,8 +48,8 @@ component grammar KerMLExpressions
         Expression "#" ( "(" Expression ")" | "(index)" );
 
     // Not in Sysml
-    FeatureAssignment implements FeatureInit <110> =
-        "=" Expression (FeatureBlock | ";");
+    FeatureAssignment implements FeatureInit =
+        "=" Expression (IFeatureBlock | ";");
 
     NullCoalescingExpression implements Expression <110> =
         Expression "??" Expression;
@@ -74,7 +74,7 @@ component grammar KerMLExpressions
         // TODO konkrete Elemente (ehem. Types) ersetzen durch ein Interface
         //  "KerMLElement" aus KerMLBase
         // TODO Semikolon hat hier nichts verloren
-        ("{" (DocBlock | PackageElement | Expression | ";")* "}")? ;
+        ("{" (KerMLElement | Expression | ";")* "}")? ;
 
     KerMLTupleExpression implements Expression =
         "(" Expression ("," Expression)+ ")";
