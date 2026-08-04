@@ -11,18 +11,7 @@ component grammar KerMLBasis
             de.monticore.types.MCBasicTypes,
             de.monticore.UMLModifier
 {
-    // TODO nach Elements schieben
-    PackageDeclaration implements KerMLElement=
-        Modifier  ("standard")? ("library")? "package" MCQualifiedName
-        ( "{" (KerMLElement)* "}");
-
-    // TODO Verschieben nach Elements (ehem. Types)
-    // Handels import statements
-    ImportStatement implements KerMLElement =
-        // Hier unbedingt SysML-Original kopieren, so gut es geht und so weit es
-        // nötig ist.
-        Modifier "import" MCQualifiedName ("::" "*")? ";";
-
+    
     /* Matches anything except a single quote */
     fragment token Anything = ~ ('\'') ;
 

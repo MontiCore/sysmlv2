@@ -229,4 +229,16 @@ component grammar KerMLElements
 
     KerMLReferences implements KerMLRelationClause=
         "references" referenced:(MCQualifiedName || ",")+ ;
+
+    PackageDeclaration implements KerMLElement=
+        Modifier  ("standard")? ("library")? "package" MCQualifiedName
+        ( "{" (KerMLElement)* "}");
+
+    KerMLImportStatement extends MCImportStatement implements KerMLElement =
+        Modifier "import" ["all"]? MCQualifiedName
+        (("::" | ".") (Star:["*"] | Recursive:["**"]))*
+        ("[" filter:Expression "]")?
+        ("as" Name)?
+        ("{" KerMLElement* "}" | ";") ;
+
 }
