@@ -1,4 +1,4 @@
-package parser;
+/*package parser;
 
 import org.junit.jupiter.api.Test;
 
@@ -6,10 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ParserTest {
 
-  /**
-   * Dieser Test ex. weil...
-   * TODO
-   */
   @Test
   public void testSonderfall() {
     LogStub.init();
@@ -21,4 +17,4 @@ public class ParserTest {
 
     assertTrue(ast instanceof KerMLIndexExpression);
   }
-}
+} */

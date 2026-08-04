@@ -7,7 +7,7 @@ package de.monticore.lang;
 //  in KerML.mc4 machen. Die existierenden Regeln bzw deren Grammatik (zB
 //  UML-Modifier) dort importieren, wo unbedingt gebraucht (zB in Elements (ehem
 //  Types), da diese die Regel "Modifier" benötigen.
-component grammar KerMLBase
+component grammar KerMLBasis
     extends de.monticore.MCBasics,
             de.monticore.types.MCBasicTypes
 {
