@@ -8,12 +8,13 @@ package de.monticore.lang;
 //  Types), da diese die Regel "Modifier" benötigen.
 component grammar KerMLBasis
     extends de.monticore.MCBasics,
-            de.monticore.types.MCBasicTypes
+            de.monticore.types.MCBasicTypes,
+            de.monticore.UMLModifier
 {
     // TODO nach Elements schieben
     PackageDeclaration implements PackageElement=
         Modifier  ("standard")? ("library")? "package" KerMLQualifiedName
-        ( "{"(DocBlock | ImportStatement | PackageElement)* "}");
+        ( "{"(DocBlock | PackageElement)* "}");
 
     // TODO Verschieben nach Elements (ehem. Types)
     // Handels import statements
@@ -38,30 +39,7 @@ component grammar KerMLBasis
     // TODO Nach KerML.mc4 verschieben, @Override hinzufügen (wie in SysML),
     //  dazu die KerML.mc4-Grammatik von de.monticore.UMLModifier erben lassen
     //  (wie in SysML)
-    Modifier =
-        // TODO Einkommentieren, konservativ das existierende Modifier erweitern
-        //Stereotype? // <Test> public part def Test;
-        (   ["public"]       | [public:"+"]
-            | ["private"]      | [private:"-"]
-            | ["protected"]    | [protected:"#"]
-            | ["final"]
-            | ["abstract"]
-            | ["local"]
-            | ["derived"]      | [derived:"/"]
-            | ["readonly"]     | [readonly:"?"]
-            | ["static"]
-            | ["in"] | ["out"] | ["inout"]        // default direction is "in"
-            | ["end"]
-            | ["ref"]
-            | ["return"]                          // only in calculation, analysis, verification, function
-            | ["timeslice"]                       // only in occurrences
-            | ["snapshot"]                        // only in occurrences
-            | ["individual"]                      // only in occurrences
-            | ["event"]                           // only in occurrences
-            | ["variation"]
-            | ["variant"]
-            | ["member"]
-        )*;
+
 
     /*
         Element that is whithin the package like functions and datatype defintions
