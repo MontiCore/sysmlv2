@@ -18,6 +18,12 @@ component grammar SysMLStates extends SysMLActions {
       (EntryAction | DoAction | ExitAction | SysMLElement)*
     "}" | ";") ;
 
+  symbolrule StateUsage =
+    exhibited: boolean
+    userDefinedKeywords: Name*
+    sysMLIdentifier:Name?
+  ;
+
   ExhibitedStateReference extends StateUsage =
     UserDefinedKeyword* "exhibit" MCQualifiedName
     SysMLCardinality? Specialization*
@@ -25,11 +31,6 @@ component grammar SysMLStates extends SysMLActions {
     ("{"
       (EntryAction | DoAction | ExitAction | SysMLElement)*
     "}" | ";") ;
-
-  symbolrule StateUsage =
-    exhibited: boolean
-    userDefinedKeywords: Name*
-  ;
 
   symbol SysMLTransition implements SysMLElement =
     ("transition" Name?)?

@@ -741,4 +741,36 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
     return getResolvedOrThrowException(resolvedSymbols);
   }
+
+  // Alongside filtering for "name" and "fullname", we also filter for
+  // SysMLIdentifier ("part def <this_is_an_identifier> ThisIsTheName;")
+  @Override
+  default Optional<StateUsageSymbol> filterStateUsage(
+      String name,
+      LinkedListMultimap<String, StateUsageSymbol> symbols
+  ) {
+    final Set<StateUsageSymbol> resolvedSymbols = new LinkedHashSet<>();
+
+    // Skip the filter on the map key, because we might be looking for a
+    // SysMLIdentifier. Instead, iterate all symbols.
+    for (StateUsageSymbol symbol : symbols.values()) {
+      // Checks both the symbol and the AST for SysMLIdentifier information
+      // to make it work with symbols from sym-files (where the symbol
+      // information was completed and stored in  previous run) and symbols
+      // that were created from AST (where the symbol completion has not been
+      // completed, e.g., if this code is called as part of symbol completion).
+      if (symbol.getName().equals(name) ||
+          symbol.getFullName().equals(name) ||
+          symbol.isPresentSysMLIdentifier() // when loaded from sym files
+              && symbol.getSysMLIdentifier().equals(name) ||
+          symbol.isPresentAstNode() // when parsed / built to AST
+              && symbol.getAstNode().isPresentSysMLIdentifier()
+              && symbol.getAstNode().getSysMLIdentifier().getName().equals(name)
+      ) {
+        resolvedSymbols.add(symbol);
+      }
+    }
+
+    return getResolvedOrThrowException(resolvedSymbols);
+  }
 }
