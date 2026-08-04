@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
-// TODO Rename "KerMLBasis" wie in SysML
 // TODO Ziel für beinhaltete Elemente: Nur, was absolut nötig ist, dh. keine
 //  Overrides von existierenden Regeln (zB Modifier). Stattdessen die Overrides
 //  in KerML.mc4 machen. Die existierenden Regeln bzw deren Grammatik (zB
@@ -34,9 +33,6 @@ component grammar KerMLBasis
     /**
      * So bitte
      */
-    /*
-        Handles comments that start with doc where the comment-part is handled by MCBasic
-    */
     DocBlock = "doc";
 
     // TODO Nach KerML.mc4 verschieben, @Override hinzufügen (wie in SysML),

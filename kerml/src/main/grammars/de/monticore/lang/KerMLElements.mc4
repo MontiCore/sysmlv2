@@ -2,7 +2,7 @@
 package de.monticore.lang;
 
 // TODO Umbenennen in KerMLElements
-component grammar KerMLTypes
+component grammar KerMLElements
     extends KerMLBasis,
             de.monticore.literals.MCCommonLiterals,
             de.monticore.expressions.ExpressionsBasis

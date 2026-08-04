@@ -3,7 +3,7 @@ package de.monticore.lang;
 
 // TODO "extends KerMLElements (ehem. -Types)" entfernen
 component grammar KerMLExpressions
-    extends KerMLTypes,
+    extends KerMLElements,
             de.monticore.expressions.CommonExpressions,
             de.monticore.literals.MCCommonLiterals
 {
