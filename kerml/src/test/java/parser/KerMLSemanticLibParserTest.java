@@ -1,7 +1,7 @@
 package parser;
 
 import de.monticore.lang.kerml.KerMLMill;
-import de.monticore.lang.kerml._ast.ASTKerMLDocument;
+import de.monticore.lang.kerml._ast.ASTKerMLModel;
 import de.monticore.lang.kerml._parser.KerMLParser;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
@@ -46,7 +46,7 @@ public class KerMLSemanticLibParserTest {
   public void testParseKernelDataTypeLibrary(String filename) throws IOException {
     String modelFile = "src/test/resources/KernelSemanticLibrary/" + filename;
     KerMLParser parser = KerMLMill.parser();
-    Optional<ASTKerMLDocument> ast = parser.parse(modelFile);
+    Optional<ASTKerMLModel> ast = parser.parse(modelFile);
 
     assertFalse(parser.hasErrors(), "Parser threw Errors!");
     assertTrue(ast.isPresent(), "Ast generation failed!");

@@ -1,19 +1,63 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
-grammar KerML extends KerMLExpressions {
+grammar KerML
+  extends KerMLExpressions,
+          KerMLElements,
+          KerMLBasis
+{
 
-  start KerMLDocument;
+  start KerMLModel;
 
-  KerMLDocument = PackageDeclaration;
+  KerMLModel = KerMLElement*;
+
+  /* Matches anything except a single quote */
+    fragment token Anything = ~ ('\'') ;
 
   @Override
-    token Name =
-      ( ( 'a'..'z' | 'A'..'Z' | '_' | '$' )
-        ( 'a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '$' )* )
-      | ( '\'' Anything* '\'' ) :
-      {
-        if(getText().length() > 0 && getText().charAt(0) == '\'')
-          setText(getText().substring(1, getText().length() - 1));
-      } ;
+  token Name =
+    ( ( 'a'..'z' | 'A'..'Z' | '_' | '$' )
+      ( 'a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '$' )* )
+    | ( '\'' Anything* '\'' ) :
+    {
+      if(getText().length() > 0 && getText().charAt(0) == '\'')
+        setText(getText().substring(1, getText().length() - 1));
+    } ;
+
+    @Override
+        Modifier =
+            Stereotype?
+            (   ["public"]       | [public:"+"]
+                | ["private"]      | [private:"-"]
+                | ["protected"]    | [protected:"#"]
+                | ["final"]
+                | ["abstract"]
+                | ["local"]
+                | ["derived"]      | [derived:"/"]
+                | ["readonly"]     | [readonly:"?"]
+                | ["static"]
+                | ["in"] | ["out"] | ["inout"]        // default direction is "in"
+                | ["end"]
+                | ["ref"]
+                | ["return"]                          // only in calculation, analysis, verification, function
+                | ["timeslice"]                       // only in occurrences
+                | ["snapshot"]                        // only in occurrences
+                | ["individual"]                      // only in occurrences
+                | ["event"]                           // only in occurrences
+                | ["variation"]
+                | ["variant"]
+                | ["member"]
+            )*;
+
+  KerMLQualifiedName extends MCQualifiedName = parts:Name (("::"|".") parts:Name)*;
+
+  KerMLScientificLiteral implements Literal = KerMLScientificToken;
+
+  KerMLDecimalNumber implements Literal = KerMLDecimalToken;
+
+  token KerMLScientificToken =
+        ('0'..'9')+ ("e" | "E") ("+" | "-")? ('0'..'9')+ ;
+
+  token KerMLDecimalToken =
+        ('0'..'9')+ "." ('0'..'9')+ ( ("e" | "E") ("+" | "-")? ('0'..'9')+ )?;
 }

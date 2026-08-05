@@ -2,11 +2,9 @@
 package de.monticore.lang;
 
 component grammar KerMLExpressions
-    extends KerMLTypes,
-            de.monticore.expressions.CommonExpressions,
-            de.monticore.literals.MCCommonLiterals
+    extends KerMLBasis,
+            de.monticore.expressions.CommonExpressions
 {
-    // Same as Sysml
     ConditionalAndExpression implements Expression <120>, InfixExpression =
         left:Expression operator:"and" right:Expression;
 
@@ -23,67 +21,51 @@ component grammar KerMLExpressions
         "not" Expression;
 
     KerMLAsExpression implements Expression <150> =
-        left:Expression "as" right:KerMLQualifiedName;
+        left:Expression "as" right:MCQualifiedName;
 
     KerMLEnumerationExpression implements Expression =
         "(" start:Expression ".." end:Expression ")" ;
-    // Differs from Sysml but similar 
 
-    KerMLFunctionOperationExpression implements Expression <120> =
-        Expression "->" Name
-        (
-            ("{" ("in" iteratorName:Name ":" iteratorType:KerMLQualifiedName ";")?
-            body:Expression "}")
-            |
-            (Arguments 
-            | FunctionBlock                           
-            | KerMLQualifiedFunctionName)
-        )? ;
-
-    ArrowExpression implements Expression <110>, InfixExpression =
+    ArrowExpression implements Expression, InfixExpression =
         left:Expression operator:"->" right:Expression;
 
-    KerMLIndexExpression implements Expression <130> =
-        Expression "#" ( "(" Expression ")" | "(index)" );
+    NullCoalescingExpression implements Expression =
+        left:Expression operator:"??" right:Expression;
 
-    // Not in Sysml
-    FeatureAssignment implements FeatureInit <110> =
-        "=" Expression (FeatureBlock | ";");
+    KerMLIdentityExpression implements Expression =
+        left:Expression operator:"===" right:Expression;
 
-    NullCoalescingExpression implements Expression <110> =
-        Expression "??" Expression;
+    KerMLNotIdentityExpression implements Expression =
+        left:Expression operator:"!==" right:Expression;
 
-    KerMLLiteralArgExpression implements Expression <140> =
-        Expression (Literal| KerMLQualifiedName);
+    ConditionalImpliesExpression implements Expression, InfixExpression =
+            left:Expression operator:"implies" right:Expression;
 
-    KerMLIdentityExpression implements Expression <90> =
-        Expression ("===" | "!==") Expression;
+    TernaryExpression implements Expression =
+            "if" condition:Expression "?" if:Expression "else" else:Expression;
 
-    KerMLIsTypeExpression implements Expression <150> =
-        left:Expression "istype" right:KerMLQualifiedName;
-    
-    KerMLQualifiedNameExpression implements Expression =
-        KerMLQualifiedName;
-    
-    KerMLNewExpression implements Expression =
-        "new" type:KerMLQualifiedName 
-        ("(" (Expression ("," Expression)*)? ")")? 
-        ("{" (DocBlock | PackageElement | Expression | ";")* "}")? ;
-        
+    KerMLIsTypeExpression implements Expression =
+            left:Expression operator:"istype" right:MCQualifiedName;
+
     KerMLTupleExpression implements Expression =
-        "(" Expression ("," Expression)+ ")";
+            "(" elements:Expression ("," elements:Expression)+ ")";
 
-    token KerMLScientificToken = ('0'..'9')+ ("e" | "E") ("+" | "-")? ('0'..'9')+ ;
-    
-    token KerMLDecimalToken = ('0'..'9')+ "." ('0'..'9')+ ( ("e" | "E") ("+" | "-")? ('0'..'9')+ )? ;
+    KerMLIndexExpression implements Expression =
+            left:Expression operator:"#" "(" index:Expression ")";
 
-    KerMLScientificLiteral implements Literal = KerMLScientificToken;
+    MCQualifiedNameExpression implements Expression =
+            MCQualifiedName;
 
-    KerMLDecimalNumber implements Literal = KerMLDecimalToken;
+    KerMLNewExpression implements Expression =
+        operator:"new" type:MCQualifiedName (arguments:Arguments)?
+        ("{" (elements:KerMLElement)* "}")?;
 
-    KerMLIfElseExpression implements Expression =
-        "if" Expression "?" Expression "else" Expression;
+    KerMLFunctionOperationExpression implements Expression =
+      Expression "->" Name
+      (
+          ("{" ("in" iteratorName:Name ":" iteratorType:MCQualifiedName ";")?
+          body:Expression "}")
+          | (Arguments | KerMLElement | MCQualifiedName)
+      )? ;
 
-    ConditionalImpliesExpression implements Expression <115>, InfixExpression =
-        left:Expression operator:"implies" right:Expression;
 }
