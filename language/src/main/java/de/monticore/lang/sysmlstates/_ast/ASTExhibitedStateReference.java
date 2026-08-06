@@ -17,14 +17,19 @@ public class ASTExhibitedStateReference extends ASTExhibitedStateReferenceTOP {
         .set_SourcePositionStart(getMCQualifiedName().get_SourcePositionStart())
         .set_SourcePositionEnd(getMCQualifiedName().get_SourcePositionEnd())
         .build();
-    type.setEnclosingScope(getMCQualifiedName().getEnclosingScope());
 
     ASTSysMLReference reference = SysMLv2Mill.sysMLReferenceBuilder()
         .setSuperTypesList(List.of(type))
         .set_SourcePositionStart(getMCQualifiedName().get_SourcePositionStart())
         .set_SourcePositionEnd(getMCQualifiedName().get_SourcePositionEnd())
         .build();
-    reference.setEnclosingScope(getMCQualifiedName().getEnclosingScope());
+
+    // because this is accessible even without symboltable gen, only set when scope is actually there
+    var delegateEnclosing = getMCQualifiedName().getEnclosingScope();
+    if (delegateEnclosing != null) {
+      type.setEnclosingScope(delegateEnclosing);
+      reference.setEnclosingScope(delegateEnclosing);
+    }
 
     res.add(reference);
     return res;

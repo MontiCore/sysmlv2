@@ -17,14 +17,19 @@ public class ASTRequirementVerifyReference extends ASTRequirementVerifyReference
         .set_SourcePositionStart(getReq().get_SourcePositionStart())
         .set_SourcePositionEnd(getReq().get_SourcePositionEnd())
         .build();
-    type.setEnclosingScope(getReq().getEnclosingScope());
 
     ASTSysMLReference reference = SysMLv2Mill.sysMLReferenceBuilder()
         .setSuperTypesList(List.of(type))
         .set_SourcePositionStart(getReq().get_SourcePositionStart())
         .set_SourcePositionEnd(getReq().get_SourcePositionEnd())
         .build();
-    reference.setEnclosingScope(getReq().getEnclosingScope());
+
+    // because this is accessible even without symboltable gen, only set when scope is actually there
+    var delegateEnclosing = getReq().getEnclosingScope();
+    if (delegateEnclosing != null) {
+      type.setEnclosingScope(delegateEnclosing);
+      reference.setEnclosingScope(delegateEnclosing);
+    }
 
     res.add(reference);
     return res;

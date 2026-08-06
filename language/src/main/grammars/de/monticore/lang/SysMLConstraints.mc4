@@ -14,7 +14,7 @@ component grammar SysMLConstraints
     "}" | ";") ;
 
   symbol ConstraintUsage implements SysMLUsage =
-    Modifier
+    Modifier UserDefinedKeyword*
     (["require"] | ["assume"] | ["assert"])? ["not"]?
     (UserDefinedKeyword* "constraint" | UserDefinedKeyword+)
     Name? SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
