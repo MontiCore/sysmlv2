@@ -18,8 +18,8 @@ component grammar KerMLElements
         ("as" Name)?
         ("{" KerMLElement* "}" | ";");
 
-    Datatype implements KerMLElement =
-        Modifier "datatype" MCQualifiedName (KerMLRelationClause)*
+    symbol scope Datatype implements KerMLElement =
+        Modifier "datatype" name:Name (KerMLRelationClause)*
         ("{" (KerMLElement)* "}" | ";");
 
     Classifier implements KerMLElement =
