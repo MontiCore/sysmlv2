@@ -22,17 +22,26 @@ public class RequirementSubjectTest extends NervigeSymboltableTests {
 
   @Test
   public void testValid() throws IOException {
-    var as = process("part def S { attribute a: boolean; } requirement R { subject s: S; constraint t { a } }");
+    var as = process("part def S { attribute a: boolean; } requirement R { subject s: S; constraint t { s.a } }");
     var errors = check((ASTSysMLModel) as.getAstNode());
     assertThat(errors).hasSize(0);
   }
 
   @Test
   public void testInvalid() throws IOException {
-    var as = process("part def S { attribute a: int; } requirement R { subject s: S; constraint t { a } }");
+    var as = process("part def S { attribute a: int; } requirement R { subject s: S; constraint t { s.a } }");
     var errors = check((ASTSysMLModel) as.getAstNode());
     assertThat(errors).hasSize(1);
     assertThat(errors.get(0).getMsg()).contains("should be boolean");
+  }
+
+  @Test
+  public void testInvalidImplizit() throws IOException {
+    var as = process("part def S { attribute a: boolean; } requirement R { subject s: S; constraint t { a } }");
+    var errors = check((ASTSysMLModel) as.getAstNode());
+    assertThat(errors).hasSize(2);
+    assertThat(errors.get(0).getMsg()).contains("0xFD118 could not find symbol");
+    assertThat(errors.get(1).getMsg()).contains("0x80001 Failed to derive a type");
   }
 
   private List<Finding> check(ASTSysMLModel ast) {

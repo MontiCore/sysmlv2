@@ -7,9 +7,7 @@ import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildPortSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol;
 import de.monticore.lang.sysmlactions._symboltable.CalcUsageSymbol;
-import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol;
-import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlconstraints.symboltable.adapters.RequirementSubject2VariableSymbolAdapter;
 import de.monticore.lang.sysmlparts._ast.ASTSysMLImportStatement;
@@ -45,10 +43,8 @@ import de.monticore.lang.sysmlv2.symboltable.adapters.StateUsage2AutomatonAdapte
 import de.monticore.lang.sysmlv2.symboltable.adapters.StateUsage2EventAutomatonAdapter;
 import de.monticore.lang.componentconnector._symboltable.RequirementSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.symboltable.IScopeSpanningSymbol;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
@@ -376,31 +372,6 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     for (CalcUsageSymbol calcUsage : calcs) {
       var variable = new CalcUsage2VariableAdapter(calcUsage);
       adapted.add(variable);
-    }
-
-    // Falls Requirement, dann subject befragen
-    if (this.isPresentAstNode()
-        && this.getAstNode() instanceof ASTRequirementUsage) {
-      var ast = (ASTRequirementUsage) this.getAstNode();
-      if (ast.isPresentRequirementSubject()) {
-        // Alle Typen kommen in Frage
-        ast.getRequirementSubject().getSpecializationList().stream().flatMap(
-            ASTSpecialization::streamSuperTypes).forEach(t -> {
-          var typeSymbol = t.getDefiningSymbol();
-          if (typeSymbol.isPresent()
-              && typeSymbol.get() instanceof IScopeSpanningSymbol) {
-            var scope =
-                ((IScopeSpanningSymbol) typeSymbol.get()).getSpannedScope();
-            if (scope instanceof IBasicSymbolsScope) {
-              var variable = ((IBasicSymbolsScope) scope).resolveVariableDown(
-                  name, modifier, predicate);
-              if (variable.isPresent()) {
-                adapted.add(variable.get());
-              }
-            }
-          }
-        });
-      }
     }
 
     return adapted;
