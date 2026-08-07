@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import de.monticore.lang.sysmlexpressions._ast.ASTSysMLFunctionOperationExpression;
 
 import java.io.IOException;
 
@@ -80,6 +81,36 @@ public class ExpressionParserTest {
     assertThat(ast).isPresent();
     assertThat(Log.getFindings()).isEmpty();
     assertThat(ast.get()).isInstanceOf(ASTElementOfExpression.class);
+  }
+
+  @Test
+  public void testSysMLFunctionOperatorExprMinimal() throws IOException {
+    var ast = parser.parse_StringExpression("x->b()");
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    assertThat(ast.get())
+        .isInstanceOf(ASTSysMLFunctionOperationExpression.class);
+  }
+
+  @Test
+  public void testSysMLFunctionOperatorExpr() throws IOException {
+    var ast = parser.parse_StringExpression("x->excludes(y)");
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    assertThat(ast.get())
+        .isInstanceOf(ASTSysMLFunctionOperationExpression.class);
+  }
+
+  @Test
+  public void testSysMLFunctionOperatorExpr2() throws IOException {
+    var ast = parser.parse_StringExpression("x->excludes(y.z)");
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    assertThat(ast.get())
+        .isInstanceOf(ASTSysMLFunctionOperationExpression.class);
   }
 
 }
