@@ -70,6 +70,15 @@ public class CometInterceptorTest {
         .map(m -> tool.parse(m.toString()))
         .collect(Collectors.toList());
 
+    var isqAst = tool.parse("src/main/resources/Domain Libraries/Quantities and Units/ISQ.sysml");
+    tool.createSymbolTable(isqAst);
+    tool.completeSymbolTable(isqAst);
+    tool.finalizeSymbolTable(isqAst);
+    var siAst = tool.parse("src/main/resources/Domain Libraries/Quantities and Units/SI.sysml");
+    tool.createSymbolTable(siAst);
+    tool.completeSymbolTable(siAst);
+    tool.finalizeSymbolTable(siAst);
+
     asts.forEach(it -> tool.createSymbolTable(it));
     asts.forEach(it -> tool.completeSymbolTable(it));
     asts.forEach(it -> tool.finalizeSymbolTable(it));

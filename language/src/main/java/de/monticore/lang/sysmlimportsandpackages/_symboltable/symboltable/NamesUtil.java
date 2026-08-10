@@ -1,4 +1,4 @@
-package de.monticore.lang.sysmlv2.symboltable;
+package de.monticore.lang.sysmlimportsandpackages._symboltable.symboltable;
 
 public class NamesUtil {
   public static <T> String getRelativeFromFqn(String relative, String fqn) {

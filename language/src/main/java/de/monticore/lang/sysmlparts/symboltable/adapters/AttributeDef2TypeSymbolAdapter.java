@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import de.monticore.lang.sysmlparts._symboltable.AttributeDefSymbol;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.lang.sysmlv2.symboltable.adapters.Requirement2SpecificationAdapter;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
@@ -83,5 +84,15 @@ public class AttributeDef2TypeSymbolAdapter extends OOTypeSymbol {
       clone.setAstNode(this.getAstNode());
     }
     return clone;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if(other instanceof AttributeDef2TypeSymbolAdapter) {
+      return adaptee.equals(((AttributeDef2TypeSymbolAdapter) other).adaptee);
+    }
+    else {
+      return super.equals(other);
+    }
   }
 }

@@ -139,7 +139,6 @@ public class ImportResolveTest extends NervigeSymboltableTests {
    *
    * @throws IOException Mills parser exception, shall not happen
    */
-  @Disabled("Recursive Imports are currently unsupported in our implementation")
   @Test()
   public void testArtifactsScopeRecursiveImport() throws IOException {
     LogStub.init();
@@ -165,7 +164,7 @@ public class ImportResolveTest extends NervigeSymboltableTests {
 
     var parentName = parentRef.getNameList().get(0);
 
-    var optParent = ((ISysMLv2Scope) parentRef.getEnclosingScope()).resolvePartDef(parentName);
+    var optParent = ((ISysMLv2Scope) parentRef.getEnclosingScope()).resolveType(parentName);
 
     assertThat(optParent).isPresent(); // check if we did resolve
     assertThat(optParent.get().getFullName()).isEqualTo("Other.InnerOther.Parent");

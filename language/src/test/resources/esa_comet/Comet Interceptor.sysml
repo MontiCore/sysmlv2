@@ -9,6 +9,7 @@ private import RequirementDerivation::*;
 private import SI::*;
 private import CDFReferenceDataLibrary::*;
 
+attribute a: Boolean;
 
 package 'Mission objectives' {
     use case 'Assess the bulk shape of the nucleus and the morphology of its surface at a scale comparable to the best images returned by previous comet flyby missions, and those returned by New Horizons of Kuiper Belt Objects' {
@@ -1345,10 +1346,10 @@ library package CDFReferenceDataLibrary {
         attribute powerInEPTH : PowerValue; // derived
         attribute powerInSCI : PowerValue; // derived
         // thermal
-        attribute <MaxNOT> maximumNonOperationalTemperature : TemperatureValue;
-        attribute <MaxOT> maximumOperationalTemperature : TemperatureValue;
-        attribute <MinOT> minimumOperationalTemperature : TemperatureValue;
-        attribute <MinNOT> minimumNonOperationalTemperature : TemperatureValue;
+        attribute <MaxNOT> maximumNonOperationalTemperature : TemperatureDifferenceValue;
+        attribute <MaxOT> maximumOperationalTemperature : TemperatureDifferenceValue;
+        attribute <MinOT> minimumOperationalTemperature : TemperatureDifferenceValue;
+        attribute <MinNOT> minimumNonOperationalTemperature : TemperatureDifferenceValue;
     }
 
     enum def RedundancyConceptSchemes {
