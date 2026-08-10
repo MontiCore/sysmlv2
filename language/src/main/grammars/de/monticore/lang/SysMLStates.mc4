@@ -19,7 +19,7 @@ component grammar SysMLStates extends SysMLActions {
     "}" | ";") ;
 
   ExhibitedStateReference implements SysMLUsage =
-    UserDefinedKeyword* "exhibit" MCQualifiedName?
+    Modifier UserDefinedKeyword* "exhibit" MCQualifiedName?
     SysMLCardinality? Specialization*
     ("{"
       SysMLElement*

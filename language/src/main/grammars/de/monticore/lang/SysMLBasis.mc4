@@ -61,7 +61,7 @@ component grammar SysMLBasis
   interface Specialization = superTypes:MCType+;
 
   // Interface zum Unterscheiden zwischen Usages und anderen Typen mit dem Visitor
-  interface SysMLUsage extends SysMLElement = Specialization*;
+  interface SysMLUsage extends SysMLElement = Modifier Specialization*;
 
   // Specialization ist spezifisch für Definitions
   SysMLSpecialization implements Specialization =
