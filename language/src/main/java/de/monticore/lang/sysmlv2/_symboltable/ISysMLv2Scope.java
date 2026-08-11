@@ -48,6 +48,7 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.symboltable.IScope;
 import de.monticore.symboltable.IScopeSpanningSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
@@ -498,7 +499,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
     if (symbols.containsKey(simpleName)) {
       for (TypeSymbol symbol : symbols.get(simpleName)) {
-        if (symbol.getName().equals(name)) {
+        if (symbol.getName().equals(name) ||
+            !symbol.getPackageName().isEmpty() &&
+                name.equals(symbol.getPackageName() + "." + symbol.getName())) {
           resolvedSymbols.add(symbol);
         }
       }
@@ -516,7 +519,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
     if (symbols.containsKey(simpleName)) {
       for (VariableSymbol symbol : symbols.get(simpleName)) {
-        if (symbol.getName().equals(name)) {
+        if (symbol.getName().equals(name) ||
+            !symbol.getPackageName().isEmpty() &&
+                name.equals(symbol.getPackageName() + "." + symbol.getName())) {
           resolvedSymbols.add(symbol);
         }
       }
@@ -534,7 +539,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
     if (symbols.containsKey(simpleName)) {
       for (FunctionSymbol symbol : symbols.get(simpleName)) {
-        if (symbol.getName().equals(name)) {
+        if (symbol.getName().equals(name) ||
+            !symbol.getPackageName().isEmpty() &&
+                name.equals(symbol.getPackageName() + "." + symbol.getName())) {
           resolvedSymbols.add(symbol);
         }
       }
@@ -552,7 +559,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
     if (symbols.containsKey(simpleName)) {
       for (TypeVarSymbol symbol : symbols.get(simpleName)) {
-        if (symbol.getName().equals(name)) {
+        if (symbol.getName().equals(name) ||
+            !symbol.getPackageName().isEmpty() &&
+                name.equals(symbol.getPackageName() + "." + symbol.getName())) {
           resolvedSymbols.add(symbol);
         }
       }
@@ -570,7 +579,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
     if (symbols.containsKey(simpleName)) {
       for (DiagramSymbol symbol : symbols.get(simpleName)) {
-        if (symbol.getName().equals(name)) {
+        if (symbol.getName().equals(name) ||
+            !symbol.getPackageName().isEmpty() &&
+                name.equals(symbol.getPackageName() + "." + symbol.getName())) {
           resolvedSymbols.add(symbol);
         }
       }
@@ -588,7 +599,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
     if (symbols.containsKey(simpleName)) {
       for (MCStereotypeSymbol symbol : symbols.get(simpleName)) {
-        if (symbol.getName().equals(name)) {
+        if (symbol.getName().equals(name) ||
+            !symbol.getPackageName().isEmpty() &&
+                name.equals(symbol.getPackageName() + "." + symbol.getName())) {
           resolvedSymbols.add(symbol);
         }
       }
@@ -606,7 +619,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
     if (symbols.containsKey(simpleName)) {
       for (OOTypeSymbol symbol : symbols.get(simpleName)) {
-        if (symbol.getName().equals(name)) {
+        if (symbol.getName().equals(name) ||
+            !symbol.getPackageName().isEmpty() &&
+                name.equals(symbol.getPackageName() + "." + symbol.getName())) {
           resolvedSymbols.add(symbol);
         }
       }
@@ -624,7 +639,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
     if (symbols.containsKey(simpleName)) {
       for (FieldSymbol symbol : symbols.get(simpleName)) {
-        if (symbol.getName().equals(name)) {
+        if (symbol.getName().equals(name) ||
+            !symbol.getPackageName().isEmpty() &&
+                name.equals(symbol.getPackageName() + "." + symbol.getName())) {
           resolvedSymbols.add(symbol);
         }
       }
@@ -642,7 +659,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
     if (symbols.containsKey(simpleName)) {
       for (MethodSymbol symbol : symbols.get(simpleName)) {
-        if (symbol.getName().equals(name)) {
+        if (symbol.getName().equals(name) ||
+            !symbol.getPackageName().isEmpty() &&
+                name.equals(symbol.getPackageName() + "." + symbol.getName())) {
           resolvedSymbols.add(symbol);
         }
       }
@@ -650,5 +669,22 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
     return getResolvedOrThrowException(resolvedSymbols);
 
+  }
+
+  default boolean checkIfContinueAsSubScope(String symbolName) {
+    if (isPresentSpanningSymbol() && !getSpanningSymbol().getPackageName().isEmpty()
+    && symbolName.startsWith(getSpanningSymbol().getPackageName() + ".")) {
+      symbolName = symbolName.replaceFirst(getSpanningSymbol().getPackageName() + ".", "");
+    }
+    return ISysMLv2ScopeTOP.super.checkIfContinueAsSubScope(symbolName);
+  }
+
+  @Override
+  default List<String> getRemainingNameForResolveDown(String symbolName) {
+    if (isPresentSpanningSymbol() && !getSpanningSymbol().getPackageName().isEmpty()) {
+      symbolName = symbolName.replaceFirst(getSpanningSymbol().getPackageName() + ".", "");
+      return List.of(getSpanningSymbol().getPackageName() + "." + ISysMLv2ScopeTOP.super.getRemainingNameForResolveDown(symbolName).get(0));
+    }
+    return ISysMLv2ScopeTOP.super.getRemainingNameForResolveDown(symbolName);
   }
 }

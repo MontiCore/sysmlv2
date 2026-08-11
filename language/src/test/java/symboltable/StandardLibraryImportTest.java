@@ -51,8 +51,6 @@ public class StandardLibraryImportTest {
 
     var type = ((ASTAttributeUsage) ast.getSysMLElement(0)).getSpecialization(0).getSuperTypes(0);
 
-    type.printType();
-
     assertThat(type.printType()).isEqualTo("ScalarValues.Complex");
     assertThat(((ISysMLv2Scope)type.getEnclosingScope()).resolveType(type.printType())).isPresent();
   }
