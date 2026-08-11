@@ -3,7 +3,7 @@ package de.monticore.lang.sysmlparts._ast;
 import de.monticore.ast.Comment;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpressionBuilder;
 import de.monticore.lang.sysmlbasis._ast.ASTDefaultValueBuilder;
-import de.monticore.lang.sysmlbasis._ast.ASTModifierBuilder;
+import de.monticore.lang.sysmlv2._ast.ASTModifierBuilder;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsageBuilder;
 import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;

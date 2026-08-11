@@ -244,7 +244,10 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
       traverser.add4SysMLBasis(new SysMLBasisVisitor2() {
         @Override
         public void visit(ASTAnonymousUsage retNode) {
-          if (retNode.getModifier().isReturn() && retNode.getEnclosingScope() == node.getSpannedScope()) {
+          var modifier = retNode.getModifier();
+          if (modifier instanceof de.monticore.lang.sysmlv2._ast.ASTModifier
+              && ((de.monticore.lang.sysmlv2._ast.ASTModifier) modifier).isReturn()
+              && retNode.getEnclosingScope() == node.getSpannedScope()) {
             List<SymTypeExpression> types = getTypeCompletion(retNode.getSpecializationList(), false);
             returnType[0] = types.isEmpty() ? SymTypeExpressionFactory.createObscureType() : types.get(0);
           }
@@ -254,7 +257,10 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
       traverser.add4SysMLParts(new SysMLPartsVisitor2() {
         @Override
         public void visit(ASTAttributeUsage retNode) {
-          if (retNode.getModifier().isReturn() && retNode.getEnclosingScope() == node.getSpannedScope()) {
+          var modifier = retNode.getModifier();
+          if (modifier instanceof de.monticore.lang.sysmlv2._ast.ASTModifier
+              && ((de.monticore.lang.sysmlv2._ast.ASTModifier) modifier).isReturn()
+              && retNode.getEnclosingScope() == node.getSpannedScope()) {
             List<SymTypeExpression> types = getTypeCompletion(retNode.getSpecializationList(), false);
             returnType[0] = types.isEmpty() ? SymTypeExpressionFactory.createObscureType() : types.get(0);
           }
@@ -268,7 +274,10 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
       argTraverser.add4SysMLBasis(new SysMLBasisVisitor2() {
         @Override
         public void visit(ASTAnonymousUsage retNode) {
-          if (retNode.getModifier().isIn() && retNode.getEnclosingScope() == node.getSpannedScope()) {
+          var modifier = retNode.getModifier();
+          if (modifier instanceof de.monticore.lang.sysmlv2._ast.ASTModifier
+              && ((de.monticore.lang.sysmlv2._ast.ASTModifier) modifier).isIn()
+              && retNode.getEnclosingScope() == node.getSpannedScope()) {
             List<SymTypeExpression> types = getTypeCompletion(retNode.getSpecializationList(), false);
             var argType = types.isEmpty() ? SymTypeExpressionFactory.createObscureType() : types.get(0);
             argTypes.add(argType);
@@ -279,7 +288,10 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
       argTraverser.add4SysMLParts(new SysMLPartsVisitor2() {
         @Override
         public void visit(ASTAttributeUsage retNode) {
-          if (retNode.getModifier().isIn() && retNode.getEnclosingScope() == node.getSpannedScope()) {
+          var modifier = retNode.getModifier();
+          if (modifier instanceof de.monticore.lang.sysmlv2._ast.ASTModifier
+              && ((de.monticore.lang.sysmlv2._ast.ASTModifier) modifier).isIn()
+              && retNode.getEnclosingScope() == node.getSpannedScope()) {
             List<SymTypeExpression> types = getTypeCompletion(retNode.getSpecializationList(), false);
             var argType = types.isEmpty() ? SymTypeExpressionFactory.createObscureType() : types.get(0);
             argTypes.add(argType);
@@ -303,7 +315,10 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
       traverser.add4SysMLBasis(new SysMLBasisVisitor2() {
         @Override
         public void visit(ASTAnonymousUsage retNode) {
-          if (retNode.getModifier().isReturn() && retNode.getEnclosingScope() == node.getSpannedScope()) {
+          var modifier = retNode.getModifier();
+          if (modifier instanceof de.monticore.lang.sysmlv2._ast.ASTModifier
+              && ((de.monticore.lang.sysmlv2._ast.ASTModifier) modifier).isReturn()
+              && retNode.getEnclosingScope() == node.getSpannedScope()) {
             List<SymTypeExpression> types = getTypeCompletion(retNode.getSpecializationList(), false);
             returnType[0] = types.isEmpty() ? SymTypeExpressionFactory.createObscureType() : types.get(0);
           }
@@ -313,7 +328,10 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
       traverser.add4SysMLParts(new SysMLPartsVisitor2() {
         @Override
         public void visit(ASTAttributeUsage retNode) {
-          if (retNode.getModifier().isReturn() && retNode.getEnclosingScope() == node.getSpannedScope()) {
+          var modifier = retNode.getModifier();
+          if (modifier instanceof de.monticore.lang.sysmlv2._ast.ASTModifier
+              && ((de.monticore.lang.sysmlv2._ast.ASTModifier) modifier).isReturn()
+              && retNode.getEnclosingScope() == node.getSpannedScope()) {
             List<SymTypeExpression> types = getTypeCompletion(retNode.getSpecializationList(), false);
             returnType[0] = types.isEmpty() ? SymTypeExpressionFactory.createObscureType() : types.get(0);
           }
