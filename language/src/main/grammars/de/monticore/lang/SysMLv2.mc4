@@ -65,4 +65,10 @@ grammar SysMLv2 extends SysMLExpressions,
       SysMLElement*
     "}" | ";") ;
 
+  Dependency implements SysMLElement =
+    Modifier UserDefinedKeyword* "dependency" (Name? "from")? sources:(MCQualifiedName || ",")* "to" targets:(MCQualifiedName || ",")+
+    ("{"
+       SysMLElement*
+     "}" | ";");
+
 }
