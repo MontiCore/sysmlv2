@@ -22,7 +22,10 @@ public class MaxOneDirectReturnInCalcUsageCoCo implements SysMLActionsASTCalcUsa
     traverser.add4SysMLBasis(new SysMLBasisVisitor2() {
       @Override
       public void visit(ASTAnonymousUsage retNode) {
-        if (retNode.getModifier().isReturn() && retNode.getEnclosingScope() == node.getSpannedScope()) {
+        var modifier = retNode.getModifier();
+        if (modifier instanceof de.monticore.lang.sysmlv2._ast.ASTModifier
+            && ((de.monticore.lang.sysmlv2._ast.ASTModifier) modifier).isReturn()
+            && retNode.getEnclosingScope() == node.getSpannedScope()) {
           returnCount[0]++;
         }
       }
@@ -31,7 +34,10 @@ public class MaxOneDirectReturnInCalcUsageCoCo implements SysMLActionsASTCalcUsa
     traverser.add4SysMLParts(new SysMLPartsVisitor2() {
       @Override
       public void visit(ASTAttributeUsage retNode) {
-        if (retNode.getModifier().isReturn() && retNode.getEnclosingScope() == node.getSpannedScope()) {
+        var modifier = retNode.getModifier();
+        if (modifier instanceof de.monticore.lang.sysmlv2._ast.ASTModifier
+            && ((de.monticore.lang.sysmlv2._ast.ASTModifier) modifier).isReturn()
+            && retNode.getEnclosingScope() == node.getSpannedScope()) {
           returnCount[0]++;
         }
       }
