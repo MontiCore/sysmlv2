@@ -157,7 +157,8 @@ component grammar ComponentConnector
   ;
 
   /**
-   * Requirements: Wir berücksichtigen primär die Namen der Requirements
+   * Requirements bestehen aus einem Namen, einem Subjekt (vom Typ PartDef),
+   *   einer Liste von Annahmen und einer Garantie.
    */
    interface symbol Requirement =
      name:Name
