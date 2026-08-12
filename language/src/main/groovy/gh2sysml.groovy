@@ -11,7 +11,7 @@ import de.monticore.types.mccollectiontypes._ast.ASTMCTypeArgument
 /**
  * This script replaces generated methods for continueWithEnclosing to including imports in all scopes into
  * symbol resolution for all symbolkinds. Additionally removed fullName comparison from filter methods
- * to reduce ambiguity
+ * to reduce ambiguity when having transparent artifact scopes
  */
 
 // glex, astGrammar, decoratedCD

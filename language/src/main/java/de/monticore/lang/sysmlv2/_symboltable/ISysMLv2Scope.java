@@ -491,6 +491,12 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     return getResolvedOrThrowException(resolvedSymbols);
   }
 
+  /**
+   * Because raw Basic~ and OOSymbols can come from external loaded symboltables, these
+   * may have packages which sysml does not (every usage, def is a namespace but
+   * which makes monticore packages together with scoping incompatible). Thus, we adapt
+   * the filtering of these symbols to also handle packages.
+   */
   @Override
   default public Optional<TypeSymbol> filterType (String name, LinkedListMultimap<String,TypeSymbol> symbols) {
     final Set<TypeSymbol> resolvedSymbols = new LinkedHashSet<>();
@@ -511,6 +517,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
   }
 
+  /**
+   * @see ISysMLv2Scope#filterType
+   */
   @Override
   default public Optional<VariableSymbol> filterVariable (String name, LinkedListMultimap<String,VariableSymbol> symbols) {
     final Set<VariableSymbol> resolvedSymbols = new LinkedHashSet<>();
@@ -531,6 +540,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
   }
 
+  /**
+   * @see ISysMLv2Scope#filterType
+   */
   @Override
   default public Optional<FunctionSymbol> filterFunction (String name, LinkedListMultimap<String,FunctionSymbol> symbols) {
     final Set<FunctionSymbol> resolvedSymbols = new LinkedHashSet<>();
@@ -551,6 +563,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
   }
 
+  /**
+   * @see ISysMLv2Scope#filterType
+   */
   @Override
   default public Optional<TypeVarSymbol> filterTypeVar (String name, LinkedListMultimap<String,TypeVarSymbol> symbols) {
     final Set<TypeVarSymbol> resolvedSymbols = new LinkedHashSet<>();
@@ -571,6 +586,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
   }
 
+  /**
+   * @see ISysMLv2Scope#filterType
+   */
   @Override
   default public Optional<DiagramSymbol> filterDiagram (String name, LinkedListMultimap<String,DiagramSymbol> symbols) {
     final Set<DiagramSymbol> resolvedSymbols = new LinkedHashSet<>();
@@ -591,6 +609,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
   }
 
+  /**
+   * @see ISysMLv2Scope#filterType
+   */
   @Override
   default public Optional<MCStereotypeSymbol> filterMCStereotype (String name, LinkedListMultimap<String,MCStereotypeSymbol> symbols) {
     final Set<MCStereotypeSymbol> resolvedSymbols = new LinkedHashSet<>();
@@ -611,6 +632,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
   }
 
+  /**
+   * @see ISysMLv2Scope#filterType
+   */
   @Override
   default public Optional<OOTypeSymbol> filterOOType (String name, LinkedListMultimap<String,OOTypeSymbol> symbols) {
     final Set<OOTypeSymbol> resolvedSymbols = new LinkedHashSet<>();
@@ -631,6 +655,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
   }
 
+  /**
+   * @see ISysMLv2Scope#filterType
+   */
   @Override
   default public Optional<FieldSymbol> filterField (String name, LinkedListMultimap<String,FieldSymbol> symbols) {
     final Set<FieldSymbol> resolvedSymbols = new LinkedHashSet<>();
@@ -651,6 +678,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
   }
 
+  /**
+   * @see ISysMLv2Scope#filterType
+   */
   @Override
   default public Optional<MethodSymbol> filterMethod (String name, LinkedListMultimap<String,MethodSymbol> symbols) {
     final Set<MethodSymbol> resolvedSymbols = new LinkedHashSet<>();
@@ -671,6 +701,11 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
   }
 
+  /**
+   * In the case of external symboltables we also need to handle packages while also
+   * keeping them intact. So we compare the scoping after comparing the packages.
+   * @see ISysMLv2Scope#filterType
+   */
   default boolean checkIfContinueAsSubScope(String symbolName) {
     if (isPresentSpanningSymbol() && !getSpanningSymbol().getPackageName().isEmpty()
     && symbolName.startsWith(getSpanningSymbol().getPackageName() + ".")) {
@@ -679,6 +714,12 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     return ISysMLv2ScopeTOP.super.checkIfContinueAsSubScope(symbolName);
   }
 
+  /**
+   * In the case of external symboltables we also need to handle packages while also
+   * keeping them intact. So we remove the scoping modifier but keep the package intact
+   * @see ISysMLv2Scope#filterType
+   * @see ISysMLv2Scope#checkIfContinueWithEnclosingScope
+   */
   @Override
   default List<String> getRemainingNameForResolveDown(String symbolName) {
     if (isPresentSpanningSymbol() && !getSpanningSymbol().getPackageName().isEmpty()) {
