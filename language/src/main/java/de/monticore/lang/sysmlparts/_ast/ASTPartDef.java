@@ -1,10 +1,10 @@
 package de.monticore.lang.sysmlparts._ast;
 
-import de.monticore.lang.sysmlbasis._ast.ASTDependency;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLRefinement;
 import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
+import de.monticore.lang.sysmlv2._ast.ASTDependency;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import org.antlr.v4.runtime.misc.Pair;
 

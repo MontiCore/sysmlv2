@@ -275,12 +275,6 @@ component grammar SysMLBasis
   // Inline-Variante für das "first" vor dem "then"
   interface IInlineOccurrenceUsage ;
 
-  Dependency implements SysMLElement =
-    Modifier UserDefinedKeyword* "dependency" (Name? "from")? sources:(MCQualifiedName || ",")* "to" targets:(MCQualifiedName || ",")+
-    ("{"
-       SysMLElement*
-     "}" | ";");
-
   // Used regularly in successions
   Endpoint =
     MCQualifiedName SysMLCardinality? Specialization* ;
