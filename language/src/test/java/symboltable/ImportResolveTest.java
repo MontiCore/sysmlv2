@@ -470,5 +470,69 @@ public class ImportResolveTest extends NervigeSymboltableTests {
     assertThat(optParent.get().getFullName()).isEqualTo("Other.InnerOther.Parent");
   }
 
+  /**
+   * We test what happens when one direct import imports the namespace defining Parent (directly)
+   * imports Parent transitively
+   */
+  @Test
+  public void testDoubledTransitive() throws IOException {
+    var parentModel = "package Other { package InnerOther { part def Parent; } }";
+    var model = "package test { public import Other::InnerOther::*; part def Child; }";
+    var modelImportingAPublic = ""
+        + "private import Other::InnerOther::*; "
+        + "package Estranged { "
+        + "  private import test::*; "
+        + "  part def Uncle : Parent;"
+        + "}";
 
+    processAst(parentModel);
+    processAst(model);
+    var astImportingAPublic = processAst(modelImportingAPublic);
+
+    var partDef = (ASTPartDef) ((ASTSysMLPackage) astImportingAPublic.getSysMLElement(1))
+        .getSysMLElement(1  );
+    var parentRef = (ASTMCQualifiedType) partDef.getSpecialization(0).getSuperTypes(0);
+
+    var parentName = parentRef.getNameList().get(0);
+
+    // names after first import resolution:
+    // Parent -> AS imports to Other::InnerOther::Parent -> found
+    // Other::InnerOther::Parent -> does not resolve AS imports because AS is shadowing
+    var optParent = ((ISysMLv2Scope) parentRef.getEnclosingScope()).resolveType(parentName);
+
+    assertThat(optParent).isPresent(); // check if we did resolve
+    assertThat(optParent.get().getFullName()).isEqualTo("Other.InnerOther.Parent");
+  }
+
+  @Test
+  public void testDoubledTransitiveInvertedOrder() throws IOException {
+    var parentModel = "package Other { package InnerOther { part def Parent; } }";
+    var model = "package test { public import Other::InnerOther::*; part def Child; }";
+    var modelImportingAPublic = ""
+        + "private import test::*; "
+        + "package Estranged { "
+        + "  private import Other::InnerOther::*;"
+        + "  part def Uncle : Parent;"
+        + "}";
+
+    processAst(parentModel);
+    processAst(model);
+    var astImportingAPublic = processAst(modelImportingAPublic);
+
+    var partDef = (ASTPartDef) ((ASTSysMLPackage) astImportingAPublic.getSysMLElement(1))
+        .getSysMLElement(1  );
+    var parentRef = (ASTMCQualifiedType) partDef.getSpecialization(0).getSuperTypes(0);
+
+    var parentName = parentRef.getNameList().get(0);
+
+    // names after first import resolution:
+    // Parent -> AS imports to Parent -> not found
+    //                         Other::InnerOther::Parent -> found
+    //                         test::Parent -> not
+    // Other::InnerOther::Parent -> does not resolve AS imports because AS is shadowing
+    var optParent = ((ISysMLv2Scope) parentRef.getEnclosingScope()).resolveType(parentName);
+
+    assertThat(optParent).isPresent(); // check if we did resolve
+    assertThat(optParent.get().getFullName()).isEqualTo("Other.InnerOther.Parent");
+  }
 }
