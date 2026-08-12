@@ -25,7 +25,7 @@ component grammar SysMLConstraints
     "}" | ";") ;
 
   ConstraintReference implements SysMLUsage =
-    (
+    Modifier (
       (["require"] | ["assume"] | ["assert"]) UserDefinedKeyword* "constraint"?
       | UserDefinedKeyword* "constraint"
     )
@@ -102,7 +102,7 @@ component grammar SysMLConstraints
    * reference subsetting.
    */
   RequirementVerification implements SysMLUsage =
-      "verify" req:MCQualifiedName SysMLCardinality? Specialization*
+      Modifier "verify" req:MCQualifiedName SysMLCardinality? Specialization*
       ("{"
           SysMLElement*
        "}" | ";") ;
