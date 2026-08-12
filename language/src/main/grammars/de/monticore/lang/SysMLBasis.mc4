@@ -47,8 +47,10 @@ component grammar SysMLBasis
   /** Elemente der Bodies/Pakete */
   interface SysMLElement;
 
+  interface symbol scope SysMLNamespace extends SysMLElement;
+
   /** Element mit eigenem Symbol für resolve (zB. für ReqDef) */
-  interface symbol SysMLType extends SysMLElement;
+  interface symbol SysMLType extends SysMLNamespace = Name;
 
   SysMLCardinality =
     Cardinality (["ordered"] | ["nonunique"])* ;
@@ -59,6 +61,9 @@ component grammar SysMLBasis
    * types.
    */
   interface Specialization = superTypes:MCType+;
+
+  // Interface zum Unterscheiden zwischen Usages und anderen Typen mit dem Visitor
+  interface symbol SysMLUsage extends SysMLNamespace = Specialization*;
 
   // Specialization ist spezifisch für Definitions
   SysMLSpecialization implements Specialization =
@@ -244,13 +249,13 @@ component grammar SysMLBasis
       )*;
 
   UserDefinedKeyword =
-    {noSpace(2);} "#" MCQualifiedName ;
+    {noSpace(2)}? "#" MCQualifiedName ;
 
   /**
    * Anonyme Usage, deren "Typ" im Sinne der SysML (also Beispielsweise "attribute" oder "part") sich erst durch
    * die Spezialisationen (Typisierungen) ergibt.
    */
-  symbol scope AnonymousUsage implements SysMLElement =
+  symbol AnonymousUsage implements SysMLUsage =
       Modifier UserDefinedKeyword* SysMLIdentifier? Name? SysMLCardinality?
       Specialization+ DefaultValue?
       ("{"
@@ -262,7 +267,7 @@ component grammar SysMLBasis
       in:boolean
       out:boolean ;
 
-  symbol scope AnonymousReference implements SysMLElement =
+  symbol AnonymousReference implements SysMLUsage =
        Modifier UserDefinedKeyword* SysMLIdentifier? src:MCQualifiedName SysMLCardinality?
        Specialization* DefaultValue?
        ("{"
@@ -278,7 +283,7 @@ component grammar SysMLBasis
    * Occurrence usages can be used in successions.
    * Example: "first send a to b if b then perform myAction;"
    */
-  interface OccurrenceUsageElement extends SysMLElement;
+  interface OccurrenceUsageElement extends SysMLUsage;
 
   // Inline-Variante für das "first" vor dem "then"
   interface IInlineOccurrenceUsage ;

@@ -2,18 +2,27 @@
 package de.monticore.lang;
 
 component grammar SysMLImportsAndPackages extends SysMLBasis {
+  scoperule = publicImports:de.monticore.lang.sysmlimportsandpackages_ast.ASTSysMLImportStatement*;
 
   /**
    * From PrivateImportTest.sysml: "import all" overrides private import.
    */
   SysMLImportStatement extends MCImportStatement implements SysMLElement =
     Modifier UserDefinedKeyword* "import" ["all"]? MCQualifiedName
-    (("::" | ".") (Star:["*"] | Recursive:["**"]))*
+    ( "::" Star:["*"])? ("::" Recursive:["**"])?
     ("[" filter:Expression "]")?
     ("as" Name)?
     ("{"
        SysMLElement*
      "}" | ";") ;
+
+  astrule SysMLImportStatement =
+    method public boolean isPublic() {
+      return getModifier().isPublic();
+    }
+    method public boolean isPrivate() {
+      return getModifier().isPrivate();
+    } ;
 
   SysMLAlias implements SysMLElement =
     Modifier UserDefinedKeyword* "alias" SysMLIdentifier? Name? "for" MCQualifiedName
@@ -21,7 +30,7 @@ component grammar SysMLImportsAndPackages extends SysMLBasis {
        SysMLElement*
      "}" | ";") ;
 
-  symbol scope SysMLPackage implements SysMLElement =
+  symbol SysMLPackage implements SysMLNamespace =
     ["standard"]? ["library"]? "package" SysMLIdentifier? Name?
     ("{"
        SysMLElement*

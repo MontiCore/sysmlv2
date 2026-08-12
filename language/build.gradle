@@ -52,6 +52,7 @@ dependencies {
   grammar "de.monticore.lang:ocl:$mc_version"
   grammar project(":cc")
 
+  compileOnly "de.monticore.lang:cd4analysis:$mc_version"
   implementation "de.monticore:stream-symbols:$mc_version"
 
   implementation "org.apache.commons:commons-lang3:$commons_lang_version"
@@ -133,3 +134,7 @@ publishing {
 }
 
 defaultTasks('build')
+
+tasks.named('generateMCGrammars') {
+  groovyHook2 = file "$projectDir/src/main/groovy/gh2sysml.groovy"
+}
