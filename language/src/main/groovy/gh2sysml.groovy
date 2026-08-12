@@ -32,7 +32,7 @@ for (ASTCDInterface cl : decoratedCD.getCDDefinition().getCDInterfacesList()) {
         String actualName = last.substring(0, last.length() - 6);
 
         if (m.getName() == "filter" + actualName && !cl.getName().endsWith("ArtifactScope")) {
-          //glex.replaceTemplate("cd2java.EmptyBody", m, new TemplateHookPoint("sysml.iscope.Filter", symbolType.printType()))
+          glex.replaceTemplate("cd2java.EmptyBody", m, new TemplateHookPoint("sysml.iscope.Filter", symbolType.printType()))
         }
 
         if (m.getName() == "continue" + actualName + "WithEnclosingScope" && cl.getName().startsWith("ISysMLv2")) {
