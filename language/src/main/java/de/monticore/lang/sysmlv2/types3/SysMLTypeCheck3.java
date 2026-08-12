@@ -50,7 +50,7 @@ public class SysMLTypeCheck3 extends MapBasedTypeCheck3 {
     Type4Ast type4Ast = new Type4Ast();
 
     // Expressions
-    var forBasis = new ExpressionBasisTypeVisitor();
+    var forBasis = new SysMLExpressionBasisTypeVisitor();
     forBasis.setType4Ast(type4Ast);
     typeTraverser.add4ExpressionsBasis(forBasis);
 
