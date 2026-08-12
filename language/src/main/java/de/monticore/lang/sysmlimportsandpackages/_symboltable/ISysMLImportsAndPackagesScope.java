@@ -97,7 +97,7 @@ public interface ISysMLImportsAndPackagesScope extends ISysMLImportsAndPackagesS
               namespaces.add(
                   getRelativeFromFqn(importStatement.getQName(),
                       scope.getSpanningSymbol().getFullName()));
-              findAllNamespacesForImports(name, scope.getSysMLImportsList(), namespaces);
+              findAllNamespacesForImports(name, scope.getPublicImportsList(), namespaces);
             }
           }
         });
@@ -109,7 +109,7 @@ public interface ISysMLImportsAndPackagesScope extends ISysMLImportsAndPackagesS
         namespaces.add(importStatement.getQName());
         getEnclosingScope().resolveSysMLNamespace(importStatement.getQName())
             .ifPresent(sysMLNamespaceSymbol -> findAllNamespacesForImports(name,
-                ((ISysMLImportsAndPackagesScope) sysMLNamespaceSymbol.getSpannedScope()).getSysMLImportsList(),
+                ((ISysMLImportsAndPackagesScope) sysMLNamespaceSymbol.getSpannedScope()).getPublicImportsList(),
                 namespaces));
       }
     }

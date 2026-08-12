@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * Constraint references are syntactic sugar for constraint usages that only reference
- * other usages.
+ * other usages  without having a proprietary name.
  */
 public class ASTConstraintReference extends ASTConstraintReferenceTOP {
   @Override

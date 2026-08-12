@@ -8,6 +8,10 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Satisfy references are syntactic sugar for Requirement usages that only reference
+ * other usages without having a proprietary name.
+ */
 public class ASTRequirementSatisfyReference extends ASTRequirementSatisfyReferenceTOP {
   @Override
   public List<ASTSpecialization> getSpecializationList() {

@@ -8,6 +8,10 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Exhibited references are syntactic sugar for State usages that only reference
+ * other usages without having a proprietary name.
+ */
 public class ASTExhibitedStateReference extends ASTExhibitedStateReferenceTOP {
   @Override
   public List<ASTSpecialization> getSpecializationList() {

@@ -2,9 +2,7 @@
 package de.monticore.lang;
 
 component grammar SysMLImportsAndPackages extends SysMLBasis {
-
-  // TODO MC generates wrong DeSer when names just as in the artifact scope,e.g., "imports"
-  scoperule = sysMLImports:de.monticore.lang.sysmlimportsandpackages_ast.ASTSysMLImportStatement*;
+  scoperule = publicImports:de.monticore.lang.sysmlimportsandpackages_ast.ASTSysMLImportStatement*;
 
   /**
    * From PrivateImportTest.sysml: "import all" overrides private import.

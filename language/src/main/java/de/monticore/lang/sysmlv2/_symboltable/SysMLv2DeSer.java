@@ -21,11 +21,11 @@ import java.util.Objects;
 
 public class SysMLv2DeSer extends SysMLv2DeSerTOP {
   @Override
-  protected void serializeSysMLImports(
-      List<ASTSysMLImportStatement> sysMLImports, SysMLv2Symbols2Json s2j) {
+  protected void serializePublicImports(
+      List<ASTSysMLImportStatement> publicImports, SysMLv2Symbols2Json s2j) {
     JsonPrinter jsonPrinter = s2j.getJsonPrinter();
     jsonPrinter.beginArray("imports");
-    for (ASTSysMLImportStatement sysMLImport : sysMLImports) {
+    for (ASTSysMLImportStatement sysMLImport : publicImports) {
       var json = JsonElementFactory.createJsonObject();
       jsonPrinter.addToArray(json);
       json.putMember("isStar", JsonElementFactory.createJsonBoolean(sysMLImport.isStar()));
@@ -40,7 +40,7 @@ public class SysMLv2DeSer extends SysMLv2DeSerTOP {
   }
 
   @Override
-  protected List<ASTSysMLImportStatement> deserializeSysMLImports(JsonObject scopeJson) {
+  protected List<ASTSysMLImportStatement> deserializePublicImports(JsonObject scopeJson) {
       return scopeJson
           .getArrayMemberOpt("imports")
           .stream()
