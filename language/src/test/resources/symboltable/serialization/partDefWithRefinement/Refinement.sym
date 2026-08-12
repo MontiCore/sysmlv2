@@ -63,6 +63,7 @@
     "de.monticore.lang.sysmlconstraints._symboltable.ConstraintUsageSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLUsageSymbol",
     "de.monticore.lang.sysmlconnections._symboltable.FlowDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
     "de.monticore.lang.sysmlactions._symboltable.CalcDefSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol",
+    "de.monticore.lang.sysmlviews._symboltable.ViewUsageSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLUsageSymbol",
     "de.monticore.lang.sysmlactions._symboltable.ForLoopActionUsageSymbol": "de.monticore.lang.sysmlactions._symboltable.ActionUsageSymbol",
     "de.monticore.lang.sysmloccurrences._symboltable.OccurrenceUsageSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLUsageSymbol",
     "de.monticore.lang.sysmlparts._symboltable.ConnectionUsageSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLUsageSymbol",
@@ -105,6 +106,8 @@
     "de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLUsageSymbol",
     "de.monticore.lang.sysmlactions._symboltable.CalcUsageSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLUsageSymbol",
     "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+    "de.monticore.lang.sysmlviews._symboltable.ViewpointUsageSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLUsageSymbol",
+    "de.monticore.lang.sysmlviews._symboltable.RenderingUsageSymbol": "de.monticore.lang.sysmlbasis._symboltable.SysMLUsageSymbol",
     "de.monticore.symbols.oosymbols._symboltable.FieldSymbol": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol"
   }
 }
