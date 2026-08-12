@@ -137,5 +137,4 @@ defaultTasks('build')
 
 tasks.named('generateMCGrammars') {
   groovyHook2 = file "$projectDir/src/main/groovy/gh2sysml.groovy"
-
 }
