@@ -16,6 +16,17 @@ grammar SysMLv2 extends SysMLExpressions,
 
   SysMLModel = SysMLElement* ;
 
+  SysMLQualifiedName extends MCQualifiedName =
+    Name (("::" | ".") Name)* ;
+
+  astrule SysMLQualifiedName =
+    method public List<String> getPartsList() {
+      return getNameList();
+    }
+    method public String getBaseName() {
+      return getPartsList().get(getPartsList().size()-1);
+    } ;
+
   // Bug in MontiCore führt dazu, dass es nur hier funktioniert
   @Override
   token Char = "doNotParseThisEverAgain";
