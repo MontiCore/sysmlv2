@@ -98,7 +98,7 @@ public class ExpressionParserTest {
     var functionOperation = (ASTSysMLFunctionOperationExpression) ast.get();
     assertThat(functionOperation.getExpression())
         .isInstanceOf(ASTFieldAccessExpression.class);
-    assertThat(functionOperation.getSysMLQualifiedName().getPartsList()).containsExactly("c");
+    assertThat(functionOperation.getMCQualifiedName().getPartsList()).containsExactly("c");
   }
 
   /**
@@ -122,7 +122,7 @@ public class ExpressionParserTest {
     var functionOperation = (ASTSysMLFunctionOperationExpression) ast.get();
     assertThat(functionOperation.getExpression())
         .isInstanceOf(ASTFieldAccessExpression.class);
-    assertThat(functionOperation.getSysMLQualifiedName().getPartsList())
+    assertThat(functionOperation.getMCQualifiedName().getPartsList())
         .containsExactly("c", "d");
   }
 }
