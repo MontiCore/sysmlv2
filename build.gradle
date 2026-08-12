@@ -37,9 +37,14 @@ subprojects {
     logger.warn("\u001B[33m Warning: You are currently using JDK Version " + JavaVersion.current() + ". " + "Higher JDK versions may cause compatibility problems. JDK 21 is recommended. \u001B[0m")
   }
 
+  configurations {
+    ecjCompiler
+  }
+
   // Use the same testing framework for all modules
   dependencies {
     implementation "org.slf4j:slf4j-simple:2.0.0-beta1"
+    ecjCompiler "org.eclipse.jdt:ecj:3.43.0"
     // Test annotations, api
     testImplementation "org.junit.jupiter:junit-jupiter:$junit_version"
     // Parametrized tests
