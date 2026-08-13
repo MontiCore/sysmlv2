@@ -6,8 +6,11 @@ subprojects {
   group = 'de.monticore.lang.sysml_v2'
 
   // Needs to be after java plugin
-  sourceCompatibility = "21"
-
+  java {
+    toolchain {
+      languageVersion = JavaLanguageVersion.of(21)
+    }
+  }
   project.buildDir = "target"
 
   repositories {
@@ -44,7 +47,7 @@ subprojects {
   // Use the same testing framework for all modules
   dependencies {
     implementation "org.slf4j:slf4j-simple:2.0.0-beta1"
-    ecjCompiler "org.eclipse.jdt:ecj:3.43.0"
+    ecjCompiler "org.eclipse.jdt:ecj:3.44.0"
     // Test annotations, api
     testImplementation "org.junit.jupiter:junit-jupiter:$junit_version"
     // Parametrized tests
