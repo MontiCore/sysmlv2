@@ -118,7 +118,7 @@ component grammar SysMLExpressions
      "{" SysMLElement* inner:Expression "}" ;
 
   SysMLFunctionOperationExpression implements Expression <291> =
-    Expression "->" Name
+    Expression "->" MCQualifiedName
     ("(" (SysMLParameter || ",")* ")")?
     (body:SysMLBodyExpression)? ;
 
