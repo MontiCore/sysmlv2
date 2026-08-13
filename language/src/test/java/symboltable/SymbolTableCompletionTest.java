@@ -65,6 +65,8 @@ public class SymbolTableCompletionTest {
 
     var expr = ((ASTConstraintUsage)((ASTPartDef)ast.get().getSysMLElement(1)).getSysMLElement(1)).getExpression();
     var deriver = new SysMLDeriver(true);
+    var res = tool.getGlobalScope().resolveField("EventStream.EventStream.eRepeat.elem");
+    assertThat(res).isPresent();
     var type = deriver.deriveType(expr);
     assertThat(type.isPresentResult());
     assertThat(type.getResult().printFullName()).isEqualTo("Set<int>");

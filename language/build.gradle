@@ -7,7 +7,6 @@
 plugins {
   id "de.monticore.generator" version "$mc_version"
   id "com.gradleup.shadow" version "8.3.9"
-  id "io.github.themrmilchmann.ecj" version "0.2.0"
 }
 
 /* ============================================================ */
@@ -53,6 +52,7 @@ dependencies {
   grammar "de.monticore.lang:ocl:$mc_version"
   grammar project(":cc")
 
+  compileOnly "de.monticore.lang:cd4analysis:$mc_version"
   implementation "de.monticore:stream-symbols:$mc_version"
 
   implementation "org.apache.commons:commons-lang3:$commons_lang_version"
@@ -82,11 +82,19 @@ tasks.withType(JavaCompile) {
   options.deprecation false
   options.warnings = false
   options.headerOutputDirectory.convention(null)
-}
 
-// configure ecj for compatibility with Java 21
-ecj {
-  compilerVersion = "3.43.0"
+  def javaLauncher = javaToolchains.launcherFor {
+    languageVersion = JavaLanguageVersion.of(21)
+  }
+
+  doFirst {
+    options.forkOptions.executable = javaLauncher.get().executablePath.asFile.absolutePath
+
+    options.forkOptions.jvmArgs += [
+        "-cp", configurations.ecjCompiler.asPath,
+        "org.eclipse.jdt.internal.compiler.batch.Main"
+    ]
+  }
 }
 
 // all in one cli-jar
@@ -126,3 +134,7 @@ publishing {
 }
 
 defaultTasks('build')
+
+tasks.named('generateMCGrammars') {
+  groovyHook2 = file "$projectDir/src/main/groovy/gh2sysml.groovy"
+}

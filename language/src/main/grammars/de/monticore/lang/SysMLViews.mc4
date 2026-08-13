@@ -7,14 +7,14 @@ component grammar SysMLViews extends SysMLBasis {
    * Viewpoints
    * ======================================================================== */
 
-  symbol scope ViewpointDef implements SysMLType =
+  symbol ViewpointDef implements SysMLType =
     Modifier UserDefinedKeyword* "viewpoint" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
 
-  symbol scope ViewpointUsage implements SysMLElement =
+  symbol ViewpointUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* "viewpoint"
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("{"
@@ -25,14 +25,14 @@ component grammar SysMLViews extends SysMLBasis {
    * Views
    * ======================================================================== */
 
-  symbol scope ViewDef implements SysMLType =
+  symbol ViewDef implements SysMLType =
     Modifier UserDefinedKeyword* "view" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
         (RenderingReference | SysMLElement)*
      "}" | ";") ;
 
-  symbol scope ViewUsage implements SysMLElement =
+  symbol ViewUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* "view"
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("{"
@@ -57,14 +57,14 @@ component grammar SysMLViews extends SysMLBasis {
    * Renderings
    * ======================================================================== */
 
-  symbol scope RenderingDef implements SysMLType =
+  symbol RenderingDef implements SysMLType =
     Modifier UserDefinedKeyword* "rendering" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
 
-  symbol scope RenderingUsage implements SysMLElement =
+  symbol RenderingUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* ["render"]? "rendering"
     SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
