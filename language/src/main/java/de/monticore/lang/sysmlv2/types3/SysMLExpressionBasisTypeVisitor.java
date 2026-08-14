@@ -12,6 +12,10 @@ import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
 
+/**
+ * SysML-spezifische Erweiterung des Typechecks für NameExpressions, einer
+ * Produktion aus der ExpressionBasis.mc4-Grammatik
+ */
 public class SysMLExpressionBasisTypeVisitor extends ExpressionBasisTypeVisitor {
 
   @Override
@@ -36,12 +40,15 @@ public class SysMLExpressionBasisTypeVisitor extends ExpressionBasisTypeVisitor 
       return varResult;
     }
 
+
+    // Dieser If-Block wurde zum vordefinierten calculateNameExpression hinzugefügt
     if (enclosingScope instanceof ISysMLv2Scope) {
-      ISysMLv2Scope sysmlScope = (ISysMLv2Scope) enclosingScope;
-      Optional<TypeSymbol> typeSymbol = sysmlScope.resolveType(name);
+      Optional<TypeSymbol> typeSymbol = enclosingScope.resolveType(name);
 
       if (typeSymbol.isPresent()) {
-        return Optional.of(SymTypeExpressionFactory.createTypeObject(typeSymbol.get()));
+        return Optional.of(
+          SymTypeExpressionFactory.createTypeObject(typeSymbol.get())
+        );
       }
     }
 

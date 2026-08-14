@@ -3,6 +3,7 @@ package cocos;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
+import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
@@ -34,46 +35,25 @@ public class UsingCtrlEnumTypeCheckTest {
     SysMLv2Tool tool = new SysMLv2Tool();
     tool.init();
 
-    ASTSysMLModel ast = tool.parse(
-        Path.of("src/test/resources/dluf/models/UsingCtrlEnum.sysml").toString()
-    );
+    var model = "enum def E { enum e; } constraint { E::e }";
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
 
     tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
     tool.finalizeSymbolTable(ast);
 
-    ASTNameExpression ctrlEnum = findCtrlEnumNameExpression(ast);
+    // extrahiere das "E" aus "enum def ...; constraint { E::e }" im Model
+    var expr = ((ASTConstraintUsage) ast.getSysMLElement(1)).getExpression();
+    var E = ((ASTFieldAccessExpression)expr).getExpression();
 
-    var type = TypeCheck3.typeOf(ctrlEnum);
+    var type = TypeCheck3.typeOf(E);
 
     assertThat(type.isObscureType()).isFalse();
     assertThat(type.hasTypeInfo()).isTrue();
-    assertThat(type.getTypeInfo().getFullName()).isEqualTo("CtrlEnum");
+    assertThat(type.getTypeInfo().getFullName()).isEqualTo("E");
 
     assertThat(Log.getFindings())
         .filteredOn(Finding::isError)
         .isEmpty();
-  }
-
-  private ASTNameExpression findCtrlEnumNameExpression(ASTSysMLModel ast) {
-    AtomicReference<ASTNameExpression> result = new AtomicReference<>();
-
-    var traverser = SysMLv2Mill.inheritanceTraverser();
-    traverser.add4CommonExpressions(new CommonExpressionsVisitor2() {
-      @Override
-      public void visit(ASTFieldAccessExpression node) {
-        if ("NAK".equals(node.getName())
-            && node.getExpression() instanceof ASTNameExpression
-            && "CtrlEnum".equals(((ASTNameExpression) node.getExpression()).getName())) {
-          result.set((ASTNameExpression) node.getExpression());
-        }
-      }
-    });
-
-    ast.accept(traverser);
-
-    assertThat(result.get()).isNotNull();
-
-    return result.get();
   }
 }
