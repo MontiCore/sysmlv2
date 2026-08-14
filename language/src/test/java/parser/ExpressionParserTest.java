@@ -98,7 +98,31 @@ public class ExpressionParserTest {
     var functionOperation = (ASTSysMLFunctionOperationExpression) ast.get();
     assertThat(functionOperation.getExpression())
         .isInstanceOf(ASTFieldAccessExpression.class);
-    assertThat(functionOperation.getName()).isEqualTo("c");
+    assertThat(functionOperation.getMCQualifiedName().getPartsList()).containsExactly("c");
   }
 
+  /**
+   * Checks that qualified names on both sides of a function operation
+   * are parsed with the correct binding.
+   */
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "a.b->c.d",
+      "a::b->c::d",
+      "a::b->c.d",
+      "a.b->c::d"
+  })
+  public void testQualifiedNamesInFunctionOperation(String expr) throws IOException {
+    var ast = parser.parse_StringExpression(expr);
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    assertThat(ast.get()).isInstanceOf(ASTSysMLFunctionOperationExpression.class);
+
+    var functionOperation = (ASTSysMLFunctionOperationExpression) ast.get();
+    assertThat(functionOperation.getExpression())
+        .isInstanceOf(ASTFieldAccessExpression.class);
+    assertThat(functionOperation.getMCQualifiedName().getPartsList())
+        .containsExactly("c", "d");
+  }
 }
