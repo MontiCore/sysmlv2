@@ -7,8 +7,8 @@ component grammar KerMLElements
 {
     DocBlock implements KerMLElement= "doc";
 
-    PackageDeclaration implements KerMLElement=
-        Modifier  ("standard")? ("library")? "package" name:MCQualifiedName
+    symbol scope PackageDeclaration implements KerMLElement=
+        Modifier  ("standard")? ("library")? "package" name:Name
         ( "{" (KerMLElement)* "}");
 
     KerMLImportStatement extends MCImportStatement implements KerMLElement =
