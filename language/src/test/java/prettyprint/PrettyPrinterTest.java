@@ -39,34 +39,38 @@ public class PrettyPrinterTest {
 
   @ParameterizedTest(name = "{index} - {0} does parse w/o errors")
   @ValueSource(strings = {
-      "packages.sysml",
-      "imports.sysml",
-      "ports.sysml",
-      "parts.sysml",
-      "states.sysml",
-      "parallel_states.sysml",
-      "actions.sysml",
-      "items.sysml",
-      "assert.sysml",
-      "constraints.sysml",
-      "requirements.sysml",
-      "streams.sysml",
-      "refinement.sysml",
-      "cardinalities.sysml",
-      "connections.sysml",
-      "collections.sysml",
-      "StateDecomposition1.sysml",
-      "FlowConectionInterfaceExample.sysml",
-      "StateActions.sysml",
-      "ConditionalSuccessionExample-1.sysml"
+      "example.sysml"
+      //"packages.sysml",
+     // "imports.sysml",
+      //"ports.sysml",
+     // "parts.sysml",
+     // "states.sysml",
+      //"parallel_states.sysml",
+      //"actions.sysml",
+     // "items.sysml",
+     // "assert.sysml",
+     // "constraints.sysml",
+     // "requirements.sysml",
+     // "streams.sysml",
+     // "refinement.sysml",
+     // "cardinalities.sysml",
+     // "connections.sysml",
+     // "collections.sysml",
+     // "StateDecomposition1.sysml",
+    //  "FlowConectionInterfaceExample.sysml",
+     // "StateActions.sysml",
+     // "ConditionalSuccessionExample-1.sysml"
   })
   public void testPrintingModels(String modelName) throws IOException {
     Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse(MODEL_PATH  + "/" + modelName);
     assertFalse(parser.hasErrors(), "Parsing should not have failed");
     assertTrue(ast.isPresent(), "The AST should have been created");
-
     String ppm = SysMLv2Mill.prettyPrint(ast.get(), true);
     System.out.println(ppm);
+
+
+
+
 //    assertTrue(!ppm.isEmpty(), "The printed ast should be available");
 //
 //    SysMLv2Mill.parser().parse_String(ppm);

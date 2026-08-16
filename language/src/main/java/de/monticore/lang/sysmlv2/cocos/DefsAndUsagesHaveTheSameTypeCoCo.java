@@ -1,6 +1,7 @@
 package de.monticore.lang.sysmlv2.cocos;
 
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTEnumUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
@@ -9,6 +10,9 @@ import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeUsageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTEnumUsageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartUsageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortUsageCoCo;
+import de.monticore.lang.sysmlparts.symboltable.adapters.EnumDef2TypeSymbolAdapter;
+import de.monticore.lang.sysmlparts.symboltable.adapters.PartDef2TypeSymbolAdapter;
+import de.monticore.lang.sysmlparts.symboltable.adapters.PortDef2TypeSymbolAdapter;
 import de.se_rwth.commons.logging.Log;
 
 public class DefsAndUsagesHaveTheSameTypeCoCo
@@ -49,7 +53,7 @@ public class DefsAndUsagesHaveTheSameTypeCoCo
     if (!ok) {
       Log.error("0xCOCO002 No valid PortDef found for ASTSysMLTyping",
           node.get_SourcePositionStart());
-    };
+    }
 
   }
   @Override
@@ -68,12 +72,16 @@ public class DefsAndUsagesHaveTheSameTypeCoCo
 
                   || node.getEnclosingScope()
                   .resolveType(typeName)
+                  .filter(type ->
+                      !(type instanceof PartDef2TypeSymbolAdapter)
+                          && !(type instanceof PortDef2TypeSymbolAdapter)
+                          && !(type instanceof EnumDef2TypeSymbolAdapter))
                   .isPresent();
 
           if (!valid) {
             Log.error(
-                "0xCOCO003 Attribute usages may only be typed by an attribute definition "
-                    + "or a valid type (e.g. ScalarValues::Boolean).",
+                "0xCOCO003 Attribute usages may only be typed by an "
+                    + "attribute definition or a valid non-SysML type.",
                 node.get_SourcePositionStart(),
                 node.get_SourcePositionEnd());
           }
