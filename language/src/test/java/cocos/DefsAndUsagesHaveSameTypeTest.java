@@ -39,7 +39,7 @@ public class DefsAndUsagesHaveSameTypeTest extends NervigeSymboltableTests{
 
   @Test
   public void testInvalid() throws IOException {
-    var as = process("port def P; attribute d: P;");
+    var as = process("attribute def P; attribute d: P;");
 
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo((SysMLPartsASTPortUsageCoCo) new DefsAndUsagesHaveTheSameTypeCoCo());
