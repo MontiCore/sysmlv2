@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Disabled;
+import org.omg.sysml.interactive.SysMLInteractive;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,6 +18,7 @@ import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Diese Klasse sammelt alle Tests zu den SysML Domain Libraries (abgelegt unter resources).
@@ -28,6 +30,8 @@ public class DomainLibrariesTest {
 
   static SysMLv2Tool tool;
 
+ // private static SysMLInteractive official;
+
   @BeforeAll
   public static void setup() {
     tool = new SysMLv2Tool();
@@ -37,6 +41,9 @@ public class DomainLibrariesTest {
   public void init() {
     tool.init();
     Log.init();
+
+   //official = SysMLInteractive.getInstance();
+   //official.setVerbose(false);
   }
 
   @Test
@@ -153,10 +160,10 @@ public class DomainLibrariesTest {
     assertThat(Log.getFindings()).isEmpty();
   }
 
-  @Disabled
   @Test
   public void testParseShapeItems() {
     var ast = tool.parse(domainLibraries + "/Geometry/ShapeItems.sysml");
+    System.out.println(Log.getFindings());
     assertThat(Log.getFindings()).isEmpty();
   }
 
@@ -165,6 +172,15 @@ public class DomainLibrariesTest {
     var ast = tool.parse(domainLibraries + "/Quantities and Units/SI.sysml");
     assertThat(Log.getFindings()).isEmpty();
   }
+
+  /*@Test
+  public void testParseOfficial() throws IOException {
+    official.parse(domainLibraries + "/Geometry/ShapeItems.sysml");
+    //System.out.println("HERE:" + official.getResource().getErrors());
+    assertTrue(official.getResource().getErrors().isEmpty(), "Omg parser found errors when MC parser did not");
+
+  }*/
+
 
   @Test
   public void testParseISQ() {
@@ -178,7 +194,7 @@ public class DomainLibrariesTest {
     assertThat(Log.getFindings()).isEmpty();
   }
 
-  @Disabled
+
   @Test
   public void testParseAll() throws IOException {
     var models = Files.walk(Path.of(domainLibraries))
