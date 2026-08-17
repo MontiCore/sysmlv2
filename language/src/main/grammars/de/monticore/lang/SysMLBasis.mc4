@@ -74,7 +74,6 @@ component grammar SysMLBasis
   SysMLRedefinition implements Specialization =
       (":>>" | "redefines") superTypes:(MCType || ",")+ SysMLCardinality?;
 
-
   /**
    * Cardinality bei mehreren Typen macht wenig Sinn, aber die Grammatik und damit der AST werden sehr kompliziert, wenn
    * man versucht alle Eventualitäten durch die Grammatik abzudecken.
