@@ -37,10 +37,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
    */
   public static void prepareGlobalScope() {
     SysMLv2Mill.initializePrimitives();
-    //SysMLv2Mill.addStringType();
-    //SysMLv2Mill.addScalarValueTypes();
     loadScalarValuesFromJson();
-    SysMLv2Mill.addScalarFunctionsTypes();
     SysMLv2Mill.addKermlCollectionsTypes();
     SysMLv2Mill.addVectorValuesTypes();
     SysMLv2Mill.addCollectionTypes();
@@ -84,96 +81,6 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         .setSpannedScope(scope())
         .setAccessModifier(AccessModifier.ALL_INCLUSION)
         .build());
-  }
-
-  public static void addStringType() {
-    BasicSymbolsMill.initializeString();
-  }
-
-  public static void addScalarValueTypes() {
-    getMill()._addScalarValueTypes();
-  }
-
-  public static void addScalarFunctionsTypes() {
-    getMill()._addScalarFunctionsTypes();
-  }
-
-  protected void _addScalarValueTypes() {
-    if (SysMLv2Mill.globalScope().resolveSysMLPackage("ScalarValues").isPresent()) {
-      return;
-    }
-
-    var packageScope = SysMLv2Mill.scope();
-    packageScope.setName("ScalarValues");
-    packageScope.setEnclosingScope(SysMLv2Mill.globalScope());
-    var scalarValues = SysMLv2Mill.sysMLPackageSymbolBuilder()
-        .setName("ScalarValues")
-        .setFullName("ScalarValues")
-        .setPackageName("")
-        .setEnclosingScope(SysMLv2Mill.globalScope())
-        .setSpannedScope(packageScope)
-        .build();
-    packageScope.setSpanningSymbol(scalarValues);
-    SysMLv2Mill.globalScope().add(scalarValues);
-
-    var scalarValue = createScalarValueType(packageScope, "ScalarValue");
-    var bool = createScalarValueType(packageScope, "Boolean");
-    var numericalValue = createScalarValueType(packageScope, "NumericalValue");
-    var number = createScalarValueType(packageScope, "Number");
-    var complex = createScalarValueType(packageScope, "Complex");
-    var real = createScalarValueType(packageScope, "Real");
-    var rational = createScalarValueType(packageScope, "Rational");
-    var integer = createScalarValueType(packageScope, "Integer");
-    var natural = createScalarValueType(packageScope, "Natural");
-    var positive = createScalarValueType(packageScope, "Positive");
-
-    setScalarValueSuperTypes(bool, scalarValue);
-    setScalarValueSuperTypes(numericalValue, scalarValue);
-    setScalarValueSuperTypes(number, numericalValue);
-    setScalarValueSuperTypes(complex, number);
-    setScalarValueSuperTypes(real, complex);
-    setScalarValueSuperTypes(rational, real);
-    setScalarValueSuperTypes(integer, rational);
-    setScalarValueSuperTypes(natural, integer);
-    setScalarValueSuperTypes(positive, natural);
-  }
-
-  protected void _addScalarFunctionsTypes() {
-    if (SysMLv2Mill.globalScope().resolveSysMLPackage("ScalarFunctions").isPresent()) {
-      return;
-    }
-
-    var packageScope = SysMLv2Mill.scope();
-    packageScope.setName("ScalarFunctions");
-    packageScope.setEnclosingScope(SysMLv2Mill.globalScope());
-    var scalarFunctions = SysMLv2Mill.sysMLPackageSymbolBuilder()
-        .setName("ScalarFunctions")
-        .setFullName("ScalarFunctions")
-        .setPackageName("")
-        .setEnclosingScope(SysMLv2Mill.globalScope())
-        .setSpannedScope(packageScope)
-        .build();
-    packageScope.setSpanningSymbol(scalarFunctions);
-    SysMLv2Mill.globalScope().add(scalarFunctions);
-
-
-    packageScope.add(buildMinFunction());
-  }
-
-  protected OOTypeSymbol createScalarValueType(ISysMLv2Scope packageScope, String name) {
-    var type = OOSymbolsMill.oOTypeSymbolBuilder()
-        .setName(name)
-        .setFullName("ScalarValues." + name)
-        .setPackageName("ScalarValues")
-        .setEnclosingScope(packageScope)
-        .setSpannedScope(scope())
-        .build();
-    packageScope.add(type);
-    return type;
-  }
-
-  protected void setScalarValueSuperTypes(OOTypeSymbol type, OOTypeSymbol superType) {
-    type.setSuperTypesList(List.of(SymTypeExpressionFactory.createTypeObject(superType)));
   }
 
   public static void addKermlCollectionsTypes() {
