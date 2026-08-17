@@ -41,7 +41,7 @@ public class KerMLTestRunner {
       BasicSymbolsMill.init();
 
       String modelPath = "kerml/src/test/resources/KernelDataTypeLibrary/ScalarValues.kerml";
-      String jsonOutputPath = "kerml/target/symbols/ScalarValues.json";
+      String jsonOutputPath = "kerml/src/test/resources/symbols/ScalarValues.json";
 
       ASTKerMLModel ast = tool.parse(modelPath);
 
@@ -49,8 +49,8 @@ public class KerMLTestRunner {
         tool.createSymbolTable(ast);
 
         IBasicSymbolsArtifactScope exportScope = BasicSymbolsMill.artifactScope();
-        exportScope.setName("ScalarValues");
-        exportScope.setPackageName("");
+        exportScope.setName("");
+        exportScope.setPackageName("ScalarValues");
 
         var traverser = KerMLMill.traverser();
         traverser.add4KerMLElements(new DatatypeExtractor(exportScope));

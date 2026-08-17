@@ -3,6 +3,8 @@ package de.monticore.lang.sysmlv2;
 
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
+import de.monticore.symbols.basicsymbols._symboltable.BasicSymbolsSymbols2Json;
+import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsArtifactScope;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.symbols.basicsymbols._symboltable.BasicSymbolsScope;
@@ -15,11 +17,11 @@ import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symboltable.modifiers.AccessModifier;
-import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.SymTypeVariable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,8 +37,9 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
    */
   public static void prepareGlobalScope() {
     SysMLv2Mill.initializePrimitives();
-    SysMLv2Mill.addStringType();
-    SysMLv2Mill.addScalarValueTypes();
+    //SysMLv2Mill.addStringType();
+    //SysMLv2Mill.addScalarValueTypes();
+    loadScalarValuesFromJson();
     SysMLv2Mill.addScalarFunctionsTypes();
     SysMLv2Mill.addKermlCollectionsTypes();
     SysMLv2Mill.addVectorValuesTypes();
@@ -46,6 +49,21 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     SysMLv2Tool.loadStreamSymbolsFromJar();
   }
 
+  public static void loadScalarValuesFromJson() {
+    if (globalScope().resolveType("ScalarValues.Boolean").isPresent()) {
+      return;
+    }
+    if (globalScope().resolveSysMLPackage("ScalarValues").isEmpty()) {
+      globalScope().add(sysMLPackageSymbolBuilder().setName("ScalarValues").build());
+    }
+    for (String path : List.of("kerml/src/test/resources/symbols/ScalarValues.json", "../kerml/src/test/resources/symbols/ScalarValues.json")) {
+      File file = new File(path);
+      if (file.exists()) {
+        globalScope().addSubScope(new BasicSymbolsSymbols2Json().load(file.getAbsolutePath()));
+        break;
+      }
+    }
+  }
   /**
    * BasicSymbolsMill.initializePrimitives plus our own
    */
