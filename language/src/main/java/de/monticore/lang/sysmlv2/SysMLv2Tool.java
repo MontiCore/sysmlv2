@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2;
 
+import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
+import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.lang.componentconnector.SerializationUtil;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintDefCoCo;
@@ -502,4 +504,21 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
         "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
         new MethodSymbolDeSer());
   }
+
+  /**
+   * Baut einen Typ-basierten qualifizierten Namen für Port-Resolution in Requirements.
+   * Für llr1.input.val mit llr1 vom Typen Inverter_LLR1 wird "Inverter_LLR1.input.val" zurückgegeben.
+   */
+  public static String buildTypeBasedPortName(ASTFieldAccessExpression fieldAccess) {
+    if(fieldAccess.getExpression() instanceof ASTNameExpression){
+      return SysMLTypeCheck3.typeOf(fieldAccess.getExpression())
+        .printFullName()
+        + "."
+        + fieldAccess.getName();
+    }
+    return buildTypeBasedPortName(
+      (ASTFieldAccessExpression)fieldAccess.getExpression()
+    ) + "." + fieldAccess.getName();
+  }
+
 }

@@ -13,6 +13,7 @@ import de.monticore.lang.componentconnector.StreamTimingUtil;
 import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScope;
 import de.monticore.lang.sysmlactions._ast.ASTAssignmentActionUsage;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
+import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlexpressions._ast.ASTConditionalNotExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTInfinity;
 import de.monticore.lang.sysmlexpressions._ast.ASTSubsetEquationExpression;
@@ -36,6 +37,7 @@ import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
 import de.monticore.lang.sysmlstates._symboltable.StateDefSymbol;
 import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
+import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
@@ -152,6 +154,13 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
             false));
       } else if (expr.getExpression() instanceof ASTNameExpression) {
         optPort = ((IComponentConnectorScope) expr.getEnclosingScope()).resolvePort(SysMLv2Mill.prettyPrint(expr, false));
+      } else if (
+        expr.getExpression() instanceof ASTFieldAccessExpression &&
+        expr.getEnclosingScope().getAstNode() instanceof ASTRequirementUsage
+      ) {
+        // Requirement-spezifisch: Verwende Typ-basierten Namen statt Instanz-Namen
+        String typeBasedName = SysMLv2Tool.buildTypeBasedPortName(expr);
+        optPort = ((IComponentConnectorScope) expr.getEnclosingScope()).resolvePort(typeBasedName);
       }
 
       var innerTypeIsPortDef =  innerAsExprType.hasTypeInfo() &&
