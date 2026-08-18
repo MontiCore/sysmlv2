@@ -115,15 +115,9 @@ public class CompareGenericTypesTest {
   public void test4CompatibleGenericTypes(String expression) throws IOException {
     var type = typeOfConstraintExpression(expression);
 
-    System.out.println("TypeCheck calculated: " + type.getTypeInfo().getFullName());
     assertTrue(type.isPrimitive());
     assertThat(type.printFullName()).isEqualTo("boolean");
-    System.out.println("Checking Log after TypeCheck...");
-    for (var finding : Log.getFindings()) {
-      System.out.println(finding);
-    }
     assertTrue(Log.getFindings().isEmpty());
-    System.out.println("Done");
   }
 
   @ParameterizedTest
@@ -136,16 +130,8 @@ public class CompareGenericTypesTest {
   public void test4IncompatibleGenericTypes(String expression) throws IOException {
     var type = typeOfConstraintExpression(expression);
 
-    System.out.println("TypeCheck calculated: " +
-      (type.isObscureType() ? "ObscureType" : type.getTypeInfo().getFullName())
-    );
     assertTrue(type.isObscureType());
-    System.out.println("Checking Log after TypeCheck...");
-    for (var finding : Log.getFindings()) {
-      System.out.println(finding);
-    }
     assertFalse(Log.getFindings().isEmpty());
-    System.out.println("Done");
   }
 
   protected de.monticore.types.check.SymTypeExpression typeOfConstraintExpression(
@@ -167,12 +153,7 @@ public class CompareGenericTypesTest {
 
     var ast = parser.parse_String(model);
 
-    System.out.println("Parsing model...");
     assertThat(ast).isPresent();
-    System.out.println("Checking Log after parsing...");
-    for (var finding : Log.getFindings()) {
-      System.out.println(finding);
-    }
     assertThat(Log.getFindings()).isEmpty();
 
     var astSysMLModel = ast.get();
@@ -185,7 +166,6 @@ public class CompareGenericTypesTest {
     var constraintUsage = ((ASTPartDef) astPartDef).getSysMLElement(3);
     var expr = ((ASTConstraintUsage) constraintUsage).getExpression();
 
-    System.out.println("TypeChecking...");
     return TypeCheck3.typeOf(expr);
   }
 }
