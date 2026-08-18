@@ -502,5 +502,4 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
         "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
         new MethodSymbolDeSer());
   }
-
 }
