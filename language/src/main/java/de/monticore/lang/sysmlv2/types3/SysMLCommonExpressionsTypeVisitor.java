@@ -155,12 +155,17 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
       } else if (expr.getExpression() instanceof ASTNameExpression) {
         optPort = ((IComponentConnectorScope) expr.getEnclosingScope()).resolvePort(SysMLv2Mill.prettyPrint(expr, false));
       } else if (
-        expr.getExpression() instanceof ASTFieldAccessExpression &&
-        expr.getEnclosingScope().getAstNode() instanceof ASTRequirementUsage
+        expr.getExpression() instanceof ASTFieldAccessExpression
       ) {
-        // Requirement-spezifisch: Verwende Typ-basierten Namen statt Instanz-Namen
-        String typeBasedName = SysMLv2Tool.buildTypeBasedPortName(expr);
-        optPort = ((IComponentConnectorScope) expr.getEnclosingScope()).resolvePort(typeBasedName);
+        String typeBasedNameBySource =
+          calculateExprFieldAccess((ASTFieldAccessExpression)(expr.getExpression()), false)
+            .get()
+            .getSourceInfo()
+            .getSourceSymbol()
+            .get()
+            .getFullName() + "." +expr.getName();
+
+        optPort = ((IComponentConnectorScope) expr.getEnclosingScope()).resolvePort(typeBasedNameBySource);
       }
 
       var innerTypeIsPortDef =  innerAsExprType.hasTypeInfo() &&
