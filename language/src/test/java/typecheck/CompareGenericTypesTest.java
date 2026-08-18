@@ -4,6 +4,8 @@ import de.monticore.expressions.commonexpressions.types3.util.CommonExpressionsL
 import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisTypeVisitor;
 import de.monticore.expressions.streamexpressions.types3.StreamExpressionsTypeVisitor;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
+import de.monticore.lang.sysmlconstraints._ast.ASTRequirementDef;
+import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
@@ -29,6 +31,7 @@ import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -132,6 +135,50 @@ public class CompareGenericTypesTest {
 
     assertTrue(type.isObscureType());
     assertFalse(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void test4RequirementSubjectPortResolving() throws IOException {
+    var model =
+        "port def Booleans {" +
+          "in attribute val: boolean;" +
+        "}" +
+        "part def subjectPart{" +
+          "port input: Booleans;" +
+          "port output: ~Booleans;" +
+          "exhibit state behavior;" +
+        "}" +
+        "requirement 'Requirement' {" +
+          "subject subPart: subjectPart;" +
+          "attribute a: boolean;" +
+          "assert constraint {" +
+            "subPart.input.val == <a, Tick>" +
+          "}" +
+        "}"
+        ;
+
+    var ast = parser.parse_String(model);
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+
+    var astSysMLModel = ast.get();
+    tool.createSymbolTable(astSysMLModel);
+    tool.completeSymbolTable(astSysMLModel);
+    tool.finalizeSymbolTable(astSysMLModel);
+
+    var sysmlelements = astSysMLModel.getSysMLElementList();
+    var requirement = sysmlelements.get(2);
+    var constraintUsage = ((ASTRequirementUsage) requirement).getSysMLElement(2);
+    var expr = ((ASTConstraintUsage) constraintUsage).getExpression();
+
+    var type = TypeCheck3.typeOf(expr);
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    assertTrue(type.isPrimitive());
+    assertThat(type.printFullName()).isEqualTo("boolean");
+    assertTrue(Log.getFindings().isEmpty());
   }
 
   protected de.monticore.types.check.SymTypeExpression typeOfConstraintExpression(
