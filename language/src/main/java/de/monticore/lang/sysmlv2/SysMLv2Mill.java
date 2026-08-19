@@ -37,7 +37,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
    */
   public static void prepareGlobalScope() {
     SysMLv2Mill.initializePrimitives();
-    loadScalarValuesFromJson();
+    SysMLv2Mill.loadScalarValuesFromJson();
     SysMLv2Mill.addKermlCollectionsTypes();
     SysMLv2Mill.addVectorValuesTypes();
     SysMLv2Mill.addCollectionTypes();
