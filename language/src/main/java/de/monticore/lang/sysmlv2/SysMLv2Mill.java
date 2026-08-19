@@ -22,6 +22,7 @@ import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.SymTypeVariable;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,19 +48,11 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
   }
 
   public static void loadScalarValuesFromJson() {
-    if (globalScope().resolveType("ScalarValues.Boolean").isPresent()) {
-      return;
-    }
-    if (globalScope().resolveSysMLPackage("ScalarValues").isEmpty()) {
-      globalScope().add(sysMLPackageSymbolBuilder().setName("ScalarValues").build());
-    }
-    for (String path : List.of("kerml/src/test/resources/symbols/ScalarValues.json", "../kerml/src/test/resources/symbols/ScalarValues.json")) {
-      File file = new File(path);
-      if (file.exists()) {
-        globalScope().addSubScope(new BasicSymbolsSymbols2Json().load(file.getAbsolutePath()));
-        break;
-      }
-    }
+    getMill()._addScalarValuesToSymPath();
+  }
+
+  protected void _addScalarValuesToSymPath(){
+    URL scalarValues = SysMLv2Tool.class.getClassLoader().getResource("ScalarValues.kermlsym");
   }
   /**
    * BasicSymbolsMill.initializePrimitives plus our own

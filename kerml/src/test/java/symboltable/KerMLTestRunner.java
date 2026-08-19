@@ -41,7 +41,7 @@ public class KerMLTestRunner {
       BasicSymbolsMill.init();
 
       String modelPath = "kerml/src/test/resources/KernelDataTypeLibrary/ScalarValues.kerml";
-      String jsonOutputPath = "kerml/src/test/resources/symbols/ScalarValues.json";
+      String OutputPath = "language/src/main/resources/ScalarValues.kermlsym";
 
       ASTKerMLModel ast = tool.parse(modelPath);
 
@@ -59,13 +59,13 @@ public class KerMLTestRunner {
         BasicSymbolsSymbols2Json symbols2Json = new BasicSymbolsSymbols2Json();
         String jsonString = symbols2Json.serialize(exportScope);
 
-        File outFile = new File(jsonOutputPath);
+        File outFile = new File(OutputPath);
         outFile.getParentFile().mkdirs();
         FileWriter writer = new FileWriter(outFile);
         writer.write(jsonString);
         writer.close();
 
-        System.out.println("\nJSON-File was generated");
+        System.out.println("\nSymboltable was generated");
         System.out.println(outFile.getAbsolutePath());
       } else {
         System.err.println("\nModel couldnt be parsed. Check if Model exists.");
