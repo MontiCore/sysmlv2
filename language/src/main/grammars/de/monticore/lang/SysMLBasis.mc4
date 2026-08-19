@@ -75,14 +75,6 @@ component grammar SysMLBasis
       (":>>" | "redefines") superTypes:(MCType || ",")+ SysMLCardinality?;
 
   /**
-   * [An event occurence] is related to another occurrence usage,
-   * representing the occurring event, by a reference subsetting relationship, which is a special kind of subsetting
-   * relationship specified using the keyword references or the symbol ::>.
-   */
-  SysMLReference implements Specialization =
-      ("::>" | "references") superTypes:(MCType || ",")+ SysMLCardinality?;
-
-  /**
    * Cardinality bei mehreren Typen macht wenig Sinn, aber die Grammatik und damit der AST werden sehr kompliziert, wenn
    * man versucht alle Eventualitäten durch die Grammatik abzudecken.
    */
