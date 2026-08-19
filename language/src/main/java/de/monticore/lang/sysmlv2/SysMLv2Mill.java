@@ -76,6 +76,30 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         .build());
   }
 
+  public static void addStringType() {
+    BasicSymbolsMill.initializeObject();
+  }
+
+  protected void _addScalarFunctionsTypes() {
+    if (SysMLv2Mill.globalScope().resolveType("ScalarFunctions").isPresent()) {
+      return;
+    }
+
+    var packageScope = SysMLv2Mill.scope();
+    packageScope.setName("ScalarFunctions");
+    packageScope.setEnclosingScope(SysMLv2Mill.globalScope());
+    var scalarFunctions = SysMLv2Mill.sysMLPackageSymbolBuilder()
+        .setName("ScalarFunctions")
+        .setFullName("ScalarFunctions")
+        .setPackageName("")
+        .setEnclosingScope(SysMLv2Mill.globalScope())
+        .setSpannedScope(packageScope)
+        .build();
+    packageScope.setSpanningSymbol(scalarFunctions);
+    SysMLv2Mill.globalScope().add(scalarFunctions);
+    packageScope.add(buildMinFunction());
+  }
+
   public static void addKermlCollectionsTypes() {
     getMill()._addCollectionsPackage();
   }
