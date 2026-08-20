@@ -97,4 +97,12 @@ grammar SysMLv2 extends SysMLExpressions,
        SysMLElement*
      "}" | ";");
 
+  /**
+     * [An event occurence] is related to another occurrence usage,
+     * representing the occurring event, by a reference subsetting relationship, which is a special kind of subsetting
+     * relationship specified using the keyword references or the symbol ::>.
+     */
+    SysMLReference implements Specialization =
+        ("::>" | "references") superTypes:(MCType || ",")+ SysMLCardinality?;
+
 }
