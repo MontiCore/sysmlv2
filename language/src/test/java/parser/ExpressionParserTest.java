@@ -125,4 +125,22 @@ public class ExpressionParserTest {
     assertThat(functionOperation.getMCQualifiedName().getPartsList())
         .containsExactly("c", "d");
   }
+
+  /**
+   * Checks that a function operation with arguments is parsed directly as
+   * ASTSysMLFunctionOperationExpression, not wrapped in an ASTCallExpression.
+   */
+  @Test
+  public void testFunctionOperationWithArguments() throws IOException {
+    var ast = parser.parse_StringExpression("x->b(y)");
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    assertThat(ast.get()).isInstanceOf(ASTSysMLFunctionOperationExpression.class);
+    assertThat(ast.get()).isNotInstanceOf(ASTCallExpression.class);
+
+    var functionOperation = (ASTSysMLFunctionOperationExpression) ast.get();
+    assertThat(functionOperation.getMCQualifiedName().getPartsList()).containsExactly("b");
+    assertThat(functionOperation.getArguments().getExpressionList()).hasSize(1);
+  }
 }
