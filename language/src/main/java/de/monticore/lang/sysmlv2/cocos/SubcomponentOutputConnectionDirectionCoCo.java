@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.cocos;
 
-import de.monticore.lang.sysmlbasis._ast.ASTModifier;
 import de.monticore.lang.sysmlbasis._ast.ASTEndpoint;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
@@ -9,6 +8,7 @@ import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTConnectionUsageCoCo;
 import de.monticore.lang.sysmlparts._symboltable.*;
 import de.monticore.symboltable.modifiers.AccessModifier;
+import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
@@ -180,21 +180,30 @@ public class SubcomponentOutputConnectionDirectionCoCo implements SysMLPartsASTC
 
   protected boolean portIsInput(PortUsageSymbol symbol) {
     ASTModifier mods = getModifiersFromPortUsageSymbol(symbol);
-    boolean portIsInAndNotConjugated = mods.isIn() && !portIsConjugated(symbol);
-    boolean portIsOutAndConjugated = mods.isOut() && portIsConjugated(symbol);
-    return (portIsInAndNotConjugated || portIsOutAndConjugated);
+    if (mods instanceof de.monticore.lang.sysmlv2._ast.ASTModifier) {
+      var sysMLModifier = (de.monticore.lang.sysmlv2._ast.ASTModifier) mods;
+      boolean portIsInAndNotConjugated = sysMLModifier.isIn() && !portIsConjugated(symbol);
+      boolean portIsOutAndConjugated = sysMLModifier.isOut() && portIsConjugated(symbol);
+      return (portIsInAndNotConjugated || portIsOutAndConjugated);
+    }
+    return false;
   }
 
   protected boolean portIsOutput(PortUsageSymbol symbol) {
     ASTModifier mods = getModifiersFromPortUsageSymbol(symbol);
-    boolean portIsOutAndNotConjugated = mods.isOut() && !portIsConjugated(symbol);
-    boolean portIsInAndConjugated = mods.isIn() && portIsConjugated(symbol);
-    return (portIsOutAndNotConjugated || portIsInAndConjugated);
+    if (mods instanceof de.monticore.lang.sysmlv2._ast.ASTModifier) {
+      var sysMLModifier = (de.monticore.lang.sysmlv2._ast.ASTModifier) mods;
+      boolean portIsOutAndNotConjugated = sysMLModifier.isOut() && !portIsConjugated(symbol);
+      boolean portIsInAndConjugated = sysMLModifier.isIn() && portIsConjugated(symbol);
+      return (portIsOutAndNotConjugated || portIsInAndConjugated);
+    }
+    return false;
   }
 
   protected boolean portIsInOutput(PortUsageSymbol symbol) {
     ASTModifier mods = getModifiersFromPortUsageSymbol(symbol);
-    return mods.isInout();
+    return mods instanceof de.monticore.lang.sysmlv2._ast.ASTModifier
+        && ((de.monticore.lang.sysmlv2._ast.ASTModifier) mods).isInout();
   }
 
   protected boolean portIsConjugated(PortUsageSymbol symbol) {
