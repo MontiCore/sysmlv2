@@ -1,8 +1,4 @@
-package de.monticore.lang.sysmlbasis._ast;
-
-import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
-import de.monticore.literals.mccommonliterals._ast.ASTNatLiteral;
-import de.se_rwth.commons.logging.Log;
+package de.monticore.lang.sysmlv2._ast;
 
 public class ASTKerMLCardinality extends ASTKerMLCardinalityTOP {
 
