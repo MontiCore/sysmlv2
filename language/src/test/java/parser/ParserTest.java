@@ -8,7 +8,6 @@ import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -40,7 +39,7 @@ public class ParserTest {
 
   @ParameterizedTest(name = "{index} - {0} does parse w/o errors")
   @ValueSource(strings = {
-      /*"packages.sysml",
+      "packages.sysml",
       "imports.sysml",
       "ports.sysml",
       "parts.sysml",
@@ -60,8 +59,7 @@ public class ParserTest {
       "StateDecomposition1.sysml",
       "FlowConectionInterfaceExample.sysml",
       "StateActions.sysml",
-      "ConditionalSuccessionExample-1.sysml",*/
-      "example.sysml"
+      "ConditionalSuccessionExample-1.sysml"
   })
   public void testParsingModels(String modelName) throws IOException {
     Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse(MODEL_PATH  + "/" + modelName);
