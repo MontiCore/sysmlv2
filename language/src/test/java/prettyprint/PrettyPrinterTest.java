@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package prettyprint;
 
-import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
@@ -61,17 +61,12 @@ public class PrettyPrinterTest {
       "ConditionalSuccessionExample-1.sysml"
   })
   public void testPrintingModels(String modelName) throws IOException {
-    Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse(MODEL_PATH  + "/" + modelName);
+    Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse(
+        MODEL_PATH + "/" + modelName);
     assertFalse(parser.hasErrors(), "Parsing should not have failed");
     assertTrue(ast.isPresent(), "The AST should have been created");
-
     String ppm = SysMLv2Mill.prettyPrint(ast.get(), true);
     System.out.println(ppm);
-//    assertTrue(!ppm.isEmpty(), "The printed ast should be available");
-//
-//    SysMLv2Mill.parser().parse_String(ppm);
-//    assertFalse(parser.hasErrors(), "Parsing of printed ast should not have failed");
-//    assertTrue(ast.isPresent(), "The AST of printed ast should have been created");
-  }
 
+  }
 }

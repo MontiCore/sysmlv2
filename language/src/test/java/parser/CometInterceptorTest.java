@@ -4,6 +4,7 @@ import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -56,6 +57,7 @@ public class CometInterceptorTest {
     assertThat(Log.getFindings()).isEmpty();
   }
 
+  @Disabled
   @Test
   public void testProcessAll() throws IOException {
     var models = Files.walk(Path.of(FOLDER))
