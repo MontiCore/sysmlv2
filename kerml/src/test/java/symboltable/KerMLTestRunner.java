@@ -49,8 +49,6 @@ public class KerMLTestRunner {
         tool.createSymbolTable(ast);
 
         IBasicSymbolsArtifactScope exportScope = BasicSymbolsMill.artifactScope();
-        exportScope.setName("");
-        exportScope.setPackageName("ScalarValues");
 
         var traverser = KerMLMill.traverser();
         traverser.add4KerMLElements(new DatatypeExtractor(exportScope));
