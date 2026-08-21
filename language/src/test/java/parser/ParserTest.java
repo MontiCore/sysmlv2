@@ -39,7 +39,7 @@ public class ParserTest {
 
   @ParameterizedTest(name = "{index} - {0} does parse w/o errors")
   @ValueSource(strings = {
-      /*"packages.sysml",
+      "packages.sysml",
       "imports.sysml",
       "ports.sysml",
       "parts.sysml",
@@ -59,8 +59,7 @@ public class ParserTest {
       "StateDecomposition1.sysml",
       "FlowConectionInterfaceExample.sysml",
       "StateActions.sysml",
-      "ConditionalSuccessionExample-1.sysml",*/
-      "example.sysml"
+      "ConditionalSuccessionExample-1.sysml"
   })
   public void testParsingModels(String modelName) throws IOException {
     Optional<ASTSysMLModel> ast = SysMLv2Mill.parser().parse(MODEL_PATH  + "/" + modelName);
