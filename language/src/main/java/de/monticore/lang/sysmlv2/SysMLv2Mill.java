@@ -14,13 +14,13 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.lang.sysmlv2._symboltable.SysMLv2GlobalScope;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.SymTypeVariable;
 
 import java.net.URL;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,8 +37,6 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
    */
   public static void prepareGlobalScope() {
     SysMLv2Mill.initializePrimitives();
-    SysMLv2Mill.addStringType();
-    //SysMLv2Mill.addScalarValueTypes();
     SysMLv2Mill.loadScalarValuesFromSym();
     SysMLv2Mill.addScalarFunctionsTypes();
     SysMLv2Mill.addKermlCollectionsTypes();
@@ -49,22 +47,33 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     SysMLv2Tool.loadStreamSymbolsFromJar();
   }
 
-  protected static void loadScalarValuesFromSym(){
-    getMill()._addScalarValuesToSymPath();
+  protected static void loadScalarValuesFromSym() {
+    getMill()._loadScalarValuesFromSym();
   }
 
-  protected void _addScalarValuesToSymPath() {
-    URL url = de.monticore.lang.sysmlv2.SysMLv2Tool.class.getClassLoader().getResource("ScalarValues.kermlsym");
+  protected void _loadScalarValuesFromSym() {
+    URL url = SysMLv2Tool.class.getClassLoader().getResource(
+        "ScalarValues.kermlsym");
 
     if (url != null) {
-      try {
-        Path pathOfScalarValues = java.nio.file.Paths.get(url.toURI()).getParent();
-
-        SysMLv2Mill.globalScope().getSymbolPath().addEntry(pathOfScalarValues);
-
-      } catch (java.net.URISyntaxException e) {
-        de.se_rwth.commons.logging.Log.error("Failed to convert URL to Path", e);
+      var globalScope = (SysMLv2GlobalScope) SysMLv2Mill.globalScope();
+      boolean packageAlreadyLoaded = globalScope.getLocalSysMLPackageSymbols().stream()
+          .anyMatch(symbol -> "ScalarValues".equals(symbol.getFullName()));
+      if (packageAlreadyLoaded) {
+        return;
       }
+
+      var scalarValuesScope = globalScope.getSymbols2Json().load(url);
+      var scalarValues = SysMLv2Mill.sysMLPackageSymbolBuilder()
+          .setName("ScalarValues")
+          .setFullName("ScalarValues")
+          .setPackageName("")
+          .setEnclosingScope(globalScope)
+          .setSpannedScope(scalarValuesScope)
+          .build();
+      scalarValuesScope.setSpanningSymbol(scalarValues);
+      globalScope.add(scalarValues);
+      globalScope.addSubScope(scalarValuesScope);
     } else {
       de.se_rwth.commons.logging.Log.error("Could not find ScalarValues.kermlsym");
     }
