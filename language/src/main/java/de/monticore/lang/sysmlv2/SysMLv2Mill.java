@@ -14,12 +14,13 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.lang.sysmlv2._symboltable.SysMLv2GlobalScope;
 import de.monticore.symboltable.modifiers.AccessModifier;
-import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.SymTypeVariable;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,13 +31,13 @@ import java.util.stream.Collectors;
 public class SysMLv2Mill extends SysMLv2MillTOP {
 
   /**
-   * Prepares the current global scope, i.e., adds symbols to it. Does not initialize anything else, especially not the
+   * Prepares the current global scope, i.e., adds symbols to it.
+   * Does not initialize anything else, especially not the
    * Mill itself. Does not clear the scope beforehand.
    */
   public static void prepareGlobalScope() {
     SysMLv2Mill.initializePrimitives();
-    SysMLv2Mill.addStringType();
-    SysMLv2Mill.addScalarValueTypes();
+    SysMLv2Mill.loadScalarValuesFromSym();
     SysMLv2Mill.addScalarFunctionsTypes();
     SysMLv2Mill.addKermlCollectionsTypes();
     SysMLv2Mill.addVectorValuesTypes();
@@ -44,6 +45,38 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     SysMLv2Mill.addTsynVariables();
     SysMLv2Mill.addStatesTypes();
     SysMLv2Tool.loadStreamSymbolsFromJar();
+  }
+
+  protected static void loadScalarValuesFromSym() {
+    getMill()._loadScalarValuesFromSym();
+  }
+
+  protected void _loadScalarValuesFromSym() {
+    URL url = SysMLv2Tool.class.getClassLoader().getResource(
+        "ScalarValues.kermlsym");
+
+    if (url != null) {
+      var globalScope = (SysMLv2GlobalScope) SysMLv2Mill.globalScope();
+      boolean packageAlreadyLoaded = globalScope.getLocalSysMLPackageSymbols().stream()
+          .anyMatch(symbol -> "ScalarValues".equals(symbol.getFullName()));
+      if (packageAlreadyLoaded) {
+        return;
+      }
+
+      var scalarValuesScope = globalScope.getSymbols2Json().load(url);
+      var scalarValues = SysMLv2Mill.sysMLPackageSymbolBuilder()
+          .setName("ScalarValues")
+          .setFullName("ScalarValues")
+          .setPackageName("")
+          .setEnclosingScope(globalScope)
+          .setSpannedScope(scalarValuesScope)
+          .build();
+      scalarValuesScope.setSpanningSymbol(scalarValues);
+      globalScope.add(scalarValues);
+      globalScope.addSubScope(scalarValuesScope);
+    } else {
+      de.se_rwth.commons.logging.Log.error("Could not find ScalarValues.kermlsym");
+    }
   }
 
   /**
