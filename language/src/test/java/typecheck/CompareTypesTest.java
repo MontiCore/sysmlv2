@@ -53,55 +53,6 @@ public class CompareTypesTest {
   public void clear() {
     Log.clearFindings();
     tool.init();
-
-    var type4Ast = new Type4Ast();
-    var typeTraverser = SysMLv2Mill.inheritanceTraverser();
-
-    var forBasis = new ExpressionBasisTypeVisitor();
-    forBasis.setType4Ast(type4Ast);
-    typeTraverser.add4ExpressionsBasis(forBasis);
-
-    var forLiterals = new MCCommonLiteralsTypeVisitor();
-    forLiterals.setType4Ast(type4Ast);
-    typeTraverser.add4MCCommonLiterals(forLiterals);
-
-    var forCommon = new SysMLCommonExpressionsTypeVisitor();
-    forCommon.setType4Ast(type4Ast);
-    typeTraverser.add4CommonExpressions(forCommon);
-    typeTraverser.setCommonExpressionsHandler(forCommon);
-    typeTraverser.add4SysMLExpressions(forCommon);
-    typeTraverser.setSysMLExpressionsHandler(forCommon);
-
-    var forOcl = new SysMLOCLExpressionsTypeVisitor();
-    forOcl.setType4Ast(type4Ast);
-    typeTraverser.add4OCLExpressions(forOcl);
-    typeTraverser.add4SysMLExpressions(forOcl);
-
-    var forStreams = new StreamExpressionsTypeVisitor();
-    forStreams.setType4Ast(type4Ast);
-    typeTraverser.add4StreamExpressions(forStreams);
-
-    var forSets = new SysMLSetExpressionsTypeVisitor();
-    forSets.setType4Ast(type4Ast);
-    typeTraverser.add4SetExpressions(forSets);
-
-    var forBasicTypes = new SysMLMCBasicTypesTypeVisitor();
-    forBasicTypes.setType4Ast(type4Ast);
-    typeTraverser.add4MCBasicTypes(forBasicTypes);
-    typeTraverser.add4SysMLExpressions(forBasicTypes);
-
-    var forCollectionTypes = new MCCollectionTypesTypeVisitor();
-    forCollectionTypes.setType4Ast(type4Ast);
-    typeTraverser.add4MCCollectionTypes(forCollectionTypes);
-
-    StreamSymTypeRelations.init();
-    SysMLWithinScopeBasicSymbolResolver.init();
-    SysMLTypeVisitorOperatorCalculator.init();
-    CommonExpressionsLValueRelations.init();
-    MCCollectionSymTypeRelations.init();
-    SysMLSymTypeRelations.init();
-
-    new SysMLTypeCheck3(typeTraverser, type4Ast).setThisAsDelegate();
   }
 
   @ParameterizedTest
