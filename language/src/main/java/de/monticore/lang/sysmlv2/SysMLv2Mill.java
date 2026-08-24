@@ -37,6 +37,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
    */
   public static void prepareGlobalScope() {
     SysMLv2Mill.initializePrimitives();
+    SysMLv2Mill.addStringType();
     SysMLv2Mill.loadScalarValuesFromSym();
     SysMLv2Mill.addScalarFunctionsTypes();
     SysMLv2Mill.addKermlCollectionsTypes();

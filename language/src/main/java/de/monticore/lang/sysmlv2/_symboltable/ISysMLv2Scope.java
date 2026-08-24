@@ -58,11 +58,47 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static de.se_rwth.commons.Names.getQualifier;
 import static de.se_rwth.commons.Names.getSimpleName;
 
 public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
+
+  /**
+   * An imported type shadows an equally named type that is available without
+   * an import. This keeps MontiCore's built-in {@code String} and KerML's
+   * {@code ScalarValues::String} as distinct symbols while making an explicit
+   * or wildcard import of the latter unambiguous.
+   */
+  @Override
+  default List<TypeSymbol> resolveTypeMany(
+      boolean foundSymbols,
+      String name,
+      AccessModifier modifier,
+      Predicate<TypeSymbol> predicate) {
+    List<TypeSymbol> resolvedSymbols = ISysMLv2ScopeTOP.super.resolveTypeMany(
+        foundSymbols, name, modifier, predicate);
+
+    if (!getQualifier(name).isEmpty()) {
+      return resolvedSymbols;
+    }
+
+    Set<String> importedNames = new LinkedHashSet<>();
+    for (var importStatement : findImports()) {
+      if (importStatement.isStar()) {
+        importedNames.add(importStatement.getStatement() + "." + name);
+      }
+      else if (getSimpleName(importStatement.getStatement()).equals(name)) {
+        importedNames.add(importStatement.getStatement());
+      }
+    }
+
+    List<TypeSymbol> resolvedImports = resolvedSymbols.stream()
+        .filter(symbol -> importedNames.contains(symbol.getFullName()))
+        .collect(Collectors.toList());
+    return resolvedImports.isEmpty() ? resolvedSymbols : resolvedImports;
+  }
 
   /**
    * In SysML, namespaces live inside SysML models (keyword "package") and
