@@ -38,20 +38,6 @@ public abstract class SysMLSymTypeRelations extends OCLSymTypeRelations {
           );
         }
       };
-
-      compatibilityDelegate = new SymTypeCompatibilityCalculator() {
-        @Override
-        public boolean isCompatible(
-            SymTypeExpression target,
-            SymTypeExpression source) {
-          return (super.isCompatible(target, source) ||
-            (
-              builtInRelationsDelegate.isBoolean(target) &&
-              builtInRelationsDelegate.isBoolean(source)
-            )
-          );
-        }
-      };
     }
   }
 }
