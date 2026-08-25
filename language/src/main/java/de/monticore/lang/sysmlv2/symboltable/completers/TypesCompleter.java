@@ -32,6 +32,7 @@ import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
 import de.monticore.types.mcstructuraltypes._ast.ASTMCTupleType;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,7 +55,7 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
    * Returns type completion for Usages. Bases on types completed in the SpecializationCompleter. We solely store the
    * qualified name as SymTypeExpression using the defining symbol, outside of generic types (require type printing)
    */
-  public static List<SymTypeExpression> getTypeCompletion(
+  private List<SymTypeExpression> getTypeCompletion(
       List<ASTSpecialization> specializationList,
       boolean conjugated,
       List<ASTSysMLElement> bodyElements
