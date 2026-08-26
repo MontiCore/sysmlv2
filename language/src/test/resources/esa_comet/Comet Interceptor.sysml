@@ -1345,10 +1345,10 @@ library package CDFReferenceDataLibrary {
         attribute powerInEPTH : PowerValue; // derived
         attribute powerInSCI : PowerValue; // derived
         // thermal
-        attribute <MaxNOT> maximumNonOperationalTemperature : TemperatureValue;
-        attribute <MaxOT> maximumOperationalTemperature : TemperatureValue;
-        attribute <MinOT> minimumOperationalTemperature : TemperatureValue;
-        attribute <MinNOT> minimumNonOperationalTemperature : TemperatureValue;
+        attribute <MaxNOT> maximumNonOperationalTemperature : ThermodynamicTemperatureValue;
+        attribute <MaxOT> maximumOperationalTemperature : ThermodynamicTemperatureValue;
+        attribute <MinOT> minimumOperationalTemperature : ThermodynamicTemperatureValue;
+        attribute <MinNOT> minimumNonOperationalTemperature : ThermodynamicTemperatureValue;
     }
 
     enum def RedundancyConceptSchemes {

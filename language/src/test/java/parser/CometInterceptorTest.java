@@ -4,6 +4,7 @@ import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -70,6 +71,14 @@ public class CometInterceptorTest {
         .map(m -> tool.parse(m.toString()))
         .collect(Collectors.toList());
 
+    var isqBaseAst = tool.parse("src/main/resources/Domain Libraries/Quantities and Units/ISQBase.sysml");
+    tool.createSymbolTable(isqBaseAst);
+    tool.completeSymbolTable(isqBaseAst);
+    tool.finalizeSymbolTable(isqBaseAst);
+    var isqMechAst = tool.parse("src/main/resources/Domain Libraries/Quantities and Units/ISQMechanics.sysml");
+    tool.createSymbolTable(isqMechAst);
+    tool.completeSymbolTable(isqMechAst);
+    tool.finalizeSymbolTable(isqMechAst);
     var isqAst = tool.parse("src/main/resources/Domain Libraries/Quantities and Units/ISQ.sysml");
     tool.createSymbolTable(isqAst);
     tool.completeSymbolTable(isqAst);
