@@ -21,42 +21,43 @@ public class DefsAndUsagesHaveTheSameTypeCoCo
 
   @Override
   public void check(ASTPartUsage node) {
-    boolean ok = node.getSpecializationList().stream()
-        .filter(t -> t instanceof ASTSysMLTyping)
-        .flatMap(t -> ((ASTSysMLTyping) t).getSuperTypesList().stream())
-        .map(t -> ((ISysMLv2Scope)t.getEnclosingScope()).resolvePartDef(t.printType()))
-        .allMatch(t -> t.isPresent());
-
-
-    if (!ok) {
-      Log.error("0xCOCO002 No valid PartDef found for ASTSysMLTyping",
-          node.get_SourcePositionStart());
-    }
-
-
+    node.getSpecializationList().stream()
+        .filter(ASTSysMLTyping.class::isInstance)
+        .flatMap(t -> t.getSuperTypesList().stream())
+        .forEach(t -> {
+          String typeName = t.printType();
+          boolean resolved = ((ISysMLv2Scope) t.getEnclosingScope())
+              .resolvePartDef(typeName).isPresent();
+          if (!resolved) {
+            Log.error("0xCOCO002 No valid PartDef found for specialization '"
+                    + typeName + "'",
+                node.get_SourcePositionStart());
+          }
+        });
   }
 
   @Override
   public void check(ASTPortUsage node) {
-    boolean ok = node.getSpecializationList().stream()
-        .filter(t -> t instanceof ASTSysMLTyping)
-        .flatMap(t -> ((ASTSysMLTyping) t).getSuperTypesList().stream())
-        .map(t -> ((ISysMLv2Scope)t.getEnclosingScope()).resolvePortDef(t.printType()))
-        .allMatch(t -> t.isPresent());
-
-    if (!ok) {
-      Log.error("0xCOCO002 No valid PortDef found for ASTSysMLTyping",
-          node.get_SourcePositionStart());
-    }
-
+    node.getSpecializationList().stream()
+        .filter(ASTSysMLTyping.class::isInstance)
+        .flatMap(t -> t.getSuperTypesList().stream())
+        .forEach(t -> {
+          String typeName = t.printType();
+          boolean resolved = ((ISysMLv2Scope) t.getEnclosingScope())
+              .resolvePortDef(typeName).isPresent();
+          if (!resolved) {
+            Log.error("0xCOCO002 No valid PortDef found for specialization '"
+                    + typeName + "'",
+                node.get_SourcePositionStart());
+          }
+        });
   }
+
   @Override
   public void check(ASTAttributeUsage node) {
-
     node.getSpecializationList().stream()
         .filter(ASTSysMLTyping.class::isInstance)
         .forEach(t -> {
-
           String typeName = t.getSuperTypes(0).printType();
 
           boolean valid =
@@ -73,7 +74,9 @@ public class DefsAndUsagesHaveTheSameTypeCoCo
           if (!valid) {
             Log.error(
                 "0xCOCO003 Attribute usages may only be typed by an "
-                    + "attribute definition, an enum def or a valid KerML type.",
+                    + "attribute definition, an enum def or a valid KerML type. "
+                    + "No valid definition found for specialization '"
+                    + typeName + "'.",
                 node.get_SourcePositionStart(),
                 node.get_SourcePositionEnd());
           }
@@ -82,17 +85,19 @@ public class DefsAndUsagesHaveTheSameTypeCoCo
 
   @Override
   public void check(ASTEnumUsage node) {
-    boolean ok = node.getSpecializationList().stream()
+    node.getSpecializationList().stream()
         .filter(t -> t instanceof ASTSysMLTyping)
         .flatMap(t -> ((ASTSysMLTyping) t).getSuperTypesList().stream())
-        .map(t -> ((ISysMLv2Scope)t.getEnclosingScope()).resolveEnumDef(t.printType()))
-        .allMatch(t -> t.isPresent());
-
-    if (!ok) {
-      Log.error("0xCOCO002 No valid EnumDef found for ASTSysMLTyping",
-          node.get_SourcePositionStart());
-    }
-
+        .forEach(t -> {
+          String typeName = t.printType();
+          boolean resolved = ((ISysMLv2Scope) t.getEnclosingScope())
+              .resolveEnumDef(typeName).isPresent();
+          if (!resolved) {
+            Log.error("0xCOCO002 No valid EnumDef found for specialization '"
+                    + typeName + "'",
+                node.get_SourcePositionStart());
+          }
+        });
   }
 
 }
