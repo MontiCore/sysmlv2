@@ -66,7 +66,10 @@ public class PrettyPrinterTest {
     assertFalse(parser.hasErrors(), "Parsing should not have failed");
     assertTrue(ast.isPresent(), "The AST should have been created");
     String ppm = SysMLv2Mill.prettyPrint(ast.get(), true);
-    System.out.println(ppm);
-
+//    assertTrue(!ppm.isEmpty(), "The printed ast should be available");
+//
+//    SysMLv2Mill.parser().parse_String(ppm);
+//    assertFalse(parser.hasErrors(), "Parsing of printed ast should not have failed");
+//    assertTrue(ast.isPresent(), "The AST of printed ast should have been created");
   }
 }
