@@ -16,11 +16,14 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TupleTypeCompleterTest {
 
@@ -61,16 +64,38 @@ public class TupleTypeCompleterTest {
     var astAttributeUsage = ((ASTPortDef) astPortDef).getSysMLElement(0);
     var node = (ASTAttributeUsage) astAttributeUsage;
 
-    List<SymTypeExpression> result = TypesCompleter.getTypeCompletion(
-        node.getSpecializationList(), false, node.getSysMLElementList());
+    TypesCompleter completer = new TypesCompleter();
+    try{
+      Method testMethod = TypesCompleter.class.getDeclaredMethod(
+          "getTypeCompletion",
+          List.class,
+          boolean.class,
+          List.class
+      );
+      testMethod.setAccessible(true);
+      @SuppressWarnings("unchecked")
+      List<SymTypeExpression> result =
+          (List<SymTypeExpression>) testMethod.invoke(
+              completer,
+              node.getSpecializationList(),
+              false,
+              node.getSysMLElementList()
+          );
 
-    assertEquals(1, result.size());
-    SymTypeExpression resultType = result.get(0);
-    assertTrue(resultType.isTupleType());
-    SymTypeOfTuple tupleType = resultType.asTupleType();
-    assertEquals(2, tupleType.sizeTypes());
-    assertTrue(tupleType.getType(0).printFullName().contains("Boolean"));
-    assertTrue(tupleType.getType(1).printFullName().contains("Boolean"));
+      assertEquals(1, result.size());
+      SymTypeExpression resultType = result.get(0);
+      assertTrue(resultType.isTupleType());
+      SymTypeOfTuple tupleType = resultType.asTupleType();
+      assertEquals(2, tupleType.sizeTypes());
+      assertTrue(tupleType.getType(0).printFullName().contains("Boolean"));
+      assertTrue(tupleType.getType(1).printFullName().contains("Boolean"));
+    }
+    catch (NoSuchMethodException e) {
+      fail("Methode getTypeCompletion existiert nicht im TypesCompleter");
+    }
+    catch (InvocationTargetException | IllegalAccessException e) {
+      fail("Der output der Methode konnte nicht korrekt bestimmt werden");
+    }
 
   }
 }
