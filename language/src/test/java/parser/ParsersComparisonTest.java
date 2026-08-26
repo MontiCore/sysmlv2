@@ -41,7 +41,7 @@ public class ParsersComparisonTest {
   @ParameterizedTest(name = "{index} - {0} does parse w/o errors (MontiCore + official)")
   @ValueSource(strings = {
       "packages.sysml",
-     //"imports.sysml",
+      //"imports.sysml",
       "ports.sysml",
       //"parts.sysml",
       //"states.sysml",
@@ -75,5 +75,6 @@ public class ParsersComparisonTest {
     String input = Files.readString(modelPath);
     official.parse(input);
     assertTrue(official.getResource().getErrors().isEmpty(), "Omg parser found errors when MC parser did not");
+
   }
 }
