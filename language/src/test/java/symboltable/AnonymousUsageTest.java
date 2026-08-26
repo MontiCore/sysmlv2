@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AnonymousUsageTest extends NervigeSymboltableTests {
 
-  @Disabled
   @Test
   public void testAnonymousUsageInTransition() throws IOException {
     ISysMLv2ArtifactScope artifactScope = this.process(

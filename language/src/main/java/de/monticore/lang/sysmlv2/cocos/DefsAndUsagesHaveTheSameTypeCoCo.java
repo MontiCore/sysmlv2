@@ -63,19 +63,17 @@ public class DefsAndUsagesHaveTheSameTypeCoCo
               node.getEnclosingScope()
                   .resolveAttributeDef(typeName)
                   .isPresent()
-
                   || node.getEnclosingScope()
                   .resolveType(typeName)
                   .filter(type ->
                       !(type instanceof PartDef2TypeSymbolAdapter)
-                          && !(type instanceof PortDef2TypeSymbolAdapter)
-                          && !(type instanceof EnumDef2TypeSymbolAdapter))
+                          && !(type instanceof PortDef2TypeSymbolAdapter))
                   .isPresent();
 
           if (!valid) {
             Log.error(
                 "0xCOCO003 Attribute usages may only be typed by an "
-                    + "attribute definition or a valid non-SysML type.",
+                    + "attribute definition, an enum def or a valid KerML type.",
                 node.get_SourcePositionStart(),
                 node.get_SourcePositionEnd());
           }
