@@ -106,52 +106,8 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     BasicSymbolsMill.initializeString();
   }
 
-  public static void addScalarValueTypes() {
-    getMill()._addScalarValueTypes();
-  }
-
   public static void addScalarFunctionsTypes() {
     getMill()._addScalarFunctionsTypes();
-  }
-
-  protected void _addScalarValueTypes() {
-    if (SysMLv2Mill.globalScope().resolveSysMLPackage("ScalarValues").isPresent()) {
-      return;
-    }
-
-    var packageScope = SysMLv2Mill.scope();
-    packageScope.setName("ScalarValues");
-    packageScope.setEnclosingScope(SysMLv2Mill.globalScope());
-    var scalarValues = SysMLv2Mill.sysMLPackageSymbolBuilder()
-        .setName("ScalarValues")
-        .setFullName("ScalarValues")
-        .setPackageName("")
-        .setEnclosingScope(SysMLv2Mill.globalScope())
-        .setSpannedScope(packageScope)
-        .build();
-    packageScope.setSpanningSymbol(scalarValues);
-    SysMLv2Mill.globalScope().add(scalarValues);
-
-    var scalarValue = createScalarValueType(packageScope, "ScalarValue");
-    var bool = createScalarValueType(packageScope, "Boolean");
-    var numericalValue = createScalarValueType(packageScope, "NumericalValue");
-    var number = createScalarValueType(packageScope, "Number");
-    var complex = createScalarValueType(packageScope, "Complex");
-    var real = createScalarValueType(packageScope, "Real");
-    var rational = createScalarValueType(packageScope, "Rational");
-    var integer = createScalarValueType(packageScope, "Integer");
-    var natural = createScalarValueType(packageScope, "Natural");
-    var positive = createScalarValueType(packageScope, "Positive");
-
-    setScalarValueSuperTypes(bool, scalarValue);
-    setScalarValueSuperTypes(numericalValue, scalarValue);
-    setScalarValueSuperTypes(number, numericalValue);
-    setScalarValueSuperTypes(complex, number);
-    setScalarValueSuperTypes(real, complex);
-    setScalarValueSuperTypes(rational, real);
-    setScalarValueSuperTypes(integer, rational);
-    setScalarValueSuperTypes(natural, integer);
-    setScalarValueSuperTypes(positive, natural);
   }
 
   protected void _addScalarFunctionsTypes() {
