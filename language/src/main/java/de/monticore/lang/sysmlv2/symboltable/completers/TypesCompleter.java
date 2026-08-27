@@ -7,7 +7,9 @@ import de.monticore.lang.sysmlactions._visitor.SysMLActionsVisitor2;
 import de.monticore.lang.sysmlbasis._ast.ASTAnonymousReference;
 import de.monticore.lang.sysmlbasis._ast.ASTAnonymousUsage;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLParameter;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLRedefinition;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlbasis._symboltable.AnonymousReferenceSymbol;
 import de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol;
@@ -27,24 +29,41 @@ import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symboltable.modifiers.BasicAccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
 import de.monticore.types.mcstructuraltypes._ast.ASTMCTupleType;
 import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
     SysMLConstraintsVisitor2, SysMLActionsVisitor2
 {
 
+  private List<SymTypeExpression> getTypeCompletion(
+      List<ASTSpecialization> specializationList,
+      boolean conjugated
+  ) {
+    return getTypeCompletion(specializationList, conjugated,
+        Collections.emptyList());
+  }
+
   /**
    * Returns type completion for Usages. Bases on types completed in the SpecializationCompleter. We solely store the
    * qualified name as SymTypeExpression using the defining symbol, outside of generic types (require type printing)
    */
-  private List<SymTypeExpression> getTypeCompletion(List<ASTSpecialization> specializationList, boolean conjugated) {
+  public static List<SymTypeExpression> getTypeCompletion(
+      List<ASTSpecialization> specializationList,
+      boolean conjugated,
+      List<ASTSysMLElement> bodyElements
+  ) {
     List<SymTypeExpression> typeExpressions = new ArrayList<>();
 
     for(var specialization: specializationList) {
+      // TODO Mike: var symType = TypeCheck3.symTypeFromAST(mcType);
+      //  Restlichen Code wegwerfen, sobald der TypeCheck soweit ist!
       if(specialization instanceof ASTSysMLTyping && ((ASTSysMLTyping) specialization).isConjugated() == conjugated) {
         var astTyping = (ASTSysMLTyping) specialization;
 
@@ -59,6 +78,38 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
                   (IBasicSymbolsScope) componentMcType.getEnclosingScope()));
             }
             res = SymTypeExpressionFactory.createTuple(componentTypes);
+          }
+          if(mcType instanceof ASTMCQualifiedType &&
+              ((ASTMCQualifiedType)mcType).getNameList().get(
+                  ((ASTMCQualifiedType)mcType).getNameList().size()-1
+              ).equals("Tuple"))
+          {
+            // Im Body stehen die Redefinitionen der Argumente. In Java würde
+            // man von TypVariablen sprechen, die assignes werden
+            // (List<String>). In SysML regelt man das mit "redefines"
+            // (redefines element : String;)
+            var fst = bodyElements.stream()
+                .filter(e -> e instanceof ASTAnonymousUsage)
+                .map(e -> (ASTAnonymousUsage)e)
+                .filter(e -> e.getSpecializationList().stream()
+                    .filter(s -> s instanceof ASTSysMLRedefinition)
+                    .map(s -> (ASTSysMLRedefinition)s)
+                    .filter(s -> s.getSuperTypesList().stream()
+                        .anyMatch(t -> t.printType().equals("fst")))
+                    .findAny()
+                    .isPresent()
+                )
+                .map(e -> e.getSpecializationList())
+                .filter(s -> s instanceof ASTSysMLTyping)
+                .map(s -> (ASTSysMLTyping)s)
+                .flatMap(s -> s.getSuperTypesList().stream())
+                .map(t -> SymTypeExpressionFactory.createTypeExpression(
+                    t.printType(),
+                    (IBasicSymbolsScope) t.getEnclosingScope())
+                )
+                .collect(Collectors.toList())
+                .get(0);
+            res = SymTypeExpressionFactory.createTuple(fst);
           }
           else if(mcType instanceof ASTMCGenericType) {
             // We still have to print when the type is generic because the defining symbol does not give info about the
@@ -139,8 +190,13 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
   public void visit(ASTAttributeUsage node) {
     if(node.isPresentSymbol()) {
       AttributeUsageSymbol symbol = node.getSymbol();
-      // type
-      List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
+      // Hier könnte der Typ "Tuple<Boolean,...> sein. Das "Boolean" steht dabei
+      // als Redefinition im Body. Deswegen geben wor die SysMLElements weiter.
+      List<SymTypeExpression> types = getTypeCompletion(
+          node.getSpecializationList(),
+          false,
+          node.getSysMLElementList()
+      );
 
       symbol.setAccessModifier(BasicAccessModifier.ALL_INCLUSION);
 
