@@ -1,1 +1,132 @@
-{"generated-using":"www.MontiCore.de technology","package":"ScalarValues","symbols":[{"kind":"de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol","name":"ScalarValue","fullName":"ScalarValues.ScalarValue","packageName":"ScalarValues"},{"kind":"de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol","name":"Boolean","fullName":"ScalarValues.Boolean","packageName":"ScalarValues","superTypes":[{"kind":"de.monticore.types.check.SymTypeOfObject","objName":"ScalarValues.ScalarValue"}]},{"kind":"de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol","name":"String","fullName":"ScalarValues.String","packageName":"ScalarValues","superTypes":[{"kind":"de.monticore.types.check.SymTypeOfObject","objName":"ScalarValues.ScalarValue"}]},{"kind":"de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol","name":"NumericalValue","fullName":"ScalarValues.NumericalValue","packageName":"ScalarValues","superTypes":[{"kind":"de.monticore.types.check.SymTypeOfObject","objName":"ScalarValues.ScalarValue"}]},{"kind":"de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol","name":"Number","fullName":"ScalarValues.Number","packageName":"ScalarValues","superTypes":[{"kind":"de.monticore.types.check.SymTypeOfObject","objName":"ScalarValues.NumericalValue"}]},{"kind":"de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol","name":"Complex","fullName":"ScalarValues.Complex","packageName":"ScalarValues","superTypes":[{"kind":"de.monticore.types.check.SymTypeOfObject","objName":"ScalarValues.Number"}]},{"kind":"de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol","name":"Real","fullName":"ScalarValues.Real","packageName":"ScalarValues","superTypes":[{"kind":"de.monticore.types.check.SymTypeOfObject","objName":"ScalarValues.Complex"}]},{"kind":"de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol","name":"Rational","fullName":"ScalarValues.Rational","packageName":"ScalarValues","superTypes":[{"kind":"de.monticore.types.check.SymTypeOfObject","objName":"ScalarValues.Real"}]},{"kind":"de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol","name":"Integer","fullName":"ScalarValues.Integer","packageName":"ScalarValues","superTypes":[{"kind":"de.monticore.types.check.SymTypeOfObject","objName":"ScalarValues.Rational"}]},{"kind":"de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol","name":"Natural","fullName":"ScalarValues.Natural","packageName":"ScalarValues","superTypes":[{"kind":"de.monticore.types.check.SymTypeOfObject","objName":"ScalarValues.Integer"}]},{"kind":"de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol","name":"Positive","fullName":"ScalarValues.Positive","packageName":"ScalarValues","superTypes":[{"kind":"de.monticore.types.check.SymTypeOfObject","objName":"ScalarValues.Natural"}]}]}
+{
+  "generated-using": "www.MontiCore.de technology",
+  "package": "ScalarValues",
+  "symbols": [
+    {
+      "kind": "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol",
+      "name": "ScalarValue",
+      "fullName": "ScalarValues.ScalarValue",
+      "packageName": "ScalarValues"
+    },
+    {
+      "kind": "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol",
+      "name": "Boolean",
+      "fullName": "ScalarValues.Boolean",
+      "packageName": "ScalarValues",
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "ScalarValues.ScalarValue"
+        }
+      ]
+    },
+    {
+      "kind": "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol",
+      "name": "String",
+      "fullName": "ScalarValues.String",
+      "packageName": "ScalarValues",
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "ScalarValues.ScalarValue"
+        }
+      ]
+    },
+    {
+      "kind": "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol",
+      "name": "NumericalValue",
+      "fullName": "ScalarValues.NumericalValue",
+      "packageName": "ScalarValues",
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "ScalarValues.ScalarValue"
+        }
+      ]
+    },
+    {
+      "kind": "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol",
+      "name": "Number",
+      "fullName": "ScalarValues.Number",
+      "packageName": "ScalarValues",
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "ScalarValues.NumericalValue"
+        }
+      ]
+    },
+    {
+      "kind": "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol",
+      "name": "Complex",
+      "fullName": "ScalarValues.Complex",
+      "packageName": "ScalarValues",
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "ScalarValues.Number"
+        }
+      ]
+    },
+    {
+      "kind": "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol",
+      "name": "Real",
+      "fullName": "ScalarValues.Real",
+      "packageName": "ScalarValues",
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "ScalarValues.Complex"
+        }
+      ]
+    },
+    {
+      "kind": "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol",
+      "name": "Rational",
+      "fullName": "ScalarValues.Rational",
+      "packageName": "ScalarValues",
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "ScalarValues.Real"
+        }
+      ]
+    },
+    {
+      "kind": "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol",
+      "name": "Integer",
+      "fullName": "ScalarValues.Integer",
+      "packageName": "ScalarValues",
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "ScalarValues.Rational"
+        }
+      ]
+    },
+    {
+      "kind": "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol",
+      "name": "Natural",
+      "fullName": "ScalarValues.Natural",
+      "packageName": "ScalarValues",
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "ScalarValues.Integer"
+        }
+      ]
+    },
+    {
+      "kind": "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol",
+      "name": "Positive",
+      "fullName": "ScalarValues.Positive",
+      "packageName": "ScalarValues",
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "ScalarValues.Natural"
+        }
+      ]
+    }
+  ]
+}
