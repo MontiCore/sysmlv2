@@ -136,22 +136,6 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     packageScope.add(buildMinFunction());
   }
 
-  protected OOTypeSymbol createScalarValueType(ISysMLv2Scope packageScope, String name) {
-    var type = OOSymbolsMill.oOTypeSymbolBuilder()
-        .setName(name)
-        .setFullName("ScalarValues." + name)
-        .setPackageName("ScalarValues")
-        .setEnclosingScope(packageScope)
-        .setSpannedScope(scope())
-        .build();
-    packageScope.add(type);
-    return type;
-  }
-
-  protected void setScalarValueSuperTypes(OOTypeSymbol type, OOTypeSymbol superType) {
-    type.setSuperTypesList(List.of(SymTypeExpressionFactory.createTypeObject(superType)));
-  }
-
   public static void addKermlCollectionsTypes() {
     getMill()._addCollectionsPackage();
   }
