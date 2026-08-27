@@ -6,6 +6,7 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,8 +35,43 @@ public class StandardLibraryImportTest {
 
     // Why not SysMLType?
     assertThat(globalScope.resolveType("ScalarValues.Boolean")).isPresent();
+    assertThat(globalScope.resolveType("String")).isPresent();
+    assertThat(globalScope.resolveType("String").get().getFullName()).isEqualTo("String");
+    assertThat(globalScope.resolveType("ScalarValues.String")).isPresent();
+    assertThat(globalScope.resolveType("ScalarValues.String").get().getFullName())
+        .isEqualTo("ScalarValues.String");
+    assertThat(globalScope.resolveType("String").get())
+        .isNotSameAs(globalScope.resolveType("ScalarValues.String").get());
     assertThat(globalScope.resolveType("Collections.Bag")).isPresent();
     assertThat(globalScope.resolveType("VectorValues.CartesianVectorValue")).isPresent();
+
+    var positive = (OOTypeSymbol) globalScope.resolveType("ScalarValues.Positive").get();
+    assertThat(positive.getSuperTypesList()).hasSize(1);
+    assertThat(positive.getSuperTypesList().get(0).printFullName())
+        .isEqualTo("ScalarValues.Natural");
+  }
+
+  @Test
+  public void testImportedScalarStringTakesPrecedenceOverBuiltInString() throws IOException {
+    var model = "private import ScalarValues::*; attribute a: String;";
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+
+    tool.createSymbolTable(ast);
+    var type = ((ASTAttributeUsage) ast.getSysMLElement(1))
+        .getSpecialization(0).getSuperTypes(0);
+    var typeScope = (ISysMLv2Scope) type.getEnclosingScope();
+
+    assertThat(typeScope.resolveTypeMany(type.printType()))
+        .extracting(symbol -> symbol.getFullName())
+        .containsExactly("ScalarValues.String");
+
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    var resolvedType = typeScope.resolveType(type.printType());
+
+    assertThat(resolvedType).isPresent();
+    assertThat(resolvedType.get().getFullName()).isEqualTo("ScalarValues.String");
   }
 
   @Test()

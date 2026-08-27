@@ -3,10 +3,7 @@ package de.monticore.lang.sysmlv2;
 
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.class2mc.OOClass2MCResolver;
-import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
-import de.monticore.symbols.basicsymbols._symboltable.BasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsGlobalScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -15,12 +12,13 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.lang.sysmlv2._symboltable.SysMLv2GlobalScope;
 import de.monticore.symboltable.modifiers.AccessModifier;
-import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.SymTypeVariable;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,13 +29,14 @@ import java.util.stream.Collectors;
 public class SysMLv2Mill extends SysMLv2MillTOP {
 
   /**
-   * Prepares the current global scope, i.e., adds symbols to it. Does not initialize anything else, especially not the
+   * Prepares the current global scope, i.e., adds symbols to it.
+   * Does not initialize anything else, especially not the
    * Mill itself. Does not clear the scope beforehand.
    */
   public static void prepareGlobalScope() {
     SysMLv2Mill.initializePrimitives();
     SysMLv2Mill.addStringType();
-    SysMLv2Mill.addScalarValueTypes();
+    SysMLv2Mill.loadScalarValuesFromSym();
     SysMLv2Mill.addScalarFunctionsTypes();
     SysMLv2Mill.addKermlCollectionsTypes();
     SysMLv2Mill.addVectorValuesTypes();
@@ -50,6 +49,38 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
   public void initializeClass2MC() {
     SysMLv2Mill.globalScope().addAdaptedTypeSymbolResolver(new OOClass2MCResolver());
     SysMLv2Mill.globalScope().addAdaptedOOTypeSymbolResolver(new OOClass2MCResolver());
+  }
+
+  protected static void loadScalarValuesFromSym() {
+    getMill()._loadScalarValuesFromSym();
+  }
+
+  protected void _loadScalarValuesFromSym() {
+    URL url = SysMLv2Tool.class.getClassLoader().getResource(
+        "ScalarValues.kermlsym");
+
+    if (url != null) {
+      var globalScope = (SysMLv2GlobalScope) SysMLv2Mill.globalScope();
+      boolean packageAlreadyLoaded = globalScope.getLocalSysMLPackageSymbols().stream()
+          .anyMatch(symbol -> "ScalarValues".equals(symbol.getFullName()));
+      if (packageAlreadyLoaded) {
+        return;
+      }
+
+      var scalarValuesScope = globalScope.getSymbols2Json().load(url);
+      var scalarValues = SysMLv2Mill.sysMLPackageSymbolBuilder()
+          .setName("ScalarValues")
+          .setFullName("ScalarValues")
+          .setPackageName("")
+          .setEnclosingScope(globalScope)
+          .setSpannedScope(scalarValuesScope)
+          .build();
+      scalarValuesScope.setSpanningSymbol(scalarValues);
+      globalScope.add(scalarValues);
+      globalScope.addSubScope(scalarValuesScope);
+    } else {
+      de.se_rwth.commons.logging.Log.error("Could not find ScalarValues.kermlsym");
+    }
   }
 
   /**
@@ -79,52 +110,8 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     BasicSymbolsMill.initializeString();
   }
 
-  public static void addScalarValueTypes() {
-    getMill()._addScalarValueTypes();
-  }
-
   public static void addScalarFunctionsTypes() {
     getMill()._addScalarFunctionsTypes();
-  }
-
-  protected void _addScalarValueTypes() {
-    if (SysMLv2Mill.globalScope().resolveSysMLPackage("ScalarValues").isPresent()) {
-      return;
-    }
-
-    var packageScope = SysMLv2Mill.scope();
-    packageScope.setName("ScalarValues");
-    packageScope.setEnclosingScope(SysMLv2Mill.globalScope());
-    var scalarValues = SysMLv2Mill.sysMLPackageSymbolBuilder()
-        .setName("ScalarValues")
-        .setFullName("ScalarValues")
-        .setPackageName("")
-        .setEnclosingScope(SysMLv2Mill.globalScope())
-        .setSpannedScope(packageScope)
-        .build();
-    packageScope.setSpanningSymbol(scalarValues);
-    SysMLv2Mill.globalScope().add(scalarValues);
-
-    var scalarValue = createScalarValueType(packageScope, "ScalarValue");
-    var bool = createScalarValueType(packageScope, "Boolean");
-    var numericalValue = createScalarValueType(packageScope, "NumericalValue");
-    var number = createScalarValueType(packageScope, "Number");
-    var complex = createScalarValueType(packageScope, "Complex");
-    var real = createScalarValueType(packageScope, "Real");
-    var rational = createScalarValueType(packageScope, "Rational");
-    var integer = createScalarValueType(packageScope, "Integer");
-    var natural = createScalarValueType(packageScope, "Natural");
-    var positive = createScalarValueType(packageScope, "Positive");
-
-    setScalarValueSuperTypes(bool, scalarValue);
-    setScalarValueSuperTypes(numericalValue, scalarValue);
-    setScalarValueSuperTypes(number, numericalValue);
-    setScalarValueSuperTypes(complex, number);
-    setScalarValueSuperTypes(real, complex);
-    setScalarValueSuperTypes(rational, real);
-    setScalarValueSuperTypes(integer, rational);
-    setScalarValueSuperTypes(natural, integer);
-    setScalarValueSuperTypes(positive, natural);
   }
 
   protected void _addScalarFunctionsTypes() {
@@ -147,22 +134,6 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
 
 
     packageScope.add(buildMinFunction());
-  }
-
-  protected OOTypeSymbol createScalarValueType(ISysMLv2Scope packageScope, String name) {
-    var type = OOSymbolsMill.oOTypeSymbolBuilder()
-        .setName(name)
-        .setFullName("ScalarValues." + name)
-        .setPackageName("ScalarValues")
-        .setEnclosingScope(packageScope)
-        .setSpannedScope(scope())
-        .build();
-    packageScope.add(type);
-    return type;
-  }
-
-  protected void setScalarValueSuperTypes(OOTypeSymbol type, OOTypeSymbol superType) {
-    type.setSuperTypesList(List.of(SymTypeExpressionFactory.createTypeObject(superType)));
   }
 
   public static void addKermlCollectionsTypes() {
