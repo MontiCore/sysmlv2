@@ -2,6 +2,8 @@
 package de.monticore.lang.sysmlv2;
 
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.monticore.class2mc.OOClass2MCResolver;
+import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsGlobalScope;
@@ -83,6 +85,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
   public static void initializePrimitives() {
     BasicSymbolsMill.initializePrimitives();
     getMill()._initializePrimitives();
+    getMill().initializeClass2MC();
   }
 
   /**
