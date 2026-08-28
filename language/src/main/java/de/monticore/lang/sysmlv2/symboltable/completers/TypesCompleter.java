@@ -34,6 +34,7 @@ import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
 import de.monticore.types.mcstructuraltypes._ast.ASTMCTupleType;
 import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -88,28 +89,55 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
             // man von TypVariablen sprechen, die assignes werden
             // (List<String>). In SysML regelt man das mit "redefines"
             // (redefines element : String;)
-            var fst = bodyElements.stream()
+            List<ASTAnonymousUsage> anonymousUsages = bodyElements.stream()
                 .filter(e -> e instanceof ASTAnonymousUsage)
-                .map(e -> (ASTAnonymousUsage)e)
-                .filter(e -> e.getSpecializationList().stream()
-                    .filter(s -> s instanceof ASTSysMLRedefinition)
-                    .map(s -> (ASTSysMLRedefinition)s)
-                    .filter(s -> s.getSuperTypesList().stream()
-                        .anyMatch(t -> t.printType().equals("fst")))
-                    .findAny()
-                    .isPresent()
-                )
-                .map(e -> e.getSpecializationList())
+                .map(e -> (ASTAnonymousUsage) e).collect(Collectors.toList());
+
+            // Typ von erstem Tuple-Argument bestimmen.
+            var fstAnonUsage = anonymousUsages.stream().filter(e -> e.getSpecializationList().stream()
+                .filter(s -> s instanceof ASTSysMLRedefinition)
+                .map(s -> (ASTSysMLRedefinition) s)
+                .anyMatch(s -> s.getSuperTypesList().stream()
+                    .anyMatch(t -> t.printType().equals("fst")))
+            );
+
+            List<ASTSysMLTyping> fstSysMLTyping = fstAnonUsage
+                .map(s -> s.getSpecializationList())
+                .flatMap(s -> s.stream())
                 .filter(s -> s instanceof ASTSysMLTyping)
-                .map(s -> (ASTSysMLTyping)s)
-                .flatMap(s -> s.getSuperTypesList().stream())
+                .map(s -> (ASTSysMLTyping) s).collect(Collectors.toList());
+
+            SymTypeExpression fst = fstSysMLTyping.stream()
+                .map(s -> s.getSuperTypesList())
+                .flatMap(s -> s.stream())
                 .map(t -> SymTypeExpressionFactory.createTypeExpression(
-                    t.printType(),
-                    (IBasicSymbolsScope) t.getEnclosingScope())
-                )
-                .collect(Collectors.toList())
-                .get(0);
-            res = SymTypeExpressionFactory.createTuple(fst);
+                    t.printType(), (IBasicSymbolsScope) t.getEnclosingScope()))
+                .collect(Collectors.toList()).get(0);
+
+            // Typ von zweitem Tuple-Argument bestimmen.
+            var sndAnonUsage = anonymousUsages.stream().filter(e -> e.getSpecializationList().stream()
+                .filter(s -> s instanceof ASTSysMLRedefinition)
+                .map(s -> (ASTSysMLRedefinition) s)
+                .anyMatch(s -> s.getSuperTypesList().stream()
+                    .anyMatch(t -> t.printType().equals("snd")))
+            );
+
+            List<ASTSysMLTyping> sndSysMLTyping = sndAnonUsage
+                .map(s -> s.getSpecializationList())
+                .flatMap(s -> s.stream())
+                .filter(s -> s instanceof ASTSysMLTyping)
+                .map(s -> (ASTSysMLTyping) s).collect(Collectors.toList());
+
+            SymTypeExpression snd = sndSysMLTyping.stream()
+                .map(s -> s.getSuperTypesList())
+                .flatMap(s -> s.stream())
+                .map(t -> SymTypeExpressionFactory.createTypeExpression(
+                    t.printType(), (IBasicSymbolsScope) t.getEnclosingScope()))
+                .collect(Collectors.toList()).get(0);
+
+            res = SymTypeExpressionFactory.createTuple(fst,snd);
+
+
           }
           else if(mcType instanceof ASTMCGenericType) {
             // We still have to print when the type is generic because the defining symbol does not give info about the
