@@ -1,6 +1,5 @@
 package symboltable;
 
-import de.monticore.io.paths.MCPath;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,10 +27,6 @@ public class ScalarValuesSymbolTableTest {
 
     tool = new SysMLv2Tool();
     tool.init();
-
-    MCPath symbolPath = new MCPath();
-    symbolPath.addEntry(Paths.get("src/test/resources/symbols"));
-    SysMLv2Mill.globalScope().setSymbolPath(symbolPath);
   }
 
   @Test
