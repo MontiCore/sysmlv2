@@ -15,7 +15,7 @@ hide:
 </h1>
 -->
 
-# The Systems Modeling Language v2 {: #more }
+# <span style="color: var(--md-primary-fg-color);">SysMLv2Assure</span><br><span style="font-size: 0.65em; font-weight: 400; color: var(--md-default-fg-color--light);">A Semantically Well-Founded Full Parser for SysML v2</span> {: #more }
 
 One of the interesting new capabilities is the exchange of models
 between tools using a human-readable textual form of the SysML
