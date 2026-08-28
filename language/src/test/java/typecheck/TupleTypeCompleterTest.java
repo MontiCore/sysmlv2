@@ -40,7 +40,6 @@ public class TupleTypeCompleterTest {
     tool.init();
   }
 
-  // @Disabled
   @Test
   public void testTuples() throws IOException {
     var model = "private import ScalarValues::Boolean;\n"
