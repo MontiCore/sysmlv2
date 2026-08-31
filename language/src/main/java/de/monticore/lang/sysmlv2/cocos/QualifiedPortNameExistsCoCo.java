@@ -10,7 +10,6 @@ import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -76,8 +75,7 @@ public class QualifiedPortNameExistsCoCo implements SysMLPartsASTConnectionUsage
     else {
       // Unqualifiziert: Port der Oberkomponente muss lokal existieren
       String portName = parts[0];
-      List<?> localPorts = scope.resolvePortUsageLocallyMany(
-          false, portName, AccessModifier.ALL_INCLUSION, p -> true);
+      Optional<?> localPorts = scope.resolveVariable(portName);
       if (localPorts.isEmpty()) {
         Log.error(
             "0x10AA4 The port used in 'connect' '" + portName
