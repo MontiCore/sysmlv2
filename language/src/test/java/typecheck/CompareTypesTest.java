@@ -57,7 +57,8 @@ public class CompareTypesTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "attribute target : boolean; attribute source : ScalarValues::Boolean;"
+      "attribute target : boolean; attribute source : ScalarValues::Boolean;",
+      "attribute target : ScalarValues::Integer; attribute source : int;",
   })
   public void test4CompatibleTypes(String targetAndSource) throws IOException {
     var type = typeOfConstraintExpression(targetAndSource);
@@ -70,7 +71,7 @@ public class CompareTypesTest {
   // int und ScalarValues::Integer sollte erlaubt sein, aber das muss noch implementiert werden
   @ParameterizedTest
   @ValueSource(strings = {
-      "attribute target : int; attribute source : ScalarValues::Integer;"
+      "attribute target : int; attribute source : ScalarValues::String;"
   })
   public void test4IncompatibleTypes(String targetAndSource) throws IOException {
     var type = typeOfConstraintExpression(targetAndSource);
