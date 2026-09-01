@@ -38,4 +38,14 @@ public class SysMLBuiltInTypeRelations extends de.monticore.types3.util.BuiltInT
       (type.hasTypeInfo() &&
         type.getTypeInfo().getFullName().equals("ScalarValues.Boolean"));
   }
+
+  @Override
+  public boolean isDouble(SymTypeExpression type) {
+    return super.isDouble(type)
+      || (type.hasTypeInfo() && (
+        type.getTypeInfo().getFullName().equals("ScalarValues.Real") ||
+        type.getTypeInfo().getFullName().equals("ScalarValues.Rational"))
+    );
+  }
+
 }
