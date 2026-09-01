@@ -48,4 +48,13 @@ public class SysMLBuiltInTypeRelations extends de.monticore.types3.util.BuiltInT
     );
   }
 
+  @Override
+  public boolean isInt(SymTypeExpression type) {
+    return super.isInt(type)
+      || (type.isPrimitive()
+        && type.asPrimitive().getPrimitiveName().equals("nat"))
+      || (type.hasTypeInfo()
+        && type.getTypeInfo().getFullName().equals("ScalarValues.Natural"));
+  }
+
 }
