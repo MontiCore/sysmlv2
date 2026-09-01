@@ -57,4 +57,13 @@ public class SysMLBuiltInTypeRelations extends de.monticore.types3.util.BuiltInT
         && type.getTypeInfo().getFullName().equals("ScalarValues.Natural"));
   }
 
+  @Override
+  public boolean isString(SymTypeExpression type) {
+    boolean isScalarValuesString = false;
+    if (type.isObjectType()) {
+      isScalarValuesString = type.hasTypeInfo()
+        && (type.getTypeInfo().getFullName().equals("ScalarValues.String"));
+    }
+    return super.isString(type) || isScalarValuesString;
+  }
 }
