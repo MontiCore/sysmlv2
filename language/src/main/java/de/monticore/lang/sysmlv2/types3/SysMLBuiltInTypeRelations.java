@@ -10,6 +10,16 @@ import de.monticore.types.check.SymTypeExpression;
 public class SysMLBuiltInTypeRelations extends de.monticore.types3.util.BuiltInTypeRelations{
 
   @Override
+  public boolean isNumericType(SymTypeExpression type) {
+    return super.isNumericType(type) || isIntegralType(type)
+      || (type.hasTypeInfo()
+        && (
+          type.getTypeInfo().getFullName().equals("ScalarValues.Real") ||
+          type.getTypeInfo().getFullName().equals("ScalarValues.Rational"))
+    );
+  }
+
+  @Override
   public boolean isIntegralType(SymTypeExpression type) {
     return super.isIntegralType(type)
         || (type.isPrimitive()
