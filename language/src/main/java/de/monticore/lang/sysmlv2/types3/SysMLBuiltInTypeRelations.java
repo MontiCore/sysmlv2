@@ -11,12 +11,7 @@ public class SysMLBuiltInTypeRelations extends de.monticore.types3.util.BuiltInT
 
   @Override
   public boolean isNumericType(SymTypeExpression type) {
-    return super.isNumericType(type) || isIntegralType(type)
-      || (type.hasTypeInfo()
-        && (
-          type.getTypeInfo().getFullName().equals("ScalarValues.Real") ||
-          type.getTypeInfo().getFullName().equals("ScalarValues.Rational"))
-    );
+    return super.isNumericType(type) || isIntegralType(type) || isDouble(type);
   }
 
   @Override
