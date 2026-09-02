@@ -98,11 +98,22 @@ grammar SysMLv2 extends SysMLExpressions,
      "}" | ";");
 
   /**
-     * [An event occurence] is related to another occurrence usage,
-     * representing the occurring event, by a reference subsetting relationship, which is a special kind of subsetting
-     * relationship specified using the keyword references or the symbol ::>.
-     */
-    SysMLReference implements Specialization =
-        ("::>" | "references") superTypes:(MCType || ",")+ SysMLCardinality?;
+   * [An event occurence] is related to another occurrence usage,
+   * representing the occurring event, by a reference subsetting relationship, which is a special kind of subsetting
+   * relationship specified using the keyword references or the symbol ::>.
+   */
+  SysMLReference implements Specialization =
+      ("::>" | "references") superTypes:(MCType || ",")+ SysMLCardinality?;
+
+  // Specialization ist spezifisch für Definitions
+  SysMLSpecialization implements Specialization =
+    (":>" | "specializes") superTypes:(MCType || ",")+ SysMLCardinality?;
+
+  // Subsetting ist spezifisch für Usages
+  SysMLSubsetting implements Specialization =
+    (":>" | "subsets") superTypes:(MCType || ",")+ SysMLCardinality?;
+
+  SysMLRedefinition implements Specialization =
+    (":>>" | "redefines") superTypes:(MCType || ",")+ SysMLCardinality?;
 
 }

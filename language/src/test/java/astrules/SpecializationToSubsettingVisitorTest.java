@@ -2,8 +2,6 @@
 package astrules;
 
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLSubsetting;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeDef;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
@@ -16,6 +14,8 @@ import de.monticore.lang.sysmlparts._ast.ASTPortUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2.visitors.SpecializationToSubsettingVisitor;
+import de.monticore.lang.sysmlv2._ast.ASTSysMLSpecialization;
+import de.monticore.lang.sysmlv2._ast.ASTSysMLSubsetting;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
