@@ -1,10 +1,10 @@
 package de.monticore.lang.sysmlv2.visitors;
 
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLSpecialization;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLSubsetting;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
+import de.monticore.lang.sysmlv2._ast.ASTSysMLSpecialization;
+import de.monticore.lang.sysmlv2._ast.ASTSysMLSubsetting;
 import de.monticore.lang.sysmlbasis._visitor.SysMLBasisVisitor2;
 
 import java.util.ArrayList;

@@ -37,17 +37,6 @@ component grammar SysMLBasis
   // Interface zum Unterscheiden zwischen Usages und anderen Typen mit dem Visitor
   interface SysMLUsage extends SysMLElement = Modifier Specialization*;
 
-  // Specialization ist spezifisch für Definitions
-  SysMLSpecialization implements Specialization =
-      (":>" | "specializes") superTypes:(MCType || ",")+ SysMLCardinality?;
-
-  // Subsetting ist spezifisch für Usages
-  SysMLSubsetting implements Specialization =
-      (":>" | "subsets") superTypes:(MCType || ",")+ SysMLCardinality?;
-
-  SysMLRedefinition implements Specialization =
-      (":>>" | "redefines") superTypes:(MCType || ",")+ SysMLCardinality?;
-
   /**
    * Cardinality bei mehreren Typen macht wenig Sinn, aber die Grammatik und damit der AST werden sehr kompliziert, wenn
    * man versucht alle Eventualitäten durch die Grammatik abzudecken.
