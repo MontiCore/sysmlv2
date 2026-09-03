@@ -1,6 +1,6 @@
 package de.monticore.lang.sysmlv2._lsp.commands;
 
-import de.monticore.lang.sysmlbasis._ast.ASTModifierBuilder;
+
 import de.monticore.lang.sysmlparts._ast.ASTEnumDefBuilder;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartDefBuilder;
@@ -58,13 +58,13 @@ public class CreateModelCommand extends Command<Boolean> {
             .addPortUsage("port1", booleanType)
             .addEmptyStateUsage(modelName);
         if (args.length == 4) {
-          automatonBuilder.addRefinement(new ASTPartDefBuilder().setName(args[3]).setModifier(new ASTModifierBuilder().build()).build());
+          automatonBuilder.addRefinement(new ASTPartDefBuilder().setName(args[3]).setModifier(SysMLv2Mill.modifierBuilder().build()).build());
         }
         partDef = automatonBuilder.build();
         model.addSysMLElement(new ASTPartDefBuilder(partDef).build());
 
       } else if (modelType.equalsIgnoreCase("Port Definition")) {
-        var portDef = new ASTPortDefBuilder().setName(modelName).setModifier(new ASTModifierBuilder().build()).build();
+        var portDef = new ASTPortDefBuilder().setName(modelName).setModifier(SysMLv2Mill.modifierBuilder().build()).build();
         model.addSysMLElement(portDef);
 
       } else if (modelType.equalsIgnoreCase("Enum Definition")) {
