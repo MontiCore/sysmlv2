@@ -1,30 +1,11 @@
 package typecheck;
 
-import de.monticore.expressions.commonexpressions.types3.util.CommonExpressionsLValueRelations;
-import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisTypeVisitor;
-import de.monticore.expressions.streamexpressions.types3.StreamExpressionsTypeVisitor;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
-import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
-import de.monticore.lang.sysmlv2.types3.SysMLCommonExpressionsTypeVisitor;
-import de.monticore.lang.sysmlv2.types3.SysMLMCBasicTypesTypeVisitor;
-import de.monticore.lang.sysmlv2.types3.SysMLOCLExpressionsTypeVisitor;
-import de.monticore.lang.sysmlv2.types3.SysMLSetExpressionsTypeVisitor;
-import de.monticore.lang.sysmlv2.types3.SysMLSymTypeRelations;
-import de.monticore.lang.sysmlv2.types3.SysMLTypeCheck3;
-import de.monticore.lang.sysmlv2.types3.SysMLTypeVisitorOperatorCalculator;
-import de.monticore.lang.sysmlv2.types3.SysMLWithinScopeBasicSymbolResolver;
-import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
-import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
-import de.monticore.types.mccollectiontypes.types3.MCCollectionTypesTypeVisitor;
-import de.monticore.types3.SymTypeRelations;
-import de.monticore.types3.Type4Ast;
 import de.monticore.types3.TypeCheck3;
-import de.monticore.types3.streams.StreamSymTypeRelations;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
@@ -55,10 +36,27 @@ public class CompareTypesTest {
     tool.init();
   }
 
+  /*
+   * String und nat benötigen boxing, da es für nat keinen java.lang.Natural gibt.
+   * Für String gilt, Objekte-Kompatibel, wenn eine der Bedingungen erfüllt ist:
+   * - den gleichen Namen und die gleichen Args haben
+   * - Super/Sub-types voneinander sein
+   * - zu den gleichen Typen oder zu Super/Sub-types voneinander geboxed werden
+   */
   @ParameterizedTest
   @ValueSource(strings = {
       "attribute target : boolean; attribute source : ScalarValues::Boolean;",
+      "attribute target : int; attribute source : ScalarValues::Rational;",
+      "attribute target : float; attribute source : ScalarValues::Real;",
+      "attribute target : ScalarValues::Natural; attribute source : ScalarValues::Real;",
+      "attribute target : ScalarValues::Integer; attribute source : ScalarValues::Rational;",
       "attribute target : ScalarValues::Integer; attribute source : int;",
+      "attribute target : ScalarValues::Integer; attribute source : ScalarValues::Natural;",
+      "attribute target : double; attribute source : ScalarValues::Real;",
+      "attribute target : int; attribute source : ScalarValues::Positive;",
+      "attribute target : ScalarValues::Positive; attribute source : ScalarValues::Natural;",
+//      "attribute target : ScalarValues::String; attribute source : String;",
+//      "attribute target : ScalarValues::Natural; attribute source : nat;"
   })
   public void test4CompatibleTypes(String targetAndSource) throws IOException {
     var type = typeOfConstraintExpression(targetAndSource);
