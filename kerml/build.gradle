@@ -116,7 +116,7 @@ tasks.withType(JavaCompile) {
 // all in one cli-jar
 shadowJar {
   manifest {
-    attributes "Main-Class": " de.monticore.lang.sysmlv2.SysMLv2Tool"
+    attributes "Main-Class": "de.monticore.lang.kerml.KerMLTool"
   }
   archiveClassifier = 'cli'
   minimize()
