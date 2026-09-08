@@ -600,4 +600,8 @@ component grammar SysMLParts extends SysMLBasis {
         SysMLElement*
       "}" | ";") ;
 
+    // Used regularly in successions
+      Endpoint =
+        MCQualifiedName SysMLCardinality? Specialization* ;
+
 }

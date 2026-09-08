@@ -158,8 +158,4 @@ component grammar SysMLBasis
   // Inline-Variante für das "first" vor dem "then"
   interface IInlineOccurrenceUsage ;
 
-  // Used regularly in successions
-  Endpoint =
-    MCQualifiedName SysMLCardinality? Specialization* ;
-
 }
