@@ -2,7 +2,7 @@
 package de.monticore.lang.sysmlparts.symboltable.adapters;
 
 import com.google.common.base.Preconditions;
-import de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol;
+import de.monticore.lang.sysmlv2._symboltable.AnonymousUsageSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.types.check.SymTypeExpression;

@@ -2,11 +2,12 @@ package de.monticore.lang.sysmlv2.cocos;
 
 import de.monticore.lang.sysmlactions._ast.ASTCalcUsage;
 import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTCalcUsageCoCo;
-import de.monticore.lang.sysmlbasis._ast.ASTAnonymousUsage;
 import de.monticore.lang.sysmlbasis._visitor.SysMLBasisVisitor2;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
+import de.monticore.lang.sysmlv2._ast.ASTAnonymousUsage;
+import de.monticore.lang.sysmlv2._visitor.SysMLv2Visitor2;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -19,7 +20,7 @@ public class MaxOneDirectReturnInCalcUsageCoCo implements SysMLActionsASTCalcUsa
     final int[] returnCount = {0};
     var traverser = SysMLv2Mill.inheritanceTraverser();
 
-    traverser.add4SysMLBasis(new SysMLBasisVisitor2() {
+    traverser.add4SysMLv2(new SysMLv2Visitor2() {
       @Override
       public void visit(ASTAnonymousUsage retNode) {
         var modifier = retNode.getModifier();

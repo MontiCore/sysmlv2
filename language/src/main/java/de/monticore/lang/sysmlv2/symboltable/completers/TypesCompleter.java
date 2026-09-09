@@ -4,14 +4,10 @@ package de.monticore.lang.sysmlv2.symboltable.completers;
 import de.monticore.lang.sysmlactions._ast.ASTCalcDef;
 import de.monticore.lang.sysmlactions._ast.ASTCalcUsage;
 import de.monticore.lang.sysmlactions._visitor.SysMLActionsVisitor2;
-import de.monticore.lang.sysmlbasis._ast.ASTAnonymousReference;
-import de.monticore.lang.sysmlbasis._ast.ASTAnonymousUsage;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLParameter;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
-import de.monticore.lang.sysmlbasis._symboltable.AnonymousReferenceSymbol;
-import de.monticore.lang.sysmlbasis._symboltable.AnonymousUsageSymbol;
 import de.monticore.lang.sysmlbasis._visitor.SysMLBasisVisitor2;
 import de.monticore.lang.sysmlconstraints._ast.ASTRequirementSubject;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
@@ -24,6 +20,11 @@ import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLRedefinition;
+import de.monticore.lang.sysmlv2._symboltable.AnonymousReferenceSymbol;
+import de.monticore.lang.sysmlv2._symboltable.AnonymousUsageSymbol;
+import de.monticore.lang.sysmlv2._ast.ASTAnonymousReference;
+import de.monticore.lang.sysmlv2._ast.ASTAnonymousUsage;
+import de.monticore.lang.sysmlv2._visitor.SysMLv2Visitor2;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symboltable.modifiers.BasicAccessModifier;
@@ -34,13 +35,12 @@ import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
 import de.monticore.types.mcstructuraltypes._ast.ASTMCTupleType;
 import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
-    SysMLConstraintsVisitor2, SysMLActionsVisitor2
+    SysMLConstraintsVisitor2, SysMLActionsVisitor2, SysMLv2Visitor2
 {
 
   private List<SymTypeExpression> getTypeCompletion(
@@ -241,7 +241,7 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
       returnType[0] = SymTypeExpressionFactory.createTopType();
 
       var traverser = SysMLv2Mill.inheritanceTraverser();
-      traverser.add4SysMLBasis(new SysMLBasisVisitor2() {
+      traverser.add4SysMLv2(new SysMLv2Visitor2() {
         @Override
         public void visit(ASTAnonymousUsage retNode) {
           var modifier = retNode.getModifier();
@@ -271,7 +271,7 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
 
       List<SymTypeExpression> argTypes = new ArrayList<>();
       var argTraverser = SysMLv2Mill.inheritanceTraverser();
-      argTraverser.add4SysMLBasis(new SysMLBasisVisitor2() {
+      argTraverser.add4SysMLv2(new SysMLv2Visitor2() {
         @Override
         public void visit(ASTAnonymousUsage retNode) {
           var modifier = retNode.getModifier();
@@ -312,7 +312,7 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
       returnType[0] = SymTypeExpressionFactory.createTopType();
 
       var traverser = SysMLv2Mill.inheritanceTraverser();
-      traverser.add4SysMLBasis(new SysMLBasisVisitor2() {
+      traverser.add4SysMLv2(new SysMLv2Visitor2() {
         @Override
         public void visit(ASTAnonymousUsage retNode) {
           var modifier = retNode.getModifier();
