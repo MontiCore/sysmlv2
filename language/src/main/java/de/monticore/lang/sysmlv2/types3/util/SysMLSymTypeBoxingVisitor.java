@@ -27,9 +27,6 @@ public class SysMLSymTypeBoxingVisitor extends de.monticore.types3.util.SymTypeB
     objectBoxMap_temp.put("String", "ScalarValues.String");
     sysMLObjectBoxMap = Collections.unmodifiableMap(objectBoxMap_temp);
 
-    /* Können Optional nicht boxen.
-     * Stattdessen Optional<T> mit T[0..1] darstellen?
-     */
     Map<String, String> genericBoxMap_temp = new HashMap<>();
     genericBoxMap_temp.put("Set", "Collections.Set");
     genericBoxMap_temp.put("List", "Collections.List");
