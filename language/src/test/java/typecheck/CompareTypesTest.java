@@ -10,6 +10,7 @@ import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -36,13 +37,6 @@ public class CompareTypesTest {
     tool.init();
   }
 
-  /*
-   * String und nat benötigen boxing, da es für nat keinen java.lang.Natural gibt.
-   * Für String gilt, Objekte-Kompatibel, wenn eine der Bedingungen erfüllt ist:
-   * - den gleichen Namen und die gleichen Args haben
-   * - Super/Sub-types voneinander sein
-   * - zu den gleichen Typen oder zu Super/Sub-types voneinander geboxed werden
-   */
   @ParameterizedTest
   @ValueSource(strings = {
       "attribute target : boolean; attribute source : ScalarValues::Boolean;",
@@ -55,10 +49,25 @@ public class CompareTypesTest {
       "attribute target : double; attribute source : ScalarValues::Real;",
       "attribute target : int; attribute source : ScalarValues::Positive;",
       "attribute target : ScalarValues::Positive; attribute source : ScalarValues::Natural;",
-//      "attribute target : ScalarValues::String; attribute source : String;",
+      "attribute target : ScalarValues::String; attribute source : String;",
       "attribute target : ScalarValues::Natural; attribute source : nat;"
   })
   public void test4CompatibleTypes(String targetAndSource) throws IOException {
+    var type = typeOfConstraintExpression(targetAndSource);
+
+    assertTrue(type.isPrimitive());
+    assertThat(type.printFullName()).isEqualTo("boolean");
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Disabled
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "attribute target : Set<ScalarValues::String>; attribute source : Collections::Set<ScalarValues::String>;",
+      "attribute target : List<ScalarValues::String>; attribute source : Collections::List<ScalarValues::String>;",
+      "attribute target : Map<ScalarValues::String, ScalarValues::Integer>; attribute source : Collections::Map<ScalarValues::String, ScalarValues::Integer>;",
+  })
+  public void test4CompatibleGenericTypes(String targetAndSource) throws IOException {
     var type = typeOfConstraintExpression(targetAndSource);
 
     assertTrue(type.isPrimitive());

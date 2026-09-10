@@ -49,6 +49,7 @@ public class SysMLBuiltInTypeRelations extends de.monticore.types3.util.BuiltInT
       || (type.isPrimitive()
         && type.asPrimitive().getPrimitiveName().equals("nat"))
       || (type.hasTypeInfo() && (
+        type.getTypeInfo().getFullName().equals("ScalarValues.Integer") ||
         type.getTypeInfo().getFullName().equals("ScalarValues.Natural") ||
         type.getTypeInfo().getFullName().equals("ScalarValues.Positive"))
     );

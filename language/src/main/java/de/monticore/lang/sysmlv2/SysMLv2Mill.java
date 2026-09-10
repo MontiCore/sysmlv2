@@ -2,7 +2,6 @@
 package de.monticore.lang.sysmlv2;
 
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
-import de.monticore.class2mc.OOClass2MCResolver;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsGlobalScope;
@@ -46,11 +45,6 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     SysMLv2Tool.loadStreamSymbolsFromJar();
   }
 
-  public void initializeClass2MC() {
-    SysMLv2Mill.globalScope().addAdaptedTypeSymbolResolver(new OOClass2MCResolver());
-    SysMLv2Mill.globalScope().addAdaptedOOTypeSymbolResolver(new OOClass2MCResolver());
-  }
-
   protected static void loadScalarValuesFromSym() {
     getMill()._loadScalarValuesFromSym();
   }
@@ -89,7 +83,6 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
   public static void initializePrimitives() {
     BasicSymbolsMill.initializePrimitives();
     getMill()._initializePrimitives();
-    getMill().initializeClass2MC();
   }
 
   /**
