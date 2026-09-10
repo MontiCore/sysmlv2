@@ -15,6 +15,30 @@
             "spannedScope": {
               "symbols": [
                 {
+                  "kind": "de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol",
+                  "name": "i",
+                  "fullName":"StateDef.AutomatonInverter.i",
+                  "types": [
+                    {
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
+                    }
+                  ],
+                  "in": true
+                },
+                {
+                  "kind": "de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol",
+                  "name": "o",
+                  "fullName":"StateDef.AutomatonInverter.o",
+                  "types": [
+                    {
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
+                    }
+                  ],
+                  "out": true
+                },
+                {
                   "kind": "de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol",
                   "name": "S",
                   "fullName":"StateDef.AutomatonInverter.S"
@@ -23,24 +47,6 @@
                   "kind": "de.monticore.lang.sysmlstates._symboltable.SysMLTransitionSymbol",
                   "name": "invert",
                   "fullName":"StateDef.AutomatonInverter.invert"
-                },
-                {
-                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-                  "name": "i",
-                  "fullName":"StateDef.AutomatonInverter.i",
-                  "type": {
-                    "kind": "de.monticore.types.check.SymTypePrimitive",
-                    "primitiveName": "boolean"
-                  }
-                },
-                {
-                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-                  "name": "o",
-                  "fullName":"StateDef.AutomatonInverter.o",
-                  "type": {
-                    "kind": "de.monticore.types.check.SymTypePrimitive",
-                    "primitiveName": "boolean"
-                  }
                 }
               ]
             }
