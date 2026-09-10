@@ -4,6 +4,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Verändert die Standard-Boxmap, so dass nicht mehr nach java.lang.* geboxt
+ * wird, sondern zu den KerML-ELemente aus ScalarValues, Collections, etc.
+ */
 public class SysMLSymTypeBoxingVisitor extends de.monticore.types3.util.SymTypeBoxingVisitor {
 
   protected static final Map<String, String> sysMLPrimitiveBoxMap;
