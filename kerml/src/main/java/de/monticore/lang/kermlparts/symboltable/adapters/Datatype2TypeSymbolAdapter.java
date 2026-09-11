@@ -4,14 +4,14 @@ import com.google.common.base.Preconditions;
 import de.monticore.lang.kermlelements._symboltable.DatatypeSymbol;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
-import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.se_rwth.commons.SourcePosition;
 
 /**
- * Adapts a KerML datatype to an {@link OOTypeSymbol} so that relations such as
- * datatype specialization can be serialized as OO super types.
+ * Adapts a KerML datatype to a {@link TypeSymbol} so that relations such as
+ * datatype specialization can be represented as super types.
  */
-public class Datatype2TypeSymbolAdapter extends OOTypeSymbol {
+public class Datatype2TypeSymbolAdapter extends TypeSymbol {
   protected DatatypeSymbol adaptee;
 
   public Datatype2TypeSymbolAdapter(DatatypeSymbol adaptee) {
@@ -20,9 +20,6 @@ public class Datatype2TypeSymbolAdapter extends OOTypeSymbol {
     IBasicSymbolsScope spanned = BasicSymbolsMill.scope();
     spanned.setName(adaptee.getName());
     this.setSpannedScope(spanned);
-    this.setIsClass(false);
-    this.setIsInterface(false);
-    this.setIsEnum(false);
   }
 
   public DatatypeSymbol getAdaptee() {
