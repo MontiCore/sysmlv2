@@ -5,7 +5,6 @@ import de.monticore.lang.kerml._ast.ASTKerMLModel;
 import de.monticore.lang.kerml._symboltable.IKerMLArtifactScope;
 import de.monticore.lang.kerml.symboltable.DatatypeExtractor;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
-import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsArtifactScope;
 import de.monticore.symbols.basicsymbols._symboltable.BasicSymbolsSymbols2Json;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.CommandLine;
@@ -56,15 +55,12 @@ public class KerMLTool extends KerMLToolTOP {
 
   @Override
   public void storeSymbols(IKerMLArtifactScope scope, String path) {
-    ASTKerMLModel ast = (ASTKerMLModel) scope.getAstNode();
     BasicSymbolsMill.init();
-    IBasicSymbolsArtifactScope exportScope = BasicSymbolsMill.artifactScope();
-
-    DatatypeExtractor datatypeExtractor = new DatatypeExtractor(exportScope);
+    var exportScope = BasicSymbolsMill.artifactScope();
+    var datatypeExtractor = new DatatypeExtractor(exportScope);
     var traverser = KerMLMill.traverser();
     traverser.add4KerMLElements(datatypeExtractor);
-    ast.accept(traverser);
-    datatypeExtractor.completeSuperTypes();
+    ((ASTKerMLModel) scope.getAstNode()).accept(traverser);
     new BasicSymbolsSymbols2Json().store(exportScope, path);
   }
 }

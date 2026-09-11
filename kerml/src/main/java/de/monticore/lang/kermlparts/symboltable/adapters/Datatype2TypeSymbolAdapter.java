@@ -8,8 +8,7 @@ import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.se_rwth.commons.SourcePosition;
 
 /**
- * Adapts a KerML datatype to a {@link TypeSymbol} so that relations such as
- * datatype specialization can be represented as super types.
+ * Adapts a KerML datatype to a {@link TypeSymbol} for serialization.
  */
 public class Datatype2TypeSymbolAdapter extends TypeSymbol {
   protected DatatypeSymbol adaptee;

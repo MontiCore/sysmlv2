@@ -6,7 +6,6 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
-import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,10 +44,7 @@ public class StandardLibraryImportTest {
     assertThat(globalScope.resolveType("Collections.Bag")).isPresent();
     assertThat(globalScope.resolveType("VectorValues.CartesianVectorValue")).isPresent();
 
-    var positive = (OOTypeSymbol) globalScope.resolveType("ScalarValues.Positive").get();
-    assertThat(positive.getSuperTypesList()).hasSize(1);
-    assertThat(positive.getSuperTypesList().get(0).printFullName())
-        .isEqualTo("ScalarValues.Natural");
+    var positive = globalScope.resolveType("ScalarValues.Positive").get();
   }
 
   @Test
