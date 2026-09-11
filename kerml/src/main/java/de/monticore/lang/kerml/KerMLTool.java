@@ -55,7 +55,6 @@ public class KerMLTool extends KerMLToolTOP {
 
   @Override
   public void storeSymbols(IKerMLArtifactScope scope, String path) {
-    BasicSymbolsMill.init();
     var exportScope = BasicSymbolsMill.artifactScope();
     var datatypeExtractor = new DatatypeExtractor(exportScope);
     var traverser = KerMLMill.traverser();
