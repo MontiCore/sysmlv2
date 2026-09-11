@@ -61,11 +61,6 @@ public class KerMLTool extends KerMLToolTOP {
    */
   @Override
   public void storeSymbols(IKerMLArtifactScope scope, String path) {
-    if (!scope.isPresentAstNode()
-        || !(scope.getAstNode() instanceof ASTKerMLModel)) {
-      Log.error("Cannot export a KerML symbol table without its AST.");
-      return;
-    }
 
     ASTKerMLModel ast = (ASTKerMLModel) scope.getAstNode();
     OOSymbolsMill.init();
