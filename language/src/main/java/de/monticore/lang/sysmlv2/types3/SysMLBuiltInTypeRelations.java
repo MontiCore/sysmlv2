@@ -10,24 +10,6 @@ import de.monticore.types.check.SymTypeExpression;
 public class SysMLBuiltInTypeRelations extends de.monticore.types3.util.BuiltInTypeRelations{
 
   @Override
-  public boolean isNumericType(SymTypeExpression type) {
-    return super.isNumericType(type) || isIntegralType(type) || isDouble(type);
-  }
-
-  @Override
-  public boolean isIntegralType(SymTypeExpression type) {
-    return super.isIntegralType(type)
-        || (type.isPrimitive()
-          && type.asPrimitive().getPrimitiveName().equals("nat"))
-        || (type.hasTypeInfo()
-          && (
-            type.getTypeInfo().getFullName().equals("ScalarValues.Integer") ||
-            type.getTypeInfo().getFullName().equals("ScalarValues.Natural") ||
-            type.getTypeInfo().getFullName().equals("ScalarValues.Positive"))
-    );
-  }
-
-  @Override
   public boolean isBoolean(SymTypeExpression type) {
     return super.isBoolean(type) ||
       (type.hasTypeInfo() &&
@@ -36,32 +18,33 @@ public class SysMLBuiltInTypeRelations extends de.monticore.types3.util.BuiltInT
 
   @Override
   public boolean isDouble(SymTypeExpression type) {
-    return super.isDouble(type)
-      || (type.hasTypeInfo() && (
-        type.getTypeInfo().getFullName().equals("ScalarValues.Real") ||
-        type.getTypeInfo().getFullName().equals("ScalarValues.Rational"))
-    );
+    return super.isDouble(type) ||
+    (type.isObjectType() && (
+      type.printFullName().equals("ScalarValues.Real") ||
+      type.printFullName().equals("ScalarValues.Rational")
+    ));
   }
 
   @Override
   public boolean isInt(SymTypeExpression type) {
-    return super.isInt(type)
-      || (type.isPrimitive()
-        && type.asPrimitive().getPrimitiveName().equals("nat"))
-      || (type.hasTypeInfo() && (
-        type.getTypeInfo().getFullName().equals("ScalarValues.Integer") ||
-        type.getTypeInfo().getFullName().equals("ScalarValues.Natural") ||
-        type.getTypeInfo().getFullName().equals("ScalarValues.Positive"))
-    );
+    return super.isInt(type) || isNat(type) ||
+      (type.isObjectType() &&
+        type.printFullName().equals("ScalarValues.Integer"));
   }
 
   @Override
   public boolean isString(SymTypeExpression type) {
-    boolean isScalarValuesString = false;
-    if (type.isObjectType()) {
-      isScalarValuesString = type.hasTypeInfo()
-        && (type.getTypeInfo().getFullName().equals("ScalarValues.String"));
+    return super.isString(type) || (type.isObjectType() &&
+      type.printFullName().equals("ScalarValues.String"));
+  }
+
+  public boolean isNat(SymTypeExpression type) {
+    if (type.isPrimitive()) {
+      return type.printFullName().equals("nat");
+    } else {
+    return (type.isObjectType() && (
+      type.printFullName().equals("ScalarValues.Natural") ||
+      type.printFullName().equals("ScalarValues.Positive")));
     }
-    return super.isString(type) || isScalarValuesString;
   }
 }
