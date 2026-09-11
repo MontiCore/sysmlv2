@@ -4,10 +4,9 @@ package de.monticore.lang.kerml;
 import de.monticore.lang.kerml._ast.ASTKerMLModel;
 import de.monticore.lang.kerml._symboltable.IKerMLArtifactScope;
 import de.monticore.lang.kerml.symboltable.DatatypeExtractor;
-import de.monticore.lang.kermlelements._ast.ASTPackageDeclaration;
-import de.monticore.symbols.oosymbols.OOSymbolsMill;
-import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsArtifactScope;
-import de.monticore.symbols.oosymbols._symboltable.OOSymbolsSymbols2Json;
+import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsArtifactScope;
+import de.monticore.symbols.basicsymbols._symboltable.BasicSymbolsSymbols2Json;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -55,33 +54,17 @@ public class KerMLTool extends KerMLToolTOP {
     }
   }
 
-  /**
-   * Stores KerML datatypes as OO type symbols. OO type symbols are BasicSymbols
-   * type symbols with support for the datatype specialization hierarchy.
-   */
   @Override
   public void storeSymbols(IKerMLArtifactScope scope, String path) {
-
     ASTKerMLModel ast = (ASTKerMLModel) scope.getAstNode();
-    OOSymbolsMill.init();
-    IOOSymbolsArtifactScope exportScope = OOSymbolsMill.artifactScope();
-    exportScope.setName("");
-    exportScope.setPackageName(determinePackageName(ast));
+    BasicSymbolsMill.init();
+    IBasicSymbolsArtifactScope exportScope = BasicSymbolsMill.artifactScope();
 
     DatatypeExtractor datatypeExtractor = new DatatypeExtractor(exportScope);
     var traverser = KerMLMill.traverser();
     traverser.add4KerMLElements(datatypeExtractor);
     ast.accept(traverser);
     datatypeExtractor.completeSuperTypes();
-    new OOSymbolsSymbols2Json().store(exportScope, path);
-  }
-
-  protected String determinePackageName(ASTKerMLModel ast) {
-    return ast.getKerMLElementList().stream()
-        .filter(ASTPackageDeclaration.class::isInstance)
-        .map(ASTPackageDeclaration.class::cast)
-        .map(ASTPackageDeclaration::getName)
-        .findFirst()
-        .orElse("");
+    new BasicSymbolsSymbols2Json().store(exportScope, path);
   }
 }
