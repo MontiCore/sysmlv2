@@ -1,7 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
 package StateDef {
 
-  state def AutomatonInverter(in i: boolean, out o: boolean) {
+  state def AutomatonInverter {
+
+    in attribute i : boolean;
+    out attribute o : boolean;
+
     entry;
       then S;
 

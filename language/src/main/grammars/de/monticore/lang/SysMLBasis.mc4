@@ -72,7 +72,7 @@ component grammar SysMLBasis
    * Parameters
    */
   SysMLParameter implements Field =
-    Modifier UserDefinedKeyword* ["stream"]? Name SysMLCardinality? Specialization* ("=" binding:Expression)? DefaultValue?;
+    UserDefinedKeyword* ["stream"]? Name SysMLCardinality? Specialization* ("=" binding:Expression)? DefaultValue?;
 
   /**
    * A fixed, bound feature value relationship is declared using the symbol = followed by a representation of the value

@@ -13,6 +13,7 @@ import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symboltable.serialization.JsonPrinter;
 import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -84,6 +85,11 @@ public class SerializationTest {
   @BeforeAll
   public static void setPrinter() {
     JsonPrinter.enableIndentation();
+  }
+
+  @AfterAll
+  public static void resetPrinter() {
+    JsonPrinter.disableIndentation();
   }
 
   @BeforeEach
