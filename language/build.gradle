@@ -64,7 +64,6 @@ dependencies {
   }
 
   implementation(project(":cc"))
-  implementation(project(":kerml"))
 
   implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
   implementation "org.apache.commons:commons-lang3:$commons_lang_version"

@@ -4,6 +4,8 @@ package de.monticore.lang.kerml;
 import de.monticore.lang.kerml._ast.ASTKerMLModel;
 import de.monticore.lang.kerml._symboltable.IKerMLArtifactScope;
 import de.monticore.lang.kerml._symboltable.KerMLSymbols2Json;
+import de.monticore.lang.kermlelements._symboltable.DatatypeSymbol;
+import de.monticore.lang.kermlparts.symboltable.adapters.Datatype2TypeSymbolAdapter;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -53,6 +55,8 @@ public class KerMLTool extends KerMLToolTOP {
 
   @Override
   public void storeSymbols(IKerMLArtifactScope scope, String path) {
+    KerMLMill.globalScope().putSymbolDeSer(
+        DatatypeSymbol.class.getName(), new Datatype2TypeSymbolAdapter());
     new KerMLSymbols2Json().store(scope, path);
   }
 }

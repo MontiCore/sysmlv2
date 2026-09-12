@@ -1,49 +1,16 @@
 package de.monticore.lang.kermlparts.symboltable.adapters;
 
-import com.google.common.base.Preconditions;
-import de.monticore.lang.kermlelements._symboltable.DatatypeSymbol;
-import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
-import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
+import de.monticore.lang.kermlelements._symboltable.DatatypeSymbolDeSer;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
-import de.se_rwth.commons.SourcePosition;
 
 /**
- * Adapts a KerML datatype to a {@link TypeSymbol} for serialization.
+ * Serializes KerML datatypes with the compatible {@link TypeSymbol} kind,
+ * retaining the fields and nested scopes written by the KerML serializer.
  */
-public class Datatype2TypeSymbolAdapter extends TypeSymbol {
-  protected DatatypeSymbol adaptee;
-
-  public Datatype2TypeSymbolAdapter(DatatypeSymbol adaptee) {
-    super(Preconditions.checkNotNull(adaptee.getName()));
-    this.adaptee = adaptee;
-    IBasicSymbolsScope spanned = BasicSymbolsMill.scope();
-    spanned.setName(adaptee.getName());
-    this.setSpannedScope(spanned);
-  }
-
-  public DatatypeSymbol getAdaptee() {
-    return adaptee;
-  }
+public class Datatype2TypeSymbolAdapter extends DatatypeSymbolDeSer {
 
   @Override
-  public void setName(String name) {
-    Preconditions.checkNotNull(name);
-    Preconditions.checkArgument(!name.isBlank());
-    getAdaptee().setName(name);
-  }
-
-  @Override
-  public String getName() {
-    return getAdaptee().getName();
-  }
-
-  @Override
-  public String getFullName() {
-    return getAdaptee().getFullName();
-  }
-
-  @Override
-  public SourcePosition getSourcePosition() {
-    return getAdaptee().getSourcePosition();
+  public String getSerializedKind() {
+    return TypeSymbol.class.getName();
   }
 }

@@ -1,10 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2;
 
-import de.monticore.lang.kerml._symboltable.KerMLSymbols2Json;
-import de.monticore.lang.kerml._auxiliary.KerMLElementsMillForKerML;
-import de.monticore.lang.kermlelements.KerMLElementsMill;
-import de.monticore.lang.kermlparts.symboltable.adapters.Datatype2TypeSymbolAdapter;
+import de.monticore.lang.sysmlparts._symboltable.SysMLPackageSymbolDeSer;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.class2mc.OOClass2MCResolver;
 import de.monticore.types.check.SymTypeExpression;
@@ -71,23 +68,12 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         return;
       }
 
-      KerMLElementsMill.initMe(new KerMLElementsMillForKerML());
-      var kermlScope = new KerMLSymbols2Json().load(url);
-      var kermlPackage = kermlScope.resolvePackageDeclaration("ScalarValues").orElseThrow();
-      var scalarValuesScope = SysMLv2Mill.artifactScope();
-      for (var datatype : kermlPackage.getSpannedScope().getLocalDatatypeSymbols()) {
-        var type = new Datatype2TypeSymbolAdapter(datatype);
-        type.setPackageName(scalarValuesScope.getPackageName());
-        scalarValuesScope.add(type);
-      }
-      var scalarValues = SysMLv2Mill.sysMLPackageSymbolBuilder()
-          .setName("ScalarValues")
-          .setFullName("ScalarValues")
-          .setPackageName("")
-          .setEnclosingScope(globalScope)
-          .setSpannedScope(scalarValuesScope)
-          .build();
-      scalarValuesScope.setSpanningSymbol(scalarValues);
+      globalScope.putSymbolDeSer("de.monticore.lang.kermlelements._symboltable.PackageDeclarationSymbol",
+          new SysMLPackageSymbolDeSer());
+      var scalarValues = globalScope.getSymbols2Json().load(url)
+          .resolveSysMLPackage("ScalarValues").orElseThrow();
+      var scalarValuesScope = scalarValues.getSpannedScope();
+      scalarValuesScope.setEnclosingScope(null);
       globalScope.add(scalarValues);
       globalScope.addSubScope(scalarValuesScope);
     } else {
