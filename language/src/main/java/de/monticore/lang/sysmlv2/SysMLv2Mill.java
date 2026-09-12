@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2;
 
+import de.monticore.lang.sysmlparts._symboltable.SysMLPackageSymbolDeSer;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
@@ -61,15 +62,12 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         return;
       }
 
-      var scalarValuesScope = globalScope.getSymbols2Json().load(url);
-      var scalarValues = SysMLv2Mill.sysMLPackageSymbolBuilder()
-          .setName("ScalarValues")
-          .setFullName("ScalarValues")
-          .setPackageName("")
-          .setEnclosingScope(globalScope)
-          .setSpannedScope(scalarValuesScope)
-          .build();
-      scalarValuesScope.setSpanningSymbol(scalarValues);
+      globalScope.putSymbolDeSer("de.monticore.lang.kermlelements._symboltable.PackageDeclarationSymbol",
+          new SysMLPackageSymbolDeSer());
+      var scalarValues = globalScope.getSymbols2Json().load(url)
+          .resolveSysMLPackage("ScalarValues").orElseThrow();
+      var scalarValuesScope = scalarValues.getSpannedScope();
+      scalarValuesScope.setEnclosingScope(null);
       globalScope.add(scalarValues);
       globalScope.addSubScope(scalarValuesScope);
     } else {
