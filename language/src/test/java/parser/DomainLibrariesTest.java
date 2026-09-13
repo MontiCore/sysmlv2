@@ -11,12 +11,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Disabled;
 
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * Diese Klasse sammelt alle Tests zu den SysML Domain Libraries (abgelegt unter resources).
@@ -28,6 +30,7 @@ public class DomainLibrariesTest {
 
   static SysMLv2Tool tool;
 
+
   @BeforeAll
   public static void setup() {
     tool = new SysMLv2Tool();
@@ -37,6 +40,7 @@ public class DomainLibrariesTest {
   public void init() {
     tool.init();
     Log.init();
+
   }
 
   @Test
@@ -152,7 +156,6 @@ public class DomainLibrariesTest {
     assertThat(ast).isPresent();
     assertThat(Log.getFindings()).isEmpty();
   }
-
   @Disabled
   @Test
   public void testParseShapeItems() {
