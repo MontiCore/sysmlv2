@@ -1,0 +1,70 @@
+{
+  "generated-using": "www.MontiCore.de technology",
+  "name": "Collections",
+  "symbols": [
+    {
+      "kind": "de.monticore.lang.kermlelements._symboltable.PackageDeclarationSymbol",
+      "name": "Collections",
+      "fullName": "Collections",
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "Collection",
+            "fullName": "Collections.Collection"
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "OrderedCollection",
+            "fullName": "Collections.OrderedCollection"
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "UniqueCollection",
+            "fullName": "Collections.UniqueCollection"
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "Array",
+            "fullName": "Collections.Array"
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "Bag",
+            "fullName": "Collections.Bag"
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "Set",
+            "fullName": "Collections.Set"
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "OrderedSet",
+            "fullName": "Collections.OrderedSet"
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "List",
+            "fullName": "Collections.List"
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "KeyValuePair",
+            "fullName": "Collections.KeyValuePair"
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "Map",
+            "fullName": "Collections.Map"
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "OrderedMap",
+            "fullName": "Collections.OrderedMap"
+          }
+        ]
+      }
+    }
+  ]
+}

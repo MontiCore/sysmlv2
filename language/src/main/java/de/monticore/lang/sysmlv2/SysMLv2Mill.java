@@ -17,6 +17,7 @@ import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.SymTypeVariable;
+import de.se_rwth.commons.logging.Log;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,7 +39,8 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     SysMLv2Mill.addStringType();
     SysMLv2Mill.loadScalarValuesFromSym();
     SysMLv2Mill.addScalarFunctionsTypes();
-    SysMLv2Mill.addKermlCollectionsTypes();
+    //SysMLv2Mill.addKermlCollecitonsTypes();
+    SysMLv2Mill.loadCollectionValuesFromSym();
     SysMLv2Mill.addVectorValuesTypes();
     SysMLv2Mill.addCollectionTypes();
     SysMLv2Mill.addTsynVariables();
@@ -71,7 +73,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
       globalScope.add(scalarValues);
       globalScope.addSubScope(scalarValuesScope);
     } else {
-      de.se_rwth.commons.logging.Log.error("Could not find ScalarValues.kermlsym");
+      Log.error("Could not find ScalarValues.kermlsym");
     }
   }
 
@@ -127,8 +129,37 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     packageScope.add(buildMinFunction());
   }
 
-  public static void addKermlCollectionsTypes() {
+  public static void addKermlCollecitonsTypes(){
     getMill()._addCollectionsPackage();
+  }
+
+  protected static void loadCollectionValuesFromSym() {
+    getMill()._loadCollectionFromSym();
+  }
+
+  protected void _loadCollectionFromSym() {
+    URL url = SysMLv2Tool.class.getClassLoader().getResource(
+        "Collections.kermlsym");
+
+    if (url != null) {
+      var globalScope = (SysMLv2GlobalScope) SysMLv2Mill.globalScope();
+      boolean packageAlreadyLoaded = globalScope.getLocalSysMLPackageSymbols().stream()
+          .anyMatch(symbol -> "Collections".equals(symbol.getFullName()));
+      if (packageAlreadyLoaded) {
+        return;
+      }
+
+      globalScope.putSymbolDeSer("de.monticore.lang.kermlelements._symboltable.PackageDeclarationSymbol",
+          new SysMLPackageSymbolDeSer());
+      var collections = globalScope.getSymbols2Json().load(url)
+          .resolveSysMLPackage("Collections").orElseThrow();
+      var collectionsScope = collections.getSpannedScope();
+      collectionsScope.setEnclosingScope(null);
+      globalScope.add(collections);
+      globalScope.addSubScope(collectionsScope);
+    } else {
+      Log.error("Could not find Collections.kermlsym");
+    }
   }
 
   protected void _addCollectionsPackage() {
