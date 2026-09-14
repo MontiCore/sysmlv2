@@ -199,6 +199,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     traverser.add4SysMLBasis(new SpecializationCompleter());
     traverser.add4SysMLBasis(new DirectionCompleter());
     traverser.add4SysMLParts(new DirectionCompleter());
+    traverser.add4SysMLv2(new DirectionCompleter());
     traverser.add4SysMLParts(new ConvertEnumUsagesToFields());
     traverser.add4SysMLParts(new SysMLPartsCompleter());
     traverser.add4SysMLParts(new IdentifierCompletion());
@@ -217,6 +218,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     traverser.add4SysMLParts(completer);
     traverser.add4SysMLConstraints(completer);
     traverser.add4SysMLActions(completer);
+    traverser.add4SysMLv2(completer);
 
     traverser.add4SysMLParts(new RequirementClassificationCompleter());
     traverser.add4SysMLParts(new DirectRefinementCompleter());
