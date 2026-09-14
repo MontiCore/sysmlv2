@@ -239,8 +239,7 @@ public class QuotedDottedNameResolveTest {
     var partDef = (ASTPartDef) ast.get().getSysMLElement(1);
     var parentRef = (ASTMCQualifiedType) partDef.getSpecialization(0).getSuperTypes(0);
 
-    assertThat(parentRef.getNameList()).containsExactly("a", "b.with.dots", "C");
-
+    assertThat(parentRef.getNameList()).containsExactly("a", "b__DOT__with__DOT__dots", "C");
     var parentName = String.join(".", parentRef.getNameList());
     var optParent = ((ISysMLv2Scope) parentRef.getEnclosingScope()).resolveType(parentName);
 
