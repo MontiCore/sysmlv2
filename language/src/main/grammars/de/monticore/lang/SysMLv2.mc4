@@ -64,7 +64,7 @@ grammar SysMLv2 extends SysMLExpressions,
     | ( '\'' Anything* '\'' ) :
     {
       if(getText().length() > 0 && getText().charAt(0) == '\'')
-        setText(getText().substring(1, getText().length() - 1));
+        setText(getText().substring(1, getText().length() - 1).replace(".","__DOT__"));
     } ;
 
   // Do not include "//*" since its considered a "MultilineNote"
