@@ -91,6 +91,7 @@ public class CompareTypesTest {
       String targetAndSource) throws IOException {
     var model =
         "private import ScalarValues::Boolean;" +
+        "private import Collections::*" +
         "part def myPart { " +
           targetAndSource +
           "assert constraint e {" +

@@ -4,8 +4,9 @@ import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
-import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -98,7 +99,9 @@ public class StandardLibraryImportTest {
 
     var model = "private import Collections::Bag; attribute a: Bag;";
 
-    var ast = SysMLv2Mill.parser().parse_String(model).get();
+    var parsed = SysMLv2Mill.parser().parse_String(model);
+    assertThat(parsed).isPresent();
+    var ast = parsed.get();
 
     tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
@@ -107,8 +110,13 @@ public class StandardLibraryImportTest {
     var type = ((ASTAttributeUsage) ast.getSysMLElement(1)).getSpecialization(0).getSuperTypes(0);
 
     assertThat(type.printType()).isEqualTo("Bag");
-    assertThat(((ISysMLv2Scope)type.getEnclosingScope()).resolveType(type.printType())).isPresent();
-    assertThat(((ISysMLv2Scope)type.getEnclosingScope()).resolveType(type.printType()).get().getFullName()).isEqualTo("Collections.Bag");
+    var resolved = ((ISysMLv2Scope) type.getEnclosingScope()).resolveType("Bag");
+    assertThat(resolved).isPresent();
+    assertThat(resolved.get()).isExactlyInstanceOf(TypeSymbol.class);
+    assertThat(resolved.get().getFullName()).isEqualTo("Collections.Bag");
+    assertThat(resolved.get().getTypeParameterList())
+        .extracting(parameter -> parameter.getName()).containsExactly("T");
+    assertThat(Log.getFindings()).isEmpty();
   }
 
   @Test
