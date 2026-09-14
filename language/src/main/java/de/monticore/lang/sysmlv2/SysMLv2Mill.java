@@ -39,6 +39,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     SysMLv2Mill.addStringType();
     SysMLv2Mill.loadScalarValuesFromSym();
     SysMLv2Mill.addScalarFunctionsTypes();
+    //SysMLv2Mill.addKermlCollecitonsTypes();
     SysMLv2Mill.loadCollectionValuesFromSym();
     SysMLv2Mill.addVectorValuesTypes();
     SysMLv2Mill.addCollectionTypes();
@@ -126,6 +127,10 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
 
 
     packageScope.add(buildMinFunction());
+  }
+
+  public static void addKermlCollecitonsTypes(){
+    getMill()._addCollectionsPackage();
   }
 
   protected static void loadCollectionValuesFromSym() {
