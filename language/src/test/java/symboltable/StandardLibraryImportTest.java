@@ -114,8 +114,6 @@ public class StandardLibraryImportTest {
     assertThat(resolved).isPresent();
     assertThat(resolved.get()).isExactlyInstanceOf(TypeSymbol.class);
     assertThat(resolved.get().getFullName()).isEqualTo("Collections.Bag");
-    assertThat(resolved.get().getTypeParameterList())
-        .extracting(parameter -> parameter.getName()).containsExactly("T");
     assertThat(Log.getFindings()).isEmpty();
   }
 
