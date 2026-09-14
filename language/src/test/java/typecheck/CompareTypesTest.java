@@ -91,7 +91,6 @@ public class CompareTypesTest {
       String targetAndSource) throws IOException {
     var model =
         "private import ScalarValues::Boolean;" +
-        "private import Collections::*;" +
         "part def myPart { " +
           targetAndSource +
           "assert constraint e {" +
@@ -111,7 +110,7 @@ public class CompareTypesTest {
     tool.finalizeSymbolTable(astSysMLModel);
 
     var sysmlelements = astSysMLModel.getSysMLElementList();
-    var astPartDef = sysmlelements.get(2);
+    var astPartDef = sysmlelements.get(1);
     var constraintUsage = ((ASTPartDef) astPartDef).getSysMLElement(2);
     var expr = ((ASTConstraintUsage) constraintUsage).getExpression();
 
