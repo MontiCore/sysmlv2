@@ -7,7 +7,7 @@ package de.monticore.lang;
 component grammar SysMLBasis
     extends de.monticore.expressions.ExpressionsBasis,  // Expression
             de.monticore.types.MCBasicTypes,            // MCQualifiedName, MCType
-            de.monticore.symbols.OOSymbols,             // OOTypes, Field
+            de.monticore.symbols.BasicSymbols,          // Variable
             de.monticore.Cardinality,                   // Cardinality
             de.monticore.UMLModifier                    // Modifier
 {
@@ -71,7 +71,8 @@ component grammar SysMLBasis
   /**
    * Parameters
    */
-  SysMLParameter implements Field =
+
+  SysMLParameter implements Variable =
     UserDefinedKeyword* Name SysMLCardinality? Specialization* ("=" binding:Expression)? DefaultValue?;
 
   /**
