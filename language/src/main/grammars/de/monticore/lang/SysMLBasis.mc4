@@ -71,7 +71,6 @@ component grammar SysMLBasis
   /**
    * Parameters
    */
-
   SysMLParameter implements Variable =
     UserDefinedKeyword* Name SysMLCardinality? Specialization* ("=" binding:Expression)? DefaultValue?;
 
