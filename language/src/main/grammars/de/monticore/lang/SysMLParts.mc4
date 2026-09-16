@@ -1,7 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
-component grammar SysMLParts extends SysMLBasis {
+component grammar SysMLParts
+    extends SysMLBasis,
+            de.monticore.symbols.OOSymbols
+{
 
   /**
    * Causality indication: "instant" = weak causal, "delayed" = strong causal.
