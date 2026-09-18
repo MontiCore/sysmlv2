@@ -70,7 +70,7 @@ public class SysMLTypeCheck3 extends MapBasedTypeCheck3 {
     typeTraverser.add4OCLExpressions(forOcl);
     typeTraverser.add4SysMLExpressions(forOcl);
 
-    var forStreams = new StreamExpressionsTypeVisitor();
+    var forStreams = new SysMLStreamExpressionsTypeVisitor();
     forStreams.setType4Ast(type4Ast);
     typeTraverser.add4StreamExpressions(forStreams);
 
