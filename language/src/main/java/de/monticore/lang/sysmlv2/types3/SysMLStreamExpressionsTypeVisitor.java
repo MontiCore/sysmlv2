@@ -5,6 +5,10 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.streams.StreamSymTypeFactory;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static de.monticore.types.check.SymTypeExpressionFactory.createUnion;
 
 public class SysMLStreamExpressionsTypeVisitor extends de.monticore.expressions.streamexpressions.types3.StreamExpressionsTypeVisitor {
   @Override
@@ -30,19 +34,25 @@ public class SysMLStreamExpressionsTypeVisitor extends de.monticore.expressions.
         return;
       }
 
-      SymTypeExpression unionType = argumentList.get(0).asUnionType();
+      List<SymTypeExpression> boxedContainedExprTypes =
+        argumentList.get(0).asUnionType()
+        .getUnionizedTypeSet().stream()
+        .map(SysMLSymTypeRelations::box)
+        .collect(Collectors.toList());
+
+      SymTypeExpression elementType = createUnion(Set.copyOf(boxedContainedExprTypes));
 
       if (expr.isEventTimed()) {
-        result = StreamSymTypeFactory.createEventStream(unionType);
+        result = StreamSymTypeFactory.createEventStream(elementType);
       }
       else if (expr.isSyncTimed()) {
-        result = StreamSymTypeFactory.createSyncStream(unionType);
+        result = StreamSymTypeFactory.createSyncStream(elementType);
       }
       else if (expr.isToptTimed()) {
-        result = StreamSymTypeFactory.createToptStream(unionType);
+        result = StreamSymTypeFactory.createToptStream(elementType);
       }
       else {
-        result = StreamSymTypeFactory.createUntimedStream(unionType);
+        result = StreamSymTypeFactory.createUntimedStream(elementType);
       }
 
       getType4Ast().setTypeOfExpression(expr, result);
