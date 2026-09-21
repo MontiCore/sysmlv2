@@ -11,6 +11,8 @@ import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 
@@ -114,6 +116,35 @@ public class StandardLibraryImportTest {
     assertThat(resolved).isPresent();
     assertThat(resolved.get()).isExactlyInstanceOf(TypeSymbol.class);
     assertThat(resolved.get().getFullName()).isEqualTo("Collections.Bag");
+    assertThat(Log.getFindings()).isEmpty();
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "private import Collections::List; attribute a: List;",
+      "private import Collections::*; attribute a: List;",
+      "attribute a: Collections::List;"
+  })
+  public void testCollectionsListResolving(String model) throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+
+    var parsed = SysMLv2Mill.parser().parse_String(model);
+    assertThat(parsed).isPresent();
+    var ast = parsed.get();
+
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    var attribute = (ASTAttributeUsage) ast.getSysMLElement(ast.sizeSysMLElements() - 1);
+    var type = attribute.getSpecialization(0).getSuperTypes(0);
+    var resolved = ((ISysMLv2Scope) type.getEnclosingScope()).resolveType(type.printType());
+
+    assertThat(resolved).isPresent();
+    assertThat(resolved.get()).isExactlyInstanceOf(TypeSymbol.class);
+    assertThat(resolved.get().getFullName()).isEqualTo("Collections.List");
     assertThat(Log.getFindings()).isEmpty();
   }
 
