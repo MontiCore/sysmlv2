@@ -39,8 +39,8 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     SysMLv2Mill.addStringType();
     SysMLv2Mill.loadScalarValuesFromSym();
     SysMLv2Mill.addScalarFunctionsTypes();
-    //SysMLv2Mill.addKermlCollecitonsTypes();
-    SysMLv2Mill.loadCollectionValuesFromSym();
+    SysMLv2Mill.addKermlCollecitonsTypes();
+    //SysMLv2Mill.loadCollectionValuesFromSym();
     SysMLv2Mill.addVectorValuesTypes();
     SysMLv2Mill.addCollectionTypes();
     SysMLv2Mill.addTsynVariables();

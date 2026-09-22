@@ -10,6 +10,7 @@ import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -114,7 +115,7 @@ public class StandardLibraryImportTest {
     assertThat(type.printType()).isEqualTo("Bag");
     var resolved = ((ISysMLv2Scope) type.getEnclosingScope()).resolveType("Bag");
     assertThat(resolved).isPresent();
-    assertThat(resolved.get()).isExactlyInstanceOf(TypeSymbol.class);
+    assertThat(resolved.get()).isInstanceOf(TypeSymbol.class);
     assertThat(resolved.get().getFullName()).isEqualTo("Collections.Bag");
     assertThat(Log.getFindings()).isEmpty();
   }
@@ -144,7 +145,7 @@ public class StandardLibraryImportTest {
     var resolved = ((ISysMLv2Scope) type.getEnclosingScope()).resolveType(type.printType());
 
     assertThat(resolved).isPresent();
-    assertThat(resolved.get()).isExactlyInstanceOf(TypeSymbol.class);
+    assertThat(resolved.get()).isInstanceOf(TypeSymbol.class);
     assertThat(resolved.get().getFullName()).isEqualTo("Collections.List");
     assertThat(Log.getFindings()).isEmpty();
   }
