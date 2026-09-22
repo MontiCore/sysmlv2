@@ -124,6 +124,7 @@ public class StandardLibraryImportTest {
       "private import Collections::List; attribute a: List;",
       "private import Collections::*; attribute a: List;",
       "attribute a: Collections::List;"
+      //"attribute a: Collections::List<E>"
   })
   public void testCollectionsListResolving(String model) throws IOException {
     LogStub.init();
