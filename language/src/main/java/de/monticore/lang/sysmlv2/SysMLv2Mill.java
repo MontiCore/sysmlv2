@@ -129,7 +129,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     packageScope.add(buildMinFunction());
   }
 
-  public static void addKermlCollecitonsTypes(){
+  public static void addKermlCollectionsTypes(){
     getMill()._addCollectionsPackage();
   }
 
