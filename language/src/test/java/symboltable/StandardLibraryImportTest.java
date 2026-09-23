@@ -102,9 +102,7 @@ public class StandardLibraryImportTest {
 
     var model = "private import Collections::Bag; attribute a: Bag;";
 
-    var parsed = SysMLv2Mill.parser().parse_String(model);
-    assertThat(parsed).isPresent();
-    var ast = parsed.get();
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
 
     tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
@@ -125,16 +123,13 @@ public class StandardLibraryImportTest {
       "private import Collections::List; attribute a: List;",
       "private import Collections::*; attribute a: List;",
       "attribute a: Collections::List;"
-      //"attribute a: Collections::List<E>"
   })
   public void testCollectionsListResolving(String model) throws IOException {
     LogStub.init();
     var tool = new SysMLv2Tool();
     tool.init();
 
-    var parsed = SysMLv2Mill.parser().parse_String(model);
-    assertThat(parsed).isPresent();
-    var ast = parsed.get();
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
 
     tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
