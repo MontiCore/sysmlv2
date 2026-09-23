@@ -283,7 +283,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       return resolved;
     }
 
-    return ((PartDefSymbol) getSpanningSymbol()).getAstNode()
+    var inherited = ((PartDefSymbol) getSpanningSymbol()).getAstNode()
         .getSpecializationList().stream()
         .filter(s -> s instanceof ASTSysMLSpecialization)
         .flatMap(s -> s.getSuperTypesList().stream())
@@ -293,7 +293,9 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
         .filter(s -> s instanceof PartDef2TypeSymbolAdapter)
         .map(s -> (ISysMLv2Scope)((PartDef2TypeSymbolAdapter) s).getSpannedScope())
         .flatMap(scope -> scope.resolvePortUsageLocallyMany(false, name, modifier, predicate).stream())
-        .collect(Collectors.toList());
+        .collect(Collectors.toCollection(LinkedHashSet::new));
+
+    return new ArrayList<>(inherited);
   }
 
   @Override
