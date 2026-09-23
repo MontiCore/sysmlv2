@@ -2,58 +2,37 @@ package cocos;
 
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
+import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2.cocos.ConnectedVariableExistsCoCo;
 import de.monticore.lang.sysmlv2.cocos.QualifiedPortNameExistsCoCo;
 import de.monticore.lang.sysmlv2.cocos.SubPartNamesInConnectionExistCoCo;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class InheritedConnectionResolutionTest {
 
-  private static final SysMLv2Tool tool = new SysMLv2Tool();
-
-  @BeforeAll
-  public static void init() {
-    LogStub.init();
-    SysMLv2Mill.init();
-  }
-
-  @BeforeEach
-  public void reset() {
-    SysMLv2Mill.globalScope().clear();
-    SysMLv2Mill.initializePrimitives();
-    SysMLv2Mill.addCollectionTypes();
-    Log.clearFindings();
-  }
-
   @Disabled("resolvePartUsageLocallyMany not overridden yet")
   @Test
   public void testAA3InheritedSubPartUsage() throws IOException {
-    String model =
-        "part def A { "
-      + "port i: boolean; "
-      + "} "
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
 
-      + "part def B { "
-      + "part a: A; "
-      + "} "
-
-      + "part def C specializes B { "
-      + "port o: boolean; "
-      + "connect a.i to o; "
-      + "}";
+    String model = "" +
+        "part def A { port i; }" +
+        "part def B { part a: A; }" +
+        "part def C specializes B { connect a.i to a.i; }";
 
     var ast = SysMLv2Mill.parser().parse_String(model).get();
+
     tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
     tool.finalizeSymbolTable(ast);
@@ -66,22 +45,18 @@ public class InheritedConnectionResolutionTest {
   }
 
   @Test
-  public void testAA4InheritedQualifiedPort() throws IOException {
-    String model =
-        "part def A { "
-      + "port i: boolean; "
-      + "} "
+  public void testAA4InheritedQualifiedPortUsage() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
 
-      + "part def B specializes A { "
-      + "} "
-
-      + "part def C { "
-      + "part b: B; "
-      + "port o: boolean; "
-      + "connect b.i to o; "
-      + "}";
+    String model = "" +
+        "part def A { port i; }" +
+        "part def B specializes A {}" +
+        "part def C { part b: B; connect b.i to b.i; }";
 
     var ast = SysMLv2Mill.parser().parse_String(model).get();
+
     tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
     tool.finalizeSymbolTable(ast);
@@ -94,18 +69,17 @@ public class InheritedConnectionResolutionTest {
   }
 
   @Test
-  public void testAD0InheritedUnqualifiedSourcePort() throws IOException {
-    String model =
-        "part def A { "
-      + "port i: boolean; "
-      + "} "
+  public void testAD0InheritedSourcePortUsage() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
 
-      + "part def B specializes A { "
-      + "port o: boolean; "
-      + "connect i to o; "
-      + "}";
+    String model = "" +
+        "part def A { port i: boolean; }" +
+        "part def B specializes A { port o: boolean; connect i to o; }";
 
     var ast = SysMLv2Mill.parser().parse_String(model).get();
+
     tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
     tool.finalizeSymbolTable(ast);
@@ -118,18 +92,17 @@ public class InheritedConnectionResolutionTest {
   }
 
   @Test
-  public void testAD1InheritedUnqualifiedTargetPort() throws IOException {
-    String model =
-        "part def A { "
-      + "port i: boolean; "
-      + "} "
+  public void testAD1InheritedTargetPortUsage() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
 
-      + "part def B specializes A { "
-      + "port o: boolean; "
-      + "connect o to i; "
-      + "}";
+    String model = "" +
+        "part def A { port i: boolean; }" +
+        "part def B specializes A { port o: boolean; connect o to i; }";
 
     var ast = SysMLv2Mill.parser().parse_String(model).get();
+
     tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
     tool.finalizeSymbolTable(ast);
@@ -139,11 +112,5 @@ public class InheritedConnectionResolutionTest {
     checker.checkAll(ast);
 
     assertThat(Log.getFindings()).isEmpty();
-  }
-
-  @AfterEach
-  void clearLog() {
-    Log.clearFindings();
-    Log.enableFailQuick(true);
   }
 }

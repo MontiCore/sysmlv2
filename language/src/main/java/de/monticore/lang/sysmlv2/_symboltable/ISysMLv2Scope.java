@@ -275,51 +275,25 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
         predicate
     );
 
-    if (!resolved.isEmpty()) {
+    // Continue to look for symbols in superTypes only if necessary
+    if (!resolved.isEmpty()
+        || !isPresentSpanningSymbol()
+        || !(getSpanningSymbol() instanceof PartDefSymbol)
+        || !getSpanningSymbol().isPresentAstNode()) {
       return resolved;
     }
 
-    if (!isPresentSpanningSymbol()
-        || !(getSpanningSymbol() instanceof PartDefSymbol)) {
-      return resolved;
-    }
-
-    PartDefSymbol partDef = (PartDefSymbol) getSpanningSymbol();
-
-    if (!partDef.isPresentAstNode()) {
-      return resolved;
-    }
-
-    final LinkedHashSet<PortUsageSymbol> inherited = new LinkedHashSet<>();
-
-    for (var specialization : partDef.getAstNode().getSpecializationList()) {
-
-      if (!(specialization instanceof ASTSysMLSpecialization)) {
-        continue;
-      }
-
-      for (var superType : specialization.getSuperTypesList()) {
-
-        if (superType.getDefiningSymbol().isEmpty()
-            || !(superType.getDefiningSymbol().get() instanceof PartDef2TypeSymbolAdapter)) {
-          continue;
-        }
-
-        var parent = (PartDef2TypeSymbolAdapter) superType.getDefiningSymbol().get();
-
-        var parentScope = (ISysMLv2Scope) parent.getSpannedScope();
-
-        inherited.addAll(parentScope.resolvePortUsageLocallyMany(
-                false,
-                name,
-                modifier,
-                predicate
-            )
-        );
-      }
-    }
-
-    return new ArrayList<>(inherited);
+    return ((PartDefSymbol) getSpanningSymbol()).getAstNode()
+        .getSpecializationList().stream()
+        .filter(s -> s instanceof ASTSysMLSpecialization)
+        .flatMap(s -> s.getSuperTypesList().stream())
+        .map(t -> t.getDefiningSymbol())
+        .filter(s -> s.isPresent())
+        .map(s -> s.get())
+        .filter(s -> s instanceof PartDef2TypeSymbolAdapter)
+        .map(s -> (ISysMLv2Scope)((PartDef2TypeSymbolAdapter) s).getSpannedScope())
+        .flatMap(scope -> scope.resolvePortUsageLocallyMany(false, name, modifier, predicate).stream())
+        .collect(Collectors.toList());
   }
 
   @Override
