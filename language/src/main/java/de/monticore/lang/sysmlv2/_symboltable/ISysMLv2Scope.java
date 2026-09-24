@@ -10,6 +10,7 @@ import de.monticore.lang.sysmlactions._symboltable.CalcUsageSymbol;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlconstraints.symboltable.adapters.RequirementSubject2VariableSymbolAdapter;
 import de.monticore.lang.sysmlparts._ast.ASTSysMLImportStatement;
+import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlparts._symboltable.SysMLPackageSymbol;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.ItemDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.OccurrenceDef2TypeSymbolAdapter;
@@ -31,6 +32,7 @@ import de.monticore.lang.sysmlparts.symboltable.adapters.PortUsage2VariableSymbo
 import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
 import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
+import de.monticore.lang.sysmlv2._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlv2.symboltable.adapters.AttributeUsage2PortSymbolAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.CalcUsage2VariableAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Constraint2SpecificationAdapter;
@@ -257,6 +259,43 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     // import statements are not yet considered
 
     return potentialSymbolNames;
+  }
+
+  @Override
+  default List<PortUsageSymbol> resolvePortUsageLocallyMany(
+      boolean foundSymbols,
+      String name,
+      AccessModifier modifier,
+      Predicate<PortUsageSymbol> predicate
+  ) {
+    var resolved = ISysMLv2ScopeTOP.super.resolvePortUsageLocallyMany(
+        foundSymbols,
+        name,
+        modifier,
+        predicate
+    );
+
+    // Continue to look for symbols in superTypes only if necessary
+    if (!resolved.isEmpty()
+        || !isPresentSpanningSymbol()
+        || !(getSpanningSymbol() instanceof PartDefSymbol)
+        || !getSpanningSymbol().isPresentAstNode()) {
+      return resolved;
+    }
+
+    var inherited = ((PartDefSymbol) getSpanningSymbol()).getAstNode()
+        .getSpecializationList().stream()
+        .filter(s -> s instanceof ASTSysMLSpecialization)
+        .flatMap(s -> s.getSuperTypesList().stream())
+        .map(t -> t.getDefiningSymbol())
+        .filter(s -> s.isPresent())
+        .map(s -> s.get())
+        .filter(s -> s instanceof PartDef2TypeSymbolAdapter)
+        .map(s -> (ISysMLv2Scope)((PartDef2TypeSymbolAdapter) s).getSpannedScope())
+        .flatMap(scope -> scope.resolvePortUsageLocallyMany(false, name, modifier, predicate).stream())
+        .collect(Collectors.toCollection(LinkedHashSet::new));
+
+    return new ArrayList<>(inherited);
   }
 
   @Override
