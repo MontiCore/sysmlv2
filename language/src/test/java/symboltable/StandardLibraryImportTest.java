@@ -4,12 +4,16 @@ import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
-import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 
@@ -107,8 +111,38 @@ public class StandardLibraryImportTest {
     var type = ((ASTAttributeUsage) ast.getSysMLElement(1)).getSpecialization(0).getSuperTypes(0);
 
     assertThat(type.printType()).isEqualTo("Bag");
-    assertThat(((ISysMLv2Scope)type.getEnclosingScope()).resolveType(type.printType())).isPresent();
-    assertThat(((ISysMLv2Scope)type.getEnclosingScope()).resolveType(type.printType()).get().getFullName()).isEqualTo("Collections.Bag");
+    var resolved = ((ISysMLv2Scope) type.getEnclosingScope()).resolveType("Bag");
+    assertThat(resolved).isPresent();
+    assertThat(resolved.get()).isInstanceOf(TypeSymbol.class);
+    assertThat(resolved.get().getFullName()).isEqualTo("Collections.Bag");
+    assertThat(Log.getFindings()).isEmpty();
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "private import Collections::List; attribute a: List;",
+      "private import Collections::*; attribute a: List;",
+      "attribute a: Collections::List;"
+  })
+  public void testCollectionsListResolving(String model) throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    var attribute = (ASTAttributeUsage) ast.getSysMLElement(ast.sizeSysMLElements() - 1);
+    var type = attribute.getSpecialization(0).getSuperTypes(0);
+    var resolved = ((ISysMLv2Scope) type.getEnclosingScope()).resolveType(type.printType());
+
+    assertThat(resolved).isPresent();
+    assertThat(resolved.get()).isInstanceOf(TypeSymbol.class);
+    assertThat(resolved.get().getFullName()).isEqualTo("Collections.List");
+    assertThat(Log.getFindings()).isEmpty();
   }
 
   @Test
