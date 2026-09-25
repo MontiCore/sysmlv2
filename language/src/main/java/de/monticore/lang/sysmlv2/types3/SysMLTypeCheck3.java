@@ -1,11 +1,13 @@
 package de.monticore.lang.sysmlv2.types3;
 
 import de.monticore.expressions.commonexpressions.types3.util.CommonExpressionsLValueRelations;
-import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisTypeVisitor;
+import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisCTTIVisitor;
 import de.monticore.expressions.streamexpressions.types3.StreamExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
+import de.monticore.ocl.oclexpressions.types3.OCLExpressionsCTTIVisitor;
+import de.monticore.ocl.setexpressions.types3.SetExpressionsCTTIVisitor;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionTypesTypeVisitor;
@@ -13,6 +15,7 @@ import de.monticore.types.mcsimplegenerictypes.types3.MCSimpleGenericTypesTypeVi
 import de.monticore.types.mcstructuraltypes.types3.MCStructuralTypesTypeVisitor;
 import de.monticore.types3.Type4Ast;
 import de.monticore.types3.TypeCheck3;
+import de.monticore.types3.generics.context.InferenceContext4Ast;
 import de.monticore.types3.streams.StreamSymTypeRelations;
 import de.monticore.types3.util.MapBasedTypeCheck3;
 import de.monticore.visitor.ITraverser;
@@ -49,45 +52,65 @@ public class SysMLTypeCheck3 extends MapBasedTypeCheck3 {
 
     SysMLv2Traverser typeTraverser = SysMLv2Mill.inheritanceTraverser();
     Type4Ast type4Ast = new Type4Ast();
+    InferenceContext4Ast ctx4Ast = new InferenceContext4Ast();
 
     // Expressions
-    var forBasis = new ExpressionBasisTypeVisitor();
+    var forBasis = new ExpressionBasisCTTIVisitor();
     forBasis.setType4Ast(type4Ast);
+    forBasis.setContext4Ast(ctx4Ast);
     typeTraverser.add4ExpressionsBasis(forBasis);
+    typeTraverser.setExpressionsBasisHandler(forBasis);
 
     var forLiterals = new MCCommonLiteralsTypeVisitor();
     forLiterals.setType4Ast(type4Ast);
+    forLiterals.setContext4Ast(ctx4Ast);
     typeTraverser.add4MCCommonLiterals(forLiterals);
 
     var forCommon = new SysMLCommonExpressionsTypeVisitor();
     forCommon.setType4Ast(type4Ast);
+    forCommon.setContext4Ast(ctx4Ast);
     typeTraverser.add4CommonExpressions(forCommon);
     typeTraverser.setCommonExpressionsHandler(forCommon);
     typeTraverser.add4SysMLExpressions(forCommon);
     typeTraverser.setSysMLExpressionsHandler(forCommon);
 
-    var forOcl = new SysMLOCLExpressionsTypeVisitor();
+    var forOcl = new OCLExpressionsCTTIVisitor();
     forOcl.setType4Ast(type4Ast);
+    forOcl.setContext4Ast(ctx4Ast);
     typeTraverser.add4OCLExpressions(forOcl);
-    typeTraverser.add4SysMLExpressions(forOcl);
+    typeTraverser.setOCLExpressionsHandler(forOcl);
+
+    var forSysMLOcl = new SysMLOCLExpressionsTypeVisitor();
+    forSysMLOcl.setType4Ast(type4Ast);
+    forSysMLOcl.setContext4Ast(ctx4Ast);
+    typeTraverser.add4SysMLExpressions(forSysMLOcl);
 
     var forStreams = new SysMLStreamExpressionsTypeVisitor();
     forStreams.setType4Ast(type4Ast);
+    forStreams.setContext4Ast(ctx4Ast);
     typeTraverser.add4StreamExpressions(forStreams);
 
-    var forSets = new SysMLSetExpressionsTypeVisitor();
+    var forSets = new SetExpressionsCTTIVisitor();
     forSets.setType4Ast(type4Ast);
+    forSets.setContext4Ast(ctx4Ast);
     typeTraverser.add4SetExpressions(forSets);
-    typeTraverser.add4SysMLExpressions(forSets);
+    typeTraverser.setSetExpressionsHandler(forSets);
+
+    var forSysMLSets = new SysMLSetExpressionsTypeVisitor();
+    forSysMLSets.setType4Ast(type4Ast);
+    forSysMLSets.setContext4Ast(ctx4Ast);
+    typeTraverser.add4SysMLExpressions(forSysMLSets);
 
     // MCTypes
     var forBasicTypes = new SysMLMCBasicTypesTypeVisitor();
     forBasicTypes.setType4Ast(type4Ast);
+    forBasicTypes.setContext4Ast(ctx4Ast);
     typeTraverser.add4MCBasicTypes(forBasicTypes);
     typeTraverser.add4SysMLExpressions(forBasicTypes);
 
     var forStructuralTypes = new MCStructuralTypesTypeVisitor();
     forStructuralTypes.setType4Ast(type4Ast);
+    forStructuralTypes.setContext4Ast(ctx4Ast);
     typeTraverser.add4MCStructuralTypes(forStructuralTypes);
 
     var forSimpleGenericTypes = new MCSimpleGenericTypesTypeVisitor();
@@ -96,6 +119,7 @@ public class SysMLTypeCheck3 extends MapBasedTypeCheck3 {
 
     var forCollectionTypes = new MCCollectionTypesTypeVisitor();
     forCollectionTypes.setType4Ast(type4Ast);
+    forCollectionTypes.setContext4Ast(ctx4Ast);
     typeTraverser.add4MCCollectionTypes(forCollectionTypes);
 
     // create delegate
