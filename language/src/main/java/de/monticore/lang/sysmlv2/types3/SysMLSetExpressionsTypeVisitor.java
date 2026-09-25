@@ -3,9 +3,9 @@ package de.monticore.lang.sysmlv2.types3;
 import de.monticore.lang.sysmlexpressions._ast.ASTElementOfExpression;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsVisitor2;
 import de.monticore.ocl.setexpressions._ast.ASTSetInExpressionBuilder;
-import de.monticore.ocl.setexpressions.types3.SetExpressionsTypeVisitor;
+import de.monticore.ocl.setexpressions.types3.SetExpressionsCTTIVisitor;
 
-public class SysMLSetExpressionsTypeVisitor extends SetExpressionsTypeVisitor implements
+public class SysMLSetExpressionsTypeVisitor extends SetExpressionsCTTIVisitor implements
     SysMLExpressionsVisitor2 {
   @Override
   public void endVisit(ASTElementOfExpression node) {
