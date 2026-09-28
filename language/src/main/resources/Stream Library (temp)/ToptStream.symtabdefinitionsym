@@ -147,8 +147,18 @@
                   "fullName": "ToptStream.ToptStream.toptIterate.elem",
                   "packageName": "ToptStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypeVariable",
-                    "varName": "ToptStream.ToptStream.toptIterate.S"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypeVariable",
+                      "varName": "ToptStream.ToptStream.toptIterate.S"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "ToptStream.ToptStream.toptIterate.S"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 },
                 {
@@ -200,8 +210,17 @@
                     "typeConstructorFullName": "ToptStream.ToptStream",
                     "arguments": [
                       {
-                        "kind": "de.monticore.types.check.SymTypeVariable",
-                        "varName": "ToptStream.ToptStream.toptProjFst.U"
+                        "kind": "de.monticore.types.check.SymTypeOfTuple",
+                        "listedTypes": [
+                          {
+                            "kind": "de.monticore.types.check.SymTypeVariable",
+                            "varName": "ToptStream.ToptStream.toptProjFst.S"
+                          },
+                          {
+                            "kind": "de.monticore.types.check.SymTypeVariable",
+                            "varName": "ToptStream.ToptStream.toptProjFst.U"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -251,8 +270,17 @@
                     "typeConstructorFullName": "ToptStream.ToptStream",
                     "arguments": [
                       {
-                        "kind": "de.monticore.types.check.SymTypeVariable",
-                        "varName": "ToptStream.ToptStream.toptProjSnd.U"
+                        "kind": "de.monticore.types.check.SymTypeOfTuple",
+                        "listedTypes": [
+                          {
+                            "kind": "de.monticore.types.check.SymTypeVariable",
+                            "varName": "ToptStream.ToptStream.toptProjSnd.S"
+                          },
+                          {
+                            "kind": "de.monticore.types.check.SymTypeVariable",
+                            "varName": "ToptStream.ToptStream.toptProjSnd.U"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -429,8 +457,18 @@
                   "fullName": "ToptStream.ToptStream.map.f",
                   "packageName": "ToptStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypeVariable",
-                    "varName": "ToptStream.ToptStream.map.U"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypeVariable",
+                      "varName": "ToptStream.ToptStream.map.U"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "ToptStream.ToptStream.T"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 },
                 {
@@ -467,8 +505,18 @@
                   "fullName": "ToptStream.ToptStream.filter.predicate",
                   "packageName": "ToptStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypePrimitive",
-                    "primitiveName": "boolean"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "ToptStream.ToptStream.T"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 }
               ]
@@ -499,8 +547,18 @@
                   "fullName": "ToptStream.ToptStream.takeWhile.predicate",
                   "packageName": "ToptStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypePrimitive",
-                    "primitiveName": "boolean"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "ToptStream.ToptStream.T"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 }
               ]
@@ -531,8 +589,18 @@
                   "fullName": "ToptStream.ToptStream.dropWhile.predicate",
                   "packageName": "ToptStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypePrimitive",
-                    "primitiveName": "boolean"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "ToptStream.ToptStream.T"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 }
               ]
@@ -566,8 +634,17 @@
               "typeConstructorFullName": "ToptStream.ToptStream",
               "arguments": [
                 {
-                  "kind": "de.monticore.types.check.SymTypeVariable",
-                  "varName": "ToptStream.ToptStream.zip.U"
+                  "kind": "de.monticore.types.check.SymTypeOfTuple",
+                  "listedTypes": [
+                    {
+                      "kind": "de.monticore.types.check.SymTypeVariable",
+                      "varName": "ToptStream.ToptStream.T"
+                    },
+                    {
+                      "kind": "de.monticore.types.check.SymTypeVariable",
+                      "varName": "ToptStream.ToptStream.zip.U"
+                    }
+                  ]
                 }
               ]
             },
@@ -625,8 +702,28 @@
                   "fullName": "ToptStream.ToptStream.scanl.f",
                   "packageName": "ToptStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypeVariable",
-                    "varName": "ToptStream.ToptStream.scanl.U"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypeOfFunction",
+                      "returnType": {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "ToptStream.ToptStream.scanl.U"
+                      },
+                      "argumentTypes": [
+                        {
+                          "kind": "de.monticore.types.check.SymTypeVariable",
+                          "varName": "ToptStream.ToptStream.T"
+                        }
+                      ],
+                      "elliptic": false
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "ToptStream.ToptStream.scanl.U"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 },
                 {
