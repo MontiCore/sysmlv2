@@ -147,8 +147,18 @@
                   "fullName": "EventStream.EventStream.eIterate.elem",
                   "packageName": "EventStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypeVariable",
-                    "varName": "EventStream.EventStream.eIterate.S"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypeVariable",
+                      "varName": "EventStream.EventStream.eIterate.S"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "EventStream.EventStream.eIterate.S"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 },
                 {
@@ -200,8 +210,17 @@
                     "typeConstructorFullName": "UntimedStream.UntimedStream",
                     "arguments": [
                       {
-                        "kind": "de.monticore.types.check.SymTypeVariable",
-                        "varName": "EventStream.EventStream.eProjFst.U"
+                        "kind": "de.monticore.types.check.SymTypeOfTuple",
+                        "listedTypes": [
+                          {
+                            "kind": "de.monticore.types.check.SymTypeVariable",
+                            "varName": "EventStream.EventStream.eProjFst.S"
+                          },
+                          {
+                            "kind": "de.monticore.types.check.SymTypeVariable",
+                            "varName": "EventStream.EventStream.eProjFst.U"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -251,8 +270,17 @@
                     "typeConstructorFullName": "UntimedStream.UntimedStream",
                     "arguments": [
                       {
-                        "kind": "de.monticore.types.check.SymTypeVariable",
-                        "varName": "EventStream.EventStream.eProjSnd.U"
+                        "kind": "de.monticore.types.check.SymTypeOfTuple",
+                        "listedTypes": [
+                          {
+                            "kind": "de.monticore.types.check.SymTypeVariable",
+                            "varName": "EventStream.EventStream.eProjSnd.S"
+                          },
+                          {
+                            "kind": "de.monticore.types.check.SymTypeVariable",
+                            "varName": "EventStream.EventStream.eProjSnd.U"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -429,8 +457,18 @@
                   "fullName": "EventStream.EventStream.map.f",
                   "packageName": "EventStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypeVariable",
-                    "varName": "EventStream.EventStream.map.U"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypeVariable",
+                      "varName": "EventStream.EventStream.map.U"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "EventStream.EventStream.T"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 },
                 {
@@ -467,8 +505,18 @@
                   "fullName": "EventStream.EventStream.filter.predicate",
                   "packageName": "EventStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypePrimitive",
-                    "primitiveName": "boolean"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "EventStream.EventStream.T"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 }
               ]
@@ -499,8 +547,18 @@
                   "fullName": "EventStream.EventStream.takeWhile.predicate",
                   "packageName": "EventStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypePrimitive",
-                    "primitiveName": "boolean"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "EventStream.EventStream.T"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 }
               ]
@@ -531,8 +589,18 @@
                   "fullName": "EventStream.EventStream.dropWhile.predicate",
                   "packageName": "EventStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypePrimitive",
-                    "primitiveName": "boolean"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "EventStream.EventStream.T"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 }
               ]
@@ -566,8 +634,17 @@
               "typeConstructorFullName": "EventStream.EventStream",
               "arguments": [
                 {
-                  "kind": "de.monticore.types.check.SymTypeVariable",
-                  "varName": "EventStream.EventStream.zip.U"
+                  "kind": "de.monticore.types.check.SymTypeOfTuple",
+                  "listedTypes": [
+                    {
+                      "kind": "de.monticore.types.check.SymTypeVariable",
+                      "varName": "EventStream.EventStream.T"
+                    },
+                    {
+                      "kind": "de.monticore.types.check.SymTypeVariable",
+                      "varName": "EventStream.EventStream.zip.U"
+                    }
+                  ]
                 }
               ]
             },
@@ -625,8 +702,28 @@
                   "fullName": "EventStream.EventStream.scanl.f",
                   "packageName": "EventStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypeVariable",
-                    "varName": "EventStream.EventStream.scanl.U"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypeOfFunction",
+                      "returnType": {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "EventStream.EventStream.scanl.U"
+                      },
+                      "argumentTypes": [
+                        {
+                          "kind": "de.monticore.types.check.SymTypeVariable",
+                          "varName": "EventStream.EventStream.T"
+                        }
+                      ],
+                      "elliptic": false
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "EventStream.EventStream.scanl.U"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 },
                 {
@@ -705,14 +802,30 @@
                   "fullName": "EventStream.EventStream.mapSlice.f",
                   "packageName": "EventStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypeOfGenerics",
-                    "typeConstructorFullName": "UntimedStream.UntimedStream",
-                    "arguments": [
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypeOfGenerics",
+                      "typeConstructorFullName": "UntimedStream.UntimedStream",
+                      "arguments": [
+                        {
+                          "kind": "de.monticore.types.check.SymTypeVariable",
+                          "varName": "EventStream.EventStream.mapSlice.U"
+                        }
+                      ]
+                    },
+                    "argumentTypes": [
                       {
-                        "kind": "de.monticore.types.check.SymTypeVariable",
-                        "varName": "EventStream.EventStream.mapSlice.U"
+                        "kind": "de.monticore.types.check.SymTypeOfGenerics",
+                        "typeConstructorFullName": "UntimedStream.UntimedStream",
+                        "arguments": [
+                          {
+                            "kind": "de.monticore.types.check.SymTypeVariable",
+                            "varName": "EventStream.EventStream.T"
+                          }
+                        ]
                       }
-                    ]
+                    ],
+                    "elliptic": false
                   }
                 },
                 {
