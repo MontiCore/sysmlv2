@@ -25,6 +25,19 @@
           },
           {
             "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "isEmpty",
+            "fullName": "Stream.Stream.isEmpty",
+            "packageName": "Stream",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "boolean"
+            },
+            "isMethod": true,
+            "isPublic": true,
+            "isAbstract": true
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
             "name": "hasInfiniteLen",
             "fullName": "Stream.Stream.hasInfiniteLen",
             "packageName": "Stream",
@@ -113,8 +126,18 @@
                   "fullName": "Stream.Stream.iterate.elem",
                   "packageName": "Stream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypeVariable",
-                    "varName": "Stream.Stream.iterate.S"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypeVariable",
+                      "varName": "Stream.Stream.iterate.S"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "Stream.Stream.iterate.S"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 },
                 {
@@ -167,8 +190,17 @@
                     "typeConstructorFullName": "Stream.Stream",
                     "arguments": [
                       {
-                        "kind": "de.monticore.types.check.SymTypeVariable",
-                        "varName": "Stream.Stream.projFst.U"
+                        "kind": "de.monticore.types.check.SymTypeOfTuple",
+                        "listedTypes": [
+                          {
+                            "kind": "de.monticore.types.check.SymTypeVariable",
+                            "varName": "Stream.Stream.projFst.S"
+                          },
+                          {
+                            "kind": "de.monticore.types.check.SymTypeVariable",
+                            "varName": "Stream.Stream.projFst.U"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -219,8 +251,17 @@
                     "typeConstructorFullName": "Stream.Stream",
                     "arguments": [
                       {
-                        "kind": "de.monticore.types.check.SymTypeVariable",
-                        "varName": "Stream.Stream.projSnd.U"
+                        "kind": "de.monticore.types.check.SymTypeOfTuple",
+                        "listedTypes": [
+                          {
+                            "kind": "de.monticore.types.check.SymTypeVariable",
+                            "varName": "Stream.Stream.projSnd.S"
+                          },
+                          {
+                            "kind": "de.monticore.types.check.SymTypeVariable",
+                            "varName": "Stream.Stream.projSnd.U"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -403,8 +444,18 @@
                   "fullName": "Stream.Stream.map.f",
                   "packageName": "Stream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypeVariable",
-                    "varName": "Stream.Stream.map.U"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypeVariable",
+                      "varName": "Stream.Stream.map.U"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "Stream.Stream.T"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 },
                 {
@@ -442,8 +493,18 @@
                   "fullName": "Stream.Stream.filter.predicate",
                   "packageName": "Stream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypePrimitive",
-                    "primitiveName": "boolean"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "Stream.Stream.T"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 }
               ]
@@ -475,8 +536,18 @@
                   "fullName": "Stream.Stream.takeWhile.predicate",
                   "packageName": "Stream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypePrimitive",
-                    "primitiveName": "boolean"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "Stream.Stream.T"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 }
               ]
@@ -508,8 +579,18 @@
                   "fullName": "Stream.Stream.dropWhile.predicate",
                   "packageName": "Stream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypePrimitive",
-                    "primitiveName": "boolean"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "Stream.Stream.T"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 }
               ]
@@ -544,8 +625,17 @@
               "typeConstructorFullName": "Stream.Stream",
               "arguments": [
                 {
-                  "kind": "de.monticore.types.check.SymTypeVariable",
-                  "varName": "Stream.Stream.zip.U"
+                  "kind": "de.monticore.types.check.SymTypeOfTuple",
+                  "listedTypes": [
+                    {
+                      "kind": "de.monticore.types.check.SymTypeVariable",
+                      "varName": "Stream.Stream.T"
+                    },
+                    {
+                      "kind": "de.monticore.types.check.SymTypeVariable",
+                      "varName": "Stream.Stream.zip.U"
+                    }
+                  ]
                 }
               ]
             },
@@ -624,8 +714,28 @@
                   "fullName": "Stream.Stream.scanl.f",
                   "packageName": "Stream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypeVariable",
-                    "varName": "Stream.Stream.scanl.U"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypeOfFunction",
+                      "returnType": {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "Stream.Stream.scanl.U"
+                      },
+                      "argumentTypes": [
+                        {
+                          "kind": "de.monticore.types.check.SymTypeVariable",
+                          "varName": "Stream.Stream.T"
+                        }
+                      ],
+                      "elliptic": false
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "Stream.Stream.scanl.U"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 },
                 {
