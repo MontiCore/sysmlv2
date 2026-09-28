@@ -135,8 +135,18 @@
                   "fullName": "SyncStream.SyncStream.syncIterate.elem",
                   "packageName": "SyncStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypeVariable",
-                    "varName": "SyncStream.SyncStream.syncIterate.S"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypeVariable",
+                      "varName": "SyncStream.SyncStream.syncIterate.S"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "SyncStream.SyncStream.syncIterate.S"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 },
                 {
@@ -188,8 +198,17 @@
                     "typeConstructorFullName": "SyncStream.SyncStream",
                     "arguments": [
                       {
-                        "kind": "de.monticore.types.check.SymTypeVariable",
-                        "varName": "SyncStream.SyncStream.syncProjFst.U"
+                        "kind": "de.monticore.types.check.SymTypeOfTuple",
+                        "listedTypes": [
+                          {
+                            "kind": "de.monticore.types.check.SymTypeVariable",
+                            "varName": "SyncStream.SyncStream.syncProjFst.S"
+                          },
+                          {
+                            "kind": "de.monticore.types.check.SymTypeVariable",
+                            "varName": "SyncStream.SyncStream.syncProjFst.U"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -239,8 +258,17 @@
                     "typeConstructorFullName": "SyncStream.SyncStream",
                     "arguments": [
                       {
-                        "kind": "de.monticore.types.check.SymTypeVariable",
-                        "varName": "SyncStream.SyncStream.syncProjSnd.U"
+                        "kind": "de.monticore.types.check.SymTypeOfTuple",
+                        "listedTypes": [
+                          {
+                            "kind": "de.monticore.types.check.SymTypeVariable",
+                            "varName": "SyncStream.SyncStream.syncProjSnd.S"
+                          },
+                          {
+                            "kind": "de.monticore.types.check.SymTypeVariable",
+                            "varName": "SyncStream.SyncStream.syncProjSnd.U"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -417,8 +445,18 @@
                   "fullName": "SyncStream.SyncStream.map.f",
                   "packageName": "SyncStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypeVariable",
-                    "varName": "SyncStream.SyncStream.map.U"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypeVariable",
+                      "varName": "SyncStream.SyncStream.map.U"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "SyncStream.SyncStream.T"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 },
                 {
@@ -455,8 +493,18 @@
                   "fullName": "SyncStream.SyncStream.filter.predicate",
                   "packageName": "SyncStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypePrimitive",
-                    "primitiveName": "boolean"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "SyncStream.SyncStream.T"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 }
               ]
@@ -487,8 +535,18 @@
                   "fullName": "SyncStream.SyncStream.takeWhile.predicate",
                   "packageName": "SyncStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypePrimitive",
-                    "primitiveName": "boolean"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "SyncStream.SyncStream.T"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 }
               ]
@@ -519,8 +577,18 @@
                   "fullName": "SyncStream.SyncStream.dropWhile.predicate",
                   "packageName": "SyncStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypePrimitive",
-                    "primitiveName": "boolean"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypePrimitive",
+                      "primitiveName": "boolean"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "SyncStream.SyncStream.T"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 }
               ]
@@ -554,8 +622,17 @@
               "typeConstructorFullName": "SyncStream.SyncStream",
               "arguments": [
                 {
-                  "kind": "de.monticore.types.check.SymTypeVariable",
-                  "varName": "SyncStream.SyncStream.zip.U"
+                  "kind": "de.monticore.types.check.SymTypeOfTuple",
+                  "listedTypes": [
+                    {
+                      "kind": "de.monticore.types.check.SymTypeVariable",
+                      "varName": "SyncStream.SyncStream.T"
+                    },
+                    {
+                      "kind": "de.monticore.types.check.SymTypeVariable",
+                      "varName": "SyncStream.SyncStream.zip.U"
+                    }
+                  ]
                 }
               ]
             },
@@ -613,8 +690,28 @@
                   "fullName": "SyncStream.SyncStream.scanl.f",
                   "packageName": "SyncStream",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypeVariable",
-                    "varName": "SyncStream.SyncStream.scanl.U"
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypeOfFunction",
+                      "returnType": {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "SyncStream.SyncStream.scanl.U"
+                      },
+                      "argumentTypes": [
+                        {
+                          "kind": "de.monticore.types.check.SymTypeVariable",
+                          "varName": "SyncStream.SyncStream.T"
+                        }
+                      ],
+                      "elliptic": false
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "SyncStream.SyncStream.scanl.U"
+                      }
+                    ],
+                    "elliptic": false
                   }
                 },
                 {
