@@ -4,6 +4,7 @@ import de.monticore.lang.sysmlbasis._ast.ASTAnonymousReference;
 import de.monticore.lang.sysmlbasis._ast.ASTAnonymousUsage;
 import de.monticore.lang.sysmlbasis._ast.ASTModifier;
 import de.monticore.lang.sysmlbasis._visitor.SysMLBasisVisitor2;
+import de.monticore.lang.sysmloccurrences._ast.ASTItemUsage;
 import de.monticore.lang.sysmloccurrences._visitor.SysMLOccurrencesVisitor2;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
