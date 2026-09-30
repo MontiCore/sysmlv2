@@ -54,4 +54,11 @@ public class DirectionCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor
     }
   }
 
+  @Override
+  public void visit(ASTItemUsage node) {
+    if(node.isPresentSymbol()) {
+      node.getSymbol().setIn(isIn(node.getModifier()));
+      node.getSymbol().setOut(isOut(node.getModifier()));
+    }
+  }
 }
