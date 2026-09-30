@@ -299,6 +299,43 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
   }
 
   @Override
+  default List<PartUsageSymbol> resolvePartUsageLocallyMany(
+      boolean foundSymbols,
+      String name,
+      AccessModifier modifier,
+      Predicate<PartUsageSymbol> predicate
+  ) {
+    var resolved =
+        ISysMLv2ScopeTOP.super.resolvePartUsageLocallyMany(
+            foundSymbols,
+            name,
+            modifier,
+            predicate
+        );
+
+    if (!resolved.isEmpty()
+        || !isPresentSpanningSymbol()
+        || !(getSpanningSymbol() instanceof PartDefSymbol)
+        || !getSpanningSymbol().isPresentAstNode()) {
+      return resolved;
+    }
+
+    var inherited = ((PartDefSymbol) getSpanningSymbol()).getAstNode()
+        .getSpecializationList().stream()
+        .filter(s -> s instanceof ASTSysMLSpecialization)
+        .flatMap(s -> s.getSuperTypesList().stream())
+        .map(s -> s.getDefiningSymbol())
+        .filter(s -> s.isPresent())
+        .map(s -> s.get())
+        .filter(s -> s instanceof PartDef2TypeSymbolAdapter)
+        .map(s -> (ISysMLv2Scope)((PartDef2TypeSymbolAdapter) s).getSpannedScope())
+        .flatMap(scope -> scope.resolvePartUsageLocallyMany(false, name, modifier, predicate).stream())
+        .collect(Collectors.toCollection(LinkedHashSet::new));
+
+    return new ArrayList<>(inherited);
+  }
+
+  @Override
   default List<RequirementSymbol> resolveAdaptedRequirementLocallyMany(
       boolean foundSymbols,
       String name,

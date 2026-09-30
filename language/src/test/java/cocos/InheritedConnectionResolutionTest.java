@@ -19,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class InheritedConnectionResolutionTest {
 
-  @Disabled("resolvePartUsageLocallyMany not overridden yet")
   @Test
   public void testAA3InheritedSubPartUsage() throws IOException {
     LogStub.init();
