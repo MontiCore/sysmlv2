@@ -106,11 +106,11 @@ public class FieldAccessExpressionInConstraintUsageTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "port def F { attribute a: boolean[2]; } part s { port f: F; constraint e { f.a[1] } }",
-      "port def F { attribute a: boolean; } part s { port f: F[1]; constraint e { f[1].a } }",
+      "port def F { in attribute a: boolean[2]; } part s { port f: F; constraint e { f.a[1] } }",
+      "port def F { in attribute a: boolean; } part s { port f: F[1]; constraint e { f[1].a } }",
 
-      "port def F { attribute a: boolean[2]; } part s { port f: F; constraint e { f[1] } }",
-      "port def F { attribute a: boolean; } part s { port f: F[1]; constraint e { f[1] } }"
+      "port def F { in attribute a: boolean[2]; } part s { port f: F; constraint e { f[1] } }",
+      "port def F { in attribute a: boolean; } part s { port f: F[1]; constraint e { f[1] } }"
   }) public void test4ValidExpr1(String model) throws IOException {
     var ast = parser.parse_String(model);
     assertThat(ast).isPresent();
@@ -131,8 +131,8 @@ public class FieldAccessExpressionInConstraintUsageTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "port def F { attribute a: boolean; } part s { port f: F[2]; constraint e { f.a } }",
-      "port def F { attribute a: boolean; } part s { port f: F[2]; constraint e { f } }"
+      "port def F { in attribute a: boolean; } part s { port f: F[2]; constraint e { f.a } }",
+      "port def F { in attribute a: boolean; } part s { port f: F[2]; constraint e { f } }"
   })
   public void test4InvalidExpr(String model) throws IOException {
     var ast = parser.parse_String(model);;

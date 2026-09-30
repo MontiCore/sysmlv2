@@ -121,74 +121,74 @@ public class FieldAccessExpressionInStateUsageTest {
   static Stream<Arguments> createInputs() {
     return Stream.of(
         Arguments.of(
-            "port def F { attribute a: boolean; }" +
+            "port def F { in attribute a: boolean; }" +
                 "part def X { port f: F; state s { transition first S if f then S; } }")
         ,Arguments.of(
-            "port def F { attribute a: boolean[3]; }" +
+            "port def F { in attribute a: boolean[3]; }" +
                 "part def X { port f: F; state s { transition first S if f[1] then S; } }")
         ,Arguments.of(
-            "port def F { attribute a: boolean; } " +
+            "port def F { in attribute a: boolean; } " +
                 "part def X { port f: F[3]; exhibit state s { transition first S if f[1] then S; } }")
         ,Arguments.of(
-           "port def F { attribute a: boolean[3]; } " +
+           "port def F { in attribute a: boolean[3]; } " +
                "part def X { port f: F[3]; exhibit state s { transition first S if f[1][1] then S; } }")
         ,Arguments.of(
-            "port def F { attribute a: boolean; } part def X { port f: F; constraint e { f } }")
+            "port def F { in attribute a: boolean; } part def X { port f: F; constraint e { f } }")
 
 
         ,Arguments.of(
-            "port def F { attribute a: boolean; }" +
+            "port def F { in attribute a: boolean; }" +
                 "part def X { port f: F; state s { transition first S if f.a then S; } }")
         ,Arguments.of(
-            "port def F { attribute a: boolean[3]; }" +
+            "port def F { in attribute a: boolean[3]; }" +
                 "part def X { port f: F; state s { transition first S if f.a[1] then S; } }")
         ,Arguments.of(
-            "port def F { attribute a: boolean; } " +
+            "port def F { in attribute a: boolean; } " +
                 "part def X { port f: F[3]; exhibit state s { transition first S if f[1].a then S; } }")
         ,Arguments.of(
-            "port def F { attribute a: boolean[3]; } " +
+            "port def F { in attribute a: boolean[3]; } " +
                 "part def X { port f: F[3]; exhibit state s { transition first S if f[1].a[1] then S; } }")
         ,Arguments.of(
-            "port def F { attribute a: boolean; } part def X { port f: F; constraint e { f.a } }")
+            "port def F { in attribute a: boolean; } part def X { port f: F; constraint e { f.a } }")
         ,Arguments.of(
-            "port def F { attribute a: boolean; } part def X { port f: F[3]; constraint e { f[1].a } }")
+            "port def F { in attribute a: boolean; } part def X { port f: F[3]; constraint e { f[1].a } }")
 
 
         ,Arguments.of(
-            "port def F { attribute a: boolean; attribute b: nat; }" +
+            "port def F { in attribute a: boolean; in attribute b: nat; }" +
                 "part def X { port f: F; state s { transition first S if f.a then S; } }")
         ,Arguments.of(
-            "port def F { attribute a: boolean[3]; attribute b: nat[3]; }" +
+            "port def F { in attribute a: boolean[3]; in attribute b: nat[3]; }" +
                 "part def X { port f: F; state s { transition first S if f.a[1] then S; } }")
         ,Arguments.of(
-            "port def F { attribute a: boolean; attribute b: nat; } " +
+            "port def F { in attribute a: boolean; in attribute b: nat; } " +
                 "part def X { port f: F[3]; exhibit state s { transition first S if f[1].a then S; } }")
         ,Arguments.of(
-            "port def F { attribute a: boolean[3]; attribute b: nat[3]; } " +
+            "port def F { in attribute a: boolean[3]; in attribute b: nat[3]; } " +
                 "part def X { port f: F[3]; exhibit state s { transition first S if f[1].a[1] then S; } }")
         ,Arguments.of(
-            "port def F { attribute a: boolean; attribute b: nat; } part def X { port f: F; constraint e { f.a } }")
+            "port def F { in attribute a: boolean; in attribute b: nat; } part def X { port f: F; constraint e { f.a } }")
         ,Arguments.of(
-            "port def F { attribute a: boolean; attribute b: nat; } part def X { port f: F[3]; constraint e { f[1].a } }")
+            "port def F { in attribute a: boolean; in attribute b: nat; } part def X { port f: F[3]; constraint e { f[1].a } }")
     );
   }
 
   static Stream<Arguments> createInvalidInputs() {
     return Stream.of(
         Arguments.of(
-            "port def F { attribute a: boolean; attribute b: nat; }" +
+            "port def F { in attribute a: boolean; in attribute b: nat; }" +
                 "part def X { port f: F; state s { transition first S if f then S; } }")
         ,Arguments.of(
-            "port def F { attribute a: boolean[3]; attribute b: nat[3]; }" +
+            "port def F { in attribute a: boolean[3]; in attribute b: nat[3]; }" +
                 "part def X { port f: F; state s { transition first S if f[1] then S; } }")
         ,Arguments.of(
-            "port def F { attribute a: boolean; attribute b: nat; } " +
+            "port def F { in attribute a: boolean; in attribute b: nat; } " +
                 "part def X { port f: F[3]; exhibit state s { transition first S if f[1] then S; } }")
         ,Arguments.of(
-           "port def F { attribute a: boolean[3]; attribute b: nat[3]; } " +
+           "port def F { in attribute a: boolean[3]; in attribute b: nat[3]; } " +
                "part def X { port f: F[3]; exhibit state s { transition first S if f[1][1] then S; } }")
         ,Arguments.of(
-            "port def F { attribute a: boolean; attribute b: nat; } part def X { port f: F; constraint e { f } }")
+            "port def F { in attribute a: boolean; in attribute b: nat; } part def X { port f: F; constraint e { f } }")
         // TODO one field access with a stream method
     );
   }
