@@ -2,7 +2,7 @@
 package symboltable;
 
 import de.monticore.io.paths.MCPath;
-import de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol;
+import de.monticore.lang.sysmlbasis._symboltable.SysMLDefinitionSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortDefSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
@@ -158,7 +158,7 @@ public class SerializationTest {
     // check inter-model resolution of fqn from the package scope of the reference artifact.
     Assertions.assertThat(artifactScope.getSubScopes()).isNotEmpty();
     ISysMLv2Scope packageScope = artifactScope.getSubScopes().get(0);
-    Optional<SysMLTypeSymbol> resolved = packageScope.resolveSysMLType(fqnSymbol);
+    Optional<SysMLDefinitionSymbol> resolved = packageScope.resolveSysMLDefinition(fqnSymbol);
     assertThat(resolved).isPresent();
 
     if(resolved.get() instanceof PortDefSymbol) {
@@ -168,7 +168,7 @@ public class SerializationTest {
     }
 
     // resolution of relative symbols does not work if symbol is in another artifact scope (i.e. top-down resolution is required).
-    Optional<SysMLTypeSymbol> relativeResolved = packageScope.resolveSysMLType(relativeSymbol);
+    Optional<SysMLDefinitionSymbol> relativeResolved = packageScope.resolveSysMLDefinition(relativeSymbol);
     assertThat(relativeResolved).isEmpty();
   }
 

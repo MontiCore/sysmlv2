@@ -22,7 +22,7 @@ component grammar SysMLBasis
   interface SysMLElement;
 
   /** Element mit eigenem Symbol für resolve (zB. für ReqDef) */
-  interface symbol SysMLType extends SysMLElement;
+  interface symbol SysMLDefinition extends SysMLElement;
 
   SysMLCardinality =
     Cardinality (["ordered"] | ["nonunique"])* | (["ordered"] | ["nonunique"])+;

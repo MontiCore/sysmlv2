@@ -19,7 +19,7 @@ component grammar SysMLParts
    * ##################################################################
    */
 
-  symbol scope PartDef implements SysMLType =
+  symbol scope PartDef implements SysMLDefinition =
     Modifier UserDefinedKeyword* "part" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
@@ -32,14 +32,14 @@ component grammar SysMLParts
       directRefinements:de.monticore.types.check.SymTypeExpression*
       requirementType:SysMLReqType;
 
-  symbol scope AttributeDef implements SysMLType =
+  symbol scope AttributeDef implements SysMLDefinition =
     Modifier UserDefinedKeyword* "attribute" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
 
-  symbol scope EnumDef implements SysMLType =
+  symbol scope EnumDef implements SysMLDefinition =
     Modifier UserDefinedKeyword* "enum" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
@@ -62,7 +62,7 @@ component grammar SysMLParts
       SysMLElement*
     "}" | ";") ;
 
-  symbol scope PortDef implements SysMLType =
+  symbol scope PortDef implements SysMLDefinition =
     Modifier UserDefinedKeyword* "port" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
@@ -218,7 +218,7 @@ component grammar SysMLParts
        SysMLElement*
      "}" | ";") ;
 
-  symbol scope ConnectionDef implements SysMLType =
+  symbol scope ConnectionDef implements SysMLDefinition =
     Modifier UserDefinedKeyword* "connection" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
@@ -240,7 +240,7 @@ component grammar SysMLParts
    * interface usage are restricted to be port usages.
    * ================================================================================================================ */
 
-  symbol scope InterfaceDef implements SysMLType =
+  symbol scope InterfaceDef implements SysMLDefinition =
     Modifier UserDefinedKeyword* "interface" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("(" (SysMLParameter || ",")* ")")?
@@ -259,7 +259,7 @@ component grammar SysMLParts
        SysMLElement*
      "}" | ";") ;
 
-  symbol scope FlowDef implements SysMLType =
+  symbol scope FlowDef implements SysMLDefinition =
     Modifier UserDefinedKeyword* "flow" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
@@ -271,7 +271,7 @@ component grammar SysMLParts
    * Allocations
    * ================================================================================================================ */
 
-  symbol scope AllocationDef implements SysMLType =
+  symbol scope AllocationDef implements SysMLDefinition =
     Modifier UserDefinedKeyword* "allocation" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
@@ -307,7 +307,7 @@ component grammar SysMLParts
    * OCCURRENCES
    * ##################################################################
    */
-  symbol scope OccurrenceDef implements SysMLType =
+  symbol scope OccurrenceDef implements SysMLDefinition =
     Modifier UserDefinedKeyword* "occurrence" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
@@ -329,7 +329,7 @@ component grammar SysMLParts
     "}" | ";") ;
 
   // IndividualUsages are parsed as AnonymousReferences with Modifier UserDefinedKeyword* "individual"
-  symbol scope IndividualDef implements SysMLType =
+  symbol scope IndividualDef implements SysMLDefinition =
     Modifier UserDefinedKeyword* "individual" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
@@ -342,7 +342,7 @@ component grammar SysMLParts
    * more item definitions.
    * ================================================================================================================ */
 
-  symbol scope ItemDef implements SysMLType =
+  symbol scope ItemDef implements SysMLDefinition =
     Modifier UserDefinedKeyword* "item" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("(" (SysMLParameter || ",")* ")")?
@@ -379,7 +379,7 @@ component grammar SysMLParts
    * regard (i.e., having an Expression), they are not explicitly related.
    */
 
-  symbol scope AnalysisDef implements SysMLType =
+  symbol scope AnalysisDef implements SysMLDefinition =
       Modifier UserDefinedKeyword* "analysis" "def"
       SysMLIdentifier? Name SysMLCardinality? Specialization*
       ("{"
@@ -401,7 +401,7 @@ component grammar SysMLParts
         Expression?
       "}" | ";") ;
 
-  symbol scope VerificationDef implements SysMLType =
+  symbol scope VerificationDef implements SysMLDefinition =
       Modifier UserDefinedKeyword* "verification" "def"
       SysMLIdentifier? Name SysMLCardinality? Specialization*
       ("{"
@@ -417,7 +417,7 @@ component grammar SysMLParts
         Expression?
       "}" | ";") ;
 
-  symbol scope UseCaseDef implements SysMLType =
+  symbol scope UseCaseDef implements SysMLDefinition =
       Modifier UserDefinedKeyword* "use" "case" "def"
       SysMLIdentifier? Name SysMLCardinality? Specialization*
       ("{"
@@ -454,7 +454,7 @@ component grammar SysMLParts
         Expression?
       "}" | ";") ;
 
-  symbol scope CaseDef implements SysMLType =
+  symbol scope CaseDef implements SysMLDefinition =
       Modifier UserDefinedKeyword* "case" "def"
       SysMLIdentifier? Name SysMLCardinality? Specialization*
       ("{"
@@ -515,7 +515,7 @@ component grammar SysMLParts
    * Metadata is additional data that can be used to annotate
    * the elements of a model.
    */
-  symbol scope SysMLMetaDataDefinition implements SysMLType, SysMLElement =
+  symbol scope SysMLMetaDataDefinition implements SysMLDefinition, SysMLElement =
     Modifier UserDefinedKeyword* "metadata" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
@@ -539,7 +539,7 @@ component grammar SysMLParts
      * Viewpoints
      * ======================================================================== */
 
-    symbol scope ViewpointDef implements SysMLType =
+    symbol scope ViewpointDef implements SysMLDefinition =
       Modifier UserDefinedKeyword* "viewpoint" "def"
       SysMLIdentifier? Name SysMLCardinality? Specialization*
       ("{"
@@ -557,7 +557,7 @@ component grammar SysMLParts
      * Views
      * ======================================================================== */
 
-    symbol scope ViewDef implements SysMLType =
+    symbol scope ViewDef implements SysMLDefinition =
       Modifier UserDefinedKeyword* "view" "def"
       SysMLIdentifier? Name SysMLCardinality? Specialization*
       ("{"
@@ -589,7 +589,7 @@ component grammar SysMLParts
      * Renderings
      * ======================================================================== */
 
-    symbol scope RenderingDef implements SysMLType =
+    symbol scope RenderingDef implements SysMLDefinition =
       Modifier UserDefinedKeyword* "rendering" "def"
       SysMLIdentifier? Name SysMLCardinality? Specialization*
       ("{"
