@@ -464,6 +464,12 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     }
   }
 
+  // Die StreamSymbole werden manuell geladen aus
+  // 'build/stream-symbols/stream-symbols-7.8.1.jar' und in der
+  // 'language/build.gradle' Zeile 73 von 'implementation "de
+  // .monticore:stream-symbols:$mc_version"' auf 'implementation files
+  // ("$rootDir/build/stream-symbols/stream-symbols-7.8.1.jar")' gesetzt. Das
+  // muss nach dem fix in monticore rückgängig gemacht werden
   public static void loadStreamSymbolsFromJar() {
     URL streamDefUrl = SysMLv2Tool.class.getClassLoader().getResource(
         "Stream.symtabdefinitionsym");
