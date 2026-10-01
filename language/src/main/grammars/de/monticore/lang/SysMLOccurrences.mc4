@@ -53,4 +53,8 @@ component grammar SysMLOccurrences extends SysMLBasis {
       SysMLElement*
      "}" | ";")? ;
 
+  symbolrule ItemUsage = types:de.monticore.types.check.SymTypeExpression*
+    in:boolean
+    out:boolean;
+
 }

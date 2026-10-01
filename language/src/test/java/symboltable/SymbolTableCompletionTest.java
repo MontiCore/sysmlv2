@@ -2,8 +2,10 @@ package symboltable;
 
 import de.monticore.expressions.commonexpressions._ast.ASTCallExpression;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
+import de.monticore.lang.sysmloccurrences._ast.ASTItemUsage;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
+import de.monticore.lang.sysmlparts._ast.ASTPortDef;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
@@ -31,6 +33,8 @@ import java.util.Optional;
 import java.util.jar.JarFile;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Checks the completion of the Symbol Table, particularly related to types and type check.
@@ -347,4 +351,18 @@ public class SymbolTableCompletionTest {
     asts.forEach(ast -> tool.runAdditionalCoCos(ast));
   }
 
+  @Test
+  public void testItemDirections() throws IOException {
+    var model = "port def P { in item a: SomeItem; }";
+    var ast = parser.parse_String(model);
+    assertThat(ast).isPresent();
+
+    tool.createSymbolTable(ast.get());
+    tool.completeSymbolTable(ast.get());
+    tool.finalizeSymbolTable(ast.get());
+
+    var item = ((ASTItemUsage)((ASTPortDef)ast.get().getSysMLElement(0)).getSysMLElement(0)).getSymbol();
+    assertTrue(item.isIn());
+    assertFalse(item.isOut());
+  }
 }

@@ -12,6 +12,9 @@ import de.monticore.lang.sysmlbasis._visitor.SysMLBasisVisitor2;
 import de.monticore.lang.sysmlconstraints._ast.ASTRequirementSubject;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlconstraints._visitor.SysMLConstraintsVisitor2;
+import de.monticore.lang.sysmloccurrences._ast.ASTItemUsage;
+import de.monticore.lang.sysmloccurrences._symboltable.ItemUsageSymbol;
+import de.monticore.lang.sysmloccurrences._visitor.SysMLOccurrencesVisitor2;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlparts._ast.ASTEnumDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
@@ -31,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
-    SysMLConstraintsVisitor2
+    SysMLConstraintsVisitor2, SysMLOccurrencesVisitor2
 {
 
   /**
@@ -160,6 +163,19 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
     if(node.isPresentSymbol()) {
       AnonymousReferenceSymbol symbol = node.getSymbol();
       List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
+      symbol.setTypesList(types);
+    }
+  }
+
+  @Override
+  public void visit(ASTItemUsage node) {
+    if(node.isPresentSymbol()) {
+      ItemUsageSymbol symbol = node.getSymbol();
+
+      List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
+
+      symbol.setAccessModifier(BasicAccessModifier.ALL_INCLUSION);
+
       symbol.setTypesList(types);
     }
   }
