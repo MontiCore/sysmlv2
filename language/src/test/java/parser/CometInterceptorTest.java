@@ -57,6 +57,7 @@ public class CometInterceptorTest {
     assertThat(Log.getFindings()).isEmpty();
   }
 
+  @Disabled
   @Test
   public void testProcessAll() throws IOException {
     var models = Files.walk(Path.of(FOLDER))

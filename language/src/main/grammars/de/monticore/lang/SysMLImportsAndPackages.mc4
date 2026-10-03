@@ -8,13 +8,11 @@ component grammar SysMLImportsAndPackages extends SysMLBasis {
    * From PrivateImportTest.sysml: "import all" overrides private import.
    */
   SysMLImportStatement extends MCImportStatement implements SysMLElement =
-    Modifier UserDefinedKeyword* "import" ["all"]? MCQualifiedName
-    ( "::" Star:["*"])? ("::" Recursive:["**"])?
+    Modifier UserDefinedKeyword* "import" ["all"]? SysMLQualifiedName
+    ("::" Star:["*"])? ("::" Recursive:["**"])?
     ("[" filter:Expression "]")?
     ("as" Name)?
-    ("{"
-       SysMLElement*
-     "}" | ";") ;
+    ("{" SysMLElement* "}" | ";") ;
 
   astrule SysMLImportStatement =
     method public boolean isPublic() {
