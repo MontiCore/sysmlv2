@@ -7,7 +7,7 @@ import de.monticore.ast.ASTNode;
 import de.monticore.lang.sysmlv2._lsp.LanguageServerCLI;
 
 import de.monticore.lang.sysmlbasis._symboltable.SysMLBasisScope;
-import de.monticore.lang.sysmlbasis._symboltable.SysMLTypeSymbol;
+import de.monticore.lang.sysmlbasis._symboltable.SysMLDefinitionSymbol;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import org.eclipse.lsp4j.*;
@@ -68,10 +68,10 @@ public class UpperCaseBlockName extends CoCoCodeActionProvider {
     return res;
   }
 
-  private static void traverse(ISysMLv2Scope scope, Consumer<SysMLTypeSymbol> f) {
+  private static void traverse(ISysMLv2Scope scope, Consumer<SysMLDefinitionSymbol> f) {
     if (scope != null) {
       if (scope instanceof SysMLBasisScope) {
-        scope.getSysMLTypeSymbols().entries().forEach(entry -> f.accept(entry.getValue()));
+        scope.getSysMLDefinitionSymbols().entries().forEach(entry -> f.accept(entry.getValue()));
       }
       scope.getSubScopes().forEach(s -> traverse(s, f));
     }

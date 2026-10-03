@@ -3,7 +3,7 @@ package de.monticore.lang;
 
 component grammar SysMLStates extends SysMLActions {
 
-  symbol scope StateDef implements SysMLType =
+  symbol scope StateDef implements SysMLDefinition =
     Modifier UserDefinedKeyword* "state" "def" SysMLIdentifier? Name
     SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
