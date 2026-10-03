@@ -138,8 +138,12 @@ component grammar SysMLBasis
    * ##################################################################
    */
 
-  SysMLQualifiedName extends MCQualifiedName =
-    Name (("::" | ".") Name)* ;
+ SysMLQualifiedName extends MCQualifiedName =
+   Name (separator:SysMLQualifiedNameSeparator Name)* ;
+
+ SysMLQualifiedNameSeparator =
+     colonColon:"::"
+   | dot:"." ;
 
   astrule SysMLQualifiedName =
     method public List<String> getPartsList() {
