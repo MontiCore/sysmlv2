@@ -122,7 +122,8 @@ public class StandardLibraryImportTest {
   @ValueSource(strings = {
       "private import Collections::List; attribute a: List;",
       "private import Collections::*; attribute a: List;",
-      "attribute a: Collections::List;"
+      "attribute a: Collections::List;",
+      "attribute l: Collections::List<ScalarValues::Boolean>;"
   })
   public void testCollectionsListResolving(String model) throws IOException {
     LogStub.init();
