@@ -5,7 +5,10 @@ import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAda
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.lang.sysmlv2.types3.SysMLTypeCheck3;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.types.mcsimplegenerictypes._ast.ASTMCBasicGenericType;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
@@ -122,8 +125,7 @@ public class StandardLibraryImportTest {
   @ValueSource(strings = {
       "private import Collections::List; attribute a: List;",
       "private import Collections::*; attribute a: List;",
-      "attribute a: Collections::List;",
-      "attribute l: Collections::List<ScalarValues::Boolean>;"
+      "attribute a: Collections::List;"
   })
   public void testCollectionsListResolving(String model) throws IOException {
     LogStub.init();
@@ -144,6 +146,55 @@ public class StandardLibraryImportTest {
     assertThat(resolved.get()).isInstanceOf(TypeSymbol.class);
     assertThat(resolved.get().getFullName()).isEqualTo("Collections.List");
     assertThat(Log.getFindings()).isEmpty();
+  }
+
+  @Test
+  public void testCollectionsListGenericTypeFromSymFile() throws IOException {
+    LogStub.init();
+    var model = "attribute l: Collections::List<ScalarValues::Boolean>;";
+    SysMLv2Mill.init();
+    // We clear the globalScope to load the KerMLSym
+    SysMLv2Mill.globalScope().clear();
+
+    // No call to tool.init(): it registers the hardcoded Collections.List<T>.
+    SysMLv2Mill.loadScalarValuesFromSym();
+    SysMLv2Mill.loadCollectionValuesFromSym();
+    SysMLTypeCheck3.init();
+    assertThat(Log.getFindings()).isEmpty();
+
+    var list = SysMLv2Mill.globalScope().resolveType("Collections.List");
+    assertThat(list).isPresent();
+    assertThat(list.get()).isExactlyInstanceOf(TypeSymbol.class);
+    assertThat(list.get().getFullName()).isEqualTo("Collections.List");
+    assertThat(list.get().getTypeParameterList())
+        .as("Current limitation: Collections.kermlsym has no element type parameter")
+        .isEmpty();
+
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+    var symbolFileTool = new SysMLv2Tool();
+    symbolFileTool.createSymbolTable(ast);
+    symbolFileTool.completeSymbolTable(ast);
+    symbolFileTool.finalizeSymbolTable(ast);
+
+    var attribute = (ASTAttributeUsage) ast.getSysMLElement(0);
+    var mcType = attribute.getSpecialization(0).getSuperTypes(0);
+    assertThat(mcType).isInstanceOf(ASTMCBasicGenericType.class);
+    var genericType = (ASTMCBasicGenericType) mcType;
+    assertThat(genericType.printWithoutTypeArguments()).isEqualTo("Collections.List");
+    assertThat(genericType.getMCTypeArgumentList()).hasSize(1);
+    var scope = (ISysMLv2Scope) mcType.getEnclosingScope();
+    assertThat(scope.resolveType(genericType.printWithoutTypeArguments())).contains(list.get());
+    assertThat(scope.resolveType("ScalarValues.Boolean")).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+
+    // For an ASTMCType, TypeCheck3 uses symTypeFromAST rather than typeOf.
+    var type = TypeCheck3.symTypeFromAST(mcType);
+    // Current limitation: SysMLTypeCheck3 does not register MCSimpleGenericTypesTypeVisitor.
+    assertThat(type.isObscureType()).as("Type checking: %s", Log.getFindings()).isTrue();
+    assertThat(type.isGenericType()).isFalse();
+    assertThat(Log.getFindings()).anySatisfy(finding ->
+        assertThat(finding.getMsg()).contains("0xFD799"));
+    Log.clearFindings();
   }
 
   @Test
