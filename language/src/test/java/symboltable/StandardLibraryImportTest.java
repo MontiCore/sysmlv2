@@ -154,7 +154,6 @@ public class StandardLibraryImportTest {
     // We clear the globalScope to load the KerMLSym
     SysMLv2Mill.globalScope().clear();
 
-    // No call to tool.init(): since it registers the hardcoded Collections.List<T>.
     SysMLv2Mill.loadScalarValuesFromSym();
     SysMLv2Mill.loadCollectionValuesFromSym();
     assertThat(Log.getFindings()).isEmpty();
