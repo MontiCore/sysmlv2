@@ -7,6 +7,7 @@ import de.monticore.lang.componentconnector._symboltable.MildComponentSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildPortSymbol;
 import de.monticore.lang.componentconnector._symboltable.MildSpecificationSymbol;
 import de.monticore.lang.sysmlactions._symboltable.CalcUsageSymbol;
+import de.monticore.lang.sysmlbasis._symboltable.SysMLDefinitionSymbol;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlconstraints.symboltable.adapters.RequirementSubject2VariableSymbolAdapter;
 import de.monticore.lang.sysmlparts._ast.ASTSysMLImportStatement;
@@ -262,51 +263,14 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
   }
 
   @Override
-  default List<PortUsageSymbol> resolvePortUsageLocallyMany(
+  default List<VariableSymbol> resolveVariableLocallyMany(
       boolean foundSymbols,
       String name,
       AccessModifier modifier,
-      Predicate<PortUsageSymbol> predicate
-  ) {
-    var resolved = ISysMLv2ScopeTOP.super.resolvePortUsageLocallyMany(
-        foundSymbols,
-        name,
-        modifier,
-        predicate
-    );
-
-    // Continue to look for symbols in superTypes only if necessary
-    if (!resolved.isEmpty()
-        || !isPresentSpanningSymbol()
-        || !(getSpanningSymbol() instanceof PartDefSymbol)
-        || !getSpanningSymbol().isPresentAstNode()) {
-      return resolved;
-    }
-
-    var inherited = ((PartDefSymbol) getSpanningSymbol()).getAstNode()
-        .getSpecializationList().stream()
-        .filter(s -> s instanceof ASTSysMLSpecialization)
-        .flatMap(s -> s.getSuperTypesList().stream())
-        .map(t -> t.getDefiningSymbol())
-        .filter(s -> s.isPresent())
-        .map(s -> s.get())
-        .filter(s -> s instanceof PartDef2TypeSymbolAdapter)
-        .map(s -> (ISysMLv2Scope)((PartDef2TypeSymbolAdapter) s).getSpannedScope())
-        .flatMap(scope -> scope.resolvePortUsageLocallyMany(false, name, modifier, predicate).stream())
-        .collect(Collectors.toCollection(LinkedHashSet::new));
-
-    return new ArrayList<>(inherited);
-  }
-
-  @Override
-  default List<PartUsageSymbol> resolvePartUsageLocallyMany(
-      boolean foundSymbols,
-      String name,
-      AccessModifier modifier,
-      Predicate<PartUsageSymbol> predicate
+      Predicate<VariableSymbol> predicate
   ) {
     var resolved =
-        ISysMLv2ScopeTOP.super.resolvePartUsageLocallyMany(
+        ISysMLv2ScopeTOP.super.resolveVariableLocallyMany(
             foundSymbols,
             name,
             modifier,
@@ -315,21 +279,23 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
     if (!resolved.isEmpty()
         || !isPresentSpanningSymbol()
-        || !(getSpanningSymbol() instanceof PartDefSymbol)
-        || !getSpanningSymbol().isPresentAstNode()) {
+        || !(getSpanningSymbol() instanceof SysMLDefinitionSymbol)) {
       return resolved;
     }
 
-    var inherited = ((PartDefSymbol) getSpanningSymbol()).getAstNode()
-        .getSpecializationList().stream()
-        .filter(s -> s instanceof ASTSysMLSpecialization)
-        .flatMap(s -> s.getSuperTypesList().stream())
-        .map(s -> s.getDefiningSymbol())
-        .filter(s -> s.isPresent())
-        .map(s -> s.get())
-        .filter(s -> s instanceof PartDef2TypeSymbolAdapter)
-        .map(s -> (ISysMLv2Scope)((PartDef2TypeSymbolAdapter) s).getSpannedScope())
-        .flatMap(scope -> scope.resolvePartUsageLocallyMany(false, name, modifier, predicate).stream())
+    var inherited = ((SysMLDefinitionSymbol) getSpanningSymbol())
+        .getSpecializationsList().stream()
+        .filter(SymTypeExpression::hasTypeInfo)
+        .map(SymTypeExpression::getTypeInfo)
+        .map(TypeSymbol::getSpannedScope)
+        .flatMap(scope ->
+            scope.resolveVariableLocallyMany(
+                false,
+                name,
+                modifier,
+                predicate
+            ).stream()
+        )
         .collect(Collectors.toCollection(LinkedHashSet::new));
 
     return new ArrayList<>(inherited);

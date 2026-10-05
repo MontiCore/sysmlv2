@@ -7,6 +7,7 @@ import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTConnectionUsageCoCo;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
 import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
+import de.monticore.lang.sysmlparts.symboltable.adapters.PortUsage2VariableSymbolAdapter;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.se_rwth.commons.logging.Log;
 
@@ -60,7 +61,12 @@ public class QualifiedPortNameExistsCoCo implements SysMLPartsASTConnectionUsage
 
       PartDefSymbol partDef = partDefOpt.get();
       boolean portExistsInDef = partDef.getSpannedScope()
-          .resolvePortUsageLocallyMany(false, portName, AccessModifier.ALL_INCLUSION, p -> true)
+          .resolveVariableLocallyMany(
+              false,
+              portName,
+              AccessModifier.ALL_INCLUSION,
+              v -> v instanceof PortUsage2VariableSymbolAdapter
+          )
           .size() == 1;
 
       if (!portExistsInDef) {
