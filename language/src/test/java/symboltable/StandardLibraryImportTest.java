@@ -158,7 +158,7 @@ public class StandardLibraryImportTest {
     SysMLv2Mill.loadCollectionValuesFromSym();
     assertThat(Log.getFindings()).isEmpty();
 
-    var ast = SysMLv2Mill.parser().parse_String(model).get();
+    var ast = SysMLv2Mill.parser().parse_StringMCType("Collections::List<ScalarValues::Boolean>").get();
     var symbolFileTool = new SysMLv2Tool();
     symbolFileTool.createSymbolTable(ast);
     symbolFileTool.completeSymbolTable(ast);
