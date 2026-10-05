@@ -5,7 +5,6 @@ import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAda
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
-import de.monticore.lang.sysmlv2.types3.SysMLTypeCheck3;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.mcsimplegenerictypes._ast.ASTMCBasicGenericType;
 import de.monticore.types3.TypeCheck3;
@@ -159,7 +158,6 @@ public class StandardLibraryImportTest {
     // No call to tool.init(): it registers the hardcoded Collections.List<T>.
     SysMLv2Mill.loadScalarValuesFromSym();
     SysMLv2Mill.loadCollectionValuesFromSym();
-    SysMLTypeCheck3.init();
     assertThat(Log.getFindings()).isEmpty();
 
     var list = SysMLv2Mill.globalScope().resolveType("Collections.List");
@@ -185,6 +183,28 @@ public class StandardLibraryImportTest {
     var scope = (ISysMLv2Scope) mcType.getEnclosingScope();
     assertThat(scope.resolveType(genericType.printWithoutTypeArguments())).contains(list.get());
     assertThat(scope.resolveType("ScalarValues.Boolean")).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+  }
+
+  @Test
+  public void testCollectionsListGenericTypeCheckWithoutVisitor() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+
+    // Use List<T> to isolate the missing visitor from the symfile's missing TypeVar.
+    var list = tool.getGlobalScope().resolveType("Collections.List");
+    assertThat(list).isPresent();
+    assertThat(list.get().getTypeParameterList()).hasSize(1);
+
+    var model = "attribute l: Collections::List<ScalarValues::Boolean>;";
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    var attribute = (ASTAttributeUsage) ast.getSysMLElement(0);
+    var mcType = attribute.getSpecialization(0).getSuperTypes(0);
     assertThat(Log.getFindings()).isEmpty();
 
     // For an ASTMCType, TypeCheck3 uses symTypeFromAST rather than typeOf.
