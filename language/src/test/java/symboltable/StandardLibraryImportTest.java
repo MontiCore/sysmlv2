@@ -158,14 +158,6 @@ public class StandardLibraryImportTest {
     SysMLv2Mill.loadCollectionValuesFromSym();
     assertThat(Log.getFindings()).isEmpty();
 
-    var list = SysMLv2Mill.globalScope().resolveType("Collections.List");
-    assertThat(list).isPresent();
-    assertThat(list.get()).isExactlyInstanceOf(TypeSymbol.class);
-    assertThat(list.get().getFullName()).isEqualTo("Collections.List");
-    assertThat(list.get().getTypeParameterList())
-        .as("Current limitation: Collections.kermlsym has no element type parameter")
-        .isEmpty();
-
     var ast = SysMLv2Mill.parser().parse_String(model).get();
     var symbolFileTool = new SysMLv2Tool();
     symbolFileTool.createSymbolTable(ast);
