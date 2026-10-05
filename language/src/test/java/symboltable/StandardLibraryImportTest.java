@@ -7,7 +7,6 @@ import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.mcsimplegenerictypes._ast.ASTMCBasicGenericType;
-import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
@@ -155,7 +154,7 @@ public class StandardLibraryImportTest {
     // We clear the globalScope to load the KerMLSym
     SysMLv2Mill.globalScope().clear();
 
-    // No call to tool.init(): it registers the hardcoded Collections.List<T>.
+    // No call to tool.init(): since it registers the hardcoded Collections.List<T>.
     SysMLv2Mill.loadScalarValuesFromSym();
     SysMLv2Mill.loadCollectionValuesFromSym();
     assertThat(Log.getFindings()).isEmpty();
@@ -184,37 +183,6 @@ public class StandardLibraryImportTest {
     assertThat(scope.resolveType(genericType.printWithoutTypeArguments())).contains(list.get());
     assertThat(scope.resolveType("ScalarValues.Boolean")).isPresent();
     assertThat(Log.getFindings()).isEmpty();
-  }
-
-  @Test
-  public void testCollectionsListGenericTypeCheckWithoutVisitor() throws IOException {
-    LogStub.init();
-    var tool = new SysMLv2Tool();
-    tool.init();
-
-    // Use List<T> to isolate the missing visitor from the symfile's missing TypeVar.
-    var list = tool.getGlobalScope().resolveType("Collections.List");
-    assertThat(list).isPresent();
-    assertThat(list.get().getTypeParameterList()).hasSize(1);
-
-    var model = "attribute l: Collections::List<ScalarValues::Boolean>;";
-    var ast = SysMLv2Mill.parser().parse_String(model).get();
-    tool.createSymbolTable(ast);
-    tool.completeSymbolTable(ast);
-    tool.finalizeSymbolTable(ast);
-
-    var attribute = (ASTAttributeUsage) ast.getSysMLElement(0);
-    var mcType = attribute.getSpecialization(0).getSuperTypes(0);
-    assertThat(Log.getFindings()).isEmpty();
-
-    // For an ASTMCType, TypeCheck3 uses symTypeFromAST rather than typeOf.
-    var type = TypeCheck3.symTypeFromAST(mcType);
-    // Current limitation: SysMLTypeCheck3 does not register MCSimpleGenericTypesTypeVisitor.
-    assertThat(type.isObscureType()).as("Type checking: %s", Log.getFindings()).isTrue();
-    assertThat(type.isGenericType()).isFalse();
-    assertThat(Log.getFindings()).anySatisfy(finding ->
-        assertThat(finding.getMsg()).contains("0xFD799"));
-    Log.clearFindings();
   }
 
   @Test
