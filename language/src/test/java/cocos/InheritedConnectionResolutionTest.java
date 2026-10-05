@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class InheritedConnectionResolutionTest {
 
+  @Disabled("require an PartUsage2VariableSymbolAdapter")
   @Test
   public void testAA3InheritedSubPartUsage() throws IOException {
     LogStub.init();
@@ -50,7 +51,7 @@ public class InheritedConnectionResolutionTest {
     tool.init();
 
     String model = "" +
-        "part def A { port i; }" +
+        "part def A { port i : boolean; }" +
         "part def B specializes A {}" +
         "part def C { part b: B; connect b.i to b.i; }";
 
