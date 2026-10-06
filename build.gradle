@@ -43,3 +43,48 @@ subprojects {
 
 evaluationDependsOnChildren()
 project(":language-server").tasks.generateSysMLv2LanguageServer.dependsOn project(":language").tasks.grammarsJar
+
+apply plugin: 'maven-publish'
+
+def streamSymbolsVersion = '7.8.1'
+def streamSymbolsJar = file("$rootDir/build/stream-symbols/stream-symbols-${streamSymbolsVersion}.jar")
+
+tasks.register('validateStreamSymbolsJar') {
+  inputs.file(streamSymbolsJar)
+  doLast {
+    if (!streamSymbolsJar.isFile()) {
+      throw new GradleException("Missing stream-symbols artifact: ${streamSymbolsJar}")
+    }
+  }
+}
+
+publishing {
+  publications {
+    streamSymbols(MavenPublication) {
+      groupId = 'de.monticore'
+      artifactId = 'stream-symbols'
+      version = streamSymbolsVersion
+      artifact(streamSymbolsJar) {
+        builtBy tasks.named('validateStreamSymbolsJar')
+      }
+      pom {
+        name = 'stream-symbols'
+        description = 'Stream symbols workaround artifact for the SysML v2 7.8.x release.'
+      }
+    }
+  }
+  repositories.maven {
+    name = "Nexus"
+    credentials.username nexusUser
+    credentials.password nexusPassword
+    def releasesRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/"
+    def snapshotsRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/"
+    url = streamSymbolsVersion.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+  }
+}
+
+tasks.register('publishStreamSymbolsToNexus') {
+  group = 'publishing'
+  description = 'Publishes the local stream-symbols 7.8.1 workaround artifact to SE Nexus.'
+  dependsOn tasks.named('publishStreamSymbolsPublicationToNexusRepository')
+}
