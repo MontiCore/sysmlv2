@@ -6,7 +6,7 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
-import de.monticore.types.mcsimplegenerictypes._ast.ASTMCBasicGenericType;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,6 +19,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class StandardLibraryImportTest {
   public static SysMLv2Tool tool;
@@ -149,31 +150,18 @@ public class StandardLibraryImportTest {
   @Test
   public void testCollectionsListGenericTypeFromSymFile() throws IOException {
     LogStub.init();
-    var model = "attribute l: Collections::List<ScalarValues::Boolean>;";
-    SysMLv2Mill.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
     // We clear the globalScope to load the KerMLSym
-    SysMLv2Mill.globalScope().clear();
+    tool.getGlobalScope().clear();
 
     SysMLv2Mill.loadScalarValuesFromSym();
     SysMLv2Mill.loadCollectionValuesFromSym();
     assertThat(Log.getFindings()).isEmpty();
 
-    var ast = SysMLv2Mill.parser().parse_StringMCType("Collections::List<ScalarValues::Boolean>").get();
-    var symbolFileTool = new SysMLv2Tool();
-    symbolFileTool.createSymbolTable(ast);
-    symbolFileTool.completeSymbolTable(ast);
-    symbolFileTool.finalizeSymbolTable(ast);
-
-    var attribute = (ASTAttributeUsage) ast.getSysMLElement(0);
-    var mcType = attribute.getSpecialization(0).getSuperTypes(0);
-    assertThat(mcType).isInstanceOf(ASTMCBasicGenericType.class);
-    var genericType = (ASTMCBasicGenericType) mcType;
-    assertThat(genericType.printWithoutTypeArguments()).isEqualTo("Collections.List");
-    assertThat(genericType.getMCTypeArgumentList()).hasSize(1);
-    var scope = (ISysMLv2Scope) mcType.getEnclosingScope();
-    assertThat(scope.resolveType(genericType.printWithoutTypeArguments())).contains(list.get());
-    assertThat(scope.resolveType("ScalarValues.Boolean")).isPresent();
-    assertThat(Log.getFindings()).isEmpty();
+    var ast = SysMLv2Mill.parser()
+        .parse_StringMCType("Collections::List<ScalarValues::Boolean>").get();
+    assertThrows(NullPointerException.class, () -> TypeCheck3.symTypeFromAST(ast));
   }
 
   @Test

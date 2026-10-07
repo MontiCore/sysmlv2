@@ -45,7 +45,6 @@ grammar SysMLv2 extends SysMLExpressions,
   SysMLQualifiedName extends MCQualifiedName =
     Name (("::" | ".") Name)* ;
 
-  @Override
   SysMLBasicGenericType extends MCBasicGenericType =
     Name (("." | "::") Name)* "<" (MCTypeArgument || ",")* ">";
 
