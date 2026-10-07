@@ -45,6 +45,9 @@ grammar SysMLv2 extends SysMLExpressions,
   SysMLQualifiedName extends MCQualifiedName =
     Name (("::" | ".") Name)* ;
 
+  SysMLBasicGenericType extends MCBasicGenericType =
+    Name (("." | "::") Name)* "<" (MCTypeArgument || ",")* ">";
+
   astrule SysMLQualifiedName =
     method public List<String> getPartsList() {
       return getNameList();

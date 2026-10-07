@@ -48,7 +48,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     SysMLv2Tool.loadStreamSymbolsFromJar();
   }
 
-  protected static void loadScalarValuesFromSym() {
+  public static void loadScalarValuesFromSym() {
     getMill()._loadScalarValuesFromSym();
   }
 
@@ -133,7 +133,7 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     getMill()._addCollectionsPackage();
   }
 
-  protected static void loadCollectionValuesFromSym() {
+  public static void loadCollectionValuesFromSym() {
     getMill()._loadCollectionFromSym();
   }
 
