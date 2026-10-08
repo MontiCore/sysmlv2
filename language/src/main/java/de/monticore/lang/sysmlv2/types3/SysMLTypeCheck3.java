@@ -6,8 +6,6 @@ import de.monticore.expressions.streamexpressions.types3.StreamExpressionsTypeVi
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
-import de.monticore.ocl.oclexpressions.types3.OCLExpressionsCTTIVisitor;
-import de.monticore.ocl.setexpressions.types3.SetExpressionsCTTIVisitor;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionTypesTypeVisitor;
@@ -74,15 +72,11 @@ public class SysMLTypeCheck3 extends MapBasedTypeCheck3 {
     typeTraverser.add4SysMLExpressions(forCommon);
     typeTraverser.setSysMLExpressionsHandler(forCommon);
 
-    var forOcl = new OCLExpressionsCTTIVisitor();
-    forOcl.setType4Ast(type4Ast);
-    forOcl.setContext4Ast(ctx4Ast);
-    typeTraverser.add4OCLExpressions(forOcl);
-    typeTraverser.setOCLExpressionsHandler(forOcl);
-
     var forSysMLOcl = new SysMLOCLExpressionsTypeVisitor();
     forSysMLOcl.setType4Ast(type4Ast);
     forSysMLOcl.setContext4Ast(ctx4Ast);
+    typeTraverser.add4OCLExpressions(forSysMLOcl);
+    typeTraverser.setOCLExpressionsHandler(forSysMLOcl);
     typeTraverser.add4SysMLExpressions(forSysMLOcl);
 
     var forStreams = new SysMLStreamExpressionsTypeVisitor();
@@ -90,15 +84,11 @@ public class SysMLTypeCheck3 extends MapBasedTypeCheck3 {
     forStreams.setContext4Ast(ctx4Ast);
     typeTraverser.add4StreamExpressions(forStreams);
 
-    var forSets = new SetExpressionsCTTIVisitor();
-    forSets.setType4Ast(type4Ast);
-    forSets.setContext4Ast(ctx4Ast);
-    typeTraverser.add4SetExpressions(forSets);
-    typeTraverser.setSetExpressionsHandler(forSets);
-
     var forSysMLSets = new SysMLSetExpressionsTypeVisitor();
     forSysMLSets.setType4Ast(type4Ast);
     forSysMLSets.setContext4Ast(ctx4Ast);
+    typeTraverser.add4SetExpressions(forSysMLSets);
+    typeTraverser.setSetExpressionsHandler(forSysMLSets);
     typeTraverser.add4SysMLExpressions(forSysMLSets);
 
     // MCTypes
