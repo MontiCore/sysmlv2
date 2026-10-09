@@ -9,6 +9,7 @@ import de.monticore.lang.componentconnector.StreamTimingUtil;
 import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScope;
 import de.monticore.lang.sysmlexpressions._ast.ASTConditionalNotExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTInfinity;
+import de.monticore.lang.sysmlexpressions._ast.ASTSqsubsetEquationExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSubsetEquationExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSubsetExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSupersetEquationExpression;
@@ -152,6 +153,20 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsCTTIVisi
   public void endVisit(ASTInfinity node) {
     // backwards compatibility
     getType4Ast().setTypeOfExpression(node, SymTypeExpressionFactory.createPrimitive("int"));
+  }
+
+  @Override
+  public void endVisit(ASTSqsubsetEquationExpression expr) {
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression result;
+
+    if(SymTypeRelations.isCompatible(left, right)){
+      result = SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
+    } else {
+      result = SymTypeExpressionFactory.createObscureType();
+    }
+    getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
