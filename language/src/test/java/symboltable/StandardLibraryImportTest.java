@@ -6,12 +6,11 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -19,7 +18,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class StandardLibraryImportTest {
   public static SysMLv2Tool tool;
@@ -159,9 +157,18 @@ public class StandardLibraryImportTest {
     SysMLv2Mill.loadCollectionValuesFromSym();
     assertThat(Log.getFindings()).isEmpty();
 
-    var ast = SysMLv2Mill.parser()
-        .parse_StringMCType("Collections::List<ScalarValues::Boolean>").get();
-    assertThrows(NullPointerException.class, () -> TypeCheck3.symTypeFromAST(ast));
+    var model = "Collections::List<ScalarValues::Boolean>";
+    var ast = SysMLv2Mill.parser().parse_StringSysMLBasicGenericType(model).get();
+    ast.setEnclosingScope(tool.getGlobalScope());
+    var argument = (ASTMCQualifiedType) ast.getMCTypeArgument(0).getMCTypeOpt().orElseThrow();
+    argument.getMCQualifiedName().setEnclosingScope(tool.getGlobalScope());
+    var type = TypeCheck3.symTypeFromAST(ast);
+
+    assertThat(type.isObscureType()).isFalse();
+    assertThat(type.isGenericType()).isTrue();
+    assertThat(type.getTypeInfo().getName()).isEqualTo("List");
+    assertThat(type.printFullName()).isEqualTo("Collections.List<ScalarValues.Boolean>");
+    assertThat(Log.getFindings()).isEmpty();
   }
 
   @Test
