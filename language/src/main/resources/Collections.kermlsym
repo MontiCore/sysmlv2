@@ -46,7 +46,16 @@
           {
             "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
             "name": "List",
-            "fullName": "Collections.List"
+            "fullName": "Collections.List",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "E",
+                  "fullName": "Collections.List.E"
+                }
+              ]
+            }
           },
           {
             "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
