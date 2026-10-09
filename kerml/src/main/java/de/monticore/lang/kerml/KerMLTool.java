@@ -6,6 +6,7 @@ import de.monticore.lang.kerml._symboltable.IKerMLArtifactScope;
 import de.monticore.lang.kerml._symboltable.KerMLSymbols2Json;
 import de.monticore.lang.kermlelements._symboltable.DatatypeSymbol;
 import de.monticore.lang.kermlparts.symboltable.adapters.Datatype2TypeSymbolAdapter;
+import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -51,6 +52,21 @@ public class KerMLTool extends KerMLToolTOP {
       Log.error("Could not process KerMLTool parameters: "
           + e.getMessage());
     }
+  }
+
+  @Override
+  public IKerMLArtifactScope createSymbolTable(ASTKerMLModel ast) {
+    var scope = super.createSymbolTable(ast);
+    scope.resolveDatatypeDown("Collections.List").ifPresent(list -> {
+      var typeScope = list.getSpannedScope();
+      if (typeScope.resolveTypeVarLocally("E").isEmpty()) {
+        typeScope.add(BasicSymbolsMill.typeVarSymbolBuilder()
+            .setName("E")
+            .setSpannedScope(KerMLMill.scope())
+            .build());
+      }
+    });
+    return scope;
   }
 
   @Override

@@ -3,6 +3,7 @@ package de.monticore.lang;
 
 component grammar KerMLElements
     extends KerMLBasis,
+            de.monticore.symbols.BasicSymbols,
             de.monticore.UMLModifier
 {
     DocBlock implements KerMLElement= "doc";
@@ -73,7 +74,7 @@ component grammar KerMLElements
     Implies implements KerMLElement =
         left:Expression "implies" right:Expression;
 
-    Function implements KerMLElement =
+    KerMLFunction implements KerMLElement =
             Modifier "function" MCQualifiedName
             (KerMLRelationClause)?
             ("{" (KerMLElement)* ("chain")? "}" | ";");
