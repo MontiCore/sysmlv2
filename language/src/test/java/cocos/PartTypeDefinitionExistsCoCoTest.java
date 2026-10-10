@@ -3,30 +3,23 @@ package cocos;
 
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
-import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
-import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
 import de.monticore.lang.sysmlv2.cocos.PartTypeDefinitionExistsCoCo;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PartTypeDefinitionExistsCoCoTest {
 
-  private static final String MODEL_PATH = "src/test/resources/parser";
+  //private static final String MODEL_PATH = "src/test/resources/parser";
 
-  private SysMLv2Parser parser = SysMLv2Mill.parser();
+  //private SysMLv2Parser parser = SysMLv2Mill.parser();
 
   @Test
   public void testIsValid() throws IOException {
