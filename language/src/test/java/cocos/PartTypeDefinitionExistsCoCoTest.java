@@ -28,6 +28,46 @@ public class PartTypeDefinitionExistsCoCoTest {
 
   private SysMLv2Parser parser = SysMLv2Mill.parser();
 
+  @Test
+  public void testIsValid() throws IOException {
+    Log.init();
+    SysMLv2Mill.init();
+
+    SysMLv2Mill.globalScope().clear();
+    SysMLv2Mill.initializePrimitives();
+    SysMLv2Mill.addCollectionTypes();
+    Log.clearFindings();
+
+    String validModel =
+        "part def SubComponent1;"
+            + "part def SubComponent2;"
+            + "part def MainComponent{"
+            +   "part subcomp1: SubComponent1;"
+            +   "part subcomp2: SubComponent2;"
+            + "}";
+
+    //Parse the validModel String to an AST
+    var optAst = SysMLv2Mill.parser().parse_String(validModel);
+    assertThat(optAst).isPresent();
+    var ast = optAst.get();
+
+    //Create a Symbol Table from the Ast
+    var tool = new SysMLv2Tool();
+    var scope = tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+
+    //Check the CoCo
+    var checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new PartTypeDefinitionExistsCoCo());
+    Log.enableFailQuick(false);
+    checker.checkAll(ast);
+    var errors = Log.getFindings().stream().filter(Finding::isError).collect(
+        Collectors.toList());
+    assertThat(errors).hasSize(0);
+
+    Log.clearFindings();
+    Log.enableFailQuick(true);
+  }
 
 
   /*@BeforeAll
