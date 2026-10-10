@@ -69,6 +69,49 @@ public class PartTypeDefinitionExistsCoCoTest {
     Log.enableFailQuick(true);
   }
 
+  @Test
+  public void testInvalid() throws IOException {
+
+    //Initialie Log and SysmlMill
+    Log.init();
+    SysMLv2Mill.init();
+
+    SysMLv2Mill.globalScope().clear();
+    SysMLv2Mill.initializePrimitives();
+    SysMLv2Mill.addCollectionTypes();
+    Log.clearFindings();
+    String invalidModel =
+        "part def SubComponent1;"
+            + "part def MainComponent{"
+            +   "part subcomp1: SubComponent1;"
+            +   "part subcomp2: UndefinedComponent;"
+            + "}";
+
+    //Parse the validModel String to an AST
+    var optAst = SysMLv2Mill.parser().parse_String(invalidModel);
+    assertThat(optAst).isPresent();
+    var ast = optAst.get();
+
+    //Create a Symbol Table from the Ast
+    var tool = new SysMLv2Tool();
+    var scope = tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+
+    //Check the CoCo
+    var checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new PartTypeDefinitionExistsCoCo());
+    Log.enableFailQuick(false);
+    checker.checkAll(ast);
+    var errors = Log.getFindings().stream().filter(Finding::isError).collect(
+        Collectors.toList());
+    assertThat(errors).hasSize(1); //Check that model is detected as invalid
+    assertThat(errors.get(0).getMsg()).contains("0x10AA1"); //Check that the CoCos Error code is found
+
+    //Clear Logs
+    Log.clearFindings();
+    Log.enableFailQuick(true);
+
+  }
 
   /*@BeforeAll
   public static void init() {
