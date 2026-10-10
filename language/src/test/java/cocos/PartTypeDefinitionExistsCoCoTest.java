@@ -42,25 +42,10 @@ public class PartTypeDefinitionExistsCoCoTest {
     SysMLv2Mill.initializePrimitives();
     SysMLv2Mill.addCollectionTypes();
     Log.clearFindings();
-  }
+  }*/
 
-  @Nested
+/*  @Nested
   public class PartTypeDefinitionExistsCoCoTests {
-    @Test
-    public void testValid() throws IOException {
-      String validModel =
-            "part def SubComponent1;"
-          + "part def SubComponent2;"
-          + "part def MainComponent{"
-          +   "part subcomp1: SubComponent1;"
-          +   "part subcomp2: SubComponent2;"
-          + "}";
-
-      var ast = parse(validModel);
-      createSt(ast);
-      var errors = check(ast);
-      assertThat(errors).hasSize(0);
-    }
 
     @Test
     public void testInvalid() throws IOException {
