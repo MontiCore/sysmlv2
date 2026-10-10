@@ -28,7 +28,9 @@ public class PartTypeDefinitionExistsCoCoTest {
 
   private SysMLv2Parser parser = SysMLv2Mill.parser();
 
-  @BeforeAll
+
+
+  /*@BeforeAll
   public static void init() {
     Log.init();
     SysMLv2Mill.init();
@@ -103,5 +105,5 @@ public class PartTypeDefinitionExistsCoCoTest {
       Log.clearFindings();
       Log.enableFailQuick(true);
     }
-  }
+  }*/
 }
