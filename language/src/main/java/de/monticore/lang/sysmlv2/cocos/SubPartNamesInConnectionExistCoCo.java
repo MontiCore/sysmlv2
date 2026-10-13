@@ -5,6 +5,7 @@ import de.monticore.lang.sysmlparts._ast.ASTEndpoint;
 import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTConnectionUsageCoCo;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
+import de.monticore.lang.sysmlparts.symboltable.adapters.PartUsage2VariableSymbolAdapter;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.se_rwth.commons.logging.Log;
 
@@ -36,10 +37,11 @@ public class SubPartNamesInConnectionExistCoCo implements SysMLPartsASTConnectio
       return;
     }
 
-    int matches = scope
-        .resolvePartUsageLocallyMany(false, subName,
-            AccessModifier.ALL_INCLUSION, p -> true)
-        .size();
+    int matches = (int) scope
+        .resolveVariableLocallyMany(false, subName, AccessModifier.ALL_INCLUSION, v -> true)
+        .stream()
+        .filter(v -> v instanceof PartUsage2VariableSymbolAdapter)
+        .count();
 
     if (matches > 1) {
       /*
