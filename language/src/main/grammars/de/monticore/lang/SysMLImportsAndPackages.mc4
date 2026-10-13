@@ -14,13 +14,20 @@ component grammar SysMLImportsAndPackages extends SysMLBasis {
     ("as" Name)?
     ("{" SysMLElement* "}" | ";") ;
 
-  astrule SysMLImportStatement =
-    method public boolean isPublic() {
-      return getModifier().isPublic();
-    }
-    method public boolean isPrivate() {
-      return getModifier().isPrivate();
-    } ;
+   astrule SysMLImportStatement =
+      method public de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName
+          getMCQualifiedName() {
+        return getSysMLQualifiedName();
+      }
+
+      method public boolean isPublic() {
+        return getModifier().isPublic();
+      }
+
+      method public boolean isPrivate() {
+        return getModifier().isPrivate();
+      }
+    ;
 
   SysMLAlias implements SysMLElement =
     Modifier UserDefinedKeyword* "alias" SysMLIdentifier? Name? "for" MCQualifiedName
