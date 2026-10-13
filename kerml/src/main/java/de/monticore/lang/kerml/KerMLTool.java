@@ -13,6 +13,8 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import java.util.List;
+
 /** Command line interface for parsing KerML models and exporting their types. */
 public class KerMLTool extends KerMLToolTOP {
 
@@ -57,15 +59,19 @@ public class KerMLTool extends KerMLToolTOP {
   @Override
   public IKerMLArtifactScope createSymbolTable(ASTKerMLModel ast) {
     var scope = super.createSymbolTable(ast);
-    scope.resolveDatatypeDown("Collections.List").ifPresent(list -> {
-      var typeScope = list.getSpannedScope();
-      if (typeScope.resolveTypeVarLocally("E").isEmpty()) {
-        typeScope.add(BasicSymbolsMill.typeVarSymbolBuilder()
-            .setName("E")
-            .setSpannedScope(KerMLMill.scope())
-            .build());
-      }
-    });
+    // KeyValuePair, Map and OrderedMap require two type parameters.
+    for (String name : List.of("Collection", "OrderedCollection", "UniqueCollection",
+        "Array", "Bag", "Set", "OrderedSet", "List")) {
+      scope.resolveDatatypeDown("Collections." + name).ifPresent(datatype -> {
+        var typeScope = datatype.getSpannedScope();
+        if (typeScope.resolveTypeVarLocally("E").isEmpty()) {
+          typeScope.add(BasicSymbolsMill.typeVarSymbolBuilder()
+              .setName("E")
+              .setSpannedScope(KerMLMill.scope())
+              .build());
+        }
+      });
+    }
     return scope;
   }
 
