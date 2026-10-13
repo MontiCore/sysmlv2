@@ -33,6 +33,7 @@ import de.monticore.lang.sysmlv2.cocos.AssignActionTypeCheck3;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBooleanTC3;
 import de.monticore.lang.sysmlv2.cocos.FlowCheckCoCo;
+import de.monticore.lang.sysmlv2.cocos.ImportSeparatorCoCo;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
 import de.monticore.lang.sysmlv2.cocos.PartBehaviorCoCo;
@@ -47,6 +48,7 @@ import de.monticore.lang.sysmlv2.cocos.TypeCheckTransitionGuards;
 import de.monticore.lang.sysmlv2.cocos.TypeCheck3TransitionGuards;
 import de.monticore.lang.sysmlv2.cocos.WarnNonExhibited;
 import de.monticore.lang.sysmlv2.cocos.DefsAndUsagesHaveTheSameTypeCoCo;
+import de.monticore.lang.sysmlv2.cocos.ImportModifierRequiredCoCo;
 import de.monticore.lang.sysmlv2.symboltable.completers.CausalityCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectRefinementCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectionCompleter;
@@ -127,6 +129,8 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLPartsASTPartUsageCoCo) new DefsAndUsagesHaveTheSameTypeCoCo());
     checker.addCoCo((SysMLPartsASTEnumUsageCoCo) new DefsAndUsagesHaveTheSameTypeCoCo());
     checker.addCoCo((SysMLPartsASTAttributeUsageCoCo) new DefsAndUsagesHaveTheSameTypeCoCo());
+    checker.addCoCo(new ImportModifierRequiredCoCo());
+    checker.addCoCo(new ImportSeparatorCoCo());
     checker.checkAll(ast);
   }
 
