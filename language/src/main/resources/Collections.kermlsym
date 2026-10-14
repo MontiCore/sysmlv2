@@ -1,1 +1,142 @@
-{"generated-using":"www.MontiCore.de technology","name":"Collections","symbols":[{"kind":"de.monticore.lang.kermlelements._symboltable.PackageDeclarationSymbol","name":"Collections","fullName":"Collections","spannedScope":{"symbols":[{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeSymbol","name":"Collection","fullName":"Collections.Collection","spannedScope":{"symbols":[{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol","name":"E","fullName":"Collections.Collection.E"}]}},{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeSymbol","name":"OrderedCollection","fullName":"Collections.OrderedCollection","spannedScope":{"symbols":[{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol","name":"E","fullName":"Collections.OrderedCollection.E"}]}},{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeSymbol","name":"UniqueCollection","fullName":"Collections.UniqueCollection","spannedScope":{"symbols":[{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol","name":"E","fullName":"Collections.UniqueCollection.E"}]}},{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeSymbol","name":"Array","fullName":"Collections.Array","spannedScope":{"symbols":[{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol","name":"E","fullName":"Collections.Array.E"}]}},{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeSymbol","name":"Bag","fullName":"Collections.Bag","spannedScope":{"symbols":[{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol","name":"E","fullName":"Collections.Bag.E"}]}},{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeSymbol","name":"Set","fullName":"Collections.Set","spannedScope":{"symbols":[{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol","name":"E","fullName":"Collections.Set.E"}]}},{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeSymbol","name":"OrderedSet","fullName":"Collections.OrderedSet","spannedScope":{"symbols":[{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol","name":"E","fullName":"Collections.OrderedSet.E"}]}},{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeSymbol","name":"List","fullName":"Collections.List","spannedScope":{"symbols":[{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol","name":"E","fullName":"Collections.List.E"}]}},{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeSymbol","name":"KeyValuePair","fullName":"Collections.KeyValuePair"},{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeSymbol","name":"Map","fullName":"Collections.Map"},{"kind":"de.monticore.symbols.basicsymbols._symboltable.TypeSymbol","name":"OrderedMap","fullName":"Collections.OrderedMap"}]}}]}
+{
+  "generated-using": "www.MontiCore.de technology",
+  "name": "Collections",
+  "symbols": [
+    {
+      "kind": "de.monticore.lang.kermlelements._symboltable.PackageDeclarationSymbol",
+      "name": "Collections",
+      "fullName": "Collections",
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "Collection",
+            "fullName": "Collections.Collection",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "E",
+                  "fullName": "Collections.Collection.E"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "OrderedCollection",
+            "fullName": "Collections.OrderedCollection",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "E",
+                  "fullName": "Collections.OrderedCollection.E"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "UniqueCollection",
+            "fullName": "Collections.UniqueCollection",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "E",
+                  "fullName": "Collections.UniqueCollection.E"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "Array",
+            "fullName": "Collections.Array",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "E",
+                  "fullName": "Collections.Array.E"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "Bag",
+            "fullName": "Collections.Bag",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "E",
+                  "fullName": "Collections.Bag.E"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "Set",
+            "fullName": "Collections.Set",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "E",
+                  "fullName": "Collections.Set.E"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "OrderedSet",
+            "fullName": "Collections.OrderedSet",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "E",
+                  "fullName": "Collections.OrderedSet.E"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "List",
+            "fullName": "Collections.List",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "E",
+                  "fullName": "Collections.List.E"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "KeyValuePair",
+            "fullName": "Collections.KeyValuePair"
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "Map",
+            "fullName": "Collections.Map"
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+            "name": "OrderedMap",
+            "fullName": "Collections.OrderedMap"
+          }
+        ]
+      }
+    }
+  ]
+}
