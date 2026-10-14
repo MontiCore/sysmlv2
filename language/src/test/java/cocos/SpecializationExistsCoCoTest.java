@@ -89,6 +89,37 @@ public class SpecializationExistsCoCoTest {
     assertThat(errors).hasSize(0);
   }
 
+  // Should also work with state defs
+  @Test
+  public void testExistingStateDefinition() throws IOException {
+    SysMLv2Mill.init();
+
+    SysMLv2Mill.globalScope().clear();
+    SysMLv2Mill.initializePrimitives();
+    SysMLv2Mill.addCollectionTypes();
+    SysMLTypeCheck3.reset();
+    SysMLTypeCheck3.init();
+    Log.clearFindings();
+
+    var model = "state def Existent; requirement Valid { subject s: Existent; }";
+
+    var optAst = SysMLv2Mill.parser().parse_String(model);
+    assertThat(optAst).isPresent();
+    var ast = optAst.get();
+
+    var tool = new SysMLv2Tool();
+    var scope = tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+
+    var checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new SpecializationExistsTC3());
+    Log.enableFailQuick(false);
+    checker.checkAll(ast);
+    var errors = Log.getFindings().stream().filter(f -> f.isError()).collect(Collectors.toList());
+
+    assertThat(errors).hasSize(0);
+  }
+
 
   /*
   @BeforeAll
@@ -104,25 +135,6 @@ public class SpecializationExistsCoCoTest {
     SysMLTypeCheck3.reset();
     SysMLTypeCheck3.init();
     Log.clearFindings();
-  }
-
-  @Test
-  public void testExistingDefinition() throws IOException {
-    var model = "part def Existent; requirement Valid { subject s: Existent; }";
-    var ast = parse(model);
-    createSt(ast);
-    var errors = check(ast);
-    assertThat(errors).hasSize(0);
-  }
-
-  // Should also work with state defs
-  @Test
-  public void testExistingStateDefinition() throws IOException {
-    var model = "state def Existent; requirement Valid { subject s: Existent; }";
-    var ast = parse(model);
-    createSt(ast);
-    var errors = check(ast);
-    assertThat(errors).hasSize(0);
   }
 
   @Test
