@@ -698,6 +698,31 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     return getResolvedOrThrowException(resolvedSymbols);
   }
 
+
+  @Override
+  default Optional<PartDefSymbol> filterPartDef(
+      String name,
+      LinkedListMultimap<String, PartDefSymbol> symbols
+  ) {
+    final Set<PartDefSymbol> resolvedSymbols = new LinkedHashSet<>();
+
+    for (PartDefSymbol symbol : symbols.values()) {
+      if (symbol.getName().equals(name) ||
+          symbol.getFullName().equals(name) ||
+          symbol.isPresentSysMLIdentifier()
+              && symbol.getSysMLIdentifier().equals(name) ||
+          symbol.isPresentAstNode()
+              && symbol.getAstNode().isPresentSysMLIdentifier()
+              && symbol.getAstNode().getSysMLIdentifier().getName().equals(name)
+      ) {
+        resolvedSymbols.add(symbol);
+      }
+    }
+
+    return getResolvedOrThrowException(resolvedSymbols);
+  }
+
+
   @Override
   default List<FunctionSymbol> resolveAdaptedFunctionLocallyMany(
       boolean foundSymbols,

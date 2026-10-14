@@ -1,5 +1,6 @@
 package de.monticore.lang.sysmlv2.symboltable.completers;
 
+import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
 import de.monticore.lang.sysmlparts._visitor.SysMLPartsVisitor2;
 
@@ -20,6 +21,18 @@ public class IdentifierCompletion implements SysMLPartsVisitor2 {
   public void visit(ASTPartUsage node) {
     if(node.isPresentSymbol()) {
       if(node.isPresentSysMLIdentifier()) {
+        node.getSymbol().setSysMLIdentifier(node.getSysMLIdentifier().getName());
+      }
+      else {
+        node.getSymbol().setSysMLIdentifierAbsent();
+      }
+    }
+  }
+
+  @Override
+  public void visit(ASTPartDef node) {
+    if (node.isPresentSymbol()) {
+      if (node.isPresentSysMLIdentifier()) {
         node.getSymbol().setSysMLIdentifier(node.getSysMLIdentifier().getName());
       }
       else {
