@@ -193,6 +193,9 @@ public class SpecializationExistsCoCoTest {
 
     assertThat(errors).hasSize(1);
     assertThat(errors.get(0).getMsg()).contains("0xA0324");
+
+    Log.clearFindings();
+    Log.enableFailQuick(true);
   }
 
   /*
