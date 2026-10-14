@@ -27,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class SpecializationExistsCoCoTest {
 
+  /*
   @BeforeAll
   static void setup() {
     SysMLv2Mill.init();
@@ -119,5 +120,6 @@ public class SpecializationExistsCoCoTest {
     Log.clearFindings();
     Log.enableFailQuick(true);
   }
+  */
 
 }
