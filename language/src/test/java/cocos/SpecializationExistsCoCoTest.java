@@ -198,46 +198,4 @@ public class SpecializationExistsCoCoTest {
     Log.enableFailQuick(true);
   }
 
-  /*
-  @BeforeAll
-  static void setup() {
-    SysMLv2Mill.init();
-  }
-
-  @BeforeEach
-  void clear() {
-    SysMLv2Mill.globalScope().clear();
-    SysMLv2Mill.initializePrimitives();
-    SysMLv2Mill.addCollectionTypes();
-    SysMLTypeCheck3.reset();
-    SysMLTypeCheck3.init();
-    Log.clearFindings();
-  }
-
-
-
-
-
-  private ISysMLv2ArtifactScope createSt(ASTSysMLModel ast) {
-    var tool = new SysMLv2Tool();
-    var scope = tool.createSymbolTable(ast);
-    tool.completeSymbolTable(ast);
-    return scope;
-  }
-
-  private List<Finding> check(ASTSysMLModel ast) {
-    var checker = new SysMLv2CoCoChecker();
-    checker.addCoCo(new SpecializationExistsTC3());
-    Log.enableFailQuick(false);
-    checker.checkAll(ast);
-    return Log.getFindings().stream().filter(f -> f.isError()).collect(Collectors.toList());
-  }
-
-  @AfterEach
-  void clearLog() {
-    Log.clearFindings();
-    Log.enableFailQuick(true);
-  }
-  */
-
 }
