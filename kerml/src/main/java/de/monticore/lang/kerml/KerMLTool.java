@@ -59,7 +59,6 @@ public class KerMLTool extends KerMLToolTOP {
   @Override
   public IKerMLArtifactScope createSymbolTable(ASTKerMLModel ast) {
     var scope = super.createSymbolTable(ast);
-    // KeyValuePair, Map and OrderedMap require two type parameters.
     for (String name : List.of("Collection", "OrderedCollection", "UniqueCollection",
         "Array", "Bag", "Set", "OrderedSet", "List")) {
       scope.resolveDatatypeDown("Collections." + name).ifPresent(datatype -> {
