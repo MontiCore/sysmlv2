@@ -56,6 +56,9 @@ public class SpecializationExistsCoCoTest {
 
     assertThat(errors).hasSize(1);
     assertThat(errors.get(0).getMsg()).contains("0xA0324 Cannot find symbol NonExistent");
+
+    Log.clearFindings();
+    Log.enableFailQuick(true);
   }
 
   @Test
@@ -87,6 +90,9 @@ public class SpecializationExistsCoCoTest {
     var errors = Log.getFindings().stream().filter(f -> f.isError()).collect(Collectors.toList());
 
     assertThat(errors).hasSize(0);
+
+    Log.clearFindings();
+    Log.enableFailQuick(true);
   }
 
   // Should also work with state defs
@@ -118,6 +124,9 @@ public class SpecializationExistsCoCoTest {
     var errors = Log.getFindings().stream().filter(f -> f.isError()).collect(Collectors.toList());
 
     assertThat(errors).hasSize(0);
+
+    Log.clearFindings();
+    Log.enableFailQuick(true);
   }
 
   @Test
@@ -148,6 +157,9 @@ public class SpecializationExistsCoCoTest {
     var errors = Log.getFindings().stream().filter(f -> f.isError()).collect(Collectors.toList());
 
     assertThat(errors).hasSize(0);
+
+    Log.clearFindings();
+    Log.enableFailQuick(true);
   }
 
   /*
