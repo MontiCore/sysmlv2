@@ -19,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class InheritedConnectionResolutionTest {
 
-  @Disabled("require an PartUsage2VariableSymbolAdapter")
   @Test
   public void testAA3InheritedSubPartUsage() throws IOException {
     LogStub.init();
@@ -113,4 +112,30 @@ public class InheritedConnectionResolutionTest {
 
     assertThat(Log.getFindings()).isEmpty();
   }
+
+
+  @Test
+  public void testAD0AD1InheritedUnqualifiedPartUsage() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+
+    String model = ""
+        + "part def A {}"
+        + "part def B { part a: A; part b: A; }"
+        + "part def C specializes B { connect a to b; }";
+
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    var checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new ConnectedVariableExistsCoCo());
+    checker.checkAll(ast);
+
+    assertThat(Log.getFindings()).isEmpty();
+  }
+
 }
