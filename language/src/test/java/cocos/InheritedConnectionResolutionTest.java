@@ -5,6 +5,7 @@ import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2.cocos.ConnectedVariableExistsCoCo;
+import de.monticore.lang.sysmlv2.cocos.PartTypeDefinitionExistsCoCo;
 import de.monticore.lang.sysmlv2.cocos.QualifiedPortNameExistsCoCo;
 import de.monticore.lang.sysmlv2.cocos.SubPartNamesInConnectionExistCoCo;
 import de.se_rwth.commons.logging.Log;
@@ -133,6 +134,32 @@ public class InheritedConnectionResolutionTest {
 
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo(new ConnectedVariableExistsCoCo());
+    checker.checkAll(ast);
+
+    assertThat(Log.getFindings()).isEmpty();
+  }
+
+
+  @Test
+  public void testValidPartDefSysMLIdentifier() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+
+    String model = ""
+        + "part def <A1> ComponentA;"
+        + "part def ComponentB { part a: A1; }";
+
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+
+    var scope = tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    assertThat(scope.resolvePartDef("A1")).isPresent();
+
+    var checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new PartTypeDefinitionExistsCoCo());
     checker.checkAll(ast);
 
     assertThat(Log.getFindings()).isEmpty();
