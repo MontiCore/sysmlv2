@@ -65,7 +65,7 @@ public class PartTypeDefinitionExistsCoCoTest {
   @Test
   public void testInvalid() throws IOException {
 
-    //Initialie Log and SysmlMill
+    //Initialize Log and SysmlMill
     Log.init();
     SysMLv2Mill.init();
 
