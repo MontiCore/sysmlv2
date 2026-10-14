@@ -162,6 +162,39 @@ public class SpecializationExistsCoCoTest {
     Log.enableFailQuick(true);
   }
 
+  @Disabled("Die CoCo sucht 'P' im enclosing Scope von ':P', was dem der Part "
+      + "Usage entspricht.")
+  @Test
+  public void testInvalid() throws IOException {
+    SysMLv2Mill.init();
+
+    SysMLv2Mill.globalScope().clear();
+    SysMLv2Mill.initializePrimitives();
+    SysMLv2Mill.addCollectionTypes();
+    SysMLTypeCheck3.reset();
+    SysMLTypeCheck3.init();
+    Log.clearFindings();
+
+    var model = "part p: P { part def P; }";
+
+    var optAst = SysMLv2Mill.parser().parse_String(model);
+    assertThat(optAst).isPresent();
+    var ast = optAst.get();
+
+    var tool = new SysMLv2Tool();
+    var scope = tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+
+    var checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new SpecializationExistsTC3());
+    Log.enableFailQuick(false);
+    checker.checkAll(ast);
+    var errors = Log.getFindings().stream().filter(f -> f.isError()).collect(Collectors.toList());
+
+    assertThat(errors).hasSize(1);
+    assertThat(errors.get(0).getMsg()).contains("0xA0324");
+  }
+
   /*
   @BeforeAll
   static void setup() {
@@ -180,24 +213,7 @@ public class SpecializationExistsCoCoTest {
 
 
 
-  @Disabled("Die CoCo sucht 'P' im enclosing Scope von ':P', was dem der Part "
-      + "Usage entspricht.")
-  @Test
-  public void testInvalid() throws IOException {
-    var model = "part p: P { part def P; }";
-    var ast = parse(model);
-    createSt(ast);
-    var errors = check(ast);
 
-    assertThat(errors).hasSize(1);
-    assertThat(errors.get(0).getMsg()).contains("0xA0324");
-  }
-
-  private ASTSysMLModel parse(String model) throws IOException {
-    var optAst = SysMLv2Mill.parser().parse_String(model);
-    assertThat(optAst).isPresent();
-    return optAst.get();
-  }
 
   private ISysMLv2ArtifactScope createSt(ASTSysMLModel ast) {
     var tool = new SysMLv2Tool();
