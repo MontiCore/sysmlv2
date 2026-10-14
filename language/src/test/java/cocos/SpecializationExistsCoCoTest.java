@@ -27,6 +27,38 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class SpecializationExistsCoCoTest {
 
+  @Test
+  public void testMissingDefinition() throws IOException {
+    SysMLv2Mill.init();
+
+    SysMLv2Mill.globalScope().clear();
+    SysMLv2Mill.initializePrimitives();
+    SysMLv2Mill.addCollectionTypes();
+    SysMLTypeCheck3.reset();
+    SysMLTypeCheck3.init();
+    Log.clearFindings();
+
+    var model = "requirement Invalid { subject s: NonExistent; }";
+
+    var optAst = SysMLv2Mill.parser().parse_String(model);
+    assertThat(optAst).isPresent();
+    var ast = optAst.get();
+
+    var tool = new SysMLv2Tool();
+    var scope = tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+
+    var checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new SpecializationExistsTC3());
+    Log.enableFailQuick(false);
+    checker.checkAll(ast);
+    var errors = Log.getFindings().stream().filter(f -> f.isError()).collect(Collectors.toList());
+
+    assertThat(errors).hasSize(1);
+    assertThat(errors.get(0).getMsg()).contains("0xA0324 Cannot find symbol NonExistent");
+  }
+
+
   /*
   @BeforeAll
   static void setup() {
@@ -41,16 +73,6 @@ public class SpecializationExistsCoCoTest {
     SysMLTypeCheck3.reset();
     SysMLTypeCheck3.init();
     Log.clearFindings();
-  }
-
-  @Test
-  public void testMissingDefinition() throws IOException {
-    var model = "requirement Invalid { subject s: NonExistent; }";
-    var ast = parse(model);
-    createSt(ast);
-    var errors = check(ast);
-    assertThat(errors).hasSize(1);
-    assertThat(errors.get(0).getMsg()).contains("0xA0324 Cannot find symbol NonExistent");
   }
 
   @Test
