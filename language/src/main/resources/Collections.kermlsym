@@ -11,37 +11,100 @@
           {
             "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
             "name": "Collection",
-            "fullName": "Collections.Collection"
+            "fullName": "Collections.Collection",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "E",
+                  "fullName": "Collections.Collection.E"
+                }
+              ]
+            }
           },
           {
             "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
             "name": "OrderedCollection",
-            "fullName": "Collections.OrderedCollection"
+            "fullName": "Collections.OrderedCollection",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "E",
+                  "fullName": "Collections.OrderedCollection.E"
+                }
+              ]
+            }
           },
           {
             "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
             "name": "UniqueCollection",
-            "fullName": "Collections.UniqueCollection"
+            "fullName": "Collections.UniqueCollection",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "E",
+                  "fullName": "Collections.UniqueCollection.E"
+                }
+              ]
+            }
           },
           {
             "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
             "name": "Array",
-            "fullName": "Collections.Array"
+            "fullName": "Collections.Array",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "E",
+                  "fullName": "Collections.Array.E"
+                }
+              ]
+            }
           },
           {
             "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
             "name": "Bag",
-            "fullName": "Collections.Bag"
+            "fullName": "Collections.Bag",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "E",
+                  "fullName": "Collections.Bag.E"
+                }
+              ]
+            }
           },
           {
             "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
             "name": "Set",
-            "fullName": "Collections.Set"
+            "fullName": "Collections.Set",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "E",
+                  "fullName": "Collections.Set.E"
+                }
+              ]
+            }
           },
           {
             "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
             "name": "OrderedSet",
-            "fullName": "Collections.OrderedSet"
+            "fullName": "Collections.OrderedSet",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "E",
+                  "fullName": "Collections.OrderedSet.E"
+                }
+              ]
+            }
           },
           {
             "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",

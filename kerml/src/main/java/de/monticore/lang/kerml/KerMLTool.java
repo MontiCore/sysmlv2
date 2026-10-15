@@ -6,11 +6,14 @@ import de.monticore.lang.kerml._symboltable.IKerMLArtifactScope;
 import de.monticore.lang.kerml._symboltable.KerMLSymbols2Json;
 import de.monticore.lang.kermlelements._symboltable.DatatypeSymbol;
 import de.monticore.lang.kermlparts.symboltable.adapters.Datatype2TypeSymbolAdapter;
+import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+
+import java.util.List;
 
 /** Command line interface for parsing KerML models and exporting their types. */
 public class KerMLTool extends KerMLToolTOP {
@@ -51,6 +54,24 @@ public class KerMLTool extends KerMLToolTOP {
       Log.error("Could not process KerMLTool parameters: "
           + e.getMessage());
     }
+  }
+
+  @Override
+  public IKerMLArtifactScope createSymbolTable(ASTKerMLModel ast) {
+    var scope = super.createSymbolTable(ast);
+    for (String name : List.of("Collection", "OrderedCollection", "UniqueCollection",
+        "Array", "Bag", "Set", "OrderedSet", "List")) {
+      scope.resolveDatatypeDown("Collections." + name).ifPresent(datatype -> {
+        var typeScope = datatype.getSpannedScope();
+        if (typeScope.resolveTypeVarLocally("E").isEmpty()) {
+          typeScope.add(BasicSymbolsMill.typeVarSymbolBuilder()
+              .setName("E")
+              .setSpannedScope(KerMLMill.scope())
+              .build());
+        }
+      });
+    }
+    return scope;
   }
 
   @Override
