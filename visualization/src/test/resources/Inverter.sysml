@@ -51,7 +51,9 @@ package inverter1 {
     state behavior: AutomatonInverter;
   }
 
-  state def AutomatonInverter(in i: Boolean, out o: Boolean){
+  state def AutomatonInverter{
+    in i : Boolean;
+    out o : Boolean
     entry;
       then S;
 
