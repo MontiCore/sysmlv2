@@ -4,9 +4,9 @@ package inverter {
 
   // ---------------------------  BDD  ---------------------------
 
-  state def AutomatonInverter
-    (in variableIn, out variableOut){
-
+  state def AutomatonInverter{
+      in variableIn;
+      out port variableOut;
       entry; then StateInitial;
 
       state StateInitial;
@@ -51,7 +51,9 @@ package inverter1 {
     state behavior: AutomatonInverter;
   }
 
-  state def AutomatonInverter(in i: Boolean, out o: Boolean){
+  state def AutomatonInverter{
+    in i : Boolean;
+    out o : Boolean;
     entry;
       then S;
 
