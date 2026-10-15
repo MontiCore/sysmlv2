@@ -53,7 +53,7 @@ package inverter1 {
 
   state def AutomatonInverter{
     in i : Boolean;
-    out o : Boolean
+    out o : Boolean;
     entry;
       then S;
 
