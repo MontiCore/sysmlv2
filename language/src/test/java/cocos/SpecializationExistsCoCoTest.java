@@ -32,9 +32,7 @@ public class SpecializationExistsCoCoTest {
 
     var model = "requirement Invalid { subject s: NonExistent; }";
 
-    var optAst = SysMLv2Mill.parser().parse_String(model);
-    assertThat(optAst).isPresent();
-    var ast = optAst.get();
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
 
     tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
@@ -64,9 +62,7 @@ public class SpecializationExistsCoCoTest {
     var model = "part def Existent; requirement Valid { subject s: Existent; }";
 
 
-    var optAst = SysMLv2Mill.parser().parse_String(model);
-    assertThat(optAst).isPresent();
-    var ast = optAst.get();
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
 
     tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
@@ -97,9 +93,7 @@ public class SpecializationExistsCoCoTest {
 
     var model = "state def Existent; requirement Valid { subject s: Existent; }";
 
-    var optAst = SysMLv2Mill.parser().parse_String(model);
-    assertThat(optAst).isPresent();
-    var ast = optAst.get();
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
 
     tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
@@ -128,9 +122,7 @@ public class SpecializationExistsCoCoTest {
 
     var model = "attribute def Existent; part def Valid { attribute e: List<Existent>; }";
 
-    var optAst = SysMLv2Mill.parser().parse_String(model);
-    assertThat(optAst).isPresent();
-    var ast = optAst.get();
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
 
     tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
@@ -160,9 +152,7 @@ public class SpecializationExistsCoCoTest {
 
     var model = "part p: P { part def P; }";
 
-    var optAst = SysMLv2Mill.parser().parse_String(model);
-    assertThat(optAst).isPresent();
-    var ast = optAst.get();
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
 
     tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
