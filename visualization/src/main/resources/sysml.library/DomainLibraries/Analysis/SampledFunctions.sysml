@@ -60,7 +60,7 @@ package SampledFunctions {
         }
 		in attribute domainValues [0..*];
 		return sampling = new SampledFunction (
-			samples = domainValues->collect { in x : DataValue; new SamplePair(x, calculation(x)) }
+			samples = domainValues->collect { in x : DataValue; new SamplePair(x, calculation(x)) } as SamplePair
 		);
 	}
 	
@@ -83,7 +83,7 @@ package SampledFunctions {
 		
 		private attribute domainValues = Domain(fn);
 		private attribute index : Positive[0..1] =
-			(1..size(domainValues))->select { in i : Positive; domainValues#(i) <= value }#(1);
+			(1..size(domainValues))->select { in i : Positive; domainValues#(i) <= value }#(1) as Positive;
 
 		private calc def Linear {
             in attribute lowerSample : SamplePair;
