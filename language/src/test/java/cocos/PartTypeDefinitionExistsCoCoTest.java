@@ -8,6 +8,7 @@ import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.monticore.lang.sysmlv2.cocos.PartTypeDefinitionExistsCoCo;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -23,12 +24,9 @@ public class PartTypeDefinitionExistsCoCoTest {
 
   @Test
   public void testIsValid() throws IOException {
-    Log.init();
-    SysMLv2Mill.init();
-
-    SysMLv2Mill.globalScope().clear();
-    SysMLv2Mill.initializePrimitives();
-    SysMLv2Mill.addCollectionTypes();
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
     Log.clearFindings();
 
     String validModel =
@@ -40,14 +38,12 @@ public class PartTypeDefinitionExistsCoCoTest {
             + "}";
 
     //Parse the validModel String to an AST
-    var optAst = SysMLv2Mill.parser().parse_String(validModel);
-    assertThat(optAst).isPresent();
-    var ast = optAst.get();
+    var ast = SysMLv2Mill.parser().parse_String(validModel).get();
 
     //Create a Symbol Table from the Ast
-    var tool = new SysMLv2Tool();
-    var scope = tool.createSymbolTable(ast);
+    tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
 
     //Check the CoCo
     var checker = new SysMLv2CoCoChecker();
@@ -64,15 +60,11 @@ public class PartTypeDefinitionExistsCoCoTest {
 
   @Test
   public void testInvalid() throws IOException {
-
-    //Initialize Log and SysmlMill
-    Log.init();
-    SysMLv2Mill.init();
-
-    SysMLv2Mill.globalScope().clear();
-    SysMLv2Mill.initializePrimitives();
-    SysMLv2Mill.addCollectionTypes();
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
     Log.clearFindings();
+
     String invalidModel =
         "part def SubComponent1;"
             + "part def MainComponent{"
@@ -81,14 +73,12 @@ public class PartTypeDefinitionExistsCoCoTest {
             + "}";
 
     //Parse the validModel String to an AST
-    var optAst = SysMLv2Mill.parser().parse_String(invalidModel);
-    assertThat(optAst).isPresent();
-    var ast = optAst.get();
+    var ast = SysMLv2Mill.parser().parse_String(invalidModel).get();
 
     //Create a Symbol Table from the Ast
-    var tool = new SysMLv2Tool();
-    var scope = tool.createSymbolTable(ast);
+    tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
 
     //Check the CoCo
     var checker = new SysMLv2CoCoChecker();
