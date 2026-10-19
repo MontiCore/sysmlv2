@@ -421,10 +421,16 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
 
     for (PartUsageSymbol partUsage : parts) {
       var types = partUsage.getTypesList();
+      var variable = new PartUsage2VariableSymbolAdapter(partUsage);
+
 
       if (types.size() == 1) {
-        var variable = new PartUsage2VariableSymbolAdapter(partUsage);
         variable.setType(types.get(0));
+        adapted.add(variable);
+      }
+      else if (types.isEmpty()) {
+        var implicitType = SysMLv2Mill.globalScope().resolveType("SysMLPartDefinition").orElseThrow();
+        variable.setType(SymTypeExpressionFactory.createTypeObject(implicitType));
         adapted.add(variable);
       }
     }
