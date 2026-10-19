@@ -4,6 +4,7 @@
  */
 package SampledFunctions {
 	private import Base::Anything;
+    private import Base::DataValue;
 	private import ScalarValues::Positive;
 	private import Collections::KeyValuePair;
 	private import Collections::OrderedMap;
@@ -16,8 +17,8 @@ package SampledFunctions {
 	 * SamplePair is a key-value pair of a domain-value and a range-value, used as a sample element in SampledFunction.
 	 */
     attribute def SamplePair :> KeyValuePair {
-        attribute domainValue :>> key;
-        attribute rangeValue :>> val;
+        attribute domainValue : DataValue :>> key;
+        attribute rangeValue : DataValue :>> val;
     }
 
 	/**
@@ -34,23 +35,32 @@ package SampledFunctions {
 		
 		assert constraint {
 			// Note: Assumes the functions '<' and '>' are defined for the domain type.
-			(1..size(samples)-1)->forAll { in i; (samples.domainValue[i] < samples.domainValue[i+1]) } or  // Strictly increasing
-            (1..size(samples)-1)->forAll { in i; (samples.domainValue[i] > samples.domainValue[i+1]) }     // Strictly decreasing
+			(1..size(samples)-1)->forAll { in i; (samples.domainValue#(i) < samples.domainValue[i+1]) } or  // Strictly increasing
+            (1..size(samples)-1)->forAll { in i; (samples.domainValue#(i) > samples.domainValue[i+1]) }     // Strictly decreasing
 		}
 	}
 	
 	/* Domain returns the sequence of the domainValues of all samples in a SampledFunction. */
-	calc def Domain(fn : SampledFunction) : Anything[0..*] = fn.samples.domainValue;
-	
-	/* Range returns the sequence of the rangeValues of all samples in a SampledFunction. */	
-	calc def Range(fn : SampledFunction) : Anything[0..*] = fn.samples.rangeValue;
-	
+    calc def Domain{
+        in attribute fn : SampledFunction;
+        return result : DataValue[0..*] = fn.samples.domainValue;
+    }
+
+	/* Range returns the sequence of the rangeValues of all samples in a SampledFunction. */
+    calc def Range{
+        in attribute fn : SampledFunction;
+        return result : DataValue[0..*] = fn.samples.rangeValue;
+    }
+
 	/* Sample returns a SampledFunction that samples a given calculation over a seqence of domainValues. */
 	calc def Sample {
-		in calc calculation (x);
+		in calc calculation {
+            in x : DataValue;
+            return : DataValue;
+        }
 		in attribute domainValues [0..*];
-		return sampling = SampledFunction (
-			samples = domainValues->collect { in x; SamplePair(x, calculation(x)) }
+		return sampling = new SampledFunction (
+			samples = domainValues->collect { in x : DataValue; new SamplePair(x, calculation(x)) }
 		);
 	}
 	
@@ -58,9 +68,13 @@ package SampledFunctions {
 	 * An Interpolate calculation returns an interpolated range value from a given SampledFunction for a given domain value.
 	 * If the input domain value is outside the bounds of the domainValues of the SampleFunction, null is returned.
 	 */
-	calc def Interpolate (attribute fn : SampledFunction, attribute value) attribute result;
-		
-	/** 
+	calc def Interpolate {
+        in attribute fn : SampledFunction;
+        in attribute value : DataValue;
+        return attribute result : DataValue;
+    }
+
+	/**
 	 * interpolateLinear is an Interpolate calculation assuming a linear functional form between SamplePairs.
 	 */
 	calc interpolateLinear : Interpolate {
@@ -69,18 +83,26 @@ package SampledFunctions {
 		
 		private attribute domainValues = Domain(fn);
 		private attribute index : Positive[0..1] =
-			(1..size(domainValues))->select { in i : Positive; domainValues[i] <= value }[1];
-			
-		private calc def Linear 
-			(attribute lowerSample : SamplePair, attribute upperSample : SamplePair, attribute value) {
-			private attribute f = (value - lowerSample.domainValue) / (lowerSample.domainValue - upperSample.domainValue);
-			return result = upperSample.rangeValue + f * (lowerSample.rangeValue - upperSample.rangeValue);				
-		}
-		
+			(1..size(domainValues))->select { in i : Positive; domainValues#(i) <= value }#(1);
+
+		private calc def Linear {
+            in attribute lowerSample : SamplePair;
+            in attribute upperSample : SamplePair;
+            in attribute value : DataValue;
+
+            private attribute f =
+                (value - lowerSample.domainValue) /
+                (lowerSample.domainValue - upperSample.domainValue);
+
+            return result : DataValue =
+                upperSample.rangeValue +
+                f * (lowerSample.rangeValue - upperSample.rangeValue);
+}
+
 		return result [0..1] =
 			if index == null or index == size(domainValues)? null
-			else if domainValues[index] < domainValues[index+1]? Linear(fn.samples[index], fn.samples[index+1], value)
-			else Linear(fn.samples[index+1], fn.samples[index], value);
+			else if domainValues#(index) < domainValues#(index+1)? Linear(fn.samples#(index), fn.samples#(index+1), value)
+			else Linear(fn.samples#(index+1), fn.samples#(index), value);
 	}
 	
 }
