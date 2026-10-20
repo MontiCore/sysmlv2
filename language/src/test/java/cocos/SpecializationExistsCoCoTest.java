@@ -25,7 +25,6 @@ public class SpecializationExistsCoCoTest {
   @Test
   public void testMissingDefinition() throws IOException {
     LogStub.init();
-    // SysMLTypeCheck3.reset(); The init sequence was changed to use tool.init(). This Method is not executed in tool.init() is it necessary?
     var tool = new SysMLv2Tool();
     tool.init();
     Log.clearFindings();
@@ -54,7 +53,6 @@ public class SpecializationExistsCoCoTest {
   @Test
   public void testExistingDefinition() throws IOException {
     LogStub.init();
-    // SysMLTypeCheck3.reset(); The init sequence was changed to use tool.init(). This Method is not executed in tool.init() is it necessary?
     var tool = new SysMLv2Tool();
     tool.init();
     Log.clearFindings();
@@ -85,7 +83,6 @@ public class SpecializationExistsCoCoTest {
   @Test
   public void testExistingStateDefinition() throws IOException {
     LogStub.init();
-    // SysMLTypeCheck3.reset(); The init sequence was changed to use tool.init(). This Method is not executed in tool.init() is it necessary?
     var tool = new SysMLv2Tool();
     tool.init();
     Log.clearFindings();
@@ -114,7 +111,6 @@ public class SpecializationExistsCoCoTest {
   @Test
   public void testExistingCollectionType() throws IOException {
     LogStub.init();
-    // SysMLTypeCheck3.reset(); The init sequence was changed to use tool.init(). This Method is not executed in tool.init() is it necessary?
     var tool = new SysMLv2Tool();
     tool.init();
     Log.clearFindings();
@@ -145,7 +141,6 @@ public class SpecializationExistsCoCoTest {
   @Test
   public void testInvalid() throws IOException {
     LogStub.init();
-    // SysMLTypeCheck3.reset(); The init sequence was changed to use tool.init(). This Method is not executed in tool.init() is it necessary?
     var tool = new SysMLv2Tool();
     tool.init();
     Log.clearFindings();
