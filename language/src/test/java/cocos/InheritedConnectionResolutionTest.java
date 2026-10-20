@@ -165,4 +165,28 @@ public class InheritedConnectionResolutionTest {
     assertThat(Log.getFindings()).isEmpty();
   }
 
+  @Test
+  public void testAA3UntypedPartUsageInConnection() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+
+    String model = "" +
+        "part def B {" +
+        "  part A { port o; }" +
+        "  connect A.o to A.o;" +
+        "}";
+
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    var checker = new SysMLv2CoCoChecker();
+    checker.addCoCo(new SubPartNamesInConnectionExistCoCo());
+    checker.checkAll(ast);
+
+    assertThat(Log.getFindings()).isEmpty();
+  }
 }

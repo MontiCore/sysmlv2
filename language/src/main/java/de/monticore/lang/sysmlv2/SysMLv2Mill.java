@@ -45,7 +45,26 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     SysMLv2Mill.addCollectionTypes();
     SysMLv2Mill.addTsynVariables();
     SysMLv2Mill.addStatesTypes();
+    SysMLv2Mill.addSysMLPartDefinitionType();
     SysMLv2Tool.loadStreamSymbolsFromJar();
+  }
+
+
+  public static void addSysMLPartDefinitionType() {
+    var globalScope = SysMLv2Mill.globalScope();
+
+    if (globalScope.resolveType("SysMLPartDefinition").isPresent()) {
+      return;
+    }
+
+    globalScope.add(typeSymbolBuilder()
+        .setName("SysMLPartDefinition")
+        .setFullName("SysMLPartDefinition")
+        .setEnclosingScope(globalScope)
+        .setSpannedScope(scope())
+        .setAccessModifier(AccessModifier.ALL_INCLUSION)
+        .build()
+    );
   }
 
   public static void loadScalarValuesFromSym() {
