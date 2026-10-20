@@ -146,8 +146,12 @@ public class StandardLibraryImportTest {
     assertThat(Log.getFindings()).isEmpty();
   }
 
-  @Test
-  public void testCollectionsListGenericTypeFromSymFile() throws IOException {
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "Collection", "OrderedCollection", "UniqueCollection",
+      "Array", "Bag", "Set", "OrderedSet", "List"
+  })
+  public void testCollectionsGenericTypeFromSymFile(String collectionType) throws IOException {
     LogStub.init();
     var tool = new SysMLv2Tool();
     tool.init();
@@ -159,7 +163,7 @@ public class StandardLibraryImportTest {
     assertThat(Log.getFindings()).isEmpty();
 
     var ast = SysMLv2Mill.parser()
-        .parse_StringMCType("Collections::List<ScalarValues::Boolean>").get();
+        .parse_StringMCType("Collections::" + collectionType + "<ScalarValues::Boolean>").get();
     ast.setEnclosingScope(tool.getGlobalScope());
     var argument = (ASTMCQualifiedType) ((ASTMCBasicGenericType) ast)
         .getMCTypeArgument(0).getMCTypeOpt().orElseThrow();
@@ -168,8 +172,8 @@ public class StandardLibraryImportTest {
 
     assertThat(type.isObscureType()).isFalse();
     assertThat(type.isGenericType()).isTrue();
-    assertThat(type.getTypeInfo().getName()).isEqualTo("List");
-    assertThat(type.printFullName()).isEqualTo("Collections.List<ScalarValues.Boolean>");
+    assertThat(type.getTypeInfo().getName()).isEqualTo(collectionType);
+    assertThat(type.printFullName()).isEqualTo("Collections." + collectionType + "<ScalarValues.Boolean>");
     assertThat(Log.getFindings()).isEmpty();
   }
 
