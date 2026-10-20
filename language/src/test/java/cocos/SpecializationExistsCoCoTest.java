@@ -8,6 +8,7 @@ import de.monticore.lang.sysmlv2.cocos.SpecializationExistsTC3;
 import de.monticore.lang.sysmlv2.types3.SysMLTypeCheck3;
 import de.se_rwth.commons.logging.Log;
 
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -23,24 +24,18 @@ public class SpecializationExistsCoCoTest {
 
   @Test
   public void testMissingDefinition() throws IOException {
-    SysMLv2Mill.init();
-
-    SysMLv2Mill.globalScope().clear();
-    SysMLv2Mill.initializePrimitives();
-    SysMLv2Mill.addCollectionTypes();
-    SysMLTypeCheck3.reset();
-    SysMLTypeCheck3.init();
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
     Log.clearFindings();
 
     var model = "requirement Invalid { subject s: NonExistent; }";
 
-    var optAst = SysMLv2Mill.parser().parse_String(model);
-    assertThat(optAst).isPresent();
-    var ast = optAst.get();
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
 
-    var tool = new SysMLv2Tool();
-    var scope = tool.createSymbolTable(ast);
+    tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
 
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo(new SpecializationExistsTC3());
@@ -57,25 +52,20 @@ public class SpecializationExistsCoCoTest {
 
   @Test
   public void testExistingDefinition() throws IOException {
-    SysMLv2Mill.init();
-
-    SysMLv2Mill.globalScope().clear();
-    SysMLv2Mill.initializePrimitives();
-    SysMLv2Mill.addCollectionTypes();
-    SysMLTypeCheck3.reset();
-    SysMLTypeCheck3.init();
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
     Log.clearFindings();
 
     var model = "part def Existent; requirement Valid { subject s: Existent; }";
 
 
-    var optAst = SysMLv2Mill.parser().parse_String(model);
-    assertThat(optAst).isPresent();
-    var ast = optAst.get();
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
 
-    var tool = new SysMLv2Tool();
-    var scope = tool.createSymbolTable(ast);
+    tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
 
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo(new SpecializationExistsTC3());
@@ -92,24 +82,19 @@ public class SpecializationExistsCoCoTest {
   // Should also work with state defs
   @Test
   public void testExistingStateDefinition() throws IOException {
-    SysMLv2Mill.init();
-
-    SysMLv2Mill.globalScope().clear();
-    SysMLv2Mill.initializePrimitives();
-    SysMLv2Mill.addCollectionTypes();
-    SysMLTypeCheck3.reset();
-    SysMLTypeCheck3.init();
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
     Log.clearFindings();
+
 
     var model = "state def Existent; requirement Valid { subject s: Existent; }";
 
-    var optAst = SysMLv2Mill.parser().parse_String(model);
-    assertThat(optAst).isPresent();
-    var ast = optAst.get();
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
 
-    var tool = new SysMLv2Tool();
-    var scope = tool.createSymbolTable(ast);
+    tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
 
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo(new SpecializationExistsTC3());
@@ -125,24 +110,19 @@ public class SpecializationExistsCoCoTest {
 
   @Test
   public void testExistingCollectionType() throws IOException {
-    SysMLv2Mill.init();
-
-    SysMLv2Mill.globalScope().clear();
-    SysMLv2Mill.initializePrimitives();
-    SysMLv2Mill.addCollectionTypes();
-    SysMLTypeCheck3.reset();
-    SysMLTypeCheck3.init();
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
     Log.clearFindings();
+
 
     var model = "attribute def Existent; part def Valid { attribute e: List<Existent>; }";
 
-    var optAst = SysMLv2Mill.parser().parse_String(model);
-    assertThat(optAst).isPresent();
-    var ast = optAst.get();
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
 
-    var tool = new SysMLv2Tool();
-    var scope = tool.createSymbolTable(ast);
+    tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
 
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo(new SpecializationExistsTC3());
@@ -160,24 +140,18 @@ public class SpecializationExistsCoCoTest {
       + "Usage entspricht.")
   @Test
   public void testInvalid() throws IOException {
-    SysMLv2Mill.init();
-
-    SysMLv2Mill.globalScope().clear();
-    SysMLv2Mill.initializePrimitives();
-    SysMLv2Mill.addCollectionTypes();
-    SysMLTypeCheck3.reset();
-    SysMLTypeCheck3.init();
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
     Log.clearFindings();
 
     var model = "part p: P { part def P; }";
 
-    var optAst = SysMLv2Mill.parser().parse_String(model);
-    assertThat(optAst).isPresent();
-    var ast = optAst.get();
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
 
-    var tool = new SysMLv2Tool();
-    var scope = tool.createSymbolTable(ast);
+    tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
 
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo(new SpecializationExistsTC3());
