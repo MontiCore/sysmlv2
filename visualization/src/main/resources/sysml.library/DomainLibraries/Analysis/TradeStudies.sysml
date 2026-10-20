@@ -39,7 +39,7 @@ package TradeStudies {
 		 * The alternatives being considered in the TradeStudy for which this TradeStudyObjective 
 		 * is the objective.
 		 */
-		in ref alternatives : Anything[1..*];
+		in ref alternatives : ScalarValue[1..*];
 		
 		/**
 		 * The ObjectiveFunction to be used in evaluating the given alternatives.
@@ -90,7 +90,7 @@ package TradeStudies {
 		 * In a TradeStudy usage, bind this feature to the actual collection of
 		 * alternatives to be considered.
 		 */
-		subject studyAlternatives : Anything[1..*];
+		subject studyAlternatives : ScalarValue[1..*];
 		
 		/**
 		 * The ObjectiveFunction to be used to evaluate the alternatives.
@@ -109,6 +109,7 @@ package TradeStudies {
 		 * defined one.
 		 */
 		objective tradeStudyObjective : TradeStudyObjective {
+			subject :>> selectedAlternative;
 			in ref :>> alternatives = studyAlternatives;
 			in calc :>> fn = objectiveFunction;
 		}
@@ -117,7 +118,11 @@ package TradeStudies {
 		 * The alternative selected by this TradeStudy, which is the one that meets the
 		 * requirement of the tradeStudyObjective.
 		 */
-		return ref selectedAlternative = studyAlternatives->selectOne {in ref a; tradeStudyObjective(a)};
+		return ref selectedAlternative =
+    		studyAlternatives->selectOne {
+        		in ref a;
+        		a == tradeStudyObjective.selectedAlternative
+		};
 	}
 	
 }
