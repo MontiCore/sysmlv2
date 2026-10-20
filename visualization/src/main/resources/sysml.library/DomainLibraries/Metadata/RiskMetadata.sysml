@@ -3,7 +3,7 @@
  * This package defines metadata for annotating model elements with assessments of risk.
  */
 package RiskMetadata {
-	import ScalarValues::Real;
+	private import ScalarValues::Real;
 	
 	/**
 	 * A Level is a Real number in the interval 0.0 to 1.0, inclusive.
@@ -44,9 +44,9 @@ package RiskMetadata {
 	 * (without including impact).
 	 */
 	enum def RiskLevelEnum :> RiskLevel {
-		L = RiskLevel(probability = LevelEnum::L);
-		M = RiskLevel(probability = LevelEnum::M);
-		H = RiskLevel(probability = LevelEnum::H);
+		L = new RiskLevel(probability = LevelEnum::L);
+		M = new RiskLevel(probability = LevelEnum::M);
+		H = new RiskLevel(probability = LevelEnum::H);
 	}
 	
 	/**
