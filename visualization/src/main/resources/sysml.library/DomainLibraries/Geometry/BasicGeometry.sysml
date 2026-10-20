@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package BasicGeometry {
 	private import UnitsAndScales::DimensionOneValue;
-	private import ISQ::LengthValue;
+	private import ISQBase::LengthValue;
     private import SI::*;
     private import RealFunctions::*;
 
