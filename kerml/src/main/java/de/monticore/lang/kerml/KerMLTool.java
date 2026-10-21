@@ -71,17 +71,6 @@ public class KerMLTool extends KerMLToolTOP {
         }
       });
     }
-    scope.resolveDatatypeDown("Collections.KeyValuePair").ifPresent(datatype -> {
-      var typeScope = datatype.getSpannedScope();
-      for (String name : List.of("K", "V")) {
-        if (typeScope.resolveTypeVarLocally(name).isEmpty()) {
-          typeScope.add(BasicSymbolsMill.typeVarSymbolBuilder()
-              .setName(name)
-              .setSpannedScope(KerMLMill.scope())
-              .build());
-        }
-      }
-    });
     return scope;
   }
 
