@@ -3,7 +3,6 @@ package de.monticore.lang.sysmlv2;
 
 import de.monticore.lang.sysmlparts._symboltable.SysMLPackageSymbolDeSer;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
-import de.monticore.types.check.SymTypeExpression;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsGlobalScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -20,12 +19,10 @@ import de.monticore.types.check.SymTypeVariable;
 import de.se_rwth.commons.logging.Log;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static de.monticore.symbols.basicsymbols.BasicSymbolsMillTOP.getMill;
-import java.util.stream.Collectors;
 
 public class SysMLv2Mill extends SysMLv2MillTOP {
 
@@ -171,56 +168,9 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
       collectionsScope.setEnclosingScope(null);
       globalScope.add(collections);
       globalScope.addSubScope(collectionsScope);
-
-      var collection = collectionsScope.resolveTypeLocally("Collection").orElseThrow();
-      var orderedCollection = collectionsScope.resolveTypeLocally("OrderedCollection").orElseThrow();
-      var uniqueCollection = collectionsScope.resolveTypeLocally("UniqueCollection").orElseThrow();
-      var array = collectionsScope.resolveTypeLocally("Array").orElseThrow();
-      var bag = collectionsScope.resolveTypeLocally("Bag").orElseThrow();
-      var set = collectionsScope.resolveTypeLocally("Set").orElseThrow();
-      var orderedSet = collectionsScope.resolveTypeLocally("OrderedSet").orElseThrow();
-      var list = collectionsScope.resolveTypeLocally("List").orElseThrow();
-      var keyValuePair = collectionsScope.resolveTypeLocally("KeyValuePair").orElseThrow();
-      var map = collectionsScope.resolveTypeLocally("Map").orElseThrow();
-      var orderedMap = collectionsScope.resolveTypeLocally("OrderedMap").orElseThrow();
-
-      setCollectionSuperTypes(orderedCollection, collection);
-      setCollectionSuperTypes(uniqueCollection, collection);
-      setCollectionSuperTypes(array, orderedCollection);
-      setCollectionSuperTypes(bag, collection);
-      setCollectionSuperTypes(set, uniqueCollection);
-      setCollectionSuperTypes(orderedSet, orderedCollection, uniqueCollection);
-      setCollectionSuperTypes(list, orderedCollection);
-      setCollectionSuperTypes(orderedMap, map);
-
-      // Map :> Collection<KeyValuePair<K, V>>
-      var k = map.getSpannedScope().resolveTypeVarLocally("K");
-      var v = map.getSpannedScope().resolveTypeVarLocally("V");
-      if (k.isPresent() && v.isPresent()) {
-        var kv = SymTypeExpressionFactory.createGenerics(keyValuePair,
-            SymTypeExpressionFactory.createTypeVariable(k.get()),
-            SymTypeExpressionFactory.createTypeVariable(v.get()));
-        map.setSuperTypesList(
-            List.of(SymTypeExpressionFactory.createGenerics(collection, kv)));
-      }
     } else {
       Log.error("Could not find Collections.kermlsym");
     }
-  }
-
-  protected void setCollectionSuperTypes(TypeSymbol type, TypeSymbol... superTypes) {
-    List<SymTypeExpression> superTypeExpressions = new ArrayList<>();
-    for (TypeSymbol superType : superTypes) {
-      if (!superType.getSpannedScope().getTypeVarSymbols().isEmpty()) {
-        List<SymTypeExpression> typeArgs = type.getSpannedScope().getLocalTypeVarSymbols().stream()
-            .map(SymTypeExpressionFactory::createTypeVariable)
-            .collect(Collectors.toList());
-        superTypeExpressions.add(SymTypeExpressionFactory.createGenerics(superType, typeArgs));
-      } else {
-        superTypeExpressions.add(SymTypeExpressionFactory.createTypeObject(superType));
-      }
-    }
-    type.setSuperTypesList(superTypeExpressions);
   }
 
   public static void addVectorValuesTypes() {
