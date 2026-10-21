@@ -3,6 +3,7 @@ package de.monticore.lang.sysmlparts.symboltable.adapters;
 
 import com.google.common.base.Preconditions;
 import de.monticore.lang.sysmlparts._symboltable.PortUsageSymbol;
+import de.monticore.lang.sysmlv2.symboltable.adapters.AttributeUsage2PortSymbolAdapter;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.se_rwth.commons.SourcePosition;
@@ -60,5 +61,20 @@ public class PortUsage2VariableSymbolAdapter extends VariableSymbol {
       clone.setType(this.getType().deepClone());
     }
     return clone;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if(other instanceof PortUsage2VariableSymbolAdapter) {
+      return this.adaptee.equals(((PortUsage2VariableSymbolAdapter) other).adaptee);
+    }
+    else {
+      return super.equals(other);
+    }
+  }
+
+  @Override
+  public int hashCode() {
+    return adaptee.hashCode();
   }
 }
