@@ -204,6 +204,58 @@ public class StandardLibraryImportTest {
   }
 
   @Test
+  public void testMapGenericTypeFromSymFile() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+    tool.getGlobalScope().clear();
+    SysMLv2Mill.loadScalarValuesFromSym();
+    SysMLv2Mill.loadCollectionValuesFromSym();
+
+    var ast = SysMLv2Mill.parser()
+        .parse_StringMCBasicGenericType("Collections::Map<ScalarValues::String, ScalarValues::Boolean>").get();
+    ast.setEnclosingScope(tool.getGlobalScope());
+    for (var typeArgument : ast.getMCTypeArgumentList()) {
+      var argument = (ASTMCQualifiedType) typeArgument.getMCTypeOpt().orElseThrow();
+      argument.getMCQualifiedName().setEnclosingScope(tool.getGlobalScope());
+    }
+    var type = TypeCheck3.symTypeFromAST(ast);
+
+    assertThat(type.isObscureType()).isFalse();
+    assertThat(type.isGenericType()).isTrue();
+    assertThat(type.getTypeInfo().getName()).isEqualTo("Map");
+    assertThat(type.printFullName())
+        .isEqualTo("Collections.Map<ScalarValues.String,ScalarValues.Boolean>");
+    assertThat(Log.getFindings()).isEmpty();
+  }
+
+  @Test
+  public void testOrderedMapGenericTypeFromSymFile() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+    tool.getGlobalScope().clear();
+    SysMLv2Mill.loadScalarValuesFromSym();
+    SysMLv2Mill.loadCollectionValuesFromSym();
+
+    var ast = SysMLv2Mill.parser()
+        .parse_StringMCBasicGenericType("Collections::OrderedMap<ScalarValues::String, ScalarValues::Boolean>").get();
+    ast.setEnclosingScope(tool.getGlobalScope());
+    for (var typeArgument : ast.getMCTypeArgumentList()) {
+      var argument = (ASTMCQualifiedType) typeArgument.getMCTypeOpt().orElseThrow();
+      argument.getMCQualifiedName().setEnclosingScope(tool.getGlobalScope());
+    }
+    var type = TypeCheck3.symTypeFromAST(ast);
+
+    assertThat(type.isObscureType()).isFalse();
+    assertThat(type.isGenericType()).isTrue();
+    assertThat(type.getTypeInfo().getName()).isEqualTo("OrderedMap");
+    assertThat(type.printFullName())
+        .isEqualTo("Collections.OrderedMap<ScalarValues.String,ScalarValues.Boolean>");
+    assertThat(Log.getFindings()).isEmpty();
+  }
+
+  @Test
   public void testStatesImport() throws IOException {
     var model = " private import States::*;"+
         "state def MyState : StateAction;";
