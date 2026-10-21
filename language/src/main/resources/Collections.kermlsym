@@ -123,7 +123,21 @@
           {
             "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
             "name": "KeyValuePair",
-            "fullName": "Collections.KeyValuePair"
+            "fullName": "Collections.KeyValuePair",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "K",
+                  "fullName": "Collections.KeyValuePair.K"
+                },
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "V",
+                  "fullName": "Collections.KeyValuePair.V"
+                }
+              ]
+            }
           },
           {
             "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",

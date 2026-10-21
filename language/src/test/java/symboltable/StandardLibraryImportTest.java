@@ -178,6 +178,32 @@ public class StandardLibraryImportTest {
   }
 
   @Test
+  public void testKeyValuePairGenericTypeFromSymFile() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+    tool.getGlobalScope().clear();
+    SysMLv2Mill.loadScalarValuesFromSym();
+    SysMLv2Mill.loadCollectionValuesFromSym();
+
+    var ast = SysMLv2Mill.parser()
+        .parse_StringMCBasicGenericType("Collections::KeyValuePair<ScalarValues::String, ScalarValues::Boolean>").get();
+    ast.setEnclosingScope(tool.getGlobalScope());
+    for (var typeArgument : ast.getMCTypeArgumentList()) {
+      var argument = (ASTMCQualifiedType) typeArgument.getMCTypeOpt().orElseThrow();
+      argument.getMCQualifiedName().setEnclosingScope(tool.getGlobalScope());
+    }
+    var type = TypeCheck3.symTypeFromAST(ast);
+
+    assertThat(type.isObscureType()).isFalse();
+    assertThat(type.isGenericType()).isTrue();
+    assertThat(type.getTypeInfo().getName()).isEqualTo("KeyValuePair");
+    assertThat(type.printFullName())
+        .isEqualTo("Collections.KeyValuePair<ScalarValues.String,ScalarValues.Boolean>");
+    assertThat(Log.getFindings()).isEmpty();
+  }
+
+  @Test
   public void testStatesImport() throws IOException {
     var model = " private import States::*;"+
         "state def MyState : StateAction;";
