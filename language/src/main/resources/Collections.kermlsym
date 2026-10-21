@@ -142,12 +142,40 @@
           {
             "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
             "name": "Map",
-            "fullName": "Collections.Map"
+            "fullName": "Collections.Map",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "K",
+                  "fullName": "Collections.Map.K"
+                },
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "V",
+                  "fullName": "Collections.Map.V"
+                }
+              ]
+            }
           },
           {
             "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
             "name": "OrderedMap",
-            "fullName": "Collections.OrderedMap"
+            "fullName": "Collections.OrderedMap",
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "K",
+                  "fullName": "Collections.OrderedMap.K"
+                },
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "V",
+                  "fullName": "Collections.OrderedMap.V"
+                }
+              ]
+            }
           }
         ]
       }
