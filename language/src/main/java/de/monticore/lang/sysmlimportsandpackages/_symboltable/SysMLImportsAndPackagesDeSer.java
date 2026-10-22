@@ -40,7 +40,7 @@ public class SysMLImportsAndPackagesDeSer extends SysMLImportsAndPackagesDeSerTO
         .stream()
         .flatMap(Collection::stream)
         .map(statement -> SysMLv2Mill.sysMLImportStatementBuilder()
-            .setMCQualifiedName(SysMLv2Mill.sysMLQualifiedNameBuilder()
+            .setSysMLQualifiedName(SysMLv2Mill.sysMLQualifiedNameBuilder()
                 .setNamesList(statement
                     .getAsJsonObject()
                     .getMember("nameParts")

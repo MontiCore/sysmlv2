@@ -8,21 +8,26 @@ component grammar SysMLImportsAndPackages extends SysMLBasis {
    * From PrivateImportTest.sysml: "import all" overrides private import.
    */
   SysMLImportStatement extends MCImportStatement implements SysMLElement =
-    Modifier UserDefinedKeyword* "import" ["all"]? MCQualifiedName
-    ( "::" Star:["*"])? ("::" Recursive:["**"])?
+    Modifier UserDefinedKeyword* "import" ["all"]? SysMLQualifiedName
+    ("::" Star:["*"])? ("::" Recursive:["**"])?
     ("[" filter:Expression "]")?
     ("as" Name)?
-    ("{"
-       SysMLElement*
-     "}" | ";") ;
+    ("{" SysMLElement* "}" | ";") ;
 
-  astrule SysMLImportStatement =
-    method public boolean isPublic() {
-      return getModifier().isPublic();
-    }
-    method public boolean isPrivate() {
-      return getModifier().isPrivate();
-    } ;
+   astrule SysMLImportStatement =
+      method public de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName
+          getMCQualifiedName() {
+        return getSysMLQualifiedName();
+      }
+
+      method public boolean isPublic() {
+        return getModifier().isPublic();
+      }
+
+      method public boolean isPrivate() {
+        return getModifier().isPrivate();
+      }
+    ;
 
   SysMLAlias implements SysMLElement =
     Modifier UserDefinedKeyword* "alias" SysMLIdentifier? Name? "for" MCQualifiedName
