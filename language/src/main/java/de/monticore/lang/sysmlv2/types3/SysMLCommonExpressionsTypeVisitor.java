@@ -3,18 +3,13 @@ package de.monticore.lang.sysmlv2.types3;
 import de.monticore.expressions.commonexpressions._ast.ASTArrayAccessExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpressionBuilder;
-import de.monticore.expressions.commonexpressions._ast.ASTLogicalNotExpression;
-import de.monticore.expressions.commonexpressions._symboltable.ICommonExpressionsScope;
-import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTraverser;
-import de.monticore.expressions.commonexpressions.types3.CommonExpressionsTypeVisitor;
-import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.expressions.commonexpressions.types3.CommonExpressionsCTTIVisitor;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.lang.componentconnector.StreamTimingUtil;
 import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScope;
-import de.monticore.lang.sysmlactions._ast.ASTAssignmentActionUsage;
-import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlexpressions._ast.ASTConditionalNotExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTInfinity;
+import de.monticore.lang.sysmlexpressions._ast.ASTSqsubsetEquationExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSubsetEquationExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSubsetExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSupersetEquationExpression;
@@ -25,47 +20,25 @@ import de.monticore.lang.sysmlexpressions._ast.ASTSysMLSequenceExpression;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsHandler;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsTraverser;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsVisitor2;
-import de.monticore.lang.sysmlparts._ast.ASTPartDef;
-import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
-import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
-import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
-import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortDefSymbol;
-import de.monticore.lang.sysmlstates._ast.ASTStateDef;
-import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
-import de.monticore.lang.sysmlstates._symboltable.StateDefSymbol;
-import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
-import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
-import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
-import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
-import de.monticore.ocl.setexpressions._ast.ASTSetNotInExpression;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
-import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.compsymbols._symboltable.PortSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfFunction;
-import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.types3.SymTypeRelations;
+import de.monticore.types3.generics.TypeParameterRelations;
+import de.monticore.types3.generics.util.CompileTimeTypeCalculator;
 import de.monticore.types3.util.TypeContextCalculator;
 import de.monticore.types3.util.TypeVisitorLifting;
-import de.monticore.types3.util.TypeVisitorOperatorCalculator;
 import de.monticore.types3.util.WithinScopeBasicSymbolsResolver;
 import de.monticore.types3.util.WithinTypeBasicSymbolsResolver;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-
-import static de.monticore.types.check.SymTypeExpressionFactory.createObscureType;
 
 /**
  * Handles type checking the sysmlv2 standard and the particularities of the spes
@@ -79,10 +52,81 @@ import static de.monticore.types.check.SymTypeExpressionFactory.createObscureTyp
  * Mode 2: TypeCheck finds multiple attributes, and thus multiple channels and
  * reverts to the standard (with streams) TypeCheck without implicit field accesses.
  */
-public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisitor implements
+public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsCTTIVisitor implements
     SysMLExpressionsVisitor2, SysMLExpressionsHandler {
 
   protected SysMLExpressionsTraverser traverser;
+
+  /**
+   * SysML calc usages are adapted both as variables with function type and as
+   * functions. For a field access such as {@code f.bar()}, where {@code bar} is
+   * a calc usage, both resolver paths can contribute the same function type to
+   * an intersection type. CommonExpressions CTTI call handling expects a stable,
+   * unambiguous function type for the call target, so this method keeps
+   * MontiCore's inference-variable reuse behavior and normalizes function and
+   * intersection field-access results before passing them to the compile-time
+   * type calculator.
+   */
+  @Override
+  protected void handleFieldAccessResolvedType(
+      ASTFieldAccessExpression expr,
+      SymTypeExpression resolvedType
+  ) {
+    SymTypeExpression resolved;
+    if (TypeParameterRelations.hasInferenceVariables(resolvedType) &&
+        getInferenceContext4Ast().hasResolvedOfExpression(expr)
+    ) {
+      resolved = getInferenceContext4Ast().getResolvedOfExpression(expr);
+      Log.trace("FieldAccessExpression - deliberately ignoring"
+              + " resolved type " + resolvedType.printFullName()
+              + " (using " + resolved.printFullName() + " instead)"
+              + " to use the same inference variables as last time.",
+          LOG_NAME
+      );
+    }
+    else {
+      resolved = resolvedType;
+    }
+
+    if (resolved.isFunctionType()) {
+      SymTypeOfFunction function = resolved.asFunctionType();
+      resolved = SymTypeExpressionFactory.createFunction(
+          function.getType().deepClone(),
+          function.getArgumentTypeList().stream()
+              .map(SymTypeExpression::deepClone)
+              .collect(java.util.stream.Collectors.toList()),
+          function.isElliptic()
+      );
+    }
+    else if (resolved.isIntersectionType()) {
+      java.util.Map<String, SymTypeExpression> uniqueTypes =
+          new java.util.LinkedHashMap<>();
+      resolved.asIntersectionType().getIntersectedTypeSet()
+          .forEach(type -> {
+            SymTypeExpression safeType = type;
+            if (type.isFunctionType()) {
+              SymTypeOfFunction function = type.asFunctionType();
+              safeType = SymTypeExpressionFactory.createFunction(
+                  function.getType().deepClone(),
+                  function.getArgumentTypeList().stream()
+                      .map(SymTypeExpression::deepClone)
+                      .collect(java.util.stream.Collectors.toList()),
+                  function.isElliptic()
+              );
+            }
+            uniqueTypes.putIfAbsent(safeType.printFullName(), safeType);
+          });
+      resolved = SymTypeExpressionFactory.createIntersection(uniqueTypes.values());
+    }
+
+    CompileTimeTypeCalculator.handleResolvedType(
+        expr,
+        resolved,
+        getTraverser(),
+        getType4Ast(),
+        getInferenceContext4Ast()
+    );
+  }
 
   @Override
   public SysMLExpressionsTraverser getTraverser() {
@@ -109,6 +153,20 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisi
   public void endVisit(ASTInfinity node) {
     // backwards compatibility
     getType4Ast().setTypeOfExpression(node, SymTypeExpressionFactory.createPrimitive("int"));
+  }
+
+  @Override
+  public void endVisit(ASTSqsubsetEquationExpression expr) {
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression result;
+
+    if(SymTypeRelations.isCompatible(left, right)){
+      result = SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
+    } else {
+      result = SymTypeExpressionFactory.createObscureType();
+    }
+    getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override

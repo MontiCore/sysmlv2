@@ -1,7 +1,7 @@
 package typecheck;
 
 import de.monticore.expressions.commonexpressions.types3.util.CommonExpressionsLValueRelations;
-import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisTypeVisitor;
+import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisCTTIVisitor;
 import de.monticore.expressions.streamexpressions.types3.StreamExpressionsTypeVisitor;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
@@ -21,6 +21,7 @@ import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionTypesTypeVisitor;
 import de.monticore.types3.Type4Ast;
 import de.monticore.types3.TypeCheck3;
+import de.monticore.types3.generics.context.InferenceContext4Ast;
 import de.monticore.types3.streams.StreamSymTypeRelations;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
@@ -51,18 +52,22 @@ public class FieldAccessExpressionInConstraintUsageTest {
     tool.init();
 
     var type4Ast = new Type4Ast();
+    var ctx4Ast = new InferenceContext4Ast();
     var typeTraverser = SysMLv2Mill.inheritanceTraverser();
 
-    var forBasis = new ExpressionBasisTypeVisitor();
+    var forBasis = new ExpressionBasisCTTIVisitor();
     forBasis.setType4Ast(type4Ast);
+    forBasis.setContext4Ast(ctx4Ast);
     typeTraverser.add4ExpressionsBasis(forBasis);
 
     var forLiterals = new MCCommonLiteralsTypeVisitor();
     forLiterals.setType4Ast(type4Ast);
+    forLiterals.setContext4Ast(ctx4Ast);
     typeTraverser.add4MCCommonLiterals(forLiterals);
 
     var forCommon = new SysMLCommonExpressionsTypeVisitor();
     forCommon.setType4Ast(type4Ast);
+    forCommon.setContext4Ast(ctx4Ast);
     typeTraverser.add4CommonExpressions(forCommon);
     typeTraverser.setCommonExpressionsHandler(forCommon);
     typeTraverser.add4SysMLExpressions(forCommon);
@@ -70,24 +75,29 @@ public class FieldAccessExpressionInConstraintUsageTest {
 
     var forOcl = new SysMLOCLExpressionsTypeVisitor();
     forOcl.setType4Ast(type4Ast);
+    forOcl.setContext4Ast(ctx4Ast);
     typeTraverser.add4OCLExpressions(forOcl);
     typeTraverser.add4SysMLExpressions(forOcl);
 
     var forStreams = new StreamExpressionsTypeVisitor();
     forStreams.setType4Ast(type4Ast);
+    forStreams.setContext4Ast(ctx4Ast);
     typeTraverser.add4StreamExpressions(forStreams);
 
     var forSets = new SysMLSetExpressionsTypeVisitor();
     forSets.setType4Ast(type4Ast);
+    forSets.setContext4Ast(ctx4Ast);
     typeTraverser.add4SetExpressions(forSets);
 
     var forBasicTypes = new SysMLMCBasicTypesTypeVisitor();
     forBasicTypes.setType4Ast(type4Ast);
+    forBasicTypes.setContext4Ast(ctx4Ast);
     typeTraverser.add4MCBasicTypes(forBasicTypes);
     typeTraverser.add4SysMLExpressions(forBasicTypes);
 
     var forCollectionTypes = new MCCollectionTypesTypeVisitor();
     forCollectionTypes.setType4Ast(type4Ast);
+    forCollectionTypes.setContext4Ast(ctx4Ast);
     typeTraverser.add4MCCollectionTypes(forCollectionTypes);
 
     StreamSymTypeRelations.init();
@@ -146,5 +156,4 @@ public class FieldAccessExpressionInConstraintUsageTest {
     assertFalse(type.printFullName().equals("EventStream.EventStream<boolean>"));
   }
 }
-
 
