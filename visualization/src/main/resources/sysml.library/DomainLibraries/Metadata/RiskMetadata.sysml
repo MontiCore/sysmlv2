@@ -1,78 +1,101 @@
 /* (c) https://github.com/MontiCore/monticore */
-/**
- * This package defines metadata for annotating model elements with assessments of risk.
- */
-package RiskMetadata {
+standard library package RiskMetadata {
+	doc
+	/*
+	 * This package defines metadata for annotating model elements with assessments of risk.
+	 */
+
 	private import ScalarValues::Real;
-	
-	/**
-	 * A Level is a Real number in the interval 0.0 to 1.0, inclusive.
-	 */
+
 	attribute def Level :> Real {
-		private attribute level : Level :>> self;
-		assert constraint { level >= 0.0 and level <= 1.0 }
-	}
-	
-	/**
-	 * LevelEnum provides standard probability Levels for low, medium and high risks.
-	 */
-	enum def LevelEnum :> Level {
-		L = 0.25;
-		M = 0.50;
-		H = 0.75;
+		doc
+		/*
+		 * A Level is a Real number in the interval 0.0 to 1.0, inclusive.
+		 */
+
+		assert constraint { that >= 0.0 and that <= 1.0 }
 	}
 
-	/**
-	 * RiskLevel gives the probability of a risk occurring and, optionally, the impact
-	 * if the risk occurs.
-	 */
-	attribute def RiskLevel {
-		/**
-		 * The probability that a risk will occur.
-		 */
-		attribute probability : Level;
-		
+	enum def LevelEnum :> Level {
+		doc
 		/*
-		 * The impact of the risk if it occurs (with 0.0 being no impact and 1.0 being 
-		 * the most severe impact).
+		 * LevelEnum provides standard probability Levels for low, medium and high risks.
 		 */
-		attribute impact : Level [0..1];
+
+		low = 0.25;
+		medium = 0.50;
+		high = 0.75;
 	}
-	
-	/*
-	 * RiskLevelEnum enumerates standard RiskLevels for low, medium and high risks
-	 * (without including impact).
-	 */
+
+	attribute def RiskLevel {
+		doc
+		/*
+		 * RiskLevel gives the probability of a risk occurring and, optionally, the impact
+		 * if the risk occurs.
+		 */
+
+		attribute probability : Level {
+			doc
+			/*
+			 * The probability that a risk will occur.
+			 */
+		}
+
+		attribute impact : Level [0..1] {
+			doc
+			/*
+			 * The impact of the risk if it occurs (with 0.0 being no impact and 1.0 being
+			 * the most severe impact).
+			 */
+		}
+	}
+
 	enum def RiskLevelEnum :> RiskLevel {
-		L = new RiskLevel(probability = LevelEnum::L);
-		M = new RiskLevel(probability = LevelEnum::M);
-		H = new RiskLevel(probability = LevelEnum::H);
+		doc
+		/*
+		 * RiskLevelEnum enumerates standard RiskLevels for low, medium and high risks
+		 * (without including impact).
+		 */
+
+		low = new RiskLevel(probability = LevelEnum::low);
+		medium = new RiskLevel(probability = LevelEnum::medium);
+		high = new RiskLevel(probability = LevelEnum::high);
 	}
-	
-	/**
-	 * Risk is used to annotate a model element with an assessment of the risk related to it
-	 * in some typical risk areas.
-	 */
-	attribute def Risk {
-		/**
-		 * The total risk associated with the annotated element.
+
+	metadata def Risk {
+		doc
+		/*
+		 * Risk is used to annotate a model element with an assessment of the risk related to it
+		 * in some typical risk areas.
 		 */
-		attribute totalRisk : RiskLevel [0..1];
-		
-		/**
-		 * The risk of unresolved technical issues regarding the annotated element.
-		 */
-		attribute technicalRisk : RiskLevel [0..1];
-		
-		/**
-		 * The risk that work on the annotated element will not be completed on schedule.
-		 */
-		attribute scheduleRisk : RiskLevel [0..1];
-		
-		/**
-		 * The risk that work on the annotated element will exceed its planned cost.
-		 */
-		attribute costRisk : RiskLevel [0..1];
+
+		attribute totalRisk : RiskLevel [0..1] {
+			doc
+			/*
+			 * The total risk associated with the annotated element.
+			 */
+		}
+
+		attribute technicalRisk : RiskLevel [0..1] {
+			doc
+			/*
+			 * The risk of unresolved technical issues regarding the annotated element.
+			 */
+		}
+
+		attribute scheduleRisk : RiskLevel [0..1] {
+			doc
+			/*
+			 * The risk that work on the annotated element will not be completed on schedule.
+			 */
+		}
+
+		attribute costRisk : RiskLevel [0..1] {
+			doc
+			/*
+			 * The risk that work on the annotated element will exceed its planned cost.
+			 */
+		}
 	}
-	
+
 }
