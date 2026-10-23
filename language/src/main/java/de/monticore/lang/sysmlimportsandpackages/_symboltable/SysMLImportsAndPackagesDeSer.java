@@ -26,7 +26,7 @@ public class SysMLImportsAndPackagesDeSer extends SysMLImportsAndPackagesDeSerTO
       json.putMember("isRecursive", JsonElementFactory.createJsonBoolean(sysMLImport.isRecursive()));
       var nameParts = JsonElementFactory.createJsonArray();
       json.putMember("nameParts", nameParts);
-      for (var part : sysMLImport.getMCQualifiedName().getPartsList()) {
+      for (var part : sysMLImport.getSysMLQualifiedName().getPartsList()) {
         nameParts.add(JsonElementFactory.createJsonString("\"" + part + "\""));
       }
     }

@@ -138,12 +138,8 @@ component grammar SysMLBasis
    * ##################################################################
    */
 
- SysMLQualifiedName extends MCQualifiedName =
-   Name (separator:SysMLQualifiedNameSeparator Name)* ;
-
- SysMLQualifiedNameSeparator =
-     colonColon:"::"
-   | dot:"." ;
+  SysMLQualifiedName extends MCQualifiedName =
+    Name ("::" Name)* ;
 
   astrule SysMLQualifiedName =
     method public List<String> getPartsList() {
@@ -152,6 +148,9 @@ component grammar SysMLBasis
     method public String getBaseName() {
       return getPartsList().get(getPartsList().size()-1);
     } ;
+
+    SysMLFeatureChain extends MCQualifiedName =
+      (SysMLQualifiedName || ".")+ ;
 
   token MultilineNote =
      "//*" .*? "*/"  : -> channel(HIDDEN);
@@ -299,7 +298,6 @@ component grammar SysMLBasis
      "}" | ";");
 
   // Used regularly in successions
-  Endpoint =
-    MCQualifiedName SysMLCardinality? Specialization* ;
+  Endpoint = SysMLFeatureChain SysMLCardinality? Specialization* ;
 
 }

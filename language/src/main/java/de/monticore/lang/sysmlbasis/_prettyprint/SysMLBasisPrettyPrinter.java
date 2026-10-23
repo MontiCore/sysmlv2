@@ -23,7 +23,7 @@ public class SysMLBasisPrettyPrinter extends SysMLBasisPrettyPrinterTOP {
       getPrinter().print(iter_name.next());
       while (iter_name.hasNext()) {
         getPrinter().stripTrailing();
-        getPrinter().print(".");
+        getPrinter().print("::");
         getPrinter().print(iter_name.next());
       }
     }
@@ -31,5 +31,7 @@ public class SysMLBasisPrettyPrinter extends SysMLBasisPrettyPrinterTOP {
       CommentPrettyPrinter.printPostComments(node, getPrinter());
     }
   }
+
+
 
 }

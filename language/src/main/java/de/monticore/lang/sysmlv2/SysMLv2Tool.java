@@ -130,7 +130,7 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo((SysMLPartsASTEnumUsageCoCo) new DefsAndUsagesHaveTheSameTypeCoCo());
     checker.addCoCo((SysMLPartsASTAttributeUsageCoCo) new DefsAndUsagesHaveTheSameTypeCoCo());
     checker.addCoCo(new ImportModifierRequiredCoCo());
-    checker.addCoCo(new ImportSeparatorCoCo());
+   // checker.addCoCo(new ImportSeparatorCoCo());
     checker.checkAll(ast);
   }
 

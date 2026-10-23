@@ -43,7 +43,7 @@ public class SysMLBasisTypesPrettyPrinter implements SysMLBasisVisitor2, SysMLBa
   // #############################################################################
 
   public void visit(ASTSysMLQualifiedName node) {
-    printer.print(node.streamParts().collect(Collectors.joining(".")));
+    printer.print(node.streamParts().collect(Collectors.joining("::")));
   }
 
 }

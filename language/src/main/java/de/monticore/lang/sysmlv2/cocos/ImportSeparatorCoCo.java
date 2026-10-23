@@ -1,4 +1,4 @@
-package de.monticore.lang.sysmlv2.cocos;
+/*package de.monticore.lang.sysmlv2.cocos;
 
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLQualifiedName;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLQualifiedNameSeparator;
@@ -25,4 +25,4 @@ public class ImportSeparatorCoCo
       }
     }
   }
-}
+}*/
