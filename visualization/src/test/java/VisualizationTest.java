@@ -34,7 +34,9 @@ public class VisualizationTest {
     String inverterContent = Files.readString(Paths.get("src/test/resources/Inverter.sysml"));
 
     SysMLInteractiveResult rezEval = instance.eval(inverterContent);
-    assertThat(rezEval.hasErrors()).isFalse();
+    assertThat(rezEval.hasErrors())
+        .withFailMessage("SysML evaluation failed:%n%s", rezEval.formatIssues())
+        .isFalse();
 
     Element rezRoot = rezEval.getRootElement();
     Element resEle = instance.resolve("inverter");

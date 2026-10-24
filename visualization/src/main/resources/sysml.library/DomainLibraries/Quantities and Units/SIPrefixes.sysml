@@ -1,13 +1,15 @@
 /* (c) https://github.com/MontiCore/monticore */
-/**
- * Definition of SI unit prefixes as specified in ISO/IEC 80000-1
- */
-package SIPrefixes {
-	private import UnitsAndScales::*;
+standard library package SIPrefixes {
+	doc
+	/*
+	 * Definition of SI unit prefixes as specified in ISO/IEC 80000-1
+	 */
+
+	private import MeasurementReferences::*;
 
 	/*
 	 * ISO/IEC 80000-1 prefixes for decimal multiples and sub-multiples
-	 * 
+	 *
 	 * See also https://en.wikipedia.org/wiki/Unit_prefix
 	 */
 	attribute yocto: UnitPrefix { :>> longName = "yocto"; :>> symbol = "y"; :>> conversionFactor = 1E-24; }
@@ -30,10 +32,10 @@ package SIPrefixes {
 	attribute exa: UnitPrefix { :>> longName = "exa"; :>> symbol = "E"; :>> conversionFactor = 1E18; }
 	attribute zetta: UnitPrefix { :>> longName = "zetta"; :>> symbol = "Z"; :>> conversionFactor = 1E21; }
 	attribute yotta: UnitPrefix { :>> longName = "yotta"; :>> symbol = "Y"; :>> conversionFactor = 1E24; }
-	
+
 	/*
 	 * ISO/IEC 80000-1 prefixes for binary multiples, i.e. multiples of 1024 (= 2^10)
-	 * 
+	 *
 	 * See also https://en.wikipedia.org/wiki/Binary_prefix
 	 */
 	attribute kibi: UnitPrefix { :>> longName = "kibi"; :>> symbol = "Ki"; :>> conversionFactor = 1024; }
