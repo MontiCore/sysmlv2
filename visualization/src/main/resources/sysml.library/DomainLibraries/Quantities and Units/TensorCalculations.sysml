@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 standard library package TensorCalculations {
 	doc
 	/*
@@ -11,10 +12,10 @@ standard library package TensorCalculations {
     private import Quantities::TensorQuantityValue;
     private import MeasurementReferences::TensorMeasurementReference;
     private import MeasurementReferences::CoordinateTransformation;
-    
-    calc def '[' specializes BaseFunctions::'[' { 
-    	in elements: Number[1..n] ordered; 
-    	in mRef: TensorMeasurementReference[1]; 
+
+    calc def '[' specializes BaseFunctions::'[' {
+    	in elements: Number[1..n] ordered nonunique;
+    	in mRef: TensorMeasurementReference[1];
     	return quantity: TensorQuantityValue[1];
     	private attribute n = mRef.flattenedSize;
     }
