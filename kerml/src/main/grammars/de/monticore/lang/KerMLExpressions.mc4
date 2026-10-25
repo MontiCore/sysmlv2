@@ -57,8 +57,7 @@ component grammar KerMLExpressions
       MCQualifiedName;
 
   KerMLNewExpression implements Expression =
-      operator:"new" type:MCQualifiedName (arguments:Arguments)?
-      ("{" (elements:KerMLElement)* "}")?;
+      operator:"new" type:MCQualifiedName (arguments:Arguments)?;
 
   KerMLFunctionOperationExpression implements Expression =
       Expression "->" Name
