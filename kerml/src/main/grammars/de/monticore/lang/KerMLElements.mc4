@@ -3,6 +3,7 @@ package de.monticore.lang;
 
 component grammar KerMLElements
     extends KerMLBasis,
+            de.monticore.types.MCBasicTypes,
             de.monticore.symbols.BasicSymbols,
             de.monticore.UMLModifier
 {

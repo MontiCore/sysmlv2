@@ -3,6 +3,7 @@ package de.monticore.lang;
 
 component grammar KerMLExpressions
     extends KerMLBasis,
+            de.monticore.types.MCBasicTypes,
             de.monticore.expressions.CommonExpressions
 {
     ConditionalAndExpression implements Expression <120>, InfixExpression =
