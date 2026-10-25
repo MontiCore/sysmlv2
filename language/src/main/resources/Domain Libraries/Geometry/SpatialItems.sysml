@@ -59,15 +59,23 @@ standard library package SpatialItems {
 			isZeroVector(CurrentPositionOf(originPoint, that))
 		}
 
-		item componentItems : SpatialItem[1..*] :> subitems {
+        item subSpatialItems : SpatialItem[1..*] :> subitems {
+            ref item :>> SpatialItem::localClock, subitems::localClock;
+        }
+
+        part subSpatialParts : SpatialItem[1..*] :> subSpatialItems, subparts {
+            ref item :>> SpatialItem::localClock, subSpatialItems::localClock, subparts::localClock;
+        }
+
+		item componentItems : SpatialItem[1..*] :> subSpatialItems {
 			doc
 			/*
 			 * A SpatialItem with componentItems is entirely made up of those items (the SpatialItem occurs only
 			 * as a collection of its componentItems).  By default they have the same localClock and equivalent
 			 * coordinate frame as the SpatialItem they make up.  A SpatialItem without componentItems occurs
 			 * on its own, separately from its subitems.
-			 */		
-			item :>> localClock default (that as SpatialItem).localClock;
+			 */
+			ref item :>> SpatialItem::localClock, subSpatialItems::localClock default (that as SpatialItem).localClock;
 			attribute :>> coordinateFrame {
 				attribute :>> mRefs default (that.that as SpatialItem).coordinateFrame.mRefs;
 				attribute :>> transformation[1] default nullTransformation {
@@ -84,6 +92,10 @@ standard library package SpatialItems {
 			 */
 		
 			item :>> elements : SpatialItem [1..*] = componentItems;
+		}
+
+		part componentParts : SpatialItem[1..*] :> componentItems, subSpatialParts {
+		    ref item :>> SpatialItem::localClock, componentItems::localClock, subSpatialParts::localClock, subparts::localClock;
 		}
 	}
 

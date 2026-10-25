@@ -2,9 +2,9 @@ standard library package ISQThermodynamics {
     doc
     /*
      * International System of Quantities and Units
-     * Generated on 2022-08-07T14:44:27Z from standard ISO-80000-5:2019 "Thermodynamics"
-     * see also https://www.iso.org/obp/ui/#iso:std:iso:80000:-5:ed-2:v1:en
-     * 
+     * Generated on 2025-03-13T15:00:05Z from standard ISO-80000-5:2019 "Thermodynamics"
+     * see also https://www.iso.org/standard/64976.html
+     *
      * Note 1: In documentation comments, AsciiMath notation (see http://asciimath.org/) is used for mathematical concepts,
      * with Greek letters in Unicode encoding. In running text, AsciiMath is placed between backticks.
      * Note 2: For vector and tensor quantities currently the unit and quantity value type for their (scalar) magnitude is 
