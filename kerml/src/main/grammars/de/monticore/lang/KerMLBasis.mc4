@@ -4,5 +4,5 @@ package de.monticore.lang;
 component grammar KerMLBasis
     extends de.monticore.types.MCBasicTypes
 {
-    interface KerMLElement;
+  interface KerMLElement;
 }
