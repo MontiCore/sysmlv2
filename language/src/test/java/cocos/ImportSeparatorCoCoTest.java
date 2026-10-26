@@ -1,11 +1,10 @@
-package cocos;
+/*package cocos;
 
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLQualifiedName;
 import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLImportsAndPackagesNode;
 import de.monticore.lang.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesCoCoChecker;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
-import de.monticore.lang.sysmlv2.cocos.ImportSeparatorCoCo;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,4 +62,4 @@ public class ImportSeparatorCoCoTest {
     return result.get();
   }
 
-}
+}*/

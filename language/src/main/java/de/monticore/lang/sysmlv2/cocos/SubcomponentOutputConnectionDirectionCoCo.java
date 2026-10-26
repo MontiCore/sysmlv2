@@ -13,6 +13,7 @@ import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * SubcomponentOutputConnectionDirectionCoCo
@@ -101,10 +102,15 @@ public class SubcomponentOutputConnectionDirectionCoCo implements SysMLPartsASTC
 
   /** Qualified Name des Endpunkts als String. */
   protected String endpointQName(ASTEndpoint ep) {
-    if (ep.getMCQualifiedName() != null) {
-      return ep.getMCQualifiedName().toString();
+    if (ep.getSysMLFeatureChain() == null) {
+      return "";
     }
-    return "";
+
+    return ep.getSysMLFeatureChain()
+        .getSysMLQualifiedNameList()
+        .stream()
+        .map(Object::toString)
+        .collect(Collectors.joining("."));
   }
 
   /**

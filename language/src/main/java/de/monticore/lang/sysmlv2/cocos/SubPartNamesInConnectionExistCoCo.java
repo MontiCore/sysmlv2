@@ -8,6 +8,8 @@ import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.se_rwth.commons.logging.Log;
 
+import java.util.stream.Collectors;
+
 /**
  * CoCo3: Jeder in "connect a.b to c.d" verwendete Name von Subkomponenten (a und c)
  * muss im Modell vorhanden sein.
@@ -55,8 +57,18 @@ public class SubPartNamesInConnectionExistCoCo implements SysMLPartsASTConnectio
     }
   }
 
+
+
   protected String endpointQName(ASTEndpoint ep) {
-    return ep.getMCQualifiedName() != null ? ep.getMCQualifiedName().toString() : "";
+    if (ep.getSysMLFeatureChain() == null) {
+      return "";
+    }
+
+    return ep.getSysMLFeatureChain()
+        .getSysMLQualifiedNameList()
+        .stream()
+        .map(Object::toString)
+        .collect(Collectors.joining("."));
   }
 
   protected String extractFirstSegment(String qname) {

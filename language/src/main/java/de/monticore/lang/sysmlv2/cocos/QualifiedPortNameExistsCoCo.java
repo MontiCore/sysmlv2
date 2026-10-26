@@ -12,6 +12,7 @@ import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * QualifiedPortNameExistsCoCo:
@@ -91,6 +92,14 @@ public class QualifiedPortNameExistsCoCo implements SysMLPartsASTConnectionUsage
 
   /** Liefert den qualifizierten Namen des Endpunkts als String. */
   protected String endpointQName(ASTEndpoint ep) {
-    return ep.getMCQualifiedName() != null ? ep.getMCQualifiedName().toString() : "";
+    if (ep.getSysMLFeatureChain() == null) {
+      return "";
+    }
+
+    return ep.getSysMLFeatureChain()
+        .getSysMLQualifiedNameList()
+        .stream()
+        .map(Object::toString)
+        .collect(Collectors.joining("."));
   }
 }

@@ -257,16 +257,16 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
       var connectionUsage = SysMLv2Mill.connectionUsageBuilder()
           .setSrc(
               SysMLv2Mill.endpointBuilder()
-                  .setMCQualifiedName(
-                      SysMLv2Mill.mCQualifiedNameBuilder()
+                  .setSysMLFeatureChain(
+                      SysMLv2Mill.sysMLFeatureChainBuilder()
                           .addParts(input.getName())
                           .build())
                   .build()
               )
           .setTgt(
               SysMLv2Mill.endpointBuilder()
-                  .setMCQualifiedName(
-                      SysMLv2Mill.mCQualifiedNameBuilder()
+                  .setSysMLFeatureChain(
+                      SysMLv2Mill.sysMLFeatureChainBuilder()
                           .addParts("/* TODO: add target */")
                           .build())
                   .build()
@@ -285,16 +285,16 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
       var connectionUsage = SysMLv2Mill.connectionUsageBuilder()
           .setSrc(
               SysMLv2Mill.endpointBuilder()
-                  .setMCQualifiedName(
-                      SysMLv2Mill.mCQualifiedNameBuilder()
+                  .setSysMLFeatureChain(
+                      SysMLv2Mill.sysMLFeatureChainBuilder()
                           .addParts("/* TODO: add source */")
                           .build()
                   )
                   .build())
           .setTgt(
               SysMLv2Mill.endpointBuilder()
-                  .setMCQualifiedName(
-                      SysMLv2Mill.mCQualifiedNameBuilder()
+                  .setSysMLFeatureChain(
+                      SysMLv2Mill.sysMLFeatureChainBuilder()
                           .addParts(output.getName())
                           .build()
                   )

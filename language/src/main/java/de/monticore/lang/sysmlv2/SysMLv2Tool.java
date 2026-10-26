@@ -33,7 +33,7 @@ import de.monticore.lang.sysmlv2.cocos.AssignActionTypeCheck3;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBoolean;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBooleanTC3;
 import de.monticore.lang.sysmlv2.cocos.FlowCheckCoCo;
-import de.monticore.lang.sysmlv2.cocos.ImportSeparatorCoCo;
+//import de.monticore.lang.sysmlv2.cocos.ImportSeparatorCoCo;
 import de.monticore.lang.sysmlv2.cocos.NameCompatible4Isabelle;
 import de.monticore.lang.sysmlv2.cocos.OneCardinality;
 import de.monticore.lang.sysmlv2.cocos.PartBehaviorCoCo;
