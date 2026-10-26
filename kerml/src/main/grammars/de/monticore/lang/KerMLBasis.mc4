@@ -3,5 +3,5 @@ package de.monticore.lang;
 
 component grammar KerMLBasis
 {
-    interface KerMLElement;
+  interface KerMLElement;
 }
