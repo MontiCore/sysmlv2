@@ -61,7 +61,7 @@ component grammar KerMLExpressions
 
   KerMLFunctionOperationExpression implements Expression <291> =
       Expression "->" MCQualifiedName
-      (body:KerMLBodyExpression
-        | functionReference:MCQualifiedName
-        | Arguments);
+      (functionReference:MCQualifiedName
+        | Arguments (body:KerMLBodyExpression)?
+        | body:KerMLBodyExpression)?;
 }
