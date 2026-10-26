@@ -16,8 +16,8 @@
               "symbols": [
                 {
                   "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
-                  "name": "E",
-                  "fullName": "Collections.Collection.E"
+                  "name": "T0",
+                  "fullName": "Collections.Collection.T0"
                 }
               ]
             }
@@ -30,8 +30,8 @@
               "symbols": [
                 {
                   "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
-                  "name": "E",
-                  "fullName": "Collections.OrderedCollection.E"
+                  "name": "T0",
+                  "fullName": "Collections.OrderedCollection.T0"
                 }
               ]
             }
@@ -44,8 +44,8 @@
               "symbols": [
                 {
                   "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
-                  "name": "E",
-                  "fullName": "Collections.UniqueCollection.E"
+                  "name": "T0",
+                  "fullName": "Collections.UniqueCollection.T0"
                 }
               ]
             }
@@ -58,8 +58,8 @@
               "symbols": [
                 {
                   "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
-                  "name": "E",
-                  "fullName": "Collections.Array.E"
+                  "name": "T0",
+                  "fullName": "Collections.Array.T0"
                 }
               ]
             }
@@ -72,8 +72,8 @@
               "symbols": [
                 {
                   "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
-                  "name": "E",
-                  "fullName": "Collections.Bag.E"
+                  "name": "T0",
+                  "fullName": "Collections.Bag.T0"
                 }
               ]
             }
@@ -86,8 +86,8 @@
               "symbols": [
                 {
                   "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
-                  "name": "E",
-                  "fullName": "Collections.Set.E"
+                  "name": "T0",
+                  "fullName": "Collections.Set.T0"
                 }
               ]
             }
@@ -100,8 +100,8 @@
               "symbols": [
                 {
                   "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
-                  "name": "E",
-                  "fullName": "Collections.OrderedSet.E"
+                  "name": "T0",
+                  "fullName": "Collections.OrderedSet.T0"
                 }
               ]
             }
@@ -114,8 +114,8 @@
               "symbols": [
                 {
                   "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
-                  "name": "E",
-                  "fullName": "Collections.List.E"
+                  "name": "T0",
+                  "fullName": "Collections.List.T0"
                 }
               ]
             }
@@ -128,13 +128,13 @@
               "symbols": [
                 {
                   "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
-                  "name": "K",
-                  "fullName": "Collections.KeyValuePair.K"
+                  "name": "T0",
+                  "fullName": "Collections.KeyValuePair.T0"
                 },
                 {
                   "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
-                  "name": "V",
-                  "fullName": "Collections.KeyValuePair.V"
+                  "name": "T1",
+                  "fullName": "Collections.KeyValuePair.T1"
                 }
               ]
             }
@@ -147,13 +147,13 @@
               "symbols": [
                 {
                   "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
-                  "name": "K",
-                  "fullName": "Collections.Map.K"
+                  "name": "T0",
+                  "fullName": "Collections.Map.T0"
                 },
                 {
                   "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
-                  "name": "V",
-                  "fullName": "Collections.Map.V"
+                  "name": "T1",
+                  "fullName": "Collections.Map.T1"
                 }
               ]
             }
@@ -166,13 +166,13 @@
               "symbols": [
                 {
                   "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
-                  "name": "K",
-                  "fullName": "Collections.OrderedMap.K"
+                  "name": "T0",
+                  "fullName": "Collections.OrderedMap.T0"
                 },
                 {
                   "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
-                  "name": "V",
-                  "fullName": "Collections.OrderedMap.V"
+                  "name": "T1",
+                  "fullName": "Collections.OrderedMap.T1"
                 }
               ]
             }

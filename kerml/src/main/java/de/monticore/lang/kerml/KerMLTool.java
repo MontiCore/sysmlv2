@@ -4,7 +4,9 @@ package de.monticore.lang.kerml;
 import de.monticore.lang.kerml._ast.ASTKerMLModel;
 import de.monticore.lang.kerml._symboltable.IKerMLArtifactScope;
 import de.monticore.lang.kerml._symboltable.KerMLSymbols2Json;
+import de.monticore.lang.kermlelements._ast.ASTFeature;
 import de.monticore.lang.kermlelements._symboltable.DatatypeSymbol;
+import de.monticore.lang.kermlelements._symboltable.IKerMLElementsScope;
 import de.monticore.lang.kermlparts.symboltable.adapters.Datatype2TypeSymbolAdapter;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
@@ -12,8 +14,6 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
-import java.util.List;
 
 /** Command line interface for parsing KerML models and exporting their types. */
 public class KerMLTool extends KerMLToolTOP {
@@ -59,32 +59,52 @@ public class KerMLTool extends KerMLToolTOP {
   @Override
   public IKerMLArtifactScope createSymbolTable(ASTKerMLModel ast) {
     var scope = super.createSymbolTable(ast);
-    for (String name : List.of("Collection", "OrderedCollection", "UniqueCollection",
-        "Array", "Bag", "Set", "OrderedSet", "List")) {
-      scope.resolveDatatypeDown("Collections." + name).ifPresent(datatype -> {
-        var typeScope = datatype.getSpannedScope();
-        if (typeScope.resolveTypeVarLocally("E").isEmpty()) {
-          typeScope.add(BasicSymbolsMill.typeVarSymbolBuilder()
-              .setName("E")
-              .setSpannedScope(KerMLMill.scope())
-              .build());
-        }
-      });
-    }
-    for (String typeName : List.of("KeyValuePair", "Map", "OrderedMap")) {
-      scope.resolveDatatypeDown("Collections." + typeName).ifPresent(datatype -> {
-        var typeScope = datatype.getSpannedScope();
-        for (String name : List.of("K", "V")) {
-          if (typeScope.resolveTypeVarLocally(name).isEmpty()) {
-            typeScope.add(BasicSymbolsMill.typeVarSymbolBuilder()
-                .setName(name)
-                .setSpannedScope(KerMLMill.scope())
-                .build());
+    addTypeVariables(scope);
+    return scope;
+  }
+
+  private void addTypeVariables(IKerMLElementsScope scope) {
+    for (var datatype : scope.getLocalDatatypeSymbols()) {
+      int typeVarCount = 0;
+      for (var element : datatype.getAstNode().getKerMLElementList()) {
+        if (element instanceof ASTFeature) {
+          var feature = (ASTFeature) element;
+          if (feature.isPresentType()) {
+            String type = feature.getType().getQName();
+            if (type.equals("Base.Anything")) {
+              typeVarCount++;
+            }
           }
         }
-      });
+      }
+      if (typeVarCount == 0) {
+        switch (datatype.getFullName()) {
+          case "Collections.Collection":
+          case "Collections.OrderedCollection":
+          case "Collections.UniqueCollection":
+          case "Collections.Array":
+          case "Collections.Bag":
+          case "Collections.Set":
+          case "Collections.OrderedSet":
+          case "Collections.List":
+            typeVarCount = 1;
+            break;
+          case "Collections.Map":
+          case "Collections.OrderedMap":
+            typeVarCount = 2;
+            break;
+        }
+      }
+      for (int i = 0; i < typeVarCount; i++) {
+        datatype.getSpannedScope().add(BasicSymbolsMill.typeVarSymbolBuilder()
+            .setName("T" + i)
+            .setSpannedScope(KerMLMill.scope())
+            .build());
+      }
     }
-    return scope;
+    for (var subScope : scope.getSubScopes()) {
+      addTypeVariables(subScope);
+    }
   }
 
   @Override
