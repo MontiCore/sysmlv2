@@ -11,7 +11,7 @@ import de.monticore.lang.kermlexpressions._ast
 import de.monticore.lang.kermlexpressions._ast.ASTNullCoalescingExpression;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -23,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class KerMLFunctionOperationExpressionParserTest {
 
-  @BeforeEach
-  void setUp() {
+  @BeforeAll
+  static void setUp() {
     LogStub.init();
     Log.enableFailQuick(false);
     KerMLMill.reset();
