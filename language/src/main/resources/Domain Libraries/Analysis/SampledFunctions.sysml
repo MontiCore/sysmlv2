@@ -72,7 +72,7 @@ standard library package SampledFunctions {
 		 
 		in calc calculation { in x; }
 		in attribute domainValues [0..*];
-		return sampling = new SampledFunction(
+		return sampling = new SampledFunction (
 			samples = domainValues->collect { in x; new SamplePair(x, calculation(x)) }
 		);
 	}

@@ -36,7 +36,7 @@ public class SystemsLibraryTest {
         .filter(p -> p.toFile().getName().endsWith(".sysml"))
         .collect(Collectors.toList());
 
-    assertThat(models).hasSize(20);
+    assertThat(models).hasSize(21);
     var successful = 0;
     var lines = 0;
 
@@ -56,8 +56,8 @@ public class SystemsLibraryTest {
       }
     }
 
-    //System.out.println("Success rate: " + successful + "/" + 20 + " (" + lines + " findings)");
-    assertThat(successful).isEqualTo(20);
+    //System.out.println("Success rate: " + successful + "/" + 21 + " (" + lines + " findings)");
+    assertThat(successful).isEqualTo(21);
     assertThat(Log.getFindings()).isEmpty();
   }
 

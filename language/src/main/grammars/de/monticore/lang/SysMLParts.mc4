@@ -194,8 +194,8 @@ component grammar SysMLParts
     Modifier UserDefinedKeyword* "succession"? "flow"
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("of" FlowPayload)?
-     "from"? source:Endpoint
-     "to" target:Endpoint
+    ("from"? source:Endpoint
+     "to" target:Endpoint)?
      ("{"
         SysMLElement*
       "}" | ";") ;
@@ -323,7 +323,9 @@ component grammar SysMLParts
     "}")? ;
 
   symbol scope OccurrenceUsage implements OccurrenceUsageElement =
-    Modifier UserDefinedKeyword* "occurrence" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    Modifier UserDefinedKeyword*
+    (endName:Name endCardinality:SysMLCardinality)?
+    "occurrence" SysMLIdentifier? Name? SysMLCardinality? Specialization*
     DefaultValue?
     ("{"
       SysMLElement*
@@ -352,7 +354,9 @@ component grammar SysMLParts
     "}" | ";") ;
 
   symbol scope ItemUsage implements SysMLUsage =
-    Modifier UserDefinedKeyword* "item" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    Modifier UserDefinedKeyword*
+    (endName:Name endCardinality:SysMLCardinality)?
+    "item" SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("(" (SysMLParameter || ",")* ")")? DefaultValue?
     ("{"
       SysMLElement*
@@ -605,7 +609,8 @@ component grammar SysMLParts
       "}" | ";") ;
 
     // Used regularly in successions
-      Endpoint =
-        MCQualifiedName SysMLCardinality? Specialization* ;
+    Endpoint =
+      (SysMLCardinality MCQualifiedName | MCQualifiedName SysMLCardinality?)
+      Specialization* ;
 
 }
