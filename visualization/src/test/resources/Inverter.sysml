@@ -14,7 +14,7 @@ package inverter {
       transition invert
         first StateInitial
         if true
-        do send !variableIn to variableOut
+        do send (not variableIn) to variableOut
         then StateInitial;
   }
 
@@ -28,7 +28,7 @@ package inverter {
 
 package inverter1 {
 
-  import ScalarValues::*;
+  private import ScalarValues::*;
 
   package retrofit {
     port def Tuna {
