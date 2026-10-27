@@ -3,8 +3,9 @@ package de.monticore.lang;
 
 component grammar KerMLElements
     extends KerMLBasis,
-        de.monticore.symbols.BasicSymbols,
-        de.monticore.UMLModifier
+            de.monticore.types.MCBasicTypes,
+            de.monticore.symbols.BasicSymbols,
+            de.monticore.UMLModifier
 {
   DocBlock implements KerMLElement = "doc";
 
