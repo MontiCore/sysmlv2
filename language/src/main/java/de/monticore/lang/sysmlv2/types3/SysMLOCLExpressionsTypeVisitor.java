@@ -6,7 +6,7 @@ import de.monticore.lang.sysmlexpressions._ast.ASTConditionalOrExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTConditionalOrExpression2;
 import de.monticore.lang.sysmlexpressions._ast.ASTExistsExpression;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsVisitor2;
-import de.monticore.ocl.oclexpressions.types3.OCLExpressionsTypeVisitor;
+import de.monticore.ocl.oclexpressions.types3.OCLExpressionsCTTIVisitor;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
@@ -15,7 +15,7 @@ import de.monticore.types3.SymTypeRelations;
 import de.monticore.types3.util.TypeVisitorLifting;
 import de.se_rwth.commons.logging.Log;
 
-public class SysMLOCLExpressionsTypeVisitor extends OCLExpressionsTypeVisitor implements
+public class SysMLOCLExpressionsTypeVisitor extends OCLExpressionsCTTIVisitor implements
     SysMLExpressionsVisitor2 {
   @Override
   public void endVisit(ASTExistsExpression node) {
