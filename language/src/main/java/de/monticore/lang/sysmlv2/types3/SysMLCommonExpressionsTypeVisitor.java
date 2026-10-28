@@ -86,31 +86,6 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsCTTIVisi
 
   protected SysMLExpressionsTraverser traverser;
 
-  /**
-   * Calc usages can resolve both as function-valued variables and as functions,
-   * producing an intersection type. In this case, prefer the type from the
-   * variable symbol and pass it on to the CTTI Calculator.
-   * Intersection types without a variable result are passed through unchanged.
-   */
-  @Override
-  protected void handleFieldAccessResolvedType(
-      ASTFieldAccessExpression expr,
-      SymTypeExpression resolvedType
-  ) {
-    if (resolvedType.isIntersectionType()) {
-      SymTypeExpression extractedType = resolvedType.asIntersectionType()
-          .getIntersectedTypeSet().stream()
-          .filter(type -> type.getSourceInfo().getSourceSymbol()
-              .filter(VariableSymbol.class::isInstance).isPresent())
-          .findFirst()
-          .orElse(resolvedType);
-      super.handleFieldAccessResolvedType(expr, extractedType);
-    }
-    else {
-      super.handleFieldAccessResolvedType(expr, resolvedType);
-    }
-  }
-
   @Override
   public SysMLExpressionsTraverser getTraverser() {
     return traverser;
