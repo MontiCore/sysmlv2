@@ -3,10 +3,16 @@ package de.monticore.lang.sysmlv2.types3;
 import de.monticore.expressions.commonexpressions._ast.ASTArrayAccessExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpressionBuilder;
-import de.monticore.expressions.commonexpressions.types3.CommonExpressionsCTTIVisitor;
+import de.monticore.expressions.commonexpressions._ast.ASTLogicalNotExpression;
+import de.monticore.expressions.commonexpressions._symboltable.ICommonExpressionsScope;
+import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTraverser;
+import de.monticore.expressions.commonexpressions.types3.CommonExpressionsTypeVisitor;
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.lang.componentconnector.StreamTimingUtil;
 import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScope;
+import de.monticore.lang.sysmlactions._ast.ASTAssignmentActionUsage;
+import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlexpressions._ast.ASTConditionalNotExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTInfinity;
 import de.monticore.lang.sysmlexpressions._ast.ASTSqsubsetEquationExpression;
@@ -20,23 +26,47 @@ import de.monticore.lang.sysmlexpressions._ast.ASTSysMLSequenceExpression;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsHandler;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsTraverser;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsVisitor2;
+import de.monticore.lang.sysmlparts._ast.ASTPartDef;
+import de.monticore.lang.sysmlparts._ast.ASTPartUsage;
+import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
+import de.monticore.lang.sysmlparts._symboltable.PartDefSymbol;
+import de.monticore.lang.sysmlparts._symboltable.PartUsageSymbol;
 import de.monticore.lang.sysmlparts._symboltable.PortDefSymbol;
+import de.monticore.lang.sysmlstates._ast.ASTStateDef;
+import de.monticore.lang.sysmlstates._ast.ASTStateUsage;
+import de.monticore.lang.sysmlstates._symboltable.StateDefSymbol;
+import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
+import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
+import de.monticore.lang.sysmlv2._symboltable.ISysMLv2GlobalScope;
+import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
+import de.monticore.ocl.setexpressions._ast.ASTSetNotInExpression;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.compsymbols._symboltable.PortSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.check.SymTypeOfFunction;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.types3.SymTypeRelations;
 import de.monticore.types3.util.TypeContextCalculator;
 import de.monticore.types3.util.TypeVisitorLifting;
+import de.monticore.types3.util.TypeVisitorOperatorCalculator;
 import de.monticore.types3.util.WithinScopeBasicSymbolsResolver;
 import de.monticore.types3.util.WithinTypeBasicSymbolsResolver;
 import de.se_rwth.commons.logging.Log;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
+
+import static de.monticore.types.check.SymTypeExpressionFactory.createObscureType;
 
 /**
  * Handles type checking the sysmlv2 standard and the particularities of the spes
@@ -50,35 +80,10 @@ import java.util.Optional;
  * Mode 2: TypeCheck finds multiple attributes, and thus multiple channels and
  * reverts to the standard (with streams) TypeCheck without implicit field accesses.
  */
-public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsCTTIVisitor implements
+public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisitor implements
     SysMLExpressionsVisitor2, SysMLExpressionsHandler {
 
   protected SysMLExpressionsTraverser traverser;
-
-  /**
-   * Calc usages can resolve both as function-valued variables and as functions,
-   * producing an intersection type. In this case, prefer the type from the
-   * variable symbol and pass it on to the CTTI Calculator.
-   * Intersection types without a variable result are passed through unchanged.
-   */
-  @Override
-  protected void handleFieldAccessResolvedType(
-      ASTFieldAccessExpression expr,
-      SymTypeExpression resolvedType
-  ) {
-    if (resolvedType.isIntersectionType()) {
-      SymTypeExpression extractedType = resolvedType.asIntersectionType()
-          .getIntersectedTypeSet().stream()
-          .filter(type -> type.getSourceInfo().getSourceSymbol()
-              .filter(VariableSymbol.class::isInstance).isPresent())
-          .findFirst()
-          .orElse(resolvedType);
-      super.handleFieldAccessResolvedType(expr, extractedType);
-    }
-    else {
-      super.handleFieldAccessResolvedType(expr, resolvedType);
-    }
-  }
 
   @Override
   public SysMLExpressionsTraverser getTraverser() {
