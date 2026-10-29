@@ -114,6 +114,20 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsCTTIVisi
   }
 
   @Override
+  public void endVisit(ASTSqsubsetEquationExpression expr) {
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression result;
+
+    if(SymTypeRelations.isCompatible(left, right)){
+      result = SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
+    } else {
+      result = SymTypeExpressionFactory.createObscureType();
+    }
+    getType4Ast().setTypeOfExpression(expr, result);
+  }
+
+  @Override
   public void endVisit(ASTSysMLFieldAccessExpression node) {
     // does not work with inheritance traverser because this is the handler and
     endVisit((ASTFieldAccessExpression) node);
