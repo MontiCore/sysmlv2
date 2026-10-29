@@ -7,6 +7,7 @@ import de.monticore.lang.sysmlv2.cocos.ConstraintIsBooleanTC3;
 import de.monticore.lang.sysmlv2.cocos.MaxOneDirectReturnInCalcUsageCoCo;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * are not meaningful for symbol resolution (and specifically
  * not relevant for type checking).
  */
+@Disabled("Calc usages are no longer adapted to function symbols")
 public class CalcUsageAsFunctionsTest {
 
   @Test

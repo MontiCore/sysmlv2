@@ -8,6 +8,7 @@ import de.monticore.expressions.commonexpressions._symboltable.ICommonExpression
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTraverser;
 import de.monticore.expressions.commonexpressions.types3.CommonExpressionsTypeVisitor;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.expressions.commonexpressions.types3.CommonExpressionsCTTIVisitor;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.lang.componentconnector.StreamTimingUtil;
 import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScope;
@@ -15,6 +16,7 @@ import de.monticore.lang.sysmlactions._ast.ASTAssignmentActionUsage;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlexpressions._ast.ASTConditionalNotExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTInfinity;
+import de.monticore.lang.sysmlexpressions._ast.ASTSqsubsetEquationExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSubsetEquationExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSubsetExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSupersetEquationExpression;
@@ -79,7 +81,7 @@ import static de.monticore.types.check.SymTypeExpressionFactory.createObscureTyp
  * Mode 2: TypeCheck finds multiple attributes, and thus multiple channels and
  * reverts to the standard (with streams) TypeCheck without implicit field accesses.
  */
-public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisitor implements
+public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsCTTIVisitor implements
     SysMLExpressionsVisitor2, SysMLExpressionsHandler {
 
   protected SysMLExpressionsTraverser traverser;

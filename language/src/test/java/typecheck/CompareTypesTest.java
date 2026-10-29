@@ -1,5 +1,6 @@
 package typecheck;
 
+import de.monticore.expressions.commonexpressions._ast.ASTEqualsExpression;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlparts._ast.ASTPartDef;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
@@ -11,6 +12,7 @@ import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -115,5 +117,74 @@ public class CompareTypesTest {
     var expr = ((ASTConstraintUsage) constraintUsage).getExpression();
 
     return TypeCheck3.typeOf(expr);
+  }
+
+  @Test
+  public void test4ConstructedStreamCompatibility() throws IOException {
+    var model =
+      "port def Booleans { in attribute val: ScalarValues::Boolean; }" +
+        "part def myPart { " +
+          "port source : Booleans;" +
+          "assert constraint e {" +
+            "source.val == <true>" +
+          "}" +
+        "}";
+
+    var ast = parser.parse_String(model);
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+
+    var astSysMLModel = ast.get();
+    tool.createSymbolTable(astSysMLModel);
+    tool.completeSymbolTable(astSysMLModel);
+    tool.finalizeSymbolTable(astSysMLModel);
+
+    var astPartDef = astSysMLModel.getSysMLElementList().get(1);
+    var constraintUsage = ((ASTPartDef) astPartDef).getSysMLElement(1);
+    var expr = ((ASTConstraintUsage) constraintUsage).getExpression();
+    var type = TypeCheck3.typeOf(expr);
+
+    assertTrue(type.isPrimitive());
+    assertThat(type.printFullName()).isEqualTo("boolean");
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void test4InferenceVariables() throws IOException {
+    var model =
+    "part def test {"
+    + "    assert constraint test {"
+    + "      Stream.projSnd(<(1, true)>)"
+    + "        == Stream.projSnd(<(1, true)>)"
+    + "}}";
+
+    var ast = parser.parse_String(model);
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+
+    var astSysMLModel = ast.get();
+    tool.createSymbolTable(astSysMLModel);
+    tool.completeSymbolTable(astSysMLModel);
+    tool.finalizeSymbolTable(astSysMLModel);
+
+    var astPartDef = astSysMLModel.getSysMLElementList().get(0);
+    var constraintUsage = ((ASTPartDef) astPartDef).getSysMLElement(0);
+    var expr = ((ASTConstraintUsage) constraintUsage).getExpression();
+    var left = ((ASTEqualsExpression) expr).getLeft();
+    var right = ((ASTEqualsExpression) expr).getRight();
+
+    var typeLeft = TypeCheck3.typeOf(left);
+    var typeRight = TypeCheck3.typeOf(right);
+
+//    System.out.println("Left Side is: " + typeLeft.printFullName());
+//    System.out.println("Right Side is: " + typeRight.printFullName());
+    var type = TypeCheck3.typeOf(expr);
+//    System.out.println("Equals evaluated to: " + type.printFullName());
+
+    assertTrue(type.isPrimitive());
+    assertThat(type.printFullName()).isEqualTo("boolean");
+    assertTrue(Log.getFindings().isEmpty());
   }
 }

@@ -24,7 +24,6 @@ import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeDef2TypeSymbol
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeUsage2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.AttributeUsage2VariableSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.CalcDef2FunctionSymbolAdapter;
-import de.monticore.lang.sysmlparts.symboltable.adapters.CalcUsage2FunctionSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.EnumDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.PartDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts.symboltable.adapters.PartUsage2TypeSymbolAdapter;
@@ -34,7 +33,6 @@ import de.monticore.lang.sysmlparts.symboltable.adapters.PortUsage2VariableSymbo
 import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
 import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
-import de.monticore.lang.sysmlv2._ast.ASTSysMLSpecialization;
 import de.monticore.lang.sysmlv2.symboltable.adapters.AttributeUsage2PortSymbolAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.CalcUsage2VariableAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Constraint2SpecificationAdapter;
@@ -738,10 +736,10 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
   ) {
     var adapted = new ArrayList<FunctionSymbol>();
 
-    var calcUsage = resolveCalcUsageLocally(name);
-    if (calcUsage.isPresent()) {
-      adapted.add(new CalcUsage2FunctionSymbolAdapter(calcUsage.get()));
-    }
+//    var calcUsage = resolveCalcUsageLocally(name);
+//    if (calcUsage.isPresent()) {
+//      adapted.add(new CalcUsage2FunctionSymbolAdapter(calcUsage.get()));
+//    }
 
     var calcDef = resolveCalcDefLocally(name);
     if (calcDef.isPresent()) {
