@@ -57,15 +57,15 @@ standard library package TradeStudies {
 			 * is the objective.
 			 */
 		}
-		
-		in calc fn : EvaluationFunction {
+
+		in calc eval : EvaluationFunction {
 			doc
 			/*
 			 * The EvaluationFunction to be used in evaluating the given alternatives.
 			 */
 		}
-		
-		out attribute best : ScalarValue {
+
+		attribute best : ScalarValue {
 			doc
 			/*
 			 * Out of the evaluation results of all the given alternatives, the one that is considered 
@@ -73,8 +73,8 @@ standard library package TradeStudies {
 			 * value must be computed in any concrete specialization of TradeStudyObjective.
 			 */
 		}
-				
-		require constraint { fn(selectedAlternative) == best }
+
+		require constraint { eval(selectedAlternative) == best }
 	}
 	
 	requirement def MinimizeObjective :> TradeStudyObjective {
@@ -84,18 +84,14 @@ standard library package TradeStudies {
 		 * selectedAlternative have the minimum ObjectiveFunction value of all the
 		 * given alternatives.
 		 */
-		 
-		subject :>> selectedAlternative;
-		in ref :>> alternatives;
-		in calc :>>fn;
-	
-		out attribute :>> best = alternatives->minimize {
+
+		attribute :>> best = alternatives->minimize {
 			doc
 			/*
 			 * For a MinimizeObjective, the best value is the minimum one.
 			 */
-		
-			in x; fn(x)
+
+			in x; eval(x)
 		};
 	}
 	
@@ -106,18 +102,14 @@ standard library package TradeStudies {
 		 * selectedAlternative have the maximum ObjectiveFunction value of all the
 		 * given alternatives.
 		 */
-	
-        subject :>> selectedAlternative;
-        in ref :>> alternatives;
-        in calc :>>fn;
-    
-		out attribute :>> best = alternatives->maximize {
+
+		attribute :>> best = alternatives->maximize {
 			doc
 			/*
 			 * For a MinimizeObjective, the best value is the maximum one.
 			 */
-		
-			in x; fn(x)
+
+			in x; eval(x)
 		};
 	}
 	
@@ -164,7 +156,7 @@ standard library package TradeStudies {
 		
             subject :>> selectedAlternative;
 			in ref :>> alternatives = studyAlternatives;
-			in calc :>> fn = evaluationFunction;
+			in calc :>> eval = evaluationFunction;
 		}
 		
 		return selectedAlternative : Anything = studyAlternatives->selectOne {in ref a {
