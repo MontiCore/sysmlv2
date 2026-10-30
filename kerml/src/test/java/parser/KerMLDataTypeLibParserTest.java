@@ -26,8 +26,8 @@ public class KerMLDataTypeLibParserTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-      //"Collections.kerml",
-      "ScalarValues.kerml",
+      //"Collections.kerml"
+      "ScalarValues.kerml"
       //"VectorValues.kerml"
   })
   public void testParseKernelDataTypeLibrary(String filename) throws IOException {
