@@ -84,19 +84,21 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     packageScope.setSpanningSymbol(scalarValues);
     SysMLv2Mill.globalScope().add(scalarValues);
 
-    var scalarValue = createScalarValueType(packageScope, "ScalarValue");
-    var bool = createScalarValueType(packageScope, "Boolean");
-    var numericalValue = createScalarValueType(packageScope, "NumericalValue");
-    var number = createScalarValueType(packageScope, "Number");
-    var complex = createScalarValueType(packageScope, "Complex");
-    var real = createScalarValueType(packageScope, "Real");
-    var rational = createScalarValueType(packageScope, "Rational");
-    var integer = createScalarValueType(packageScope, "Integer");
-    var natural = createScalarValueType(packageScope, "Natural");
-    var positive = createScalarValueType(packageScope, "Positive");
+    var scalarValue = createScalarValueType(packageScope, "ScalarValue", true);
+    var bool = createScalarValueType(packageScope, "Boolean", false);
+    var numericalValue = createScalarValueType(packageScope, "NumericalValue", true);
+    var number = createScalarValueType(packageScope, "Number", true);
+    var complex = createScalarValueType(packageScope, "Complex", false);
+    var real = createScalarValueType(packageScope, "Real", false);
+    var rational = createScalarValueType(packageScope, "Rational", false);
+    var integer = createScalarValueType(packageScope, "Integer", false);
+    var natural = createScalarValueType(packageScope, "Natural", false);
+    var positive = createScalarValueType(packageScope, "Positive", false);
+    var string = createScalarValueType(packageScope, "String", false);
 
     setScalarValueSuperTypes(bool, scalarValue);
     setScalarValueSuperTypes(numericalValue, scalarValue);
+    setScalarValueSuperTypes(string, scalarValue);
     setScalarValueSuperTypes(number, numericalValue);
     setScalarValueSuperTypes(complex, number);
     setScalarValueSuperTypes(real, complex);
@@ -106,9 +108,10 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     setScalarValueSuperTypes(positive, natural);
   }
 
-  protected OOTypeSymbol createScalarValueType(ISysMLv2Scope packageScope, String name) {
+  protected OOTypeSymbol createScalarValueType(ISysMLv2Scope packageScope, String name, boolean isAbstract) {
     var type = OOSymbolsMill.oOTypeSymbolBuilder()
         .setName(name)
+        .setIsAbstract(isAbstract)
         .setFullName("ScalarValues." + name)
         .setPackageName("ScalarValues")
         .setEnclosingScope(packageScope)

@@ -177,7 +177,8 @@ public class ASTPartDefBuilder extends ASTPartDefBuilderTOP {
         .setModifier(new ASTModifierBuilder().build())
         .setName(name)
         .addSysMLElement(constraint)
-        .setSatisfy(true).build();
+        .setSatisfy(true)
+        .build();
 
     this.getSysMLElementList().add(newRequirement);
     return this;

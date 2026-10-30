@@ -16,7 +16,7 @@ component grammar SysMLParts extends SysMLBasis {
    * ##################################################################
    */
 
-  symbol scope PartDef implements SysMLType =
+  symbol PartDef implements SysMLType =
     Modifier UserDefinedKeyword* "part" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
@@ -29,21 +29,21 @@ component grammar SysMLParts extends SysMLBasis {
       directRefinements:de.monticore.types.check.SymTypeExpression*
       requirementType:SysMLReqType;
 
-  symbol scope AttributeDef implements SysMLType =
+  symbol AttributeDef implements SysMLType =
     Modifier UserDefinedKeyword* "attribute" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
 
-  symbol scope EnumDef implements SysMLType =
+  symbol EnumDef implements SysMLType =
     Modifier UserDefinedKeyword* "enum" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
       (SysMLElement | AnonEnumUsage)*
     "}" | ";") ;
 
-  symbol EnumUsage implements SysMLElement =
+  symbol EnumUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* "enum"
     SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
@@ -59,7 +59,7 @@ component grammar SysMLParts extends SysMLBasis {
       SysMLElement*
     "}" | ";") ;
 
-  symbol scope PortDef implements SysMLType =
+  symbol PortDef implements SysMLType =
     Modifier UserDefinedKeyword* "port" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
@@ -72,7 +72,7 @@ component grammar SysMLParts extends SysMLBasis {
    * ##################################################################
    */
 
-  symbol scope PartUsage implements SysMLElement =
+  symbol PartUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* "part" SysMLIdentifier? Name?
     SysMLCardinality? Specialization* DefaultValue?
     ("{"
@@ -102,7 +102,7 @@ component grammar SysMLParts extends SysMLBasis {
         return Optional.empty();
       } ;
 
-  symbol scope AttributeUsage implements SysMLElement =
+  symbol AttributeUsage implements SysMLUsage =
       Modifier UserDefinedKeyword* "attribute"
       SysMLIdentifier? Name? SysMLCardinality?
       Specialization* DefaultValue?
@@ -137,7 +137,7 @@ component grammar SysMLParts extends SysMLBasis {
    * integrate with the existing artifacts (i.e., theories containing specific channel names) only by referencing the
    * symboltable (and not needing to re-processes the original models).
    */
-  symbol scope PortUsage implements SysMLElement =
+  symbol PortUsage implements SysMLUsage =
       Modifier UserDefinedKeyword* "port"
       SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
       ("{"
@@ -161,7 +161,7 @@ component grammar SysMLParts extends SysMLBasis {
       return Optional.empty();
     } ;
 
-  symbol ConnectionUsage implements SysMLElement =
+  symbol ConnectionUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* "connection"?
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "connect" (

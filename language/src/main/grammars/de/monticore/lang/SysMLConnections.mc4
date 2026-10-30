@@ -42,7 +42,7 @@ component grammar SysMLConnections
        SysMLElement*
      "}" | ";") ;
 
-  symbol scope ConnectionDef implements SysMLType =
+  symbol ConnectionDef implements SysMLType =
     Modifier UserDefinedKeyword* "connection" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
@@ -64,7 +64,7 @@ component grammar SysMLConnections
    * interface usage are restricted to be port usages.
    * ================================================================================================================ */
 
-  symbol scope InterfaceDef implements SysMLType =
+  symbol InterfaceDef implements SysMLType =
     Modifier UserDefinedKeyword* "interface" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("(" (SysMLParameter || ",")* ")")?
@@ -72,7 +72,7 @@ component grammar SysMLConnections
       SysMLElement*
     "}" | ";") ;
 
-  symbol scope InterfaceUsage implements SysMLElement =
+  symbol InterfaceUsage implements SysMLElement =
     Modifier UserDefinedKeyword* "interface"
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("connect"? (
@@ -83,7 +83,7 @@ component grammar SysMLConnections
        SysMLElement*
      "}" | ";") ;
 
-  symbol scope FlowDef implements SysMLType =
+  symbol FlowDef implements SysMLType =
     Modifier UserDefinedKeyword* "flow" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
@@ -95,14 +95,14 @@ component grammar SysMLConnections
    * Allocations
    * ================================================================================================================ */
 
-  symbol scope AllocationDef implements SysMLType =
+  symbol AllocationDef implements SysMLType =
     Modifier UserDefinedKeyword* "allocation" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
 
-  symbol scope AllocationUsage implements SysMLElement =
+  symbol AllocationUsage implements SysMLElement =
     Modifier UserDefinedKeyword* "allocation"
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("{"

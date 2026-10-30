@@ -3,14 +3,14 @@ package de.monticore.lang;
 
 component grammar SysMLStates extends SysMLActions {
 
-  symbol scope StateDef implements SysMLType =
+  symbol StateDef implements SysMLType =
     Modifier UserDefinedKeyword* "state" "def" SysMLIdentifier? Name
     SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
     ("{"
       (EntryAction | DoAction | ExitAction | SysMLElement)*
     "}" | ";") ;
 
-  symbol scope StateUsage implements SysMLElement =
+  symbol StateUsage implements SysMLUsage =
     Modifier UserDefinedKeyword* exhibited:["exhibit"]? "state" SysMLIdentifier?
     Name? SysMLCardinality? Specialization*
     ("(" (SysMLParameter || ",")* ")")? paralled:["parallel"]? DefaultValue?
@@ -18,16 +18,18 @@ component grammar SysMLStates extends SysMLActions {
       (EntryAction | DoAction | ExitAction | SysMLElement)*
     "}" | ";") ;
 
-  ExhibitedStateReference implements SysMLElement =
-    UserDefinedKeyword* "exhibit" MCQualifiedName?
+  ExhibitedStateReference extends StateUsage =
+    UserDefinedKeyword* "exhibit" MCQualifiedName
     SysMLCardinality? Specialization*
+    ("(" (SysMLParameter || ",")* ")")? paralled:["parallel"]? DefaultValue?
     ("{"
-      SysMLElement*
+      (EntryAction | DoAction | ExitAction | SysMLElement)*
     "}" | ";") ;
 
   symbolrule StateUsage =
     exhibited: boolean
     userDefinedKeywords: Name*
+    sysMLIdentifier:Name?
   ;
 
   symbol SysMLTransition implements SysMLElement =

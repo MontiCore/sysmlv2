@@ -16,6 +16,7 @@ import org.omg.sysml.interactive.SysMLInteractive;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,17 +95,20 @@ public class ParsersComparisonFullTest {
     );
 
     // 2) Official OMG parser (parse + validate)
+    official.loadLibrary(Paths.get("src/main/resources/").toAbsolutePath().toString());
+    official.next(".sysml");
     String input = Files.readString(modelPath);
-
-    assertDoesNotThrow(
-        () -> official.parse(input),
-        () -> "Official OMG parse() failed for " + modelName + " (" + modelPath + ")"
+    official.parse(input);
+    var errors = official.getResource().getErrors();
+    assertTrue(
+        errors.isEmpty(),
+        () -> "Omg parser found errors when MC parser did not" + modelName + ":\n" + errors
     );
 
     List<Issue> issues = official.validate();
 
     assertTrue(
-        issues.isEmpty(),
+        issues.stream().noneMatch(issue -> issue.getSeverity().name().equals("ERROR")),
         () -> "Official OMG validation issues for " + modelName + ":\n" + formatIssues(issues)
     );
   }

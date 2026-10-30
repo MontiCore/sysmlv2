@@ -6,8 +6,12 @@ import de.monticore.lang.sysmlactions._cocos.SysMLActionsASTActionDefCoCo;
 import de.monticore.lang.sysmlconstraints._cocos.SysMLConstraintsASTConstraintDefCoCo;
 import de.monticore.lang.sysmlimportsandpackages._cocos.SysMLImportsAndPackagesASTSysMLPackageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeDefCoCo;
+import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTAttributeUsageCoCo;
+import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTEnumUsageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartDefCoCo;
+import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPartUsageCoCo;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortDefCoCo;
+import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTPortUsageCoCo;
 import de.monticore.lang.sysmlparts.coco.PortDefHasOneType;
 import de.monticore.lang.sysmlparts.coco.PortDefNeedsDirection;
 import de.monticore.lang.sysmlparts.symboltable.completers.ConvertEnumUsagesToFields;
@@ -42,10 +46,12 @@ import de.monticore.lang.sysmlv2.cocos.StateSupertypes;
 import de.monticore.lang.sysmlv2.cocos.TypeCheckTransitionGuards;
 import de.monticore.lang.sysmlv2.cocos.TypeCheck3TransitionGuards;
 import de.monticore.lang.sysmlv2.cocos.WarnNonExhibited;
+import de.monticore.lang.sysmlv2.cocos.DefsAndUsagesHaveTheSameTypeCoCo;
 import de.monticore.lang.sysmlv2.symboltable.completers.CausalityCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectRefinementCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.DirectionCompleter;
-import de.monticore.lang.sysmlv2.symboltable.completers.IdentifierCompletion;
+import de.monticore.lang.sysmlv2.symboltable.completers.IdentifierCompleter;
+import de.monticore.lang.sysmlv2.symboltable.completers.ImportsCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.RequirementClassificationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.SpecializationCompleter;
 import de.monticore.lang.sysmlv2.symboltable.completers.StateUsageCompleter;
@@ -117,6 +123,10 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     checker.addCoCo(new SendActionTypeCheck3());
     checker.addCoCo(new AssignActionTypeCheck3());
     checker.addCoCo(new TypeCheck3TransitionGuards());
+    checker.addCoCo((SysMLPartsASTPortUsageCoCo) new DefsAndUsagesHaveTheSameTypeCoCo());
+    checker.addCoCo((SysMLPartsASTPartUsageCoCo) new DefsAndUsagesHaveTheSameTypeCoCo());
+    checker.addCoCo((SysMLPartsASTEnumUsageCoCo) new DefsAndUsagesHaveTheSameTypeCoCo());
+    checker.addCoCo((SysMLPartsASTAttributeUsageCoCo) new DefsAndUsagesHaveTheSameTypeCoCo());
     checker.checkAll(ast);
   }
 
@@ -200,9 +210,11 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     traverser.add4SysMLBasis(new SpecializationCompleter());
     traverser.add4SysMLBasis(new DirectionCompleter());
     traverser.add4SysMLParts(new DirectionCompleter());
+    traverser.add4SysMLOccurrences(new DirectionCompleter());
     traverser.add4SysMLParts(new ConvertEnumUsagesToFields());
     traverser.add4SysMLParts(new SysMLPartsCompleter());
-    traverser.add4SysMLParts(new IdentifierCompletion());
+    traverser.add4SysMLParts(new IdentifierCompleter());
+    traverser.add4SysMLStates(new IdentifierCompleter());
 
     // Visiting artifact scope _and_ the AST requires two calls
     if (node.getEnclosingScope() != null) {
@@ -217,6 +229,8 @@ public class SysMLv2Tool extends SysMLv2ToolTOP {
     traverser.add4SysMLBasis(completer);
     traverser.add4SysMLParts(completer);
     traverser.add4SysMLConstraints(completer);
+    traverser.add4SysMLOccurrences(completer);
+    traverser.add4SysMLImportsAndPackages(new ImportsCompleter());
 
     traverser.add4SysMLParts(new RequirementClassificationCompleter());
     traverser.add4SysMLParts(new DirectRefinementCompleter());

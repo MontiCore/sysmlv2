@@ -6,7 +6,7 @@ import de.monticore.lang.sysmlv2._parser.SysMLv2Parser;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
+
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.omg.sysml.interactive.SysMLInteractive;
@@ -16,16 +16,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ParsersComparisonTest {
+
   private static final String MODEL_PATH = "src/test/resources/parser";
-
-  private SysMLv2Parser parser = SysMLv2Mill.parser();
-
-  // SysMLInteractive is a singleton; keep one reference
   private static SysMLInteractive official;
+  private SysMLv2Parser parser = SysMLv2Mill.parser();
 
   @BeforeAll
   public static void init() {

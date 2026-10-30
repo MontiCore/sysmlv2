@@ -19,7 +19,7 @@ component grammar SysMLCases extends SysMLBasis {
    * regard (i.e., having an Expression), they are not explicitly related.
    */
 
-  symbol scope AnalysisDef implements SysMLType =
+  symbol AnalysisDef implements SysMLType =
       Modifier UserDefinedKeyword* "analysis" "def"
       SysMLIdentifier? Name SysMLCardinality? Specialization*
       ("{"
@@ -33,7 +33,7 @@ component grammar SysMLCases extends SysMLBasis {
         (AnalysisObjective | SysMLElement)*
       "}" | ";") ;
 
-  symbol scope AnalysisUsage implements SysMLElement =
+  symbol AnalysisUsage implements SysMLElement =
       Modifier UserDefinedKeyword* "analysis"
       SysMLIdentifier? Name? SysMLCardinality? Specialization*
       ("{"
@@ -41,7 +41,7 @@ component grammar SysMLCases extends SysMLBasis {
         Expression?
       "}" | ";") ;
 
-  symbol scope VerificationDef implements SysMLType =
+  symbol VerificationDef implements SysMLType =
       Modifier UserDefinedKeyword* "verification" "def"
       SysMLIdentifier? Name SysMLCardinality? Specialization*
       ("{"
@@ -49,7 +49,7 @@ component grammar SysMLCases extends SysMLBasis {
         Expression?
       "}" | ";") ;
 
-  symbol scope VerificationUsage implements SysMLElement =
+  symbol VerificationUsage implements SysMLElement =
       Modifier UserDefinedKeyword* "verification"
       Name? SysMLCardinality? Specialization*
       ("{"
@@ -57,7 +57,7 @@ component grammar SysMLCases extends SysMLBasis {
         Expression?
       "}" | ";") ;
 
-  symbol scope UseCaseDef implements SysMLType =
+  symbol UseCaseDef implements SysMLType =
       Modifier UserDefinedKeyword* "use" "case" "def"
       SysMLIdentifier? Name SysMLCardinality? Specialization*
       ("{"
@@ -73,7 +73,7 @@ component grammar SysMLCases extends SysMLBasis {
         Expression?
       "}")? ;
 
-  symbol scope UseCaseUsage implements OccurrenceUsageElement =
+  symbol UseCaseUsage implements OccurrenceUsageElement =
       Modifier UserDefinedKeyword* "use" "case"
       SysMLIdentifier? Name? SysMLCardinality? Specialization*
       ("{"
@@ -94,7 +94,7 @@ component grammar SysMLCases extends SysMLBasis {
         Expression?
       "}" | ";") ;
 
-  symbol scope CaseDef implements SysMLType =
+  symbol CaseDef implements SysMLType =
       Modifier UserDefinedKeyword* "case" "def"
       SysMLIdentifier? Name SysMLCardinality? Specialization*
       ("{"
@@ -102,7 +102,7 @@ component grammar SysMLCases extends SysMLBasis {
         Expression?
       "}" | ";") ;
 
-  symbol scope CaseUsage implements SysMLElement =
+  symbol CaseUsage implements SysMLElement =
       Modifier UserDefinedKeyword* "case"
       SysMLIdentifier? Name? SysMLCardinality? Specialization*
       ("{"

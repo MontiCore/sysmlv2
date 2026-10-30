@@ -1,8 +1,8 @@
 package de.monticore.lang.sysmlv2.types3;
 
+import de.monticore.lang.sysmlv2.types3.util.SysMLSymTypeBoxingVisitor;
+import de.monticore.lang.sysmlv2.types3.util.SysMLSymTypeCompatibilityCalculator;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
-import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types3.util.BuiltInTypeRelations;
 import de.monticore.types3.util.SymTypeRelationsDefaultDelegatee;
 
 public abstract class SysMLSymTypeRelations extends OCLSymTypeRelations {
@@ -15,14 +15,9 @@ public abstract class SysMLSymTypeRelations extends OCLSymTypeRelations {
   protected static class SysMLSymTypeRelationsDelegatee extends
       SymTypeRelationsDefaultDelegatee {
     public SysMLSymTypeRelationsDelegatee() {
-      builtInRelationsDelegate = new BuiltInTypeRelations() {
-        @Override
-        public boolean isIntegralType(SymTypeExpression type) {
-          return super.isIntegralType(type) ||
-              type.isPrimitive() &&
-                  type.asPrimitive().getPrimitiveName().equals("nat");
-        }
-      };
+      builtInRelationsDelegate = new SysMLBuiltInTypeRelations();
+      boxingVisitor = new SysMLSymTypeBoxingVisitor();
+      compatibilityDelegate = new SysMLSymTypeCompatibilityCalculator();
     }
   }
 }

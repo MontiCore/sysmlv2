@@ -3,6 +3,7 @@ package symboltable;
 import de.monticore.lang.componentconnector.SerializationUtil;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
+import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
@@ -41,6 +42,10 @@ abstract public class NervigeSymboltableTests extends SerializationUtil {
     tool.completeSymbolTable(ast);
     tool.finalizeSymbolTable(ast);
     return as;
+  }
+
+  protected ASTSysMLModel processAst(String model) throws IOException {
+    return (ASTSysMLModel) process(model).getAstNode();
   }
 
 }

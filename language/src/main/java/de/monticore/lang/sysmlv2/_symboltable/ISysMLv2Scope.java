@@ -12,7 +12,6 @@ import de.monticore.lang.sysmlconstraints._ast.ASTRequirementUsage;
 import de.monticore.lang.sysmlconstraints._symboltable.RequirementSubjectSymbol;
 import de.monticore.lang.sysmlconstraints.symboltable.adapters.RequirementSubject2VariableSymbolAdapter;
 import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLImportStatement;
-import de.monticore.lang.sysmlimportsandpackages._symboltable.SysMLPackageSymbol;
 import de.monticore.lang.sysmlimportsandpackages._visitor.SysMLImportsAndPackagesVisitor2;
 import de.monticore.lang.sysmloccurrences.symboltable.adapters.ItemDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlparts._symboltable.AttributeUsageSymbol;
@@ -30,6 +29,7 @@ import de.monticore.lang.sysmlparts.symboltable.adapters.PortUsage2VariableSymbo
 import de.monticore.lang.sysmlstates._symboltable.StateUsageSymbol;
 import de.monticore.lang.sysmlstates.symboltable.adapters.StateDef2TypeSymbolAdapter;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
+import de.monticore.lang.sysmlv2._visitor.SysMLv2Visitor2;
 import de.monticore.lang.sysmlv2.symboltable.adapters.AttributeUsage2PortSymbolAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.Constraint2SpecificationAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.PartDef2ComponentAdapter;
@@ -38,16 +38,23 @@ import de.monticore.lang.sysmlv2.symboltable.adapters.Requirement2SpecificationA
 import de.monticore.lang.sysmlv2.symboltable.adapters.StateUsage2AutomatonAdapter;
 import de.monticore.lang.sysmlv2.symboltable.adapters.StateUsage2EventAutomatonAdapter;
 import de.monticore.lang.componentconnector._symboltable.RequirementSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
+import de.monticore.symbols.basicsymbols._symboltable.MCStereotypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
+import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.symboltable.IScope;
 import de.monticore.symboltable.IScopeSpanningSymbol;
-import de.monticore.symboltable.ImportStatement;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
-import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.Names;
+import de.se_rwth.commons.Splitters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,227 +64,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-import static de.se_rwth.commons.Names.getQualifier;
 import static de.se_rwth.commons.Names.getSimpleName;
 
 public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
-
-  /**
-   * In SysML, namespaces live inside SysML models (keyword "package") and
-   * there can be multiple namespaces in a single model. This is sometimes
-   * referred to as "first class support" of namespaces. In Java-like
-   * programming languages, the namespace of an artifact is handled implicitly
-   * through the file system path (in conjunction with a package declaration
-   * for easier inside-out-resolving). Blocks, methods, or classes are not
-   * considered full namespaces (resolving "bar" from within a class "Foo"
-   * does not yield the potential qualified name "Foo.bar" at the global scope).
-   * MontiCore's default resolve-mechanism is built to behave Java-like, i.e.,
-   * it assumes that namespaces exist only at the file level and only package
-   * declarations matter for the calculation of potential names. Therefore, the
-   * logic of looking for all potential qualified names is only executed when
-   * leaving the artifact scope and does not account for any scope names passed
-   * on the way up.
-   * <br>
-   * This override changes this. It explicitly adds one new potential name to
-   * the list of potential names every time a package is passed while continuing
-   * with the enclosing scope. Assume we look for "bar", we pass "package Foo",
-   * then the list of potential names we are resolving for is now
-   * ["bar", "Foo.bar"].
-   * <br>
-   * <b>Notice</b>: SysML comes with a large number of keywords
-   * (e.g., occurrence, item, attribute, part) that have no or very little
-   * meaning wrt. to symbol resolution. In MontiCore, we already established the
-   * basic set of symbols (aptly named "BasicSymbols"), namely Types, Variables,
-   * and Functions. To avoid re-implementing resolving functionality for all
-   * keywords, we use symbol adapters from SysML definitions to MontiCore types,
-   * SysML usages to MontiCore variables, and SysML constraints (including
-   * calc defs) to MontiCore functions. This method here handles resolving of
-   * MontiCore types, i.e., SysML definitions.
-   */
-  @Override
-  default List<TypeSymbol> continueTypeWithEnclosingScope(
-    boolean foundSymbols,
-    String name,
-    AccessModifier modifier,
-    Predicate<TypeSymbol> predicate
-  ) {
-    final LinkedHashSet<TypeSymbol> result = new LinkedHashSet<>();
-    if (
-      checkIfContinueWithEnclosingScope(foundSymbols)
-      && getEnclosingScope() != null
-    ) {
-
-      var importStatements = new LinkedList<ImportStatement>();
-      if(getEnclosingScope().isPresentAstNode()) {
-        var visitor = new SysMLImportsAndPackagesVisitor2() {
-          @Override
-          public void visit(ASTSysMLImportStatement node) {
-            if (getEnclosingScope().equals(node.getEnclosingScope())) {
-              importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
-                  node.isStar() || node.isRecursive()));
-            }
-          }
-        };
-        var traverser = SysMLv2Mill.inheritanceTraverser();
-        traverser.add4SysMLImportsAndPackages(visitor);
-        getEnclosingScope().getAstNode().accept(traverser);
-      }
-
-      Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
-
-      for (String potentialName : potentialNames) {
-        var resolvedEnclosing = getEnclosingScope().resolveTypeMany( foundSymbols,
-            potentialName,
-            modifier,
-            predicate
-        );
-        result.addAll(resolvedEnclosing);
-        foundSymbols = foundSymbols || !resolvedEnclosing.isEmpty();
-      }
-    }
-
-    return new ArrayList<>(result);
-  }
-
-  /**
-   * @see ISysMLv2Scope#continueTypeWithEnclosingScope(boolean, String, AccessModifier, Predicate)
-   */
-  @Override
-  default List<VariableSymbol> continueVariableWithEnclosingScope(
-    boolean foundSymbols,
-    String name,
-    AccessModifier modifier,
-    Predicate<VariableSymbol> predicate
-  ) {
-    final LinkedHashSet<VariableSymbol> result = new LinkedHashSet<>();
-    if (
-      checkIfContinueWithEnclosingScope(foundSymbols)
-      && getEnclosingScope() != null
-    ) {
-
-      var importStatements = new LinkedList<ImportStatement>();
-      if(getEnclosingScope().isPresentAstNode()) {
-        var visitor = new SysMLImportsAndPackagesVisitor2() {
-          @Override
-          public void visit(ASTSysMLImportStatement node) {
-            if (getEnclosingScope().equals(node.getEnclosingScope())) {
-              importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
-                  node.isStar() || node.isRecursive()));
-            }
-          }
-        };
-        var traverser = SysMLv2Mill.inheritanceTraverser();
-        traverser.add4SysMLImportsAndPackages(visitor);
-        getEnclosingScope().getAstNode().accept(traverser);
-      }
-
-      Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
-
-      for (String potentialName : potentialNames) {
-        var resolvedEnclosing = getEnclosingScope().resolveVariableMany( foundSymbols,
-            potentialName,
-            modifier,
-            predicate
-        );
-        result.addAll(resolvedEnclosing);
-        foundSymbols = foundSymbols || !resolvedEnclosing.isEmpty();
-      }
-    }
-
-    return new ArrayList<>(result);
-  }
-
-  /**
-   * @see ISysMLv2Scope#continueTypeWithEnclosingScope(boolean, String, AccessModifier, Predicate)
-   */
-  @Override
-  default List<FunctionSymbol> continueFunctionWithEnclosingScope(
-    boolean foundSymbols,
-    String name,
-    AccessModifier modifier,
-    Predicate<FunctionSymbol> predicate
-  ) {
-    final LinkedHashSet<FunctionSymbol> result = new LinkedHashSet<>();
-    if (
-      checkIfContinueWithEnclosingScope(foundSymbols)
-      && (getEnclosingScope() != null)
-    ) {
-
-      var importStatements = new LinkedList<ImportStatement>();
-      if(getEnclosingScope().isPresentAstNode()) {
-        var visitor = new SysMLImportsAndPackagesVisitor2() {
-          @Override
-          public void visit(ASTSysMLImportStatement node) {
-            if (getEnclosingScope().equals(node.getEnclosingScope())) {
-              importStatements.add(new ImportStatement(node.getMCQualifiedName().getQName(),
-                  node.isStar() || node.isRecursive()));
-            }
-          }
-        };
-        var traverser = SysMLv2Mill.inheritanceTraverser();
-        traverser.add4SysMLImportsAndPackages(visitor);
-        getEnclosingScope().getAstNode().accept(traverser);
-      }
-
-      Set<String> potentialNames = calcQNamesForEnclosingScope(name, importStatements);
-
-      for (String potentialName : potentialNames) {
-        var resolvedEnclosing = getEnclosingScope().resolveFunctionMany( foundSymbols,
-            potentialName,
-            modifier,
-            predicate
-        );
-        result.addAll(resolvedEnclosing);
-        foundSymbols = foundSymbols || !resolvedEnclosing.isEmpty();
-      }
-    }
-
-    return new ArrayList<>(result);
-  }
-
-  /**
-   * This method is essentially copied from artifact scopes. See explanation
-   * on continueTypeWithEnclosingScope(4): MontiCore's symbol resolution is
-   * Java-like out-of-the-box and needs to be extended for SysMLv2's usage
-   * of packages (namespaces) as proper modeling elements.
-   * Also, the Scopes-Included Imports are used for potential name qualification.
-   * Therefore: 1. Matching, direct Imports are taken as FQNs
-   *            2. Star and recursive Imports do try to resolve the import
-   *               where the wildcard is replaced by the resolved Symbols name.
-   *               Therefore, recursive imports are only supported as star-imports.
-   */
-  default Set<String> calcQNamesForEnclosingScope(String name,
-                                                  List<ImportStatement> importStatements) {
-    Set<String> potentialSymbolNames = new LinkedHashSet<>();
-    potentialSymbolNames.add(name);
-
-    // if name is already qualified, no further (potential) names exist by imports
-    if (getQualifier(name).isEmpty()) {
-      // qualify names based on the import statements of enclosing scope
-      // 1. qualify star imports by replacing the start with symbolname
-      // 2. qualify direct imports when the name matches
-      for (var importStatement : importStatements) {
-        if (importStatement.isStar()) {
-          potentialSymbolNames.add(importStatement.getStatement() + "." + name);
-        }
-        else if (getSimpleName(importStatement.getStatement()).equals(name)) {
-          potentialSymbolNames.add(importStatement.getStatement());
-        }
-      }
-    }
-
-    if (
-      this.isPresentSpanningSymbol()
-      && this.getSpanningSymbol() instanceof SysMLPackageSymbol
-    ) {
-      potentialSymbolNames.add(this.getSpanningSymbol().getName() + "." + name);
-    }
-
-
-    return potentialSymbolNames;
-  }
-
   @Override
   default List<RequirementSymbol> resolveAdaptedRequirementLocallyMany(
       boolean foundSymbols,
@@ -654,7 +445,7 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
       // that were created from AST (where the symbol completion has not been
       // completed, e.g., if this code is called as part of symbol completion).
       if (symbol.getName().equals(name) ||
-          symbol.getFullName().equals(name) ||
+          //symbol.getFullName().equals(name) ||
           symbol.isPresentSysMLIdentifier() // when loaded from sym files
               && symbol.getSysMLIdentifier().equals(name) ||
           symbol.isPresentAstNode() // when parsed / built to AST
@@ -668,4 +459,273 @@ public interface ISysMLv2Scope extends ISysMLv2ScopeTOP {
     return getResolvedOrThrowException(resolvedSymbols);
   }
 
+  // Alongside filtering for "name" and "fullname", we also filter for
+  // SysMLIdentifier ("part def <this_is_an_identifier> ThisIsTheName;")
+  @Override
+  default Optional<StateUsageSymbol> filterStateUsage(
+      String name,
+      LinkedListMultimap<String, StateUsageSymbol> symbols
+  ) {
+    final Set<StateUsageSymbol> resolvedSymbols = new LinkedHashSet<>();
+
+    // Skip the filter on the map key, because we might be looking for a
+    // SysMLIdentifier. Instead, iterate all symbols.
+    for (StateUsageSymbol symbol : symbols.values()) {
+      // Checks both the symbol and the AST for SysMLIdentifier information
+      // to make it work with symbols from sym-files (where the symbol
+      // information was completed and stored in  previous run) and symbols
+      // that were created from AST (where the symbol completion has not been
+      // completed, e.g., if this code is called as part of symbol completion).
+      if (symbol.getName().equals(name) ||
+          //symbol.getFullName().equals(name) ||
+          symbol.isPresentSysMLIdentifier() // when loaded from sym files
+              && symbol.getSysMLIdentifier().equals(name) ||
+          symbol.isPresentAstNode() // when parsed / built to AST
+              && symbol.getAstNode().isPresentSysMLIdentifier()
+              && symbol.getAstNode().getSysMLIdentifier().getName().equals(name)
+      ) {
+        resolvedSymbols.add(symbol);
+      }
+    }
+
+    return getResolvedOrThrowException(resolvedSymbols);
+  }
+
+  /**
+   * Because raw Basic~ and OOSymbols can come from external loaded symboltables, these
+   * may have packages which sysml does not (every usage, def is a namespace but
+   * which makes monticore packages together with scoping incompatible). Thus, we adapt
+   * the filtering of these symbols to also handle packages.
+   */
+  @Override
+  default public Optional<TypeSymbol> filterType (String name, LinkedListMultimap<String,TypeSymbol> symbols) {
+    final Set<TypeSymbol> resolvedSymbols = new LinkedHashSet<>();
+
+    final String simpleName = getSimpleName(name);
+
+    if (symbols.containsKey(simpleName)) {
+      for (TypeSymbol symbol : symbols.get(simpleName)) {
+        if (symbol.getName().equals(name) ||
+            !symbol.getPackageName().isEmpty() &&
+                name.equals(symbol.getPackageName() + "." + symbol.getName())) {
+          resolvedSymbols.add(symbol);
+        }
+      }
+    }
+
+    return getResolvedOrThrowException(resolvedSymbols);
+
+  }
+
+  /**
+   * @see ISysMLv2Scope#filterType
+   */
+  @Override
+  default public Optional<VariableSymbol> filterVariable (String name, LinkedListMultimap<String,VariableSymbol> symbols) {
+    final Set<VariableSymbol> resolvedSymbols = new LinkedHashSet<>();
+
+    final String simpleName = getSimpleName(name);
+
+    if (symbols.containsKey(simpleName)) {
+      for (VariableSymbol symbol : symbols.get(simpleName)) {
+        if (symbol.getName().equals(name) ||
+            !symbol.getPackageName().isEmpty() &&
+                name.equals(symbol.getPackageName() + "." + symbol.getName())) {
+          resolvedSymbols.add(symbol);
+        }
+      }
+    }
+
+    return getResolvedOrThrowException(resolvedSymbols);
+
+  }
+
+  /**
+   * @see ISysMLv2Scope#filterType
+   */
+  @Override
+  default public Optional<FunctionSymbol> filterFunction (String name, LinkedListMultimap<String,FunctionSymbol> symbols) {
+    final Set<FunctionSymbol> resolvedSymbols = new LinkedHashSet<>();
+
+    final String simpleName = getSimpleName(name);
+
+    if (symbols.containsKey(simpleName)) {
+      for (FunctionSymbol symbol : symbols.get(simpleName)) {
+        if (symbol.getName().equals(name) ||
+            !symbol.getPackageName().isEmpty() &&
+                name.equals(symbol.getPackageName() + "." + symbol.getName())) {
+          resolvedSymbols.add(symbol);
+        }
+      }
+    }
+
+    return getResolvedOrThrowException(resolvedSymbols);
+
+  }
+
+  /**
+   * @see ISysMLv2Scope#filterType
+   */
+  @Override
+  default public Optional<TypeVarSymbol> filterTypeVar (String name, LinkedListMultimap<String,TypeVarSymbol> symbols) {
+    final Set<TypeVarSymbol> resolvedSymbols = new LinkedHashSet<>();
+
+    final String simpleName = getSimpleName(name);
+
+    if (symbols.containsKey(simpleName)) {
+      for (TypeVarSymbol symbol : symbols.get(simpleName)) {
+        if (symbol.getName().equals(name) ||
+            !symbol.getPackageName().isEmpty() &&
+                name.equals(symbol.getPackageName() + "." + symbol.getName())) {
+          resolvedSymbols.add(symbol);
+        }
+      }
+    }
+
+    return getResolvedOrThrowException(resolvedSymbols);
+
+  }
+
+  /**
+   * @see ISysMLv2Scope#filterType
+   */
+  @Override
+  default public Optional<DiagramSymbol> filterDiagram (String name, LinkedListMultimap<String,DiagramSymbol> symbols) {
+    final Set<DiagramSymbol> resolvedSymbols = new LinkedHashSet<>();
+
+    final String simpleName = getSimpleName(name);
+
+    if (symbols.containsKey(simpleName)) {
+      for (DiagramSymbol symbol : symbols.get(simpleName)) {
+        if (symbol.getName().equals(name) ||
+            !symbol.getPackageName().isEmpty() &&
+                name.equals(symbol.getPackageName() + "." + symbol.getName())) {
+          resolvedSymbols.add(symbol);
+        }
+      }
+    }
+
+    return getResolvedOrThrowException(resolvedSymbols);
+
+  }
+
+  /**
+   * @see ISysMLv2Scope#filterType
+   */
+  @Override
+  default public Optional<MCStereotypeSymbol> filterMCStereotype (String name, LinkedListMultimap<String,MCStereotypeSymbol> symbols) {
+    final Set<MCStereotypeSymbol> resolvedSymbols = new LinkedHashSet<>();
+
+    final String simpleName = getSimpleName(name);
+
+    if (symbols.containsKey(simpleName)) {
+      for (MCStereotypeSymbol symbol : symbols.get(simpleName)) {
+        if (symbol.getName().equals(name) ||
+            !symbol.getPackageName().isEmpty() &&
+                name.equals(symbol.getPackageName() + "." + symbol.getName())) {
+          resolvedSymbols.add(symbol);
+        }
+      }
+    }
+
+    return getResolvedOrThrowException(resolvedSymbols);
+
+  }
+
+  /**
+   * @see ISysMLv2Scope#filterType
+   */
+  @Override
+  default public Optional<OOTypeSymbol> filterOOType (String name, LinkedListMultimap<String,OOTypeSymbol> symbols) {
+    final Set<OOTypeSymbol> resolvedSymbols = new LinkedHashSet<>();
+
+    final String simpleName = getSimpleName(name);
+
+    if (symbols.containsKey(simpleName)) {
+      for (OOTypeSymbol symbol : symbols.get(simpleName)) {
+        if (symbol.getName().equals(name) ||
+            !symbol.getPackageName().isEmpty() &&
+                name.equals(symbol.getPackageName() + "." + symbol.getName())) {
+          resolvedSymbols.add(symbol);
+        }
+      }
+    }
+
+    return getResolvedOrThrowException(resolvedSymbols);
+
+  }
+
+  /**
+   * @see ISysMLv2Scope#filterType
+   */
+  @Override
+  default public Optional<FieldSymbol> filterField (String name, LinkedListMultimap<String,FieldSymbol> symbols) {
+    final Set<FieldSymbol> resolvedSymbols = new LinkedHashSet<>();
+
+    final String simpleName = getSimpleName(name);
+
+    if (symbols.containsKey(simpleName)) {
+      for (FieldSymbol symbol : symbols.get(simpleName)) {
+        if (symbol.getName().equals(name) ||
+            !symbol.getPackageName().isEmpty() &&
+                name.equals(symbol.getPackageName() + "." + symbol.getName())) {
+          resolvedSymbols.add(symbol);
+        }
+      }
+    }
+
+    return getResolvedOrThrowException(resolvedSymbols);
+
+  }
+
+  /**
+   * @see ISysMLv2Scope#filterType
+   */
+  @Override
+  default public Optional<MethodSymbol> filterMethod (String name, LinkedListMultimap<String,MethodSymbol> symbols) {
+    final Set<MethodSymbol> resolvedSymbols = new LinkedHashSet<>();
+
+    final String simpleName = getSimpleName(name);
+
+    if (symbols.containsKey(simpleName)) {
+      for (MethodSymbol symbol : symbols.get(simpleName)) {
+        if (symbol.getName().equals(name) ||
+            !symbol.getPackageName().isEmpty() &&
+                name.equals(symbol.getPackageName() + "." + symbol.getName())) {
+          resolvedSymbols.add(symbol);
+        }
+      }
+    }
+
+    return getResolvedOrThrowException(resolvedSymbols);
+
+  }
+
+  /**
+   * In the case of external symboltables we also need to handle packages while also
+   * keeping them intact. So we compare the scoping after comparing the packages.
+   * @see ISysMLv2Scope#filterType
+   */
+  default boolean checkIfContinueAsSubScope(String symbolName) {
+    if (isPresentSpanningSymbol() && !getSpanningSymbol().getPackageName().isEmpty()
+    && symbolName.startsWith(getSpanningSymbol().getPackageName() + ".")) {
+      symbolName = symbolName.replaceFirst(getSpanningSymbol().getPackageName() + ".", "");
+    }
+    return ISysMLv2ScopeTOP.super.checkIfContinueAsSubScope(symbolName);
+  }
+
+  /**
+   * In the case of external symboltables we also need to handle packages while also
+   * keeping them intact. So we remove the scoping modifier but keep the package intact
+   * @see ISysMLv2Scope#filterType
+   * @see ISysMLv2Scope#checkIfContinueWithEnclosingScope
+   */
+  @Override
+  default List<String> getRemainingNameForResolveDown(String symbolName) {
+    if (isPresentSpanningSymbol() && !getSpanningSymbol().getPackageName().isEmpty()) {
+      symbolName = symbolName.replaceFirst(getSpanningSymbol().getPackageName() + ".", "");
+      return List.of(getSpanningSymbol().getPackageName() + "." + ISysMLv2ScopeTOP.super.getRemainingNameForResolveDown(symbolName).get(0));
+    }
+    return ISysMLv2ScopeTOP.super.getRemainingNameForResolveDown(symbolName);
+  }
 }

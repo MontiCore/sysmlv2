@@ -57,23 +57,23 @@ public class FieldAccessExpressionInStateUsageTest {
   static Stream<Arguments> createInputs() {
     return Stream.of(
         Arguments.of(
-            "port def F { attribute a: boolean; }" +
+            "port def F { in attribute a: boolean; }" +
                 "part def X { port f: F; state s { transition first S if f.a then S; } }",
             false),
         Arguments.of(
-            "port def F { attribute a: boolean[3]; }" +
+            "port def F { in attribute a: boolean[3]; }" +
                 "part def X { port f: F; state s { transition first S if f.a[1] then S; } }",
             false),
         Arguments.of(
-            "port def F { attribute a: boolean; } " +
+            "port def F { in attribute a: boolean; } " +
                 "part def X { port f: F[3]; exhibit state s { transition first S if f[1].a then S; } }",
             false),
         Arguments.of(
-            "port def F { attribute a: boolean[3]; } " +
+            "port def F { in attribute a: boolean[3]; } " +
                 "part def X { port f: F[3]; exhibit state s { transition first S if f[1].a[1] then S; } }",
             false),
         Arguments.of(
-            "port def F { attribute a: boolean; } part def X { port f: F; constraint e { f.a } }",
+            "port def F { in attribute a: boolean; } part def X { port f: F; constraint e { f.a } }",
             true)
     );
   }
@@ -106,7 +106,7 @@ public class FieldAccessExpressionInStateUsageTest {
 
   @Test
   public void testProblem() throws IOException {
-    var ast = parser.parse_String("attribute a: boolean;");
+    var ast = parser.parse_String("in attribute a: boolean;");
     assertThat(ast).isPresent();
     var astSysmlmodel = ast.get();
     SysMLv2Mill.scopesGenitorDelegator().createFromAST(astSysmlmodel);
@@ -117,7 +117,7 @@ public class FieldAccessExpressionInStateUsageTest {
 
   @Test
   public void testProblem2() throws IOException {
-    var ast = parser.parse_String("port def P { attribute a: boolean; }");
+    var ast = parser.parse_String("port def P { in attribute a: boolean; }");
     assertThat(ast).isPresent();
     var astSysmlmodel = ast.get();
     SysMLv2Mill.scopesGenitorDelegator().createFromAST(astSysmlmodel);
