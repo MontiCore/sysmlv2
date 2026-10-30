@@ -4,8 +4,9 @@ package de.monticore.lang.kerml;
 import de.monticore.lang.kerml._ast.ASTKerMLModel;
 import de.monticore.lang.kerml._symboltable.IKerMLArtifactScope;
 import de.monticore.lang.kerml._symboltable.KerMLSymbols2Json;
+import de.monticore.lang.kermlelements._ast.ASTFeature;
 import de.monticore.lang.kermlelements._symboltable.DatatypeSymbol;
-import de.monticore.lang.kermlparts.symboltable.adapters.Datatype2TypeSymbolAdapter;
+import de.monticore.lang.kermlelements._symboltable.IKerMLElementsScope;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.CommandLine;
@@ -13,10 +14,14 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import java.util.List;
-
 /** Command line interface for parsing KerML models and exporting their types. */
 public class KerMLTool extends KerMLToolTOP {
+
+  @Override
+  public void init() {
+    super.init();
+    KerMLTypeCheck3.init();
+  }
 
   @Override
   public void run(String[] args) {
@@ -57,40 +62,27 @@ public class KerMLTool extends KerMLToolTOP {
   }
 
   @Override
-  public IKerMLArtifactScope createSymbolTable(ASTKerMLModel ast) {
-    var scope = super.createSymbolTable(ast);
-    for (String name : List.of("Collection", "OrderedCollection", "UniqueCollection",
-        "Array", "Bag", "Set", "OrderedSet", "List")) {
-      scope.resolveDatatypeDown("Collections." + name).ifPresent(datatype -> {
-        var typeScope = datatype.getSpannedScope();
-        if (typeScope.resolveTypeVarLocally("E").isEmpty()) {
-          typeScope.add(BasicSymbolsMill.typeVarSymbolBuilder()
-              .setName("E")
-              .setSpannedScope(KerMLMill.scope())
-              .build());
-        }
-      });
+  public void completeSymbolTable(ASTKerMLModel node) {
+    var traverser = KerMLMill.traverser();
+    traverser.add4KerMLElements(new KerMLTypesCompleter());
+
+    // Visiting artifact scope _and_ the AST requires two calls
+    if (node.getEnclosingScope() != null) {
+      node.getEnclosingScope().accept(traverser);
     }
-    for (String typeName : List.of("KeyValuePair", "Map", "OrderedMap")) {
-      scope.resolveDatatypeDown("Collections." + typeName).ifPresent(datatype -> {
-        var typeScope = datatype.getSpannedScope();
-        for (String name : List.of("K", "V")) {
-          if (typeScope.resolveTypeVarLocally(name).isEmpty()) {
-            typeScope.add(BasicSymbolsMill.typeVarSymbolBuilder()
-                .setName(name)
-                .setSpannedScope(KerMLMill.scope())
-                .build());
-          }
-        }
-      });
-    }
-    return scope;
+    node.accept(traverser);
   }
 
   @Override
   public void storeSymbols(IKerMLArtifactScope scope, String path) {
+    // TODO DatatypeAsTypeSymbolDeSer entfernen (siehe TODO dort)
+    // TODO Hier stattdessen:
+    //  1. Datatypes alle visitieren
+    //  2. in visit() die Datatypes adaptieren zu Type
+    //  3. adapted Types in ein neues Scope hinzufügen
+    //  4. das neue Scope serialisieren
     KerMLMill.globalScope().putSymbolDeSer(
-        DatatypeSymbol.class.getName(), new Datatype2TypeSymbolAdapter());
+        DatatypeSymbol.class.getName(), new DatatypeAsTypeSymbolDeSer());
     new KerMLSymbols2Json().store(scope, path);
   }
 }

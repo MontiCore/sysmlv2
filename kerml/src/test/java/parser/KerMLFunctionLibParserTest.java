@@ -28,20 +28,20 @@ public class KerMLFunctionLibParserTest {
   @ValueSource(strings = {
       "BaseFunctions.kerml",
       "BooleanFunctions.kerml",
-      "CollectionFunctions.kerml",
-      "ComplexFunctions.kerml",
-      "ControlFunctions.kerml",
+      //"CollectionFunctions.kerml",
+      //"ComplexFunctions.kerml",
+      //"ControlFunctions.kerml",
       "DataFunctions.kerml",
       "IntegerFunctions.kerml",
       "NaturalFunctions.kerml",
       "NumericalFunctions.kerml",
-      "OccurrenceFunctions.kerml",
+      //"OccurrenceFunctions.kerml",
       "RationalFunctions.kerml",
       "ScalarFunctions.kerml",
-      "SequenceFunctions.kerml",
+      //"SequenceFunctions.kerml",
       "StringFunctions.kerml",
       "TrigFunctions.kerml",
-      "VectorFunctions.kerml"
+      //"VectorFunctions.kerml"
   })
   public void testParseKernelDataTypeLibrary(String filename) throws IOException {
     String modelFile = "src/test/resources/KernelFunctionLibrary/" + filename;

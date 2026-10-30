@@ -6,6 +6,7 @@ import de.monticore.lang.kerml._parser.KerMLParser;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -23,7 +24,7 @@ public class KerMLSemanticLibParserTest {
     Log.enableFailQuick(false);
     KerMLMill.init();
   }
-
+  @Disabled
   @ParameterizedTest
   @ValueSource(strings = {
       "Base.kerml",

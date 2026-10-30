@@ -31,29 +31,13 @@ component grammar KerMLElements
       (KerMLRelationClause)*
       ("{" (KerMLElement)* "}" | ";");
 
-  Feature implements KerMLElement =
-      Modifier
-      (KerMLRelationClause)*
-      ("composite")?
-      ("var")?
-      (shortName:MCQualifiedName (shortMultiplicity:TypeMultiplicity)?)?
-      (KerMLRelationClause)*
-      (preMultiplicity:TypeMultiplicity)?
-      ("feature" | "expr" | "portion" ("feature" | "expr")?)?
-      ("all")?
-      ("step" | "chain")?
-      ("chains")?
-      (":>>" | "redefines")?
-      name:MCQualifiedName?
-      (TypeMultiplicity)?
-      (KerMLRelationClause)*
-      (":" type:MCQualifiedName)?
-      (TypeMultiplicity
-        | "ordered"
-        | "nonunique"
-        | KerMLRelationClause)*
+  symbol Feature implements KerMLElement =
+      Modifier "feature" Name (":" type:MCType)?
       (("=" | "default") Expression)?
       ("{" (KerMLElement)* "}" | ";");
+
+  symbolrule Feature =
+      types: de.monticore.types.check.SymTypeExpression* ;
 
   Multiplicity implements KerMLElement =
       "multiplicity"
