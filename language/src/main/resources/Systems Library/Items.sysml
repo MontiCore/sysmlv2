@@ -20,41 +20,41 @@ standard library package Items {
 	private import SequenceFunctions::includes;
 	private import SequenceFunctions::union;
 	private import ControlFunctions::forAll;
-	
+
 	abstract item def Item :> Object {
 		doc
 		/*
-		 * Item is the most general class of objects that are part of, exist in or flow through a system. 
+		 * Item is the most general class of objects that are part of, exist in or flow through a system.
 		 * Item is the base type of all ItemDefinitions.
 		 */
-	
+
 		ref self: Item :>> Object::self;
-		
+
 		item start: Item :>> startShot;
 		item done: Item :>> endShot;
-		
+
 		item shape : Item :>> spaceBoundary {
 		doc
 			/*
 			 * The shape of an Item is its spatial boundary.
 			 */
 		}
-		
+
 		item envelopingShapes : Item[0..*] {
 		doc
 			/*
 			 * Each enveloping shape is the shape of an Item that spacially overlaps this Item for its
 			 * entire lifetime.
-			 */		
+			 */
 
-			 /* Enables two dimensional items to be enveloped by two or three dimensional shapes. */
-			attribute :>> innerSpaceDimension = 
-				if (that as Item).innerSpaceDimension == 3  | (that as Item).outerSpaceDimension == 3? 2 
-				else (that as Item).outerSpaceDimension - 1 {
-				doc
-			 	/* 
-			 	 * Enables two dimensional items to be enveloped by two or three dimensional shapes.
-			 	 */				
+			/* Enables two dimensional items to be enveloped by two or three dimensional shapes. */
+    attribute :>> innerSpaceDimension =
+      if (that as Item).innerSpaceDimension == 3  | (that as Item).outerSpaceDimension == 3? 2
+      else (that as Item).outerSpaceDimension - 1 {
+      doc
+      /*
+       * Enables two dimensional items to be enveloped by two or three dimensional shapes.
+       */
 			}
 			assert constraint { (that as Item).innerSpaceDimension < 3 implies notEmpty(outerSpaceDimension) }
 
@@ -62,31 +62,31 @@ standard library package Items {
 
 			assert constraint {
 				doc
-				/* 
-				 * This constraint prevents an envelopingShape frombeing a portion.
+				/*
+				 * This constraint prevents an envelopingShape from being a portion.
 				 */
-				 
+
 				envelopingItem.shape.spaceTimeCoincidentOccurrences->includes(that) and
-				envelopingItem.spaceTimeEnclosedOccurrences->includes(that.that) 
+				envelopingItem.spaceTimeEnclosedOccurrences->includes(that.that)
 			}
 		}
-		
+
 		item boundingShapes : StructuredSpaceObject [0..*] :> envelopingShapes {
-		doc
+            doc
 			/*
 			 * envelopingShapes that are structured space objects with every face or every edge
 			 * intersecting this Item.
-			 */		
+			 */
 
 			item boundingShape: Item :>> self;
 
 			item :>> faces {
-				item face :>> self;
+        item face :>> self;
 				item inter [1];
 				assert constraint { contains(inter.intersectionsOf, union(face, boundingShape)) }
 			}
 			item :>> edges {
-				item edge :>> self;
+      	item edge :>> self;
 				item inter [1];
 				assert constraint { isEmpty(faces) implies
 							contains(inter.intersectionsOf, union(edge, boundingShape)) }
@@ -106,21 +106,23 @@ standard library package Items {
 			 * An Item is solid if it has no voids.
 			 */
 		}
-		
+
 		abstract item subitems: Item[0..*] :> items, subobjects {
 			doc
 			/*
 			 * The Items that are composite subitems of this Item.
 			 */
+
+			private ref redefines Item::incomingTransferSort, subobjects::incomingTransferSort;
 		}
-		
+
 		abstract part subparts: Part[0..*] :> subitems, parts {
 			doc
 			/*
 			 * The subitems of this Item that are Parts.
 			 */
 		}
-		
+
 		abstract constraint checkedConstraints: ConstraintCheck[0..*] :> constraintChecks, ownedPerformances {
 			doc
 			/*
@@ -128,15 +130,15 @@ standard library package Items {
 			 */
 		}
 	}
-	
+
 	connection def Touches :> JustOutsideOf, HappensWhile {
 		doc
 		/*
 		 * Touching items are just outside each other and happen at the same time.
 		 */
-	
+
 		end item touchedItemToo [0..*] :>> separateSpaceToo, thisOccurrence;
-		end item touchedItem [0..*] :>> separateSpace, thatOccurrence;
+    end item touchedItem [0..*] :>> separateSpace, thatOccurrence;
 	}
 
 	abstract item items : Item[0..*] nonunique :> objects {
@@ -145,5 +147,5 @@ standard library package Items {
 		 * items is the base feature of all ItemUsages.
 		 */
 	}
-	
+
 }

@@ -6,7 +6,8 @@ standard library package ShapeItems {
 
 	private import ScalarValues::Boolean;
 	private import ScalarValues::Positive;
-	private import ISQ::*;
+	private import ISQSpaceTime::*;
+	private import ISQBase::*;
 	private import SI::m;
 	private import Occurrences::MatesWith;
 	private import Objects::*;
@@ -55,7 +56,7 @@ standard library package ShapeItems {
 		attribute :>> outerSpaceDimension = 1;
 	}
 
-	abstract item def Path :> StructuredSpaceObject, Curve {
+	abstract item def Path :> StructuredSpaceObject::StructuredCurve {
 		doc
 		/*
 		 * Path is the most general structured Curve.
@@ -65,7 +66,7 @@ standard library package ShapeItems {
 		item :>> edges [1..*] {
 			item :>> vertices [0..2];
 		}
-		item :>> vertices = edges.vertices;
+		item :>> vertices [*] = edges.vertices;
 
 		assert constraint { isClosed == vertices->forAll{in p1 : Point;
 					vertices->exists{p2 : Point; p1 != p2 and
@@ -110,8 +111,8 @@ standard library package ShapeItems {
 		 */
 	
 		attribute :>> radius [1];
-        attribute :>> semiMajorAxis [1] = radius;
-        attribute :>> semiMinorAxis [1] = radius;
+		attribute :>> semiMajorAxis [1] = radius;
+		attribute :>> semiMinorAxis [1] = radius;
 
 		item :>> edges {
 			attribute length [1] = Circle::radius * TrigFunctions::pi * 2;
@@ -226,7 +227,7 @@ standard library package ShapeItems {
 		item :>> e4 { attribute :>> length = e2.length; }
 	}
 
-	abstract item def Shell :> StructuredSpaceObject, Surface {
+	abstract item def Shell :> StructuredSpaceObject::StructuredSurface {
 		doc
 		/*
 		 * Shell is the most general structured Surface.
@@ -250,7 +251,10 @@ standard library package ShapeItems {
 		item :>> faces : PlanarSurface [1] {
 			item :>> edges [1];
 		}
-		item :>> edges : Ellipse [1] = shape;
+		item :>> edges : Ellipse [1] = shape {
+            attribute :>> Shell::edges::innerSpaceDimension, Ellipse::innerSpaceDimension;
+            ref item :>> Shell::edges::vertices, Ellipse::vertices;
+		}
 		item :>> vertices [0];
 	}
 
@@ -259,9 +263,15 @@ standard library package ShapeItems {
 		/*
 		 * A CircularDisc is a Disc bound by a Circle.
 		 */
-	
-		attribute :>> radius [1] = semiMajorAxis;
-		item :>> shape : Circle;
+
+		attribute :>> radius [1];
+		attribute :>> semiMajorAxis [1] = radius;
+		attribute :>> semiMinorAxis [1] = radius;
+
+		item :>> shape : Circle {
+            attribute :>> Disc::shape::semiMajorAxis, Circle::semiMajorAxis;
+            attribute :>> Disc::shape::semiMinorAxis, Circle::semiMinorAxis;
+        }
 		item :>> edges : Circle;
 	}
 
@@ -295,12 +305,12 @@ standard library package ShapeItems {
 		doc
 		/*
 		 * A Sphere is an Ellipsoid with all the same semiaxes.
-		 */	
+		 */
 
-		attribute :>> radius [1] = semiAxis1;
-
-		assert constraint { ( semiAxis1 == semiAxis2 ) &
-						    ( semiAxis2 ==  semiAxis3 ) }
+		attribute :>> radius [1];
+		attribute :>> semiAxis1 [1] = radius;
+		attribute :>> semiAxis2 [1] = radius;
+		attribute :>> semiAxis3 [1] = radius;
 	}
 
 	item def Paraboloid :> ConicSurface {
@@ -367,6 +377,7 @@ standard library package ShapeItems {
 		item :>> revolvedCurve: Rectangle [1] {
 			attribute :>> length = rectangleLength;
 			attribute :>> width  = rectangleWidth;
+			attribute :>> revolvedCurve::isClosed, Rectangle::isClosed;
 		}
 	}
 
@@ -386,8 +397,20 @@ standard library package ShapeItems {
 		attribute :>> yoffset [1];
 
 		item :>> faces [2..3];
-		item base : Disc [1] :> faces;
-		item af : Disc [0..1] :> faces;
+		item base : Disc [1] :> faces {
+            attribute :>> Disc::innerSpaceDimension, faces::innerSpaceDimension;
+            ref :>> Disc::edges, ConeOrCylinder::faces::edges {
+                attribute :>> Disc::edges::innerSpaceDimension, ConeOrCylinder::faces::edges::innerSpaceDimension;
+            }
+            ref :>> Disc::vertices, ConeOrCylinder::faces::vertices;
+		}
+		item af : Disc [0..1] :> faces {
+            attribute :>> Disc::innerSpaceDimension, faces::innerSpaceDimension;
+            ref :>> Disc::edges, ConeOrCylinder::faces::edges {
+                attribute :>> Disc::edges::innerSpaceDimension, ConeOrCylinder::faces::edges::innerSpaceDimension;
+            }
+            ref :>> Disc::vertices, ConeOrCylinder::faces::vertices;
+        }
 		item cf : Surface [1] :> faces;
 
 		item :>> edges [2..4] = faces.edges;
@@ -406,11 +429,11 @@ standard library package ShapeItems {
 		assert constraint { isEmpty(af) == notEmpty(vertices) }
 
 		/* Bind face edges to specific edges */
-		binding [1] bind base.edges [0..*] = be [0..*];
-		binding [1] bind cf.edges [0..*] = be [0..*];
+		binding [1] bind [0..*] base.edges = [0..*] be;
+		binding [1] bind [0..*] cf.edges = [0..*] be;
 
 		/* Meeting edges */
-		connection :MatesWith connect be [1] to be [1];
+		connection :MatesWith connect [1] be to [1] be;
 
 		attribute :>> genus = 0;
 	}
@@ -426,7 +449,7 @@ standard library package ShapeItems {
 		item apex :>> vertices;
 
 		/* Bind face vertices to specific vertices */
-		binding [1] bind cf.vertices [0..*] = apex [0..*];
+		binding [1] bind [0..*] cf.vertices = [0..*] apex;
 	}
 
 	item def EccentricCone :> Cone {
@@ -442,13 +465,15 @@ standard library package ShapeItems {
 		doc
 		/*
 		 * A CircularCone is a Cone with a circular base.
-		 */	
+		 */
 
-		attribute :>> radius [1] = semiMajorAxis;
+		attribute :>> radius [1];
+		attribute :>> semiMajorAxis [1] = radius;
+		attribute :>> semiMinorAxis [1] = radius;
 
-		assert constraint { semiMajorAxis == semiMinorAxis }
-
-		item :>> base : CircularDisc;
+		item :>> base : CircularDisc {
+		    ref :>> base::edges, CircularDisc::edges;
+		}
 	}
 
 	item def RightCircularCone :> CircularCone {
@@ -469,9 +494,9 @@ standard library package ShapeItems {
 	
 		item :>> af [1];
 
-		binding [1] bind cf.edges [0..*] = ae [0..*];
+		binding [1] bind [0..*] cf.edges = [0..*] ae;
 
-		connection :MatesWith connect ae [1] to ae [1] {
+		connection :MatesWith connect [1] ae to [1] ae {
 			doc /* Meeting edges */
 		}
 	}
@@ -490,13 +515,17 @@ standard library package ShapeItems {
 		/*
 		 * A CircularCylinder is a Cylinder with two circular sides.
 		 */
-	
-		attribute :>> radius [1] = semiMajorAxis;
 
-		assert constraint { semiMajorAxis == semiMinorAxis }
+		attribute :>> radius [1];
+		attribute :>> semiMajorAxis [1] = radius;
+		attribute :>> semiMinorAxis [1] = radius;
 
-		item :>> base : CircularDisc;
-		item :>> af : CircularDisc;
+		item :>> base : CircularDisc {
+            ref :>> base::edges, CircularDisc::edges;
+        }
+		item :>> af : CircularDisc {
+            ref :>> af::edges, CircularDisc::edges;
+        }
 	}
 
 	item def RightCircularCylinder :> CircularCylinder {
@@ -517,8 +546,12 @@ standard library package ShapeItems {
 
 		attribute :>> isClosed = true;
 
-		item :>> faces : Polygon [2..*];
-		
+		item :>> faces : Polygon [2..*] {
+            attribute :>> Polygon::innerSpaceDimension, faces::innerSpaceDimension;
+            ref :>> Polygon::edges, ConeOrCylinder::faces::edges;
+            ref :>> Polygon::vertices, ConeOrCylinder::faces::vertices;
+        }
+
 		item :>> edges = faces.edges;
 		
 		attribute :>> outerSpaceDimension = if size(faces) > 2 ? 3 else 2;
@@ -533,12 +566,24 @@ standard library package ShapeItems {
 		 */
 
 		item :>> faces [5..6];
-		item tf	 : Quadrilateral [1] :> faces;
-		item bf	 : Quadrilateral [1] :> faces;
-		item ff	 : Polygon [1] :> faces { item :>> edges [3..4]; }
-		item rf	 : Polygon [1] :> faces { item :>> edges [3..4]; }
-		item slf : Quadrilateral [1] :> faces;
-		item srf : Quadrilateral [0..1] :> faces;
+		item tf	 : Quadrilateral [1] :> faces {
+            ref :>> Quadrilateral::edges, ConeOrCylinder::faces::edges;
+            ref :>> Quadrilateral::vertices, ConeOrCylinder::faces::vertices;
+        }
+		item bf	 : Quadrilateral [1] :> faces {
+            ref :>> Quadrilateral::edges, ConeOrCylinder::faces::edges;
+            ref :>> Quadrilateral::vertices, ConeOrCylinder::faces::vertices;
+        }
+		item ff	 : Polygon [1] :> faces { item :>> Polygon::edges, faces::edges [3..4]; }
+		item rf	 : Polygon [1] :> faces { item :>> Polygon::edges, faces::edges [3..4]; }
+		item slf : Quadrilateral [1] :> faces {
+            ref :>> Quadrilateral::edges, ConeOrCylinder::faces::edges;
+            ref :>> Quadrilateral::vertices, ConeOrCylinder::faces::vertices;
+        }
+		item srf : Quadrilateral [0..1] :> faces {
+            ref :>> Quadrilateral::edges, ConeOrCylinder::faces::edges;
+            ref :>> Quadrilateral::vertices, ConeOrCylinder::faces::vertices;
+        }
 
 		item :>> edges;
 		assert constraint { size(edges) == 18 or size(edges) == 24 }
@@ -575,61 +620,61 @@ standard library package ShapeItems {
 		assert constraint { ( isEmpty(tfrv) == isEmpty(trrv) ) }
 
 		/* Bind face edges to specific edges */
-		binding [1] bind tf.edges [0..1] = tfe [0..1];
-		binding [1] bind tf.edges [0..1] = tre [0..1];
-		binding [1] bind tf.edges [0..1] = tsle [0..1];
-		binding [1] bind bf.edges [0..1] = bfe [0..1];
-		binding [1] bind bf.edges [0..1] = bre [0..1];
-		binding [1] bind bf.edges [0..1] = bsle [0..1];
-		binding [1] bind bf.edges [0..1] = bsre [0..1];
+		binding [1] bind [0..1] tf.edges = [0..1] tfe;
+		binding [1] bind [0..1] tf.edges = [0..1] tre;
+		binding [1] bind [0..1] tf.edges = [0..1] tsle;
+		binding [1] bind [0..1] bf.edges = [0..1] bfe;
+		binding [1] bind [0..1] bf.edges = [0..1] bre;
+		binding [1] bind [0..1] bf.edges = [0..1] bsle;
+		binding [1] bind [0..1] bf.edges = [0..1] bsre;
 
-		binding [1] bind ff.edges [0..1] = tfe [0..1];
-		binding [1] bind ff.edges [0..1] = bfe [0..1];
-		binding [1] bind ff.edges [0..1] = ufle [0..1];
+		binding [1] bind [0..1] ff.edges = [0..1] tfe;
+		binding [1] bind [0..1] ff.edges = [0..1] bfe;
+		binding [1] bind [0..1] ff.edges = [0..1] ufle;
 
-		binding [1] bind rf.edges [0..1] = tre [0..1];
-		binding [1] bind rf.edges [0..1] = bre [0..1];
-		binding [1] bind rf.edges [0..1] = urle [0..1];
+		binding [1] bind [0..1] rf.edges = [0..1] tre;
+		binding [1] bind [0..1] rf.edges = [0..1] bre;
+		binding [1] bind [0..1] rf.edges = [0..1] urle;
 
 		/* Bind edge vertices to specific vertices */
-		binding [1] bind tfe.vertices [0..1] = tflv [0..1];
-		binding [1] bind tre.vertices [0..1] = trlv [0..1];
-		binding [1] bind tsle.vertices [0..1] = tflv [0..1];
-		binding [1] bind tsle.vertices [0..1] = trlv [0..1];
+		binding [1] bind [0..1] tfe.vertices = [0..1] tflv;
+		binding [1] bind [0..1] tre.vertices = [0..1] trlv;
+		binding [1] bind [0..1] tsle.vertices = [0..1] tflv;
+		binding [1] bind [0..1] tsle.vertices = [0..1] trlv;
 
-		binding [1] bind bfe.vertices [0..1] = bflv [0..1];
-		binding [1] bind bfe.vertices [0..1] = bfrv [0..1];
-		binding [1] bind bre.vertices [0..1] = brlv [0..1];
-		binding [1] bind bre.vertices [0..1] = brrv [0..1];
-		binding [1] bind bsle.vertices [0..1] = bflv [0..1];
-		binding [1] bind bsle.vertices [0..1] = brlv [0..1];
-		binding [1] bind bsre.vertices [0..1] = bfrv [0..1];
-		binding [1] bind bsre.vertices [0..1] = brrv [0..1];
+		binding [1] bind [0..1] bfe.vertices = [0..1] bflv;
+		binding [1] bind [0..1] bfe.vertices = [0..1] bfrv;
+		binding [1] bind [0..1] bre.vertices = [0..1] brlv;
+		binding [1] bind [0..1] bre.vertices = [0..1] brrv;
+		binding [1] bind [0..1] bsle.vertices = [0..1] bflv;
+		binding [1] bind [0..1] bsle.vertices = [0..1] brlv;
+		binding [1] bind [0..1] bsre.vertices = [0..1] bfrv;
+		binding [1] bind [0..1] bsre.vertices = [0..1] brrv;
 
-		binding [1] bind ufle.vertices [0..1] = tflv [0..1];
-		binding [1] bind ufle.vertices [0..1] = bflv [0..1];
-		binding [1] bind urle.vertices [0..1] = trlv [0..1];
-		binding [1] bind urle.vertices [0..1] = brlv [0..1];
+		binding [1] bind [0..1] ufle.vertices = [0..1] tflv;
+		binding [1] bind [0..1] ufle.vertices = [0..1] bflv;
+		binding [1] bind [0..1] urle.vertices = [0..1] trlv;
+		binding [1] bind [0..1] urle.vertices = [0..1] brlv;
 
 		/* Meeting edges */
-		connection :MatesWith connect tfe [1] to tfe [1];
-		connection :MatesWith connect tre [1] to tre [1];
-		connection :MatesWith connect tsle [1] to tsle [1];
-		connection :MatesWith connect bfe [1] to bfe [1];
-		connection :MatesWith connect bre [1] to bre [1];
-		connection :MatesWith connect bsle [1] to bsle [1];
-		connection :MatesWith connect bsre [1] to bsre [1];
-		connection :MatesWith connect ufle [1] to ufle [1];
-		connection :MatesWith connect urle [1] to urle [1];
-		connection :MatesWith connect bsre [1] to bsre [1];
+		connection :MatesWith connect [1] tfe to [1] tfe;
+		connection :MatesWith connect [1] tre to [1] tre;
+		connection :MatesWith connect [1] tsle to [1] tsle;
+		connection :MatesWith connect [1] bfe to [1] bfe;
+		connection :MatesWith connect [1] bre to [1] bre;
+		connection :MatesWith connect [1] bsle to [1] bsle;
+		connection :MatesWith connect [1] bsre to [1] bsre;
+		connection :MatesWith connect [1] ufle to [1] ufle;
+		connection :MatesWith connect [1] urle to [1] urle;
+		connection :MatesWith connect [1] bsre to [1] bsre;
 
 		/* Meeting vertices  */
-		connection :MatesWith connect tflv [2] to tflv [2];
-		connection :MatesWith connect trlv [2] to trlv [2];
-		connection :MatesWith connect bflv [2] to bflv [2];
-		connection :MatesWith connect bfrv [2] to bfrv [2];
-		connection :MatesWith connect brlv [2] to brlv [2];
-		connection :MatesWith connect brrv [2] to brrv [2];
+		connection :MatesWith connect [2] tflv to [2] tflv;
+		connection :MatesWith connect [2] trlv to [2] trlv;
+		connection :MatesWith connect [2] bflv to [2] bflv;
+		connection :MatesWith connect [2] bfrv to [2] bfrv;
+		connection :MatesWith connect [2] brlv to [2] brlv;
+		connection :MatesWith connect [2] brrv to [2] brrv;
 	}
 
 	item def TriangularPrism :> CuboidOrTriangularPrism {
@@ -641,19 +686,25 @@ standard library package ShapeItems {
 	
 
 		item :>> faces [5];
-		item :>> ff : Triangle;
-		item :>> rf : Triangle;
+		item :>> ff : Triangle {
+            ref :>> Triangle::edges, ConeOrCylinder::faces::edges;
+            ref :>> Triangle::vertices, ConeOrCylinder::faces::vertices;
+        }
+		item :>> rf : Triangle {
+            ref :>> Triangle::edges, ConeOrCylinder::faces::edges;
+            ref :>> Triangle::vertices, ConeOrCylinder::faces::vertices;
+        }
 
 		item :>> edges [18];
 
 		item :>> vertices;
 
 		/* Bind face edges to specific edges */
-		binding [1] bind tf.edges [0..1] = bsre [0..1];
+		binding [1] bind [0..1] tf.edges = [0..1] bsre;
 
 		/* Bind edge vertices to specific vertices */
-		binding [1] bind tfe.vertices  [0..1] = bfrv [0..1];
-		binding [1] bind tre.vertices  [0..1] = bfrv [0..1];
+		binding [1] bind [0..1] tfe.vertices = [0..1] bfrv;
+		binding [1] bind [0..1] tre.vertices = [0..1] bfrv;
 	}
 
 	item def RightTriangularPrism :> TriangularPrism {
@@ -699,43 +750,49 @@ standard library package ShapeItems {
 		 */	
 
 		item :>> faces [6];
-		item :>> ff : Quadrilateral;
-		item :>> rf : Quadrilateral;
+		item :>> ff : Quadrilateral {
+            ref :>> Quadrilateral::edges, ConeOrCylinder::faces::edges;
+            ref :>> Quadrilateral::vertices, ConeOrCylinder::faces::vertices;
+        }
+		item :>> rf : Quadrilateral {
+            ref :>> Quadrilateral::edges, ConeOrCylinder::faces::edges;
+            ref :>> Quadrilateral::vertices, ConeOrCylinder::faces::vertices;
+        }
 
 		item :>> edges [24];
 
 		item :>> vertices;
 
 		/* Bind face edges to specific edges */
-		binding [1] bind tf.edges [0..1] = tsre [0..1];
-		binding [1] bind ff.edges [0..1] = ufre [0..1];
-		binding [1] bind rf.edges [0..1] = urre [0..1];
+		binding [1] bind [0..1] tf.edges = [0..1] tsre;
+		binding [1] bind [0..1] ff.edges = [0..1] ufre;
+		binding [1] bind [0..1] rf.edges = [0..1] urre;
 
-		binding [1] bind srf.edges [0..1] = tsre [0..1];
-		binding [1] bind srf.edges [0..1] = bsre [0..1];
-		binding [1] bind srf.edges [0..1] = ufre [0..1];
-		binding [1] bind srf.edges [0..1] = urre [0..1];
+		binding [1] bind [0..1] srf.edges = [0..1] tsre;
+		binding [1] bind [0..1] srf.edges = [0..1] bsre;
+		binding [1] bind [0..1] srf.edges = [0..1] ufre;
+		binding [1] bind [0..1] srf.edges = [0..1] urre;
 
 		/* Bind edge vertices to specific vertices */
-		binding [1] bind tfe.vertices  [0..1] = tfrv [0..1];
-		binding [1] bind tre.vertices  [0..1] = trrv [0..1];
-		binding [1] bind tsre.vertices [0..1] = tfrv [0..1];
-		binding [1] bind tsre.vertices [0..1] = trrv [0..1];
+		binding [1] bind [0..1] tfe.vertices = [0..1] tfrv;
+		binding [1] bind [0..1] tre.vertices = [0..1] trrv;
+		binding [1] bind [0..1] tsre.vertices = [0..1] tfrv;
+		binding [1] bind [0..1] tsre.vertices = [0..1] trrv;
 
-		binding [1] bind ufre.vertices [0..1] = tfrv [0..1];
-		binding [1] bind ufre.vertices [0..1] = bfrv [0..1];
-		binding [1] bind urre.vertices [0..1] = trrv [0..1];
-		binding [1] bind urre.vertices [0..1] = brrv [0..1];
+		binding [1] bind [0..1] ufre.vertices = [0..1] tfrv;
+		binding [1] bind [0..1] ufre.vertices = [0..1] bfrv;
+		binding [1] bind [0..1] urre.vertices = [0..1] trrv;
+		binding [1] bind [0..1] urre.vertices = [0..1] brrv;
 
 		/* Meeting edges */
-		connection :MatesWith connect tsre [1] to tsre [1];
-		connection :MatesWith connect ufre [1] to ufre [1];
-		connection :MatesWith connect urre [1] to urre [1];
-		connection :MatesWith connect bsre [1] to bsre [1];
+		connection :MatesWith connect [1] tsre to [1] tsre;
+		connection :MatesWith connect [1] ufre to [1] ufre;
+		connection :MatesWith connect [1] urre to [1] urre;
+		connection :MatesWith connect [1] bsre to [1] bsre;
 
 		/* Meeting vertices  */
-		connection :MatesWith connect tfrv [2] to tfrv [2];
-		connection :MatesWith connect trrv [2] to trrv [2];
+		connection :MatesWith connect [2] tfrv to [2] tfrv;
+		connection :MatesWith connect [2] trrv to [2] trrv;
 	}
 
 	item def RectangularCuboid :> Cuboid {
@@ -777,7 +834,10 @@ standard library package ShapeItems {
 
 		item :>> faces;
 		item base [1] :> faces;
-		item wall : Triangle :> faces;
+		item wall : Triangle :> faces {
+            ref :>> Triangle::edges, ConeOrCylinder::faces::edges;
+            ref :>> Triangle::vertices, ConeOrCylinder::faces::vertices;
+        }
 		attribute wallNumber : Positive = size(wall);
 
 		assert constraint { size(faces) == wallNumber + 1 }
@@ -800,7 +860,7 @@ standard library package ShapeItems {
 							 wall#(if i==wallNumber ? 1 else i+1).edges#(2)) } }
 
 		/* Meeting apices. */
-		connection :MatesWith connect apex [wallNumber] to apex [wallNumber];
+		connection :MatesWith connect [wallNumber] apex to [wallNumber] apex;
 	}
 
 	item def Tetrahedron :> Pyramid {
@@ -813,6 +873,8 @@ standard library package ShapeItems {
 		attribute :>> baseWidth [1];
 
 		item :>> base : Triangle {
+            ref :>> Triangle::edges, ConeOrCylinder::faces::edges;
+            ref :>> Triangle::vertices, ConeOrCylinder::faces::vertices;
 			attribute :>> length = Tetrahedron::baseLength;
 			attribute :>> width  = Tetrahedron::baseWidth;
 		}
@@ -828,6 +890,8 @@ standard library package ShapeItems {
 		attribute :>> baseWidth [1];
 
 		item :>> base : Rectangle {
+            ref :>> Rectangle::edges, ConeOrCylinder::faces::edges;
+            ref :>> Rectangle::vertices, ConeOrCylinder::faces::vertices;
 			attribute :>> length = RectangularPyramid::baseLength;
 			attribute :>> width = RectangularPyramid::baseWidth;
 		}

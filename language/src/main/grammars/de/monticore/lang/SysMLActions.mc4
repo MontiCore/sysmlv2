@@ -170,11 +170,13 @@ component grammar SysMLActions
    * ================================================================================================================ */
 
   SuccessionFirst =
-    MCQualifiedName SysMLCardinality? Specialization* ("{" SysMLElement* "}")? |
+    (SysMLCardinality MCQualifiedName | MCQualifiedName SysMLCardinality?)
+    Specialization* ("{" SysMLElement* "}")? |
     IInlineOccurrenceUsage ;
 
   SuccessionThen =
-    MCQualifiedName SysMLCardinality? Specialization* ("{" SysMLElement* "}" | ";") |
+    (SysMLCardinality MCQualifiedName | MCQualifiedName SysMLCardinality?)
+    Specialization* ("{" SysMLElement* "}" | ";") |
     SysMLElement ;
 
   // Base successions according to 7.13.5 (Connections > Successions as Usages)

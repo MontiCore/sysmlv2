@@ -43,7 +43,7 @@ component grammar SysMLExpressions
     Expression "::" Name;
 
   SysMLInstantiation implements Expression <235> =
-    "new" {noSpace(2)}? MCType Arguments;
+    "new" MCType Arguments;
 
   /**
    * Infinity literal can be negative, but...

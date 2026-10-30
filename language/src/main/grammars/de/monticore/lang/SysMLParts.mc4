@@ -194,8 +194,8 @@ component grammar SysMLParts
     Modifier UserDefinedKeyword* "succession"? "flow"
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("of" FlowPayload)?
-     "from"? source:Endpoint
-     "to" target:Endpoint
+    ("from"? source:Endpoint
+     "to" target:Endpoint)?
      ("{"
         SysMLElement*
       "}" | ";") ;
@@ -605,7 +605,8 @@ component grammar SysMLParts
       "}" | ";") ;
 
     // Used regularly in successions
-      Endpoint =
-        MCQualifiedName SysMLCardinality? Specialization* ;
+    Endpoint =
+      (SysMLCardinality MCQualifiedName | MCQualifiedName SysMLCardinality?)
+      Specialization* ;
 
 }

@@ -30,7 +30,9 @@ standard library package States {
 		attribute :>> isTriggerDuring;
 		
 		ref state self: StateAction :>> Action::self, StatePerformance::self;
-		
+		ref state start: StateAction :>> Action::start, StatePerformance::startShot;
+		ref state done: StateAction :>> Action::done, StatePerformance::endShot;
+
 		action :>> subactions :> middle {
 			doc
 			/*
@@ -39,11 +41,15 @@ standard library package States {
 			 * entry Action and before the exit Action. 
 			 */
 		}
-		
-		abstract state substates: StateAction[0..*] :> stateActions, subactions {
+
+		action substates: StateAction[0..*] :> stateActions, subactions {
 			doc
 			/*
 			 * The subactions of this state that are states.
+			 *
+			 * NOTE: This feature is declared as an ActionUsage, not a StateUsage, so that the constraint
+ 			 * checkStateUsageExclusiveStateSpecialization does not apply to it, since this constraint
+			 * would otherwise incorrectly require that "substates" subset "exclusiveStates".
 			 */
 		}
 		
@@ -61,8 +67,8 @@ standard library package States {
 			 * The transitions of this state that are state transitions.
 			 */
 		}
-		
-		succession stateSequencing first exclusiveStates[0..1] then exclusiveStates[0..1] {
+
+		succession stateSequencing first [0..1] exclusiveStates then [0..1] exclusiveStates {
 			doc
 			/*
 			 * Exclusive states cannot overlap, so it must be possible to strictly sequence them in time.
@@ -80,8 +86,8 @@ standard library package States {
 	
 		in transitionLinkSource[1]: StateAction :>> 
 			TransitionAction::transitionLinkSource, StateTransitionPerformance::transitionLinkSource;
-			
-		out payload[0..*];
+
+		inout payload[0..*];
 		in :>> receiver;
 		
 		bind payload = accepter.payload;
