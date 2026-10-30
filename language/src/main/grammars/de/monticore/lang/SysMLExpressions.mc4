@@ -119,8 +119,11 @@ component grammar SysMLExpressions
 
   SysMLFunctionOperationExpression implements Expression <291> =
     Expression "->" MCQualifiedName
-    (Arguments)?
-    (body:SysMLBodyExpression)? ;
+    (
+      body:SysMLBodyExpression
+      | functionReference:MCQualifiedName
+      | Arguments
+    )? ;
 
   // Eigentlich ist "^" der Name einer CalcDef aus den Domain Libraries
   CalcDefPowerExpression implements Expression =
