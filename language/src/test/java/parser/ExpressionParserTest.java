@@ -143,4 +143,48 @@ public class ExpressionParserTest {
     assertThat(functionOperation.getMCQualifiedName().getPartsList()).containsExactly("b");
     assertThat(functionOperation.getArguments().getExpressionList()).hasSize(1);
   }
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "values->reduce '*'",
+      "values->reduce Functions::sum",
+      "values->reduce Functions.sum"
+  })
+  public void testFunctionOperationWithFunctionReference(String expr) throws IOException {
+    var ast = parser.parse_StringExpression(expr);
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    assertThat(ast.get()).isInstanceOf(ASTSysMLFunctionOperationExpression.class);
+    var operation = (ASTSysMLFunctionOperationExpression) ast.get();
+    assertThat(operation.isPresentFunctionReference()).isTrue();
+    assertThat(operation.isPresentArguments()).isFalse();
+    assertThat(operation.isPresentBody()).isFalse();
+  }
+
+  @Test
+  public void testFunctionOperationWithBody() throws IOException {
+    var ast = parser.parse_StringExpression("values->forAll { true }");
+
+    assertThat(ast).isPresent();
+    assertThat(Log.getFindings()).isEmpty();
+    assertThat(ast.get()).isInstanceOf(ASTSysMLFunctionOperationExpression.class);
+    var operation = (ASTSysMLFunctionOperationExpression) ast.get();
+    assertThat(operation.isPresentBody()).isTrue();
+    assertThat(operation.isPresentArguments()).isFalse();
+    assertThat(operation.isPresentFunctionReference()).isFalse();
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "values->forAll() { true }",
+      "values->forAll(predicate) { true }",
+      "values->forAll Predicates::check { true }"
+  })
+  public void testFunctionOperationRejectsCombinedForms(String expr) throws IOException {
+    var ast = parser.parse_StringExpression(expr);
+
+    assertThat(ast).isEmpty();
+    assertThat(parser.hasErrors()).isTrue();
+  }
 }
