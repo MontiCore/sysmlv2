@@ -140,7 +140,7 @@ public class ExpressionParserTest {
 
     assertThat(functionOperation.getExpression())
         .isInstanceOf(ASTFieldAccessExpression.class);
-    assertThat(functionOperation.getSysMLQualifiedName().getPartsList())
+    assertThat(functionOperation.getMCQualifiedName().getPartsList())
         .containsExactly("c", "d");
   }
 
