@@ -323,9 +323,7 @@ component grammar SysMLParts
     "}")? ;
 
   symbol scope OccurrenceUsage implements OccurrenceUsageElement =
-    Modifier UserDefinedKeyword*
-    (endName:Name endCardinality:SysMLCardinality)?
-    "occurrence" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    Modifier UserDefinedKeyword* "occurrence" SysMLIdentifier? Name? SysMLCardinality? Specialization*
     DefaultValue?
     ("{"
       SysMLElement*
@@ -354,9 +352,7 @@ component grammar SysMLParts
     "}" | ";") ;
 
   symbol scope ItemUsage implements SysMLUsage =
-    Modifier UserDefinedKeyword*
-    (endName:Name endCardinality:SysMLCardinality)?
-    "item" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    Modifier UserDefinedKeyword* "item" SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("(" (SysMLParameter || ",")* ")")? DefaultValue?
     ("{"
       SysMLElement*
