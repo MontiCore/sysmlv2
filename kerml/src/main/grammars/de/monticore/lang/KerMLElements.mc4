@@ -5,7 +5,8 @@ component grammar KerMLElements
     extends KerMLBasis,
             de.monticore.types.MCBasicTypes,
             de.monticore.symbols.BasicSymbols,
-            de.monticore.UMLModifier
+            de.monticore.UMLModifier,
+            de.monticore.Cardinality  // Cardinality
 {
   DocBlock implements KerMLElement = "doc";
 
@@ -31,10 +32,39 @@ component grammar KerMLElements
       (KerMLRelationClause)*
       ("{" (KerMLElement)* "}" | ";");
 
-  symbol Feature implements KerMLElement =
-      Modifier "feature" Name (":" type:MCType)?
-      (("=" | "default") Expression)?
-      ("{" (KerMLElement)* "}" | ";");
+  symbol scope Feature implements KerMLElement =
+      Modifier "feature" KerMLIdentifier? Name?
+      KerMLCardinality? Specialization*
+      FeatureValue?
+      ("{"
+        KerMLElement*
+      "}" | ";");
+
+  KerMLIdentifier = "<" Name ">";
+
+  interface Specialization = superTypes:MCType+;
+
+  KerMLTyping implements Specialization =
+      (":" | "typed by") superTypes:(MCType || ",")+ KerMLCardinality?;
+
+  KerMLFeatureSubsetting implements Specialization =
+      (":>" | "subsets") superTypes:(MCType || ",")+;
+
+  KerMLFeatureRedefinition implements Specialization =
+      (":>>" | "redefines") superTypes:(MCType || ",")+;
+
+  KerMLFeatureCrossing implements Specialization =
+      "crosses" superTypes:(MCType || ",")+;
+
+  KerMLFeatureReferences implements Specialization =
+      "references" superTypes:(MCType || ",")+;
+
+  KerMLCardinality =
+      Cardinality (["ordered"] | ["nonunique"])*
+      | (["ordered"] | ["nonunique"])+;
+
+  FeatureValue =
+      ("=" | ":=" | "default" ("=" | ":=")?) Expression;
 
   symbolrule Feature =
       types: de.monticore.types.check.SymTypeExpression* ;
