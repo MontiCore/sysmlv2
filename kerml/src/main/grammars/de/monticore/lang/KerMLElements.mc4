@@ -42,7 +42,7 @@ component grammar KerMLElements
 
   KerMLIdentifier = "<" Name ">";
 
-  interface Specialization;
+  interface Specialization = superTypes:MCType+;
 
   KerMLTyping implements Specialization =
       (":" | "typed by") superTypes:(MCType || ",")+ KerMLCardinality?;
@@ -184,16 +184,16 @@ component grammar KerMLElements
   KerMLSpecialization implements KerMLRelationClause =
       (":>" | "specializes") specialized:(MCQualifiedName || ",")+;
 
-  KerMLSubsetting implements KerMLRelationClause, Specialization =
+  KerMLSubsetting implements KerMLRelationClause =
       (":>" | "subsets") subset:(MCQualifiedName || ",")+;
 
-  KerMLRedefinition implements KerMLRelationClause, Specialization =
+  KerMLRedefinition implements KerMLRelationClause =
       (":>>" | "redefines") redefined:(MCQualifiedName || ",")+;
 
   KerMLChains implements KerMLRelationClause =
       (":>" | "chains") chained:(MCQualifiedName || ",")+;
 
-  KerMLCrossing implements KerMLRelationClause, Specialization =
+  KerMLCrossing implements KerMLRelationClause =
       "crosses" MCQualifiedName ("," MCQualifiedName)*;
 
   KerMLIntersection implements KerMLRelationClause =
@@ -212,6 +212,6 @@ component grammar KerMLElements
       Modifier "disjoint" left:MCQualifiedName "from"
       right:(MCQualifiedName || ",")+ ";";
 
-  KerMLReferences implements KerMLRelationClause, Specialization =
+  KerMLReferences implements KerMLRelationClause =
       "references" referenced:(MCQualifiedName || ",")+;
 }
