@@ -34,12 +34,18 @@ component grammar KerMLElements
 
   symbol scope Feature implements KerMLElement =
       Modifier "feature" KerMLIdentifier? Name?
-      KerMLCardinality FeatureValue?
+      KerMLCardinality? Specialization*
+      FeatureValue?
       ("{"
         KerMLElement*
       "}" | ";");
 
   KerMLIdentifier = "<" Name ">";
+
+  interface Specialization;
+
+  KerMLTyping implements Specialization =
+      (":" | "typed by") superTypes:(MCType || ",")+ KerMLCardinality?;
 
   KerMLCardinality =
       Cardinality (["ordered"] | ["nonunique"])*
@@ -178,16 +184,16 @@ component grammar KerMLElements
   KerMLSpecialization implements KerMLRelationClause =
       (":>" | "specializes") specialized:(MCQualifiedName || ",")+;
 
-  KerMLSubsetting implements KerMLRelationClause =
+  KerMLSubsetting implements KerMLRelationClause, Specialization =
       (":>" | "subsets") subset:(MCQualifiedName || ",")+;
 
-  KerMLRedefinition implements KerMLRelationClause =
+  KerMLRedefinition implements KerMLRelationClause, Specialization =
       (":>>" | "redefines") redefined:(MCQualifiedName || ",")+;
 
   KerMLChains implements KerMLRelationClause =
       (":>" | "chains") chained:(MCQualifiedName || ",")+;
 
-  KerMLCrossing implements KerMLRelationClause =
+  KerMLCrossing implements KerMLRelationClause, Specialization =
       "crosses" MCQualifiedName ("," MCQualifiedName)*;
 
   KerMLIntersection implements KerMLRelationClause =
@@ -206,6 +212,6 @@ component grammar KerMLElements
       Modifier "disjoint" left:MCQualifiedName "from"
       right:(MCQualifiedName || ",")+ ";";
 
-  KerMLReferences implements KerMLRelationClause =
+  KerMLReferences implements KerMLRelationClause, Specialization =
       "references" referenced:(MCQualifiedName || ",")+;
 }

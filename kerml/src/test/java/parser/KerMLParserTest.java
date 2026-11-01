@@ -4,6 +4,7 @@ import de.monticore.lang.kerml.KerMLMill;
 import de.monticore.lang.kerml.KerMLTool;
 import de.monticore.lang.kermlelements._ast.ASTDatatype;
 import de.monticore.lang.kermlelements._ast.ASTFeature;
+import de.monticore.lang.kermlelements._ast.ASTKerMLTyping;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +38,10 @@ public class KerMLParserTest {
 
     var feature = (ASTFeature) datatype.getKerMLElement(0);
     assertThat(feature.getName()).isEqualTo("a");
-    assertThat(feature.isPresentType()).isTrue();
-    assertThat(feature.getType().printType()).isEqualTo("Anything");
+    assertThat(feature.getSpecializationList()).hasSize(1);
+    assertThat(feature.getSpecialization(0)).isInstanceOf(ASTKerMLTyping.class);
+    var typing = (ASTKerMLTyping) feature.getSpecialization(0);
+    assertThat(typing.getSuperTypesList()).hasSize(1);
+    assertThat(typing.getSuperTypes(0).printType()).isEqualTo("Anything");
   }
 }
