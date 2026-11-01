@@ -32,9 +32,20 @@ component grammar KerMLElements
       ("{" (KerMLElement)* "}" | ";");
 
   symbol Feature implements KerMLElement =
-      Modifier "feature" Name (":" type:MCType)?
-      (("=" | "default") Expression)?
-      ("{" (KerMLElement)* "}" | ";");
+      Modifier "feature" Name
+      (FeatureMultiplicity (":" type:MCType)?
+        | ":" type:MCType FeatureMultiplicity?)?
+      (KerMLSubsetting | KerMLRedefinition | KerMLReferences | KerMLCrossing)*
+      FeatureValue?
+      ("{" KerMLElement* "}" | ";");
+
+  FeatureMultiplicity =
+      TypeMultiplicity
+      | TypeMultiplicity?
+        (["ordered"] ["nonunique"]? | ["nonunique"] ["ordered"]?);
+
+  FeatureValue =
+      ("=" | ":=" | "default" ("=" | ":=")?) Expression;
 
   symbolrule Feature =
       types: de.monticore.types.check.SymTypeExpression* ;

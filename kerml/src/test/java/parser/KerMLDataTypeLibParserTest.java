@@ -26,7 +26,7 @@ public class KerMLDataTypeLibParserTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-      //"Collections.kerml"
+      "Collections.kerml",
       "ScalarValues.kerml"
       //"VectorValues.kerml"
   })
