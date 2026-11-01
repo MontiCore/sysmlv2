@@ -47,6 +47,18 @@ component grammar KerMLElements
   KerMLTyping implements Specialization =
       (":" | "typed by") superTypes:(MCType || ",")+ KerMLCardinality?;
 
+  KerMLFeatureSubsetting implements Specialization =
+      (":>" | "subsets") superTypes:(MCType || ",")+;
+
+  KerMLFeatureRedefinition implements Specialization =
+      (":>>" | "redefines") superTypes:(MCType || ",")+;
+
+  KerMLFeatureCrossing implements Specialization =
+      "crosses" superTypes:(MCType || ",")+;
+
+  KerMLFeatureReferences implements Specialization =
+      "references" superTypes:(MCType || ",")+;
+
   KerMLCardinality =
       Cardinality (["ordered"] | ["nonunique"])*
       | (["ordered"] | ["nonunique"])+;
