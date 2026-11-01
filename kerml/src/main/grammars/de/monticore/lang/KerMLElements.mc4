@@ -5,7 +5,8 @@ component grammar KerMLElements
     extends KerMLBasis,
             de.monticore.types.MCBasicTypes,
             de.monticore.symbols.BasicSymbols,
-            de.monticore.UMLModifier
+            de.monticore.UMLModifier,
+            de.monticore.Cardinality  // Cardinality
 {
   DocBlock implements KerMLElement = "doc";
 
@@ -31,18 +32,18 @@ component grammar KerMLElements
       (KerMLRelationClause)*
       ("{" (KerMLElement)* "}" | ";");
 
-  symbol Feature implements KerMLElement =
-      Modifier "feature" Name
-      (FeatureMultiplicity (":" type:MCType)?
-        | ":" type:MCType FeatureMultiplicity?)?
-      (KerMLSubsetting | KerMLRedefinition | KerMLReferences | KerMLCrossing)*
-      FeatureValue?
-      ("{" KerMLElement* "}" | ";");
+  symbol scope Feature implements KerMLElement =
+      Modifier "feature" KerMLIdentifier? Name?
+      KerMLCardinality FeatureValue?
+      ("{"
+        KerMLElement*
+      "}" | ";");
 
-  FeatureMultiplicity =
-      TypeMultiplicity
-      | TypeMultiplicity?
-        (["ordered"] ["nonunique"]? | ["nonunique"] ["ordered"]?);
+  KerMLIdentifier = "<" Name ">";
+
+  KerMLCardinality =
+      Cardinality (["ordered"] | ["nonunique"])*
+      | (["ordered"] | ["nonunique"])+;
 
   FeatureValue =
       ("=" | ":=" | "default" ("=" | ":=")?) Expression;
