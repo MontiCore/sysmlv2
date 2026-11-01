@@ -31,7 +31,8 @@ component grammar SysMLParts
    symbolrule PartDef =
       directRefinements:de.monticore.types.check.SymTypeExpression*
       requirementType:SysMLReqType
-      sysMLIdentifier:Name?;
+      sysMLIdentifier:Name?
+      userDefinedKeywords:Name*;
 
   symbol scope AttributeDef implements SysMLDefinition =
     Modifier UserDefinedKeyword* "attribute" "def"
