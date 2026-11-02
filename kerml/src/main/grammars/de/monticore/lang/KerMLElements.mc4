@@ -1,4 +1,4 @@
-/* (c) https://github.com/MontiCore/monticore */
+/* c https://github.com/MontiCore/monticore */
 package de.monticore.lang;
 
 component grammar KerMLElements
@@ -11,8 +11,8 @@ component grammar KerMLElements
   DocBlock implements KerMLElement = "doc";
 
   symbol scope PackageDeclaration implements KerMLElement =
-      Modifier ("standard")? ("library")? "package" name:Name
-      ("{" (KerMLElement)* "}");
+      Modifier "standard"? "library"? "package" name:Name
+      ("{" KerMLElement* "}");
 
   KerMLImportStatement extends MCImportStatement implements KerMLElement =
       Modifier "import" ["all"]? MCQualifiedName
@@ -22,19 +22,19 @@ component grammar KerMLElements
       ("{" KerMLElement* "}" | ";");
 
   symbol scope Datatype implements KerMLElement =
-      Modifier "datatype" name:Name (KerMLRelationClause)*
-      ("{" (KerMLElement)* "}" | ";");
+      Modifier "datatype" name:Name KerMLRelationClause*
+      ("{" KerMLElement* "}" | ";");
 
   Classifier implements KerMLElement =
       Modifier
-      ("class" | "classifier" | "subclassifier" | "predicate") ("all")?
-      MCQualifiedName (TypeMultiplicity)?
-      (KerMLRelationClause)*
-      ("{" (KerMLElement)* "}" | ";");
+      ("class" | "classifier" | "subclassifier" | "predicate") "all"?
+      MCQualifiedName MultiplicityBounds?
+      KerMLRelationClause*
+      ("{" KerMLElement* "}" | ";");
 
   symbol scope Feature implements KerMLElement =
       Modifier "feature" KerMLIdentifier? Name?
-      KerMLCardinality? Specialization*
+      MultiplicityPart? Specialization*
       FeatureValue?
       ("{"
         KerMLElement*
@@ -45,7 +45,7 @@ component grammar KerMLElements
   interface Specialization = superTypes:MCType+;
 
   KerMLTyping implements Specialization =
-      (":" | "typed by") superTypes:(MCType || ",")+ KerMLCardinality?;
+      (":" | "typed by") superTypes:(MCType || ",")+ MultiplicityPart?;
 
   KerMLFeatureSubsetting implements Specialization =
       (":>" | "subsets") superTypes:(MCType || ",")+;
@@ -59,9 +59,15 @@ component grammar KerMLElements
   KerMLFeatureReferences implements Specialization =
       "references" superTypes:(MCType || ",")+;
 
-  KerMLCardinality =
+  MultiplicityPart =
       Cardinality (["ordered"] | ["nonunique"])*
       | (["ordered"] | ["nonunique"])+;
+
+  MultiplicityBounds extends Cardinality =
+      "["
+      (many:["*"] | lowerBoundLit:NatLiteral | lowerExpr:Expression)
+      (".." (upperBoundLit:NatLiteral | noUpperLimit:["*"] | upperExpr:Expression))?
+      "]";
 
   FeatureValue =
       ("=" | ":=" | "default" ("=" | ":=")?) Expression;
@@ -72,47 +78,43 @@ component grammar KerMLElements
   Multiplicity implements KerMLElement =
       "multiplicity"
       MCQualifiedName
-      TypeMultiplicity
-      ("{" (KerMLElement)* "}");
+      MultiplicityBounds
+      ("{" KerMLElement* "}");
 
   Struct implements KerMLElement =
       Modifier
-      "struct" ("all")? Name (TypeMultiplicity | KerMLRelationClause)*
-      ((Name (TypeMultiplicity)?) ("," Name (TypeMultiplicity)*)*)?
-      ("{" (KerMLElement)* "}" | ";");
+      "struct" "all"? Name (MultiplicityBounds | KerMLRelationClause)*
+      (Name MultiplicityBounds? ("," Name MultiplicityBounds*)*)?
+      ("{" KerMLElement* "}" | ";");
 
   Behavior implements KerMLElement =
-      Modifier ("behavior" | "interaction") ("all")? MCQualifiedName
-      (KerMLRelationClause)*
-      ("{" (KerMLElement)* "}" | ";");
+      Modifier ("behavior" | "interaction") "all"? MCQualifiedName
+      KerMLRelationClause*
+      ("{" KerMLElement* "}" | ";");
 
   Implies implements KerMLElement =
       left:Expression "implies" right:Expression;
 
   KerMLFunction implements KerMLElement =
       Modifier "function" MCQualifiedName
-      (KerMLRelationClause)?
-      ("{" (KerMLElement)* ("chain")? "}" | ";");
+      KerMLRelationClause?
+      ("{" KerMLElement* "chain"? "}" | ";");
 
   FunctionParameter implements KerMLElement =
       Modifier
-      (KerMLRedefinition)?
-      (name:MCQualifiedName)*
+      KerMLRedefinition?
+      name:MCQualifiedName*
       (":" type:MCQualifiedName)?
-      (TypeMultiplicity | "ordered" | "nonunique" | KerMLSubsetting
+      (MultiplicityPart | KerMLSubsetting
         | KerMLChains | KerMLRedefinition | "chain")*
-      (Expression)?
+      Expression?
       (("{" (KerMLElement | Expression)* "}")+ | ";");
 
   FunctionReturn implements KerMLElement =
-      "return" (Name)? (":" type:MCQualifiedName)?
-      (TypeMultiplicity | KerMLRelationClause | "ordered" | "nonunique"
-        | "chain")*      (("=" | "default") Expression)?
-      ("{" (KerMLElement)* "}" | ";");
-
-  TypeMultiplicity = "[" min:Bound ".." max:Bound "]" | "[" exact:Bound "]";
-
-  Bound = NatLiteral | "*" | Name;
+      "return" Name? (":" type:MCQualifiedName)?
+      (MultiplicityPart | KerMLRelationClause | "chain")*
+      (("=" | "default") Expression)?
+      ("{" KerMLElement* "}" | ";");
 
   IfElse implements KerMLElement =
       "if" condition:Expression "?" if:Expression "else" else:Expression;
@@ -122,60 +124,60 @@ component grammar KerMLElements
 
   Connector implements KerMLElement =
       Modifier
-      "connector" ("all")? MCQualifiedName?
-      (KerMLRelationClause)*
+      "connector" "all"? MCQualifiedName?
+      KerMLRelationClause*
       (":" type:MCQualifiedName)?
-      (TypeMultiplicity)?
-      (KerMLRelationClause)*
+      MultiplicityPart?
+      KerMLRelationClause*
       (
-        ("from")? (TypeMultiplicity)? Expression
+        "from"? MultiplicityPart? Expression
         ("references" fromRef:MCQualifiedName)?
-        "to" (TypeMultiplicity)? Expression
+        "to" MultiplicityPart? Expression
         ("references" toRef:MCQualifiedName)?
       )?
-      ("{" (KerMLElement)* "}" | ";");
+      ("{" KerMLElement* "}" | ";");
 
   Step implements KerMLElement =
       Modifier
-      ("composite")?
-      (shortName:MCQualifiedName (shortMultiplicity:TypeMultiplicity)?)?
-      (KerMLRelationClause)*
-      (preMultiplicity:TypeMultiplicity)?
+      "composite"?
+      (shortName:MCQualifiedName shortMultiplicity:MultiplicityPart?)?
+      KerMLRelationClause*
+      preMultiplicity:MultiplicityPart?
       "step"
-      (KerMLRelationClause)*
+      KerMLRelationClause*
       (":" type:MCQualifiedName)?
       ("ordered" | "nonunique" | KerMLRelationClause)*
       (("=" | "default") Expression)?
-      ("{" (KerMLElement)* "}" | ";");
+      ("{" KerMLElement* "}" | ";");
 
   Metaclass implements KerMLElement =
       Modifier "metaclass" MCQualifiedName
-      (KerMLSpecialization)?
-      ("{" (KerMLElement)* "}" | ";");
+      KerMLSpecialization?
+      ("{" KerMLElement* "}" | ";");
 
   Association implements KerMLElement =
       Modifier
-      "assoc" ("struct")? ("all")? MCQualifiedName (TypeMultiplicity)?
-      (KerMLRelationClause)*
-      ("{" (KerMLElement)* "}" | ";");
+      "assoc" "struct"? "all"? MCQualifiedName MultiplicityPart?
+      KerMLRelationClause*
+      ("{" KerMLElement* "}" | ";");
 
   CommentElement implements KerMLElement =
-      "comment" (MCQualifiedName)?
+      "comment" MCQualifiedName?
       ("about" MCQualifiedName ("," MCQualifiedName)*)?
-      ("{" (KerMLElement)* "}" | ";")?;
+      ("{" KerMLElement* "}" | ";")?;
 
   Succession implements KerMLElement =
-      Modifier "succession" ("all")? (Name (TypeMultiplicity)?)? ()
-      (("first")? (TypeMultiplicity)? left:Expression)?
+      Modifier "succession" "all"? (Name MultiplicityPart?)? ()
+      ("first"? MultiplicityPart? left:Expression)?
       "then"
-      (TypeMultiplicity)? right:Expression
-      ("{" (KerMLElement)* "}" | ";");
+      MultiplicityPart? right:Expression
+      ("{" KerMLElement* "}" | ";");
 
   Binding implements KerMLElement =
-      Modifier "binding" (Name (TypeMultiplicity)? ("of")?)?
-      (TypeMultiplicity)? left:Expression "="
-      (TypeMultiplicity)? right:Expression
-      ("{" (KerMLElement)* "}" | ";");
+      Modifier "binding" (Name MultiplicityPart? "of"?)?
+      MultiplicityPart? left:Expression "="
+      MultiplicityPart? right:Expression
+      ("{" KerMLElement* "}" | ";");
 
   Alias implements KerMLElement =
       Modifier "alias" MCQualifiedName "for" MCQualifiedName ";";
@@ -187,8 +189,8 @@ component grammar KerMLElements
       ":>>" Name "=" Expression ";";
 
   BodyRelationStatement implements KerMLElement =
-      Modifier (KerMLRelationClause)*
-      ("{" (KerMLElement)* "}" | ";");
+      Modifier KerMLRelationClause*
+      ("{" KerMLElement* "}" | ";");
 
   interface KerMLRelationClause;
 
@@ -211,7 +213,7 @@ component grammar KerMLElements
       "intersects" MCQualifiedName ("," MCQualifiedName)*;
 
   KerMLInverse implements KerMLRelationClause =
-      "inverse" ("of")? inverses:(MCQualifiedName || ",")+;
+      "inverse" "of"? inverses:(MCQualifiedName || ",")+;
 
   KerMLUnion implements KerMLRelationClause =
       "unions" unioned:(MCQualifiedName || ",")+;
