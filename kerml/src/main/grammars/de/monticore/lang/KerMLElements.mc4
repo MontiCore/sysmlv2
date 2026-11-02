@@ -107,8 +107,7 @@ component grammar KerMLElements
   FunctionReturn implements KerMLElement =
       "return" (Name)? (":" type:MCQualifiedName)?
       (TypeMultiplicity | KerMLRelationClause | "ordered" | "nonunique"
-        | "chain")*
-      (("=" | "default") Expression)?
+        | "chain")*      (("=" | "default") Expression)?
       ("{" (KerMLElement)* "}" | ";");
 
   TypeMultiplicity = "[" min:Bound ".." max:Bound "]" | "[" exact:Bound "]";
