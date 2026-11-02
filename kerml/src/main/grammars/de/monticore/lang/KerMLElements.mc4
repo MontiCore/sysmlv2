@@ -35,7 +35,7 @@ component grammar KerMLElements
   symbol scope Feature implements KerMLElement =
       Modifier "feature" KerMLIdentifier? Name?
       MultiplicityPart? Specialization*
-      FeatureValue?
+      DefaultValue?
       ("{"
         KerMLElement*
       "}" | ";");
@@ -69,8 +69,9 @@ component grammar KerMLElements
       (".." (upperBoundLit:NatLiteral | noUpperLimit:["*"] | upperExpr:Expression))?
       "]";
 
-  FeatureValue =
-      ("=" | ":=" | "default" ("=" | ":=")?) Expression;
+  DefaultValue =
+      [default1:"default"]? ([binding:"="] | [initial:":="]) Expression
+      | [default2:"default"] Expression;
 
   symbolrule Feature =
       types: de.monticore.types.check.SymTypeExpression* ;
