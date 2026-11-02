@@ -33,8 +33,9 @@ component grammar KerMLElements
       ("{" KerMLElement* "}" | ";");
 
   symbol scope Feature implements KerMLElement =
-      Modifier "feature" KerMLIdentifier? Name?
+      Modifier "feature" KerMLIdentifier? (Name | name:"chain")?
       MultiplicityPart? Specialization*
+      ("chains" MCQualifiedName)?
       DefaultValue?
       ("{"
         KerMLElement*
@@ -101,6 +102,11 @@ component grammar KerMLElements
       KerMLRelationClause?
       ("{" KerMLElement* "chain"? "}" | ";");
 
+  KerMLExpressionDeclaration implements KerMLElement =
+      Modifier "expr" KerMLIdentifier? Name?
+      MultiplicityPart? Specialization* DefaultValue?
+      ("{" KerMLElement* Expression? "}" | ";");
+
   FunctionParameter implements KerMLElement =
       Modifier
       KerMLRedefinition?
@@ -108,7 +114,7 @@ component grammar KerMLElements
       (":" type:MCQualifiedName)?
       (MultiplicityPart | KerMLSubsetting
         | KerMLChains | KerMLRedefinition | "chain")*
-      Expression?
+      (DefaultValue | Expression)?
       (("{" (KerMLElement | Expression)* "}")+ | ";");
 
   FunctionReturn implements KerMLElement =
@@ -139,16 +145,9 @@ component grammar KerMLElements
       ("{" KerMLElement* "}" | ";");
 
   Step implements KerMLElement =
-      Modifier
-      "composite"?
-      (shortName:MCQualifiedName shortMultiplicity:MultiplicityPart?)?
-      KerMLRelationClause*
-      preMultiplicity:MultiplicityPart?
-      "step"
-      KerMLRelationClause*
-      (":" type:MCQualifiedName)?
-      ("ordered" | "nonunique" | KerMLRelationClause)*
-      (("=" | "default") Expression)?
+      Modifier "composite"? "step"
+      KerMLIdentifier? Name? MultiplicityPart?
+      Specialization* DefaultValue?
       ("{" KerMLElement* "}" | ";");
 
   Metaclass implements KerMLElement =
