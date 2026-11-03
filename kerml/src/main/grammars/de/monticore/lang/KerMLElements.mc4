@@ -33,7 +33,7 @@ component grammar KerMLElements
       ("{" KerMLElement* "}" | ";");
 
   symbol scope Feature implements KerMLElement =
-      Modifier "feature" KerMLIdentifier? (Name | name:"chain")?
+      Modifier "feature" KerMLIdentifier? Name?
       MultiplicityPart? Specialization*
       ("chains" MCQualifiedName)?
       DefaultValue?
@@ -100,7 +100,10 @@ component grammar KerMLElements
   KerMLFunction implements KerMLElement =
       Modifier "function" MCQualifiedName
       KerMLRelationClause?
-      ("{" KerMLElement* "chain"? "}" | ";");
+      ("{"
+        KerMLElement*
+        Expression?
+      "}" | ";");
 
   KerMLExpressionDeclaration implements KerMLElement =
       Modifier "expr" KerMLIdentifier? Name?
@@ -113,13 +116,13 @@ component grammar KerMLElements
       name:MCQualifiedName*
       (":" type:MCQualifiedName)?
       (MultiplicityPart | KerMLSubsetting
-        | KerMLChains | KerMLRedefinition | "chain")*
+        | KerMLChains | KerMLRedefinition)*
       (DefaultValue | Expression)?
       (("{" (KerMLElement | Expression)* "}")+ | ";");
 
   FunctionReturn implements KerMLElement =
       "return" Name? (":" type:MCQualifiedName)?
-      (MultiplicityPart | KerMLRelationClause | "chain")*
+      (MultiplicityPart | KerMLRelationClause)*
       (("=" | "default") Expression)?
       ("{" KerMLElement* "}" | ";");
 

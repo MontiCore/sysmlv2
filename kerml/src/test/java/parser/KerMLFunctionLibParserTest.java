@@ -17,6 +17,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KerMLFunctionLibParserTest {
 
+  @ParameterizedTest
+  @ValueSource(strings = {"chain", "result"})
+  public void testFunctionResultExpression(String name) throws IOException {
+    KerMLParser parser = KerMLMill.parser();
+    Optional<ASTKerMLModel> ast = parser.parse_String(
+        "function identity { private feature " + name + " chains source.target; " + name + " }");
+
+    assertFalse(parser.hasErrors(), "Parser threw Errors for result expression " + name);
+    assertTrue(ast.isPresent(), "Ast generation failed!");
+  }
+
   @BeforeAll
   public static void setUp(){
     Log.init();
