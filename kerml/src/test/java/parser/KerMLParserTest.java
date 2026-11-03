@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * es weitergeht mit dem Library-Modellen aus der KerML-Library.
  */
 public class KerMLParserTest {
+
   @Test
   public void testParseDatatype() throws IOException {
     LogStub.init();
