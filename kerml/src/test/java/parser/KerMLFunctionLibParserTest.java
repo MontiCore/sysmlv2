@@ -17,6 +17,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KerMLFunctionLibParserTest {
 
+  @ParameterizedTest
+  @ValueSource(strings = {"chain", "result"})
+  public void testFunctionResultExpression(String name) throws IOException {
+    KerMLParser parser = KerMLMill.parser();
+    Optional<ASTKerMLModel> ast = parser.parse_String(
+        "function identity { private feature " + name + " chains source.target; " + name + " }");
+
+    assertFalse(parser.hasErrors(), "Parser threw Errors for result expression " + name);
+    assertTrue(ast.isPresent(), "Ast generation failed!");
+  }
+
   @BeforeAll
   public static void setUp(){
     Log.init();
@@ -30,15 +41,15 @@ public class KerMLFunctionLibParserTest {
       "BooleanFunctions.kerml",
       "CollectionFunctions.kerml",
       "ComplexFunctions.kerml",
-      //"ControlFunctions.kerml",
+      "ControlFunctions.kerml",
       "DataFunctions.kerml",
       "IntegerFunctions.kerml",
       "NaturalFunctions.kerml",
       "NumericalFunctions.kerml",
-      //"OccurrenceFunctions.kerml",
+      "OccurrenceFunctions.kerml",
       "RationalFunctions.kerml",
       "ScalarFunctions.kerml",
-      //"SequenceFunctions.kerml",
+      "SequenceFunctions.kerml",
       "StringFunctions.kerml",
       "TrigFunctions.kerml",
       "VectorFunctions.kerml"

@@ -32,6 +32,7 @@ grammar KerML
         | ["protected"] | [protected:"#"]
         | ["final"]
         | ["abstract"]
+        | ["var"] | ["const"]
         | ["local"]
         | ["derived"] | [derived:"/"]
         | ["readonly"] | [readonly:"?"]

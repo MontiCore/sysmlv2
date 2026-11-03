@@ -35,7 +35,8 @@ component grammar KerMLElements
   symbol scope Feature implements KerMLElement =
       Modifier "feature" KerMLIdentifier? Name?
       MultiplicityPart? Specialization*
-      FeatureValue?
+      ("chains" MCQualifiedName)?
+      DefaultValue?
       ("{"
         KerMLElement*
       "}" | ";");
@@ -69,8 +70,9 @@ component grammar KerMLElements
       (".." (upperBoundLit:NatLiteral | noUpperLimit:["*"] | upperExpr:Expression))?
       "]";
 
-  FeatureValue =
-      ("=" | ":=" | "default" ("=" | ":=")?) Expression;
+  DefaultValue =
+      [default1:"default"]? ([binding:"="] | [initial:":="]) Expression
+      | [default2:"default"] Expression;
 
   symbolrule Feature =
       types: de.monticore.types.check.SymTypeExpression* ;
@@ -98,7 +100,15 @@ component grammar KerMLElements
   KerMLFunction implements KerMLElement =
       Modifier "function" MCQualifiedName
       KerMLRelationClause?
-      ("{" KerMLElement* "chain"? "}" | ";");
+      ("{"
+        KerMLElement*
+        Expression?
+      "}" | ";");
+
+  KerMLExpressionDeclaration implements KerMLElement =
+      Modifier "expr" KerMLIdentifier? Name?
+      MultiplicityPart? Specialization* DefaultValue?
+      ("{" KerMLElement* Expression? "}" | ";");
 
   FunctionParameter implements KerMLElement =
       Modifier
@@ -106,13 +116,13 @@ component grammar KerMLElements
       name:MCQualifiedName*
       (":" type:MCQualifiedName)?
       (MultiplicityPart | KerMLSubsetting
-        | KerMLChains | KerMLRedefinition | "chain")*
-      Expression?
+        | KerMLChains | KerMLRedefinition)*
+      (DefaultValue | Expression)?
       (("{" (KerMLElement | Expression)* "}")+ | ";");
 
   FunctionReturn implements KerMLElement =
       "return" Name? (":" type:MCQualifiedName)?
-      (MultiplicityPart | KerMLRelationClause | "chain")*
+      (MultiplicityPart | KerMLRelationClause)*
       (("=" | "default") Expression)?
       ("{" KerMLElement* "}" | ";");
 
@@ -138,16 +148,9 @@ component grammar KerMLElements
       ("{" KerMLElement* "}" | ";");
 
   Step implements KerMLElement =
-      Modifier
-      "composite"?
-      (shortName:MCQualifiedName shortMultiplicity:MultiplicityPart?)?
-      KerMLRelationClause*
-      preMultiplicity:MultiplicityPart?
-      "step"
-      KerMLRelationClause*
-      (":" type:MCQualifiedName)?
-      ("ordered" | "nonunique" | KerMLRelationClause)*
-      (("=" | "default") Expression)?
+      Modifier "composite"? "step"
+      KerMLIdentifier? Name? MultiplicityPart?
+      Specialization* DefaultValue?
       ("{" KerMLElement* "}" | ";");
 
   Metaclass implements KerMLElement =

@@ -24,24 +24,24 @@ public class KerMLSemanticLibParserTest {
     Log.enableFailQuick(false);
     KerMLMill.init();
   }
-  @Disabled
+
   @ParameterizedTest
   @ValueSource(strings = {
       "Base.kerml",
       "Clocks.kerml",
       "ControlPerformances.kerml",
-      "FeatureReferencingPerformances.kerml",
-      "KerML.kerml",
-      "Links.kerml",
+      //"FeatureReferencingPerformances.kerml",
+      //"KerML.kerml",
+      //"Links.kerml",
       "Metaobjects.kerml",
-      "Objects.kerml",
-      "Observation.kerml",
-      "Occurrences.kerml",
-      "Performances.kerml",
+      //"Objects.kerml",
+      //"Observation.kerml",
+      //"Occurrences.kerml",
+      //"Performances.kerml",
       "SpatialFrames.kerml",
       "StatePerformances.kerml",
-      "Transfers.kerml",
-      "TransitionPerformances.kerml",
+      //"Transfers.kerml",
+      //"TransitionPerformances.kerml",
       "Triggers.kerml",
   })
   public void testParseKernelDataTypeLibrary(String filename) throws IOException {
