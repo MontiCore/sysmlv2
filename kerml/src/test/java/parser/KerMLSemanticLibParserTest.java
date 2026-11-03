@@ -31,7 +31,7 @@ public class KerMLSemanticLibParserTest {
       "Clocks.kerml",
       "ControlPerformances.kerml",
       //"FeatureReferencingPerformances.kerml",
-      //"KerML.kerml",
+      "KerML.kerml",
       //"Links.kerml",
       "Metaobjects.kerml",
       //"Objects.kerml",

@@ -19,6 +19,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class KerMLParserTest {
 
   @Test
+  public void testParseCompositeFeature() throws IOException {
+    LogStub.init();
+    new KerMLTool().init();
+    var parser = KerMLMill.parser();
+    var ast = parser.parse_String(
+        "derived composite var feature ownedAnnotatingRelationship : Annotation[0..*] "
+            + "ordered subsets annotation, ownedRelationship;");
+
+    assertThat(parser.hasErrors()).isFalse();
+    assertThat(ast).isPresent();
+    assertThat(ast.get().getKerMLElement(0)).isInstanceOf(ASTFeature.class);
+    var feature = (ASTFeature) ast.get().getKerMLElement(0);
+    assertThat(feature.getName()).isEqualTo("ownedAnnotatingRelationship");
+  }
+
+  @Test
+  public void testParseCompositeStep() throws IOException {
+    LogStub.init();
+    new KerMLTool().init();
+    var parser = KerMLMill.parser();
+    var ast = parser.parse_String("composite step action;");
+
+    assertThat(parser.hasErrors()).isFalse();
+    assertThat(ast).isPresent();
+    assertThat(ast.get().getKerMLElement(0))
+        .isInstanceOf(de.monticore.lang.kermlelements._ast.ASTStep.class);
+  }
+
+  @Test
   public void testParseDatatype() throws IOException {
     LogStub.init();
     var tool = new KerMLTool();
