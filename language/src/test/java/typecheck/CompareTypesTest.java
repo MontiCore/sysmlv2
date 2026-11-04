@@ -49,7 +49,6 @@ public class CompareTypesTest {
       "attribute target : double; attribute source : ScalarValues::Real;",
       "attribute target : int; attribute source : ScalarValues::Positive;",
       "attribute target : ScalarValues::Positive; attribute source : ScalarValues::Natural;",
-      "attribute target : ScalarValues::String; attribute source : String;",
       "attribute target : ScalarValues::Natural; attribute source : nat;"
   })
   public void test4CompatibleTypes(String targetAndSource) throws IOException {

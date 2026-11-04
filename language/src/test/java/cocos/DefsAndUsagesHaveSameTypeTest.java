@@ -101,7 +101,7 @@ public class DefsAndUsagesHaveSameTypeTest extends NervigeSymboltableTests{
 
   @Test
   public void shouldNotReportErrorAttribute() throws IOException {// does not work for standard library attributes
-    var as = process("attribute def P : String;  attribute a : String; ");
+    var as = process("attribute def P : ScalarValues::String;  attribute a : ScalarValues::String; ");
     var checker = new SysMLv2CoCoChecker();
     checker.addCoCo((SysMLPartsASTAttributeUsageCoCo) new DefsAndUsagesHaveTheSameTypeCoCo());
     Log.enableFailQuick(false);

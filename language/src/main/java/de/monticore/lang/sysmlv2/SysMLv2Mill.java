@@ -29,7 +29,6 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
    */
   public static void prepareGlobalScope() {
     SysMLv2Mill.initializePrimitives();
-    SysMLv2Mill.addStringType();
     SysMLv2Mill.addScalarValueTypes();
     SysMLv2Mill.addKermlCollectionsTypes();
     SysMLv2Mill.addVectorValuesTypes();
@@ -56,10 +55,6 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
         .setSpannedScope(scope())
         .setAccessModifier(AccessModifier.ALL_INCLUSION)
         .build());
-  }
-
-  public static void addStringType() {
-    BasicSymbolsMill.initializeString();
   }
 
   public static void addScalarValueTypes() {

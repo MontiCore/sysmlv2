@@ -1,5 +1,6 @@
 package symboltable;
 
+import de.monticore.lang.sysmlimportsandpackages._ast.ASTSysMLPackage;
 import de.monticore.lang.sysmlparts._ast.ASTAttributeUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
@@ -74,5 +75,94 @@ public class StandardLibraryImportTest {
     assertThat(type.printType()).isEqualTo("Bag");
     assertThat(((ISysMLv2Scope)type.getEnclosingScope()).resolveType(type.printType())).isPresent();
     assertThat(((ISysMLv2Scope)type.getEnclosingScope()).resolveType(type.printType()).get().getFullName()).isEqualTo("Collections.Bag");
+  }
+
+  @Test()
+  public void testNonDoublingOfStringArtifactScope() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+
+    var model = "private import ScalarValues::*; attribute a: String;";
+
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    var type = ((ASTAttributeUsage) ast.getSysMLElement(1)).getSpecialization(0).getSuperTypes(0);
+
+    assertThat(type.printType()).isEqualTo("String");
+    assertThat(((ISysMLv2Scope)type.getEnclosingScope()).resolveType(type.printType())).isPresent();
+    assertThat(((ISysMLv2Scope)type.getEnclosingScope()).resolveType(type.printType()).get().getFullName()).isEqualTo("ScalarValues.String");
+  }
+
+  @Test()
+  public void testNonDoublingOfStringInPackage() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+
+    var model = "package a { private import ScalarValues::*; attribute a: String; }";
+
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    var type = ((ASTAttributeUsage) ((ASTSysMLPackage)ast.getSysMLElement(0)).getSysMLElement(1)).getSpecialization(0).getSuperTypes(0);
+
+    assertThat(type.printType()).isEqualTo("String");
+    assertThat(((ISysMLv2Scope)type.getEnclosingScope()).resolveType(type.printType())).isPresent();
+    assertThat(((ISysMLv2Scope)type.getEnclosingScope()).resolveType(type.printType()).get().getFullName()).isEqualTo("ScalarValues.String");
+  }
+
+  @Test()
+  public void testNonDoublingOfStringHierarchicalImportInArtifactScope() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+
+    var model = "private import ScalarValues::*; package a { attribute a: String; }";
+
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    var type = ((ASTAttributeUsage) ((ASTSysMLPackage)ast.getSysMLElement(1)).getSysMLElement(0)).getSpecialization(0).getSuperTypes(0);
+
+    assertThat(type.printType()).isEqualTo("String");
+    assertThat(((ISysMLv2Scope)type.getEnclosingScope()).resolveType(type.printType())).isPresent();
+    assertThat(((ISysMLv2Scope)type.getEnclosingScope()).resolveType(type.printType()).get().getFullName()).isEqualTo("ScalarValues.String");
+  }
+
+  @Test()
+  public void testNonDoublingOfStringHierarchicalImport() throws IOException {
+    LogStub.init();
+    var tool = new SysMLv2Tool();
+    tool.init();
+
+    var model = "package a { private import ScalarValues::*; package a { attribute a: String; } }";
+
+    var ast = SysMLv2Mill.parser().parse_String(model).get();
+
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    var type = ((ASTAttributeUsage) ((ASTSysMLPackage)((ASTSysMLPackage)ast
+        .getSysMLElement(0))
+        .getSysMLElement(1))
+        .getSysMLElement(0))
+        .getSpecialization(0)
+        .getSuperTypes(0);
+
+    assertThat(type.printType()).isEqualTo("String");
+    assertThat(((ISysMLv2Scope)type.getEnclosingScope()).resolveType(type.printType())).isPresent();
+    assertThat(((ISysMLv2Scope)type.getEnclosingScope()).resolveType(type.printType()).get().getFullName()).isEqualTo("ScalarValues.String");
   }
 }
