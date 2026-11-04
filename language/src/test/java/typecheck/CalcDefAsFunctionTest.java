@@ -1,14 +1,23 @@
 package typecheck;
 
+import de.monticore.lang.sysmlactions._ast.ASTCalcDef;
+import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
+import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._cocos.SysMLv2CoCoChecker;
 import de.monticore.lang.sysmlv2.cocos.ConstraintIsBooleanTC3;
 import de.monticore.lang.sysmlv2.cocos.MaxOneDirectReturnInCalcDefCoCo;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
+import org.assertj.core.api.AbstractBooleanAssert;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -73,5 +82,61 @@ public class CalcDefAsFunctionTest {
 
     assertThat(Log.getFindings()).hasSize(1);
     assertThat(Log.getFindings().get(0).getMsg()).contains("0x80002 The expression type is 'nat' but should be boolean!");
+  }
+
+  @Test
+  public void testValidCalcDefTyping() throws Exception {
+    String simpelModel =
+      "calc def id {"
+      + "  in value : nat;"
+      + "  return : nat;"
+      + "  value"
+      + "}"
+      + "constraint { id(1) }";
+
+    SysMLv2Tool tool = new SysMLv2Tool();
+    tool.init();
+
+    ASTSysMLModel ast = SysMLv2Mill.parser()
+      .parse_StringSysMLModel(simpelModel).orElseThrow();
+
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    ASTCalcDef easyMap = (ASTCalcDef) ast.getSysMLElement(0);
+    ASTConstraintUsage constraint = (ASTConstraintUsage) ast.getSysMLElement(1);
+
+    assertEquals("id", easyMap.getName());
+    assertEquals("nat",
+      TypeCheck3.typeOf(constraint.getExpression()).printFullName());
+  }
+
+  @Test
+  public void testInvalidCalcDefTyping() throws Exception {
+    String simpelModel =
+      "calc def id {"
+        + "  in value : nat;"
+        + "  return : nat;"
+        + "  value"
+        + "}"
+        + "constraint { id() }";
+
+    SysMLv2Tool tool = new SysMLv2Tool();
+    tool.init();
+
+    ASTSysMLModel ast = SysMLv2Mill.parser()
+      .parse_StringSysMLModel(simpelModel).get();
+
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    ASTCalcDef easyMap = (ASTCalcDef) ast.getSysMLElement(0);
+    ASTConstraintUsage constraint = (ASTConstraintUsage) ast.getSysMLElement(1);
+
+    assertEquals("id", easyMap.getName());
+    assertEquals("Obscure",
+      TypeCheck3.typeOf(constraint.getExpression()).printFullName());
   }
 }

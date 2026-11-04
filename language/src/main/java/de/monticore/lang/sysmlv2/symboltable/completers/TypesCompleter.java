@@ -339,6 +339,38 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
       });
       node.accept(traverser);
       node.getSymbol().setReturnType(returnType[0]);
+
+      List<SymTypeExpression> argTypes = new ArrayList<>();
+      var argTraverser = SysMLv2Mill.inheritanceTraverser();
+      argTraverser.add4SysMLv2(new SysMLv2Visitor2() {
+        @Override
+        public void visit(ASTAnonymousUsage retNode) {
+          var modifier = retNode.getModifier();
+          if (modifier instanceof de.monticore.lang.sysmlv2._ast.ASTModifier
+              && ((de.monticore.lang.sysmlv2._ast.ASTModifier) modifier).isIn()
+              && retNode.getEnclosingScope() == node.getSpannedScope()) {
+            List<SymTypeExpression> types = getTypeCompletion(retNode.getSpecializationList(), false);
+            var argType = types.isEmpty() ? SymTypeExpressionFactory.createObscureType() : types.get(0);
+            argTypes.add(argType);
+          }
+        }
+      });
+
+      argTraverser.add4SysMLParts(new SysMLPartsVisitor2() {
+        @Override
+        public void visit(ASTAttributeUsage retNode) {
+          var modifier = retNode.getModifier();
+          if (modifier instanceof de.monticore.lang.sysmlv2._ast.ASTModifier
+              && ((de.monticore.lang.sysmlv2._ast.ASTModifier) modifier).isIn()
+              && retNode.getEnclosingScope() == node.getSpannedScope()) {
+            List<SymTypeExpression> types = getTypeCompletion(retNode.getSpecializationList(), false);
+            var argType = types.isEmpty() ? SymTypeExpressionFactory.createObscureType() : types.get(0);
+            argTypes.add(argType);
+          }
+        }
+      });
+      node.accept(argTraverser);
+      node.getSymbol().setArgTypes(argTypes);
     }
   }
 
