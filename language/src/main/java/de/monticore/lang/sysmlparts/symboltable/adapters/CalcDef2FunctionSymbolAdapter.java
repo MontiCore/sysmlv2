@@ -5,7 +5,12 @@ import de.monticore.lang.sysmlactions._symboltable.CalcDefSymbol;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.SourcePosition;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Adapts a SysML {@link CalcDefSymbol} to a MontiCore {@link FunctionSymbol}.
@@ -56,5 +61,25 @@ public class CalcDef2FunctionSymbolAdapter extends FunctionSymbol {
   @Override
   public SourcePosition getSourcePosition() {
     return adaptee.getSourcePosition();
+  }
+
+  /**
+   * Get parameters of the FunctionSymbol
+   * @return Parameters of the FunctionSymbol, by extracting ArgumentTypes of
+   * {@link CalcDefSymbol} as a list of {@link VariableSymbol}s.
+   */
+  @Override
+  public List<VariableSymbol> getParameterList(){
+    List<VariableSymbol> parameters = new ArrayList<>();
+    int index = 0;
+
+    for (SymTypeExpression type : adaptee.getArgTypes()) {
+      parameters.add(BasicSymbolsMill.variableSymbolBuilder()
+        .setName("arg" + index++)
+        .setType(type)
+        .build());
+    }
+
+    return parameters;
   }
 }
