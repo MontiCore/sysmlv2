@@ -33,6 +33,7 @@ grammar KerML
         | ["final"]
         | ["abstract"]
         | ["var"] | ["const"]
+        | ["composite"]
         | ["local"]
         | ["derived"] | [derived:"/"]
         | ["readonly"] | [readonly:"?"]

@@ -148,7 +148,7 @@ component grammar KerMLElements
       ("{" KerMLElement* "}" | ";");
 
   Step implements KerMLElement =
-      Modifier "composite"? "step"
+      Modifier "step"
       KerMLIdentifier? Name? MultiplicityPart?
       Specialization* DefaultValue?
       ("{" KerMLElement* "}" | ";");
