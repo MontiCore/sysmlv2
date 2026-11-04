@@ -22,7 +22,8 @@ component grammar KerMLElements
       ("{" KerMLElement* "}" | ";");
 
   symbol scope Datatype implements KerMLElement =
-      Modifier "datatype" name:Name KerMLRelationClause*
+      Modifier "datatype" KerMLIdentifier? Name? MultiplicityPart?
+      KerMLSpecialization* KerMLIntersection*
       ("{" KerMLElement* "}" | ";");
 
   Classifier implements KerMLElement =
