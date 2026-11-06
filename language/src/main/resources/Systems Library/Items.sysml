@@ -41,20 +41,22 @@ standard library package Items {
 		}
 
 		item envelopingShapes : Item[0..*] {
-		doc
+            doc
 			/*
 			 * Each enveloping shape is the shape of an Item that spacially overlaps this Item for its
 			 * entire lifetime.
 			 */
 
-			/* Enables two dimensional items to be enveloped by two or three dimensional shapes. */
-    attribute :>> innerSpaceDimension =
-      if (that as Item).innerSpaceDimension == 3  | (that as Item).outerSpaceDimension == 3? 2
-      else (that as Item).outerSpaceDimension - 1 {
-      doc
-      /*
-       * Enables two dimensional items to be enveloped by two or three dimensional shapes.
-       */
+			ref item envelopedItem :>> that;
+
+			assert constraint {
+                doc
+                /*
+                 * Enables two dimensional items to be enveloped by two or three dimensional shapes.
+                 */
+			    innerSpaceDimension ==
+    				(if envelopedItem.innerSpaceDimension == 3  | envelopedItem.outerSpaceDimension == 3? 2
+    				else envelopedItem.outerSpaceDimension - 1)
 			}
 			assert constraint { (that as Item).innerSpaceDimension < 3 implies notEmpty(outerSpaceDimension) }
 
@@ -78,15 +80,15 @@ standard library package Items {
 			 * intersecting this Item.
 			 */
 
-			item boundingShape: Item :>> self;
+			ref item boundingShape: Item :>> self;
 
-			item :>> faces {
-        item face :>> self;
+			private item :>> faces {
+				ref item face :>> self;
 				item inter [1];
 				assert constraint { contains(inter.intersectionsOf, union(face, boundingShape)) }
 			}
-			item :>> edges {
-      	item edge :>> self;
+			private item :>> edges {
+				ref item edge :>> self;
 				item inter [1];
 				assert constraint { isEmpty(faces) implies
 							contains(inter.intersectionsOf, union(edge, boundingShape)) }
@@ -137,8 +139,8 @@ standard library package Items {
 		 * Touching items are just outside each other and happen at the same time.
 		 */
 
-		end item touchedItemToo [0..*] :>> separateSpaceToo, thisOccurrence;
-    end item touchedItem [0..*] :>> separateSpace, thatOccurrence;
+		end touchesToo [0..*] item touchedItemToo :>> separateSpaceToo, thisOccurrence;
+		end touches [0..*] item touchedItem :>> separateSpace, thatOccurrence;
 	}
 
 	abstract item items : Item[0..*] nonunique :> objects {

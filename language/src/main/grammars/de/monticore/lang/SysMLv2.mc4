@@ -140,7 +140,6 @@ grammar SysMLv2 extends SysMLExpressions,
         | ["readonly"]     | [readonly:"?"]
         | ["static"]
         | ["in"] | ["out"] | ["inout"]        // default direction is "in"
-        | ["end"]
         | ["ref"]
         | ["return"]                          // only in calculation, analysis, verification, function
         | ["timeslice"]                       // only in occurrences
@@ -162,7 +161,7 @@ grammar SysMLv2 extends SysMLExpressions,
     "}" | ";") ;
 
   symbol scope UserDefinedUsage implements SysMLUsage =
-    Modifier UserDefinedKeyword+ Name SysMLCardinality? Specialization*
+    Modifier OwnedCrossFeature? UserDefinedKeyword+ Name SysMLCardinality? Specialization*
     ("{"
       SysMLElement*
     "}" | ";") ;
@@ -178,7 +177,7 @@ grammar SysMLv2 extends SysMLExpressions,
      * die Spezialisationen (Typisierungen) ergibt.
      */
   symbol scope AnonymousUsage implements SysMLUsage =
-      Modifier UserDefinedKeyword* SysMLIdentifier? Name? SysMLCardinality?
+      Modifier OwnedCrossFeature? UserDefinedKeyword* SysMLIdentifier? Name? SysMLCardinality?
       Specialization+ DefaultValue?
       ("{"
         SysMLElement*
@@ -190,7 +189,7 @@ grammar SysMLv2 extends SysMLExpressions,
       out:boolean ;
 
   symbol scope AnonymousReference implements SysMLUsage =
-       Modifier UserDefinedKeyword* SysMLIdentifier? src:MCQualifiedName SysMLCardinality?
+       Modifier OwnedCrossFeature? UserDefinedKeyword* SysMLIdentifier? src:MCQualifiedName SysMLCardinality?
        Specialization* DefaultValue?
        ("{"
           SysMLElement*

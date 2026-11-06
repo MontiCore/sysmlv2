@@ -38,7 +38,7 @@ component grammar SysMLBasis
   interface Specialization = superTypes:MCType+;
 
   // Interface zum Unterscheiden zwischen Usages und anderen Typen mit dem Visitor
-  interface SysMLUsage extends SysMLElement = Modifier Specialization*;
+  interface SysMLUsage extends SysMLElement = Modifier OwnedCrossFeature? Specialization*;
 
   /**
    * Cardinality bei mehreren Typen macht wenig Sinn, aber die Grammatik und damit der AST werden sehr kompliziert, wenn
@@ -132,5 +132,12 @@ component grammar SysMLBasis
 
   // Inline-Variante für das "first" vor dem "then"
   interface IInlineOccurrenceUsage ;
+
+  /**
+   * OwnedCrossFeature wird verwendet bei einer Kurzschreibweise für crosses
+   * Für mehr Informationen siehe https://www.omg.org/spec/SysML/2.0/Language/PDF
+   * Kapitel 7.13.2
+   */
+  OwnedCrossFeature = "end" ["ref"]? Name? SysMLCardinality? Specialization* ;
 
 }

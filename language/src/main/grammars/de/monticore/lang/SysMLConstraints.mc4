@@ -14,7 +14,7 @@ component grammar SysMLConstraints
     "}" | ";") ;
 
   symbol scope ConstraintUsage implements SysMLUsage =
-    Modifier (
+    Modifier OwnedCrossFeature? (
       (["require"] | ["assume"] | ["assert"]) ["not"]? UserDefinedKeyword* "constraint"?
       | UserDefinedKeyword* "constraint"
     )
@@ -25,7 +25,7 @@ component grammar SysMLConstraints
     "}" | ";") ;
 
   ConstraintReference implements SysMLUsage =
-    Modifier (
+    Modifier OwnedCrossFeature? (
       (["require"] | ["assume"] | ["assert"]) UserDefinedKeyword* "constraint"?
       | UserDefinedKeyword* "constraint"
     )
@@ -47,7 +47,7 @@ component grammar SysMLConstraints
   // Satisfy Requirement Usages are ConstraintUsages and as such can be
   // required/assumed/asserted
   symbol scope RequirementUsage implements SysMLUsage =
-      Modifier (["require"] | ["assume"] | ["assert"])? UserDefinedKeyword*
+      Modifier OwnedCrossFeature? (["require"] | ["assume"] | ["assert"])? UserDefinedKeyword*
       ["verify"]? ["not"]? ["satisfy"]? "requirement"
       SysMLIdentifier? Name? SysMLCardinality? Specialization*
       DefaultValue?
@@ -102,7 +102,7 @@ component grammar SysMLConstraints
    * reference subsetting.
    */
   RequirementVerification implements SysMLUsage =
-      Modifier "verify" req:MCQualifiedName SysMLCardinality? Specialization*
+      Modifier OwnedCrossFeature? "verify" req:MCQualifiedName SysMLCardinality? Specialization*
       ("{"
           SysMLElement*
        "}" | ";") ;
@@ -116,7 +116,7 @@ component grammar SysMLConstraints
       "}" | ";") ;
 
   symbol scope ConcernUsage implements SysMLUsage =
-      Modifier UserDefinedKeyword* ["frame"]? "concern"
+      Modifier OwnedCrossFeature? UserDefinedKeyword* ["frame"]? "concern"
       SysMLIdentifier? Name? SysMLCardinality? Specialization*
       ("(" (SysMLParameter || ",")* ")")?
       ("{"

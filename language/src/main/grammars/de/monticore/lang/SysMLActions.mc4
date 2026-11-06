@@ -16,7 +16,7 @@ component grammar SysMLActions
    * for use in other constructs such as successions or transitions.
    */
   scope InlineActionUsage implements IInlineOccurrenceUsage =
-    Modifier UserDefinedKeyword* "action" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "action" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
       SysMLElement*
      "}")? ;
@@ -26,7 +26,7 @@ component grammar SysMLActions
    * other way around!
    */
   symbol ActionUsage implements OccurrenceUsageElement =
-    Modifier UserDefinedKeyword* "action" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "action" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
       SysMLElement*
      "}" | ";") ;
@@ -36,25 +36,25 @@ component grammar SysMLActions
    * ================================================================================================================ */
 
   symbol scope ForkAction extends ActionUsage =
-    Modifier UserDefinedKeyword* "fork" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "fork" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
        SysMLElement*
      "}" | ";") ;
 
   symbol scope DecideAction extends ActionUsage =
-    Modifier UserDefinedKeyword* "decide" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "decide" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
        SysMLElement*
      "}" | ";") ;
 
   symbol scope JoinAction extends ActionUsage =
-    Modifier UserDefinedKeyword* "join" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "join" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
        SysMLElement*
      "}" | ";") ;
 
   symbol scope MergeAction extends ActionUsage =
-    Modifier UserDefinedKeyword* "merge" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "merge" SysMLIdentifier? Name? SysMLCardinality? Specialization* DefaultValue?
     ("{"
        SysMLElement*
      "}" | ";") ;
@@ -64,7 +64,7 @@ component grammar SysMLActions
    * ================================================================================================================ */
 
   IfActionUsage implements OccurrenceUsageElement extends ActionUsage =
-    Modifier UserDefinedKeyword* "action"?
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "action"?
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "if" guard:Expression
     (InlineActionUsage | "{" ifElems:SysMLElement* "}")
@@ -78,55 +78,55 @@ component grammar SysMLActions
      payloadHandle:Name? "after" relativeTimeTrigger: Expression ;
 
   scope InlineAcceptActionUsage extends InlineActionUsage =
-    Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "accept" Payload ("via" receiver:MCQualifiedName)?
     ("{"
        SysMLElement*
      "}")? ;
 
   symbol AcceptActionUsage implements OccurrenceUsageElement extends ActionUsage =
-    Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "accept" Payload ("via" receiver:MCQualifiedName)?
     ("{"
        SysMLElement*
      "}" | ";") ;
 
   scope InlinePerformActionUsage extends InlineActionUsage =
-    Modifier UserDefinedKeyword* "perform" "action"? SysMLIdentifier? Name? SysMLCardinality?
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "perform" "action"? SysMLIdentifier? Name? SysMLCardinality?
     Specialization* DefaultValue?
     ("{"
        SysMLElement*
      "}")? ;
 
   symbol PerformActionUsage implements OccurrenceUsageElement extends ActionUsage =
-    Modifier UserDefinedKeyword* "perform" "action"? SysMLIdentifier? Name? SysMLCardinality?
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "perform" "action"? SysMLIdentifier? Name? SysMLCardinality?
     Specialization* DefaultValue?
     ("{"
        SysMLElement*
      "}" | ";") ;
 
   PerformActionReference implements OccurrenceUsageElement extends ActionUsage =
-    Modifier UserDefinedKeyword* "perform" "action"? MCQualifiedName SysMLCardinality? Specialization* DefaultValue?
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "perform" "action"? MCQualifiedName SysMLCardinality? Specialization* DefaultValue?
     ("{"
        SysMLElement*
      "}" | ";") ;
 
   scope InlineAssignmentActionUsage extends InlineActionUsage =
-    Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "assign" target:MCQualifiedName ":=" valueExpression:Expression
     ("{"
        SysMLElement*
      "}")? ;
 
   AssignmentActionUsage implements OccurrenceUsageElement extends ActionUsage =
-    Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "assign" target:MCQualifiedName ":=" valueExpression:Expression
     ("{"
        SysMLElement*
      "}" | ";") ;
 
   InlineSendActionUsage extends InlineActionUsage =
-    Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "send" payload:Expression
     ("via" sender:MCQualifiedName)?
     ("to" target:MCQualifiedName)?
@@ -135,7 +135,7 @@ component grammar SysMLActions
      "}")? ;
 
   SendActionUsage implements OccurrenceUsageElement extends ActionUsage =
-    Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "send" payload:Expression
     ("via" sender:MCQualifiedName)?
     ("to" target:MCQualifiedName)?
@@ -144,7 +144,7 @@ component grammar SysMLActions
      "}" | ";") ;
 
   symbol scope WhileActionUsage extends ActionUsage =
-    Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "while" while:Expression ("(" (SysMLParameter || ",")* ")")?
     BodyClause ("until" until:Expression ";")? ;
 
@@ -153,11 +153,11 @@ component grammar SysMLActions
    * be non-terminating or will be terminated with just an until expression.
    */
   symbol scope LoopActionUsage extends WhileActionUsage =
-    Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "loop" BodyClause ("until" until:Expression ";")? ;
 
   symbol scope ForLoopActionUsage extends ActionUsage =
-    Modifier UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "for" loopVar:Name loopSpecs:Specialization* "in" (start:Expression ".." end:Expression | sequence:Expression)
     BodyClause ;
 
@@ -181,7 +181,7 @@ component grammar SysMLActions
 
   // Base successions according to 7.13.5 (Connections > Successions as Usages)
   SysMLSuccession implements SysMLElement =
-    Modifier UserDefinedKeyword* "succession"?
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "succession"?
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("first" SuccessionFirst)?
      "then" SuccessionThen ;
@@ -210,7 +210,7 @@ component grammar SysMLActions
    * even when the shorthand notation is used.
    */
   SysMLConditionalSuccession implements ActionElement =
-    Modifier UserDefinedKeyword* "succession"?
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "succession"?
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("first" SuccessionFirst)?
     (["if"] guard:Expression "then" | ["else"])
@@ -228,7 +228,7 @@ component grammar SysMLActions
     "}" | ";") ;
 
   symbol scope CalcUsage implements SysMLUsage =
-    Modifier UserDefinedKeyword* "calc" SysMLIdentifier? Name? SysMLCardinality? Specialization*
+    Modifier OwnedCrossFeature? UserDefinedKeyword* "calc" SysMLIdentifier? Name? SysMLCardinality? Specialization*
     DefaultValue?
     ("{"
       SysMLElement*
