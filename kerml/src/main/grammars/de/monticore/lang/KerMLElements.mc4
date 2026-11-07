@@ -97,6 +97,15 @@ component grammar KerMLElements
       DefaultValue?
       ("{" KerMLElement* "}" | ";");
 
+  symbolrule Feature =
+        types: de.monticore.types.check.SymTypeExpression* ;
+
+  Multiplicity implements KerMLElement =
+      "multiplicity"
+      MCQualifiedName
+      MultiplicityBounds
+      ("{" KerMLElement* "}");
+
   /*
     * ################################################################
     * Specialization
@@ -119,15 +128,6 @@ component grammar KerMLElements
 
   KerMLFeatureReferences implements Specialization =
       "references" superTypes:(MCType || ",")+;
-
-  symbolrule Feature =
-      types: de.monticore.types.check.SymTypeExpression* ;
-
-  Multiplicity implements KerMLElement =
-      "multiplicity"
-      MCQualifiedName
-      MultiplicityBounds
-      ("{" KerMLElement* "}");
 
   Struct implements KerMLElement =
       Modifier
@@ -236,6 +236,12 @@ component grammar KerMLElements
   BodyRelationStatement implements KerMLElement =
       Modifier KerMLRelationClause*
       ("{" KerMLElement* "}" | ";");
+
+  /*
+    * ################################################################
+    * KerMLRelationClause
+    * ################################################################
+    */
 
   interface KerMLRelationClause;
 
