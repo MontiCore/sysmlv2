@@ -121,9 +121,6 @@ component grammar KerMLElements
     KerMLRelationClause*
     ("{" KerMLElement* "}" | ";");
 
-  Implies implements KerMLElement =
-    left:Expression "implies" right:Expression;
-
   KerMLFunction implements KerMLElement =
     Modifier "function" MCQualifiedName
     KerMLRelationClause?
