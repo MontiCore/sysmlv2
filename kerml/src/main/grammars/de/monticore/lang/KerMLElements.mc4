@@ -124,10 +124,7 @@ component grammar KerMLElements
   KerMLFunction implements KerMLElement =
     Modifier "function" MCQualifiedName
     KerMLRelationClause?
-    ("{"
-      KerMLElement*
-      Expression?
-    "}" | ";");
+    ("{" KerMLElement* Expression? "}" | ";");
 
   KerMLExpressionDeclaration implements KerMLElement =
     Modifier "expr" KerMLIdentifier? Name?
@@ -135,23 +132,15 @@ component grammar KerMLElements
     ("{" KerMLElement* Expression? "}" | ";");
 
   FunctionParameter implements KerMLElement =
-    Modifier
-    KerMLRedefinition?
-    name:MCQualifiedName*
-    (":" type:MCQualifiedName)?
-    (MultiplicityPart | KerMLSubsetting
-      | KerMLChains | KerMLRedefinition)*
-    (DefaultValue | Expression)?
-    (("{" (KerMLElement | Expression)* "}")+ | ";");
+    Modifier UserDefinedKeyword* KerMLIdentifier? Name?
+    MultiplicityPart? Specialization* DefaultValue?
+    ("{" KerMLElement* "}" | ";");
 
   FunctionReturn implements KerMLElement =
     "return" Name? (":" type:MCQualifiedName)?
     (MultiplicityPart | KerMLRelationClause)*
     (("=" | "default") Expression)?
     ("{" KerMLElement* "}" | ";");
-
-  IfElse implements KerMLElement =
-    "if" condition:Expression "?" if:Expression "else" else:Expression;
 
   Invariant implements KerMLElement =
     Modifier "inv" MCQualifiedName? "{" (KerMLElement | Expression)* "}";
