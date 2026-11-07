@@ -106,113 +106,113 @@ component grammar KerMLElements
       (MultiplicityBounds | (":>" | "subsets") subset:MCQualifiedName)
       ("{" KerMLElement* "}" | ";");
 
-    Struct implements KerMLElement =
-        Modifier
-        "struct" "all"? Name (MultiplicityBounds | KerMLRelationClause)*
-        (Name MultiplicityBounds? ("," Name MultiplicityBounds*)*)?
-        ("{" KerMLElement* "}" | ";");
+  Struct implements KerMLElement =
+      Modifier
+      "struct" "all"? Name (MultiplicityBounds | KerMLRelationClause)*
+      (Name MultiplicityBounds? ("," Name MultiplicityBounds*)*)?
+      ("{" KerMLElement* "}" | ";");
 
-    Behavior implements KerMLElement =
-        Modifier ("behavior" | "interaction") "all"? MCQualifiedName
-        KerMLRelationClause*
-        ("{" KerMLElement* "}" | ";");
+  Behavior implements KerMLElement =
+      Modifier ("behavior" | "interaction") "all"? MCQualifiedName
+      KerMLRelationClause*
+      ("{" KerMLElement* "}" | ";");
 
-    Implies implements KerMLElement =
-        left:Expression "implies" right:Expression;
+  Implies implements KerMLElement =
+      left:Expression "implies" right:Expression;
 
-    KerMLFunction implements KerMLElement =
-        Modifier "function" MCQualifiedName
-        KerMLRelationClause?
-        ("{"
-          KerMLElement*
-          Expression?
-        "}" | ";");
+  KerMLFunction implements KerMLElement =
+      Modifier "function" MCQualifiedName
+      KerMLRelationClause?
+      ("{"
+        KerMLElement*
+        Expression?
+      "}" | ";");
 
-    KerMLExpressionDeclaration implements KerMLElement =
-        Modifier "expr" KerMLIdentifier? Name?
-        MultiplicityPart? Specialization* DefaultValue?
-        ("{" KerMLElement* Expression? "}" | ";");
+  KerMLExpressionDeclaration implements KerMLElement =
+      Modifier "expr" KerMLIdentifier? Name?
+      MultiplicityPart? Specialization* DefaultValue?
+      ("{" KerMLElement* Expression? "}" | ";");
 
-    FunctionParameter implements KerMLElement =
-        Modifier
-        KerMLRedefinition?
-        name:MCQualifiedName*
-        (":" type:MCQualifiedName)?
-        (MultiplicityPart | KerMLSubsetting
-          | KerMLChains | KerMLRedefinition)*
-        (DefaultValue | Expression)?
-        (("{" (KerMLElement | Expression)* "}")+ | ";");
+  FunctionParameter implements KerMLElement =
+      Modifier
+      KerMLRedefinition?
+      name:MCQualifiedName*
+      (":" type:MCQualifiedName)?
+      (MultiplicityPart | KerMLSubsetting
+        | KerMLChains | KerMLRedefinition)*
+      (DefaultValue | Expression)?
+      (("{" (KerMLElement | Expression)* "}")+ | ";");
 
-    FunctionReturn implements KerMLElement =
-        "return" Name? (":" type:MCQualifiedName)?
-        (MultiplicityPart | KerMLRelationClause)*
-        (("=" | "default") Expression)?
-        ("{" KerMLElement* "}" | ";");
+  FunctionReturn implements KerMLElement =
+      "return" Name? (":" type:MCQualifiedName)?
+      (MultiplicityPart | KerMLRelationClause)*
+      (("=" | "default") Expression)?
+      ("{" KerMLElement* "}" | ";");
 
-    IfElse implements KerMLElement =
-        "if" condition:Expression "?" if:Expression "else" else:Expression;
+  IfElse implements KerMLElement =
+      "if" condition:Expression "?" if:Expression "else" else:Expression;
 
-    Invariant implements KerMLElement =
-        Modifier "inv" MCQualifiedName? "{" (KerMLElement | Expression)* "}";
+  Invariant implements KerMLElement =
+      Modifier "inv" MCQualifiedName? "{" (KerMLElement | Expression)* "}";
 
-    Connector implements KerMLElement =
-        Modifier "connector" "all"? MCQualifiedName?
-        KerMLRelationClause*
-        (":" type:MCQualifiedName)?
-        MultiplicityPart?
-        KerMLRelationClause*
-        (
-          "from"? MultiplicityPart? Expression
-          ("references" fromRef:MCQualifiedName)?
-          "to" MultiplicityPart? Expression
-          ("references" toRef:MCQualifiedName)?
-        )?
-        ("{" KerMLElement* "}" | ";");
+  Connector implements KerMLElement =
+      Modifier "connector" "all"? MCQualifiedName?
+      KerMLRelationClause*
+      (":" type:MCQualifiedName)?
+      MultiplicityPart?
+      KerMLRelationClause*
+      (
+        "from"? MultiplicityPart? Expression
+        ("references" fromRef:MCQualifiedName)?
+        "to" MultiplicityPart? Expression
+        ("references" toRef:MCQualifiedName)?
+      )?
+      ("{" KerMLElement* "}" | ";");
 
-    Step implements KerMLElement =
-        Modifier "step"
-        KerMLIdentifier? Name? MultiplicityPart?
-        Specialization* DefaultValue?
-        ("{" KerMLElement* "}" | ";");
+  Step implements KerMLElement =
+      Modifier "step"
+      KerMLIdentifier? Name? MultiplicityPart?
+      Specialization* DefaultValue?
+      ("{" KerMLElement* "}" | ";");
 
-    Metaclass implements KerMLElement =
-        Modifier "metaclass" MCQualifiedName
-        KerMLSpecialization?
-        ("{" KerMLElement* "}" | ";");
+  Metaclass implements KerMLElement =
+      Modifier "metaclass" MCQualifiedName
+      KerMLSpecialization?
+      ("{" KerMLElement* "}" | ";");
 
-    Association implements KerMLElement =
-        Modifier
-        "assoc" "struct"? "all"? MCQualifiedName MultiplicityPart?
-        KerMLRelationClause*
-        ("{" KerMLElement* "}" | ";");
+  Association implements KerMLElement =
+      Modifier
+      "assoc" "struct"? "all"? MCQualifiedName MultiplicityPart?
+      KerMLRelationClause*
+      ("{" KerMLElement* "}" | ";");
 
-    CommentElement implements KerMLElement =
-        "comment" MCQualifiedName?
-        ("about" MCQualifiedName ("," MCQualifiedName)*)?
-        ("{" KerMLElement* "}" | ";")?;
+  CommentElement implements KerMLElement =
+      "comment" MCQualifiedName?
+      ("about" MCQualifiedName ("," MCQualifiedName)*)?
+      ("{" KerMLElement* "}" | ";")?;
 
-    Succession implements KerMLElement =
-        Modifier "succession" "all"? (Name MultiplicityPart?)? ()
-        ("first"? MultiplicityPart? left:Expression)?
-        "then"
-        MultiplicityPart? right:Expression
-        ("{" KerMLElement* "}" | ";");
+  Succession implements KerMLElement =
+      Modifier "succession" "all"? (Name MultiplicityPart?)? ()
+      ("first"? MultiplicityPart? left:Expression)?
+      "then"
+      MultiplicityPart? right:Expression
+      ("{" KerMLElement* "}" | ";");
 
-    Binding implements KerMLElement =
-        Modifier "binding" (Name MultiplicityPart? "of"?)?
-        MultiplicityPart? left:Expression "="
-        MultiplicityPart? right:Expression
-        ("{" KerMLElement* "}" | ";");
+  Binding implements KerMLElement =
+      Modifier "binding" (Name MultiplicityPart? "of"?)?
+      MultiplicityPart? left:Expression "="
+      MultiplicityPart? right:Expression
+      ("{" KerMLElement* "}" | ";");
 
-    NamelessRedefinitionFeature implements KerMLElement =
-        Modifier "feature" KerMLRedefinition ";";
+  NamelessRedefinitionFeature implements KerMLElement =
+      Modifier "feature" KerMLRedefinition ";";
 
-    ShorthandRedefinition implements KerMLElement =
-        ":>>" Name "=" Expression ";";
+  ShorthandRedefinition implements KerMLElement =
+      ":>>" Name "=" Expression ";";
 
-    BodyRelationStatement implements KerMLElement =
-        Modifier KerMLRelationClause*
-        ("{" KerMLElement* "}" | ";");
+  BodyRelationStatement implements KerMLElement =
+      Modifier KerMLRelationClause*
+      ("{" KerMLElement* "}" | ";");
 
 
   /*
