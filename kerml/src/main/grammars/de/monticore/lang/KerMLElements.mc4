@@ -49,11 +49,25 @@ component grammar KerMLElements
       ("{" KerMLElement* "}" | ";");
 
   Classifier implements KerMLElement =
-      Modifier
-      ("class" | "classifier" | "subclassifier" | "predicate") "all"?
-      MCQualifiedName MultiplicityBounds?
-      KerMLRelationClause*
+      Modifier UserDefinedKeyword* "classifier" ["all"]?
+      KerMLIdentifier? Name MultiplicityPart? Specialization*
       ("{" KerMLElement* "}" | ";");
+
+  Class implements KerMLElement =
+      Modifier UserDefinedKeyword* "class" ["all"]?
+      KerMLIdentifier? Name MultiplicityPart? Specialization*
+      ("{" KerMLElement* "}" | ";");
+
+  Subclassification implements KerMLElement =
+      Modifier ("specialization" KerMLIdentifier? Name?)?
+      "subclassifier" subclassifier:MCQualifiedName
+      (":>" | "specializes") superclassifier:MCQualifiedName
+      ("{" KerMLElement* "}" | ";");
+
+  Predicate implements KerMLElement =
+      Modifier UserDefinedKeyword* "predicate" ["all"]?
+      KerMLIdentifier? Name MultiplicityPart? Specialization*
+      ("{" KerMLElement* Expression? "}" | ";");
 
   symbol scope Feature implements KerMLElement =
       Modifier "feature" KerMLIdentifier? Name?
