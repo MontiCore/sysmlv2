@@ -143,7 +143,12 @@ component grammar KerMLElements
     ("{" KerMLElement* "}" | ";");
 
   Invariant implements KerMLElement =
-    Modifier "inv" MCQualifiedName? "{" (KerMLElement | Expression)* "}";
+    Modifier UserDefinedKeyword* "inv" ("true" | [negated:"false"])?
+    ["all"]? KerMLIdentifier? Name?
+    (Specialization+ MultiplicityPart? Specialization*
+      | MultiplicityPart Specialization*)?
+    ("chains" MCQualifiedName)? DefaultValue?
+    ("{" KerMLElement* Expression? "}" | ";");
 
   Connector implements KerMLElement =
     Modifier "connector" "all"? MCQualifiedName?
