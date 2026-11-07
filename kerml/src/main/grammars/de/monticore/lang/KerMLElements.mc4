@@ -16,6 +16,9 @@ component grammar KerMLElements
 
   KerMLIdentifier = "<" Name ">";
 
+  DefaultValue =
+        [default1:"default"]? ([binding:"="] | [initial:":="]) Expression
+        | [default2:"default"] Expression;
   /*
      * ##################################################################
      * ImportsAndPackages
@@ -116,11 +119,6 @@ component grammar KerMLElements
 
   KerMLFeatureReferences implements Specialization =
       "references" superTypes:(MCType || ",")+;
-
-
-  DefaultValue =
-      [default1:"default"]? ([binding:"="] | [initial:":="]) Expression
-      | [default2:"default"] Expression;
 
   symbolrule Feature =
       types: de.monticore.types.check.SymTypeExpression* ;
