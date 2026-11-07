@@ -112,7 +112,12 @@ component grammar KerMLElements
     ("{" KerMLElement* "}" | ";");
 
   Behavior implements KerMLElement =
-    Modifier ("behavior" | "interaction") "all"? MCQualifiedName
+    Modifier "behavior" "all"? MCQualifiedName
+    KerMLRelationClause*
+    ("{" KerMLElement* "}" | ";");
+
+  Interaction implements KerMLElement =
+    Modifier "interaction" "all"? MCQualifiedName
     KerMLRelationClause*
     ("{" KerMLElement* "}" | ";");
 
