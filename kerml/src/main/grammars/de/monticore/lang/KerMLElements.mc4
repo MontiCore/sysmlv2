@@ -169,44 +169,32 @@ component grammar KerMLElements
     ("{" KerMLElement* "}" | ";");
 
   Metaclass implements KerMLElement =
-    Modifier "metaclass" MCQualifiedName
-    KerMLSpecialization?
+    Modifier UserDefinedKeyword* "metaclass" ["all"]?
+    KerMLIdentifier? Name MultiplicityPart? Specialization*
     ("{" KerMLElement* "}" | ";");
 
   Association implements KerMLElement =
-    Modifier
-    "assoc" "struct"? "all"? MCQualifiedName MultiplicityPart?
-    KerMLRelationClause*
+    Modifier UserDefinedKeyword* "assoc" ["struct"]? ["all"]?
+    KerMLIdentifier? Name MultiplicityPart? Specialization*
     ("{" KerMLElement* "}" | ";");
 
   CommentElement implements KerMLElement =
-    "comment" MCQualifiedName?
+    "comment" KerMLIdentifier? Name?
     ("about" MCQualifiedName ("," MCQualifiedName)*)?
+    ("locale" locale:String)?
     ("{" KerMLElement* "}" | ";")?;
 
   Succession implements KerMLElement =
-    Modifier "succession" "all"? (Name MultiplicityPart?)? ()
-    ("first"? MultiplicityPart? left:Expression)?
-    "then"
-    MultiplicityPart? right:Expression
+    Modifier UserDefinedKeyword* "succession" ["all"]?
+    KerMLIdentifier? Name? MultiplicityPart? Specialization*
+    ("first"? source:ConnectorEnd)? "then" target:ConnectorEnd
     ("{" KerMLElement* "}" | ";");
 
   Binding implements KerMLElement =
-    Modifier "binding" (Name MultiplicityPart? "of"?)?
-    MultiplicityPart? left:Expression "="
-    MultiplicityPart? right:Expression
+    Modifier UserDefinedKeyword* "binding" ["all"]?
+    KerMLIdentifier? Name? MultiplicityPart? Specialization*
+    "of"? left:ConnectorEnd "=" right:ConnectorEnd
     ("{" KerMLElement* "}" | ";");
-
-  NamelessRedefinitionFeature implements KerMLElement =
-    Modifier "feature" KerMLRedefinition ";";
-
-  ShorthandRedefinition implements KerMLElement =
-    ":>>" Name "=" Expression ";";
-
-  BodyRelationStatement implements KerMLElement =
-    Modifier KerMLRelationClause*
-    ("{" KerMLElement* "}" | ";");
-
 
   /*
     * ################################################################
