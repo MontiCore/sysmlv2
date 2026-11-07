@@ -39,13 +39,13 @@ component grammar KerMLElements
 
   /*
     * ################################################################
-    * To be named
+    * TypesAndFeatures
     * ################################################################
     */
 
   symbol scope Datatype implements KerMLElement =
-      Modifier "datatype" KerMLIdentifier? Name? MultiplicityPart?
-      KerMLSpecialization* KerMLRelationClause*
+      Modifier UserDefinedKeyword* "datatype"
+      KerMLIdentifier? Name MultiplicityPart? Specialization*
       ("{" KerMLElement* "}" | ";");
 
   Classifier implements KerMLElement =
