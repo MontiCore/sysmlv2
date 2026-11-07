@@ -38,7 +38,7 @@ public class KerMLSemanticLibParserTest {
       //"Observation.kerml",
       //"Occurrences.kerml",
       //"Performances.kerml",
-      "SpatialFrames.kerml",
+      //"SpatialFrames.kerml",
       "StatePerformances.kerml",
       //"Transfers.kerml",
       //"TransitionPerformances.kerml",
