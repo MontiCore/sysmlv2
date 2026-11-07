@@ -20,7 +20,7 @@ component grammar KerMLElements
      * ##################################################################
      */
 
-  symbol scope PackageDeclaration implements KerMLElement =
+  symbol scope KerMLPackage implements KerMLElement =
       ["standard"]? ["library"]?
       "package" KerMLIdentifier? Name?
       ("{" KerMLElement* "}" | ";");
