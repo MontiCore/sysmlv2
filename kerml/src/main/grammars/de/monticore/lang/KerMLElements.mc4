@@ -10,16 +10,38 @@ component grammar KerMLElements
 {
   DocBlock implements KerMLElement = "doc";
 
+  // The Spec calls it PrefixMetadataMember
+  UserDefinedKeyword =
+    {noSpace(2);} "#" MCQualifiedName ;
+
+  /*
+     * ##################################################################
+     * ImportsAndPackages
+     * ##################################################################
+     */
+
   symbol scope PackageDeclaration implements KerMLElement =
-      Modifier "standard"? "library"? "package" name:Name
-      ("{" KerMLElement* "}");
+      ["standard"]? ["library"]?
+      "package" KerMLIdentifier? Name?
+      ("{" KerMLElement* "}" | ";");
 
   KerMLImportStatement extends MCImportStatement implements KerMLElement =
-      Modifier "import" ["all"]? MCQualifiedName
+      Modifier UserDefinedKeyword* "import" ["all"]? MCQualifiedName
       (("::" | ".") (Star:["*"] | Recursive:["**"]))*
       ("[" filter:Expression "]")?
       ("as" Name)?
       ("{" KerMLElement* "}" | ";");
+
+  KerMLAlias implements KerMLElement =
+    Modifier UserDefinedKeyword* "alias" KerMLIdentifier? Name? "for"
+    MCQualifiedName
+    ("{" KerMLElement* "}" |";");
+
+  /*
+    * ################################################################
+    * To be named
+    * ################################################################
+    */
 
   symbol scope Datatype implements KerMLElement =
       Modifier "datatype" KerMLIdentifier? Name? MultiplicityPart?
@@ -134,8 +156,7 @@ component grammar KerMLElements
       Modifier "inv" MCQualifiedName? "{" (KerMLElement | Expression)* "}";
 
   Connector implements KerMLElement =
-      Modifier
-      "connector" "all"? MCQualifiedName?
+      Modifier "connector" "all"? MCQualifiedName?
       KerMLRelationClause*
       (":" type:MCQualifiedName)?
       MultiplicityPart?
@@ -183,9 +204,6 @@ component grammar KerMLElements
       MultiplicityPart? right:Expression
       ("{" KerMLElement* "}" | ";");
 
-  Alias implements KerMLElement =
-      Modifier "alias" MCQualifiedName "for" MCQualifiedName ";";
-
   NamelessRedefinitionFeature implements KerMLElement =
       Modifier "feature" KerMLRedefinition ";";
 
@@ -231,4 +249,10 @@ component grammar KerMLElements
 
   KerMLReferences implements KerMLRelationClause =
       "references" referenced:(MCQualifiedName || ",")+;
+
+  /*
+     * ##################################################################
+     * Häufig vorkommende Konstrukte mit konkr. Syntax
+     * ##################################################################
+     */
 }
