@@ -112,18 +112,18 @@ component grammar KerMLElements
     ("{" KerMLElement* "}" | ";");
 
   Behavior implements KerMLElement =
-    Modifier "behavior" "all"? MCQualifiedName
-    KerMLRelationClause*
+    Modifier UserDefinedKeyword* "behavior" ["all"]?
+    KerMLIdentifier? Name MultiplicityPart? Specialization*
     ("{" KerMLElement* "}" | ";");
 
   Interaction implements KerMLElement =
-    Modifier "interaction" "all"? MCQualifiedName
-    KerMLRelationClause*
+    Modifier UserDefinedKeyword* "interaction" ["all"]?
+    KerMLIdentifier? Name MultiplicityPart? Specialization*
     ("{" KerMLElement* "}" | ";");
 
   KerMLFunction implements KerMLElement =
-    Modifier "function" MCQualifiedName
-    KerMLRelationClause?
+    Modifier UserDefinedKeyword* "function" ["all"]?
+    KerMLIdentifier? Name MultiplicityPart? Specialization*
     ("{" KerMLElement* Expression? "}" | ";");
 
   KerMLExpressionDeclaration implements KerMLElement =
@@ -137,9 +137,8 @@ component grammar KerMLElements
     ("{" KerMLElement* "}" | ";");
 
   FunctionReturn implements KerMLElement =
-    "return" Name? (":" type:MCQualifiedName)?
-    (MultiplicityPart | KerMLRelationClause)*
-    (("=" | "default") Expression)?
+    "return" UserDefinedKeyword* KerMLIdentifier? Name?
+    MultiplicityPart? Specialization* DefaultValue?
     ("{" KerMLElement* "}" | ";");
 
   Invariant implements KerMLElement =
@@ -151,18 +150,17 @@ component grammar KerMLElements
     ("{" KerMLElement* Expression? "}" | ";");
 
   Connector implements KerMLElement =
-    Modifier "connector" "all"? MCQualifiedName?
-    KerMLRelationClause*
-    (":" type:MCQualifiedName)?
-    MultiplicityPart?
-    KerMLRelationClause*
-    (
-      "from"? MultiplicityPart? Expression
-      ("references" fromRef:MCQualifiedName)?
-      "to" MultiplicityPart? Expression
-      ("references" toRef:MCQualifiedName)?
-    )?
+    Modifier UserDefinedKeyword* "connector" ["all"]?
+    KerMLIdentifier? Name? MultiplicityPart? Specialization* DefaultValue?
+    BinaryConnectorDeclaration?
     ("{" KerMLElement* "}" | ";");
+
+  BinaryConnectorDeclaration =
+    "from"? source:ConnectorEnd "to" target:ConnectorEnd;
+
+  ConnectorEnd =
+    MultiplicityPart? Expression
+    ("references" reference:MCQualifiedName)?;
 
   Step implements KerMLElement =
     Modifier "step"
@@ -217,6 +215,9 @@ component grammar KerMLElements
     */
 
   interface Specialization = superTypes:MCType+;
+
+  KerMLSuperclassing implements Specialization =
+    "specializes" superTypes:(MCType || ",")+;
 
   KerMLTyping implements Specialization =
     (":" | "typed by") superTypes:(MCType || ",")+ MultiplicityPart?;
