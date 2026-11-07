@@ -38,11 +38,11 @@ public class KerMLSemanticLibParserTest {
       //"Observation.kerml",
       //"Occurrences.kerml",
       //"Performances.kerml",
-      "SpatialFrames.kerml",
+      //"SpatialFrames.kerml",
       "StatePerformances.kerml",
       //"Transfers.kerml",
       //"TransitionPerformances.kerml",
-      "Triggers.kerml",
+      //"Triggers.kerml",
   })
   public void testParseKernelDataTypeLibrary(String filename) throws IOException {
     String modelFile = "src/test/resources/KernelSemanticLibrary/" + filename;

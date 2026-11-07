@@ -36,7 +36,7 @@ component grammar KerMLExpressions
   KerMLNotIdentityExpression implements Expression =
       left:Expression operator:"!==" right:Expression;
 
-  ConditionalImpliesExpression implements Expression, InfixExpression =
+  ConditionalImpliesExpression implements Expression <116>, InfixExpression =
       left:Expression operator:"implies" right:Expression;
 
   TernaryExpression implements Expression =
