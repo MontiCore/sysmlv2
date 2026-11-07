@@ -10,9 +10,11 @@ component grammar KerMLElements
 {
   DocBlock implements KerMLElement = "doc";
 
-  // The Spec calls it PrefixMetadataMember
+  // The Specification calls it PrefixMetadataMember
   UserDefinedKeyword =
     {noSpace(2);} "#" MCQualifiedName ;
+
+  KerMLIdentifier = "<" Name ">";
 
   /*
      * ##################################################################
@@ -36,6 +38,22 @@ component grammar KerMLElements
     Modifier UserDefinedKeyword* "alias" KerMLIdentifier? Name? "for"
     MCQualifiedName
     ("{" KerMLElement* "}" |";");
+
+  /*
+    * ################################################################
+    * Cardinalities
+    * ################################################################
+    */
+
+    MultiplicityPart =
+        Cardinality (["ordered"] | ["nonunique"])*
+        | (["ordered"] | ["nonunique"])+;
+
+    MultiplicityBounds extends Cardinality =
+        "["
+        (many:["*"] | lowerBoundLit:NatLiteral | lowerExpr:Expression)
+        (".." (upperBoundLit:NatLiteral | noUpperLimit:["*"] | upperExpr:Expression))?
+        "]";
 
   /*
     * ################################################################
@@ -74,11 +92,13 @@ component grammar KerMLElements
       MultiplicityPart? Specialization*
       ("chains" MCQualifiedName)?
       DefaultValue?
-      ("{"
-        KerMLElement*
-      "}" | ";");
+      ("{" KerMLElement* "}" | ";");
 
-  KerMLIdentifier = "<" Name ">";
+  /*
+    * ################################################################
+    * Specialization
+    * ################################################################
+    */
 
   interface Specialization = superTypes:MCType+;
 
@@ -97,15 +117,6 @@ component grammar KerMLElements
   KerMLFeatureReferences implements Specialization =
       "references" superTypes:(MCType || ",")+;
 
-  MultiplicityPart =
-      Cardinality (["ordered"] | ["nonunique"])*
-      | (["ordered"] | ["nonunique"])+;
-
-  MultiplicityBounds extends Cardinality =
-      "["
-      (many:["*"] | lowerBoundLit:NatLiteral | lowerExpr:Expression)
-      (".." (upperBoundLit:NatLiteral | noUpperLimit:["*"] | upperExpr:Expression))?
-      "]";
 
   DefaultValue =
       [default1:"default"]? ([binding:"="] | [initial:":="]) Expression
