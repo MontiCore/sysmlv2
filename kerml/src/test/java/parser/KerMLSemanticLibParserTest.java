@@ -40,8 +40,8 @@ public class KerMLSemanticLibParserTest {
       "Performances.kerml",
       "SpatialFrames.kerml",
       "StatePerformances.kerml",
-      //"Transfers.kerml",
-      //"TransitionPerformances.kerml",
+      "Transfers.kerml",
+      "TransitionPerformances.kerml",
       //"Triggers.kerml",
   })
   public void testParseKernelDataTypeLibrary(String filename) throws IOException {

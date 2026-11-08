@@ -138,6 +138,11 @@ component grammar KerMLElements
     MultiplicityPart? Specialization* DefaultValue?
     ("{" KerMLElement* Expression? "}" | ";");
 
+  Flow implements KerMLElement =
+    Modifier UserDefinedKeyword* "flow" ["all"]?
+    KerMLIdentifier? Name? MultiplicityPart? Specialization* DefaultValue?
+    ("{" KerMLElement* "}" | ";");
+
   FunctionParameter implements KerMLElement =
     Modifier UserDefinedKeyword* KerMLIdentifier? Name?
     MultiplicityPart? Specialization* DefaultValue?
