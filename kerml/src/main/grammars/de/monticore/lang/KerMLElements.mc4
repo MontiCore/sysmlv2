@@ -91,7 +91,7 @@ component grammar KerMLElements
     ("{" KerMLElement* Expression? "}" | ";");
 
   symbol scope Feature implements KerMLElement =
-    Modifier OwnedCrossFeature? "feature" KerMLIdentifier? Name?
+    Modifier OwnedCrossFeature? "feature" ["all"]? KerMLIdentifier? Name?
     MultiplicityPart? Specialization*
     DefaultValue?
     ("{" KerMLElement* "}" | ";");
@@ -101,6 +101,12 @@ component grammar KerMLElements
 
   OwnedCrossFeature =
     "end" ["ref"]? KerMLIdentifier? Name? MultiplicityPart? Specialization*;
+
+  Subsetting implements KerMLElement =
+    Modifier ("specialization" KerMLIdentifier? Name?)?
+    "subset" subsettedFeature:MCQualifiedName
+    (":>" | "subsets") superFeature:MCQualifiedName
+    ("{" KerMLElement* "}" | ";");
 
   Multiplicity implements KerMLElement =
     Modifier "multiplicity"
