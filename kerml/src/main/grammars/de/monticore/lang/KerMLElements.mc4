@@ -91,13 +91,16 @@ component grammar KerMLElements
     ("{" KerMLElement* Expression? "}" | ";");
 
   symbol scope Feature implements KerMLElement =
-    Modifier "feature" KerMLIdentifier? Name?
+    Modifier OwnedCrossFeature? "feature" KerMLIdentifier? Name?
     MultiplicityPart? Specialization*
     DefaultValue?
     ("{" KerMLElement* "}" | ";");
 
   symbolrule Feature =
     types: de.monticore.types.check.SymTypeExpression* ;
+
+  OwnedCrossFeature =
+    "end" ["ref"]? KerMLIdentifier? Name? MultiplicityPart? Specialization*;
 
   Multiplicity implements KerMLElement =
     Modifier "multiplicity"
@@ -127,6 +130,11 @@ component grammar KerMLElements
 
   KerMLExpressionDeclaration implements KerMLElement =
     Modifier "expr" KerMLIdentifier? Name?
+    MultiplicityPart? Specialization* DefaultValue?
+    ("{" KerMLElement* Expression? "}" | ";");
+
+  KerMLBooleanExpressionDeclaration implements KerMLElement =
+    Modifier "bool" KerMLIdentifier? Name?
     MultiplicityPart? Specialization* DefaultValue?
     ("{" KerMLElement* Expression? "}" | ";");
 
