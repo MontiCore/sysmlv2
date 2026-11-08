@@ -203,11 +203,10 @@ component grammar KerMLElements
 
   interface Specialization = superTypes:MCType+;
 
+  // Same syntax and structure as the corresponding SysML specialization rules.
+
   KerMLSuperclassing implements Specialization =
     (":>" | "specializes") superTypes:(MCType || ",")+ MultiplicityPart?;
-
-  KerMLTyping implements Specialization =
-    (":" | "typed by") superTypes:(MCType || ",")+ MultiplicityPart?;
 
   KerMLFeatureSubsetting implements Specialization =
     (":>" | "subsets") superTypes:(MCType || ",")+ MultiplicityPart?;
@@ -215,11 +214,16 @@ component grammar KerMLElements
   KerMLFeatureRedefinition implements Specialization =
     (":>>" | "redefines") superTypes:(MCType || ",")+ MultiplicityPart?;
 
-  KerMLFeatureCrossing implements Specialization =
-    ("=>" | "crosses") superTypes:(MCType || ",")+ MultiplicityPart?;
-
   KerMLFeatureReferences implements Specialization =
     ("::>" | "references") superTypes:(MCType || ",")+ MultiplicityPart?;
+
+  // Different from, or not implemented by, SysML's Specialization rules.
+
+  KerMLTyping implements Specialization =
+    (":" | "typed by") superTypes:(MCType || ",")+ MultiplicityPart?;
+
+  KerMLFeatureCrossing implements Specialization =
+    ("=>" | "crosses") superTypes:(MCType || ",")+ MultiplicityPart?;
 
   ConjugationPart implements Specialization =
     ("~" | "conjugates") superTypes:(MCType || ",")+;
