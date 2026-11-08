@@ -93,7 +93,6 @@ component grammar KerMLElements
   symbol scope Feature implements KerMLElement =
     Modifier "feature" KerMLIdentifier? Name?
     MultiplicityPart? Specialization*
-    ("chains" MCQualifiedName)?
     DefaultValue?
     ("{" KerMLElement* "}" | ";");
 
@@ -146,7 +145,7 @@ component grammar KerMLElements
     ["all"]? KerMLIdentifier? Name?
     (Specialization+ MultiplicityPart? Specialization*
       | MultiplicityPart Specialization*)?
-    ("chains" MCQualifiedName)? DefaultValue?
+    DefaultValue?
     ("{" KerMLElement* Expression? "}" | ";");
 
   Connector implements KerMLElement =
@@ -205,69 +204,49 @@ component grammar KerMLElements
   interface Specialization = superTypes:MCType+;
 
   KerMLSuperclassing implements Specialization =
-    "specializes" superTypes:(MCType || ",")+;
+    (":>" | "specializes") superTypes:(MCType || ",")+ MultiplicityPart?;
 
   KerMLTyping implements Specialization =
     (":" | "typed by") superTypes:(MCType || ",")+ MultiplicityPart?;
 
   KerMLFeatureSubsetting implements Specialization =
-    (":>" | "subsets") superTypes:(MCType || ",")+;
+    (":>" | "subsets") superTypes:(MCType || ",")+ MultiplicityPart?;
 
   KerMLFeatureRedefinition implements Specialization =
-    (":>>" | "redefines") superTypes:(MCType || ",")+;
+    (":>>" | "redefines") superTypes:(MCType || ",")+ MultiplicityPart?;
 
   KerMLFeatureCrossing implements Specialization =
-    "crosses" superTypes:(MCType || ",")+;
+    ("=>" | "crosses") superTypes:(MCType || ",")+ MultiplicityPart?;
 
   KerMLFeatureReferences implements Specialization =
-    "references" superTypes:(MCType || ",")+;
+    ("::>" | "references") superTypes:(MCType || ",")+ MultiplicityPart?;
 
+  ConjugationPart implements Specialization =
+    ("~" | "conjugates") superTypes:(MCType || ",")+;
 
-  /*
-    * ################################################################
-    * KerMLRelationClause
-    * ################################################################
-    */
+  DisjoiningPart implements Specialization =
+    "disjoint" "from" superTypes:(MCType || ",")+;
 
-  interface KerMLRelationClause;
+  UnioningPart implements Specialization =
+    "unions" superTypes:(MCType || ",")+;
 
-  KerMLSpecialization implements KerMLRelationClause =
-    (":>" | "specializes") specialized:(MCQualifiedName || ",")+;
+  IntersectingPart implements Specialization =
+    "intersects" superTypes:(MCType || ",")+;
 
-  KerMLSubsetting implements KerMLRelationClause =
-    (":>" | "subsets") subset:(MCQualifiedName || ",")+;
+  DifferencingPart implements Specialization =
+    "differences" superTypes:(MCType || ",")+;
 
-  KerMLRedefinition implements KerMLRelationClause =
-    (":>>" | "redefines") redefined:(MCQualifiedName || ",")+;
+  ChainingPart implements Specialization =
+    "chains" superTypes:(MCType || ",")+;
 
-  KerMLChains implements KerMLRelationClause =
-    (":>" | "chains") chained:(MCQualifiedName || ",")+;
+  InvertingPart implements Specialization =
+    "inverse" "of" superTypes:(MCType || ",")+;
 
-  KerMLCrossing implements KerMLRelationClause =
-    "crosses" MCQualifiedName ("," MCQualifiedName)*;
-
-  KerMLIntersection implements KerMLRelationClause =
-    "intersects" MCQualifiedName ("," MCQualifiedName)*;
-
-  KerMLInverse implements KerMLRelationClause =
-    "inverse" "of"? inverses:(MCQualifiedName || ",")+;
-
-  KerMLUnion implements KerMLRelationClause =
-    "unions" unioned:(MCQualifiedName || ",")+;
-
-  KerMLDisjoint implements KerMLRelationClause =
-    "disjoint" "from" disjoints:(MCQualifiedName || ",")+;
+  TypeFeaturingPart implements Specialization =
+    "featured" "by" superTypes:(MCType || ",")+;
 
   DisjointStatement implements KerMLElement =
     Modifier "disjoint" left:MCQualifiedName "from"
     right:(MCQualifiedName || ",")+ ";";
 
-  KerMLReferences implements KerMLRelationClause =
-    "references" referenced:(MCQualifiedName || ",")+;
-
-  /*
-     * ##################################################################
-     * Häufig vorkommende Konstrukte mit konkr. Syntax
-     * ##################################################################
-     */
 }
