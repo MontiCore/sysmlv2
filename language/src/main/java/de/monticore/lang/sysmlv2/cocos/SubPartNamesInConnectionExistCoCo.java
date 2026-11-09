@@ -1,7 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.cocos;
 
+import de.monticore.ast.ASTNode;
 import de.monticore.lang.sysmlbasis._ast.ASTEndpoint;
+import de.monticore.lang.sysmlconnections._ast.ASTInterfaceUsage;
+import de.monticore.lang.sysmlconnections._cocos.SysMLConnectionsASTInterfaceUsageCoCo;
 import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTConnectionUsageCoCo;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
@@ -9,26 +12,28 @@ import de.monticore.symboltable.modifiers.AccessModifier;
 import de.se_rwth.commons.logging.Log;
 
 /**
- * CoCo3: Jeder in "connect a.b to c.d" verwendete Name von Subkomponenten (a und c)
- * muss im Modell vorhanden sein.
+ * CoCo3: Jeder in einer Verbindung oder einem Interface ("connect a.b to c.d",
+ * "connect (a.b, c.d, e)") verwendete Name von Subkomponenten (a und c) muss im Modell vorhanden
+ * sein.
  */
-public class SubPartNamesInConnectionExistCoCo implements SysMLPartsASTConnectionUsageCoCo {
+public class SubPartNamesInConnectionExistCoCo implements SysMLPartsASTConnectionUsageCoCo,
+    SysMLConnectionsASTInterfaceUsageCoCo {
 
   @Override
   public void check(ASTConnectionUsage node) {
-    if (!node.isPresentSrc() || !node.isPresentTgt()) {
-      return; // keine Verbindung
-    }
+    ISysMLPartsScope scope = node.getEnclosingScope();
+    node.getEnds().forEach(end -> checkSubcomponentQualifier(scope, end, node));
+  }
 
-    var scope = node.getEnclosingScope();
-
-    checkSubcomponentQualifier(scope, node.getSrc(), node);
-    checkSubcomponentQualifier(scope, node.getTgt(), node);
+  @Override
+  public void check(ASTInterfaceUsage node) {
+    ISysMLPartsScope scope = (ISysMLPartsScope) node.getEnclosingScope();
+    node.getEnds().forEach(end -> checkSubcomponentQualifier(scope, end, node));
   }
 
   protected void checkSubcomponentQualifier(ISysMLPartsScope scope,
                                             ASTEndpoint endpoint,
-                                            ASTConnectionUsage node) {
+                                            ASTNode node) {
     String qname = endpointQName(endpoint);
     String subName = extractFirstSegment(qname);
 

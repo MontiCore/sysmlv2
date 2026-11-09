@@ -294,8 +294,12 @@ component grammar SysMLBasis
        SysMLElement*
      "}" | ";");
 
-  // Used regularly in successions
+  /**
+   * An end of a connection, interface, binding, flow, message or allocation: an optional
+   * multiplicity, an optional end name with a reference subsetting (end1 ::> a.p), and exactly one
+   * connected feature (ConnectorEnd in the SysML v2 specification).
+   */
   Endpoint =
-    SysMLCardinality? MCQualifiedName Specialization* ;
+    SysMLCardinality? (Name ("::>" | "references"))? MCQualifiedName Specialization* ;
 
 }

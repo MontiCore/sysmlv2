@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package cocos;
 
+import de.monticore.lang.sysmlconnections._cocos.SysMLConnectionsASTInterfaceUsageCoCo;
+import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTConnectionUsageCoCo;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
@@ -95,6 +97,40 @@ public class SubPartNamesInConnectionExistCoCoTest {
       assertThat(errors.get(1).getMsg()).contains("0x10AA3");
     }
 
+    @Test
+    public void testNaryEndsAreChecked() throws IOException {
+      var ast = parse("part def A { port p: int; }"
+        + "part def B { port q: ~int; }"
+        + "part def System { part a: A; part b: B; "
+        + "connect (a.p, c.q, b.q);" + " }");
+      createSt(ast);
+      var errors = check(ast);
+      assertThat(errors).hasSize(1);
+      assertThat(errors.get(0).getMsg()).contains("0x10AA3");
+    }
+
+    @Test
+    public void testInterfaceEndsAreChecked() throws IOException {
+      var ast = parse("part def A { port p: int; }"
+        + "part def B { port q: ~int; }"
+        + "part def System { part a: A; part b: B; "
+        + "interface connect c.p to b.q;" + " }");
+      createSt(ast);
+      var errors = check(ast);
+      assertThat(errors).hasSize(1);
+      assertThat(errors.get(0).getMsg()).contains("0x10AA3");
+    }
+
+    @Test
+    public void testValidNaryAndInterfaceEnds() throws IOException {
+      var ast = parse("part def A { port p: int; }"
+        + "part def B { port q: ~int; }"
+        + "part def System { part a: A; part b: B; part c: B; "
+        + "connect (s ::> a.p, b.q, c.q); interface connect a.p to e ::> b.q; }");
+      createSt(ast);
+      assertThat(check(ast)).hasSize(0);
+    }
+
     private ASTSysMLModel parse(String model) throws IOException {
       var optAst = SysMLv2Mill.parser().parse_String(model);
       assertThat(optAst).isPresent();
@@ -110,7 +146,9 @@ public class SubPartNamesInConnectionExistCoCoTest {
 
     private List<Finding> check(ASTSysMLModel ast) {
       var checker = new SysMLv2CoCoChecker();
-      checker.addCoCo(new SubPartNamesInConnectionExistCoCo());
+      var coco = new SubPartNamesInConnectionExistCoCo();
+      checker.addCoCo((SysMLPartsASTConnectionUsageCoCo) coco);
+      checker.addCoCo((SysMLConnectionsASTInterfaceUsageCoCo) coco);
       Log.enableFailQuick(false);
       checker.checkAll(ast);
       return Log.getFindings().stream().filter(Finding::isError).collect(
