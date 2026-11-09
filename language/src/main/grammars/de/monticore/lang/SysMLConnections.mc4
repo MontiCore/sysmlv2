@@ -77,7 +77,7 @@ component grammar SysMLConnections
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("connect"? (
       (src:Endpoint "to" tgt:Endpoint) |
-      ("(" (SysMLParameter || ",")* ")")
+      ("(" (ConnectorEnd || ",")* ")")
     ))?
     ("{"
        SysMLElement*

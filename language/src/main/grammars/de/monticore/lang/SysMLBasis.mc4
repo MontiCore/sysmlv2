@@ -298,4 +298,14 @@ component grammar SysMLBasis
   Endpoint =
     SysMLCardinality? MCQualifiedName Specialization* ;
 
+  /**
+   * An end of an n-ary connection or interface: the connected feature, optionally named by a
+   * reference subsetting (end1 ::> a.p). An end refers to exactly one feature, so a comma always
+   * starts the next end. A SysMLParameter took the comma as a further supertype of its reference
+   * and folded the next end into the previous one: (s ::> a.p, t ::> b.q) became
+   * s ::> [a.p, t] ::> [b.q].
+   */
+  ConnectorEnd =
+    SysMLCardinality? (Name ("::>" | "references"))? MCQualifiedName ;
+
 }
