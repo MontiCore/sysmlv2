@@ -91,13 +91,22 @@ component grammar KerMLElements
     ("{" KerMLElement* Expression? "}" | ";");
 
   symbol scope Feature implements KerMLElement =
-    Modifier "feature" KerMLIdentifier? Name?
+    Modifier OwnedCrossFeature? "feature" ["all"]? KerMLIdentifier? Name?
     MultiplicityPart? Specialization*
     DefaultValue?
     ("{" KerMLElement* "}" | ";");
 
   symbolrule Feature =
     types: de.monticore.types.check.SymTypeExpression* ;
+
+  OwnedCrossFeature =
+    "end" ["ref"]? KerMLIdentifier? Name? MultiplicityPart? Specialization*;
+
+  Subsetting implements KerMLElement =
+    Modifier ("specialization" KerMLIdentifier? Name?)?
+    "subset" subsettedFeature:MCQualifiedName
+    (":>" | "subsets") superFeature:MCQualifiedName
+    ("{" KerMLElement* "}" | ";");
 
   Multiplicity implements KerMLElement =
     Modifier "multiplicity"
@@ -129,6 +138,16 @@ component grammar KerMLElements
     Modifier "expr" KerMLIdentifier? Name?
     MultiplicityPart? Specialization* DefaultValue?
     ("{" KerMLElement* Expression? "}" | ";");
+
+  KerMLBooleanExpressionDeclaration implements KerMLElement =
+    Modifier "bool" KerMLIdentifier? Name?
+    MultiplicityPart? Specialization* DefaultValue?
+    ("{" KerMLElement* Expression? "}" | ";");
+
+  Flow implements KerMLElement =
+    Modifier UserDefinedKeyword* "flow" ["all"]?
+    KerMLIdentifier? Name? MultiplicityPart? Specialization* DefaultValue?
+    ("{" KerMLElement* "}" | ";");
 
   FunctionParameter implements KerMLElement =
     Modifier UserDefinedKeyword* KerMLIdentifier? Name?
