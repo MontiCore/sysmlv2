@@ -166,7 +166,7 @@ component grammar SysMLParts extends SysMLBasis {
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "connect" (
       (src:Endpoint "to" tgt:Endpoint) |
-      ("(" (ConnectorEnd || ",")* ")")
+      ("(" Endpoint "," (Endpoint || ",")+ ")")
     )
     ("{"
        SysMLElement*

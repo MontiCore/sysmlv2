@@ -294,18 +294,12 @@ component grammar SysMLBasis
        SysMLElement*
      "}" | ";");
 
-  // Used regularly in successions
-  Endpoint =
-    SysMLCardinality? MCQualifiedName Specialization* ;
-
   /**
-   * An end of an n-ary connection or interface: the connected feature, optionally named by a
-   * reference subsetting (end1 ::> a.p). An end refers to exactly one feature, so a comma always
-   * starts the next end. A SysMLParameter took the comma as a further supertype of its reference
-   * and folded the next end into the previous one: (s ::> a.p, t ::> b.q) became
-   * s ::> [a.p, t] ::> [b.q].
+   * An end of a connection, interface, binding, flow, message or allocation: an optional
+   * multiplicity, an optional end name with a reference subsetting (end1 ::> a.p), and exactly one
+   * connected feature (ConnectorEnd in the SysML v2 specification).
    */
-  ConnectorEnd =
-    SysMLCardinality? (Name ("::>" | "references"))? MCQualifiedName ;
+  Endpoint =
+    SysMLCardinality? (Name ("::>" | "references"))? MCQualifiedName Specialization* ;
 
 }

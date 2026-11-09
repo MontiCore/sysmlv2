@@ -77,7 +77,7 @@ component grammar SysMLConnections
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("connect"? (
       (src:Endpoint "to" tgt:Endpoint) |
-      ("(" (ConnectorEnd || ",")* ")")
+      ("(" Endpoint "," (Endpoint || ",")+ ")")
     ))?
     ("{"
        SysMLElement*
@@ -118,10 +118,10 @@ component grammar SysMLConnections
        SysMLElement*
      "}" | ";") ;
 
-  AllocationUsageParam extends AllocationUsageTo =
+  AllocationUsageParam extends AllocationUsage =
     Modifier UserDefinedKeyword* "allocation"?
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
-    "allocate" "(" source:Endpoint "," target:Endpoint ")"
+    "allocate" "(" Endpoint "," (Endpoint || ",")+ ")"
     ("{"
        SysMLElement*
      "}" | ";") ;
