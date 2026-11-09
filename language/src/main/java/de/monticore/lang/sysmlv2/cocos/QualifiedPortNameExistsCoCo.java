@@ -1,7 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlv2.cocos;
 
+import de.monticore.ast.ASTNode;
 import de.monticore.lang.sysmlbasis._ast.ASTEndpoint;
+import de.monticore.lang.sysmlconnections._ast.ASTInterfaceUsage;
+import de.monticore.lang.sysmlconnections._cocos.SysMLConnectionsASTInterfaceUsageCoCo;
 import de.monticore.lang.sysmlparts._ast.ASTConnectionUsage;
 import de.monticore.lang.sysmlparts._cocos.SysMLPartsASTConnectionUsageCoCo;
 import de.monticore.lang.sysmlparts._symboltable.ISysMLPartsScope;
@@ -15,25 +18,27 @@ import java.util.Optional;
 
 /**
  * QualifiedPortNameExistsCoCo:
- * In einer Verbindung "connect a.b to c.d" muss jeder verwendete (qualifizierte) Portname existieren.
+ * Jeder in einer Verbindung oder einem Interface ("connect a.b to c.d", "connect (a.b, c.d, e)")
+ * verwendete (qualifizierte) Portname muss existieren.
  */
-public class QualifiedPortNameExistsCoCo implements SysMLPartsASTConnectionUsageCoCo {
+public class QualifiedPortNameExistsCoCo implements SysMLPartsASTConnectionUsageCoCo,
+    SysMLConnectionsASTInterfaceUsageCoCo {
 
   @Override
   public void check(ASTConnectionUsage node) {
-    if (!node.isPresentSrc() || !node.isPresentTgt()) {
-      return; // keine Verbindung
-    }
-
     ISysMLPartsScope scope = node.getEnclosingScope();
+    node.getEnds().forEach(end -> checkEndpoint(scope, end, node));
+  }
 
-    checkEndpoint(scope, node.getSrc(), node);
-    checkEndpoint(scope, node.getTgt(), node);
+  @Override
+  public void check(ASTInterfaceUsage node) {
+    ISysMLPartsScope scope = (ISysMLPartsScope) node.getEnclosingScope();
+    node.getEnds().forEach(end -> checkEndpoint(scope, end, node));
   }
 
   protected void checkEndpoint(ISysMLPartsScope scope,
                                ASTEndpoint endpoint,
-                               ASTConnectionUsage conn) {
+                               ASTNode conn) {
     String qname = endpointQName(endpoint);
     if (qname.isEmpty()) {
       return;
