@@ -154,7 +154,10 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
   }
 
   protected void _addControlFunctionsTypes() {
-    // Handgeschriebenes Sym-File enthält aktuell nur 'forAll'
+    // Die handgeschriebene Sym-Datei enthält aktuell nur forAll mit
+    // OrderedCollection<T> als Eingabetyp.
+    // T[] wird im Compatibility Calculator als kompatible Eingabe behandelt.
+    // Streams werden dadurch nicht als Eingabe unterstützt.
     _loadLibraryFromSym("ControlFunctions");
   }
 

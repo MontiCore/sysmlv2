@@ -48,9 +48,11 @@ public class ControlFunctionsSymbolTableTest {
     var elementType = SymTypeExpressionFactory.createTypeVariable(
       forAll.getTypeVariableList().get(0));
     var collection = forAll.getParameterList().get(0).getType();
-    assertThat(collection.isArrayType()).isTrue();
-    assertThat(collection.asArrayType().getDim()).isEqualTo(1);
-    assertThat(collection.asArrayType().getArgument().deepEquals(elementType))
+    assertThat(collection.isGenericType()).isTrue();
+    assertThat(collection.asGenericType().getTypeConstructorFullName())
+      .isEqualTo("Collections.OrderedCollection");
+    assertThat(collection.asGenericType().getArgumentList()).hasSize(1);
+    assertThat(collection.asGenericType().getArgument(0).deepEquals(elementType))
       .isTrue();
 
     var predicate = forAll.getParameterList().get(1).getType();
@@ -83,6 +85,26 @@ public class ControlFunctionsSymbolTableTest {
     tool.finalizeSymbolTable(ast);
 
     var constraint = (ASTConstraintUsage) ast.getSysMLElement(ast.sizeSysMLElements() - 1);
+    var type = TypeCheck3.typeOf(constraint.getExpression());
+    assertThat(type.printFullName()).as("Findings: %s", Log.getFindings())
+        .isEqualTo("ScalarValues.Boolean");
+    assertThat(Log.getFindings()).isEmpty();
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"int", "ScalarValues::Boolean"})
+  public void testForAllWithCollectionArray(String elementType) throws IOException {
+    var model = "import ControlFunctions::forAll;"
+        + "attribute values: Collections::Array<" + elementType + ">;"
+        + "calc def test { in argument: " + elementType + "; return : ScalarValues::Boolean; }"
+        + "constraint { forAll(values, test) }";
+    var ast = SysMLv2Mill.parser().parse_String(model).orElseThrow();
+
+    tool.createSymbolTable(ast);
+    tool.completeSymbolTable(ast);
+    tool.finalizeSymbolTable(ast);
+
+    var constraint = (ASTConstraintUsage) ast.getSysMLElement(3);
     var type = TypeCheck3.typeOf(constraint.getExpression());
     assertThat(type.printFullName()).as("Findings: %s", Log.getFindings())
         .isEqualTo("ScalarValues.Boolean");
@@ -171,11 +193,15 @@ public class ControlFunctionsSymbolTableTest {
         finding -> assertThat(finding.getMsg()).doesNotContain("internal error"));
   }
 
-  @Test
-  public void testRejectsNonBooleanPredicate() throws IOException {
+  @ParameterizedTest
+  @CsvSource({
+      "int, int",
+      "ScalarValues::Boolean, ScalarValues::Boolean"
+  })
+  public void testRejectsIncompatiblePredicate(String parameterType, String returnType) throws IOException {
     var model = "import ControlFunctions::forAll;"
         + "attribute values: int[*];"
-        + "calc def test { in attribute argument: int; return : int; }"
+        + "calc def test { in attribute argument: " + parameterType + "; return : " + returnType + "; }"
         + "constraint { forAll(values, test) }";
     var ast = SysMLv2Mill.parser().parse_String(model).orElseThrow();
 
