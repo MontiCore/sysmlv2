@@ -36,7 +36,6 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     SysMLv2Mill.addStringType();
     SysMLv2Mill.loadScalarValuesFromSym();
     SysMLv2Mill.addScalarFunctionsTypes();
-    SysMLv2Mill.addControlFunctionsTypes();
     SysMLv2Mill.loadCollectionValuesFromSym();
     SysMLv2Mill.addVectorValuesTypes();
     SysMLv2Mill.addCollectionTypes();
@@ -69,32 +68,28 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
   }
 
   protected void _loadScalarValuesFromSym() {
-    _loadLibraryFromSym("ScalarValues");
-  }
+    URL url = SysMLv2Tool.class.getClassLoader().getResource(
+        "ScalarValues.kermlsym");
 
-  protected void _loadLibraryFromSym(String packageName) {
-    var globalScope = (SysMLv2GlobalScope) SysMLv2Mill.globalScope();
-    boolean packageAlreadyLoaded = globalScope.getLocalSysMLPackageSymbols().stream()
-        .anyMatch(symbol -> packageName.equals(symbol.getFullName()));
-    if (packageAlreadyLoaded) {
-      return;
+    if (url != null) {
+      var globalScope = (SysMLv2GlobalScope) SysMLv2Mill.globalScope();
+      boolean packageAlreadyLoaded = globalScope.getLocalSysMLPackageSymbols().stream()
+          .anyMatch(symbol -> "ScalarValues".equals(symbol.getFullName()));
+      if (packageAlreadyLoaded) {
+        return;
+      }
+
+      globalScope.putSymbolDeSer("de.monticore.lang.kermlelements._symboltable.PackageDeclarationSymbol",
+          new SysMLPackageSymbolDeSer());
+      var scalarValues = globalScope.getSymbols2Json().load(url)
+          .resolveSysMLPackage("ScalarValues").orElseThrow();
+      var scalarValuesScope = scalarValues.getSpannedScope();
+      scalarValuesScope.setEnclosingScope(null);
+      globalScope.add(scalarValues);
+      globalScope.addSubScope(scalarValuesScope);
+    } else {
+      Log.error("Could not find ScalarValues.kermlsym");
     }
-
-    String resourceName = packageName + ".kermlsym";
-    URL url = SysMLv2Tool.class.getClassLoader().getResource(resourceName);
-    if (url == null) {
-      Log.error("Could not find " + resourceName);
-      return;
-    }
-
-    globalScope.putSymbolDeSer("de.monticore.lang.kermlelements._symboltable.PackageDeclarationSymbol",
-        new SysMLPackageSymbolDeSer());
-    var libraryPackage = globalScope.getSymbols2Json().load(url)
-        .resolveSysMLPackage(packageName).orElseThrow();
-    var packageScope = libraryPackage.getSpannedScope();
-    packageScope.setEnclosingScope(null);
-    globalScope.add(libraryPackage);
-    globalScope.addSubScope(packageScope);
   }
 
   /**
@@ -149,21 +144,33 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
     packageScope.add(buildMinFunction());
   }
 
-  public static void addControlFunctionsTypes() {
-    getMill()._addControlFunctionsTypes();
-  }
-
-  protected void _addControlFunctionsTypes() {
-    // Temporary replacement until ControlFunctions.kerml can be translated.
-    _loadLibraryFromSym("ControlFunctions");
-  }
-
   public static void loadCollectionValuesFromSym() {
     getMill()._loadCollectionFromSym();
   }
 
   protected void _loadCollectionFromSym() {
-    _loadLibraryFromSym("Collections");
+    URL url = SysMLv2Tool.class.getClassLoader().getResource(
+        "Collections.kermlsym");
+
+    if (url != null) {
+      var globalScope = (SysMLv2GlobalScope) SysMLv2Mill.globalScope();
+      boolean packageAlreadyLoaded = globalScope.getLocalSysMLPackageSymbols().stream()
+          .anyMatch(symbol -> "Collections".equals(symbol.getFullName()));
+      if (packageAlreadyLoaded) {
+        return;
+      }
+
+      globalScope.putSymbolDeSer("de.monticore.lang.kermlelements._symboltable.PackageDeclarationSymbol",
+          new SysMLPackageSymbolDeSer());
+      var collections = globalScope.getSymbols2Json().load(url)
+          .resolveSysMLPackage("Collections").orElseThrow();
+      var collectionsScope = collections.getSpannedScope();
+      collectionsScope.setEnclosingScope(null);
+      globalScope.add(collections);
+      globalScope.addSubScope(collectionsScope);
+    } else {
+      Log.error("Could not find Collections.kermlsym");
+    }
   }
 
   public static void addVectorValuesTypes() {

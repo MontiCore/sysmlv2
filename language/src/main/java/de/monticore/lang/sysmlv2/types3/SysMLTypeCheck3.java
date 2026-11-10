@@ -5,7 +5,6 @@ import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisCTTIVisit
 import de.monticore.expressions.streamexpressions.types3.StreamExpressionsTypeVisitor;
 import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2._visitor.SysMLv2Traverser;
-import de.monticore.lang.sysmlv2.types3.util.SysMLTypeParameterRelations;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
@@ -14,7 +13,6 @@ import de.monticore.types.mcsimplegenerictypes.types3.MCSimpleGenericTypesTypeVi
 import de.monticore.types.mcstructuraltypes.types3.MCStructuralTypesTypeVisitor;
 import de.monticore.types3.Type4Ast;
 import de.monticore.types3.TypeCheck3;
-import de.monticore.types3.generics.TypeParameterRelations;
 import de.monticore.types3.generics.context.InferenceContext4Ast;
 import de.monticore.types3.streams.StreamSymTypeRelations;
 import de.monticore.types3.util.MapBasedTypeCheck3;
@@ -35,7 +33,6 @@ public class SysMLTypeCheck3 extends MapBasedTypeCheck3 {
     CommonExpressionsLValueRelations.init();
     MCCollectionSymTypeRelations.init();
     SysMLSymTypeRelations.init();
-    SysMLTypeParameterRelations.init();
   }
 
   public static void reset() {
@@ -46,7 +43,6 @@ public class SysMLTypeCheck3 extends MapBasedTypeCheck3 {
     CommonExpressionsLValueRelations.reset();
     MCCollectionSymTypeRelations.reset();
     OCLSymTypeRelations.reset();
-    TypeParameterRelations.reset();
   }
 
   protected static void initTC3Delegate() {
