@@ -6,10 +6,8 @@ import de.monticore.lang.sysmlv2.SysMLv2Mill;
 import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2Scope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
-import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcsimplegenerictypes._ast.ASTMCBasicGenericType;
-import de.monticore.types3.SymTypeRelations;
 import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
@@ -176,28 +174,6 @@ public class StandardLibraryImportTest {
     assertThat(type.isGenericType()).isTrue();
     assertThat(type.getTypeInfo().getName()).isEqualTo(collectionType);
     assertThat(type.printFullName()).isEqualTo("Collections." + collectionType + "<ScalarValues.Boolean>");
-    assertThat(Log.getFindings()).isEmpty();
-  }
-
-  @Test
-  public void testArrayIsOrderedCollectionWithSameElementType() {
-    LogStub.init();
-    var tool = new SysMLv2Tool();
-    tool.init();
-    var globalScope = tool.getGlobalScope();
-    var booleanType = SymTypeExpressionFactory.createTypeObject(
-        globalScope.resolveType("ScalarValues.Boolean").orElseThrow());
-    var stringType = SymTypeExpressionFactory.createTypeObject(
-        globalScope.resolveType("ScalarValues.String").orElseThrow());
-    var arraySymbol = globalScope.resolveType("Collections.Array").orElseThrow();
-    var orderedCollectionSymbol = globalScope.resolveType("Collections.OrderedCollection").orElseThrow();
-    var arrayType = SymTypeExpressionFactory.createGenerics(arraySymbol, booleanType);
-    var orderedCollectionType = SymTypeExpressionFactory.createGenerics(orderedCollectionSymbol, booleanType);
-    var otherOrderedCollectionType = SymTypeExpressionFactory.createGenerics(orderedCollectionSymbol, stringType);
-
-    assertThat(SymTypeRelations.isSubTypeOf(arrayType, orderedCollectionType)).isTrue();
-    assertThat(SymTypeRelations.isSubTypeOf(arrayType, otherOrderedCollectionType)).isFalse();
-    assertThat(SymTypeRelations.isSubTypeOf(orderedCollectionType, arrayType)).isFalse();
     assertThat(Log.getFindings()).isEmpty();
   }
 

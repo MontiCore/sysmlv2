@@ -195,12 +195,15 @@ public class ControlFunctionsSymbolTableTest {
 
   @ParameterizedTest
   @CsvSource({
-      "int, int",
-      "ScalarValues::Boolean, ScalarValues::Boolean"
+      "int[*], int, int",
+      "int[*], ScalarValues::Boolean, ScalarValues::Boolean",
+      "Collections::Array<int>, int, int",
+      "Collections::Array<int>, ScalarValues::Boolean, ScalarValues::Boolean"
   })
-  public void testRejectsIncompatiblePredicate(String parameterType, String returnType) throws IOException {
+  public void testRejectsIncompatiblePredicate(String collectionType, String parameterType, String returnType)
+      throws IOException {
     var model = "import ControlFunctions::forAll;"
-        + "attribute values: int[*];"
+        + "attribute values: " + collectionType + ";"
         + "calc def test { in attribute argument: " + parameterType + "; return : " + returnType + "; }"
         + "constraint { forAll(values, test) }";
     var ast = SysMLv2Mill.parser().parse_String(model).orElseThrow();

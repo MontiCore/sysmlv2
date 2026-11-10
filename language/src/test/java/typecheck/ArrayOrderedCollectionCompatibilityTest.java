@@ -22,10 +22,11 @@ public class ArrayOrderedCollectionCompatibilityTest {
     new SysMLv2Tool().init();
   }
 
-  @Test
-  public void testArrayIsCompatibleWithoutBeingSubtype() {
+  @ParameterizedTest
+  @ValueSource(booleans = {false, true})
+  public void testArrayIsCompatibleWithoutBeingSubtype(boolean collectionArray) {
     var integer = SymTypeExpressionFactory.createPrimitive("int");
-    var array = SymTypeExpressionFactory.createTypeArray(integer, 1);
+    var array = arrayOf(integer, collectionArray);
     var collection = orderedCollectionOf(integer);
 
     assertThat(SymTypeRelations.isCompatible(collection, array)).isTrue();
@@ -34,11 +35,12 @@ public class ArrayOrderedCollectionCompatibilityTest {
     assertThat(Log.getFindings()).isEmpty();
   }
 
-  @Test
-  public void testArrayWithDifferentElementTypeIsRejected() {
+  @ParameterizedTest
+  @ValueSource(booleans = {false, true})
+  public void testArrayWithDifferentElementTypeIsRejected(boolean collectionArray) {
     var integer = SymTypeExpressionFactory.createPrimitive("int");
     var bool = SymTypeExpressionFactory.createPrimitive("boolean");
-    var array = SymTypeExpressionFactory.createTypeArray(integer, 1);
+    var array = arrayOf(integer, collectionArray);
 
     assertThat(SymTypeRelations.isCompatible(orderedCollectionOf(bool), array)).isFalse();
     assertThat(Log.getFindings()).isEmpty();
@@ -64,6 +66,16 @@ public class ArrayOrderedCollectionCompatibilityTest {
 
     assertThat(SymTypeRelations.isCompatible(orderedCollectionOf(integer), stream)).isFalse();
     assertThat(Log.getFindings()).isEmpty();
+  }
+
+  private SymTypeExpression arrayOf(SymTypeExpression elementType, boolean collectionArray) {
+    if (collectionArray) {
+      var arraySymbol = SysMLv2Mill.globalScope().resolveType("Collections.Array").orElseThrow();
+      // Die Regel muss auch bei generierten Symbolen ohne Obertypen funktionieren.
+      arraySymbol.getSuperTypesList().clear();
+      return SymTypeExpressionFactory.createGenerics(arraySymbol, elementType);
+    }
+    return SymTypeExpressionFactory.createTypeArray(elementType, 1);
   }
 
   private SymTypeExpression orderedCollectionOf(SymTypeExpression elementType) {

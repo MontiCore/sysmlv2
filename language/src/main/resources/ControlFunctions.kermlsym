@@ -30,12 +30,14 @@
                   "name": "collection",
                   "fullName": "ControlFunctions.forAll.collection",
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypeArray",
-                    "argument": {
-                      "kind": "de.monticore.types.check.SymTypeVariable",
-                      "varName": "ControlFunctions.forAll.T"
-                    },
-                    "dim": 1
+                    "kind": "de.monticore.types.check.SymTypeOfGenerics",
+                    "typeConstructorFullName": "Collections.OrderedCollection",
+                    "arguments": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "ControlFunctions.forAll.T"
+                      }
+                    ]
                   }
                 },
                 {
