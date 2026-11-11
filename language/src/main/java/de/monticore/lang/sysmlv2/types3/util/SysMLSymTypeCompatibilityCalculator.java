@@ -36,12 +36,11 @@ public class SysMLSymTypeCompatibilityCalculator extends de.monticore.types3.uti
           .equals("Collections.OrderedCollection")
         && target.asGenericType().getArgumentList().size() == 1
     ) {
-      // T[] repräsentiert ein Array als SymTypeArray, aber ohne eigenes
-      // Array-Typsymbol. Für den Bibliothekstyp gilt
+      // T[] repräsentiert ein Array als SymTypeArray.
+      // Für KerML's Collections.Array gilt:
       // Collections.Array<T> <: Collections.OrderedCollection<T>;
-      // diese Beziehung ist im Symbol hinterlegt und wird durch die reguläre
-      // Subtypprüfung erkannt.
-      // Die Sonderregel erlaubt auch T[] als Eingabe für Collections.OrderedCollection<T>
+      // Die Sonderregel erlaubt nun auch T[] als Eingabe, wenn OrderedCollection
+      // erwartet wird.
       SymTypeExpression collectionView = SymTypeExpressionFactory.createGenerics(
           target.getTypeInfo(), source.asArrayType().cloneWithLessDim(1));
       result = constrainSubTypeOf(collectionView, target);
