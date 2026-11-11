@@ -1,6 +1,7 @@
 package de.monticore.lang.sysmlv2.types3.util;
 
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types3.generics.bounds.Bound;
 
 import java.util.Collections;
@@ -29,8 +30,22 @@ public class SysMLSymTypeCompatibilityCalculator extends de.monticore.types3.uti
     else if (source.isNullType()) {
       result = nullConstrainCompatible(target, source.asNullType());
     }
+    else if (source.isArrayType()
+        && target.isGenericType()
+        && target.asGenericType().getTypeConstructorFullName()
+          .equals("Collections.OrderedCollection")
+        && target.asGenericType().getArgumentList().size() == 1
+    ) {
+      // T[] repräsentiert ein Array als SymTypeArray.
+      // Für KerML's Collections.Array gilt:
+      // Collections.Array<T> <: Collections.OrderedCollection<T>;
+      // Die Sonderregel erlaubt nun auch T[] als Eingabe, wenn OrderedCollection
+      // erwartet wird.
+      SymTypeExpression collectionView = SymTypeExpressionFactory.createGenerics(
+          target.getTypeInfo(), source.asArrayType().cloneWithLessDim(1));
+      result = constrainSubTypeOf(collectionView, target);
+    }
     else {
-      // Die einzige Änderung ist die hier die verwendete SymTypeRelations
       SymTypeExpression boxedTarget = de.monticore.lang.sysmlv2.types3.SysMLSymTypeRelations.box(target);
       SymTypeExpression boxedSource = de.monticore.lang.sysmlv2.types3.SysMLSymTypeRelations.box(source);
 
