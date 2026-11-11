@@ -36,14 +36,22 @@ public class SysMLSymTypeCompatibilityCalculator extends de.monticore.types3.uti
           .equals("Collections.OrderedCollection")
         && target.asGenericType().getArgumentList().size() == 1
     ) && (
-      source.isArrayType() || (
-        source.isGenericType()
+      source.isArrayType() ||
+        (source.isGenericType()
           && source.asGenericType().getTypeConstructorFullName()
             .equals("Collections.Array")
-          && source.asGenericType().getArgumentList().size() == 1
-    ))) {
-      // T[] und Collections.Array<T> können unabhängig von den Obertypen im Sym
-      // als OrderedCollection übergeben werden. Die Bounds für die Inferenz bleiben erhalten.
+          && source.asGenericType().getArgumentList().size() == 1) ||
+        (source.isGenericType()
+          && source.asGenericType().getTypeConstructorFullName()
+            .equals("Collections.List")
+          && source.asGenericType().getArgumentList().size() == 1) ||
+        (source.isGenericType()
+          && source.asGenericType().getTypeConstructorFullName()
+            .equals("Collections.OrderedSet")
+          && source.asGenericType().getArgumentList().size() == 1)
+    )) {
+      // T[] kann als input für OrderedCollection übergeben werden.
+      // Die Bounds für die Inferenz bleiben erhalten.
       SymTypeExpression elementType = source.isArrayType()
         ? source.asArrayType().cloneWithLessDim(1)
         : source.asGenericType().getArgument(0).deepClone();
