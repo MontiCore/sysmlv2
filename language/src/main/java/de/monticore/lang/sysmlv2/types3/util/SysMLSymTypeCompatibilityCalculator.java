@@ -30,25 +30,20 @@ public class SysMLSymTypeCompatibilityCalculator extends de.monticore.types3.uti
     else if (source.isNullType()) {
       result = nullConstrainCompatible(target, source.asNullType());
     }
-    else if ((
-      target.isGenericType()
+    else if (source.isArrayType()
+        && target.isGenericType()
         && target.asGenericType().getTypeConstructorFullName()
           .equals("Collections.OrderedCollection")
         && target.asGenericType().getArgumentList().size() == 1
-    ) && (
-      source.isArrayType() || (
-        source.isGenericType()
-          && source.asGenericType().getTypeConstructorFullName()
-            .equals("Collections.Array")
-          && source.asGenericType().getArgumentList().size() == 1
-    ))) {
-      // T[] und Collections.Array<T> können unabhängig von den Obertypen im Sym
-      // als OrderedCollection übergeben werden. Die Bounds für die Inferenz bleiben erhalten.
-      SymTypeExpression elementType = source.isArrayType()
-        ? source.asArrayType().cloneWithLessDim(1)
-        : source.asGenericType().getArgument(0).deepClone();
-      SymTypeExpression collectionView = SymTypeExpressionFactory
-        .createGenerics(target.getTypeInfo(), elementType);
+    ) {
+      // T[] repräsentiert ein Array als SymTypeArray, aber ohne eigenes
+      // Array-Typsymbol. Für den Bibliothekstyp gilt
+      // Collections.Array<T> <: Collections.OrderedCollection<T>;
+      // diese Beziehung ist im Symbol hinterlegt und wird durch die reguläre
+      // Subtypprüfung erkannt.
+      // Die Sonderregel erlaubt auch T[] als Eingabe für Collections.OrderedCollection<T>
+      SymTypeExpression collectionView = SymTypeExpressionFactory.createGenerics(
+          target.getTypeInfo(), source.asArrayType().cloneWithLessDim(1));
       result = constrainSubTypeOf(collectionView, target);
     }
     else {

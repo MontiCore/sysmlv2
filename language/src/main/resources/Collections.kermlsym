@@ -54,6 +54,18 @@
             "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
             "name": "Array",
             "fullName": "Collections.Array",
+            "superTypes": [
+              {
+                "kind": "de.monticore.types.check.SymTypeOfGenerics",
+                "typeConstructorFullName": "Collections.OrderedCollection",
+                "arguments": [
+                  {
+                    "kind": "de.monticore.types.check.SymTypeVariable",
+                    "varName": "Collections.Array.T0"
+                  }
+                ]
+              }
+            ],
             "spannedScope": {
               "symbols": [
                 {
@@ -96,6 +108,18 @@
             "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
             "name": "OrderedSet",
             "fullName": "Collections.OrderedSet",
+            "superTypes": [
+              {
+                "kind": "de.monticore.types.check.SymTypeOfGenerics",
+                "typeConstructorFullName": "Collections.OrderedCollection",
+                "arguments": [
+                  {
+                    "kind": "de.monticore.types.check.SymTypeVariable",
+                    "varName": "Collections.OrderedSet.T0"
+                  }
+                ]
+              }
+            ],
             "spannedScope": {
               "symbols": [
                 {
@@ -110,6 +134,18 @@
             "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
             "name": "List",
             "fullName": "Collections.List",
+            "superTypes": [
+              {
+                "kind": "de.monticore.types.check.SymTypeOfGenerics",
+                "typeConstructorFullName": "Collections.OrderedCollection",
+                "arguments": [
+                  {
+                    "kind": "de.monticore.types.check.SymTypeVariable",
+                    "varName": "Collections.List.T0"
+                  }
+                ]
+              }
+            ],
             "spannedScope": {
               "symbols": [
                 {

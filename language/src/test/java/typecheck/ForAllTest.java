@@ -63,6 +63,7 @@ public class ForAllTest {
         .resolveType("Collections.OrderedCollection").orElseThrow(),
       integer
     );
+    assertThat(SymTypeRelations.isSubTypeOf(collectionArray, orderedCollection)).isTrue();
     assertThat(SymTypeRelations.isCompatible(orderedCollection, array)).isTrue();
     assertThat(SymTypeRelations.isCompatible(orderedCollection, collectionArray)).isTrue();
     assertThat(Log.getFindings()).isEmpty();
