@@ -145,7 +145,7 @@ component grammar SysMLActions
 
   symbol scope WhileActionUsage extends ActionUsage =
     Modifier OwnedCrossFeature? UserDefinedKeyword* "action"? SysMLIdentifier? Name? SysMLCardinality? Specialization*
-    "while" while:Expression ("(" (SysMLParameter || ",")* ")")?
+    "while" while:Expression
     BodyClause ("until" until:Expression ";")? ;
 
   /**

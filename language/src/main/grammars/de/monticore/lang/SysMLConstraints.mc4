@@ -39,7 +39,6 @@ component grammar SysMLConstraints
   symbol scope RequirementDef implements SysMLDefinition   =
       Modifier UserDefinedKeyword* "requirement" "def"
       SysMLIdentifier? Name SysMLCardinality? Specialization*
-      ("(" (SysMLParameter || ",")* ")")?
       ("{"
         SysMLElement*
       "}" | ";") ;
@@ -52,7 +51,6 @@ component grammar SysMLConstraints
       SysMLIdentifier? Name? SysMLCardinality? Specialization*
       DefaultValue?
       ("by" subject:MCQualifiedName)?
-      ("(" (SysMLParameter || ",")* ")")?
       ("{"
          SysMLElement*
       "}" | ";") ;
@@ -110,7 +108,6 @@ component grammar SysMLConstraints
   symbol scope ConcernDef implements SysMLDefinition  =
       Modifier UserDefinedKeyword* "concern" "def"
       SysMLIdentifier? Name SysMLCardinality? Specialization*
-      ("(" (SysMLParameter || ",")* ")")?
       ("{"
         SysMLElement*
       "}" | ";") ;
@@ -118,7 +115,6 @@ component grammar SysMLConstraints
   symbol scope ConcernUsage implements SysMLUsage =
       Modifier OwnedCrossFeature? UserDefinedKeyword* ["frame"]? "concern"
       SysMLIdentifier? Name? SysMLCardinality? Specialization*
-      ("(" (SysMLParameter || ",")* ")")?
       ("{"
         SysMLElement*
       "}" | ";") ;
