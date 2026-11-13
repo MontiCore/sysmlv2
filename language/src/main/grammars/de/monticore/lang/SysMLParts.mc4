@@ -245,7 +245,6 @@ component grammar SysMLParts
   symbol scope InterfaceDef implements SysMLDefinition =
     Modifier UserDefinedKeyword* "interface" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
-    ("(" (SysMLParameter || ",")* ")")?
     ("{"
       SysMLElement*
     "}" | ";") ;
@@ -347,14 +346,13 @@ component grammar SysMLParts
   symbol scope ItemDef implements SysMLDefinition =
     Modifier UserDefinedKeyword* "item" "def"
     SysMLIdentifier? Name SysMLCardinality? Specialization*
-    ("(" (SysMLParameter || ",")* ")")?
     ("{"
       SysMLElement*
     "}" | ";") ;
 
   symbol scope ItemUsage implements SysMLUsage =
     Modifier OwnedCrossFeature? UserDefinedKeyword* "item" SysMLIdentifier? Name? SysMLCardinality? Specialization*
-    ("(" (SysMLParameter || ",")* ")")? DefaultValue?
+    DefaultValue?
     ("{"
       SysMLElement*
      "}" | ";")? ;

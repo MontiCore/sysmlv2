@@ -5,7 +5,7 @@ component grammar SysMLStates extends SysMLActions {
 
   symbol scope StateDef implements SysMLDefinition =
     Modifier UserDefinedKeyword* "state" "def" SysMLIdentifier? Name
-    SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
+    SysMLCardinality? Specialization*
     ("{"
       (EntryAction | DoAction | ExitAction | SysMLElement)*
     "}" | ";") ;
