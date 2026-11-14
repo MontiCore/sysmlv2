@@ -76,8 +76,17 @@ public class KerMLTool extends KerMLToolTOP {
     traverser.add4KerMLElements(visitor);
     scope.accept(traverser);
 
-    // TODO Datatypes zu Type adaptieren und in einen neuen Scope hinzufügen.
-    // TODO Anschließend den neuen Scope serialisieren.
-    new KerMLSymbols2Json().store(scope, path);
+    var exportScope = KerMLMill.artifactScope();
+    if (scope.isPresentName()) {
+      exportScope.setName(scope.getName());
+    }
+    exportScope.setPackageName(scope.getPackageName());
+    for (var datatype : visitor.getDatatypes()) {
+      var type = new Datatype2TypeSymbolAdapter(datatype);
+      type.setFullName(datatype.getFullName());
+      type.setPackageName(datatype.getPackageName());
+      exportScope.add(type);
+    }
+    new KerMLSymbols2Json().store(exportScope, path);
   }
 }
