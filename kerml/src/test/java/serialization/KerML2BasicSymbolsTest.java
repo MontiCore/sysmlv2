@@ -1,15 +1,13 @@
 package serialization;
 
+import de.monticore.lang.kerml.Datatype2TypeSymbolAdapter;
 import de.monticore.lang.kerml.KerMLMill;
 import de.monticore.lang.kerml.KerMLTool;
 import de.monticore.lang.kerml._symboltable.KerMLSymbols2Json;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,9 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * BasicSymbols, spezifisch TypeSymbols
  */
 public class KerML2BasicSymbolsTest {
-
-  @TempDir
-  Path tempDir;
 
   @Test
   public void testSerializeType() throws IOException {
@@ -32,9 +27,9 @@ public class KerML2BasicSymbolsTest {
     var as = tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
 
-    var output = tempDir.resolve("Test.kermlsym");
-    tool.storeSymbols(as, output.toString());
-    var st = Files.readString(output);
+    var scope = KerMLMill.artifactScope();
+    scope.add(new Datatype2TypeSymbolAdapter(as.resolveDatatype("Test").get()));
+    var st = new KerMLSymbols2Json().serialize(scope);
 
     assertThat(st).isEqualTo("{\""
         + "generated-using\":\"www.MontiCore.de technology\","
