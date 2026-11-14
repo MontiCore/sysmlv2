@@ -4,10 +4,6 @@ package de.monticore.lang.kerml;
 import de.monticore.lang.kerml._ast.ASTKerMLModel;
 import de.monticore.lang.kerml._symboltable.IKerMLArtifactScope;
 import de.monticore.lang.kerml._symboltable.KerMLSymbols2Json;
-import de.monticore.lang.kermlelements._ast.ASTFeature;
-import de.monticore.lang.kermlelements._symboltable.DatatypeSymbol;
-import de.monticore.lang.kermlelements._symboltable.IKerMLElementsScope;
-import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -75,14 +71,13 @@ public class KerMLTool extends KerMLToolTOP {
 
   @Override
   public void storeSymbols(IKerMLArtifactScope scope, String path) {
-    // TODO DatatypeAsTypeSymbolDeSer entfernen (siehe TODO dort)
-    // TODO Hier stattdessen:
-    //  1. Datatypes alle visitieren
-    //  2. in visit() die Datatypes adaptieren zu Type
-    //  3. adapted Types in ein neues Scope hinzufügen
-    //  4. das neue Scope serialisieren
-    KerMLMill.globalScope().putSymbolDeSer(
-        DatatypeSymbol.class.getName(), new DatatypeAsTypeSymbolDeSer());
+    var visitor = new DatatypeCollector();
+    var traverser = KerMLMill.traverser();
+    traverser.add4KerMLElements(visitor);
+    scope.accept(traverser);
+
+    // TODO Datatypes zu Type adaptieren und in einen neuen Scope hinzufügen.
+    // TODO Anschließend den neuen Scope serialisieren.
     new KerMLSymbols2Json().store(scope, path);
   }
 }
