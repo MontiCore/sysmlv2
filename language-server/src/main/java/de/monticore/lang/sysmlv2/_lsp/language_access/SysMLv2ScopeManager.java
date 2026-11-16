@@ -7,6 +7,7 @@ import de.monticore.lang.sysmlv2.SysMLv2Tool;
 import de.monticore.lang.sysmlv2._ast.ASTSysMLModel;
 import de.monticore.lang.sysmlv2._symboltable.ISysMLv2ArtifactScope;
 import de.monticore.lang.sysmlv2._symboltable.SysMLv2GlobalScope;
+import de.monticore.lang.sysmlv2.types3.SysMLTypeCheck3;
 import de.se_rwth.commons.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,8 @@ public class SysMLv2ScopeManager extends SysMLv2ScopeManagerTOP {
 
     // Load globally available symbols like int, boolean, List
     SysMLv2Mill.prepareGlobalScope();
+
+    SysMLTypeCheck3.init();
   }
 
   @Override
