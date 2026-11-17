@@ -5,7 +5,6 @@ import de.monticore.lang.kermlelements._ast.ASTFeature;
 import de.monticore.lang.kermlelements._symboltable.DatatypeSymbol;
 import de.monticore.lang.kermlelements._symboltable.IKerMLElementsScope;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
-import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 
@@ -16,22 +15,14 @@ public class Datatype2TypeSymbolAdapter extends TypeSymbol {
 
   private DatatypeSymbol adaptee;
 
-  private IBasicSymbolsScope spannedScope;
-
   public Datatype2TypeSymbolAdapter(DatatypeSymbol adaptee) {
     super(adaptee.getName());
     this.adaptee = adaptee;
 
     // typeVars hinzufügen
     var typeVars = convertFeature2TypeVar(adaptee.getSpannedScope());
-    this.spannedScope = BasicSymbolsMill.scope();
-    this.spannedScope.setSpanningSymbol(this);
-    typeVars.forEach(typeVar -> this.spannedScope.add(typeVar));
-  }
-
-  @Override
-  public IBasicSymbolsScope getSpannedScope() {
-    return this.spannedScope;
+    setSpannedScope(BasicSymbolsMill.scope());
+    typeVars.forEach(typeVar -> getSpannedScope().add(typeVar));
   }
 
   /**

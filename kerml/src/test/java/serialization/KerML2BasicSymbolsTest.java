@@ -1,10 +1,9 @@
 package serialization;
 
+import de.monticore.lang.kerml.Datatype2TypeSymbolAdapter;
 import de.monticore.lang.kerml.KerMLMill;
 import de.monticore.lang.kerml.KerMLTool;
 import de.monticore.lang.kerml._symboltable.KerMLSymbols2Json;
-import de.monticore.lang.kermlelements._symboltable.DatatypeSymbol;
-import de.monticore.lang.kerml.DatatypeAsTypeSymbolDeSer;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.Test;
 
@@ -28,11 +27,9 @@ public class KerML2BasicSymbolsTest {
     var as = tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
 
-    // Trick von Hendrik Weskamp
-    KerMLMill.globalScope().putSymbolDeSer(
-        DatatypeSymbol.class.getName(), new DatatypeAsTypeSymbolDeSer());
-
-    var st = new KerMLSymbols2Json().serialize(as);
+    var scope = KerMLMill.artifactScope();
+    scope.add(new Datatype2TypeSymbolAdapter(as.resolveDatatype("Test").get()));
+    var st = new KerMLSymbols2Json().serialize(scope);
 
     assertThat(st).isEqualTo("{\""
         + "generated-using\":\"www.MontiCore.de technology\","
