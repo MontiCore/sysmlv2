@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
-constraint def LogicBasedConstraints(
-  p : int
-) {
-  p == 1
+private import ScalarValues::*;
+constraint def LogicBasedConstraints {
+    p : Integer;
+    p == 1
 }

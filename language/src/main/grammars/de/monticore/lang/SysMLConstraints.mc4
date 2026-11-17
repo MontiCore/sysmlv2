@@ -7,7 +7,7 @@ component grammar SysMLConstraints
 
   symbol scope ConstraintDef implements SysMLDefinition =
     Modifier UserDefinedKeyword* "constraint" "def"
-    Name SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
+    Name SysMLCardinality? Specialization*
     ("{"
       SysMLElement*
       Expression?
@@ -18,7 +18,7 @@ component grammar SysMLConstraints
       (["require"] | ["assume"] | ["assert"]) ["not"]? UserDefinedKeyword* "constraint"?
       | UserDefinedKeyword* "constraint"
     )
-    Name? SysMLCardinality? Specialization* ("(" (SysMLParameter || ",")* ")")?
+    Name? SysMLCardinality? Specialization*
     ("{"
       SysMLElement*
       Expression?
@@ -30,7 +30,6 @@ component grammar SysMLConstraints
       | UserDefinedKeyword* "constraint"
     )
     MCQualifiedName? SysMLCardinality? Specialization*
-    ("(" (SysMLParameter || ",")* ")")?
     ("{"
       SysMLElement*
       Expression?

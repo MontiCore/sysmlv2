@@ -52,22 +52,6 @@ public class SysMLConstraintsPrettyPrinter
 
     node.getSpecializationList().forEach(n -> n.accept(getTraverser()));
 
-    getPrinter().stripTrailing();
-    getPrinter().print("(");
-
-    Iterator<ASTSysMLParameter> iter_sysMLParameter = node.getSysMLParameterList().iterator();
-    if (iter_sysMLParameter.hasNext()) {
-      iter_sysMLParameter.next().accept(getTraverser());
-      while (iter_sysMLParameter.hasNext()) {
-        getPrinter().stripTrailing();
-        getPrinter().print(",");
-        iter_sysMLParameter.next().accept(getTraverser());
-      }
-    }
-
-    getPrinter().stripTrailing();
-    getPrinter().print(")");
-
     getPrinter().println("{ ");
     getPrinter().indent();
 
@@ -113,22 +97,6 @@ public class SysMLConstraintsPrettyPrinter
     }
 
     node.getSpecializationList().forEach(n -> n.accept(getTraverser()));
-
-    getPrinter().stripTrailing();
-    getPrinter().print("(");
-
-    Iterator<ASTSysMLParameter> iter_sysMLParameter = node.getSysMLParameterList().iterator();
-    if (iter_sysMLParameter.hasNext()) {
-      iter_sysMLParameter.next().accept(getTraverser());
-      while (iter_sysMLParameter.hasNext()) {
-        getPrinter().stripTrailing();
-        getPrinter().print(",");
-        iter_sysMLParameter.next().accept(getTraverser());
-      }
-    }
-
-    getPrinter().stripTrailing();
-    getPrinter().print(")");
 
     getPrinter().println("{ ");
     getPrinter().indent();
