@@ -13,6 +13,10 @@ import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.lang.componentconnector.StreamTimingUtil;
 import de.monticore.lang.componentconnector._symboltable.IComponentConnectorScope;
 import de.monticore.lang.sysmlactions._ast.ASTAssignmentActionUsage;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
+import de.monticore.lang.sysmlbasis._ast.ASTSysMLUsage;
+import de.monticore.lang.sysmlv2._ast.ASTModifier;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.lang.sysmlexpressions._ast.ASTConditionalNotExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTInfinity;
@@ -22,6 +26,8 @@ import de.monticore.lang.sysmlexpressions._ast.ASTSubsetExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSupersetEquationExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSupersetExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSysMLFieldAccessExpression;
+import de.monticore.lang.sysmlexpressions._ast.ASTSysMLBodyExpression;
+import de.monticore.lang.sysmlexpressions._ast.ASTSysMLFunctionOperationExpression;
 import de.monticore.lang.sysmlexpressions._ast.ASTSysMLInstantiation;
 import de.monticore.lang.sysmlexpressions._ast.ASTSysMLSequenceExpression;
 import de.monticore.lang.sysmlexpressions._visitor.SysMLExpressionsHandler;
@@ -51,9 +57,11 @@ import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfFunction;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.types3.SymTypeRelations;
+import de.monticore.types3.generics.util.CompileTimeTypeCalculator;
 import de.monticore.types3.util.TypeContextCalculator;
 import de.monticore.types3.util.TypeVisitorLifting;
 import de.monticore.types3.util.TypeVisitorOperatorCalculator;
@@ -61,11 +69,14 @@ import de.monticore.types3.util.WithinScopeBasicSymbolsResolver;
 import de.monticore.types3.util.WithinTypeBasicSymbolsResolver;
 import de.se_rwth.commons.logging.Log;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static de.monticore.types.check.SymTypeExpressionFactory.createObscureType;
 
@@ -122,6 +133,214 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsCTTIVisi
   @Override
   public void traverse(ASTSysMLFieldAccessExpression node) {
     traverse((ASTFieldAccessExpression) node);
+  }
+
+  @Override
+  public void handle(ASTSysMLFunctionOperationExpression expr) {
+    // Orientiert an CommonExpressionsCTTIVisitor.handle(ASTCallExpression).
+    // Weil aber der Funktionstyp und die Argumentliste in endVisit passiert,
+    // wird handleCall stattdessen dort aufgerufen.
+    getTraverser().visit(expr);
+    getTraverser().endVisit(expr);
+  }
+
+  @Override
+  public void endVisit(ASTSysMLFunctionOperationExpression expr) {
+    // Berechnet x->f(...) wie f(x, ...)
+    // Hier wird die Funktion aufgelöst und Argumentliste zusammengestellt, um
+    // Aufrufprüfung sowie Typinferenz an CompileTimeTypeCalculator zu übergeben.
+    String functionName = expr.getMCQualifiedName().getQName();
+    SymTypeExpression calculatedInner;
+    Set<SymTypeExpression> inner = new HashSet<>();
+
+    // Sammle mögliche Funktionstypen
+    Optional<SymTypeExpression> resolved = WithinScopeBasicSymbolsResolver
+      .resolveNameAsExpr(
+        getAsBasicSymbolsScope(expr.getEnclosingScope()), functionName);
+
+    if (resolved.isEmpty()) {
+      Log.error("0xC1234 cannot resolve function operation '" + functionName + "'",
+        expr.get_SourcePositionStart(), expr.get_SourcePositionEnd());
+      getType4Ast().setTypeOfExpression(expr, createObscureType());
+      return;
+    }
+    calculatedInner = resolved.get();
+
+    if (calculatedInner.isIntersectionType()) {
+      inner.addAll(calculatedInner.asIntersectionType().getIntersectedTypeSet());
+    }
+    else {
+      inner.add(calculatedInner);
+    }
+
+    inner = inner.stream().map(SymTypeRelations::normalize)
+      .collect(Collectors.toSet());
+
+    if (inner.stream().allMatch(SymTypeExpression::isObscureType)) {
+      getType4Ast().setTypeOfExpression(expr, createObscureType());
+      return;
+    }
+
+    // Filtere Funktionstypen
+    Set<SymTypeExpression> functions = inner.stream()
+      .filter(SymTypeExpression::isFunctionType)
+      .collect(Collectors.toSet());
+    if (functions.isEmpty()) {
+      Log.error(
+        "0xC1234 expression '" + functionName + "' "
+          + "does not seem to be a function, "
+          + "instead the (potential) type(s) are: "
+          + inner.stream().map(SymTypeExpression::printFullName)
+            .collect(Collectors.joining(", ")),
+        expr.get_SourcePositionStart(),
+        expr.get_SourcePositionEnd()
+      );
+      getType4Ast().setTypeOfExpression(expr, createObscureType());
+      return;
+    }
+
+    List<ASTExpression> args = new ArrayList<>();
+
+    // x->f(y, z) entspricht f(x, y, z), dabei ist getExpression() = x
+    args.add(expr.getExpression());
+
+    if (expr.isPresentArguments()) {
+      args.addAll(expr.getArguments().getExpressionList());
+      // für x->f(y, z) ist ExpressionList: [y, z]
+    }
+    else if (expr.isPresentBody()) { //Body beschreibt eine Funktion
+      args.add(expr.getBody());
+    }
+    else if (expr.isPresentFunctionReference()) {
+      ASTMCQualifiedName reference = expr.getFunctionReference();
+      ASTNameExpression referenceExpr = SysMLv2Mill.nameExpressionBuilder()
+        .setName(reference.getQName())
+        .build();
+      referenceExpr.setEnclosingScope(expr.getEnclosingScope());
+      referenceExpr.set_SourcePositionStart(reference.get_SourcePositionStart());
+      referenceExpr.set_SourcePositionEnd(reference.get_SourcePositionEnd());
+      args.add(referenceExpr);
+    }
+
+    SymTypeExpression functionType = functions.size() == 1
+      ? functions.iterator().next()
+      : SymTypeExpressionFactory.createIntersection(functions);
+
+    // Wie in SetExpressionsCTTIVisitor.handle(ASTSetEnumeration) erhält
+    // CompileTimeTypeCalculator einen bereits bestimmten Funktionstyp und die
+    // Argumentausdrücke.
+    // Der Calculator speichert den Rückgabetyp (bei Fehlern Obscure) in Type4Ast
+    // oder zunächst die noch offenen Inferenzinformationen im Inferenzkontext.
+    CompileTimeTypeCalculator.handleCall(
+      expr, functionType, args,
+      getTraverser(), getType4Ast(), getInferenceContext4Ast()
+    );
+  }
+
+  @Override
+  public void handle(ASTSysMLBodyExpression expr) {
+    // Prüft die expliziten Typangaben der direkten in-/inout-Parameter vor dem
+    // Body. Der frühe Abbruch verhindert Folgefehler beim Auflösen von obskuren
+    // Parametern.
+
+    List<ASTSysMLUsage> functionBodyParameters = new ArrayList<>();
+    for (ASTSysMLElement element : expr.getSysMLElementList()) {
+      if (element instanceof ASTSysMLUsage) {
+        ASTSysMLUsage usage = (ASTSysMLUsage) element;
+        if (usage.getModifier() instanceof ASTModifier) {
+          var modifier = (ASTModifier) usage.getModifier();
+          if (modifier.isIn() || modifier.isInout()) {
+            functionBodyParameters.add(usage);
+          }
+        }
+      }
+    }
+
+    for (ASTSysMLUsage parameter : functionBodyParameters) {
+      boolean hasType = parameter.getSpecializationList().stream()
+        .anyMatch(s -> s instanceof ASTSysMLTyping
+          && !((ASTSysMLTyping) s).getSuperTypesList().isEmpty());
+      if (!hasType) {
+        Log.error("0xC1AC0 cannot determine function body input type. "
+            + "Provide an explicit type",
+          parameter.get_SourcePositionStart(),
+          parameter.get_SourcePositionEnd());
+
+        getType4Ast().setTypeOfExpression(expr, createObscureType());
+        return;
+      }
+    }
+    getTraverser().visit(expr);
+    getTraverser().traverse(expr);
+    getTraverser().endVisit(expr);
+  }
+
+  @Override
+  public void endVisit(ASTSysMLBodyExpression expr) {
+    // Bildet den Funktionstyp aus den direkten in-/inout-Parametern und dem
+    // Body-Ergebnis.
+    // Parametertypen und Rückgabetyp sammeln, bei gültigen Typen createFunction
+    // erzeugen, sonst den Body auf Obscure setzen.
+    List<SymTypeExpression> parameterTypes = new ArrayList<>();
+
+    List<ASTSysMLUsage> functionBodyParameters = new ArrayList<>();
+    for (ASTSysMLElement element : expr.getSysMLElementList()) {
+      if (element instanceof ASTSysMLUsage) {
+        ASTSysMLUsage usage = (ASTSysMLUsage) element;
+        if (usage.getModifier() instanceof ASTModifier) {
+          var modifier = (ASTModifier) usage.getModifier();
+          if (modifier.isIn() || modifier.isInout()) {
+            functionBodyParameters.add(usage);
+          }
+        }
+      }
+    }
+
+    for (ASTSysMLUsage usage : functionBodyParameters) {
+      List<SymTypeExpression> types = new ArrayList<>();
+      for (var specialization : usage.getSpecializationList()) {
+        if (specialization instanceof ASTSysMLTyping) {
+          ASTSysMLTyping typing = (ASTSysMLTyping) specialization;
+          for (ASTMCType mcType : typing.getSuperTypesList()) {
+            SymTypeExpression parameterType = getType4Ast()
+              .getPartialTypeOfTypeId(mcType);
+            if (typing.isPresentCardinality() &&
+              !parameterType.isObscureType()
+            ) {
+              parameterType = SymTypeExpressionFactory
+              .createTypeArray(parameterType, 1);
+            }
+            types.add(parameterType);
+          }
+        }
+      }
+      if (types.isEmpty()) {
+        Log.error("0xC1204 cannot determine function body input type."
+            + " Provide an explicit type",
+          usage.get_SourcePositionStart(), usage.get_SourcePositionEnd());
+
+        parameterTypes.add(createObscureType());
+      }
+      else {
+        parameterTypes.add(SymTypeRelations.normalize(
+          SymTypeExpressionFactory.createIntersection(types)));
+      }
+    }
+
+    // Bestimme den Rückgabetyp
+    SymTypeExpression returnType = getType4Ast()
+      .getPartialTypeOfExpr(expr.getInner());
+
+    if (returnType.isObscureType() ||
+      parameterTypes.stream().anyMatch(SymTypeExpression::isObscureType)
+    ) {
+      getType4Ast().setTypeOfExpression(expr, createObscureType());
+    }
+    else {
+      // { in x: int; x > 0 } hat z.B. den Funktionstyp int -> boolean.
+      getType4Ast().setTypeOfExpression(expr,
+        SymTypeExpressionFactory.createFunction(returnType, parameterTypes));
+    }
   }
 
   @Override

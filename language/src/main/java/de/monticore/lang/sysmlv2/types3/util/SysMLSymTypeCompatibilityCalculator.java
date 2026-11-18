@@ -4,6 +4,7 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types3.generics.bounds.Bound;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,6 +30,22 @@ public class SysMLSymTypeCompatibilityCalculator extends de.monticore.types3.uti
     }
     else if (source.isNullType()) {
       result = nullConstrainCompatible(target, source.asNullType());
+    }
+    else if (source.isFunctionType() && target.isFunctionType()
+        && !source.asFunctionType().isElliptic() && !target.asFunctionType().isElliptic()
+        && source.asFunctionType().sizeArgumentTypes() == target.asFunctionType().sizeArgumentTypes()
+    ) {
+      // Ein SysML-Body kann boolean liefern, während die Bibliotheksfunktion
+      // ScalarValues.Boolean erwartet. Die vorhandene Konvertierung gilt auch
+      // für Rückgabetypen.
+      result = new ArrayList<>(constrainCompatible(
+        target.asFunctionType().getType(), source.asFunctionType().getType()));
+      for (int i = 0; i < source.asFunctionType().sizeArgumentTypes(); i++) {
+        // Eingabetypen bleiben wie bei der normalen Funktionssubtypisierung kontravariant.
+        result.addAll(constrainSubTypeOf(
+          target.asFunctionType().getArgumentType(i),
+          source.asFunctionType().getArgumentType(i)));
+      }
     }
     else if (source.isArrayType()
         && target.isGenericType()
