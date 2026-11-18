@@ -61,6 +61,60 @@
                 }
               ]
             }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "exists",
+            "fullName": "ControlFunctions.exists",
+            "packageName": "ControlFunctions",
+            "isElliptic": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "ScalarValues.Boolean"
+            },
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+                  "name": "T",
+                  "fullName": "ControlFunctions.exists.T"
+                },
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "collection",
+                  "fullName": "ControlFunctions.exists.collection",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfGenerics",
+                    "typeConstructorFullName": "Collections.OrderedCollection",
+                    "arguments": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "ControlFunctions.exists.T"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "test",
+                  "fullName": "ControlFunctions.exists.test",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfFunction",
+                    "returnType": {
+                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                      "objName": "ScalarValues.Boolean"
+                    },
+                    "argumentTypes": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "ControlFunctions.exists.T"
+                      }
+                    ],
+                    "elliptic": false
+                  }
+                }
+              ]
+            }
           }
         ]
       }
