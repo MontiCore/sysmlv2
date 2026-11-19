@@ -137,9 +137,6 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsCTTIVisi
 
   @Override
   public void handle(ASTSysMLFunctionOperationExpression expr) {
-    // Orientiert an CommonExpressionsCTTIVisitor.handle(ASTCallExpression).
-    // Weil aber der Funktionstyp und die Argumentliste in endVisit passiert,
-    // wird handleCall stattdessen dort aufgerufen.
     getTraverser().visit(expr);
     getTraverser().endVisit(expr);
   }
@@ -226,9 +223,6 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsCTTIVisi
       ? functions.iterator().next()
       : SymTypeExpressionFactory.createIntersection(functions);
 
-    // Wie in SetExpressionsCTTIVisitor.handle(ASTSetEnumeration) erhält
-    // CompileTimeTypeCalculator einen bereits bestimmten Funktionstyp und die
-    // Argumentausdrücke.
     // Der Calculator speichert den Rückgabetyp (bei Fehlern Obscure) in Type4Ast
     // oder zunächst die noch offenen Inferenzinformationen im Inferenzkontext.
     CompileTimeTypeCalculator.handleCall(
@@ -315,7 +309,7 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsCTTIVisi
         }
       }
       if (types.isEmpty()) {
-        Log.error("0xC1204 cannot determine function body input type."
+        Log.error("0xC1224 cannot determine function body input type."
             + " Provide an explicit type",
           usage.get_SourcePositionStart(), usage.get_SourcePositionEnd());
 

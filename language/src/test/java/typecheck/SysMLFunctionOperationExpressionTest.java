@@ -13,10 +13,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,6 +40,15 @@ class SysMLFunctionOperationExpressionTest {
   void testValidArgs() throws IOException {
     assertType("calc def check { in value: int; in flag: boolean; return : boolean; }",
       "1->check(true)", "boolean");
+  }
+
+  @Disabled("CalcDefs können noch nicht überladen werden (0xA4095)")
+  @ParameterizedTest
+  @CsvSource({"1->choose(), boolean", "true->choose(), int"})
+  void testOverloadedCalcDefs(String expression, String expectedType) throws IOException {
+    assertType("calc def choose { in value: int; return : boolean; }"
+        + "calc def choose { in value: boolean; return : int; }",
+      expression, expectedType);
   }
 
   @ParameterizedTest
@@ -70,7 +79,7 @@ class SysMLFunctionOperationExpressionTest {
   })
   void testLibraryFunction(String expression) throws IOException {
     assertType("attribute values: int[*];"
-        + "calc def positive { in value: int; return : ScalarValues::Boolean; }",
+      + "calc def positive { in value: int; return : ScalarValues::Boolean; }",
       expression, "ScalarValues.Boolean");
   }
 
@@ -88,7 +97,7 @@ class SysMLFunctionOperationExpressionTest {
     "values->ControlFunctions::forAll missing",
     "values->ControlFunctions::forAll positive"
   })
-  void rejectsAnUnresolvedOrIncompatibleFunctionReference(String expression) throws IOException {
+  void testWrongFunctionReference(String expression) throws IOException {
     assertInvalid("attribute values: int[*];"
       + "calc def positive { in value: boolean; return : ScalarValues::Boolean; }",
       expression);
@@ -121,20 +130,6 @@ class SysMLFunctionOperationExpressionTest {
   })
   void testWrongBody(String expression) throws IOException {
     assertInvalid("attribute values: int[*];", expression);
-  }
-
-  @Disabled("The expected body result type is not propagated to generic calls yet")
-  @Test
-  void infersGenericBodyResultFromForAll() throws Exception {
-    // readValue<T>(): T is defined in a test symbol file because CalcDefs do not
-    // yet provide an equivalent generic function signature.
-    var symbols = getClass().getResource("/typecheck/GenericFunctions.kermlsym");
-    assertThat(symbols).isNotNull();
-    SysMLv2Mill.globalScope().getSymbolPath().addEntry(Paths.get(symbols.toURI()).getParent());
-
-    assertType("attribute values: int[*];",
-      "values->ControlFunctions::forAll { in value: int; GenericFunctions::readValue() }",
-      "ScalarValues.Boolean");
   }
 
   @Test
