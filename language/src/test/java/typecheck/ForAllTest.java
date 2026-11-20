@@ -12,7 +12,6 @@ import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -90,7 +89,6 @@ public class ForAllTest {
   }
 
   @Test
-  @Disabled("Typprüfung von -> noch nicht implementiert")
   public void testTypeOfForAllExpression() throws IOException {
     var ast = completeModel(
         "calc def usesForAll {"
@@ -100,6 +98,9 @@ public class ForAllTest {
     var calculation = (ASTCalcDef) ast.getSysMLElement(0);
     assertThat(TypeCheck3.typeOf(calculation.getExpression()).printFullName())
         .isEqualTo("ScalarValues.Boolean");
+    assertThat(calculation.getSymbol().getArgTypes())
+        .extracting(SymTypeExpression::printFullName)
+        .containsExactly("int[]");
     assertThat(Log.getFindings()).isEmpty();
   }
 
