@@ -309,7 +309,7 @@ public class SysMLCommonExpressionsTypeVisitor extends CommonExpressionsCTTIVisi
         }
       }
       if (types.isEmpty()) {
-        Log.error("0xC1224 cannot determine function body input type."
+        Log.error("0xC1AC0 cannot determine function body input type."
             + " Provide an explicit type",
           usage.get_SourcePositionStart(), usage.get_SourcePositionEnd());
 
