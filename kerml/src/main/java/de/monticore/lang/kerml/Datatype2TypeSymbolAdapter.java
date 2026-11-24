@@ -1,7 +1,7 @@
 package de.monticore.lang.kerml;
 
 import de.monticore.lang.kerml._symboltable.IKerMLScope;
-import de.monticore.lang.kermlelements._ast.ASTFeature;
+import de.monticore.lang.kermlelements._ast.ASTKerMLTyping;
 import de.monticore.lang.kermlelements._symboltable.DatatypeSymbol;
 import de.monticore.lang.kermlelements._symboltable.IKerMLElementsScope;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
@@ -36,7 +36,11 @@ public class Datatype2TypeSymbolAdapter extends TypeSymbol {
     var anythingFeatures = features.stream()
         .filter(f -> f.getTypesList().stream()
             .anyMatch(t -> t.printFullName().equals("Anything"))
-        );
+            || (f.getTypesList().isEmpty() && f.isPresentAstNode()
+                && f.getAstNode().getSpecializationList().stream()
+                    .filter(ASTKerMLTyping.class::isInstance)
+                    .flatMap(typing -> typing.getSuperTypesList().stream())
+                    .anyMatch(t -> t.printType().equals("Anything"))));
     var typeVars = anythingFeatures.map(f ->
         BasicSymbolsMill.typeVarSymbolBuilder()
           .setName(f.getName())
