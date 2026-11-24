@@ -11,9 +11,13 @@ import de.monticore.lang.kermlelements._symboltable.FeatureSymbol;
 import de.monticore.lang.kermlelements._symboltable.IKerMLElementsScope;
 import de.monticore.lang.kermlelements._symboltable.KerMLPackageSymbol;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolSurrogate;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -94,10 +98,15 @@ public class KerMLTool extends KerMLToolTOP {
         parameters.add(BasicSymbolsMill.typeVarSymbolBuilder().setName(name)
             .setSpannedScope(BasicSymbolsMill.scope()).build());
       }
-      target.add(BasicSymbolsMill.typeSymbolBuilder().setName(datatype.getName())
+      var type = BasicSymbolsMill.typeSymbolBuilder().setName(datatype.getName())
           .setFullName(datatype.getFullName())
           .setPackageName(datatype.getPackageName())
-          .setSpannedScope(parameters).build());
+          .setSpannedScope(parameters).build();
+      target.add(type);
+      var features = effectiveFeatures(datatype);
+      superTypesOf(datatype).distinct()
+          .flatMap(parent -> typeReference(parent, type, features).stream())
+          .forEach(type::addSuperTypes);
     }
 
     for (var subScope : source.getSubScopes()) {
@@ -116,13 +125,43 @@ public class KerMLTool extends KerMLToolTOP {
     }
   }
 
+  private Optional<SymTypeExpression> typeReference(DatatypeSymbol reference, TypeSymbol owner,
+      Map<String, FeatureSymbol> features) {
+    var arguments = new ArrayList<SymTypeExpression>();
+    var names = typeVariableNames(reference, new HashSet<>()).distinct().collect(Collectors.toList());
+    for (var name : names) {
+      var variable = owner.getSpannedScope().resolveTypeVarLocally(name);
+      if (variable.isPresent()) {
+        arguments.add(SymTypeExpressionFactory.createTypeVariable(variable.get()));
+        continue;
+      }
+      // Ein konkretisierter Parameter kann selbst ein generischer Typ sein.
+      var feature = features.get(name);
+      if (feature == null) {
+        return Optional.empty();
+      }
+      var declared = featureTypes(feature).collect(Collectors.toList());
+      var bound = declared.stream()
+          .flatMap(type -> findDatatype(feature.getEnclosingScope(), type).stream())
+          .flatMap(type -> typeReference(type, owner, Map.of()).stream())
+          .collect(Collectors.toList());
+      if (bound.isEmpty() || bound.size() != declared.size()) {
+        return Optional.empty();
+      }
+      arguments.add(SymTypeExpressionFactory.createIntersectionOrDefault(bound.get(0), bound));
+    }
+    var symbol = new TypeSymbolSurrogate(reference.getFullName());
+    symbol.setEnclosingScope(owner.getEnclosingScope());
+    return Optional.of(arguments.isEmpty()
+        ? SymTypeExpressionFactory.createTypeObject(symbol)
+        : SymTypeExpressionFactory.createGenerics(symbol, arguments));
+  }
+
   private Stream<String> typeVariableNames(DatatypeSymbol datatype, Set<DatatypeSymbol> visited) {
     if (!visited.add(datatype)) {
       return Stream.empty();
     }
-    var features = new LinkedHashMap<String, FeatureSymbol>();
-    collectEffectiveFeatures(datatype, features, new HashSet<>());
-    return features.values().stream().flatMap(feature -> {
+    return effectiveFeatures(datatype).values().stream().flatMap(feature -> {
       var types = featureTypes(feature).collect(Collectors.toList());
       if (types.isEmpty() && feature.isPresentAstNode()) {
         return Stream.of(feature.getName());
@@ -134,22 +173,31 @@ public class KerMLTool extends KerMLToolTOP {
     });
   }
 
+  private Map<String, FeatureSymbol> effectiveFeatures(DatatypeSymbol datatype) {
+    var features = new LinkedHashMap<String, FeatureSymbol>();
+    collectEffectiveFeatures(datatype, features, new HashSet<>());
+    return features;
+  }
+
   private void collectEffectiveFeatures(DatatypeSymbol datatype,
       Map<String, FeatureSymbol> features, Set<DatatypeSymbol> visiting) {
     if (!visiting.add(datatype)) {
       return;
     }
-    if (datatype.isPresentAstNode()) {
-      specializationTypes(datatype.getAstNode().streamSpecializations(), ASTKerMLSuperclassing.class)
-          .flatMap(name -> findDatatype(datatype.getEnclosingScope(), name).stream())
-          .forEach(parent -> collectEffectiveFeatures(parent, features, visiting));
-    }
+    superTypesOf(datatype).forEach(parent -> collectEffectiveFeatures(parent, features, visiting));
     // Ein späteres Feature mit Typangabe ersetzt ein früheres mit demselben Namen.
     for (var feature : datatype.getSpannedScope().getLocalFeatureSymbols()) {
       features.merge(feature.getName(), feature,
           (inherited, declared) -> featureTypes(declared).findAny().isEmpty() ? inherited : declared);
     }
     visiting.remove(datatype);
+  }
+
+  private Stream<DatatypeSymbol> superTypesOf(DatatypeSymbol datatype) {
+    return datatype.isPresentAstNode()
+        ? specializationTypes(datatype.getAstNode().streamSpecializations(), ASTKerMLSuperclassing.class)
+            .flatMap(name -> findDatatype(datatype.getEnclosingScope(), name).stream())
+        : Stream.empty();
   }
 
   private Stream<String> featureTypes(FeatureSymbol feature) {
