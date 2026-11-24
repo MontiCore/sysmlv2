@@ -12,6 +12,9 @@ package StateDefReference {
     port i: BooleanInput;
     port o: BooleanOutput;
 
-    exhibit state behavior: StateDef.AutomatonInverter(i = i::val, o = o::val);
+    exhibit state behavior: StateDef.AutomatonInverter{
+      bind i = Inverter::i.val;
+      bind o = Inverter::i.val;
+    }
   }
 }

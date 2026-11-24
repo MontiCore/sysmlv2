@@ -72,12 +72,6 @@ component grammar SysMLBasis
    */
 
   /**
-   * Parameters
-   */
-  SysMLParameter implements Variable =
-    UserDefinedKeyword* Name SysMLCardinality? Specialization* ("=" binding:Expression)? DefaultValue?;
-
-  /**
    * A fixed, bound feature value relationship is declared using the symbol = followed by a representation of the value
    * expression. A fixed, initial feature value relationship is declared as above but using the symbol := instead of =.
    * A default feature value relationship is declared similarly to the above, but with the keyword default preceding the

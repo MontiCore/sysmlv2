@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.lang.sysmlconstraints._prettyprint;
 
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLParameter;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintReference;
 import de.monticore.lang.sysmlconstraints._ast.ASTConstraintUsage;
 import de.monticore.prettyprint.CommentPrettyPrinter;

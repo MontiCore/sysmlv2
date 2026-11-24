@@ -176,7 +176,7 @@ component grammar SysMLParts
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     "connect" (
       (src:Endpoint "to" tgt:Endpoint) |
-      ("(" (SysMLParameter || ",")* ")")
+      ("(" Endpoint "," (Endpoint || ",")+ ")")
     )
     ("{"
        SysMLElement*
@@ -254,7 +254,7 @@ component grammar SysMLParts
     SysMLIdentifier? Name? SysMLCardinality? Specialization*
     ("connect"? (
       (src:Endpoint "to" tgt:Endpoint) |
-      ("(" (SysMLParameter || ",")* ")")
+      ("(" Endpoint "," (Endpoint || ",")+ ")")
     ))?
     ("{"
        SysMLElement*

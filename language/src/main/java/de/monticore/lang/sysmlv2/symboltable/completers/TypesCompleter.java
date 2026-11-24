@@ -6,7 +6,6 @@ import de.monticore.lang.sysmlactions._ast.ASTCalcUsage;
 import de.monticore.lang.sysmlactions._visitor.SysMLActionsVisitor2;
 import de.monticore.lang.sysmlbasis._ast.ASTSpecialization;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLElement;
-import de.monticore.lang.sysmlbasis._ast.ASTSysMLParameter;
 import de.monticore.lang.sysmlbasis._ast.ASTSysMLTyping;
 import de.monticore.lang.sysmlbasis._visitor.SysMLBasisVisitor2;
 import de.monticore.lang.sysmlconstraints._ast.ASTRequirementSubject;
@@ -173,14 +172,6 @@ public class TypesCompleter implements SysMLBasisVisitor2, SysMLPartsVisitor2,
     return typeExpressions;
   }
 
-  @Override
-  public void visit(ASTSysMLParameter node) {
-    List<SymTypeExpression> types = getTypeCompletion(node.getSpecializationList(), false);
-
-    if(node.isPresentSymbol() && !types.isEmpty()) {
-      node.getSymbol().setType(types.get(0));
-    }
-  }
 
   /**
    * Completes the usage symbol with corresponding types used by further model-processing tools. Type is stored as a
