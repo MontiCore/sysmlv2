@@ -87,8 +87,11 @@ public class SysMLv2Mill extends SysMLv2MillTOP {
       return;
     }
 
+    var packageDeSer = new SysMLPackageSymbolDeSer();
     globalScope.putSymbolDeSer("de.monticore.lang.kermlelements._symboltable.PackageDeclarationSymbol",
-        new SysMLPackageSymbolDeSer());
+        packageDeSer);
+    globalScope.putSymbolDeSer("de.monticore.lang.kermlelements._symboltable.KerMLPackageSymbol",
+        packageDeSer);
     var libraryPackage = globalScope.getSymbols2Json().load(url)
         .resolveSysMLPackage(packageName).orElseThrow();
     var packageScope = libraryPackage.getSpannedScope();
