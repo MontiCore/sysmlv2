@@ -13,7 +13,7 @@ component grammar SysMLStates extends SysMLActions {
   symbol scope StateUsage implements SysMLUsage =
     Modifier OwnedCrossFeature? UserDefinedKeyword* exhibited:["exhibit"]? "state" SysMLIdentifier?
     Name? SysMLCardinality? Specialization*
-    ("(" (SysMLParameter || ",")* ")")? paralled:["parallel"]? DefaultValue?
+    paralled:["parallel"]? DefaultValue?
     ("{"
       (EntryAction | DoAction | ExitAction | SysMLElement)*
     "}" | ";") ;
