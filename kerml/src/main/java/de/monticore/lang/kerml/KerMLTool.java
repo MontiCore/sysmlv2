@@ -167,7 +167,7 @@ public class KerMLTool extends KerMLToolTOP {
   private Optional<DatatypeSymbol> findDatatype(IKerMLElementsScope scope, String name) {
     String qualifiedName = name.replace("::", ".");
     return Stream.iterate(scope, Objects::nonNull, IKerMLElementsScope::getEnclosingScope)
-        .map(current -> current.resolveDatatypeDown(name))
+        .map(current -> current.resolveDatatypeDown(qualifiedName))
         .flatMap(Optional::stream).findFirst();
   }
 }
